@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم — Rafd Smart Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:rtl;display:flex;min-height:100vh}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:260px;background:#0f172a;min-height:100vh;display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:100;transition:transform .3s}
+.sb-header{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-brand{display:flex;align-items:center;gap:.75rem}
+.sb-logo{width:40px;height:40px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.1rem}
+.sb-name{font-size:1.1rem;font-weight:800;color:#fff}
+.sb-tagline{font-size:.7rem;color:rgba(255,255,255,.4)}
+.sb-nav{flex:1;padding:1rem 0;overflow-y:auto}
+.sb-section{padding:.5rem 1rem;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;margin-top:.5rem}
+.sb-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s;border-right:3px solid transparent;font-size:.875rem;font-weight:600}
+.sb-item:hover{background:rgba(255,255,255,.05);color:#fff}
+.sb-item.active{background:rgba(74,157,111,.15);color:#4a9d6f;border-right-color:#4a9d6f}
+.sb-icon{font-size:1.1rem;width:24px;text-align:center}
+.sb-badge{background:#ef4444;color:#fff;font-size:.65rem;font-weight:700;padding:.1rem .4rem;border-radius:8px;margin-right:auto}
+.sb-footer{padding:1.25rem;border-top:1px solid rgba(255,255,255,.08)}
+.sb-user{display:flex;align-items:center;gap:.75rem}
+.sb-avatar{width:36px;height:36px;background:linear-gradient(135deg,#4a9d6f,#1a3a4a);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.875rem;font-weight:700}
+.sb-user-name{font-size:.85rem;font-weight:700;color:#fff}
+.sb-user-role{font-size:.7rem;color:rgba(255,255,255,.4)}
+.sb-logout{margin-right:auto;color:rgba(255,255,255,.4);cursor:pointer;font-size:.8rem;transition:color .2s}
+.sb-logout:hover{color:#ef4444}
+
+/* ===== MAIN ===== */
+.main{margin-right:260px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:1.1rem;font-weight:800;color:#0f172a}
+.topbar-actions{display:flex;align-items:center;gap:1rem}
+.btn-new{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.6rem 1.25rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem}
+.notif-btn{width:36px;height:36px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.content{padding:2rem;flex:1}
+
+/* ===== PAGES ===== */
+.page{display:none}
+.page.active{display:block}
+
+/* ===== OVERVIEW ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:2rem}
+.stat-card{background:#fff;border-radius:16px;padding:1.5rem;border:1px solid #e2e8f0}
+.stat-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.stat-card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem}
+.stat-card-icon.blue{background:#eff6ff}
+.stat-card-icon.green{background:#f0fdf4}
+.stat-card-icon.yellow{background:#fffbeb}
+.stat-card-icon.red{background:#fef2f2}
+.stat-card-change{font-size:.75rem;font-weight:700;padding:.2rem .5rem;border-radius:6px}
+.stat-card-change.up{background:#dcfce7;color:#166534}
+.stat-card-change.down{background:#fee2e2;color:#991b1b}
+.stat-card-num{font-size:2rem;font-weight:900;color:#0f172a;margin-bottom:.25rem}
+.stat-card-label{font-size:.8rem;color:#64748b;font-weight:600}
+
+.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.card{background:#fff;border-radius:16px;padding:1.5rem;border:1px solid #e2e8f0}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.card-title{font-size:1rem;font-weight:700;color:#0f172a}
+.card-link{font-size:.8rem;color:#1a3a4a;text-decoration:none;font-weight:600}
+
+/* Recent apps table */
+.apps-table{width:100%;border-collapse:collapse}
+.apps-table th{font-size:.75rem;font-weight:700;color:#64748b;text-align:right;padding:.5rem .75rem;border-bottom:1px solid #f1f5f9}
+.apps-table td{font-size:.85rem;padding:.75rem;border-bottom:1px solid #f8fafc;vertical-align:middle}
+.apps-table tr:last-child td{border-bottom:none}
+.app-name{font-weight:600;color:#0f172a}
+.app-sector{font-size:.75rem;color:#64748b;background:#f1f5f9;padding:.2rem .5rem;border-radius:6px}
+.score-bar{display:flex;align-items:center;gap:.5rem}
+.score-bg{flex:1;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px}
+.score-fill.high{background:#10b981}
+.score-fill.mid{background:#f59e0b}
+.score-fill.low{background:#ef4444}
+.score-num{font-size:.8rem;font-weight:700;color:#374151;min-width:30px}
+.status-badge{font-size:.72rem;font-weight:700;padding:.25rem .6rem;border-radius:8px;white-space:nowrap}
+.status-badge.accepted{background:#dcfce7;color:#166534}
+.status-badge.rejected{background:#fee2e2;color:#991b1b}
+.status-badge.pending{background:#fef3c7;color:#92400e}
+.status-badge.processing{background:#dbeafe;color:#1e40af}
+
+/* Donut chart */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:1rem}
+.donut{width:140px;height:140px;border-radius:50%;background:conic-gradient(#10b981 0deg 230deg,#ef4444 230deg 295deg,#f59e0b 295deg 360deg);position:relative;display:flex;align-items:center;justify-content:center}
+.donut::before{content:'';width:90px;height:90px;background:#fff;border-radius:50%;position:absolute}
+.donut-center{position:relative;text-align:center}
+.donut-pct{font-size:1.25rem;font-weight:900;color:#0f172a}
+.donut-sub{font-size:.65rem;color:#64748b}
+.donut-legend{display:flex;flex-direction:column;gap:.5rem;width:100%}
+.legend-item{display:flex;align-items:center;gap:.5rem;font-size:.8rem}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-label{color:#64748b;flex:1}
+.legend-val{font-weight:700;color:#374151}
+
+/* ===== APPLICATIONS PAGE ===== */
+.page-toolbar{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem 1rem;flex:1;min-width:200px}
+.search-box input{border:none;outline:none;font-family:'Cairo',sans-serif;font-size:.875rem;color:#374151;background:transparent;width:100%}
+.filter-btn{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem 1rem;font-family:'Cairo',sans-serif;font-size:.85rem;color:#374151;cursor:pointer;display:flex;align-items:center;gap:.4rem}
+.filter-btn.active{border-color:#1a3a4a;color:#1a3a4a;background:#f0f9ff}
+.apps-list{display:flex;flex-direction:column;gap:.75rem}
+.app-row{background:#fff;border-radius:14px;padding:1.25rem;border:1px solid #e2e8f0;display:flex;align-items:center;gap:1.25rem;transition:all .2s;cursor:pointer}
+.app-row:hover{border-color:#1a3a4a;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.app-avatar{width:44px;height:44px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1rem;flex-shrink:0}
+.app-info{flex:1}
+.app-info-name{font-size:.95rem;font-weight:700;color:#0f172a}
+.app-info-meta{font-size:.78rem;color:#64748b;margin-top:.2rem}
+.app-score-wrap{text-align:center}
+.app-score-big{font-size:1.5rem;font-weight:900;color:#0f172a}
+.app-score-label{font-size:.7rem;color:#64748b}
+.app-actions{display:flex;gap:.5rem}
+.btn-view{background:#f1f5f9;color:#374151;border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
+.btn-accept{background:#dcfce7;color:#166534;border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
+.btn-reject{background:#fee2e2;color:#991b1b;border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
+
+/* ===== CRITERIA PAGE ===== */
+.criteria-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.criteria-card{background:#fff;border-radius:16px;padding:1.5rem;border:1px solid #e2e8f0}
+.criteria-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.criteria-name{font-size:1rem;font-weight:700;color:#0f172a}
+.criteria-weight{background:#f0fdf4;color:#166534;font-size:.8rem;font-weight:700;padding:.25rem .6rem;border-radius:8px}
+.criteria-rule{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid #f8fafc;font-size:.85rem}
+.criteria-rule:last-child{border-bottom:none}
+.rule-label{color:#374151;font-weight:600}
+.rule-val{color:#64748b}
+.toggle{width:44px;height:24px;background:#10b981;border-radius:12px;position:relative;cursor:pointer}
+.toggle::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left .2s}
+.toggle.off{background:#e2e8f0}
+.toggle.off::after{left:23px}
+.btn-add-criteria{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.75rem 1.5rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.875rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.5rem}
+
+/* ===== EMPTY STATE ===== */
+.empty-state{text-align:center;padding:4rem 2rem}
+.empty-icon{font-size:3rem;margin-bottom:1rem}
+.empty-title{font-size:1.1rem;font-weight:700;color:#374151;margin-bottom:.5rem}
+.empty-desc{font-size:.875rem;color:#94a3b8;line-height:1.7}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1024px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .grid-2{grid-template-columns:1fr}
+  .criteria-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-right:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-header">
+    <div class="sb-brand">
+      <div class="sb-logo">R</div>
+      <div>
+        <div class="sb-name">Rafd</div>
+        <div class="sb-tagline">Smart Platform</div>
+      </div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">الرئيسية</div>
+    <div class="sb-item active" onclick="showPage('overview',this)">
+      <span class="sb-icon">📊</span> نظرة عامة
+    </div>
+    <div class="sb-item" onclick="showPage('applications',this)">
+      <span class="sb-icon">📋</span> الطلبات
+      <span class="sb-badge">12</span>
+    </div>
+    <div class="sb-section">الإعدادات</div>
+    <div class="sb-item" onclick="showPage('criteria',this)">
+      <span class="sb-icon">⚙️</span> معايير التقييم
+    </div>
+    <div class="sb-item" onclick="showPage('reports',this)">
+      <span class="sb-icon">📈</span> التقارير
+    </div>
+    <div class="sb-item" onclick="showPage('identity',this)">
+      <span class="sb-icon">🔐</span> التحقق من الهوية
+    </div>
+    <div class="sb-item" onclick="showPage('billing',this)">
+      <span class="sb-icon">💳</span> الاشتراك
+    </div>
+    <div class="sb-item" onclick="showPage('settings',this)">
+      <span class="sb-icon">🔧</span> الإعدادات
+    </div>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">م</div>
+      <div>
+        <div class="sb-user-name">مسرعة الأعمال</div>
+        <div class="sb-user-role">مدير النظام</div>
+      </div>
+      <a href="/" class="sb-logout">خروج</a>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="pageTitle">نظرة عامة</div>
+    <div class="topbar-actions">
+      <button class="btn-new" onclick="showPage('applications',null)">+ طلب جديد</button>
+      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ===== OVERVIEW PAGE ===== -->
+    <div class="page active" id="page-overview">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-icon blue">📋</div>
+            <span class="stat-card-change up">+18%</span>
+          </div>
+          <div class="stat-card-num">247</div>
+          <div class="stat-card-label">إجمالي الطلبات</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-icon green">✅</div>
+            <span class="stat-card-change up">+12%</span>
+          </div>
+          <div class="stat-card-num">158</div>
+          <div class="stat-card-label">طلبات مقبولة</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-icon red">❌</div>
+            <span class="stat-card-change down">-5%</span>
+          </div>
+          <div class="stat-card-num">67</div>
+          <div class="stat-card-label">طلبات مرفوضة</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-icon yellow">⏳</div>
+            <span class="stat-card-change up">+3</span>
+          </div>
+          <div class="stat-card-num">22</div>
+          <div class="stat-card-label">قيد المعالجة</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">آخر الطلبات</span>
+            <a href="#" class="card-link" onclick="showPage('applications',null)">عرض الكل</a>
+          </div>
+          <table class="apps-table">
+            <thead>
+              <tr>
+                <th>المتقدم</th>
+                <th>القطاع</th>
+                <th>الدرجة</th>
+                <th>الحالة</th>
+                <th>التاريخ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="app-name">أحمد محمد الغامدي</span></td>
+                <td><span class="app-sector">تقنية مالية</span></td>
+                <td><div class="score-bar"><div class="score-bg"><div class="score-fill high" style="width:92%"></div></div><span class="score-num">92</span></div></td>
+                <td><span class="status-badge accepted">مقبول</span></td>
+                <td style="font-size:.78rem;color:#94a3b8">اليوم</td>
+              </tr>
+              <tr>
+                <td><span class="app-name">سارة علي القحطاني</span></td>
+                <td><span class="app-sector">صحة</span></td>
+                <td><div class="score-bar"><div class="score-bg"><div class="score-fill low" style="width:41%"></div></div><span class="score-num">41</span></div></td>
+                <td><span class="status-badge rejected">مرفوض</span></td>
+                <td style="font-size:.78rem;color:#94a3b8">اليوم</td>
+              </tr>
+              <tr>
+                <td><span class="app-name">خالد عبدالله العتيبي</span></td>
+                <td><span class="app-sector">ذكاء اصطناعي</span></td>
+                <td><div class="score-bar"><div class="score-bg"><div class="score-fill high" style="width:78%"></div></div><span class="score-num">78</span></div></td>
+                <td><span class="status-badge accepted">مقبول</span></td>
+                <td style="font-size:.78rem;color:#94a3b8">أمس</td>
+              </tr>
+              <tr>
+                <td><span class="app-name">نورة سعد الشمري</span></td>
+                <td><span class="app-sector">تعليم</span></td>
+                <td><div class="score-bar"><div class="score-bg"><div class="score-fill mid" style="width:65%"></div></div><span class="score-num">65</span></div></td>
+                <td><span class="status-badge processing">جارٍ</span></td>
+                <td style="font-size:.78rem;color:#94a3b8">أمس</td>
+              </tr>
+              <tr>
+                <td><span class="app-name">فيصل محمد الدوسري</span></td>
+                <td><span class="app-sector">لوجستيات</span></td>
+                <td><div class="score-bar"><div class="score-bg"><div class="score-fill mid" style="width:58%"></div></div><span class="score-num">58</span></div></td>
+                <td><span class="status-badge pending">قيد الانتظار</span></td>
+                <td style="font-size:.78rem;color:#94a3b8">منذ يومين</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">توزيع القرارات</span></div>
+          <div class="donut-wrap">
+            <div class="donut">
+              <div class="donut-center">
+                <div class="donut-pct">64%</div>
+                <div class="donut-sub">قبول</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div><span class="legend-label">مقبول</span><span class="legend-val">158</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div><span class="legend-label">مرفوض</span><span class="legend-val">67</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><span class="legend-label">قيد المعالجة</span><span class="legend-val">22</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== APPLICATIONS PAGE ===== -->
+    <div class="page" id="page-applications">
+      <div class="page-toolbar">
+        <div class="search-box">🔍 <input type="text" placeholder="ابحث عن متقدم..."></div>
+        <button class="filter-btn active">الكل (247)</button>
+        <button class="filter-btn">مقبول (158)</button>
+        <button class="filter-btn">مرفوض (67)</button>
+        <button class="filter-btn">قيد المعالجة (22)</button>
+      </div>
+      <div class="apps-list">
+        <div class="app-row">
+          <div class="app-avatar">أ</div>
+          <div class="app-info">
+            <div class="app-info-name">أحمد محمد الغامدي</div>
+            <div class="app-info-meta">تقنية مالية · قُدِّم اليوم · التحقق: ✓ نفاذ</div>
+          </div>
+          <div class="app-score-wrap"><div class="app-score-big" style="color:#10b981">92</div><div class="app-score-label">من 100</div></div>
+          <span class="status-badge accepted">مقبول</span>
+          <div class="app-actions"><button class="btn-view">عرض</button></div>
+        </div>
+        <div class="app-row">
+          <div class="app-avatar">س</div>
+          <div class="app-info">
+            <div class="app-info-name">سارة علي القحطاني</div>
+            <div class="app-info-meta">صحة ورعاية · قُدِّم اليوم · التحقق: ✓ نفاذ</div>
+          </div>
+          <div class="app-score-wrap"><div class="app-score-big" style="color:#ef4444">41</div><div class="app-score-label">من 100</div></div>
+          <span class="status-badge rejected">مرفوض</span>
+          <div class="app-actions"><button class="btn-view">عرض</button></div>
+        </div>
+        <div class="app-row">
+          <div class="app-avatar">خ</div>
+          <div class="app-info">
+            <div class="app-info-name">خالد عبدالله العتيبي</div>
+            <div class="app-info-meta">ذكاء اصطناعي · قُدِّم أمس · التحقق: ✓ نفاذ</div>
+          </div>
+          <div class="app-score-wrap"><div class="app-score-big" style="color:#10b981">78</div><div class="app-score-label">من 100</div></div>
+          <span class="status-badge accepted">مقبول</span>
+          <div class="app-actions"><button class="btn-view">عرض</button></div>
+        </div>
+        <div class="app-row">
+          <div class="app-avatar">ن</div>
+          <div class="app-info">
+            <div class="app-info-name">نورة سعد الشمري</div>
+            <div class="app-info-meta">تعليم وتدريب · قُدِّم أمس · التحقق: ⟳ جارٍ</div>
+          </div>
+          <div class="app-score-wrap"><div class="app-score-big" style="color:#f59e0b">65</div><div class="app-score-label">من 100</div></div>
+          <span class="status-badge processing">جارٍ</span>
+          <div class="app-actions"><button class="btn-view">عرض</button></div>
+        </div>
+        <div class="app-row">
+          <div class="app-avatar">ف</div>
+          <div class="app-info">
+            <div class="app-info-name">فيصل محمد الدوسري</div>
+            <div class="app-info-meta">لوجستيات · منذ يومين · التحقق: ✓ نفاذ</div>
+          </div>
+          <div class="app-score-wrap"><div class="app-score-big" style="color:#f59e0b">58</div><div class="app-score-label">من 100</div></div>
+          <span class="status-badge pending">انتظار</span>
+          <div class="app-actions"><button class="btn-accept">قبول</button><button class="btn-reject">رفض</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CRITERIA PAGE ===== -->
+    <div class="page" id="page-criteria">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-size:1.1rem;font-weight:800;color:#0f172a">معايير التقييم</h2>
+          <p style="font-size:.85rem;color:#64748b;margin-top:.25rem">حدّد معايير القبول والرفض لجهتك</p>
+        </div>
+        <button class="btn-add-criteria">+ إضافة معيار</button>
+      </div>
+      <div class="criteria-grid">
+        <div class="criteria-card">
+          <div class="criteria-header">
+            <span class="criteria-name">المؤهل الأكاديمي</span>
+            <span class="criteria-weight">الوزن: 20%</span>
+          </div>
+          <div class="criteria-rule"><span class="rule-label">الحد الأدنى</span><span class="rule-val">بكالوريوس</span></div>
+          <div class="criteria-rule"><span class="rule-label">المفضّل</span><span class="rule-val">ماجستير أو أعلى</span></div>
+          <div class="criteria-rule"><span class="rule-label">الحالة</span><div class="toggle"></div></div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-header">
+            <span class="criteria-name">سنوات الخبرة</span>
+            <span class="criteria-weight">الوزن: 25%</span>
+          </div>
+          <div class="criteria-rule"><span class="rule-label">الحد الأدنى</span><span class="rule-val">3 سنوات</span></div>
+          <div class="criteria-rule"><span class="rule-label">المفضّل</span><span class="rule-val">5 سنوات أو أكثر</span></div>
+          <div class="criteria-rule"><span class="rule-label">الحالة</span><div class="toggle"></div></div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-header">
+            <span class="criteria-name">مرحلة المشروع</span>
+            <span class="criteria-weight">الوزن: 30%</span>
+          </div>
+          <div class="criteria-rule"><span class="rule-label">الحد الأدنى</span><span class="rule-val">نموذج أولي (MVP)</span></div>
+          <div class="criteria-rule"><span class="rule-label">المفضّل</span><span class="rule-val">مرحلة الإيرادات</span></div>
+          <div class="criteria-rule"><span class="rule-label">الحالة</span><div class="toggle"></div></div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-header">
+            <span class="criteria-name">حجم الفريق</span>
+            <span class="criteria-weight">الوزن: 15%</span>
+          </div>
+          <div class="criteria-rule"><span class="rule-label">الحد الأدنى</span><span class="rule-val">مؤسسان</span></div>
+          <div class="criteria-rule"><span class="rule-label">المفضّل</span><span class="rule-val">3 أعضاء أو أكثر</span></div>
+          <div class="criteria-rule"><span class="rule-label">الحالة</span><div class="toggle"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== REPORTS PAGE ===== -->
+    <div class="page" id="page-reports">
+      <div class="empty-state">
+        <div class="empty-icon">📈</div>
+        <div class="empty-title">التقارير والتحليلات</div>
+        <div class="empty-desc">ستجد هنا تقارير تفصيلية عن أداء النظام وإحصائيات الطلبات<br>متاح في الخطة الاحترافية والمؤسسية</div>
+      </div>
+    </div>
+
+    <!-- ===== IDENTITY PAGE ===== -->
+    <div class="page" id="page-identity">
+      <div class="card" style="max-width:600px">
+        <div class="card-header"><span class="card-title">تكامل أبشر / نفاذ</span></div>
+        <div style="padding:1rem 0">
+          <div style="display:flex;align-items:center;gap:1rem;padding:1rem;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;margin-bottom:1rem">
+            <span style="font-size:1.5rem">✅</span>
+            <div>
+              <div style="font-weight:700;color:#166534;font-size:.9rem">نفاذ مُفعَّل ومتصل</div>
+              <div style="font-size:.8rem;color:#15803d;margin-top:.2rem">التحقق من الهوية يعمل تلقائياً مع كل طلب</div>
+            </div>
+          </div>
+          <div style="font-size:.875rem;color:#64748b;line-height:1.8">
+            يتكامل النظام مع منصة <strong>نفاذ</strong> التابعة لسدايا للتحقق من هوية المتقدمين تلقائياً. هذه الخدمة مجانية تماماً ومتاحة لجميع الجهات السعودية.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BILLING PAGE ===== -->
+    <div class="page" id="page-billing">
+      <div class="card" style="max-width:600px">
+        <div class="card-header"><span class="card-title">خطة الاشتراك الحالية</span></div>
+        <div style="padding:1rem;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);border-radius:12px;color:#fff;margin-bottom:1.5rem">
+          <div style="font-size:.8rem;opacity:.7;margin-bottom:.25rem">الخطة الحالية</div>
+          <div style="font-size:1.5rem;font-weight:900">الاحترافية</div>
+          <div style="font-size:.85rem;opacity:.8;margin-top:.25rem">1,500 ر.س / شهر · 1,000 طلب</div>
+        </div>
+        <div style="font-size:.875rem;color:#64748b">
+          <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid #f1f5f9"><span>الطلبات المستخدمة</span><strong>247 / 1,000</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid #f1f5f9"><span>تاريخ التجديد</span><strong>1 يوليو 2025</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:.6rem 0"><span>طريقة الدفع</span><strong>بطاقة ائتمانية ••••4242</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <div class="page" id="page-settings">
+      <div class="card" style="max-width:600px">
+        <div class="card-header"><span class="card-title">إعدادات الحساب</span></div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="field-group">
+            <label style="font-size:.875rem;font-weight:600;color:#374151;display:block;margin-bottom:.4rem">اسم الجهة</label>
+            <input type="text" value="مسرعة الأعمال السعودية" style="width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.9rem">
+          </div>
+          <div class="field-group">
+            <label style="font-size:.875rem;font-weight:600;color:#374151;display:block;margin-bottom:.4rem">البريد الإلكتروني</label>
+            <input type="email" value="admin@accelerator.sa" style="width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.9rem">
+          </div>
+          <button style="background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.85rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer">حفظ التغييرات</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const pageTitles = {
+  overview: 'نظرة عامة',
+  applications: 'الطلبات',
+  criteria: 'معايير التقييم',
+  reports: 'التقارير',
+  identity: 'التحقق من الهوية',
+  billing: 'الاشتراك',
+  settings: 'الإعدادات'
+};
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if(el) el.classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[name] || name;
+}
+</script>
+</body>
+</html>

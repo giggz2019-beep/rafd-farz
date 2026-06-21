@@ -1,0 +1,13 @@
+{
+  "name": "rafd-website",
+  "version": "1.0.0",
+  "description": "RAFD Digital - AI Assessment Platform",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'Static site - no build needed'"
+  },
+  "dependencies": {
+    "express": "^4.22.2"
+  }
+}

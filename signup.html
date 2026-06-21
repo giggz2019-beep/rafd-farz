@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إنشاء حساب — Rafd</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#f0f9ff,#e0f2fe,#f0fdf4);min-height:100vh;display:flex;align-items:center;justify-content:center;direction:rtl;padding:2rem 1rem}
+.auth-card{background:#fff;border-radius:24px;padding:2.5rem;width:100%;max-width:500px;box-shadow:0 20px 60px rgba(0,0,0,.1);border:1px solid #e2e8f0}
+.auth-logo{display:flex;align-items:center;gap:.75rem;justify-content:center;margin-bottom:1.5rem}
+.logo-icon{width:48px;height:48px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.3rem}
+.logo-text{font-size:1.5rem;font-weight:900;color:#0f172a}
+h1{font-size:1.4rem;font-weight:800;color:#0f172a;text-align:center;margin-bottom:.4rem}
+.sub{font-size:.875rem;color:#64748b;text-align:center;margin-bottom:1.75rem}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.875rem;font-weight:600;color:#374151;margin-bottom:.4rem}
+.field input,.field select{width:100%;padding:.8rem 1rem;border:1.5px solid #e2e8f0;border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#1e293b;transition:border-color .2s;background:#fff}
+.field input:focus,.field select:focus{outline:none;border-color:#1a3a4a;box-shadow:0 0 0 3px rgba(26,58,74,.08)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.btn-signup{width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:1rem;border-radius:12px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:.5rem}
+.btn-signup:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,58,74,.25)}
+.terms{font-size:.78rem;color:#94a3b8;text-align:center;margin-top:1rem;line-height:1.6}
+.terms a{color:#1a3a4a}
+.login-link{text-align:center;font-size:.875rem;color:#64748b;margin-top:1rem}
+.login-link a{color:#1a3a4a;font-weight:700;text-decoration:none}
+.back-link{text-align:center;margin-top:1rem}
+.back-link a{font-size:.8rem;color:#94a3b8;text-decoration:none}
+@media(max-width:480px){.field-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="auth-card">
+  <div class="auth-logo">
+    <div class="logo-icon">R</div>
+    <span class="logo-text">Rafd</span>
+  </div>
+  <h1>أنشئ حسابك مجاناً</h1>
+  <p class="sub">ابدأ في أتمتة قرارات جهتك اليوم</p>
+  <div class="field-row">
+    <div class="field">
+      <label>الاسم الأول</label>
+      <input type="text" placeholder="محمد">
+    </div>
+    <div class="field">
+      <label>اسم العائلة</label>
+      <input type="text" placeholder="الأحمدي">
+    </div>
+  </div>
+  <div class="field">
+    <label>اسم الجهة / الشركة</label>
+    <input type="text" placeholder="مسرعة الأعمال السعودية">
+  </div>
+  <div class="field">
+    <label>نوع الجهة</label>
+    <select>
+      <option value="">اختر نوع الجهة...</option>
+      <option>بنك أو مؤسسة مالية</option>
+      <option>جامعة أو مؤسسة تعليمية</option>
+      <option>مسرعة أو حاضنة أعمال</option>
+      <option>جهة حكومية</option>
+      <option>شركة خاصة</option>
+      <option>أخرى</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>البريد الإلكتروني</label>
+    <input type="email" placeholder="name@company.com">
+  </div>
+  <div class="field">
+    <label>كلمة المرور</label>
+    <input type="password" placeholder="8 أحرف على الأقل">
+  </div>
+  <button class="btn-signup" onclick="window.location.href='/dashboard.html'">إنشاء الحساب والبدء</button>
+  <p class="terms">بإنشاء حساب، أنت توافق على <a href="#">شروط الخدمة</a> و<a href="#">سياسة الخصوصية</a></p>
+  <div class="login-link">لديك حساب بالفعل؟ <a href="/login.html">سجّل دخولك</a></div>
+  <div class="back-link"><a href="/">← العودة للرئيسية</a></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة تحكم الشريك — RAFD Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:#0f172a;color:#e2e8f0;direction:rtl;min-height:100vh}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:250px;background:#1e293b;border-left:1px solid #334155;position:fixed;top:0;right:0;bottom:0;z-index:100;display:flex;flex-direction:column;transition:.3s}
+.sb-logo{padding:1.25rem 1.25rem 1rem;border-bottom:1px solid #334155;display:flex;align-items:center;gap:.7rem}
+.sb-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:1rem;flex-shrink:0}
+.sb-logo-text{font-size:.95rem;font-weight:800;color:#fff}
+.sb-logo-sub{font-size:.68rem;color:#64748b}
+.sb-org{padding:.9rem 1.25rem;border-bottom:1px solid #334155;background:rgba(56,189,248,.05)}
+.sb-org-name{font-size:.85rem;font-weight:700;color:#38bdf8}
+.sb-org-type{font-size:.72rem;color:#64748b;margin-top:.1rem}
+.sb-plan{display:inline-flex;align-items:center;gap:.3rem;background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.25);border-radius:20px;padding:.2rem .65rem;font-size:.7rem;font-weight:700;margin-top:.4rem}
+.sb-nav{flex:1;padding:.75rem 0;overflow-y:auto}
+.nav-sec{padding:.4rem 1rem .2rem;color:#475569;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.nav-item{display:flex;align-items:center;gap:.65rem;padding:.65rem 1.25rem;color:#94a3b8;cursor:pointer;transition:.15s;border-right:3px solid transparent;font-size:.85rem;font-weight:500}
+.nav-item:hover{color:#e2e8f0;background:rgba(255,255,255,.04)}
+.nav-item.active{color:#38bdf8;background:rgba(56,189,248,.08);border-right-color:#38bdf8}
+.nav-icon{font-size:1rem;width:18px;text-align:center}
+.sb-footer{padding:1rem 1.25rem;border-top:1px solid #334155}
+.sb-user{display:flex;align-items:center;gap:.65rem}
+.sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.85rem;flex-shrink:0}
+.sb-uname{font-size:.82rem;font-weight:700;color:#e2e8f0}
+.sb-urole{font-size:.7rem;color:#64748b}
+.btn-logout{background:none;border:none;color:#64748b;font-size:.75rem;cursor:pointer;font-family:'Cairo',sans-serif;margin-top:.25rem;padding:0}
+.btn-logout:hover{color:#ef4444}
+
+/* ===== MAIN ===== */
+.main{margin-right:250px;padding:1.75rem;min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:1rem}
+.page-title{font-size:1.5rem;font-weight:900;color:#fff}
+.page-sub{color:#64748b;font-size:.82rem;margin-top:.2rem}
+
+/* ===== STATS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.75rem}
+.stat-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.25rem}
+.stat-icon{font-size:1.4rem;margin-bottom:.5rem}
+.stat-label{color:#64748b;font-size:.75rem;font-weight:600;margin-bottom:.35rem}
+.stat-val{font-size:1.8rem;font-weight:900;color:#fff}
+.stat-note{font-size:.72rem;color:#475569;margin-top:.2rem}
+
+/* ===== CARDS ===== */
+.card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.5rem;margin-bottom:1.25rem}
+.card-title{font-size:.95rem;font-weight:800;color:#fff;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
+
+/* ===== BADGE ===== */
+.badge{display:inline-flex;align-items:center;padding:.25rem .7rem;border-radius:20px;font-size:.72rem;font-weight:700}
+.b-active{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25)}
+.b-rejected{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)}
+.b-pending{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)}
+.b-trial{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)}
+.b-basic{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.25)}
+.b-pro{background:rgba(139,92,246,.12);color:#a78bfa;border:1px solid rgba(139,92,246,.25)}
+
+/* ===== TABLE ===== */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead tr{background:#0f172a}
+th{padding:.75rem 1rem;text-align:right;color:#64748b;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+tbody tr{border-top:1px solid #1e293b;transition:.15s}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
+
+/* ===== FORM ===== */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.fld-m{margin-bottom:1rem}
+.fld-m label{display:block;font-size:.8rem;font-weight:700;color:#94a3b8;margin-bottom:.35rem}
+.fld-m input,.fld-m select,.fld-m textarea{width:100%;padding:.7rem .9rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;color:#e2e8f0;outline:none;transition:.2s}
+.fld-m input:focus,.fld-m select:focus,.fld-m textarea:focus{border-color:#38bdf8}
+.fld-m select option{background:#1e293b}
+.fld-m textarea{resize:vertical;min-height:80px;line-height:1.7}
+.btn-primary{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.7rem 1.5rem;font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:.2s}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-ghost{background:#334155;color:#94a3b8;border:none;border-radius:10px;padding:.7rem 1.25rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer}
+.btn-sm{background:#334155;border:none;color:#94a3b8;border-radius:7px;padding:.3rem .65rem;font-size:.75rem;cursor:pointer;transition:.15s;font-family:'Cairo',sans-serif}
+.btn-sm:hover{background:#475569;color:#e2e8f0}
+.btn-sm.danger:hover{background:rgba(239,68,68,.2);color:#ef4444}
+
+/* ===== PROGRESS ===== */
+.progress-bar{background:#0f172a;border-radius:20px;height:8px;overflow:hidden;margin-top:.4rem}
+.progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#38bdf8,#4a9d6f)}
+
+/* ===== PLAN CARDS ===== */
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.plan-card{background:rgba(15,23,42,.5);border:2px solid rgba(255,255,255,.08);border-radius:14px;padding:1.25rem;text-align:center;transition:.2s}
+.plan-card.current{border-color:#38bdf8;background:rgba(56,189,248,.08)}
+.plan-name{font-size:.95rem;font-weight:800;color:#fff;margin-bottom:.25rem}
+.plan-price{font-size:1.4rem;font-weight:900;color:#38bdf8}
+.plan-period{font-size:.72rem;color:#64748b}
+.plan-features{list-style:none;margin:.75rem 0;text-align:right}
+.plan-features li{font-size:.75rem;color:#94a3b8;padding:.2rem 0;display:flex;align-items:center;gap:.4rem}
+.plan-features li::before{content:'✓';color:#4a9d6f;font-weight:900}
+.btn-upgrade{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.6rem 1.25rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:.75rem;width:100%}
+.btn-upgrade:disabled{opacity:.4;cursor:not-allowed}
+
+/* ===== ALERT ===== */
+.alert{border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;font-size:.85rem;line-height:1.6;display:flex;align-items:flex-start;gap:.75rem}
+.alert-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fbbf24}
+.alert-info{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);color:#7dd3fc}
+.alert-success{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#1e293b;border:1px solid #334155;border-radius:20px;width:100%;max-width:500px;margin:1rem;max-height:90vh;overflow-y:auto}
+.modal-hdr{padding:1.25rem 1.5rem;border-bottom:1px solid #334155;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:1rem;font-weight:800;color:#fff}
+.btn-close{background:#334155;border:none;color:#94a3b8;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:.9rem}
+.modal-body{padding:1.5rem}
+.modal-footer{padding:1rem 1.5rem;border-top:1px solid #334155;display:flex;gap:.75rem;justify-content:flex-end}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .sidebar{width:100%;height:auto;position:relative}
+  .main{margin-right:0;padding:1rem}
+  .plan-grid{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr}
+  table{font-size:.78rem}
+  th,td{padding:.6rem .5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">R</div>
+    <div>
+      <div class="sb-logo-text">RAFD Digital</div>
+      <div class="sb-logo-sub">لوحة تحكم الشريك</div>
+    </div>
+  </div>
+  <div class="sb-org">
+    <div class="sb-org-name" id="sb_orgname">—</div>
+    <div class="sb-org-type" id="sb_orgtype">—</div>
+    <div class="sb-plan" id="sb_plan">—</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">الرئيسية</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-icon">📊</span> نظرة عامة</div>
+    <div class="nav-item" onclick="showPage('requests',this)"><span class="nav-icon">📋</span> الطلبات</div>
+    <div class="nav-sec">الإدارة</div>
+    <div class="nav-item" onclick="showPage('new-request',this)"><span class="nav-icon">➕</span> طلب جديد</div>
+    <div class="nav-item" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span> الإعدادات</div>
+    <div class="nav-item" onclick="showPage('subscription',this)"><span class="nav-icon">💳</span> الاشتراك</div>
+    <div class="nav-item" onclick="showPage('support',this)"><span class="nav-icon">💬</span> الدعم والتواصل</div>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-av" id="sb_av">—</div>
+      <div>
+        <div class="sb-uname" id="sb_uname">—</div>
+        <div class="sb-urole" id="sb_urole">—</div>
+        <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ===== PAGE: OVERVIEW ===== -->
+  <div class="page active" id="page-overview">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">مرحباً، <span id="welcome_name">—</span> 👋</div>
+        <div class="page-sub" id="welcome_sub">لوحة التحكم الخاصة بجهتك</div>
+      </div>
+      <button class="btn-primary" onclick="showPage('new-request',document.querySelector('.nav-item:nth-child(5)'))">➕ طلب جديد</button>
+    </div>
+
+    <div id="status_alert"></div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-label">إجمالي الطلبات</div>
+        <div class="stat-val" id="stat_total">0</div>
+        <div class="stat-note">منذ بدء الاشتراك</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-label">الطلبات المقبولة</div>
+        <div class="stat-val" id="stat_approved">0</div>
+        <div class="stat-note" id="stat_approved_pct">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">❌</div>
+        <div class="stat-label">الطلبات المرفوضة</div>
+        <div class="stat-val" id="stat_rejected">0</div>
+        <div class="stat-note" id="stat_rejected_pct">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-label">قيد المراجعة</div>
+        <div class="stat-val" id="stat_pending_req">0</div>
+        <div class="stat-note">طلب</div>
+      </div>
+    </div>
+
+    <!-- Recent Requests -->
+    <div class="card">
+      <div class="card-title">📋 آخر الطلبات</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>اسم المتقدم</th><th>الغرض</th><th>التاريخ</th><th>النتيجة</th></tr></thead>
+          <tbody id="recent_requests_table">
+            <tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">لا توجد طلبات بعد — <button onclick="showPage('new-request',null)" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.83rem">أضف أول طلب</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Usage Bar -->
+    <div class="card">
+      <div class="card-title">📊 استخدام الباقة الشهري</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+        <span style="color:#94a3b8;font-size:.82rem">الطلبات المستخدمة</span>
+        <span style="color:#e2e8f0;font-weight:700;font-size:.85rem" id="usage_text">0 / —</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="usage_bar" style="width:0%"></div></div>
+      <div style="color:#475569;font-size:.72rem;margin-top:.4rem" id="usage_note">—</div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: REQUESTS ===== -->
+  <div class="page" id="page-requests">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">الطلبات</div>
+        <div class="page-sub">جميع الطلبات المقدّمة عبر منصتك</div>
+      </div>
+      <button class="btn-primary" onclick="showPage('new-request',null)">➕ طلب جديد</button>
+    </div>
+    <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.25rem">
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+        <input type="text" id="req_search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.85rem;outline:none" oninput="filterRequests()">
+        <select id="req_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'Cairo',sans-serif;font-size:.82rem;outline:none" onchange="filterRequests()">
+          <option value="">كل الحالات</option>
+          <option value="approved">مقبول</option>
+          <option value="rejected">مرفوض</option>
+          <option value="pending">قيد المراجعة</option>
+        </select>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>اسم المتقدم</th><th>رقم الهوية</th><th>الغرض</th><th>الدرجة</th><th>التاريخ</th><th>النتيجة</th><th>إجراءات</th></tr></thead>
+          <tbody id="all_requests_table">
+            <tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem">لا توجد طلبات بعد</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: NEW REQUEST ===== -->
+  <div class="page" id="page-new-request">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">إضافة طلب جديد</div>
+        <div class="page-sub">أدخل بيانات المتقدم لتحليله وفرزه</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">👤 بيانات المتقدم</div>
+      <div class="frow">
+        <div class="fld-m">
+          <label>الاسم الكامل <span style="color:#ef4444">*</span></label>
+          <input type="text" id="nf_name" placeholder="محمد أحمد الغامدي">
+        </div>
+        <div class="fld-m">
+          <label>رقم الهوية / الإقامة</label>
+          <input type="text" id="nf_id" placeholder="1XXXXXXXXX">
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fld-m">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="nf_email" placeholder="applicant@email.com">
+        </div>
+        <div class="fld-m">
+          <label>رقم الجوال</label>
+          <input type="tel" id="nf_phone" placeholder="05XXXXXXXX">
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fld-m">
+          <label>غرض الطلب <span style="color:#ef4444">*</span></label>
+          <select id="nf_purpose">
+            <option value="">اختر...</option>
+            <option>توظيف</option>
+            <option>تمويل</option>
+            <option>قبول جامعي</option>
+            <option>انضمام للحاضنة</option>
+            <option>دعم حكومي</option>
+            <option>أخرى</option>
+          </select>
+        </div>
+        <div class="fld-m">
+          <label>درجة التقييم (0-100)</label>
+          <input type="number" id="nf_score" placeholder="مثال: 85" min="0" max="100">
+        </div>
+      </div>
+      <div class="fld-m">
+        <label>ملاحظات</label>
+        <textarea id="nf_notes" placeholder="أي ملاحظات إضافية على هذا الطلب..."></textarea>
+      </div>
+      <div style="display:flex;gap:.75rem;margin-top.5rem">
+        <button class="btn-primary" onclick="submitRequest()">✓ حفظ وتحليل الطلب</button>
+        <button class="btn-ghost" onclick="clearRequestForm()">مسح</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: SETTINGS ===== -->
+  <div class="page" id="page-settings">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">الإعدادات</div>
+        <div class="page-sub">إدارة بيانات الجهة والمسؤول</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏢 بيانات الجهة</div>
+      <div class="frow">
+        <div class="fld-m">
+          <label>اسم الجهة</label>
+          <input type="text" id="set_orgname">
+        </div>
+        <div class="fld-m">
+          <label>نوع الجهة</label>
+          <input type="text" id="set_orgtype" readonly style="opacity:.6">
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fld-m">
+          <label>المدينة</label>
+          <input type="text" id="set_city">
+        </div>
+        <div class="fld-m">
+          <label>الموقع الإلكتروني</label>
+          <input type="url" id="set_website">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">👤 بيانات المسؤول</div>
+      <div class="frow">
+        <div class="fld-m">
+          <label>الاسم الأول</label>
+          <input type="text" id="set_fname">
+        </div>
+        <div class="fld-m">
+          <label>اسم العائلة</label>
+          <input type="text" id="set_lname">
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fld-m">
+          <label>المسمى الوظيفي</label>
+          <input type="text" id="set_title">
+        </div>
+        <div class="fld-m">
+          <label>رقم الجوال</label>
+          <input type="tel" id="set_phone">
+        </div>
+      </div>
+      <div class="fld-m">
+        <label>البريد الإلكتروني (لا يمكن تغييره)</label>
+        <input type="email" id="set_email" readonly style="opacity:.6">
+      </div>
+      <button class="btn-primary" onclick="saveSettings()">💾 حفظ التغييرات</button>
+    </div>
+    <div class="card">
+      <div class="card-title">🔒 تغيير كلمة المرور</div>
+      <div class="frow">
+        <div class="fld-m">
+          <label>كلمة المرور الجديدة</label>
+          <input type="password" id="set_newpass" placeholder="8 أحرف على الأقل">
+        </div>
+        <div class="fld-m">
+          <label>تأكيد كلمة المرور</label>
+          <input type="password" id="set_newpass2" placeholder="أعد كتابتها">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="changePassword()">تحديث كلمة المرور</button>
+    </div>
+    <div class="card">
+      <div class="card-title">🔌 الوصول للـ API</div>
+      <p style="font-size:.88rem;color:#64748b;line-height:1.8;margin-bottom:1.25rem">تتيح لك واجهة برمجة التطبيقات (API) ربط نظام RAFD مباشرةً بأنظمتك الداخلية. هذه الخدمة متاحة فقط لباقة <strong style="color:#a78bfa">المتقدمة</strong> وتتطلب موافقة مسبقة من فريق RAFD.</p>
+      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:1rem;margin-bottom:1.25rem;font-size:.82rem;color:#fbbf24;line-height:1.7">
+        ⚠️ يُمنح الوصول للـ API بعد مراجعة الطلب والتحقق من هوية الجهة. لن يُشارَك أي توثيق تقني قبل الموافقة الرسمية.
+      </div>
+      <button class="btn-primary" onclick="requestApiAccess()" style="background:linear-gradient(135deg,#4a9d6f,#2d7a54)">📩 طلب الوصول للـ API</button>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: SUBSCRIPTION ===== -->
+  <div class="page" id="page-subscription">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">الاشتراك</div>
+        <div class="page-sub">إدارة باقتك الحالية</div>
+      </div>
+    </div>
+    <div class="card" id="current_plan_card">
+      <div class="card-title">💳 باقتك الحالية</div>
+      <div id="current_plan_info"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📦 الباقات المتاحة</div>
+      <div class="plan-grid">
+        <div class="plan-card" id="plan_trial">
+          <div class="plan-name">🎯 التجريبية</div>
+          <div class="plan-price">مجاناً</div>
+          <div class="plan-period">7 أيام</div>
+          <ul class="plan-features">
+            <li>حتى 50 طلب</li>
+            <li>تقارير أساسية</li>
+          </ul>
+          <button class="btn-upgrade" id="btn_trial" onclick="requestUpgrade('trial')">الباقة الحالية</button>
+        </div>
+        <div class="plan-card" id="plan_basic">
+          <div class="plan-name">⚡ الأساسية</div>
+          <div class="plan-price">499 ريال</div>
+          <div class="plan-period">/شهر</div>
+          <ul class="plan-features">
+            <li>حتى 500 طلب/شهر</li>
+            <li>تقارير تفصيلية</li>
+            <li>تخصيص المعايير</li>
+          </ul>
+          <button class="btn-upgrade" id="btn_basic" onclick="requestUpgrade('basic')">الترقية لهذه الباقة</button>
+        </div>
+        <div class="plan-card" id="plan_pro">
+          <div class="plan-name">🚀 المتقدمة</div>
+          <div class="plan-price">999 ريال</div>
+          <div class="plan-period">/شهر</div>
+          <ul class="plan-features">
+            <li>طلبات غير محدودة</li>
+            <li>تكامل API</li>
+            <li>مدير حساب مخصص</li>
+          </ul>
+          <button class="btn-upgrade" id="btn_pro" onclick="requestUpgrade('pro')">الترقية لهذه الباقة</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: SUPPORT ===== -->
+  <div class="page" id="page-support">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">الدعم والتواصل</div>
+        <div class="page-sub">نحن هنا لمساعدتك</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📨 إرسال رسالة للدعم</div>
+      <div class="fld-m">
+        <label>موضوع الرسالة</label>
+        <select id="sup_subject">
+          <option>استفسار عن الباقة</option>
+          <option>مشكلة تقنية</option>
+          <option>طلب ترقية</option>
+          <option>إلغاء الاشتراك</option>
+          <option>أخرى</option>
+        </select>
+      </div>
+      <div class="fld-m">
+        <label>نص الرسالة</label>
+        <textarea id="sup_msg" placeholder="اكتب رسالتك هنا..." style="min-height:120px"></textarea>
+      </div>
+      <button class="btn-primary" onclick="sendSupport()">إرسال الرسالة</button>
+    </div>
+    <div class="card">
+      <div class="card-title">📞 معلومات التواصل المباشر</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+        <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
+          <div style="font-size:1.5rem;margin-bottom:.5rem">📧</div>
+          <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem">البريد الإلكتروني</div>
+          <div style="font-size:.88rem;color:#38bdf8;font-weight:700">partners@rafd.digital</div>
+        </div>
+        <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
+          <div style="font-size:1.5rem;margin-bottom:.5rem">💬</div>
+          <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem">واتساب</div>
+          <div style="font-size:.88rem;color:#38bdf8;font-weight:700">+966 5X XXX XXXX</div>
+        </div>
+        <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
+          <div style="font-size:1.5rem;margin-bottom:.5rem">🕐</div>
+          <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem">أوقات الدعم</div>
+          <div style="font-size:.88rem;color:#e2e8f0;font-weight:700">الأحد–الخميس<br>9ص – 5م</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- REQUEST DETAIL MODAL -->
+<div class="modal-overlay" id="reqModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">تفاصيل الطلب</div>
+      <button class="btn-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="reqModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></script>
+<script>
+// ===== Supabase Config =====
+const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ===== AUTH CHECK =====
+const session = JSON.parse(localStorage.getItem('rafd_partner_session') || 'null');
+if (!session) { window.location.href = '/partner-login.html'; }
+
+// Partner data (loaded from Supabase)
+let partner = null;
+
+async function loadPartnerData() {
+  try {
+    const { data, error } = await supabase
+      .from('partners')
+      .select('*')
+      .eq('id', session.id)
+      .single();
+    if (error || !data) {
+      // Try by email as fallback
+      const { data: d2, error: e2 } = await supabase
+        .from('partners')
+        .select('*')
+        .eq('email', session.email)
+        .single();
+      if (e2 || !d2) { window.location.href = '/partner-login.html'; return; }
+      partner = normalizePartner(d2);
+    } else {
+      partner = normalizePartner(data);
+    }
+    initUI();
+  } catch(e) {
+    console.error('Load partner error:', e);
+    window.location.href = '/partner-login.html';
+  }
+}
+
+function normalizePartner(p) {
+  // Normalize Supabase columns to match UI expectations
+  return {
+    id: p.id,
+    org: p.org_name || p.org || '',
+    orgtype: p.org_type || p.orgtype || '',
+    city: p.city || '',
+    website: p.website || '',
+    fname: p.fname || '',
+    lname: p.lname || '',
+    title: p.title || '',
+    phone: p.phone || '',
+    email: p.email || '',
+    password: p.password || '',
+    plan: p.plan || 'trial',
+    status: p.status || 'pending',
+    purpose: p.purpose || '',
+    volume: p.volume || '',
+    notes: p.notes || '',
+    date: p.created_at ? new Date(p.created_at).toLocaleDateString('ar-SA') : '',
+    refNum: p.ref_num || '',
+    totalRequests: p.total_requests || 0,
+    approvedRequests: p.approved_requests || 0,
+    rejectedRequests: p.rejected_requests || 0,
+    _raw: p,
+  };
+}
+
+// ===== INIT UI =====
+function initUI() {
+  document.getElementById('sb_orgname').textContent = partner.org;
+  document.getElementById('sb_orgtype').textContent = partner.orgtype;
+  const planLabels = {trial:'تجريبية', basic:'أساسية', pro:'متقدمة'};
+  document.getElementById('sb_plan').textContent = planLabels[partner.plan] || partner.plan;
+  document.getElementById('sb_av').textContent = (partner.fname || '?')[0];
+  document.getElementById('sb_uname').textContent = partner.fname + ' ' + partner.lname;
+  document.getElementById('sb_urole').textContent = partner.title;
+  document.getElementById('welcome_name').textContent = partner.fname;
+  document.getElementById('welcome_sub').textContent = 'لوحة التحكم — ' + partner.org;
+
+  // Status alert
+  if (partner.status === 'approved') {
+    document.getElementById('status_alert').innerHTML = `<div class="alert alert-success">✅ حسابك نشط ومفعّل. يمكنك البدء في إضافة الطلبات.</div>`;
+  }
+
+  renderStats();
+  renderRecentRequests();
+  renderSettings();
+  renderSubscription();
+}
+
+// ===== REQUESTS (localStorage for partner requests - no separate table needed) =====
+function getMyRequests() {
+  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
+  return all.filter(r => r.partnerId === partner.id);
+}
+
+function saveRequest(req) {
+  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
+  all.unshift(req);
+  localStorage.setItem('rafd_partner_requests', JSON.stringify(all));
+}
+
+function renderStats() {
+  const reqs = getMyRequests();
+  const approved = reqs.filter(r => r.result === 'approved').length;
+  const rejected = reqs.filter(r => r.result === 'rejected').length;
+  const pending = reqs.filter(r => r.result === 'pending').length;
+  document.getElementById('stat_total').textContent = reqs.length;
+  document.getElementById('stat_approved').textContent = approved;
+  document.getElementById('stat_rejected').textContent = rejected;
+  document.getElementById('stat_pending_req').textContent = pending;
+  document.getElementById('stat_approved_pct').textContent = reqs.length ? Math.round(approved/reqs.length*100) + '% قبول' : '—';
+  document.getElementById('stat_rejected_pct').textContent = reqs.length ? Math.round(rejected/reqs.length*100) + '% رفض' : '—';
+
+  // Usage bar
+  const limits = {trial:50, basic:500, pro:999999};
+  const limit = limits[partner.plan] || 50;
+  const pct = Math.min(100, Math.round(reqs.length / limit * 100));
+  document.getElementById('usage_text').textContent = reqs.length + ' / ' + (limit === 999999 ? 'غير محدود' : limit);
+  document.getElementById('usage_bar').style.width = pct + '%';
+  document.getElementById('usage_note').textContent = limit === 999999 ? 'باقة متقدمة — طلبات غير محدودة' : `${limit - reqs.length} طلب متبقٍ هذا الشهر`;
+}
+
+function renderRecentRequests() {
+  const reqs = getMyRequests().slice(0, 5);
+  const tbody = document.getElementById('recent_requests_table');
+  if (!reqs.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">لا توجد طلبات بعد</td></tr>';
+    return;
+  }
+  tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal(${r.id})" style="cursor:pointer">
+    <td style="color:#475569">${i+1}</td>
+    <td style="font-weight:700;color:#e2e8f0">${r.name}</td>
+    <td style="color:#64748b">${r.purpose}</td>
+    <td style="color:#64748b;font-size:.78rem">${r.date}</td>
+    <td>${resultBadge(r.result, r.score)}</td>
+  </tr>`).join('');
+}
+
+function renderAllRequests(list) {
+  const reqs = list || getMyRequests();
+  const tbody = document.getElementById('all_requests_table');
+  if (!reqs.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem">لا توجد طلبات</td></tr>';
+    return;
+  }
+  tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal(${r.id})" style="cursor:pointer">
+    <td style="color:#475569">${i+1}</td>
+    <td style="font-weight:700;color:#e2e8f0">${r.name}</td>
+    <td style="color:#64748b;font-size:.78rem">${r.nationalId || '—'}</td>
+    <td style="color:#64748b">${r.purpose}</td>
+    <td><span style="font-weight:800;color:${r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score || '—'}</span></td>
+    <td style="color:#64748b;font-size:.78rem">${r.date}</td>
+    <td>${resultBadge(r.result, r.score)}</td>
+    <td onclick="event.stopPropagation()"><button class="btn-sm danger" onclick="deleteRequest(${r.id})">حذف</button></td>
+  </tr>`).join('');
+}
+
+function filterRequests() {
+  const q = document.getElementById('req_search').value.toLowerCase();
+  const status = document.getElementById('req_filter_status').value;
+  let reqs = getMyRequests();
+  if (q) reqs = reqs.filter(r => r.name.toLowerCase().includes(q) || (r.nationalId||'').includes(q));
+  if (status) reqs = reqs.filter(r => r.result === status);
+  renderAllRequests(reqs);
+}
+
+function resultBadge(result, score) {
+  if (result === 'approved') return '<span class="badge b-active">✓ مقبول</span>';
+  if (result === 'rejected') return '<span class="badge b-rejected">✕ مرفوض</span>';
+  return '<span class="badge b-pending">⏳ قيد المراجعة</span>';
+}
+
+function submitRequest() {
+  const name = document.getElementById('nf_name').value.trim();
+  const purpose = document.getElementById('nf_purpose').value;
+  if (!name || !purpose) { alert('يرجى إدخال الاسم وغرض الطلب'); return; }
+  const score = parseInt(document.getElementById('nf_score').value) || null;
+  const result = score !== null ? (score >= 70 ? 'approved' : 'rejected') : 'pending';
+
+  const req = {
+    id: Date.now(),
+    partnerId: partner.id,
+    name,
+    nationalId: document.getElementById('nf_id').value.trim(),
+    email: document.getElementById('nf_email').value.trim(),
+    phone: document.getElementById('nf_phone').value.trim(),
+    purpose,
+    score,
+    notes: document.getElementById('nf_notes').value.trim(),
+    result,
+    date: new Date().toLocaleDateString('ar-SA'),
+    dateISO: new Date().toISOString(),
+  };
+  saveRequest(req);
+
+  // Update partner stats
+  partner.totalRequests = (partner.totalRequests || 0) + 1;
+  if (result === 'approved') partner.approvedRequests = (partner.approvedRequests || 0) + 1;
+  if (result === 'rejected') partner.rejectedRequests = (partner.rejectedRequests || 0) + 1;
+  updatePartnerInStorage();
+
+  clearRequestForm();
+  renderStats();
+  renderRecentRequests();
+  showPage('requests', null);
+  renderAllRequests();
+  alert('✅ تم حفظ الطلب بنجاح!\nالنتيجة: ' + (result === 'approved' ? 'مقبول' : result === 'rejected' ? 'مرفوض' : 'قيد المراجعة'));
+}
+
+function clearRequestForm() {
+  ['nf_name','nf_id','nf_email','nf_phone','nf_score','nf_notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nf_purpose').value = '';
+}
+
+function deleteRequest(id) {
+  if (!confirm('هل تريد حذف هذا الطلب؟')) return;
+  let all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
+  all = all.filter(r => r.id !== id);
+  localStorage.setItem('rafd_partner_requests', JSON.stringify(all));
+  renderStats();
+  renderRecentRequests();
+  renderAllRequests();
+}
+
+function openReqModal(id) {
+  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
+  const r = all.find(x => x.id === id);
+  if (!r) return;
+  const scoreColor = r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444';
+  document.getElementById('reqModalBody').innerHTML = `
+    <div style="display:grid;gap:.75rem">
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الاسم</span><span style="color:#e2e8f0;font-weight:700">${r.name}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">رقم الهوية</span><span style="color:#e2e8f0">${r.nationalId || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">البريد</span><span style="color:#e2e8f0">${r.email || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الجوال</span><span style="color:#e2e8f0">${r.phone || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الغرض</span><span style="color:#e2e8f0">${r.purpose}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الدرجة</span><span style="color:${scoreColor};font-weight:900;font-size:1.1rem">${r.score !== null ? r.score + '/100' : '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">النتيجة</span>${resultBadge(r.result, r.score)}</div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التاريخ</span><span style="color:#e2e8f0">${r.date}</span></div>
+      ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">ملاحظات</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.notes}</div></div>` : ''}
+    </div>`;
+  document.getElementById('reqModal').classList.add('open');
+}
+function closeModal() { document.getElementById('reqModal').classList.remove('open'); }
+
+// ===== SETTINGS =====
+function renderSettings() {
+  document.getElementById('set_orgname').value = partner.org || '';
+  document.getElementById('set_orgtype').value = partner.orgtype || '';
+  document.getElementById('set_city').value = partner.city || '';
+  document.getElementById('set_website').value = partner.website || '';
+  document.getElementById('set_fname').value = partner.fname || '';
+  document.getElementById('set_lname').value = partner.lname || '';
+  document.getElementById('set_title').value = partner.title || '';
+  document.getElementById('set_phone').value = partner.phone || '';
+  document.getElementById('set_email').value = partner.email || '';
+}
+
+async function saveSettings() {
+  partner.org = document.getElementById('set_orgname').value.trim();
+  partner.city = document.getElementById('set_city').value.trim();
+  partner.website = document.getElementById('set_website').value.trim();
+  partner.fname = document.getElementById('set_fname').value.trim();
+  partner.lname = document.getElementById('set_lname').value.trim();
+  partner.title = document.getElementById('set_title').value.trim();
+  partner.phone = document.getElementById('set_phone').value.trim();
+  await updatePartnerInStorage();
+  initUI();
+  alert('✅ تم حفظ التغييرات بنجاح!');
+}
+
+async function changePassword() {
+  const p1 = document.getElementById('set_newpass').value;
+  const p2 = document.getElementById('set_newpass2').value;
+  if (p1.length < 8) { alert('كلمة المرور يجب أن تكون 8 أحرف على الأقل'); return; }
+  if (p1 !== p2) { alert('كلمتا المرور غير متطابقتين'); return; }
+  partner.password = btoa(p1);
+  await updatePartnerInStorage();
+  document.getElementById('set_newpass').value = '';
+  document.getElementById('set_newpass2').value = '';
+  alert('✅ تم تحديث كلمة المرور بنجاح!');
+}
+
+async function updatePartnerInStorage() {
+  // Update in Supabase
+  try {
+    const { error } = await supabase
+      .from('partners')
+      .update({
+        org_name: partner.org,
+        city: partner.city,
+        website: partner.website,
+        fname: partner.fname,
+        lname: partner.lname,
+        title: partner.title,
+        phone: partner.phone,
+        password: partner.password,
+      })
+      .eq('id', partner.id);
+    if (error) console.error('Supabase update error:', error);
+  } catch(e) {
+    console.error('Update partner error:', e);
+  }
+}
+
+// ===== SUBSCRIPTION =====
+function renderSubscription() {
+  const planNames = {trial:'التجريبية 🎯', basic:'الأساسية ⚡', pro:'المتقدمة 🚀'};
+  const prices = {trial:'مجاناً', basic:'499 ريال/شهر', pro:'999 ريال/شهر'};
+  document.getElementById('current_plan_info').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+      <div>
+        <div style="font-size:1.2rem;font-weight:900;color:#fff">${planNames[partner.plan] || partner.plan}</div>
+        <div style="color:#38bdf8;font-size:1rem;font-weight:700;margin-top:.25rem">${prices[partner.plan] || ''}</div>
+        <div style="color:#64748b;font-size:.78rem;margin-top:.25rem">تاريخ الاشتراك: ${partner.date}</div>
+      </div>
+      <span class="badge ${partner.plan === 'trial' ? 'b-trial' : partner.plan === 'basic' ? 'b-basic' : 'b-pro'}">${planNames[partner.plan]}</span>
+    </div>`;
+  // Mark current plan
+  ['trial','basic','pro'].forEach(p => {
+    const card = document.getElementById('plan_' + p);
+    const btn = document.getElementById('btn_' + p);
+    if (p === partner.plan) {
+      card.classList.add('current');
+      btn.textContent = '✓ باقتك الحالية';
+      btn.disabled = true;
+    } else {
+      card.classList.remove('current');
+      btn.disabled = false;
+      btn.textContent = 'طلب الترقية';
+    }
+  });
+}
+
+function requestUpgrade(plan) {
+  const planNames = {trial:'التجريبية', basic:'الأساسية', pro:'المتقدمة'};
+  if (confirm(`هل تريد طلب الترقية إلى الباقة ${planNames[plan]}؟\nسيتم إشعار فريق RAFD بطلبك.`)) {
+    // Save upgrade request to support messages
+    const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
+    msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject: 'طلب ترقية باقة', msg: `طلب ترقية من ${partner.plan} إلى ${plan}`, date: new Date().toLocaleDateString('ar-SA')});
+    localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
+    alert('✅ تم إرسال طلب الترقية! سيتواصل معك فريقنا خلال 24 ساعة.');
+  }
+}
+
+// ===== SUPPORT =====
+function sendSupport() {
+  const msg = document.getElementById('sup_msg').value.trim();
+  const subject = document.getElementById('sup_subject').value;
+  if (!msg) { alert('يرجى كتابة نص الرسالة'); return; }
+  const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
+  msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject, msg, date: new Date().toLocaleDateString('ar-SA')});
+  localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
+  document.getElementById('sup_msg').value = '';
+  alert('✅ تم إرسال رسالتك! سيرد عليك فريقنا خلال 24 ساعة عمل.');
+}
+
+// ===== NAVIGATION =====
+function showPage(pageId, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + pageId);
+  if (page) page.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  // Refresh data on page open
+  if (pageId === 'requests') renderAllRequests();
+  if (pageId === 'overview') { renderStats(); renderRecentRequests(); }
+  if (pageId === 'subscription') renderSubscription();
+  if (pageId === 'settings') renderSettings();
+}
+
+function requestApiAccess() {
+  const org = localStorage.getItem('rafd_partner_org') ? JSON.parse(localStorage.getItem('rafd_partner_org')) : {};
+  const name = (org.fname || '') + ' ' + (org.lname || '');
+  const orgName = org.orgName || 'غير محدد';
+  const email = org.email || 'غير محدد';
+  const plan = org.plan || 'trial';
+  if (plan !== 'pro') {
+    alert('⚠️ طلب الوصول للـ API متاح فقط لباقة المتقدمة (999 ر.س). يرجى الترقية أولاً.');
+    return;
+  }
+  const subject = encodeURIComponent('طلب وصول للـ API — ' + orgName);
+  const body = encodeURIComponent('السلام عليكم،\n\nأرغب في طلب الوصول لواجهة برمجة RAFD API.\n\nاسم الجهة: ' + orgName + '\nالمسؤول: ' + name.trim() + '\nالبريد: ' + email + '\nالباقة: المتقدمة\n\nشكراً.');
+  window.location.href = 'mailto:info@rafd-digital.com?subject=' + subject + '&body=' + body;
+}
+
+function logout() {
+  localStorage.removeItem('rafd_partner_session');
+  window.location.href = '/partner-login.html';
+}
+
+// ===== START =====
+// Load partner data from Supabase then init UI
+loadPartnerData();
+</script>
+</body>
+</html>
