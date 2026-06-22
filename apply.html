@@ -33,7 +33,7 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 .partner-hero-section{background:linear-gradient(160deg,#0f172a 0%,#1a3a4a 50%,#0f2d1e 100%);padding:3rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden}
 .partner-hero-section::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(74,157,111,.12) 0%,transparent 70%);pointer-events:none}
 .ph-rafd-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:.3rem .85rem;font-size:.72rem;color:#94a3b8;margin-bottom:1.75rem}
-.ph-org-avatar{width:80px;height:80px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;margin:0 auto 1.25rem;box-shadow:0 8px 32px rgba(74,157,111,.25);border:2px solid rgba(255,255,255,.1)}
+.ph-org-avatar{width:84px;height:84px;background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.6rem;margin:0 auto 1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.18)}
 .ph-org-name{font-size:1.75rem;font-weight:900;color:#fff;margin-bottom:.4rem;line-height:1.2}
 .ph-org-type{font-size:.85rem;color:#64748b;margin-bottom:.5rem}
 .ph-divider{width:48px;height:3px;background:linear-gradient(90deg,#4a9d6f,#1a3a4a);border-radius:2px;margin:.9rem auto}
@@ -648,7 +648,16 @@ async function init() {
 
     const programName = fc?.program_name || data.org_name;
     const programDesc = fc?.program_desc || `قدّم طلبك وستتلقى قراراً وفق معايير الجهة خلال دقيقتين.`;
-    const orgInitial = (data.org_name || 'R')[0];
+    const ORG_ICONS = {
+      'جامعة أو مؤسسة تعليمية': '🎓',
+      'بنك أو مؤسسة مالية':     '🏦',
+      'مسرعة أو حاضنة أعمال':   '🚀',
+      'جهة حكومية':              '🏛️',
+      'شركة خاصة':               '🏢',
+      'منظمة غير ربحية':         '🌱',
+      'أخرى':                    '🔷',
+    };
+    const orgIcon = ORG_ICONS[data.org_type] || '🏢';
 
     const _set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
     _set('pageTitle', `التقديم لـ ${data.org_name} — RAFD Digital`);
@@ -657,7 +666,7 @@ async function init() {
     _set('welcomePartnerName', data.org_name);
     _set('ph_org_type', (data.org_type || 'جهة شريكة') + (data.city ? ' · ' + data.city : ''));
     _set('ph_program_name', programName);
-    _set('ph_avatar', orgInitial);
+    _set('ph_avatar', orgIcon);
     _set('modalPartnerName', programName);
     _set('termPartnerName', data.org_name);
     _set('welcomeDesc', programDesc);
