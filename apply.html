@@ -612,14 +612,27 @@ async function init() {
   }
 
   try {
-    const { data, error } = await _sb
+    // Primary query — includes form_config if SQL has been run
+    let { data, error } = await _sb
       .from('partners')
       .select('id, org_name, org_type, city, plan, ref_num, status, form_config')
       .eq('ref_num', partnerRef)
       .maybeSingle();
 
+    // If form_config column doesn't exist (SQL not run yet), retry without it
+    if (error && (error.code === 'PGRST204' || error.code === '42703' || error.message?.includes('form_config'))) {
+      const r2 = await _sb
+        .from('partners')
+        .select('id, org_name, org_type, city, plan, ref_num, status')
+        .eq('ref_num', partnerRef)
+        .maybeSingle();
+      data = r2.data;
+      error = r2.error;
+      if (data) data.form_config = null;
+    }
+
     if (error || !data) {
-      showError('جهة التقديم غير موجودة. تواصل مع من أرسل لك الرابط.');
+      showError('جهة التقديم غير موجودة. تحقق من الرابط أو تواصل مع من أرسل لك الرابط.');
       return;
     }
 
