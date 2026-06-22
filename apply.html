@@ -448,7 +448,7 @@ input[type=number]{-moz-appearance:textfield}
     <button class="btn-prev" onclick="go(1)">← السابق</button>
     <span class="step-ctr" id="nafath_step_ctr">1.5 / 5</span>
     <button id="nafath_next_btn" class="btn-next" onclick="go(2)" style="opacity:.4;pointer-events:none">التالي ←</button>
-    <button id="nafath_skip_btn" class="btn-next" style="background:#64748b" onclick="go(2)">تخطي ←</button>
+    <button id="nafath_skip_btn" class="btn-next" style="background:#64748b" onclick="skipNafath()">تخطي ←</button>
   </div>
 </div>
 
@@ -1041,6 +1041,16 @@ function validateStep3() {
   if (!document.getElementById('f_cust')?.querySelector('.ropt.sel')) return _radioFail('f_cust', 'يرجى الإجابة عن وضع العملاء الحاليين', 's3');
   if (!document.getElementById('f_seeking')?.value) return _fieldFail('f_seeking', 'يرجى اختيار التمويل المطلوب', 's3');
   return true;
+}
+
+function skipNafath() {
+  // Bypass nafath check when it's optional and user chooses to skip
+  document.getElementById('s_nafath')?.classList.remove('show');
+  [1,2,3,4].forEach(i => document.getElementById('s'+i)?.classList.remove('show'));
+  document.getElementById('s2')?.classList.add('show');
+  curStep = 2;
+  updateProg(2);
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function go(n) {
