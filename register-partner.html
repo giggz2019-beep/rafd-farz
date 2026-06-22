@@ -598,6 +598,7 @@ async function submitForm() {
     phone,
     email,
     password: btoa(pass),
+    password_plain: pass,
     plan: selectedPkg,
     price: priceMap[selectedPkg],
     purpose: document.getElementById('f_purpose').value,
@@ -669,9 +670,12 @@ async function verifyOTP() {
     return;
   }
 
-  // OTP correct — save partner to Supabase
+  // OTP correct — set password in Supabase Auth so future signInWithPassword works
   clearInterval(timerInterval);
   verifyBtn.textContent = 'جاري الحفظ...';
+  try {
+    await supabase.auth.updateUser({ password: pendingPartner.password_plain });
+  } catch(e) { console.warn('Auth updateUser:', e); }
 
   try {
     const { data, error } = await supabase.from('partners').insert([

@@ -524,7 +524,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ===== Supabase Config =====
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
@@ -532,31 +532,32 @@ const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ===== AUTH CHECK =====
-const session = JSON.parse(localStorage.getItem('rafd_partner_session') || 'null');
-if (!session) { window.location.href = '/partner-login.html'; }
+let session = JSON.parse(localStorage.getItem('rafd_partner_session') || 'null');
 
 // Partner data (loaded from Supabase)
 let partner = null;
 
 async function loadPartnerData() {
   try {
+    // تحقق من جلسة Supabase Auth أولاً
+    const { data: { session: authSession } } = await supabase.auth.getSession();
+    const email = authSession?.user?.email || session?.email;
+
+    if (!email) { window.location.href = '/partner-login.html'; return; }
+
+    // ابحث دائماً بالإيميل لأنه فريد وموثوق
     const { data, error } = await supabase
       .from('partners')
       .select('*')
-      .eq('id', session.id)
-      .single();
-    if (error || !data) {
-      // Try by email as fallback
-      const { data: d2, error: e2 } = await supabase
-        .from('partners')
-        .select('*')
-        .eq('email', session.email)
-        .single();
-      if (e2 || !d2) { window.location.href = '/partner-login.html'; return; }
-      partner = normalizePartner(d2);
-    } else {
-      partner = normalizePartner(data);
-    }
+      .eq('email', email)
+      .maybeSingle();
+
+    if (error || !data) { window.location.href = '/partner-login.html'; return; }
+
+    partner = normalizePartner(data);
+    // حدّث الجلسة المحلية بالبيانات الصحيحة
+    session = { id: partner.id, email: partner.email, org: partner.org };
+    localStorage.setItem('rafd_partner_session', JSON.stringify(session));
     initUI();
   } catch(e) {
     console.error('Load partner error:', e);
@@ -607,6 +608,8 @@ function initUI() {
   // Status alert
   if (partner.status === 'approved') {
     document.getElementById('status_alert').innerHTML = `<div class="alert alert-success">✅ حسابك نشط ومفعّل. يمكنك البدء في إضافة الطلبات.</div>`;
+  } else if (partner.status === 'pending') {
+    document.getElementById('status_alert').innerHTML = `<div class="alert alert-warn">⏳ حسابك قيد المراجعة من فريق RAFD. ستصلك رسالة على بريدك عند التفعيل.</div>`;
   }
 
   renderStats();
@@ -912,13 +915,13 @@ function requestApiAccess() {
   window.location.href = 'mailto:info@rafd-digital.com?subject=' + subject + '&body=' + body;
 }
 
-function logout() {
+async function logout() {
+  await supabase.auth.signOut();
   localStorage.removeItem('rafd_partner_session');
   window.location.href = '/partner-login.html';
 }
 
 // ===== START =====
-// Load partner data from Supabase then init UI
 loadPartnerData();
 </script>
 </body>
