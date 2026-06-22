@@ -120,6 +120,17 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
 .ss-text{font-size:.82rem;color:#94a3b8}
 .btn-login-now{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem 2rem;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem}
 
+/* ===== FIELD ERRORS ===== */
+.ferr{color:#ef4444;font-size:.73rem;margin-top:.25rem;display:none;align-items:center;gap:.25rem;line-height:1.4}
+.ferr.show{display:flex}
+/* ===== PASSWORD STRENGTH ===== */
+.pass-bars{display:flex;gap:.3rem;margin-top:.5rem}
+.pass-bar{height:4px;flex:1;border-radius:4px;background:#1e293b;transition:background .25s}
+.pass-rules{display:flex;flex-wrap:wrap;gap:.25rem .85rem;margin-top:.45rem}
+.pr{font-size:.7rem;color:#475569;display:flex;align-items:center;gap:.25rem;transition:color .2s}
+.pr::before{content:'○';font-size:.6rem;transition:color .2s}
+.pr.ok{color:#10b981}
+.pr.ok::before{content:'✓';color:#10b981}
 /* ===== RESPONSIVE ===== */
 @media(max-width:600px){
   .frow{grid-template-columns:1fr}
@@ -263,11 +274,26 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
     <div class="frow">
       <div class="fld">
         <label><span class="req">*</span>كلمة المرور</label>
-        <input type="password" id="f_pass" placeholder="8 أحرف على الأقل">
+        <input type="password" id="f_pass" placeholder="8 أحرف على الأقل" oninput="updatePassStrength()">
       </div>
       <div class="fld">
         <label><span class="req">*</span>تأكيد كلمة المرور</label>
         <input type="password" id="f_pass2" placeholder="أعد كتابة كلمة المرور">
+      </div>
+    </div>
+    <!-- مؤشر قوة كلمة المرور -->
+    <div id="passStrengthWrap" style="display:none;padding:.1rem 0 .25rem">
+      <div class="pass-bars">
+        <div class="pass-bar" id="pb1"></div>
+        <div class="pass-bar" id="pb2"></div>
+        <div class="pass-bar" id="pb3"></div>
+        <div class="pass-bar" id="pb4"></div>
+      </div>
+      <div class="pass-rules">
+        <span class="pr" id="pr_len">8 أحرف على الأقل</span>
+        <span class="pr" id="pr_up">حرف كبير (A-Z)</span>
+        <span class="pr" id="pr_num">رقم (0-9)</span>
+        <span class="pr" id="pr_sym">رمز خاص (!@#$%)</span>
       </div>
     </div>
   </div>
@@ -370,14 +396,16 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
       <p>٥. تسري الاشتراكات الشهرية ولا يُسترد المبلغ المدفوع بعد بدء الفترة.</p>
       <p>٦. تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.</p>
     </div>
-    <label class="check-row" style="margin-bottom:.75rem">
+    <label class="check-row" style="margin-bottom:.4rem">
       <input type="checkbox" id="chk_terms">
       <span>أوافق على <a href="#">شروط وأحكام</a> الشراكة مع RAFD Digital</span>
     </label>
+    <div class="ferr" id="terms_err" style="margin-bottom:.6rem;padding-right:.1rem">⚠ يرجى الموافقة على الشروط والأحكام</div>
     <label class="check-row">
       <input type="checkbox" id="chk_privacy">
       <span>أوافق على <a href="/privacy.html">سياسة الخصوصية</a> وطريقة معالجة البيانات</span>
     </label>
+    <div class="ferr" id="privacy_err" style="padding-right:.1rem">⚠ يرجى الموافقة على سياسة الخصوصية</div>
   </div>
 
   <button class="btn-submit" id="submitBtn" onclick="submitForm()">
@@ -460,6 +488,19 @@ function selectPkg(pkg) {
 
 // ===== OTP digit auto-advance =====
 document.addEventListener('DOMContentLoaded', function() {
+  // مسح الخطأ تلقائياً عند الكتابة
+  ['f_orgname','f_orgtype','f_city','f_fname','f_lname','f_title',
+   'f_phone','f_email','f_pass','f_pass2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => clearErr(id));
+  });
+  document.getElementById('chk_terms').addEventListener('change', () => {
+    document.getElementById('terms_err').className = 'ferr';
+  });
+  document.getElementById('chk_privacy').addEventListener('change', () => {
+    document.getElementById('privacy_err').className = 'ferr';
+  });
+
   for (let i = 0; i < 6; i++) {
     const el = document.getElementById('otp' + i);
     el.addEventListener('input', function(e) {
@@ -509,73 +550,149 @@ function startTimer(seconds) {
   }, 1000);
 }
 
+// ===== Field error helpers =====
+function setErr(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  el.style.borderColor = '#ef4444';
+  el.style.boxShadow = '0 0 0 3px rgba(239,68,68,.1)';
+  let d = document.getElementById('fe_' + id);
+  if (!d) {
+    d = document.createElement('div');
+    d.id = 'fe_' + id;
+    d.className = 'ferr show';
+    el.parentNode.appendChild(d);
+  }
+  d.innerHTML = '⚠ ' + msg;
+  d.className = 'ferr show';
+  return el;
+}
+function clearErr(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = '';
+  el.style.boxShadow = '';
+  const d = document.getElementById('fe_' + id);
+  if (d) d.className = 'ferr';
+}
+
+// ===== Password strength =====
+function updatePassStrength() {
+  const pass = document.getElementById('f_pass').value;
+  const wrap = document.getElementById('passStrengthWrap');
+  if (!pass) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  const c = {
+    len: pass.length >= 8,
+    up:  /[A-Z]/.test(pass),
+    num: /[0-9]/.test(pass),
+    sym: /[^A-Za-z0-9]/.test(pass),
+  };
+  ['len','up','num','sym'].forEach(k => {
+    document.getElementById('pr_' + k).className = 'pr' + (c[k] ? ' ok' : '');
+  });
+  const score = Object.values(c).filter(Boolean).length;
+  const cols = ['#334155','#ef4444','#f59e0b','#3b82f6','#10b981'];
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('pb' + i).style.background = i <= score ? cols[score] : '#1e293b';
+  }
+  // auto-clear pass error as user types
+  if (c.len) clearErr('f_pass');
+}
+
 async function submitForm() {
-  // Validate required fields
-  const required = [
-    {id:'f_orgname', label:'اسم الجهة'},
-    {id:'f_orgtype', label:'نوع الجهة'},
-    {id:'f_city', label:'المدينة'},
-    {id:'f_fname', label:'الاسم الأول'},
-    {id:'f_lname', label:'اسم العائلة'},
-    {id:'f_title', label:'المسمى الوظيفي'},
-    {id:'f_phone', label:'رقم الجوال'},
-    {id:'f_email', label:'البريد الإلكتروني'},
-    {id:'f_pass', label:'كلمة المرور'},
-    {id:'f_pass2', label:'تأكيد كلمة المرور'},
-  ];
-  for (const f of required) {
-    const el = document.getElementById(f.id);
+  // مسح الأخطاء السابقة
+  ['f_orgname','f_orgtype','f_city','f_fname','f_lname','f_title','f_phone','f_email','f_pass','f_pass2']
+    .forEach(clearErr);
+  document.getElementById('terms_err').className = 'ferr';
+  document.getElementById('privacy_err').className = 'ferr';
+
+  let firstErr = null;
+  function req(id, label) {
+    const el = document.getElementById(id);
     if (!el.value.trim()) {
-      el.focus();
-      el.style.borderColor = '#ef4444';
-      setTimeout(() => el.style.borderColor = '', 2000);
-      alert('يرجى إدخال: ' + f.label);
-      return;
+      const e = setErr(id, label + ' مطلوب');
+      if (!firstErr) firstErr = e;
+      return false;
     }
+    return true;
   }
 
+  let ok = true;
+  ok = req('f_orgname','اسم الجهة') & ok;
+  ok = req('f_orgtype','نوع الجهة') & ok;
+  ok = req('f_city','المدينة') & ok;
+  ok = req('f_fname','الاسم الأول') & ok;
+  ok = req('f_lname','اسم العائلة') & ok;
+  ok = req('f_title','المسمى الوظيفي') & ok;
+  ok = req('f_phone','رقم الجوال') & ok;
+  ok = req('f_email','البريد الإلكتروني') & ok;
+  ok = req('f_pass','كلمة المرور') & ok;
+  ok = req('f_pass2','تأكيد كلمة المرور') & ok;
+
   const email = document.getElementById('f_email').value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('يرجى إدخال بريد إلكتروني صحيح');
-    return;
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const e = setErr('f_email','بريد إلكتروني غير صحيح');
+    if (!firstErr) firstErr = e; ok = false;
   }
 
   const phone = document.getElementById('f_phone').value.trim();
-  if (!/^05\d{8}$/.test(phone)) {
-    alert('يرجى إدخال رقم جوال صحيح (مثال: 05XXXXXXXX)');
+  if (phone && !/^05\d{8}$/.test(phone)) {
+    const e = setErr('f_phone','يجب أن يبدأ بـ 05 ويتكون من 10 أرقام');
+    if (!firstErr) firstErr = e; ok = false;
+  }
+
+  const pass  = document.getElementById('f_pass').value;
+  const pass2 = document.getElementById('f_pass2').value;
+  if (pass && pass.length < 8) {
+    const e = setErr('f_pass','8 أحرف على الأقل');
+    if (!firstErr) firstErr = e; ok = false;
+  } else if (pass && !/[A-Z]/.test(pass)) {
+    const e = setErr('f_pass','يجب أن تحتوي على حرف كبير واحد على الأقل (A-Z)');
+    if (!firstErr) firstErr = e; ok = false;
+  } else if (pass && !/[0-9]/.test(pass)) {
+    const e = setErr('f_pass','يجب أن تحتوي على رقم واحد على الأقل');
+    if (!firstErr) firstErr = e; ok = false;
+  }
+  if (pass && pass2 && pass !== pass2) {
+    const e = setErr('f_pass2','كلمة المرور وتأكيدها غير متطابقتين');
+    if (!firstErr) firstErr = e; ok = false;
+  }
+
+  if (!document.getElementById('chk_terms').checked) {
+    document.getElementById('terms_err').className = 'ferr show';
+    ok = false;
+  }
+  if (!document.getElementById('chk_privacy').checked) {
+    document.getElementById('privacy_err').className = 'ferr show';
+    ok = false;
+  }
+
+  if (!ok) {
+    if (firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
 
-  const pass = document.getElementById('f_pass').value;
-  const pass2 = document.getElementById('f_pass2').value;
-  if (pass.length < 8) { alert('كلمة المرور يجب أن تكون 8 أحرف على الأقل'); return; }
-  if (pass !== pass2) { alert('كلمة المرور وتأكيدها غير متطابقتين'); return; }
-
-  if (!document.getElementById('chk_terms').checked) { alert('يرجى الموافقة على الشروط والأحكام'); return; }
-  if (!document.getElementById('chk_privacy').checked) { alert('يرجى الموافقة على سياسة الخصوصية'); return; }
-
-  // Disable button and show loading
   const btn = document.getElementById('submitBtn');
   const btnText = document.getElementById('submitBtnText');
   btn.disabled = true;
   btnText.textContent = 'جاري التحقق...';
 
-  // Check if email already exists in Supabase
+  // التحقق إذا الإيميل مسجّل مسبقاً
   try {
-    const { data: existingPartner } = await supabase
+    const { data: existing } = await _sb
       .from('partners')
       .select('email')
       .eq('email', email)
       .maybeSingle();
-    if (existingPartner) {
-      alert('هذا البريد الإلكتروني مسجّل مسبقاً. يرجى تسجيل الدخول.');
+    if (existing) {
+      setErr('f_email','هذا البريد مسجّل مسبقاً — سجّل دخولك');
+      document.getElementById('f_email').scrollIntoView({behavior:'smooth', block:'center'});
       btn.disabled = false;
       btnText.textContent = 'إرسال رمز التفعيل';
       return;
     }
-  } catch(e) {
-    console.error('Supabase check error:', e);
-  }
+  } catch(e) { console.warn('email check:', e); }
 
   btnText.textContent = 'جاري الإرسال...';
 
@@ -630,7 +747,11 @@ async function submitForm() {
 
   } catch (err) {
     console.error('Supabase OTP error:', err);
-    alert('حدث خطأ أثناء إرسال رمز التفعيل: ' + (err.message || 'يرجى المحاولة مرة أخرى'));
+    const msg = err?.message || err?.error_description || err?.msg ||
+                (err?.status ? 'خطأ ' + err.status : '') ||
+                'تعذّر إرسال رمز التفعيل — تأكد من صحة البريد أو حاول لاحقاً';
+    setErr('f_email', msg);
+    document.getElementById('f_email').scrollIntoView({behavior:'smooth', block:'center'});
   } finally {
     btn.disabled = false;
     btnText.textContent = 'إرسال رمز التفعيل';
