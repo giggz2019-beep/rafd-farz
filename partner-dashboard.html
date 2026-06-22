@@ -151,10 +151,10 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
 /* ===== FORM BUILDER ===== */
 .q-card{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;display:flex;align-items:center;gap:1rem;transition:.2s}
 .q-card.disabled{opacity:.5}
-.q-toggle{width:44px;height:24px;background:#334155;border-radius:12px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:.2s}
+.q-toggle{width:48px;height:26px;background:#334155;border-radius:13px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s}
 .q-toggle.on{background:#10b981}
-.q-toggle::after{content:'';position:absolute;top:2px;right:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s}
-.q-toggle.on::after{right:auto;left:2px}
+.q-toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.q-toggle.on::after{transform:translateX(22px)}
 .q-label{flex:1;font-size:.875rem;font-weight:600;color:#e2e8f0}
 .q-weight{display:flex;align-items:center;gap:.5rem}
 .q-weight input{width:52px;padding:.3rem .4rem;background:#1e293b;border:1px solid #334155;border-radius:6px;color:#38bdf8;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none}
@@ -574,6 +574,24 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <div class="page-sub">خصّص اسم البرنامج ومعايير القبول الخاصة بجهتك</div>
       </div>
       <button class="btn-primary" onclick="saveFormConfig()">💾 حفظ الإعدادات</button>
+    </div>
+
+    <!-- SQL reminder (hidden by default, shows on error) -->
+    <div id="sql_reminder" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:1.25rem">
+      <div style="font-size:.85rem;font-weight:700;color:#f87171;margin-bottom:.5rem">⚠️ إعداد مطلوب في Supabase</div>
+      <div style="font-size:.8rem;color:#fca5a5;line-height:1.8">افتح <strong>Supabase → SQL Editor</strong> وشغّل هذا الأمر:</div>
+      <pre style="background:#0f172a;border-radius:8px;padding:.75rem;margin:.6rem 0;font-size:.73rem;color:#86efac;direction:ltr;text-align:left;overflow-x:auto">ALTER TABLE partners ADD COLUMN IF NOT EXISTS form_config JSONB;
+CREATE TABLE IF NOT EXISTS applications (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  partner_id UUID, partner_ref TEXT,
+  name TEXT, email TEXT, phone TEXT, national_id TEXT,
+  company TEXT, sector TEXT, score INTEGER, grade TEXT,
+  result TEXT DEFAULT 'pending', ref_num TEXT,
+  challenges TEXT, notes TEXT, source TEXT DEFAULT 'online',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
+      <div style="font-size:.78rem;color:#fca5a5">بعد التشغيل، اضغط حفظ مرة أخرى.</div>
     </div>
 
     <div class="card">
@@ -1293,11 +1311,28 @@ async function saveFormConfig() {
     updated_at: new Date().toISOString(),
   };
 
+  // Show loading state
+  const saveBtns = document.querySelectorAll('[onclick="saveFormConfig()"]');
+  saveBtns.forEach(b => { b.disabled = true; b.textContent = '⏳ جارٍ الحفظ...'; });
+
   const { error } = await _sb.from('partners').update({ form_config: fc }).eq('id', partner.id);
-  if (error) { toast('خطأ أثناء الحفظ: ' + error.message, 'error'); return; }
+
+  saveBtns.forEach(b => { b.disabled = false; b.textContent = '💾 حفظ وتفعيل النموذج'; });
+
+  if (error) {
+    if (error.message?.includes('form_config') || error.code === '42703' || error.code === 'PGRST204') {
+      toast('⚠️ يجب تشغيل SQL في Supabase أولاً — راجع التعليمات', 'error');
+      document.getElementById('sql_reminder')?.style.setProperty('display','block');
+    } else {
+      toast('خطأ أثناء الحفظ: ' + error.message, 'error');
+    }
+    return;
+  }
 
   partner.formConfig = fc;
-  toast('✅ تم حفظ إعدادات النموذج وتفعيله!');
+  // Update link preview
+  document.getElementById('fc_preview_link').textContent = getPartnerLinkUrl();
+  toast('✅ تم حفظ إعدادات النموذج وتفعيله! — الرابط جاهز للمشاركة');
 }
 
 function resetFormConfig() {
