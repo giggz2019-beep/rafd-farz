@@ -173,11 +173,18 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 <div id="forgotEmailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;padding:1rem">
   <div style="background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:380px">
     <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">📱 استرجاع البريد الإلكتروني</div>
-    <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">أدخل رقم الجوال المسجّل وسنعرض لك البريد المرتبط بحسابك</div>
+    <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">ابحث برقم الجوال أو اسم الجهة للعثور على بريدك المسجّل</div>
     <div class="fld">
       <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">رقم الجوال</label>
       <input type="tel" id="fe_phone" placeholder="05XXXXXXXX" maxlength="10" inputmode="numeric"
-        style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;direction:ltr"
+        style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;direction:ltr;margin-bottom:.65rem"
+        onkeydown="if(event.key==='Enter')findEmailByPhone()">
+    </div>
+    <div style="text-align:center;font-size:.75rem;color:#475569;margin:-0.3rem 0 .65rem">— أو —</div>
+    <div class="fld">
+      <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">اسم الجهة</label>
+      <input type="text" id="fe_orgname" placeholder="مثال: جامعة الملك عبدالعزيز"
+        style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
         onkeydown="if(event.key==='Enter')findEmailByPhone()">
     </div>
     <div id="fe_err" style="display:none;font-size:.78rem;color:#f87171;margin:.5rem 0 .75rem"></div>
@@ -267,6 +274,7 @@ function showForgotEmail() {
   document.getElementById('fe_err').style.display = 'none';
   document.getElementById('fe_result').style.display = 'none';
   document.getElementById('fe_phone').value = '';
+  document.getElementById('fe_orgname').value = '';
   _foundEmail = '';
 }
 function hideForgotEmail() {
@@ -274,24 +282,35 @@ function hideForgotEmail() {
 }
 async function findEmailByPhone() {
   const phone = document.getElementById('fe_phone').value.trim();
+  const orgname = document.getElementById('fe_orgname').value.trim();
   const errEl = document.getElementById('fe_err');
   errEl.style.display = 'none';
   document.getElementById('fe_result').style.display = 'none';
-  if (!/^05\d{8}$/.test(phone)) {
-    errEl.textContent = 'يرجى إدخال رقم جوال صحيح يبدأ بـ 05';
+  if (!phone && !orgname) {
+    errEl.textContent = 'أدخل رقم الجوال أو اسم الجهة للبحث';
     errEl.style.display = 'block'; return;
   }
   const btn = document.getElementById('fe_search_btn');
   btn.textContent = 'جارٍ البحث...'; btn.disabled = true;
-  const { data: p } = await _sb.from('partners').select('email').eq('phone', phone).maybeSingle();
+  let found = null;
+  // Search by phone first
+  if (phone) {
+    const clean = phone.replace(/\s|-/g, '');
+    const { data: p1 } = await _sb.from('partners').select('email,org_name').eq('phone', clean).maybeSingle();
+    if (p1?.email) found = p1;
+  }
+  // Fallback: search by org_name (partial match)
+  if (!found && orgname) {
+    const { data: list } = await _sb.from('partners').select('email,org_name').ilike('org_name', `%${orgname}%`).limit(1);
+    if (list?.length) found = list[0];
+  }
   btn.textContent = 'بحث'; btn.disabled = false;
-  if (!p?.email) {
-    errEl.textContent = 'لم يُعثر على حساب مرتبط بهذا الرقم.';
+  if (!found?.email) {
+    errEl.textContent = 'لم يُعثر على حساب. تأكد من البيانات أو تواصل مع الدعم.';
     errEl.style.display = 'block'; return;
   }
-  _foundEmail = p.email;
-  // Mask email: na***@gmail.com
-  const [u, d] = p.email.split('@');
+  _foundEmail = found.email;
+  const [u, d] = found.email.split('@');
   const masked = u.slice(0,2) + '***@' + d;
   document.getElementById('fe_email_show').textContent = masked;
   document.getElementById('fe_result').style.display = 'block';
