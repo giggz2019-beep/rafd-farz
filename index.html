@@ -562,65 +562,71 @@ window.addEventListener('scroll', function() {
 </div>
 
 <script>
-const khReplies = {
-  'ما هي المنصة': 'RAFD هي منصة ذكاء اصطناعي متكاملة تُمكّن الجهات (بنوك، جامعات، شركات، حاضنات) من أتمتة قرارات القبول والرفض بناءً على معاييرها الخاصة — سواء كانت توظيفاً أو تمويلاً أو قبولاً جامعياً. النتيجة فورية وبدون تحيّز بشري. 🤖',
-  'كيف اشترك': 'الاشتراك سهل جداً! 👇<br>1️⃣ اضغط على <a href="/signup.html" style="color:#10b981">"ابدأ مجاناً"</a><br>2️⃣ أدخل بيانات جهتك (الاسم، البريد، كلمة المرور)<br>3️⃣ اختر باقتك (تبدأ بـ 7 أيام تجريبية مجانية)<br>4️⃣ حدّد معاييرك وابدأ فوراً! ✅',
-  'طريق الاشتراك': 'الاشتراك سهل جداً! 👇<br>1️⃣ اضغط على <a href="/signup.html" style="color:#10b981">"ابدأ مجاناً"</a><br>2️⃣ أدخل بيانات جهتك (الاسم، البريد، كلمة المرور)<br>3️⃣ اختر باقتك (تبدأ بـ 7 أيام تجريبية مجانية)<br>4️⃣ حدّد معاييرك وابدأ فوراً! ✅',
-  'كيف أبدأ': 'الاشتراك سهل جداً! 👇<br>1️⃣ اضغط على <a href="/signup.html" style="color:#10b981">"ابدأ مجاناً"</a><br>2️⃣ أدخل بيانات جهتك (الاسم، البريد، كلمة المرور)<br>3️⃣ اختر باقتك (تبدأ بـ 7 أيام تجريبية مجانية)<br>4️⃣ حدّد معاييرك وابدأ فوراً! ✅',
-  'طريقة عملكم': 'طريقة عمل RAFD في 4 خطوات بسيطة 🔄<br><br>1️⃣ <b>حدّد معاييرك:</b> تُدخل جهتك معايير القبول والرفض عبر لوحة التحكم (بدون برمجة)<br>2️⃣ <b>استقبل الطلبات:</b> تُشارك رابط النموذج مع المتقدمين ليُقدّموا طلباتهم<br>3️⃣ <b>التحليل الذكي:</b> يحلّل الذكاء الاصطناعي كل طلب وفق معاييرك فورياً<br>4️⃣ <b>القرار الفوري:</b> يصدر القرار مع تقرير مفصّل ويُرسَل للمتقدم تلقائياً ✅<br><br><a href="/how-it-works.html" style="color:#10b981">اقرأ المزيد ←</a>',
-  'طريقة العمل': 'طريقة عمل RAFD في 4 خطوات بسيطة 🔄<br><br>1️⃣ <b>حدّد معاييرك:</b> تُدخل جهتك معايير القبول والرفض عبر لوحة التحكم (بدون برمجة)<br>2️⃣ <b>استقبل الطلبات:</b> تُشارك رابط النموذج مع المتقدمين ليُقدّموا طلباتهم<br>3️⃣ <b>التحليل الذكي:</b> يحلّل الذكاء الاصطناعي كل طلب وفق معاييرك فورياً<br>4️⃣ <b>القرار الفوري:</b> يصدر القرار مع تقرير مفصّل ويُرسَل للمتقدم تلقائياً ✅<br><br><a href="/how-it-works.html" style="color:#10b981">اقرأ المزيد ←</a>',
-  'التقييم': 'نظام التقييم في RAFD يعمل هكذا 🧠<br><br>• تُحدّد الجهة معاييرها ووزن كل معيار<br>• يُحلّل الذكاء الاصطناعي طلب المتقدم وفق هذه المعايير<br>• يُعطي كل معيار درجة من 100<br>• يحسب الدرجة الإجمالية ويقارنها بنسبة الاجتياز التي حددتها الجهة<br>• إذا تجاوز النسبة → مقبول ✅ | إذا لم يتجاوزها → مرفوض ❌<br>• الجهة تستلم فقط المتقدمين المجتازين للفحص',
-  'الباقات': 'لدينا 3 باقات 📦<br><br>🟢 <b>التجريبية — مجانية 7 أيام</b><br>وصول محدود للميزات، مثالية للتجربة<br><br>🔵 <b>الأساسية — 499 ريال/شهر</b><br>حتى 500 طلب شهرياً، تقارير أساسية، دعم فني<br><br>🟣 <b>المتقدمة — 999 ريال/شهر</b><br>طلبات غير محدودة، تحليلات متقدمة، API، مدير حساب مخصص<br><br><a href="/#pricing" style="color:#10b981">مقارنة الباقات ←</a>',
-  'سعر': 'لدينا 3 باقات 📦<br><br>🟢 <b>التجريبية — مجانية 7 أيام</b><br>وصول محدود للميزات<br><br>🔵 <b>الأساسية — 499 ريال/شهر</b><br>حتى 500 طلب شهرياً<br><br>🟣 <b>المتقدمة — 999 ريال/شهر</b><br>طلبات غير محدودة + API<br><br><a href="/#pricing" style="color:#10b981">تفاصيل الباقات ←</a>',
-  'الأسعار': 'لدينا 3 باقات 📦<br><br>🟢 <b>التجريبية — مجانية 7 أيام</b><br>وصول محدود للميزات<br><br>🔵 <b>الأساسية — 499 ريال/شهر</b><br>حتى 500 طلب شهرياً<br><br>🟣 <b>المتقدمة — 999 ريال/شهر</b><br>طلبات غير محدودة + API<br><br><a href="/#pricing" style="color:#10b981">تفاصيل الباقات ←</a>',
-  'كيف اسجل': 'لتسجيل حساب جديد 📝<br><br>1️⃣ اضغط <a href="/signup.html" style="color:#10b981">هنا للتسجيل</a><br>2️⃣ أدخل: اسمك الأول، اسم العائلة، اسم الجهة، نوع الجهة، البريد الإلكتروني، كلمة المرور<br>3️⃣ اضغط "إنشاء الحساب"<br>4️⃣ ستصلك رسالة تأكيد على بريدك ✅<br><br>التسجيل مجاني ويستغرق أقل من دقيقة!',
-  'كيف ادخل': 'لتسجيل الدخول لحسابك 🔐<br><br>1️⃣ اضغط <a href="/login.html" style="color:#10b981">هنا للدخول</a><br>2️⃣ أدخل بريدك الإلكتروني وكلمة المرور<br>3️⃣ اضغط "تسجيل الدخول"<br><br>إذا نسيت كلمة المرور، اضغط "نسيت كلمة المرور" في صفحة الدخول.',
-  'تسجيل': 'لتسجيل حساب جديد 📝<br><br>1️⃣ اضغط <a href="/signup.html" style="color:#10b981">هنا للتسجيل</a><br>2️⃣ أدخل بيانات جهتك<br>3️⃣ اضغط "إنشاء الحساب"<br><br>التسجيل مجاني ويستغرق أقل من دقيقة!',
-  'تواصل معنا': 'يمكنك التواصل معنا عبر البريد الإلكتروني 📧<br><a href="mailto:info@rafd-digital.com" style="color:#10b981">info@rafd-digital.com</a><br><br>سيرد فريقنا خلال 24 ساعة في أيام العمل.',
-  'توفير': 'نعم! تُوفّر منصة RAFD ما يصل إلى 80% من تكاليف الفرز اليدوي للطلبات — بدون أخطاء بشرية وبسرعة فورية. 💰',
-  'default': 'شكراً لسؤالك! 😊 للمزيد من التفاصيل، تواصل معنا على <a href="mailto:info@rafd-digital.com" style="color:#10b981">info@rafd-digital.com</a> وسيسعدنا مساعدتك. أو يمكنك <a href="/demo-apply.html" style="color:#10b981">تجربة النظام مجاناً ←</a>'
-};
+// ===== خالد — وكيل ذكي =====
+const WHATSAPP_NUM = '966500000000'; // ← غيّر هذا لرقم واتساب الدعم
+const khHistory = [];
+let khEscCount = 0;
+
 function toggleKhalid() {
   document.getElementById('khalidPanel').classList.toggle('open');
 }
-function khSend(txt) {
-  const inp = document.getElementById('khalidInput');
-  const msg = txt || inp.value.trim();
-  if(!msg) return;
+
+function khAddMsg(role, html, isHTML = false) {
   const msgs = document.getElementById('khalidMsgs');
-  document.getElementById('khalidQuick').style.display = 'none';
-  const um = document.createElement('div');
-  um.className = 'kh-msg user';
-  um.textContent = msg;
-  msgs.appendChild(um);
+  const d = document.createElement('div');
+  d.className = 'kh-msg ' + (role === 'user' ? 'user' : 'bot');
+  if (isHTML) d.innerHTML = html; else d.textContent = html;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+  return d;
+}
+
+function khShowWhatsApp() {
+  const msgs = document.getElementById('khalidMsgs');
+  const d = document.createElement('div');
+  d.className = 'kh-msg bot';
+  d.innerHTML = `خلّني أوصّلك بزميلي في الدعم مباشرة 👇<br><br>
+    <a href="https://wa.me/${WHATSAPP_NUM}?text=مرحباً،%20أحتاج%20مساعدة%20بخصوص%20RAFD%20Digital"
+      target="_blank"
+      style="display:inline-flex;align-items:center;gap:.5rem;background:#25d366;color:#fff;padding:.6rem 1.1rem;border-radius:10px;text-decoration:none;font-weight:700;font-size:.85rem;margin-top:.3rem">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.524 5.855L.057 23.214a.5.5 0 0 0 .62.62l5.359-1.467A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.94 9.94 0 0 1-5.073-1.388l-.361-.214-3.742 1.024 1.024-3.742-.214-.361A9.94 9.94 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      تواصل عبر واتساب
+    </a>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function khSend(txt) {
+  const inp = document.getElementById('khalidInput');
+  const msg = (txt || inp.value).trim();
+  if (!msg) return;
   inp.value = '';
-  msgs.scrollTop = msgs.scrollHeight;
-  const typing = document.createElement('div');
-  typing.className = 'kh-msg bot kh-typing';
-  typing.innerHTML = '<span></span><span></span><span></span>';
-  msgs.appendChild(typing);
-  msgs.scrollTop = msgs.scrollHeight;
-  setTimeout(() => {
-    msgs.removeChild(typing);
-    const m = msg.toLowerCase();
-    let key = 'default';
-    if(m.includes('اشترك') || m.includes('اشتراك') || m.includes('طريق') && m.includes('اشتراك')) key = 'كيف اشترك';
-    else if(m.includes('كيف') && (m.includes('نبدأ') || m.includes('ابدأ') || m.includes('بداية'))) key = 'كيف أبدأ';
-    else if((m.includes('طريقة') || m.includes('كيف')) && (m.includes('عمل') || m.includes('تعملون') || m.includes('تشتغل'))) key = 'طريقة عملكم';
-    else if(m.includes('تقييم') || m.includes('تقييم') || m.includes('تقويم') || m.includes('فحص') || m.includes('تقييمكم')) key = 'التقييم';
-    else if(m.includes('باقات') || m.includes('باقة') || m.includes('خطط') || m.includes('خطة')) key = 'الباقات';
-    else if(m.includes('سعر') || m.includes('تكلفة') || m.includes('كم يكلف') || m.includes('كم سعر')) key = 'سعر';
-    else if(m.includes('سجل') || m.includes('تسجيل') || (m.includes('كيف') && m.includes('حساب'))) key = 'كيف اسجل';
-    else if(m.includes('دخل') || m.includes('دخول') || m.includes('لوجين') || m.includes('لوك') || (m.includes('كيف') && m.includes('ادخل'))) key = 'كيف ادخل';
-    else if(m.includes('تواصل') || m.includes('اتصال') || m.includes('بريد') || m.includes('ايميل') || m.includes('واتساب')) key = 'تواصل معنا';
-    else if(m.includes('توفير') || m.includes('توفر') || m.includes('80') || m.includes('توفير تكاليف')) key = 'توفير';
-    else if(m.includes('منصة') || m.includes('رافد') || m.includes('rafd') || m.includes('من انتم') || m.includes('من انتمو')) key = 'ما هي المنصة';
-    const bm = document.createElement('div');
-    bm.className = 'kh-msg bot';
-    bm.innerHTML = khReplies[key];
-    msgs.appendChild(bm);
-    msgs.scrollTop = msgs.scrollHeight;
-  }, 1200);
+  document.getElementById('khalidQuick').style.display = 'none';
+  khAddMsg('user', msg);
+  khHistory.push({ role: 'user', content: msg });
+
+  // typing indicator
+  const typing = khAddMsg('bot', '', true);
+  typing.innerHTML = '<span class="kh-typing"><span></span><span></span><span></span></span>';
+  document.getElementById('khalidMsgs').scrollTop = 9999;
+
+  try {
+    const res = await fetch('/.netlify/functions/chat-khalid', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, history: khHistory.slice(-6) })
+    });
+    const { reply, escalate } = await res.json();
+    typing.remove();
+    khAddMsg('bot', reply, true);
+    khHistory.push({ role: 'assistant', content: reply });
+    if (escalate) { khEscCount++; khShowWhatsApp(); }
+  } catch {
+    typing.remove();
+    khAddMsg('bot', 'عذراً، في مشكلة بالاتصال. جرّب مرة ثانية أو تواصل معنا مباشرة.', false);
+    khEscCount++;
+    if (khEscCount >= 2) khShowWhatsApp();
+  }
 }
 </script>
 <style>
