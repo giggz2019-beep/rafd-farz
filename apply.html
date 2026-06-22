@@ -343,12 +343,12 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
     <div class="fld"><label>البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com"></div>
   </div>
 
-  <div class="sec-lbl" style="margin-top:1.1rem">🏢 معلومات المشروع / الشركة</div>
-  <div class="fld"><label>اسم الشركة / المشروع <span class="req">*</span></label><input type="text" id="f_company" placeholder="اسم شركتك أو مشروعك"></div>
+  <div class="sec-lbl" id="lbl_entity_section" style="margin-top:1.1rem">🏢 معلومات المشروع / الشركة</div>
+  <div class="fld"><label id="lbl_company">اسم الشركة / المشروع <span class="req">*</span></label><input type="text" id="f_company" placeholder="اسم شركتك أو مشروعك"></div>
   <div class="frow">
-    <div class="fld"><label>القطاع <span class="req">*</span></label>
+    <div class="fld"><label id="lbl_sector">القطاع <span class="req">*</span></label>
       <select id="f_sector">
-        <option value="">اختر القطاع...</option>
+        <option value="">اختر...</option>
         <option value="fintech">التقنية المالية</option>
         <option value="health">الصحة والرعاية</option>
         <option value="edu">التعليم والتدريب</option>
@@ -360,11 +360,11 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
         <option value="other">أخرى</option>
       </select>
     </div>
-    <div class="fld"><label>سنة التأسيس</label>
+    <div class="fld" id="year_fld"><label id="lbl_year">سنة التأسيس</label>
       <select id="f_year"><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021 أو قبل</option></select>
     </div>
   </div>
-  <div class="fld"><label>وصف مختصر للمشروع <span class="req">*</span></label><textarea id="f_desc" placeholder="اشرح فكرة مشروعك في جملتين أو ثلاث..."></textarea></div>
+  <div class="fld"><label id="lbl_desc">وصف مختصر <span class="req">*</span></label><textarea id="f_desc" placeholder="اشرح مشروعك..."></textarea></div>
 
   <div style="background:#fef9ec;border:1px solid #fde68a;border-radius:10px;padding:.75rem 1rem;font-size:.75rem;color:#92400e;margin-top:.5rem">
     ⚠️ تأكد من صحة بياناتك — المعلومات الشخصية يجب أن تطابق هويتك الرسمية وتُستخدم لتحقق الجهة
@@ -449,6 +449,14 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
       <label class="ropt" onclick="selR(this,'f_edu','master')"><input type="radio" name="edu" value="master"><span>ماجستير</span></label>
       <label class="ropt" onclick="selR(this,'f_edu','bachelor')"><input type="radio" name="edu" value="bachelor"><span>بكالوريوس</span></label>
       <label class="ropt" onclick="selR(this,'f_edu','diploma')"><input type="radio" name="edu" value="diploma"><span>دبلوم أو أقل</span></label>
+    </div>
+  </div>
+  <!-- GPA field — shown only if partner enables it -->
+  <div class="frow" id="gpa_field_container" style="display:none">
+    <div class="fld">
+      <label>المعدل التراكمي (GPA) <span class="req">*</span> <span id="gpa_scale_hint" style="font-size:.72rem;color:#94a3b8;font-weight:400">من 5</span></label>
+      <input type="number" id="f_gpa" min="0" step="0.01" placeholder="مثال: 4.25" style="font-family:monospace">
+      <div class="hint">أدخل معدلك التراكمي كما هو مذكور في وثائقك الرسمية</div>
     </div>
   </div>
   <div class="frow">
@@ -643,6 +651,7 @@ async function init() {
     document.getElementById('termPartnerName').textContent = data.org_name;
     document.getElementById('welcomeDesc').textContent = programDesc;
 
+    applyAppTypeLabels();
     renderCustomQuestions();
     renderDocsUpload();
 
@@ -650,6 +659,124 @@ async function init() {
     document.getElementById('mainContent').style.display = 'block';
   } catch(e) {
     showError('حدث خطأ أثناء تحميل الصفحة. حاول مرة أخرى.');
+  }
+}
+
+// ===== APP TYPE LABEL MAPPING =====
+const APP_TYPE_LABELS = {
+  project: {
+    section: '🚀 معلومات المشروع / الشركة',
+    company: 'اسم المشروع / الشركة',
+    companyPH: 'اسم شركتك أو مشروعك',
+    sector: 'قطاع المشروع',
+    year: 'سنة التأسيس',
+    yearShow: true,
+    desc: 'وصف مختصر للمشروع',
+    descPH: 'اشرح فكرة مشروعك في جملتين أو ثلاث...',
+  },
+  job: {
+    section: '💼 بيانات طلب التوظيف',
+    company: 'المسمى الوظيفي المطلوب',
+    companyPH: 'مثال: مطور برمجيات، محاسب...',
+    sector: 'مجال العمل',
+    year: 'سنة بدء العمل',
+    yearShow: true,
+    desc: 'لماذا تتقدم لهذه الوظيفة؟',
+    descPH: 'اشرح دوافعك ومهاراتك التي تميّزك...',
+  },
+  funding: {
+    section: '💰 معلومات طلب التمويل',
+    company: 'اسم الشركة / الكيان',
+    companyPH: 'اسم الكيان القانوني المسجّل',
+    sector: 'قطاع النشاط التجاري',
+    year: 'سنة تأسيس الكيان',
+    yearShow: true,
+    desc: 'ملخص فرصة الاستثمار',
+    descPH: 'اشرح نموذج عملك والفرصة المتاحة...',
+  },
+  academic: {
+    section: '🎓 بيانات الالتحاق',
+    company: 'المؤسسة أو الجهة الحالية',
+    companyPH: 'اسم الجامعة أو الشركة الحالية',
+    sector: 'مجال الدراسة / التخصص',
+    year: 'سنة التخرج المتوقعة',
+    yearShow: true,
+    desc: 'لماذا تريد الالتحاق بهذا البرنامج؟',
+    descPH: 'اشرح دوافعك وما تسعى لتحقيقه...',
+  },
+  member: {
+    section: '🤝 معلومات طلب العضوية',
+    company: 'اسم المنظمة / الجهة الممثَّلة',
+    companyPH: 'اسم الكيان الذي تمثّله',
+    sector: 'مجال نشاط الجهة',
+    year: 'سنة تأسيس الجهة',
+    yearShow: true,
+    desc: 'ما الذي تتوقع تحقيقه من العضوية؟',
+    descPH: 'اشرح أهدافك من الانضمام...',
+  },
+  gov: {
+    section: '🏛️ بيانات طلب الخدمة',
+    company: 'الجهة الحكومية مقدِّمة الطلب',
+    companyPH: 'اسم الجهة الحكومية',
+    sector: 'القطاع الحكومي',
+    year: 'سنة إنشاء الجهة',
+    yearShow: true,
+    desc: 'وصف الاحتياج أو الطلب',
+    descPH: 'اشرح الغرض من الطلب بوضوح...',
+  },
+  npo: {
+    section: '🌱 معلومات المنظمة / المبادرة',
+    company: 'اسم المنظمة / المبادرة',
+    companyPH: 'اسم منظمتك أو مبادرتك',
+    sector: 'مجال العمل التطوعي',
+    year: 'سنة التأسيس',
+    yearShow: true,
+    desc: 'وصف مختصر لرسالة المنظمة',
+    descPH: 'اشرح هدف المنظمة وتأثيرها المجتمعي...',
+  },
+  general: {
+    section: '📋 معلومات الطلب',
+    company: 'اسم الجهة / الكيان',
+    companyPH: 'اسم جهتك أو مؤسستك',
+    sector: 'المجال',
+    year: 'السنة',
+    yearShow: true,
+    desc: 'وصف مختصر',
+    descPH: 'أضف المعلومات الضرورية...',
+  },
+};
+
+function applyAppTypeLabels() {
+  const appType = partnerData?.form_config?.app_type || 'project';
+  const L = APP_TYPE_LABELS[appType] || APP_TYPE_LABELS.project;
+
+  const secEl = document.getElementById('lbl_entity_section');
+  const coEl = document.getElementById('lbl_company');
+  const coInp = document.getElementById('f_company');
+  const secEl2 = document.getElementById('lbl_sector');
+  const yearLbl = document.getElementById('lbl_year');
+  const descLbl = document.getElementById('lbl_desc');
+  const descTa = document.getElementById('f_desc');
+
+  if (secEl) secEl.textContent = L.section;
+  if (coEl) coEl.innerHTML = L.company + ' <span class="req">*</span>';
+  if (coInp) coInp.placeholder = L.companyPH;
+  if (secEl2) secEl2.innerHTML = L.sector + ' <span class="req">*</span>';
+  if (yearLbl) yearLbl.textContent = L.year;
+  if (descLbl) descLbl.innerHTML = L.desc + ' <span class="req">*</span>';
+  if (descTa) descTa.placeholder = L.descPH;
+  const yearFld = document.getElementById('year_fld');
+  if (yearFld) yearFld.style.display = L.yearShow !== false ? '' : 'none';
+
+  // GPA field
+  const gpa = partnerData?.form_config?.edu_gpa;
+  if (gpa?.enabled) {
+    const cont = document.getElementById('gpa_field_container');
+    const hint = document.getElementById('gpa_scale_hint');
+    const inp = document.getElementById('f_gpa');
+    if (cont) cont.style.display = '';
+    if (hint) hint.textContent = gpa.scale === 100 ? '(نسبة مئوية %)' : 'من ' + gpa.scale;
+    if (inp) { inp.max = gpa.scale; inp.placeholder = gpa.scale === 100 ? 'مثال: 87.5' : gpa.scale === 4 ? 'مثال: 3.70' : 'مثال: 4.25'; }
   }
 }
 
@@ -896,8 +1023,22 @@ function collect() {
 
   let score = 0; const bd = [];
   const eduS = Math.round({phd:1,master:.8,bachelor:.6,diploma:.33}[edu]??0.47 * W.edu);
-  const eduSC = W.edu ? Math.round(({phd:1,master:.8,bachelor:.6,diploma:.33}[edu]??0.47)*W.edu) : 0;
-  if(W.edu){ score += eduSC; bd.push({l:'المؤهل الأكاديمي',s:eduSC,m:W.edu,p:eduSC>=W.edu*0.6}); }
+  const degreeRatio = {phd:1,master:.8,bachelor:.6,diploma:.33}[edu] ?? 0.47;
+  const gpaConf = partnerData?.form_config?.edu_gpa;
+  let eduSC = 0;
+  if (W.edu) {
+    if (gpaConf?.enabled) {
+      const gpaVal = parseFloat(document.getElementById('f_gpa')?.value) || 0;
+      const gpaMax = gpaConf.scale || 5;
+      const gpaRatio = Math.min(1, gpaVal / gpaMax);
+      // 60% degree level + 40% GPA
+      eduSC = Math.round((degreeRatio * 0.6 + gpaRatio * 0.4) * W.edu);
+    } else {
+      eduSC = Math.round(degreeRatio * W.edu);
+    }
+    score += eduSC;
+    bd.push({l:'المؤهل الأكاديمي', s:eduSC, m:W.edu, p:eduSC>=W.edu*0.5});
+  }
 
   const expRaw = Math.min(W.exp, exp*(W.exp/10));
   const expSC = W.exp ? Math.round(expRaw) : 0;

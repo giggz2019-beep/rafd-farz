@@ -601,6 +601,20 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <input type="text" id="fc_program_name" placeholder="مثال: برنامج دعم الشركات الناشئة 2026">
       </div>
       <div class="fld-m">
+        <label>نوع التقديم <span style="color:#ef4444">*</span></label>
+        <select id="fc_app_type">
+          <option value="project">🚀 مشروع / شركة ناشئة</option>
+          <option value="job">💼 توظيف واختيار كوادر</option>
+          <option value="funding">💰 تمويل واستثمار</option>
+          <option value="academic">🎓 قبول أكاديمي / تدريب</option>
+          <option value="member">🤝 عضوية وانتساب</option>
+          <option value="gov">🏛️ خدمة حكومية</option>
+          <option value="npo">🌱 منظمة غير ربحية / تطوعي</option>
+          <option value="general">📋 عام (بدون تصنيف محدد)</option>
+        </select>
+        <div style="font-size:.7rem;color:#64748b;margin-top:.3rem">يحدد صياغة أسئلة النموذج تلقائياً</div>
+      </div>
+      <div class="fld-m">
         <label>وصف البرنامج</label>
         <textarea id="fc_program_desc" placeholder="اشرح هدف البرنامج والفئة المستهدفة..."></textarea>
       </div>
@@ -624,10 +638,30 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div class="card-title">⚖️ معايير التقييم والأوزان</div>
       <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان يجب أن يساوي 100 نقطة.</p>
 
-      <div class="q-card" id="qc_edu">
+      <div class="q-card" id="qc_edu" style="flex-wrap:wrap;gap:.6rem">
         <button class="q-toggle on" id="qt_edu" onclick="toggleQ('edu')"></button>
-        <div class="q-label">🎓 المؤهل الأكاديمي</div>
+        <div class="q-label" style="flex:1">🎓 المؤهل الأكاديمي</div>
         <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_edu" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+        <!-- GPA sub-option -->
+        <div style="width:100%;padding-top:.5rem;border-top:1px solid #1e293b;margin-top:.25rem;display:flex;flex-direction:column;gap:.6rem" id="edu_gpa_section">
+          <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:.78rem;color:#64748b">
+            <input type="checkbox" id="edu_gpa_enabled" style="accent-color:#10b981;width:15px;height:15px" onchange="toggleGpaOptions()">
+            <span>طلب المعدل التراكمي (GPA) من المتقدم</span>
+          </label>
+          <div id="gpa_config" style="display:none;background:#0f172a;border-radius:8px;padding:.65rem .85rem;display:none;gap:.85rem;flex-wrap:wrap;align-items:center">
+            <div style="font-size:.72rem;color:#64748b;font-weight:600">نظام التقييم:</div>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
+              <input type="radio" name="gpa_scale" id="gpa_5" value="5" checked style="accent-color:#10b981"> من 5
+            </label>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
+              <input type="radio" name="gpa_scale" id="gpa_4" value="4" style="accent-color:#10b981"> من 4
+            </label>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
+              <input type="radio" name="gpa_scale" id="gpa_100" value="100" style="accent-color:#10b981"> نسبة مئوية (%)
+            </label>
+            <div style="font-size:.7rem;color:#475569;width:100%">سيظهر حقل المعدل تلقائياً أسفل سؤال المؤهل في نموذج التقديم</div>
+          </div>
+        </div>
       </div>
       <div class="q-card" id="qc_exp">
         <button class="q-toggle on" id="qt_exp" onclick="toggleQ('exp')"></button>
@@ -1364,6 +1398,12 @@ function updateWeightTotal() {
   if (warning) warning.style.display = total !== 100 ? 'block' : 'none';
 }
 
+function toggleGpaOptions() {
+  const enabled = document.getElementById('edu_gpa_enabled')?.checked;
+  const cfg = document.getElementById('gpa_config');
+  if (cfg) cfg.style.display = enabled ? 'flex' : 'none';
+}
+
 function toggleNafath() {
   const btn = document.getElementById('nafath_toggle');
   const lbl = document.getElementById('nafath_status_lbl');
@@ -1481,6 +1521,14 @@ function loadFormConfigUI() {
   const fc = partner.formConfig;
   if (fc) {
     document.getElementById('fc_program_name').value = fc.program_name || '';
+    if (fc.app_type) document.getElementById('fc_app_type').value = fc.app_type;
+    // Load GPA config
+    if (fc.edu_gpa?.enabled) {
+      const gpaChk = document.getElementById('edu_gpa_enabled');
+      if (gpaChk) { gpaChk.checked = true; toggleGpaOptions(); }
+      const scaleEl = document.getElementById('gpa_' + (fc.edu_gpa.scale || 5));
+      if (scaleEl) scaleEl.checked = true;
+    }
     document.getElementById('fc_program_desc').value = fc.program_desc || '';
     document.getElementById('fc_min_score').value = fc.min_score || 55;
     document.getElementById('fc_status').value = fc.is_active === false ? 'paused' : 'active';
@@ -1581,15 +1629,20 @@ async function saveFormConfig() {
     if (!customDocs[i].label.trim()) { toast(`⚠️ يرجى كتابة اسم المستند المخصص رقم ${i+1}`, 'warn'); return; }
   }
 
+  const appType = document.getElementById('fc_app_type')?.value || 'project';
+  const gpaEnabled = document.getElementById('edu_gpa_enabled')?.checked ?? false;
+  const gpaScale = parseInt(document.querySelector('input[name="gpa_scale"]:checked')?.value || 5);
   const nafathOn = document.getElementById('nafath_toggle')?.classList.contains('on') ?? false;
   const nafathMode = document.querySelector('input[name="nafath_mode"]:checked')?.value || 'required';
 
   const fc = {
     program_name: programName,
+    app_type: appType,
     program_desc: document.getElementById('fc_program_desc').value.trim(),
     min_score: parseInt(document.getElementById('fc_min_score').value) || 55,
     is_active: document.getElementById('fc_status').value === 'active',
     criteria,
+    edu_gpa: { enabled: gpaEnabled, scale: gpaScale },
     custom_criteria: customCriteria,
     required_docs,
     custom_docs: customDocs,
