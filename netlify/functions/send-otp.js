@@ -17,7 +17,7 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'RAFD Digital <noreply@rafd-digital.com>',
+        from: 'RAFD Digital <onboarding@resend.dev>',
         to: [email],
         subject: `${otp} - رمز التفعيل في RAFD Digital`,
         html: `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px;background:#f8fafc;border-radius:12px">
