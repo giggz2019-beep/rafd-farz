@@ -623,8 +623,8 @@ async function init() {
       return;
     }
 
-    if (data.status !== 'approved') {
-      showError('هذه الجهة غير مفعّلة حالياً.');
+    if (data.status === 'rejected') {
+      showError('هذه الجهة غير مفعّلة. تواصل مع RAFD Digital للمزيد.');
       return;
     }
 
@@ -632,7 +632,7 @@ async function init() {
     const fc = data.form_config;
 
     if (fc && fc.is_active === false) {
-      showError('نموذج التقديم متوقف مؤقتاً. تواصل مع الجهة.');
+      showError('نموذج التقديم متوقف مؤقتاً من قِبَل الجهة. تواصل معهم للمزيد.');
       return;
     }
 
@@ -650,6 +650,14 @@ async function init() {
     document.getElementById('modalPartnerName').textContent = programName;
     document.getElementById('termPartnerName').textContent = data.org_name;
     document.getElementById('welcomeDesc').textContent = programDesc;
+
+    // Show pending banner if not yet approved
+    if (data.status === 'pending') {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#92400e;color:#fef3c7;text-align:center;padding:.5rem 1rem;font-size:.75rem;font-weight:700;z-index:999';
+      banner.textContent = '⏳ هذه الجهة قيد مراجعة RAFD Digital — الرابط في وضع الاختبار حتى اكتمال التفعيل';
+      document.body.prepend(banner);
+    }
 
     applyAppTypeLabels();
     renderCustomQuestions();
@@ -879,35 +887,30 @@ function startApp() {
 
 function go(n) {
   const nf = partnerData?.form_config?.nafath;
-  // Going from step 1 to step 2: check if nafath step is needed
-  if (n === 2 && curStep === 1 && nf?.enabled) {
-    // Validate step 1 first
-    const req = ['f_name','f_national_id','f_dob','f_phone','f_email','f_company'];
-    let ok = true;
-    req.forEach(id => { const el = document.getElementById(id); if(el && !el.value.trim()) ok = false; });
-    if (!ok) { alert('يرجى إكمال البيانات الشخصية أولاً'); return; }
-    // Pre-fill nafath fields from step 1
-    const nfahId = document.getElementById('nfah_id');
-    const nfahPh = document.getElementById('nfah_phone');
-    const preview = document.getElementById('nfah_id_preview');
-    const nid = document.getElementById('f_national_id').value.trim();
-    const ph = document.getElementById('f_phone').value.trim();
-    if (nfahId && !nfahId.value) nfahId.value = nid;
-    if (nfahPh && !nfahPh.value) nfahPh.value = ph;
-    if (preview) preview.textContent = nid.slice(0,3) + '****' + nid.slice(-2);
-    // Show nafath step
-    showNafathStep(nf.mode || 'required');
-    return;
-  }
-  // Going past nafath step
-  if (n === 2 && nf?.enabled && nf?.mode === 'required' && !nafathVerified) {
-    showNafathStep(nf.mode);
-    return;
+
+  // Going from step 1 to step 2: show nafath verification if enabled
+  if (n === 2 && nf?.enabled) {
+    if (!nafathVerified) {
+      // Pre-fill nafath fields from step 1
+      const nfahId = document.getElementById('nfah_id');
+      const nfahPh = document.getElementById('nfah_phone');
+      const preview = document.getElementById('nfah_id_preview');
+      const nid = document.getElementById('f_national_id')?.value.trim() || '';
+      const ph = document.getElementById('f_phone')?.value.trim() || '';
+      if (nfahId && !nfahId.value) nfahId.value = nid;
+      if (nfahPh && !nfahPh.value) nfahPh.value = ph;
+      if (preview && nid) preview.textContent = nid.slice(0,3) + '****' + nid.slice(-2);
+      showNafathStep(nf.mode || 'required');
+      return;
+    }
   }
 
+  // Hide all steps
   [1,2,3,4].forEach(i => { const el = document.getElementById('s'+i); if(el) el.classList.remove('show'); });
   const nafathEl = document.getElementById('s_nafath');
   if (nafathEl) nafathEl.classList.remove('show');
+
+  // Show target step
   const target = document.getElementById('s'+n);
   if (target) target.classList.add('show');
   curStep = n;
@@ -1022,7 +1025,6 @@ function collect() {
   };
 
   let score = 0; const bd = [];
-  const eduS = Math.round({phd:1,master:.8,bachelor:.6,diploma:.33}[edu]??0.47 * W.edu);
   const degreeRatio = {phd:1,master:.8,bachelor:.6,diploma:.33}[edu] ?? 0.47;
   const gpaConf = partnerData?.form_config?.edu_gpa;
   let eduSC = 0;
