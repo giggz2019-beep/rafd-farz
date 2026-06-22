@@ -67,7 +67,7 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 <script>
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -92,17 +92,17 @@ async function doLogin() {
     let partner = null;
 
     // المحاولة الأولى: تسجيل دخول عبر Supabase Auth (للحسابات الجديدة)
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email, password: pass });
+    const { data: authData, error: authError } = await _sb.auth.signInWithPassword({ email, password: pass });
 
     if (!authError && authData.user) {
       // نجح Auth — اجلب بيانات الشريك
-      const { data: p } = await supabase.from('partners').select('*').eq('email', email).maybeSingle();
+      const { data: p } = await _sb.from('partners').select('*').eq('email', email).maybeSingle();
       partner = p;
     }
 
     // المحاولة الثانية: فحص يدوي من جدول partners (للحسابات القديمة)
     if (!partner) {
-      const { data: p, error: pErr } = await supabase.from('partners').select('*').eq('email', email).maybeSingle();
+      const { data: p, error: pErr } = await _sb.from('partners').select('*').eq('email', email).maybeSingle();
       if (pErr) throw pErr;
 
       if (!p) {

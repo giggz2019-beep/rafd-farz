@@ -529,7 +529,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
 // ===== Supabase Config =====
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ===== AUTH CHECK =====
 let session = JSON.parse(localStorage.getItem('rafd_partner_session') || 'null');
@@ -540,13 +540,13 @@ let partner = null;
 async function loadPartnerData() {
   try {
     // تحقق من جلسة Supabase Auth أولاً
-    const { data: { session: authSession } } = await supabase.auth.getSession();
+    const { data: { session: authSession } } = await _sb.auth.getSession();
     const email = authSession?.user?.email || session?.email;
 
     if (!email) { window.location.href = '/partner-login.html'; return; }
 
     // ابحث دائماً بالإيميل لأنه فريد وموثوق
-    const { data, error } = await supabase
+    const { data, error } = await _sb
       .from('partners')
       .select('*')
       .eq('email', email)
@@ -815,7 +815,7 @@ async function changePassword() {
 async function updatePartnerInStorage() {
   // Update in Supabase
   try {
-    const { error } = await supabase
+    const { error } = await _sb
       .from('partners')
       .update({
         org_name: partner.org,
@@ -916,7 +916,7 @@ function requestApiAccess() {
 }
 
 async function logout() {
-  await supabase.auth.signOut();
+  await _sb.auth.signOut();
   localStorage.removeItem('rafd_partner_session');
   window.location.href = '/partner-login.html';
 }

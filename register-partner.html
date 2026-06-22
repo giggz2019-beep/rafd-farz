@@ -445,7 +445,7 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
 // ===== Supabase Config =====
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let selectedPkg = 'basic';
 let timerInterval = null;
@@ -614,7 +614,7 @@ async function submitForm() {
 
   // Send OTP via Supabase Auth (sends a real 6-digit code to the user's email)
   try {
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await _sb.auth.signInWithOtp({
       email: email,
       options: { shouldCreateUser: true }
     });
@@ -650,7 +650,7 @@ async function verifyOTP() {
   verifyBtn.textContent = 'جاري التحقق...';
 
   // Verify the 6-digit code with Supabase Auth
-  const { data: authData, error: authError } = await supabase.auth.verifyOtp({
+  const { data: authData, error: authError } = await _sb.auth.verifyOtp({
     email: pendingPartner.email,
     token: entered,
     type: 'email'
@@ -674,11 +674,11 @@ async function verifyOTP() {
   clearInterval(timerInterval);
   verifyBtn.textContent = 'جاري الحفظ...';
   try {
-    await supabase.auth.updateUser({ password: pendingPartner.password_plain });
+    await _sb.auth.updateUser({ password: pendingPartner.password_plain });
   } catch(e) { console.warn('Auth updateUser:', e); }
 
   try {
-    const { data, error } = await supabase.from('partners').insert([
+    const { data, error } = await _sb.from('partners').insert([
       {
         org_name: pendingPartner.org,
         email: pendingPartner.email,
@@ -715,7 +715,7 @@ async function verifyOTP() {
     console.error('Supabase insert error:', err);
     // Fallback: if column doesn't exist, try minimal insert
     try {
-      const { data, error } = await supabase.from('partners').insert([
+      const { data, error } = await _sb.from('partners').insert([
         {
           org_name: pendingPartner.org,
           email: pendingPartner.email,
@@ -756,7 +756,7 @@ async function resendOTP() {
   btn.textContent = 'جاري الإرسال...';
 
   try {
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await _sb.auth.signInWithOtp({
       email: email,
       options: { shouldCreateUser: true }
     });
