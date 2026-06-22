@@ -1353,7 +1353,17 @@ async function submitApp() {
       if (Object.keys(uploadedDocs).length) row.docs = uploadedDocs;
 
       const { error } = await _sb.from('applications').insert([row]);
-      if (error) console.error('Save error:', error);
+      if (error) {
+        console.error('Save error:', error);
+        // Show non-blocking warning after result is displayed
+        setTimeout(() => {
+          const warn = document.createElement('div');
+          warn.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;background:#fef3c7;border:1px solid #f59e0b;border-radius:12px;padding:.9rem 1.2rem;font-size:.82rem;color:#92400e;max-width:320px;z-index:999;direction:rtl;box-shadow:0 4px 16px rgba(0,0,0,.12)';
+          warn.innerHTML = '⚠️ لم يتم حفظ طلبك في قاعدة البيانات. تأكد من تشغيل SQL في Supabase ثم أعد التقديم.';
+          document.body.appendChild(warn);
+          setTimeout(() => warn.remove(), 8000);
+        }, 3000);
+      }
     })();
   }
 

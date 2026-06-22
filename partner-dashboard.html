@@ -581,13 +581,15 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
       <div style="font-size:.85rem;font-weight:700;color:#f87171;margin-bottom:.5rem">⚠️ إعداد مطلوب في Supabase</div>
       <div style="font-size:.8rem;color:#fca5a5;line-height:1.8">افتح <strong>Supabase → SQL Editor</strong> وشغّل هذا الأمر:</div>
       <pre style="background:#0f172a;border-radius:8px;padding:.75rem;margin:.6rem 0;font-size:.73rem;color:#86efac;direction:ltr;text-align:left;overflow-x:auto">ALTER TABLE partners ADD COLUMN IF NOT EXISTS form_config JSONB;
+ALTER TABLE partners ADD COLUMN IF NOT EXISTS form_config JSONB;
 CREATE TABLE IF NOT EXISTS applications (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   partner_id UUID, partner_ref TEXT,
   name TEXT, email TEXT, phone TEXT, national_id TEXT,
   company TEXT, sector TEXT, score INTEGER, grade TEXT,
   result TEXT DEFAULT 'pending', ref_num TEXT,
-  challenges TEXT, notes TEXT, source TEXT DEFAULT 'online',
+  challenges TEXT, notes TEXT, docs JSONB,
+  source TEXT DEFAULT 'online',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
