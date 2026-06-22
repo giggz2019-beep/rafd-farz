@@ -67,6 +67,12 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 .fld label .req{color:#ef4444;margin-right:.2rem}
 .fld input,.fld select,.fld textarea{width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.88rem;color:#1e293b;transition:border-color .2s;background:#fff}
 .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:#1a3a4a;box-shadow:0 0 0 3px rgba(26,58,74,.07)}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+.dob-row{display:grid;grid-template-columns:1fr 1.5fr 1.3fr;gap:.5rem}
+.dob-row select{padding:.75rem .6rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.86rem;color:#1e293b;background:#fff;width:100%;outline:none;transition:border-color .2s}
+.dob-row select:focus{border-color:#1a3a4a;box-shadow:0 0 0 3px rgba(26,58,74,.07)}
+.dob-row.err select{border-color:#ef4444!important}
 .fld textarea{resize:vertical;min-height:90px}
 .fld .hint{font-size:.72rem;color:#94a3b8;margin-top:.3rem}
 .sec-lbl{font-size:.75rem;font-weight:800;color:#1a3a4a;background:#f0f9ff;border-right:3px solid #1a3a4a;padding:.35rem .75rem;border-radius:0 6px 6px 0;margin-bottom:.85rem;letter-spacing:.02em}
@@ -319,7 +325,15 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
     <div class="fld"><label>رقم الهوية الوطنية / الإقامة <span class="req">*</span></label><input type="text" id="f_national_id" placeholder="10 أرقام" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"></div>
   </div>
   <div class="frow">
-    <div class="fld"><label>تاريخ الميلاد <span class="req">*</span></label><input type="date" id="f_dob" max="2010-01-01"></div>
+    <div class="fld">
+      <label>تاريخ الميلاد <span class="req">*</span></label>
+      <input type="hidden" id="f_dob">
+      <div class="dob-row" id="f_dob_row">
+        <select id="f_dob_d" onchange="syncDob()"><option value="">اليوم</option></select>
+        <select id="f_dob_m" onchange="syncDob()"><option value="">الشهر</option></select>
+        <select id="f_dob_y" onchange="syncDob()"><option value="">السنة</option></select>
+      </div>
+    </div>
     <div class="fld"><label>الجنس <span class="req">*</span></label>
       <select id="f_gender"><option value="">اختر...</option><option value="male">ذكر</option><option value="female">أنثى</option></select>
     </div>
@@ -905,6 +919,27 @@ function startApp() {
   go(1);
 }
 
+// ===== DATE OF BIRTH SELECTS =====
+function initDobSelects() {
+  const dD = document.getElementById('f_dob_d');
+  const dM = document.getElementById('f_dob_m');
+  const dY = document.getElementById('f_dob_y');
+  if (!dD) return;
+  for (let d = 1; d <= 31; d++) dD.add(new Option(d, String(d).padStart(2,'0')));
+  ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']
+    .forEach((m,i) => dM.add(new Option(m, String(i+1).padStart(2,'0'))));
+  const curY = new Date().getFullYear();
+  for (let y = curY - 15; y >= 1940; y--) dY.add(new Option(y, y));
+}
+function syncDob() {
+  const d = document.getElementById('f_dob_d').value;
+  const m = document.getElementById('f_dob_m').value;
+  const y = document.getElementById('f_dob_y').value;
+  document.getElementById('f_dob').value = (d && m && y) ? `${y}-${m}-${d}` : '';
+  document.getElementById('f_dob_row')?.classList.remove('err');
+}
+initDobSelects();
+
 // ===== STEP VALIDATION =====
 function _stepErrShow(stepId, msg) {
   const s = document.getElementById(stepId);
@@ -925,6 +960,7 @@ function _stepErrClear(stepId) {
   s?.querySelector('.step-err')?.style && (s.querySelector('.step-err').style.display = 'none');
   s?.querySelectorAll('.fld.err').forEach(f => f.classList.remove('err'));
   s?.querySelectorAll('.radio-opts.err').forEach(r => r.classList.remove('err'));
+  s?.querySelectorAll('.dob-row.err').forEach(r => r.classList.remove('err'));
 }
 function _fieldFail(fieldId, msg, stepId) {
   const el = document.getElementById(fieldId);
@@ -952,10 +988,15 @@ function validateStep1() {
   if (!/^[12]\d{9}$/.test(nid)) return _fieldFail('f_national_id', 'رقم الهوية يجب أن يبدأ بـ 1 (سعودي) أو 2 (مقيم) ومكوّن من 10 أرقام فقط', 's1');
 
   const dob = v('f_dob');
-  if (!dob) return _fieldFail('f_dob', 'يرجى إدخال تاريخ الميلاد', 's1');
+  const dobRow = document.getElementById('f_dob_row');
+  if (!dob || !document.getElementById('f_dob_d').value || !document.getElementById('f_dob_m').value || !document.getElementById('f_dob_y').value) {
+    dobRow?.classList.add('err');
+    dobRow?.scrollIntoView({ behavior:'smooth', block:'center' });
+    return _stepErrShow('s1', '⚠ يرجى اختيار يوم الشهر والسنة لتاريخ الميلاد'), false;
+  }
   const ageYrs = (Date.now() - new Date(dob)) / (365.25 * 86400000);
-  if (ageYrs < 15) return _fieldFail('f_dob', 'يجب أن يكون عمرك 15 سنة على الأقل للتقديم', 's1');
-  if (ageYrs > 85) return _fieldFail('f_dob', 'تاريخ الميلاد المدخل يبدو غير صحيح — يرجى التحقق', 's1');
+  if (ageYrs < 15) { dobRow?.classList.add('err'); return _stepErrShow('s1', '⚠ يجب أن يكون عمرك 15 سنة على الأقل للتقديم'), false; }
+  if (ageYrs > 85) { dobRow?.classList.add('err'); return _stepErrShow('s1', '⚠ تاريخ الميلاد المدخل يبدو غير صحيح — يرجى التحقق'), false; }
 
   if (!v('f_gender')) return _fieldFail('f_gender', 'يرجى اختيار الجنس', 's1');
   if (!v('f_nat')) return _fieldFail('f_nat', 'يرجى اختيار الجنسية', 's1');
