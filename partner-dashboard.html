@@ -135,6 +135,33 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   table{font-size:.78rem}
   th,td{padding:.6rem .5rem}
 }
+/* ===== LINK PAGE ===== */
+.link-hero{background:linear-gradient(135deg,#1a3a4a,#0f172a);border:1px solid #334155;border-radius:20px;padding:2rem;text-align:center;margin-bottom:1.25rem}
+.link-icon{font-size:2.5rem;margin-bottom:.75rem}
+.link-title{font-size:1.2rem;font-weight:900;color:#fff;margin-bottom:.4rem}
+.link-sub{color:#64748b;font-size:.85rem;margin-bottom:1.5rem}
+.link-box{background:#0f172a;border:1.5px solid #334155;border-radius:12px;padding:.9rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:1rem;word-break:break-all;text-align:right}
+.link-url{color:#38bdf8;font-size:.85rem;font-family:monospace;flex:1;text-align:left;direction:ltr}
+.btn-copy{background:#334155;border:none;color:#94a3b8;border-radius:8px;padding:.5rem .9rem;font-size:.78rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif;transition:.2s}
+.btn-copy:hover{background:#475569;color:#e2e8f0}
+.btn-copy.copied{background:rgba(16,185,129,.2);color:#10b981}
+.embed-section{background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:14px;padding:1.25rem;margin-top:1.25rem}
+.embed-lock{filter:blur(3px);user-select:none;pointer-events:none}
+.embed-badge{display:inline-flex;align-items:center;gap:.35rem;background:rgba(139,92,246,.2);color:#a78bfa;border:1px solid rgba(139,92,246,.35);border-radius:20px;padding:.25rem .75rem;font-size:.72rem;font-weight:700;margin-bottom:.75rem}
+/* ===== FORM BUILDER ===== */
+.q-card{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;display:flex;align-items:center;gap:1rem;transition:.2s}
+.q-card.disabled{opacity:.5}
+.q-toggle{width:44px;height:24px;background:#334155;border-radius:12px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:.2s}
+.q-toggle.on{background:#10b981}
+.q-toggle::after{content:'';position:absolute;top:2px;right:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s}
+.q-toggle.on::after{right:auto;left:2px}
+.q-label{flex:1;font-size:.875rem;font-weight:600;color:#e2e8f0}
+.q-weight{display:flex;align-items:center;gap:.5rem}
+.q-weight input{width:52px;padding:.3rem .4rem;background:#1e293b;border:1px solid #334155;border-radius:6px;color:#38bdf8;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none}
+.q-weight label{font-size:.72rem;color:#64748b}
+.weight-total{display:flex;align-items:center;justify-content:space-between;background:#1e293b;border-radius:10px;padding:.7rem 1rem;margin-top:.5rem}
+.weight-total span{font-size:.85rem;color:#64748b}
+.weight-total strong{font-size:1rem;color:#38bdf8;font-weight:800}
 </style>
 </head>
 <body>
@@ -157,8 +184,10 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
     <div class="nav-sec">الرئيسية</div>
     <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-icon">📊</span> نظرة عامة</div>
     <div class="nav-item" onclick="showPage('requests',this)"><span class="nav-icon">📋</span> الطلبات</div>
+    <div class="nav-item" onclick="showPage('link',this)"><span class="nav-icon">🔗</span> رابط التقديم</div>
     <div class="nav-sec">الإدارة</div>
-    <div class="nav-item" onclick="showPage('new-request',this)"><span class="nav-icon">➕</span> طلب جديد</div>
+    <div class="nav-item" onclick="showPage('form-setup',this)"><span class="nav-icon">🔧</span> إعداد النموذج</div>
+    <div class="nav-item" onclick="showPage('new-request',this)"><span class="nav-icon">➕</span> طلب يدوي</div>
     <div class="nav-item" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span> الإعدادات</div>
     <div class="nav-item" onclick="showPage('subscription',this)"><span class="nav-icon">💳</span> الاشتراك</div>
     <div class="nav-item" onclick="showPage('support',this)"><span class="nav-icon">💬</span> الدعم والتواصل</div>
@@ -214,6 +243,23 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <div class="stat-label">قيد المراجعة</div>
         <div class="stat-val" id="stat_pending_req">0</div>
         <div class="stat-note">طلب</div>
+      </div>
+    </div>
+
+    <!-- Apply Link Card -->
+    <div class="card" style="background:linear-gradient(135deg,rgba(26,58,74,.3),rgba(74,157,111,.15));border-color:rgba(74,157,111,.3)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <span style="font-size:1.5rem">🔗</span>
+          <div>
+            <div style="font-weight:800;color:#fff;font-size:.95rem">رابط التقديم الخاص بجهتك</div>
+            <div style="color:#64748b;font-size:.78rem">شاركه مع المتقدمين ليقدّموا مباشرةً</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn-sm" id="ov_copy_btn" onclick="copyPartnerLink()" style="background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.3);font-size:.8rem;padding:.4rem .9rem">📋 نسخ الرابط</button>
+          <button class="btn-sm" onclick="showPage('link',document.querySelector('[onclick*=\"link\"]'))" style="font-size:.8rem;padding:.4rem .9rem">عرض الرابط ←</button>
+        </div>
       </div>
     </div>
 
@@ -467,6 +513,158 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
     </div>
   </div>
 
+  <!-- ===== PAGE: LINK ===== -->
+  <div class="page" id="page-link">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">رابط التقديم</div>
+        <div class="page-sub">شارك هذا الرابط مع المتقدمين لجهتك</div>
+      </div>
+    </div>
+
+    <div class="link-hero">
+      <div class="link-icon">🔗</div>
+      <div class="link-title">رابط تقديم جهتك الخاص</div>
+      <div class="link-sub">كل من يفتح هذا الرابط يرى اسم جهتك ويملأ النموذج ويحصل على قرار فوري</div>
+      <div class="link-box">
+        <span class="link-url" id="partner_link_url">—</span>
+        <button class="btn-copy" id="copy_btn" onclick="copyPartnerLink()">📋 نسخ</button>
+      </div>
+      <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn-primary" onclick="openPartnerLink()" style="font-size:.85rem;padding:.6rem 1.25rem">🌐 فتح الرابط</button>
+        <button class="btn-ghost" onclick="showPage('form-setup',document.querySelector('[onclick*=\"form-setup\"]'))" style="font-size:.85rem;padding:.6rem 1.25rem">⚙️ تخصيص النموذج</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📤 كيفية المشاركة</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem">
+        <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
+          <div style="font-size:1.5rem;margin-bottom:.4rem">💬</div>
+          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem">واتساب / رسالة</div>
+          <div style="font-size:.75rem;color:#64748b">انسخ الرابط وأرسله مباشرةً</div>
+        </div>
+        <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
+          <div style="font-size:1.5rem;margin-bottom:.4rem">📧</div>
+          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem">البريد الإلكتروني</div>
+          <div style="font-size:.75rem;color:#64748b">ضمّنه في نشرتك البريدية</div>
+        </div>
+        <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
+          <div style="font-size:1.5rem;margin-bottom:.4rem">🌐</div>
+          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem">موقعك الإلكتروني</div>
+          <div style="font-size:.75rem;color:#64748b">ضع الرابط في صفحة التقديم</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Embed section (advanced only) -->
+    <div class="card">
+      <div class="card-title">🖥️ تضمين النموذج في موقعك (Embed)</div>
+      <div id="embed_section_content">
+        <!-- filled by JS based on plan -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: FORM SETUP ===== -->
+  <div class="page" id="page-form-setup">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">إعداد نموذج التقديم</div>
+        <div class="page-sub">خصّص اسم البرنامج ومعايير القبول الخاصة بجهتك</div>
+      </div>
+      <button class="btn-primary" onclick="saveFormConfig()">💾 حفظ الإعدادات</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 معلومات البرنامج</div>
+      <div class="fld-m">
+        <label>اسم البرنامج / المبادرة <span style="color:#ef4444">*</span></label>
+        <input type="text" id="fc_program_name" placeholder="مثال: برنامج دعم الشركات الناشئة 2026">
+      </div>
+      <div class="fld-m">
+        <label>وصف البرنامج</label>
+        <textarea id="fc_program_desc" placeholder="اشرح هدف البرنامج والفئة المستهدفة..."></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="fld-m">
+          <label>الحد الأدنى للقبول (من 100)</label>
+          <input type="number" id="fc_min_score" min="1" max="100" value="55" placeholder="55">
+          <div style="font-size:.72rem;color:#64748b;margin-top:.3rem">المتقدم الحاصل على هذه الدرجة فأكثر يُقبل تلقائياً</div>
+        </div>
+        <div class="fld-m">
+          <label>حالة النموذج</label>
+          <select id="fc_status">
+            <option value="active">✅ نشط — يقبل التقديمات</option>
+            <option value="paused">⏸️ متوقف مؤقتاً</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚖️ معايير التقييم والأوزان</div>
+      <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان يجب أن يساوي 100 نقطة.</p>
+
+      <div class="q-card" id="qc_edu">
+        <button class="q-toggle on" id="qt_edu" onclick="toggleQ('edu')"></button>
+        <div class="q-label">🎓 المؤهل الأكاديمي</div>
+        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_edu" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+      </div>
+      <div class="q-card" id="qc_exp">
+        <button class="q-toggle on" id="qt_exp" onclick="toggleQ('exp')"></button>
+        <div class="q-label">💼 سنوات الخبرة</div>
+        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_exp" value="20" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+      </div>
+      <div class="q-card" id="qc_prev">
+        <button class="q-toggle on" id="qt_prev" onclick="toggleQ('prev')"></button>
+        <div class="q-label">🚀 الخبرة الريادية السابقة</div>
+        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_prev" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+      </div>
+      <div class="q-card" id="qc_stage">
+        <button class="q-toggle on" id="qt_stage" onclick="toggleQ('stage')"></button>
+        <div class="q-label">📈 مرحلة المشروع</div>
+        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_stage" value="20" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+      </div>
+      <div class="q-card" id="qc_cust">
+        <button class="q-toggle on" id="qt_cust" onclick="toggleQ('cust')"></button>
+        <div class="q-label">👥 وجود عملاء حاليين</div>
+        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_cust" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+      </div>
+      <div class="q-card" id="qc_team">
+        <button class="q-toggle on" id="qt_team" onclick="toggleQ('team')"></button>
+        <div class="q-label">🤝 حجم الفريق</div>
+        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_team" value="10" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+      </div>
+      <div class="q-card" id="qc_commit">
+        <button class="q-toggle on" id="qt_commit" onclick="toggleQ('commit')"></button>
+        <div class="q-label">✅ الالتزام بمتطلبات البرنامج</div>
+        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_commit" value="5" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+      </div>
+
+      <div class="weight-total">
+        <span>مجموع الأوزان الحالي</span>
+        <strong id="weight_total_display">100</strong>
+      </div>
+      <div id="weight_warning" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:.6rem 1rem;margin-top:.5rem;font-size:.78rem;color:#f87171">
+        ⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة بالضبط لضمان دقة التقييم.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💡 معاينة الرابط بعد الحفظ</div>
+      <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:1rem;font-size:.82rem;color:#94a3b8;line-height:1.8">
+        بعد حفظ الإعدادات، سيعرض نموذج التقديم اسم برنامجك وسيقبل المتقدمين تلقائياً بناءً على الأوزان التي حددتها.
+        <br><strong style="color:#38bdf8">الرابط:</strong> <span id="fc_preview_link" style="font-family:monospace;direction:ltr;display:inline-block">—</span>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-bottom:2rem">
+      <button class="btn-ghost" onclick="resetFormConfig()">↩️ إعادة تعيين</button>
+      <button class="btn-primary" onclick="saveFormConfig()">💾 حفظ وتفعيل النموذج</button>
+    </div>
+  </div>
+
   <!-- ===== PAGE: SUPPORT ===== -->
   <div class="page" id="page-support">
     <div class="page-hdr">
@@ -562,9 +760,9 @@ async function loadPartnerData() {
     if (error || !data) { window.location.href = '/partner-login.html'; return; }
 
     partner = normalizePartner(data);
-    // حدّث الجلسة المحلية بالبيانات الصحيحة
     session = { id: partner.id, email: partner.email, org: partner.org };
     localStorage.setItem('rafd_partner_session', JSON.stringify(session));
+    await loadApplications();
     initUI();
   } catch(e) {
     console.error('Load partner error:', e);
@@ -593,6 +791,7 @@ function normalizePartner(p) {
     notes: p.notes || '',
     date: p.created_at ? new Date(p.created_at).toLocaleDateString('ar-SA') : '',
     refNum: p.ref_num || '',
+    formConfig: p.form_config || null,
     totalRequests: p.total_requests || 0,
     approvedRequests: p.approved_requests || 0,
     rejectedRequests: p.rejected_requests || 0,
@@ -623,33 +822,40 @@ function initUI() {
   renderRecentRequests();
   renderSettings();
   renderSubscription();
+  renderLinkPage();
+  loadFormConfigUI();
 }
 
-// ===== REQUESTS (localStorage for partner requests - no separate table needed) =====
-function getMyRequests() {
-  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
-  return all.filter(r => r.partnerId === partner.id);
+// ===== APPLICATIONS (Supabase) =====
+let allApplications = [];
+
+async function loadApplications() {
+  if (!partner.refNum) return [];
+  const { data, error } = await _sb
+    .from('applications')
+    .select('*')
+    .eq('partner_ref', partner.refNum)
+    .order('created_at', { ascending: false });
+  allApplications = (!error && data) ? data : [];
+  return allApplications;
 }
 
-function saveRequest(req) {
-  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
-  all.unshift(req);
-  localStorage.setItem('rafd_partner_requests', JSON.stringify(all));
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('ar-SA', {year:'numeric',month:'short',day:'numeric'});
 }
 
 function renderStats() {
-  const reqs = getMyRequests();
+  const reqs = allApplications;
   const approved = reqs.filter(r => r.result === 'approved').length;
   const rejected = reqs.filter(r => r.result === 'rejected').length;
-  const pending = reqs.filter(r => r.result === 'pending').length;
+  const pending = reqs.filter(r => r.result === 'pending' || !r.result).length;
   document.getElementById('stat_total').textContent = reqs.length;
   document.getElementById('stat_approved').textContent = approved;
   document.getElementById('stat_rejected').textContent = rejected;
   document.getElementById('stat_pending_req').textContent = pending;
   document.getElementById('stat_approved_pct').textContent = reqs.length ? Math.round(approved/reqs.length*100) + '% قبول' : '—';
   document.getElementById('stat_rejected_pct').textContent = reqs.length ? Math.round(rejected/reqs.length*100) + '% رفض' : '—';
-
-  // Usage bar
   const limits = {trial:50, basic:500, pro:999999};
   const limit = limits[partner.plan] || 50;
   const pct = Math.min(100, Math.round(reqs.length / limit * 100));
@@ -659,45 +865,45 @@ function renderStats() {
 }
 
 function renderRecentRequests() {
-  const reqs = getMyRequests().slice(0, 5);
+  const reqs = allApplications.slice(0, 5);
   const tbody = document.getElementById('recent_requests_table');
   if (!reqs.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">لا توجد طلبات بعد</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">لا توجد طلبات بعد — <button onclick="showPage(\'link\',null)" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:\'Cairo\',sans-serif;font-size:.83rem">شارك رابط التقديم ←</button></td></tr>';
     return;
   }
-  tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal(${r.id})" style="cursor:pointer">
+  tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal('${r.id}')" style="cursor:pointer">
     <td style="color:#475569">${i+1}</td>
     <td style="font-weight:700;color:#e2e8f0">${r.name}</td>
-    <td style="color:#64748b">${r.purpose}</td>
-    <td style="color:#64748b;font-size:.78rem">${r.date}</td>
+    <td style="color:#64748b">${r.company || r.sector || '—'}</td>
+    <td style="color:#64748b;font-size:.78rem">${fmtDate(r.created_at)}</td>
     <td>${resultBadge(r.result, r.score)}</td>
   </tr>`).join('');
 }
 
 function renderAllRequests(list) {
-  const reqs = list || getMyRequests();
+  const reqs = list || allApplications;
   const tbody = document.getElementById('all_requests_table');
   if (!reqs.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem">لا توجد طلبات</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem">لا توجد طلبات بعد</td></tr>';
     return;
   }
-  tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal(${r.id})" style="cursor:pointer">
+  tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal('${r.id}')" style="cursor:pointer">
     <td style="color:#475569">${i+1}</td>
     <td style="font-weight:700;color:#e2e8f0">${r.name}</td>
-    <td style="color:#64748b;font-size:.78rem">${r.nationalId || '—'}</td>
-    <td style="color:#64748b">${r.purpose}</td>
+    <td style="color:#64748b;font-size:.78rem">${r.national_id || '—'}</td>
+    <td style="color:#64748b">${r.company || r.sector || '—'}</td>
     <td><span style="font-weight:800;color:${r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score || '—'}</span></td>
-    <td style="color:#64748b;font-size:.78rem">${r.date}</td>
+    <td style="color:#64748b;font-size:.78rem">${fmtDate(r.created_at)}</td>
     <td>${resultBadge(r.result, r.score)}</td>
-    <td onclick="event.stopPropagation()"><button class="btn-sm danger" onclick="deleteRequest(${r.id})">حذف</button></td>
+    <td onclick="event.stopPropagation()"><button class="btn-sm danger" onclick="deleteRequest('${r.id}')">حذف</button></td>
   </tr>`).join('');
 }
 
 function filterRequests() {
   const q = document.getElementById('req_search').value.toLowerCase();
   const status = document.getElementById('req_filter_status').value;
-  let reqs = getMyRequests();
-  if (q) reqs = reqs.filter(r => r.name.toLowerCase().includes(q) || (r.nationalId||'').includes(q));
+  let reqs = [...allApplications];
+  if (q) reqs = reqs.filter(r => r.name.toLowerCase().includes(q) || (r.national_id||'').includes(q) || (r.email||'').includes(q));
   if (status) reqs = reqs.filter(r => r.result === status);
   renderAllRequests(reqs);
 }
@@ -708,36 +914,34 @@ function resultBadge(result, score) {
   return '<span class="badge b-pending">⏳ قيد المراجعة</span>';
 }
 
-function submitRequest() {
+async function submitRequest() {
   const name = document.getElementById('nf_name').value.trim();
   const purpose = document.getElementById('nf_purpose').value;
   if (!name || !purpose) { toast('يرجى إدخال الاسم وغرض الطلب', 'warn'); return; }
   const score = parseInt(document.getElementById('nf_score').value) || null;
-  const result = score !== null ? (score >= 70 ? 'approved' : 'rejected') : 'pending';
+  const minScore = partner.formConfig?.min_score || 55;
+  const result = score !== null ? (score >= minScore ? 'approved' : 'rejected') : 'pending';
+  const refNum = 'MAN-' + Date.now().toString().slice(-8);
 
-  const req = {
-    id: Date.now(),
-    partnerId: partner.id,
+  const { error } = await _sb.from('applications').insert([{
+    partner_id: partner.id,
+    partner_ref: partner.refNum,
     name,
-    nationalId: document.getElementById('nf_id').value.trim(),
+    national_id: document.getElementById('nf_id').value.trim(),
     email: document.getElementById('nf_email').value.trim(),
     phone: document.getElementById('nf_phone').value.trim(),
-    purpose,
+    company: purpose,
     score,
-    notes: document.getElementById('nf_notes').value.trim(),
     result,
-    date: new Date().toLocaleDateString('ar-SA'),
-    dateISO: new Date().toISOString(),
-  };
-  saveRequest(req);
+    ref_num: refNum,
+    notes: document.getElementById('nf_notes').value.trim(),
+    source: 'manual',
+  }]);
 
-  // Update partner stats
-  partner.totalRequests = (partner.totalRequests || 0) + 1;
-  if (result === 'approved') partner.approvedRequests = (partner.approvedRequests || 0) + 1;
-  if (result === 'rejected') partner.rejectedRequests = (partner.rejectedRequests || 0) + 1;
-  updatePartnerInStorage();
+  if (error) { toast('خطأ أثناء الحفظ: ' + error.message, 'error'); return; }
 
   clearRequestForm();
+  await loadApplications();
   renderStats();
   renderRecentRequests();
   showPage('requests', null);
@@ -751,31 +955,33 @@ function clearRequestForm() {
   document.getElementById('nf_purpose').value = '';
 }
 
-function deleteRequest(id) {
+async function deleteRequest(id) {
   if (!window.confirm('هل تريد حذف هذا الطلب؟')) return;
-  let all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
-  all = all.filter(r => r.id !== id);
-  localStorage.setItem('rafd_partner_requests', JSON.stringify(all));
+  const { error } = await _sb.from('applications').delete().eq('id', id);
+  if (error) { toast('خطأ أثناء الحذف', 'error'); return; }
+  await loadApplications();
   renderStats();
   renderRecentRequests();
   renderAllRequests();
+  toast('تم حذف الطلب');
 }
 
 function openReqModal(id) {
-  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
-  const r = all.find(x => x.id === id);
+  const r = allApplications.find(x => x.id === id);
   if (!r) return;
   const scoreColor = r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444';
   document.getElementById('reqModalBody').innerHTML = `
     <div style="display:grid;gap:.75rem">
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الاسم</span><span style="color:#e2e8f0;font-weight:700">${r.name}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">رقم الهوية</span><span style="color:#e2e8f0">${r.nationalId || '—'}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">البريد</span><span style="color:#e2e8f0">${r.email || '—'}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الجوال</span><span style="color:#e2e8f0">${r.phone || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الغرض</span><span style="color:#e2e8f0">${r.purpose}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الدرجة</span><span style="color:${scoreColor};font-weight:900;font-size:1.1rem">${r.score !== null ? r.score + '/100' : '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الشركة / القطاع</span><span style="color:#e2e8f0">${r.company || r.sector || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">رقم الطلب</span><span style="color:#94a3b8;font-size:.78rem;font-family:monospace">${r.ref_num || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الدرجة</span><span style="color:${scoreColor};font-weight:900;font-size:1.1rem">${r.score != null ? r.score + '/100' : '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التقدير</span><span style="color:#e2e8f0">${r.grade || '—'}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">النتيجة</span>${resultBadge(r.result, r.score)}</div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التاريخ</span><span style="color:#e2e8f0">${r.date}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التاريخ</span><span style="color:#e2e8f0">${fmtDate(r.created_at)}</span></div>
+      ${r.challenges ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">التحديات الرئيسية</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.challenges}</div></div>` : ''}
       ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">ملاحظات</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.notes}</div></div>` : ''}
     </div>`;
   document.getElementById('reqModal').classList.add('open');
@@ -900,11 +1106,12 @@ function showPage(pageId, navEl) {
   const page = document.getElementById('page-' + pageId);
   if (page) page.classList.add('active');
   if (navEl) navEl.classList.add('active');
-  // Refresh data on page open
-  if (pageId === 'requests') renderAllRequests();
-  if (pageId === 'overview') { renderStats(); renderRecentRequests(); }
+  if (pageId === 'requests') { loadApplications().then(() => renderAllRequests()); }
+  if (pageId === 'overview') { loadApplications().then(() => { renderStats(); renderRecentRequests(); }); }
   if (pageId === 'subscription') renderSubscription();
   if (pageId === 'settings') renderSettings();
+  if (pageId === 'link') renderLinkPage();
+  if (pageId === 'form-setup') loadFormConfigUI();
 }
 
 function requestApiAccess() {
@@ -939,7 +1146,187 @@ function toast(msg, type = 'success') {
   el._t = setTimeout(() => el.classList.remove('show'), 3500);
 }
 
+// ===== LINK PAGE =====
+function getPartnerLinkUrl() {
+  return 'https://rafd-digital.com/apply.html?partner=' + (partner.refNum || '');
+}
+
+function renderLinkPage() {
+  const url = getPartnerLinkUrl();
+  const urlEl = document.getElementById('partner_link_url');
+  if (urlEl) urlEl.textContent = url;
+
+  const embedEl = document.getElementById('embed_section_content');
+  if (!embedEl) return;
+
+  if (partner.plan === 'pro') {
+    const code = `<iframe\n  src="${url}"\n  width="100%"\n  height="820px"\n  frameborder="0"\n  style="border:none;border-radius:16px;overflow:hidden"\n  title="نموذج التقديم">\n</iframe>`;
+    embedEl.innerHTML = `
+      <p style="color:#94a3b8;font-size:.83rem;line-height:1.8;margin-bottom:1rem">ضع هذا الكود في موقعك وسيظهر النموذج مباشرةً دون توجيه الزوار لرابط خارجي.</p>
+      <div class="embed-badge">🚀 باقة المتقدمة</div>
+      <pre style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem;font-size:.75rem;color:#a78bfa;direction:ltr;text-align:left;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin-bottom:1rem">${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+      <button class="btn-primary" onclick="copyEmbed()" style="font-size:.82rem;padding:.6rem 1.25rem">📋 نسخ كود التضمين</button>`;
+    window._embedCode = code;
+  } else {
+    embedEl.innerHTML = `
+      <div style="position:relative">
+        <div class="embed-lock">
+          <div class="embed-badge">🚀 باقة المتقدمة</div>
+          <pre style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem;font-size:.75rem;color:#a78bfa;direction:ltr;text-align:left">&lt;iframe\n  src="https://rafd-digital.com/apply.html?partner=..."\n  width="100%" height="820px"\n  frameborder="0"&gt;\n&lt;/iframe&gt;</pre>
+        </div>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem">
+          <div style="font-size:1.3rem">🔒</div>
+          <div style="font-size:.88rem;font-weight:700;color:#a78bfa">متاح فقط لباقة المتقدمة</div>
+          <button class="btn-primary" onclick="showPage('subscription',null)" style="font-size:.8rem;padding:.5rem 1.25rem;background:linear-gradient(135deg,#7c3aed,#6d28d9)">ترقية الباقة</button>
+        </div>
+      </div>`;
+  }
+}
+
+function copyPartnerLink() {
+  const url = getPartnerLinkUrl();
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copy_btn');
+    const ovBtn = document.getElementById('ov_copy_btn');
+    if (btn) { btn.textContent = '✓ تم النسخ'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = '📋 نسخ'; btn.classList.remove('copied'); }, 2000); }
+    if (ovBtn) { ovBtn.textContent = '✓ تم'; setTimeout(() => { ovBtn.textContent = '📋 نسخ الرابط'; }, 2000); }
+    toast('✅ تم نسخ الرابط!');
+  });
+}
+
+function openPartnerLink() {
+  window.open(getPartnerLinkUrl(), '_blank');
+}
+
+function copyEmbed() {
+  navigator.clipboard.writeText(window._embedCode || '').then(() => toast('✅ تم نسخ كود التضمين!'));
+}
+
+// ===== FORM BUILDER =====
+const CRITERIA_IDS = ['edu','exp','prev','stage','cust','team','commit'];
+const qStates = {};
+
+function toggleQ(id) {
+  qStates[id] = !qStates[id];
+  const toggle = document.getElementById('qt_'+id);
+  const card = document.getElementById('qc_'+id);
+  const weightInput = document.getElementById('qw_'+id);
+  if (qStates[id]) {
+    toggle.classList.add('on');
+    card.classList.remove('disabled');
+    weightInput.disabled = false;
+  } else {
+    toggle.classList.remove('on');
+    card.classList.add('disabled');
+    weightInput.disabled = true;
+  }
+  updateWeightTotal();
+}
+
+function updateWeightTotal() {
+  let total = 0;
+  CRITERIA_IDS.forEach(id => {
+    if (qStates[id] !== false) {
+      total += parseInt(document.getElementById('qw_'+id)?.value || 0);
+    }
+  });
+  const display = document.getElementById('weight_total_display');
+  const warning = document.getElementById('weight_warning');
+  if (display) display.textContent = total;
+  if (display) display.style.color = total === 100 ? '#10b981' : '#ef4444';
+  if (warning) warning.style.display = total !== 100 ? 'block' : 'none';
+}
+
+function loadFormConfigUI() {
+  CRITERIA_IDS.forEach(id => { qStates[id] = true; });
+
+  const fc = partner.formConfig;
+  if (fc) {
+    document.getElementById('fc_program_name').value = fc.program_name || '';
+    document.getElementById('fc_program_desc').value = fc.program_desc || '';
+    document.getElementById('fc_min_score').value = fc.min_score || 55;
+    document.getElementById('fc_status').value = fc.is_active === false ? 'paused' : 'active';
+
+    CRITERIA_IDS.forEach(id => {
+      const enabled = fc.criteria?.[id]?.active !== false;
+      qStates[id] = enabled;
+      const toggle = document.getElementById('qt_'+id);
+      const card = document.getElementById('qc_'+id);
+      const weightInput = document.getElementById('qw_'+id);
+      if (!toggle) return;
+      if (enabled) { toggle.classList.add('on'); card.classList.remove('disabled'); if(weightInput) weightInput.disabled = false; }
+      else { toggle.classList.remove('on'); card.classList.add('disabled'); if(weightInput) weightInput.disabled = true; }
+      if (fc.criteria?.[id]?.weight && weightInput) weightInput.value = fc.criteria[id].weight;
+    });
+  } else {
+    CRITERIA_IDS.forEach(id => { qStates[id] = true; });
+  }
+
+  updateWeightTotal();
+
+  const link = getPartnerLinkUrl();
+  const preview = document.getElementById('fc_preview_link');
+  if (preview) preview.textContent = link;
+}
+
+async function saveFormConfig() {
+  const programName = document.getElementById('fc_program_name').value.trim();
+  if (!programName) { toast('يرجى إدخال اسم البرنامج', 'warn'); return; }
+
+  let total = 0;
+  const criteria = {};
+  CRITERIA_IDS.forEach(id => {
+    const active = qStates[id] !== false;
+    const weight = parseInt(document.getElementById('qw_'+id)?.value || 0);
+    criteria[id] = { active, weight };
+    if (active) total += weight;
+  });
+
+  if (total !== 100) { toast('⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة', 'warn'); return; }
+
+  const fc = {
+    program_name: programName,
+    program_desc: document.getElementById('fc_program_desc').value.trim(),
+    min_score: parseInt(document.getElementById('fc_min_score').value) || 55,
+    is_active: document.getElementById('fc_status').value === 'active',
+    criteria,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await _sb.from('partners').update({ form_config: fc }).eq('id', partner.id);
+  if (error) { toast('خطأ أثناء الحفظ: ' + error.message, 'error'); return; }
+
+  partner.formConfig = fc;
+  toast('✅ تم حفظ إعدادات النموذج وتفعيله!');
+}
+
+function resetFormConfig() {
+  document.getElementById('fc_program_name').value = '';
+  document.getElementById('fc_program_desc').value = '';
+  document.getElementById('fc_min_score').value = 55;
+  document.getElementById('fc_status').value = 'active';
+  CRITERIA_IDS.forEach(id => {
+    qStates[id] = true;
+    const toggle = document.getElementById('qt_'+id);
+    const card = document.getElementById('qc_'+id);
+    const weightInput = document.getElementById('qw_'+id);
+    if (toggle) toggle.classList.add('on');
+    if (card) card.classList.remove('disabled');
+    if (weightInput) { weightInput.disabled = false; }
+  });
+  const defaults = {edu:15,exp:20,prev:15,stage:20,cust:15,team:10,commit:5};
+  CRITERIA_IDS.forEach(id => { const el = document.getElementById('qw_'+id); if(el) el.value = defaults[id]; });
+  updateWeightTotal();
+}
+
 // ===== START =====
+async function startDashboard() {
+  await loadPartnerData();
+  await loadApplications();
+  renderStats();
+  renderRecentRequests();
+}
+
 loadPartnerData();
 </script>
 </body>
