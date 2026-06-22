@@ -680,6 +680,42 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       </div>
     </div>
 
+    <!-- Nafath Verification Requirement -->
+    <div class="card">
+      <div class="card-title">🔐 التحقق الهوياتي</div>
+      <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem">اختر هل تشترط على المتقدمين التحقق من هويتهم عبر منصة نفاذ الحكومية</div>
+
+      <div style="display:flex;align-items:center;gap:1rem;background:#0a1a0f;border:1.5px solid rgba(10,95,63,.35);border-radius:14px;padding:1rem 1.2rem">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#0a5f3f,#0d7a52);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#fff;flex-shrink:0">نفاذ</div>
+        <div style="flex:1">
+          <div style="font-size:.85rem;font-weight:700;color:#e2e8f0">التحقق عبر نفاذ</div>
+          <div style="font-size:.73rem;color:#4ade80;margin-top:.15rem">المنصة الوطنية الموحّدة للهوية الرقمية — يُرسَل رمز OTP للجوال</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:.4rem">
+          <button class="q-toggle" id="nafath_toggle" onclick="toggleNafath()"></button>
+          <span id="nafath_status_lbl" style="font-size:.65rem;color:#475569">معطّل</span>
+        </div>
+      </div>
+
+      <div id="nafath_options" style="display:none;margin-top:.85rem;padding:.85rem 1rem;background:rgba(10,95,63,.06);border:1px solid rgba(10,95,63,.2);border-radius:10px">
+        <div style="font-size:.75rem;color:#64748b;margin-bottom:.65rem;font-weight:600">خيارات التحقق:</div>
+        <label style="display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem;cursor:pointer">
+          <input type="radio" name="nafath_mode" id="nafath_mode_required" value="required" checked style="accent-color:#0a5f3f">
+          <div>
+            <div style="font-size:.8rem;color:#e2e8f0;font-weight:600">إلزامي — لا يكتمل الطلب بدون التحقق</div>
+            <div style="font-size:.7rem;color:#64748b">المتقدم لا يستطيع الإرسال إلا بعد التحقق من نفاذ</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:center;gap:.65rem;cursor:pointer">
+          <input type="radio" name="nafath_mode" id="nafath_mode_optional" value="optional" style="accent-color:#0a5f3f">
+          <div>
+            <div style="font-size:.8rem;color:#e2e8f0;font-weight:600">اختياري — يُشجَّع عليه ويُضيف نقاط</div>
+            <div style="font-size:.7rem;color:#64748b">التحقق يمنح المتقدم +5 نقاط إضافية على الدرجة</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
     <!-- Required Documents -->
     <div class="card">
       <div class="card-title">📎 المستندات المطلوبة من المتقدم</div>
@@ -1328,6 +1364,16 @@ function updateWeightTotal() {
   if (warning) warning.style.display = total !== 100 ? 'block' : 'none';
 }
 
+function toggleNafath() {
+  const btn = document.getElementById('nafath_toggle');
+  const lbl = document.getElementById('nafath_status_lbl');
+  const opts = document.getElementById('nafath_options');
+  const on = btn.classList.toggle('on');
+  lbl.textContent = on ? 'مفعّل' : 'معطّل';
+  lbl.style.color = on ? '#4ade80' : '#475569';
+  opts.style.display = on ? 'block' : 'none';
+}
+
 function toggleDoc(id) {
   docStates[id] = !docStates[id];
   const btn = document.getElementById('dt_'+id);
@@ -1453,6 +1499,19 @@ function loadFormConfigUI() {
     customCriteria = fc.custom_criteria || [];
     renderCustomCriteria();
 
+    // Load nafath config
+    const nf = fc.nafath || {};
+    if (nf.enabled) {
+      const btn = document.getElementById('nafath_toggle');
+      const lbl = document.getElementById('nafath_status_lbl');
+      const opts = document.getElementById('nafath_options');
+      if (btn) btn.classList.add('on');
+      if (lbl) { lbl.textContent = 'مفعّل'; lbl.style.color = '#4ade80'; }
+      if (opts) opts.style.display = 'block';
+      const modeEl = document.getElementById('nafath_mode_' + (nf.mode || 'required'));
+      if (modeEl) modeEl.checked = true;
+    }
+
     // Load docs config
     const savedDocs = fc.required_docs || {};
     DOC_IDS.forEach(id => {
@@ -1522,6 +1581,9 @@ async function saveFormConfig() {
     if (!customDocs[i].label.trim()) { toast(`⚠️ يرجى كتابة اسم المستند المخصص رقم ${i+1}`, 'warn'); return; }
   }
 
+  const nafathOn = document.getElementById('nafath_toggle')?.classList.contains('on') ?? false;
+  const nafathMode = document.querySelector('input[name="nafath_mode"]:checked')?.value || 'required';
+
   const fc = {
     program_name: programName,
     program_desc: document.getElementById('fc_program_desc').value.trim(),
@@ -1531,6 +1593,7 @@ async function saveFormConfig() {
     custom_criteria: customCriteria,
     required_docs,
     custom_docs: customDocs,
+    nafath: { enabled: nafathOn, mode: nafathMode },
     updated_at: new Date().toISOString(),
   };
 

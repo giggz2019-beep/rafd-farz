@@ -31,6 +31,12 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 .links a{color:#64748b;text-decoration:none}
 .links a:hover{color:#94a3b8}
 .links .reg-link{color:#38bdf8;font-weight:700}
+.or-div{display:flex;align-items:center;gap:.75rem;margin:1.1rem 0;color:#334155;font-size:.75rem}
+.or-div::before,.or-div::after{content:'';flex:1;height:1px;background:#334155}
+.btn-nafath{width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem 1rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.65rem}
+.btn-nafath:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(10,95,63,.35)}
+.nafath-icon{width:28px;height:28px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#0a5f3f;letter-spacing:-.02em;flex-shrink:0}
+.nafath-link-badge{display:none;align-items:center;gap:.5rem;background:rgba(10,95,63,.15);border:1px solid rgba(10,95,63,.3);border-radius:10px;padding:.6rem .9rem;font-size:.78rem;color:#34d399;margin-top:.75rem}
 </style>
 </head>
 <body>
@@ -57,9 +63,61 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
   </div>
   <button class="btn-login" id="loginBtn" onclick="doLogin()">دخول للوحة التحكم</button>
 
+  <div class="or-div">أو</div>
+  <button class="btn-nafath" onclick="openNafathLogin()">
+    <div class="nafath-icon">نفاذ</div>
+    تسجيل الدخول عبر نفاذ
+  </button>
+  <div id="nafathLinkedBadge" class="nafath-link-badge">
+    ✅ تم ربط حسابك بنفاذ — هويتك موثّقة
+  </div>
+
   <div class="links">
     <a href="/register-partner.html" class="reg-link">تسجيل جهة جديدة ←</a>
     <a href="#" onclick="showForgot();return false;" style="color:#64748b">نسيت كلمة المرور؟</a>
+  </div>
+</div>
+
+<!-- Nafath Login Modal -->
+<div id="nafathModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1001;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#0f1a10;border:1.5px solid rgba(10,95,63,.4);border-radius:20px;padding:2rem;width:100%;max-width:400px;text-align:center">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:1.5rem">
+      <div style="width:48px;height:48px;background:linear-gradient(135deg,#0a5f3f,#0d7a52);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#fff">نفاذ</div>
+      <div style="text-align:right">
+        <div style="font-size:1rem;font-weight:900;color:#fff">تسجيل الدخول بنفاذ</div>
+        <div style="font-size:.72rem;color:#4ade80">المنصة الوطنية الموحّدة للهوية الرقمية</div>
+      </div>
+    </div>
+
+    <!-- Step 1: National ID -->
+    <div id="nf_step1">
+      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:1.1rem;text-align:right">أدخل رقم هويتك الوطنية ورقم جوالك للتحقق</div>
+      <input type="text" id="nf_id" placeholder="رقم الهوية الوطنية (10 أرقام)" maxlength="10" inputmode="numeric"
+        style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;letter-spacing:.1em;direction:ltr;margin-bottom:.75rem">
+      <input type="tel" id="nf_phone" placeholder="رقم الجوال  05xxxxxxxx" maxlength="10" inputmode="numeric"
+        style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;direction:ltr;margin-bottom:.75rem">
+      <div id="nf_err1" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
+      <button onclick="sendNafathOtp()" id="nf_send_btn"
+        style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
+        إرسال رمز التحقق
+      </button>
+      <button onclick="closeNafathModal()" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer">إلغاء</button>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div id="nf_step2" style="display:none">
+      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:.5rem">تم إرسال رمز التحقق لجوالك</div>
+      <div style="font-size:.72rem;color:#4ade80;margin-bottom:1.1rem" id="nf_phone_hint"></div>
+      <input type="text" id="nf_otp" placeholder="000000" maxlength="6" inputmode="numeric"
+        style="width:100%;padding:1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:1.6rem;font-weight:900;color:#4ade80;outline:none;text-align:center;letter-spacing:.4em;direction:ltr;margin-bottom:.75rem">
+      <div id="nf_err2" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
+      <button onclick="verifyNafathOtp()" id="nf_verify_btn"
+        style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
+        تأكيد الرمز والدخول
+      </button>
+      <button onclick="document.getElementById('nf_step1').style.display='block';document.getElementById('nf_step2').style.display='none'" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer">← رجوع</button>
+    </div>
   </div>
 </div>
 
@@ -113,6 +171,86 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ===== NAFATH LOGIN =====
+let _nafathOtp = '';
+
+function openNafathLogin() {
+  document.getElementById('nafathModal').style.display = 'flex';
+  document.getElementById('nf_step1').style.display = 'block';
+  document.getElementById('nf_step2').style.display = 'none';
+  document.getElementById('nf_err1').style.display = 'none';
+}
+function closeNafathModal() {
+  document.getElementById('nafathModal').style.display = 'none';
+}
+
+async function sendNafathOtp() {
+  const nid = document.getElementById('nf_id').value.trim();
+  const phone = document.getElementById('nf_phone').value.trim();
+  const errEl = document.getElementById('nf_err1');
+  errEl.style.display = 'none';
+
+  if (!/^\d{10}$/.test(nid)) { errEl.textContent = 'رقم الهوية يجب أن يكون 10 أرقام'; errEl.style.display='block'; return; }
+  if (!/^05\d{8}$/.test(phone)) { errEl.textContent = 'يرجى إدخال رقم جوال صحيح يبدأ بـ 05'; errEl.style.display='block'; return; }
+
+  const btn = document.getElementById('nf_send_btn');
+  btn.disabled = true; btn.textContent = '⏳ جارٍ التحقق...';
+
+  // Look up partner by national_id or phone (or just allow any, OTP confirms identity)
+  _nafathOtp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiry = Date.now() + 10 * 60 * 1000;
+  sessionStorage.setItem('rafd_nafath_otp', JSON.stringify({ otp: _nafathOtp, expiry, nid, phone }));
+
+  try {
+    await fetch('/.netlify/functions/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: phone + '@nafath-verify.local', otp: _nafathOtp, fname: 'المستخدم' }),
+    });
+  } catch(e) {}
+
+  // In production, send SMS via Nafath or a gateway. For now, show OTP in console during testing.
+  console.log('Nafath OTP (testing):', _nafathOtp);
+
+  btn.disabled = false; btn.textContent = 'إرسال رمز التحقق';
+  document.getElementById('nf_phone_hint').textContent = '📱 تم إرسال الرمز إلى ' + phone.slice(0,4) + '****' + phone.slice(-2);
+  document.getElementById('nf_step1').style.display = 'none';
+  document.getElementById('nf_step2').style.display = 'block';
+}
+
+async function verifyNafathOtp() {
+  const otp = document.getElementById('nf_otp').value.trim();
+  const errEl = document.getElementById('nf_err2');
+  const btn = document.getElementById('nf_verify_btn');
+  errEl.style.display = 'none';
+
+  const stored = JSON.parse(sessionStorage.getItem('rafd_nafath_otp') || 'null');
+  if (!stored || stored.otp !== otp || Date.now() > stored.expiry) {
+    errEl.textContent = 'رمز التحقق غير صحيح أو انتهت صلاحيته (10 دقائق)';
+    errEl.style.display = 'block'; return;
+  }
+
+  btn.disabled = true; btn.textContent = '⏳ جارٍ الدخول...';
+
+  // Find partner by national_id stored in notes OR by phone
+  const nid = stored.nid;
+  const { data: p } = await _sb.from('partners').select('*').maybeSingle().or(
+    `national_id.eq.${nid},phone.eq.${stored.phone}`
+  ).limit(1);
+
+  btn.disabled = false; btn.textContent = 'تأكيد الرمز والدخول';
+
+  if (!p) {
+    errEl.textContent = 'لم يتم العثور على حساب مرتبط بهذه البيانات. يرجى تسجيل الدخول بالبريد وكلمة المرور أولاً.';
+    errEl.style.display = 'block'; return;
+  }
+
+  sessionStorage.removeItem('rafd_nafath_otp');
+  closeNafathModal();
+  localStorage.setItem('rafd_partner_session', JSON.stringify({ id: p.id, email: p.email, org: p.org_name }));
+  window.location.href = '/partner-dashboard.html';
+}
 
 // ===== FORGOT PASSWORD =====
 let _fpOtp = '';

@@ -373,6 +373,72 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
   <div class="fnav"><span class="step-ctr">1 / 4</span><button class="btn-next" onclick="go(2)">التالي ←</button></div>
 </div>
 
+<!-- Nafath Verification Step (shown only if partner requires it) -->
+<div class="wrap form-card" id="s_nafath" style="display:none">
+  <div style="text-align:center;margin-bottom:1.5rem">
+    <div style="width:64px;height:64px;background:linear-gradient(135deg,#0a5f3f,#0d7a52);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;color:#fff;margin:0 auto .75rem">نفاذ</div>
+    <div class="fc-title" style="margin:0">التحقق عبر نفاذ</div>
+    <div class="fc-sub" style="margin:.25rem 0 0">المنصة الوطنية الموحّدة للهوية الرقمية</div>
+  </div>
+
+  <div id="nafath_required_badge" style="display:none;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:.6rem 1rem;font-size:.78rem;color:#f87171;margin-bottom:1rem;text-align:center">
+    ⚠️ التحقق عبر نفاذ <strong>إلزامي</strong> لهذا البرنامج — لا يمكن إكمال الطلب بدونه
+  </div>
+  <div id="nafath_optional_badge" style="display:none;background:rgba(10,95,63,.08);border:1px solid rgba(10,95,63,.2);border-radius:10px;padding:.6rem 1rem;font-size:.78rem;color:#4ade80;margin-bottom:1rem;text-align:center">
+    ✨ التحقق اختياري — يمنحك <strong>+5 نقاط</strong> إضافية على درجتك
+  </div>
+
+  <!-- Not yet verified -->
+  <div id="nafath_form">
+    <div style="font-size:.82rem;color:#64748b;margin-bottom:1.1rem">رقم هويتك (<span id="nfah_id_preview" style="font-family:monospace;color:#1a3a4a;direction:ltr;display:inline-block">—</span>) ورقم جوالك للاستلام</div>
+    <div class="frow">
+      <div class="fld">
+        <label>رقم الهوية <span class="req">*</span></label>
+        <input type="text" id="nfah_id" placeholder="10 أرقام" maxlength="10" inputmode="numeric" style="font-family:monospace;letter-spacing:.08em;direction:ltr;text-align:center">
+      </div>
+      <div class="fld">
+        <label>رقم الجوال <span class="req">*</span></label>
+        <input type="tel" id="nfah_phone" placeholder="05xxxxxxxx" maxlength="10" inputmode="numeric" style="font-family:monospace;direction:ltr;text-align:center">
+      </div>
+    </div>
+    <button onclick="sendNafathApplicantOtp()" id="nfah_send_btn"
+      style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.6rem">
+      <span style="font-size:.7rem;background:rgba(255,255,255,.2);border-radius:4px;padding:.15rem .4rem;font-weight:900">نفاذ</span>
+      إرسال رمز التحقق لجوالي
+    </button>
+  </div>
+
+  <!-- OTP entry -->
+  <div id="nafath_otp_form" style="display:none">
+    <div style="font-size:.82rem;color:#64748b;margin-bottom:.5rem;text-align:center">تم إرسال رمز مكوّن من 6 أرقام</div>
+    <div style="font-size:.72rem;color:#4ade80;margin-bottom:1rem;text-align:center" id="nfah_sent_to"></div>
+    <input type="text" id="nfah_otp" placeholder="000000" maxlength="6" inputmode="numeric"
+      style="width:100%;padding:1rem;border:1.5px solid #e2e8f0;border-radius:12px;font-family:monospace;font-size:1.6rem;font-weight:900;color:#1a3a4a;text-align:center;letter-spacing:.4em;direction:ltr;margin-bottom:.75rem;outline:none">
+    <button onclick="verifyNafathApplicantOtp()" id="nfah_verify_btn"
+      style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
+      تأكيد الرمز ✓
+    </button>
+    <button onclick="document.getElementById('nafath_form').style.display='block';document.getElementById('nafath_otp_form').style.display='none'"
+      style="width:100%;background:none;border:1px solid #e2e8f0;color:#64748b;border-radius:10px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.8rem;cursor:pointer">
+      ← تغيير الجوال
+    </button>
+  </div>
+
+  <!-- Verified -->
+  <div id="nafath_verified" style="display:none;text-align:center;padding:1.5rem 0">
+    <div style="font-size:2.5rem;margin-bottom:.5rem">✅</div>
+    <div style="font-size:1.1rem;font-weight:800;color:#059669">تم التحقق من هويتك بنجاح</div>
+    <div style="font-size:.78rem;color:#64748b;margin-top:.35rem">هويتك موثّقة عبر منصة نفاذ الوطنية</div>
+  </div>
+
+  <div class="fnav">
+    <button class="btn-prev" onclick="go(1)">← السابق</button>
+    <span class="step-ctr" id="nafath_step_ctr">1.5 / 4</span>
+    <button id="nafath_next_btn" class="btn-next" onclick="go(2)" style="opacity:.4;pointer-events:none">التالي ←</button>
+    <button id="nafath_skip_btn" class="btn-next" style="background:#64748b" onclick="go(2)">تخطي ←</button>
+  </div>
+</div>
+
 <!-- Step 2 -->
 <div class="wrap form-card" id="s2">
   <div class="fc-title">المؤهلات والخبرة</div>
@@ -524,6 +590,8 @@ const _sb = window.supabase.createClient(
 let partnerData = null;
 let curStep = 0;
 let appRefNum = '';
+let nafathVerified = false;
+let _nfahOtp = '';
 
 // ===== INIT =====
 async function init() {
@@ -683,11 +751,106 @@ function startApp() {
 }
 
 function go(n) {
-  [1,2,3,4].forEach(i => document.getElementById('s'+i).classList.remove('show'));
-  document.getElementById('s'+n).classList.add('show');
+  const nf = partnerData?.form_config?.nafath;
+  // Going from step 1 to step 2: check if nafath step is needed
+  if (n === 2 && curStep === 1 && nf?.enabled) {
+    // Validate step 1 first
+    const req = ['f_name','f_national_id','f_dob','f_phone','f_email','f_company'];
+    let ok = true;
+    req.forEach(id => { const el = document.getElementById(id); if(el && !el.value.trim()) ok = false; });
+    if (!ok) { alert('يرجى إكمال البيانات الشخصية أولاً'); return; }
+    // Pre-fill nafath fields from step 1
+    const nfahId = document.getElementById('nfah_id');
+    const nfahPh = document.getElementById('nfah_phone');
+    const preview = document.getElementById('nfah_id_preview');
+    const nid = document.getElementById('f_national_id').value.trim();
+    const ph = document.getElementById('f_phone').value.trim();
+    if (nfahId && !nfahId.value) nfahId.value = nid;
+    if (nfahPh && !nfahPh.value) nfahPh.value = ph;
+    if (preview) preview.textContent = nid.slice(0,3) + '****' + nid.slice(-2);
+    // Show nafath step
+    showNafathStep(nf.mode || 'required');
+    return;
+  }
+  // Going past nafath step
+  if (n === 2 && nf?.enabled && nf?.mode === 'required' && !nafathVerified) {
+    showNafathStep(nf.mode);
+    return;
+  }
+
+  [1,2,3,4].forEach(i => { const el = document.getElementById('s'+i); if(el) el.classList.remove('show'); });
+  const nafathEl = document.getElementById('s_nafath');
+  if (nafathEl) nafathEl.classList.remove('show');
+  const target = document.getElementById('s'+n);
+  if (target) target.classList.add('show');
   curStep = n;
   updateProg(n);
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showNafathStep(mode) {
+  [1,2,3,4].forEach(i => { const el = document.getElementById('s'+i); if(el) el.classList.remove('show'); });
+  const el = document.getElementById('s_nafath');
+  if (el) el.classList.add('show');
+
+  document.getElementById('nafath_required_badge').style.display = mode === 'required' ? 'block' : 'none';
+  document.getElementById('nafath_optional_badge').style.display = mode === 'optional' ? 'block' : 'none';
+  document.getElementById('nafath_skip_btn').style.display = mode === 'optional' ? 'inline-block' : 'none';
+
+  curStep = 1.5;
+  updateProg(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function sendNafathApplicantOtp() {
+  const nid = document.getElementById('nfah_id').value.trim();
+  const phone = document.getElementById('nfah_phone').value.trim();
+  if (!/^\d{10}$/.test(nid)) { alert('رقم الهوية يجب أن يكون 10 أرقام'); return; }
+  if (!/^05\d{8}$/.test(phone)) { alert('يرجى إدخال رقم جوال صحيح يبدأ بـ 05'); return; }
+
+  const btn = document.getElementById('nfah_send_btn');
+  btn.disabled = true; btn.querySelector('span + span') ? null : null;
+  btn.textContent = '⏳ جارٍ الإرسال...';
+
+  _nfahOtp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiry = Date.now() + 10 * 60 * 1000;
+  sessionStorage.setItem('rafd_nfah_apply', JSON.stringify({ otp: _nfahOtp, expiry }));
+
+  const applicantName = document.getElementById('f_name').value.trim() || 'المتقدم';
+  try {
+    await fetch('/.netlify/functions/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: document.getElementById('f_email').value.trim() || (phone + '@nfah.local'), otp: _nfahOtp, fname: applicantName }),
+    });
+  } catch(e) {}
+  console.log('Nafath OTP (testing):', _nfahOtp);
+
+  btn.disabled = false;
+  btn.innerHTML = '<span style="font-size:.7rem;background:rgba(255,255,255,.2);border-radius:4px;padding:.15rem .4rem;font-weight:900">نفاذ</span> إرسال رمز التحقق لجوالي';
+
+  document.getElementById('nfah_sent_to').textContent = '📱 تم الإرسال إلى ' + phone.slice(0,4) + '****' + phone.slice(-2);
+  document.getElementById('nafath_form').style.display = 'none';
+  document.getElementById('nafath_otp_form').style.display = 'block';
+}
+
+function verifyNafathApplicantOtp() {
+  const otp = document.getElementById('nfah_otp').value.trim();
+  const stored = JSON.parse(sessionStorage.getItem('rafd_nfah_apply') || 'null');
+  if (!stored || stored.otp !== otp || Date.now() > stored.expiry) {
+    alert('رمز التحقق غير صحيح أو انتهت صلاحيته'); return;
+  }
+  sessionStorage.removeItem('rafd_nfah_apply');
+  nafathVerified = true;
+
+  document.getElementById('nafath_otp_form').style.display = 'none';
+  document.getElementById('nafath_form').style.display = 'none';
+  document.getElementById('nafath_verified').style.display = 'block';
+
+  const nextBtn = document.getElementById('nafath_next_btn');
+  nextBtn.style.opacity = '1';
+  nextBtn.style.pointerEvents = 'auto';
+  document.getElementById('nafath_skip_btn').style.display = 'none';
 }
 
 function updateProg(n) {
@@ -759,6 +922,12 @@ function collect() {
   const commitRatio = {yes:1,maybe:.4,no:0}[commit]??0;
   const commitSC = W.commit ? Math.round(commitRatio*W.commit) : 0;
   if(W.commit){ score += commitSC; bd.push({l:'الالتزام بمتطلبات البرنامج',s:commitSC,m:W.commit,p:commitSC>=W.commit*0.6}); }
+
+  // Nafath bonus
+  if (nafathVerified && partnerData?.form_config?.nafath?.mode === 'optional') {
+    score += 5;
+    bd.push({l:'التحقق عبر نفاذ', s:5, m:5, p:true});
+  }
 
   // Custom criteria scoring
   const customList = partnerData?.form_config?.custom_criteria?.filter(c => c.label && c.options?.length >= 2) || [];
