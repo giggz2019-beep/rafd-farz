@@ -32,8 +32,21 @@
       <li><a href="/register-partner.html" style="color:#4a9d6f;font-weight:700">🤝 انضم كشريك</a></li>
     </ul>
     <div class="nav-actions">
-      <a href="/partner-login.html" class="btn-ghost" style="border-color:#4a9d6f;color:#4a9d6f">دخول الشركاء</a>
-      <a href="/login.html" class="btn-ghost">دخول</a>
+      <div class="login-dropdown-wrap" id="loginDropWrap">
+        <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem">
+          تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span>
+        </button>
+        <div class="login-drop" id="loginDrop">
+          <a href="/partner-login.html" class="login-drop-item">
+            <span style="font-size:1.1rem">🤝</span>
+            <div><div style="font-weight:700;font-size:.88rem">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6">لوحة تحكم الجهات</div></div>
+          </a>
+          <a href="/login.html" class="login-drop-item">
+            <span style="font-size:1.1rem">🛡️</span>
+            <div><div style="font-weight:700;font-size:.88rem">الإدارة</div><div style="font-size:.72rem;opacity:.6">دخول مشرفي النظام</div></div>
+          </a>
+        </div>
+      </div>
       <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f">انضم كشريك</a>
     </div>
     <button class="hamburger" id="hamburger">&#9776;</button>
@@ -610,6 +623,23 @@ function khSend(txt) {
     msgs.scrollTop = msgs.scrollHeight;
   }, 1200);
 }
+</script>
+<style>
+.login-dropdown-wrap{position:relative}
+.login-drop{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.14);min-width:200px;overflow:hidden;z-index:999}
+.login-drop.open{display:block}
+.login-drop-item{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;color:#1e293b;text-decoration:none;transition:background .15s}
+.login-drop-item:hover{background:#f8fafc}
+.login-drop-item+.login-drop-item{border-top:1px solid #f1f5f9}
+</style>
+<script>
+function toggleLoginDrop(e) {
+  e.stopPropagation();
+  document.getElementById('loginDrop').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  document.getElementById('loginDrop')?.classList.remove('open');
+});
 </script>
 </body>
 </html>
