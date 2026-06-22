@@ -263,8 +263,10 @@ input[type=number]{-moz-appearance:textfield}
     <div class="ps-col"><div class="ps-circle idle" id="sc3">3</div><div class="ps-label" id="sl3">المشروع</div></div>
     <div class="ps-line" id="ln3"></div>
     <div class="ps-col"><div class="ps-circle idle" id="sc4">4</div><div class="ps-label" id="sl4">أسئلة</div></div>
+    <div class="ps-line" id="ln4"></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc5">5</div><div class="ps-label" id="sl5">النتيجة</div></div>
   </div>
-  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:25%"></div></div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:20%"></div></div>
 </div>
 
 <!-- Welcome / Partner Landing Page -->
@@ -387,7 +389,7 @@ input[type=number]{-moz-appearance:textfield}
     ⚠️ تأكد من صحة بياناتك — المعلومات الشخصية يجب أن تطابق هويتك الرسمية وتُستخدم لتحقق الجهة
   </div>
 
-  <div class="fnav"><span class="step-ctr">1 / 4</span><button class="btn-next" onclick="go(2)">التالي ←</button></div>
+  <div class="fnav"><span class="step-ctr">1 / 5</span><button class="btn-next" onclick="go(2)">التالي ←</button></div>
 </div>
 
 <!-- Nafath Verification Step (shown only if partner requires it) -->
@@ -444,7 +446,7 @@ input[type=number]{-moz-appearance:textfield}
 
   <div class="fnav">
     <button class="btn-prev" onclick="go(1)">← السابق</button>
-    <span class="step-ctr" id="nafath_step_ctr">1.5 / 4</span>
+    <span class="step-ctr" id="nafath_step_ctr">1.5 / 5</span>
     <button id="nafath_next_btn" class="btn-next" onclick="go(2)" style="opacity:.4;pointer-events:none">التالي ←</button>
     <button id="nafath_skip_btn" class="btn-next" style="background:#64748b" onclick="go(2)">تخطي ←</button>
   </div>
@@ -498,7 +500,7 @@ input[type=number]{-moz-appearance:textfield}
       <label class="copt" onclick="togC(this)"><input type="checkbox" value="des"><span>تصميم وتجربة مستخدم</span></label>
     </div>
   </div>
-  <div class="fnav"><button class="btn-prev" onclick="go(1)">← السابق</button><span class="step-ctr">2 / 4</span><button class="btn-next" onclick="go(3)">التالي ←</button></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(1)">← السابق</button><span class="step-ctr">2 / 5</span><button class="btn-next" onclick="go(3)">التالي ←</button></div>
 </div>
 
 <!-- Step 3 -->
@@ -529,7 +531,7 @@ input[type=number]{-moz-appearance:textfield}
       <label class="ropt" onclick="selR(this,'f_cust','none')"><input type="radio" name="cust" value="none"><span>لا يوجد بعد</span></label>
     </div>
   </div>
-  <div class="fnav"><button class="btn-prev" onclick="go(2)">← السابق</button><span class="step-ctr">3 / 4</span><button class="btn-next" onclick="go(4)">التالي ←</button></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(2)">← السابق</button><span class="step-ctr">3 / 5</span><button class="btn-next" onclick="go(4)">التالي ←</button></div>
 </div>
 
 <!-- Step 4 -->
@@ -563,7 +565,7 @@ input[type=number]{-moz-appearance:textfield}
 
   <div class="fnav">
     <button class="btn-prev" onclick="go(3)">← السابق</button>
-    <span class="step-ctr">4 / 4</span>
+    <span class="step-ctr">4 / 5</span>
     <button class="btn-next btn-submit" onclick="submitApp()">إرسال الطلب ✓</button>
   </div>
 </div>
@@ -1123,13 +1125,14 @@ function verifyNafathApplicantOtp() {
 }
 
 function updateProg(n) {
-  document.getElementById('progFill').style.width = (n*25)+'%';
-  [1,2,3,4].forEach(i => {
+  document.getElementById('progFill').style.width = (n * 20) + '%';
+  [1,2,3,4,5].forEach(i => {
     const sc = document.getElementById('sc'+i);
     const sl = document.getElementById('sl'+i);
     const ln = document.getElementById('ln'+i);
-    if(i < n) { sc.className='ps-circle done'; sc.textContent='✓'; sl.className='ps-label'; if(ln) ln.className='ps-line done'; }
-    else if(i===n) { sc.className='ps-circle active'; sc.textContent=i; sl.className='ps-label active'; }
+    if (!sc) return;
+    if (i < n) { sc.className='ps-circle done'; sc.textContent='✓'; sl.className='ps-label'; if(ln) ln.className='ps-line done'; }
+    else if (i===n) { sc.className='ps-circle active'; sc.textContent= i===5 ? '🏆' : i; sl.className='ps-label active'; }
     else { sc.className='ps-circle idle'; sc.textContent=i; sl.className='ps-label'; }
   });
 }
@@ -1381,6 +1384,8 @@ function runTerminal(data) {
 function showResult(data) {
   const rp = document.getElementById('resultPage');
   rp.classList.add('show');
+  document.getElementById('progWrap').style.display = 'block';
+  updateProg(5);
   window.scrollTo({top:0,behavior:'smooth'});
   const today = new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
   const orgName = partnerData?.org_name || 'RAFD Digital';
