@@ -69,6 +69,7 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:#1a3a4a;box-shadow:0 0 0 3px rgba(26,58,74,.07)}
 .fld textarea{resize:vertical;min-height:90px}
 .fld .hint{font-size:.72rem;color:#94a3b8;margin-top:.3rem}
+.sec-lbl{font-size:.75rem;font-weight:800;color:#1a3a4a;background:#f0f9ff;border-right:3px solid #1a3a4a;padding:.35rem .75rem;border-radius:0 6px 6px 0;margin-bottom:.85rem;letter-spacing:.02em}
 .upload-zone{border:2px dashed #cbd5e1;border-radius:10px;padding:1rem 1.1rem;cursor:pointer;transition:.2s;background:#fafbfc;text-align:center;position:relative}
 .upload-zone:hover,.upload-zone.has-file{border-color:#1a3a4a;background:#f0f9ff}
 .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -306,18 +307,43 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 
 <!-- Step 1 -->
 <div class="wrap form-card" id="s1">
-  <div class="fc-title">المعلومات الأساسية</div>
-  <div class="fc-sub">الخطوة 1 من 4 — أخبرنا عن نفسك ومشروعك</div>
+  <div class="fc-title">المعلومات الشخصية</div>
+  <div class="fc-sub">الخطوة 1 من 4 — بياناتك الشخصية (يجب أن تطابق هويتك الرسمية)</div>
+
+  <div class="sec-lbl">🪪 الهوية والبيانات الرسمية</div>
   <div class="frow">
-    <div class="fld"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="f_name" placeholder="مثال: محمد أحمد الغامدي"></div>
-    <div class="fld"><label>البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com"></div>
+    <div class="fld"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="f_name" placeholder="الاسم الرباعي كما في الهوية"></div>
+    <div class="fld"><label>رقم الهوية الوطنية / الإقامة <span class="req">*</span></label><input type="text" id="f_national_id" placeholder="10 أرقام" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"></div>
   </div>
   <div class="frow">
-    <div class="fld"><label>رقم الجوال <span class="req">*</span></label><input type="tel" id="f_phone" placeholder="05xxxxxxxx"></div>
-    <div class="fld"><label>الجنسية <span class="req">*</span></label>
-      <select id="f_nat"><option value="">اختر...</option><option value="sa">سعودي</option><option value="other">غير سعودي</option></select>
+    <div class="fld"><label>تاريخ الميلاد <span class="req">*</span></label><input type="date" id="f_dob" max="2010-01-01"></div>
+    <div class="fld"><label>الجنس <span class="req">*</span></label>
+      <select id="f_gender"><option value="">اختر...</option><option value="male">ذكر</option><option value="female">أنثى</option></select>
     </div>
   </div>
+  <div class="frow">
+    <div class="fld"><label>الجنسية <span class="req">*</span></label>
+      <select id="f_nat"><option value="">اختر...</option><option value="sa">سعودي</option><option value="gcc">خليجي</option><option value="arab">عربي</option><option value="other">غير ذلك</option></select>
+    </div>
+    <div class="fld"><label>المدينة <span class="req">*</span></label>
+      <select id="f_city">
+        <option value="">اختر المدينة...</option>
+        <option value="riyadh">الرياض</option><option value="jeddah">جدة</option><option value="makkah">مكة المكرمة</option>
+        <option value="madinah">المدينة المنورة</option><option value="dammam">الدمام</option><option value="khobar">الخبر</option>
+        <option value="dhahran">الظهران</option><option value="taif">الطائف</option><option value="abha">أبها</option>
+        <option value="tabuk">تبوك</option><option value="hail">حائل</option><option value="jizan">جيزان</option>
+        <option value="najran">نجران</option><option value="qassim">القصيم</option><option value="other">مدينة أخرى</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="sec-lbl" style="margin-top:1.1rem">📱 بيانات التواصل</div>
+  <div class="frow">
+    <div class="fld"><label>رقم الجوال <span class="req">*</span></label><input type="tel" id="f_phone" placeholder="05xxxxxxxx" maxlength="10" inputmode="numeric"></div>
+    <div class="fld"><label>البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com"></div>
+  </div>
+
+  <div class="sec-lbl" style="margin-top:1.1rem">🏢 معلومات المشروع / الشركة</div>
   <div class="fld"><label>اسم الشركة / المشروع <span class="req">*</span></label><input type="text" id="f_company" placeholder="اسم شركتك أو مشروعك"></div>
   <div class="frow">
     <div class="fld"><label>القطاع <span class="req">*</span></label>
@@ -339,6 +365,11 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
     </div>
   </div>
   <div class="fld"><label>وصف مختصر للمشروع <span class="req">*</span></label><textarea id="f_desc" placeholder="اشرح فكرة مشروعك في جملتين أو ثلاث..."></textarea></div>
+
+  <div style="background:#fef9ec;border:1px solid #fde68a;border-radius:10px;padding:.75rem 1rem;font-size:.75rem;color:#92400e;margin-top:.5rem">
+    ⚠️ تأكد من صحة بياناتك — المعلومات الشخصية يجب أن تطابق هويتك الرسمية وتُستخدم لتحقق الجهة
+  </div>
+
   <div class="fnav"><span class="step-ctr">1 / 4</span><button class="btn-next" onclick="go(2)">التالي ←</button></div>
 </div>
 
@@ -750,14 +781,30 @@ function collect() {
     phone: document.getElementById('f_phone').value.trim(),
     company: document.getElementById('f_company').value.trim(),
     challenges: document.getElementById('f_challenges').value.trim(),
+    national_id: document.getElementById('f_national_id').value.trim(),
+    dob: document.getElementById('f_dob').value,
+    gender: document.getElementById('f_gender').value,
+    nationality: document.getElementById('f_nat').value,
+    city: document.getElementById('f_city').value,
   };
 }
 
 async function submitApp() {
-  const req = ['f_name','f_email','f_phone','f_challenges'];
+  const req = ['f_name','f_national_id','f_dob','f_phone','f_email','f_company','f_challenges'];
   let ok = true;
-  req.forEach(id => { const el = document.getElementById(id); if(!el.value.trim()){el.style.borderColor='#ef4444';ok=false;}else{el.style.borderColor='';} });
-  if(!ok){ alert('يرجى إكمال الحقول المطلوبة'); return; }
+  req.forEach(id => { const el = document.getElementById(id); if(el && !el.value.trim()){el.style.borderColor='#ef4444';ok=false;}else if(el){el.style.borderColor='';} });
+  // Validate selects
+  ['f_gender','f_nat','f_city','f_sector'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el && !el.value){ el.style.outline='2px solid #ef4444'; ok=false; } else if(el){ el.style.outline=''; }
+  });
+  // Validate national ID format (10 digits)
+  const nid = document.getElementById('f_national_id');
+  if (nid && nid.value && !/^\d{10}$/.test(nid.value.trim())) {
+    nid.style.borderColor='#ef4444'; ok=false;
+    alert('رقم الهوية يجب أن يكون 10 أرقام'); return;
+  }
+  if(!ok){ alert('يرجى إكمال جميع الحقول المطلوبة'); return; }
 
   // Validate custom criteria answers
   const customList = partnerData?.form_config?.custom_criteria?.filter(c => c.label && c.options?.length >= 2) || [];
@@ -825,6 +872,7 @@ async function submitApp() {
         name: data.name,
         email: data.email,
         phone: data.phone,
+        national_id: data.national_id,
         company: data.company,
         sector: data.sectorName,
         score: data.score,
@@ -832,6 +880,7 @@ async function submitApp() {
         result: data.accepted ? 'approved' : 'rejected',
         ref_num: appRefNum,
         challenges: data.challenges,
+        notes: JSON.stringify({ dob: data.dob, gender: data.gender, nationality: data.nationality, city: data.city }),
       };
       if (Object.keys(uploadedDocs).length) row.docs = uploadedDocs;
 

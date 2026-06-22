@@ -59,7 +59,52 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 
   <div class="links">
     <a href="/register-partner.html" class="reg-link">تسجيل جهة جديدة ←</a>
-    <a href="/">العودة للرئيسية</a>
+    <a href="#" onclick="showForgot();return false;" style="color:#64748b">نسيت كلمة المرور؟</a>
+  </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div id="forgotModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:400px">
+    <!-- Step A: Enter email -->
+    <div id="fp_step_email">
+      <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">🔑 نسيت كلمة المرور؟</div>
+      <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">أدخل بريدك الإلكتروني المسجّل وسنرسل لك رمز التحقق</div>
+      <div class="fld">
+        <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">البريد الإلكتروني</label>
+        <input type="email" id="fp_email" placeholder="name@company.com"
+          style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none"
+          onkeydown="if(event.key==='Enter')sendResetOtp()">
+      </div>
+      <div id="fp_err" style="display:none;font-size:.78rem;color:#f87171;margin-bottom:.75rem"></div>
+      <button onclick="sendResetOtp()" id="fp_send_btn"
+        style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem">
+        إرسال رمز التحقق
+      </button>
+      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer">إلغاء</button>
+    </div>
+
+    <!-- Step B: Enter OTP + new password -->
+    <div id="fp_step_reset" style="display:none">
+      <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">📨 أدخل رمز التحقق</div>
+      <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">تم إرسال رمز مكوّن من 6 أرقام إلى بريدك</div>
+      <div class="fld">
+        <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">رمز التحقق</label>
+        <input type="text" id="fp_otp" placeholder="000000" maxlength="6" inputmode="numeric"
+          style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:1.3rem;color:#38bdf8;outline:none;text-align:center;letter-spacing:.3em;direction:ltr">
+      </div>
+      <div class="fld">
+        <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">كلمة المرور الجديدة</label>
+        <input type="password" id="fp_newpass" placeholder="••••••••"
+          style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none">
+      </div>
+      <div id="fp_reset_err" style="display:none;font-size:.78rem;color:#f87171;margin-bottom:.75rem"></div>
+      <button onclick="doReset()" id="fp_reset_btn"
+        style="width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem">
+        تغيير كلمة المرور
+      </button>
+      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer">إلغاء</button>
+    </div>
   </div>
 </div>
 
@@ -68,6 +113,101 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ===== FORGOT PASSWORD =====
+let _fpOtp = '';
+let _fpPartner = null;
+
+function showForgot() {
+  document.getElementById('forgotModal').style.display = 'flex';
+  document.getElementById('fp_step_email').style.display = 'block';
+  document.getElementById('fp_step_reset').style.display = 'none';
+  document.getElementById('fp_email').value = document.getElementById('loginEmail').value || '';
+  document.getElementById('fp_err').style.display = 'none';
+}
+
+function hideForgot() {
+  document.getElementById('forgotModal').style.display = 'none';
+}
+
+async function sendResetOtp() {
+  const email = document.getElementById('fp_email').value.trim();
+  const errEl = document.getElementById('fp_err');
+  const btn = document.getElementById('fp_send_btn');
+  errEl.style.display = 'none';
+
+  if (!email) { errEl.textContent = 'يرجى إدخال البريد الإلكتروني'; errEl.style.display = 'block'; return; }
+
+  btn.disabled = true; btn.textContent = '⏳ جارٍ الإرسال...';
+
+  // Look up partner
+  const { data: p } = await _sb.from('partners').select('id,email,org_name').eq('email', email).maybeSingle();
+  if (!p) {
+    errEl.textContent = 'البريد الإلكتروني غير مسجّل في النظام.';
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'إرسال رمز التحقق';
+    return;
+  }
+  _fpPartner = p;
+
+  // Generate OTP
+  _fpOtp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiry = Date.now() + 10 * 60 * 1000;
+  sessionStorage.setItem('rafd_reset_otp', JSON.stringify({ otp: _fpOtp, expiry, email }));
+
+  // Send OTP email
+  try {
+    await fetch('/.netlify/functions/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp: _fpOtp, fname: p.org_name }),
+    });
+  } catch(e) { console.error('OTP send error:', e); }
+
+  btn.disabled = false; btn.textContent = 'إرسال رمز التحقق';
+  document.getElementById('fp_step_email').style.display = 'none';
+  document.getElementById('fp_step_reset').style.display = 'block';
+}
+
+async function doReset() {
+  const otp = document.getElementById('fp_otp').value.trim();
+  const newpass = document.getElementById('fp_newpass').value;
+  const errEl = document.getElementById('fp_reset_err');
+  const btn = document.getElementById('fp_reset_btn');
+  errEl.style.display = 'none';
+
+  if (!otp || otp.length !== 6) { errEl.textContent = 'يرجى إدخال رمز التحقق المكوّن من 6 أرقام'; errEl.style.display = 'block'; return; }
+  if (!newpass || newpass.length < 6) { errEl.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; errEl.style.display = 'block'; return; }
+
+  // Verify OTP
+  const stored = JSON.parse(sessionStorage.getItem('rafd_reset_otp') || 'null');
+  if (!stored || stored.otp !== otp || Date.now() > stored.expiry) {
+    errEl.textContent = 'رمز التحقق غير صحيح أو انتهت صلاحيته. أعد الإرسال.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = '⏳ جارٍ التحديث...';
+
+  // Update password
+  const encoded = btoa(newpass);
+  const { error } = await _sb.from('partners').update({ password: encoded }).eq('id', _fpPartner.id);
+
+  btn.disabled = false; btn.textContent = 'تغيير كلمة المرور';
+
+  if (error) { errEl.textContent = 'خطأ: ' + error.message; errEl.style.display = 'block'; return; }
+
+  sessionStorage.removeItem('rafd_reset_otp');
+  hideForgot();
+  document.getElementById('loginEmail').value = _fpPartner.email;
+  document.getElementById('loginPass').value = '';
+  const pendingEl = document.getElementById('pendingMsg');
+  pendingEl.textContent = '✅ تم تغيير كلمة المرور. يمكنك الدخول الآن.';
+  pendingEl.style.display = 'block';
+  pendingEl.style.background = 'rgba(16,185,129,.1)';
+  pendingEl.style.borderColor = 'rgba(16,185,129,.25)';
+  pendingEl.style.color = '#34d399';
+}
 
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
