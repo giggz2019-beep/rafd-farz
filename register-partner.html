@@ -269,7 +269,7 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
     <div class="fld">
       <label><span class="req">*</span>البريد الإلكتروني الرسمي</label>
       <input type="email" id="f_email" placeholder="name@company.com">
-      <div class="hint">سيُستخدم للدخول إلى لوحة التحكم</div>
+      <div class="hint">سيُرسَل رمز التفعيل على هذا البريد</div>
     </div>
     <div class="frow">
       <div class="fld">
@@ -409,10 +409,10 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
   </div>
 
   <button class="btn-submit" id="submitBtn" onclick="submitForm()">
-    <span id="submitBtnText">إرسال طلب التسجيل</span>
+    <span id="submitBtnText">إرسال رمز التفعيل</span>
     <span id="submitBtnIcon">←</span>
   </button>
-  <p style="text-align:center;color:#475569;font-size:.78rem;margin-top:.75rem">سيتم مراجعة طلبك من فريق RAFD وستُفعَّل لوحة التحكم فور الموافقة</p>
+  <p style="text-align:center;color:#475569;font-size:.78rem;margin-top:.75rem">سيُرسَل رمز تفعيل مكوّن من 6 أرقام على بريدك الإلكتروني</p>
 </div>
 
 <!-- OTP SCREEN -->
@@ -444,8 +444,8 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
 <!-- SUCCESS -->
 <div class="success-screen" id="successSection">
   <div class="success-icon">✓</div>
-  <div class="success-title">تم استلام طلبك!</div>
-  <div class="success-desc">شكراً لتسجيلك في منصة RAFD Digital. سيقوم فريقنا بمراجعة طلبك وتفعيل حسابك في أقرب وقت.</div>
+  <div class="success-title">تم تفعيل حسابك!</div>
+  <div class="success-desc">مرحباً بك في منصة RAFD Digital. تم التحقق من بريدك الإلكتروني وتفعيل حسابك بنجاح.</div>
   <div class="ref-box">
     <div class="ref-label">رقم الحساب المرجعي</div>
     <div class="ref-num" id="refNum">—</div>
@@ -454,15 +454,15 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
     <h4>ماذا يمكنك فعله الآن؟</h4>
     <div class="ss-item">
       <div class="ss-num">1</div>
-      <div class="ss-text">سيراجع فريق RAFD طلبك خلال 24 ساعة عمل</div>
+      <div class="ss-text">سجّل دخولك مباشرة بالبريد وكلمة المرور</div>
     </div>
     <div class="ss-item">
       <div class="ss-num">2</div>
-      <div class="ss-text">بعد الموافقة يمكنك الدخول بالبريد وكلمة المرور</div>
+      <div class="ss-text">استكشف لوحة التحكم وابدأ بإضافة طلباتك</div>
     </div>
     <div class="ss-item">
       <div class="ss-num">3</div>
-      <div class="ss-text">استكشف لوحة التحكم وابدأ بإضافة طلباتك</div>
+      <div class="ss-text">تواصل مع فريقنا لأي استفسار أو دعم</div>
     </div>
   </div>
   <a href="/partner-login.html" class="btn-login-now">الذهاب لصفحة الدخول ←</a>
@@ -694,51 +694,56 @@ async function submitForm() {
     }
   } catch(e) { console.warn('email check:', e); }
 
-  btnText.textContent = 'جاري الحفظ...';
+  btnText.textContent = 'جاري الإرسال...';
 
   const now = new Date();
   const refNum = 'RAFD-' + now.getFullYear() + '-' + String(Math.floor(Math.random()*90000)+10000);
+  const priceMap = {trial:0, basic:499, pro:999};
+
+  pendingPartner = {
+    refNum,
+    org:      document.getElementById('f_orgname').value.trim(),
+    orgtype:  document.getElementById('f_orgtype').value,
+    city:     document.getElementById('f_city').value,
+    website:  document.getElementById('f_website').value.trim(),
+    fname:    document.getElementById('f_fname').value.trim(),
+    lname:    document.getElementById('f_lname').value.trim(),
+    title:    document.getElementById('f_title').value.trim(),
+    phone, email,
+    password: btoa(pass),
+    password_plain: pass,
+    plan:     selectedPkg,
+    price:    priceMap[selectedPkg],
+    purpose:  document.getElementById('f_purpose').value,
+    volume:   document.getElementById('f_volume').value,
+    notes:    document.getElementById('f_notes').value.trim(),
+  };
 
   try {
-    const { data, error } = await _sb.from('partners').insert([{
-      org_name:  document.getElementById('f_orgname').value.trim(),
+    const { error } = await _sb.auth.signInWithOtp({
       email,
-      phone,
-      org_type:  document.getElementById('f_orgtype').value,
-      city:      document.getElementById('f_city').value,
-      password:  btoa(pass),
-      status:    'pending',
-      fname:     document.getElementById('f_fname').value.trim(),
-      lname:     document.getElementById('f_lname').value.trim(),
-      title:     document.getElementById('f_title').value.trim(),
-      website:   document.getElementById('f_website').value.trim(),
-      plan:      selectedPkg,
-      purpose:   document.getElementById('f_purpose').value,
-      volume:    document.getElementById('f_volume').value,
-      notes:     document.getElementById('f_notes').value.trim(),
-      ref_num:   refNum,
-    }]).select().single();
-
+      options: { shouldCreateUser: true }
+    });
     if (error) throw error;
 
-    // حفظ الجلسة
-    localStorage.setItem('rafd_partner_session', JSON.stringify({
-      id: data.id, email: data.email, org: data.org_name
-    }));
-
-    // عرض شاشة النجاح
-    document.getElementById('refNum').textContent = refNum;
+    // أظهر شاشة إدخال الرمز
     document.getElementById('formSection').style.display = 'none';
-    document.getElementById('successSection').style.display = 'block';
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    document.getElementById('otpSection').style.display = 'block';
+    document.getElementById('otpEmailDisplay').textContent = email;
+    window.scrollTo({top:0, behavior:'smooth'});
+    startTimer(600);
+    setTimeout(() => document.getElementById('otp0').focus(), 300);
 
   } catch (err) {
-    console.error('Register error:', err);
-    const msg = err?.message || err?.details || 'تعذّر التسجيل — يرجى المحاولة مرة أخرى';
+    console.error('OTP error:', err);
+    const msg = err?.message || err?.error_description ||
+                (err?.status ? 'خطأ ' + err.status : '') ||
+                'تعذّر إرسال الرمز — تأكد من البريد أو حاول لاحقاً';
     setErr('f_email', msg);
     document.getElementById('f_email').scrollIntoView({behavior:'smooth', block:'center'});
+  } finally {
     btn.disabled = false;
-    btnText.textContent = 'إرسال طلب التسجيل';
+    btnText.textContent = 'إرسال رمز التفعيل';
   }
 }
 
