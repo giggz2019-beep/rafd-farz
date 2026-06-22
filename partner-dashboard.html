@@ -119,6 +119,13 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
 .modal-body{padding:1.5rem}
 .modal-footer{padding:1rem 1.5rem;border-top:1px solid #334155;display:flex;gap:.75rem;justify-content:flex-end}
 
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);padding:.75rem 1.75rem;border-radius:14px;font-size:.88rem;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.toast.show{opacity:1}
+.toast.success{background:rgba(16,185,129,.95);color:#fff}
+.toast.error{background:rgba(239,68,68,.95);color:#fff}
+.toast.warn{background:rgba(245,158,11,.95);color:#0f172a}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
   .sidebar{width:100%;height:auto;position:relative}
@@ -178,7 +185,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <div class="page-title">مرحباً، <span id="welcome_name">—</span> 👋</div>
         <div class="page-sub" id="welcome_sub">لوحة التحكم الخاصة بجهتك</div>
       </div>
-      <button class="btn-primary" onclick="showPage('new-request',document.querySelector('.nav-item:nth-child(5)'))">➕ طلب جديد</button>
+      <button class="btn-primary" onclick="showPage('new-request',document.querySelector('[onclick*=\"new-request\"]'))">➕ طلب جديد</button>
     </div>
 
     <div id="status_alert"></div>
@@ -704,7 +711,7 @@ function resultBadge(result, score) {
 function submitRequest() {
   const name = document.getElementById('nf_name').value.trim();
   const purpose = document.getElementById('nf_purpose').value;
-  if (!name || !purpose) { alert('يرجى إدخال الاسم وغرض الطلب'); return; }
+  if (!name || !purpose) { toast('يرجى إدخال الاسم وغرض الطلب', 'warn'); return; }
   const score = parseInt(document.getElementById('nf_score').value) || null;
   const result = score !== null ? (score >= 70 ? 'approved' : 'rejected') : 'pending';
 
@@ -735,7 +742,8 @@ function submitRequest() {
   renderRecentRequests();
   showPage('requests', null);
   renderAllRequests();
-  alert('✅ تم حفظ الطلب بنجاح!\nالنتيجة: ' + (result === 'approved' ? 'مقبول' : result === 'rejected' ? 'مرفوض' : 'قيد المراجعة'));
+  const resultLabel = result === 'approved' ? 'مقبول' : result === 'rejected' ? 'مرفوض' : 'قيد المراجعة';
+  toast('✅ تم حفظ الطلب — النتيجة: ' + resultLabel, result === 'approved' ? 'success' : result === 'rejected' ? 'error' : 'warn');
 }
 
 function clearRequestForm() {
@@ -744,7 +752,7 @@ function clearRequestForm() {
 }
 
 function deleteRequest(id) {
-  if (!confirm('هل تريد حذف هذا الطلب؟')) return;
+  if (!window.confirm('هل تريد حذف هذا الطلب؟')) return;
   let all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
   all = all.filter(r => r.id !== id);
   localStorage.setItem('rafd_partner_requests', JSON.stringify(all));
@@ -797,19 +805,21 @@ async function saveSettings() {
   partner.phone = document.getElementById('set_phone').value.trim();
   await updatePartnerInStorage();
   initUI();
-  alert('✅ تم حفظ التغييرات بنجاح!');
+  toast('✅ تم حفظ التغييرات بنجاح!');
 }
 
 async function changePassword() {
   const p1 = document.getElementById('set_newpass').value;
   const p2 = document.getElementById('set_newpass2').value;
-  if (p1.length < 8) { alert('كلمة المرور يجب أن تكون 8 أحرف على الأقل'); return; }
-  if (p1 !== p2) { alert('كلمتا المرور غير متطابقتين'); return; }
+  if (p1.length < 8) { toast('كلمة المرور يجب أن تكون 8 أحرف على الأقل', 'warn'); return; }
+  if (p1 !== p2) { toast('كلمتا المرور غير متطابقتين', 'error'); return; }
   partner.password = btoa(p1);
   await updatePartnerInStorage();
+  // تحديث كلمة المرور في Supabase Auth أيضاً
+  try { await _sb.auth.updateUser({ password: p1 }); } catch(e) { console.warn('Auth pass update:', e); }
   document.getElementById('set_newpass').value = '';
   document.getElementById('set_newpass2').value = '';
-  alert('✅ تم تحديث كلمة المرور بنجاح!');
+  toast('✅ تم تحديث كلمة المرور بنجاح!');
 }
 
 async function updatePartnerInStorage() {
@@ -865,25 +875,22 @@ function renderSubscription() {
 
 function requestUpgrade(plan) {
   const planNames = {trial:'التجريبية', basic:'الأساسية', pro:'المتقدمة'};
-  if (confirm(`هل تريد طلب الترقية إلى الباقة ${planNames[plan]}؟\nسيتم إشعار فريق RAFD بطلبك.`)) {
-    // Save upgrade request to support messages
-    const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
-    msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject: 'طلب ترقية باقة', msg: `طلب ترقية من ${partner.plan} إلى ${plan}`, date: new Date().toLocaleDateString('ar-SA')});
-    localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
-    alert('✅ تم إرسال طلب الترقية! سيتواصل معك فريقنا خلال 24 ساعة.');
-  }
+  const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
+  msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject: 'طلب ترقية باقة', msg: `طلب ترقية من ${partner.plan} إلى ${plan}`, date: new Date().toLocaleDateString('ar-SA')});
+  localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
+  toast('✅ تم إرسال طلب الترقية! سيتواصل معك فريقنا خلال 24 ساعة.');
 }
 
 // ===== SUPPORT =====
 function sendSupport() {
   const msg = document.getElementById('sup_msg').value.trim();
   const subject = document.getElementById('sup_subject').value;
-  if (!msg) { alert('يرجى كتابة نص الرسالة'); return; }
+  if (!msg) { toast('يرجى كتابة نص الرسالة', 'warn'); return; }
   const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
   msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject, msg, date: new Date().toLocaleDateString('ar-SA')});
   localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
   document.getElementById('sup_msg').value = '';
-  alert('✅ تم إرسال رسالتك! سيرد عليك فريقنا خلال 24 ساعة عمل.');
+  toast('✅ تم إرسال رسالتك! سيرد عليك فريقنا خلال 24 ساعة عمل.');
 }
 
 // ===== NAVIGATION =====
@@ -901,17 +908,13 @@ function showPage(pageId, navEl) {
 }
 
 function requestApiAccess() {
-  const org = localStorage.getItem('rafd_partner_org') ? JSON.parse(localStorage.getItem('rafd_partner_org')) : {};
-  const name = (org.fname || '') + ' ' + (org.lname || '');
-  const orgName = org.orgName || 'غير محدد';
-  const email = org.email || 'غير محدد';
-  const plan = org.plan || 'trial';
-  if (plan !== 'pro') {
-    alert('⚠️ طلب الوصول للـ API متاح فقط لباقة المتقدمة (999 ر.س). يرجى الترقية أولاً.');
+  if (partner.plan !== 'pro') {
+    toast('⚠️ طلب الوصول للـ API متاح فقط لباقة المتقدمة', 'warn');
     return;
   }
-  const subject = encodeURIComponent('طلب وصول للـ API — ' + orgName);
-  const body = encodeURIComponent('السلام عليكم،\n\nأرغب في طلب الوصول لواجهة برمجة RAFD API.\n\nاسم الجهة: ' + orgName + '\nالمسؤول: ' + name.trim() + '\nالبريد: ' + email + '\nالباقة: المتقدمة\n\nشكراً.');
+  const name = (partner.fname + ' ' + partner.lname).trim();
+  const subject = encodeURIComponent('طلب وصول للـ API — ' + partner.org);
+  const body = encodeURIComponent('السلام عليكم،\n\nأرغب في طلب الوصول لواجهة برمجة RAFD API.\n\nاسم الجهة: ' + partner.org + '\nالمسؤول: ' + name + '\nالبريد: ' + partner.email + '\nالباقة: المتقدمة\n\nشكراً.');
   window.location.href = 'mailto:info@rafd-digital.com?subject=' + subject + '&body=' + body;
 }
 
@@ -919,6 +922,21 @@ async function logout() {
   await _sb.auth.signOut();
   localStorage.removeItem('rafd_partner_session');
   window.location.href = '/partner-login.html';
+}
+
+// ===== TOAST =====
+function toast(msg, type = 'success') {
+  let el = document.getElementById('_toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = '_toast';
+    el.className = 'toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 3500);
 }
 
 // ===== START =====
