@@ -680,6 +680,52 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       </div>
     </div>
 
+    <!-- Required Documents -->
+    <div class="card">
+      <div class="card-title">📎 المستندات المطلوبة من المتقدم</div>
+      <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem">فعّل المستندات التي تريد من المتقدمين رفعها مع طلبهم</div>
+
+      <div style="display:flex;flex-direction:column;gap:.6rem" id="docs_preset_container">
+        <div class="q-card" id="doc_cv">
+          <button class="q-toggle on" id="dt_cv" onclick="toggleDoc('cv')"></button>
+          <div class="q-label" style="flex:1">📄 السيرة الذاتية / ملف CV</div>
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
+            <input type="checkbox" id="dr_cv" style="accent-color:#10b981"> إلزامي
+          </label>
+        </div>
+        <div class="q-card" id="doc_reg">
+          <button class="q-toggle on" id="dt_reg" onclick="toggleDoc('reg')"></button>
+          <div class="q-label" style="flex:1">🏢 سجل تجاري / وثيقة تأسيس</div>
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
+            <input type="checkbox" id="dr_reg" style="accent-color:#10b981"> إلزامي
+          </label>
+        </div>
+        <div class="q-card" id="doc_cert">
+          <button class="q-toggle" id="dt_cert" onclick="toggleDoc('cert')"></button>
+          <div class="q-label" style="flex:1">🎓 شهادات خبرة ومؤهلات</div>
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
+            <input type="checkbox" id="dr_cert" style="accent-color:#10b981"> إلزامي
+          </label>
+        </div>
+        <div class="q-card" id="doc_id">
+          <button class="q-toggle" id="dt_id" onclick="toggleDoc('id')"></button>
+          <div class="q-label" style="flex:1">🪪 صورة هوية وطنية</div>
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
+            <input type="checkbox" id="dr_id" style="accent-color:#10b981"> إلزامي
+          </label>
+        </div>
+      </div>
+
+      <!-- Custom documents -->
+      <div style="border-top:1px solid #1e293b;margin-top:.85rem;padding-top:.85rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem">
+          <div style="font-size:.75rem;color:#64748b">مستندات مخصصة إضافية</div>
+          <button onclick="addCustomDoc()" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:#7dd3fc;border-radius:7px;padding:.3rem .7rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة مستند</button>
+        </div>
+        <div id="custom_docs_container"></div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-title">💡 معاينة الرابط بعد الحفظ</div>
       <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:1rem;font-size:.82rem;color:#94a3b8;line-height:1.8">
@@ -688,9 +734,18 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       </div>
     </div>
 
-    <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-bottom:2rem">
+    <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-bottom:6rem">
       <button class="btn-ghost" onclick="resetFormConfig()">↩️ إعادة تعيين</button>
       <button class="btn-primary" onclick="saveFormConfig()">💾 حفظ وتفعيل النموذج</button>
+    </div>
+  </div>
+
+  <!-- Sticky save bar for form-setup page -->
+  <div id="formStickyBar" style="display:none;position:fixed;bottom:0;right:0;left:260px;background:#1e293b;border-top:1px solid #334155;padding:.85rem 2rem;align-items:center;justify-content:space-between;gap:1rem;z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,.3)">
+    <div id="stickyWeightBadge" style="font-size:.78rem;color:#64748b">مجموع الأوزان: <strong id="sticky_weight" style="color:#10b981">100</strong>/100</div>
+    <div style="display:flex;gap:.65rem">
+      <button class="btn-ghost" onclick="resetFormConfig()" style="padding:.55rem 1rem;font-size:.82rem">↩️ إعادة تعيين</button>
+      <button class="btn-primary" onclick="saveFormConfig()" style="padding:.55rem 1.25rem;font-size:.85rem">💾 حفظ وتفعيل النموذج</button>
     </div>
   </div>
 
@@ -1141,6 +1196,9 @@ function showPage(pageId, navEl) {
   if (pageId === 'settings') renderSettings();
   if (pageId === 'link') renderLinkPage();
   if (pageId === 'form-setup') loadFormConfigUI();
+  // Show/hide sticky save bar
+  const stickyBar = document.getElementById('formStickyBar');
+  if (stickyBar) stickyBar.style.display = pageId === 'form-setup' ? 'flex' : 'none';
 }
 
 function requestApiAccess() {
@@ -1233,8 +1291,11 @@ function copyEmbed() {
 
 // ===== FORM BUILDER =====
 const CRITERIA_IDS = ['edu','exp','prev','stage','cust','team','commit'];
+const DOC_IDS = ['cv','reg','cert','id'];
 const qStates = {};
+const docStates = { cv: true, reg: true, cert: false, id: false };
 let customCriteria = [];
+let customDocs = [];
 
 function toggleQ(id) {
   qStates[id] = !qStates[id];
@@ -1261,8 +1322,45 @@ function updateWeightTotal() {
   customCriteria.forEach(c => { total += c.weight || 0; });
   const display = document.getElementById('weight_total_display');
   const warning = document.getElementById('weight_warning');
+  const sticky = document.getElementById('sticky_weight');
   if (display) { display.textContent = total; display.style.color = total === 100 ? '#10b981' : '#ef4444'; }
+  if (sticky) { sticky.textContent = total; sticky.style.color = total === 100 ? '#10b981' : '#ef4444'; }
   if (warning) warning.style.display = total !== 100 ? 'block' : 'none';
+}
+
+function toggleDoc(id) {
+  docStates[id] = !docStates[id];
+  const btn = document.getElementById('dt_'+id);
+  const card = document.getElementById('doc_'+id);
+  if (btn) btn.classList.toggle('on', docStates[id]);
+  if (card) card.style.opacity = docStates[id] ? '1' : '.45';
+}
+
+function addCustomDoc() {
+  customDocs.push({ label: '', required: false });
+  renderCustomDocs();
+}
+
+function removeCustomDoc(idx) {
+  customDocs.splice(idx, 1);
+  renderCustomDocs();
+}
+
+function renderCustomDocs() {
+  const container = document.getElementById('custom_docs_container');
+  if (!container) return;
+  if (!customDocs.length) { container.innerHTML = ''; return; }
+  container.innerHTML = customDocs.map((d, i) => `
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem">
+      <input type="text" value="${d.label}" placeholder="اسم المستند... مثال: خطة العمل"
+        oninput="customDocs[${i}].label=this.value"
+        style="flex:1;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.45rem .75rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.8rem;outline:none">
+      <label style="display:flex;align-items:center;gap:.3rem;font-size:.72rem;color:#64748b;cursor:pointer;white-space:nowrap">
+        <input type="checkbox" ${d.required?'checked':''} onchange="customDocs[${i}].required=this.checked" style="accent-color:#10b981"> إلزامي
+      </label>
+      <button onclick="removeCustomDoc(${i})" style="background:none;border:none;color:#475569;cursor:pointer;font-size:.9rem">🗑️</button>
+    </div>
+  `).join('');
 }
 
 function addCustomCriterion() {
@@ -1354,9 +1452,26 @@ function loadFormConfigUI() {
     });
     customCriteria = fc.custom_criteria || [];
     renderCustomCriteria();
+
+    // Load docs config
+    const savedDocs = fc.required_docs || {};
+    DOC_IDS.forEach(id => {
+      const active = savedDocs[id]?.active ?? (id === 'cv' || id === 'reg');
+      docStates[id] = active;
+      const btn = document.getElementById('dt_'+id);
+      const card = document.getElementById('doc_'+id);
+      const req = document.getElementById('dr_'+id);
+      if (btn) btn.classList.toggle('on', active);
+      if (card) card.style.opacity = active ? '1' : '.45';
+      if (req) req.checked = savedDocs[id]?.required ?? false;
+    });
+    customDocs = fc.custom_docs || [];
+    renderCustomDocs();
   } else {
     customCriteria = [];
     renderCustomCriteria();
+    customDocs = [];
+    renderCustomDocs();
   }
 
   updateWeightTotal();
@@ -1393,6 +1508,20 @@ async function saveFormConfig() {
     }
   }
 
+  // Collect docs config
+  const required_docs = {};
+  DOC_IDS.forEach(id => {
+    required_docs[id] = {
+      active: docStates[id] !== false,
+      required: document.getElementById('dr_'+id)?.checked ?? false,
+    };
+  });
+
+  // Validate custom docs labels
+  for (let i = 0; i < customDocs.length; i++) {
+    if (!customDocs[i].label.trim()) { toast(`⚠️ يرجى كتابة اسم المستند المخصص رقم ${i+1}`, 'warn'); return; }
+  }
+
   const fc = {
     program_name: programName,
     program_desc: document.getElementById('fc_program_desc').value.trim(),
@@ -1400,6 +1529,8 @@ async function saveFormConfig() {
     is_active: document.getElementById('fc_status').value === 'active',
     criteria,
     custom_criteria: customCriteria,
+    required_docs,
+    custom_docs: customDocs,
     updated_at: new Date().toISOString(),
   };
 
@@ -1445,6 +1576,19 @@ function resetFormConfig() {
   CRITERIA_IDS.forEach(id => { const el = document.getElementById('qw_'+id); if(el) el.value = defaults[id]; });
   customCriteria = [];
   renderCustomCriteria();
+  // Reset docs
+  DOC_IDS.forEach(id => {
+    const def = id === 'cv' || id === 'reg';
+    docStates[id] = def;
+    const btn = document.getElementById('dt_'+id);
+    const card = document.getElementById('doc_'+id);
+    const req = document.getElementById('dr_'+id);
+    if (btn) btn.classList.toggle('on', def);
+    if (card) card.style.opacity = def ? '1' : '.45';
+    if (req) req.checked = false;
+  });
+  customDocs = [];
+  renderCustomDocs();
   updateWeightTotal();
 }
 

@@ -69,6 +69,15 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:#1a3a4a;box-shadow:0 0 0 3px rgba(26,58,74,.07)}
 .fld textarea{resize:vertical;min-height:90px}
 .fld .hint{font-size:.72rem;color:#94a3b8;margin-top:.3rem}
+.upload-zone{border:2px dashed #cbd5e1;border-radius:10px;padding:1rem 1.1rem;cursor:pointer;transition:.2s;background:#fafbfc;text-align:center;position:relative}
+.upload-zone:hover,.upload-zone.has-file{border-color:#1a3a4a;background:#f0f9ff}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-zone .uz-icon{font-size:1.5rem;margin-bottom:.3rem}
+.upload-zone .uz-label{font-size:.78rem;color:#64748b;font-weight:600}
+.upload-zone .uz-hint{font-size:.68rem;color:#94a3b8;margin-top:.2rem}
+.upload-zone .uz-file{font-size:.75rem;color:#10b981;font-weight:700;display:none}
+.upload-zone.has-file .uz-file{display:block}
+.upload-zone.has-file .uz-hint{display:none}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .radio-opts,.check-opts{display:flex;flex-direction:column;gap:.5rem}
 .ropt,.copt{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;border:1.5px solid #e2e8f0;border-radius:10px;cursor:pointer;transition:all .2s;user-select:none}
@@ -433,6 +442,9 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
   <!-- Custom criteria added by partner -->
   <div id="custom_q_container"></div>
 
+  <!-- File uploads required by partner -->
+  <div id="docs_upload_container"></div>
+
   <div class="fnav">
     <button class="btn-prev" onclick="go(3)">← السابق</button>
     <span class="step-ctr">4 / 4</span>
@@ -533,12 +545,68 @@ async function init() {
     document.getElementById('welcomeDesc').textContent = programDesc;
 
     renderCustomQuestions();
+    renderDocsUpload();
 
     document.getElementById('loadingScreen').style.display = 'none';
     document.getElementById('mainContent').style.display = 'block';
   } catch(e) {
     showError('حدث خطأ أثناء تحميل الصفحة. حاول مرة أخرى.');
   }
+}
+
+function renderDocsUpload() {
+  const container = document.getElementById('docs_upload_container');
+  if (!container) return;
+  const fc = partnerData?.form_config;
+  if (!fc) return;
+
+  const presetLabels = { cv: 'السيرة الذاتية / CV', reg: 'سجل تجاري / وثيقة تأسيس', cert: 'شهادات الخبرة والمؤهلات', id: 'صورة هوية وطنية' };
+  const docs = [];
+
+  // Preset docs
+  ['cv','reg','cert','id'].forEach(id => {
+    const d = fc.required_docs?.[id];
+    if (d?.active) docs.push({ id, label: presetLabels[id], required: d.required ?? false });
+  });
+
+  // Custom docs
+  (fc.custom_docs || []).forEach((d, i) => {
+    if (d.label) docs.push({ id: 'cdoc_'+i, label: d.label, required: d.required ?? false });
+  });
+
+  if (!docs.length) return;
+
+  container.innerHTML = `
+    <div style="border-top:1px solid #e5e7eb;padding-top:1.1rem;margin-top:.5rem">
+      <div style="font-size:.78rem;font-weight:700;color:#64748b;margin-bottom:.9rem">📎 المستندات المطلوبة</div>
+      ${docs.map(d => `
+        <div class="fld">
+          <label>${d.label}${d.required ? ' <span class="req">*</span>' : ' <span style="font-size:.7rem;color:#94a3b8">(اختياري)</span>'}</label>
+          <div class="upload-zone" id="uz_${d.id}" onclick="document.getElementById('uf_${d.id}').click()">
+            <input type="file" id="uf_${d.id}" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              onchange="handleFileSelect(this,'${d.id}')" onclick="event.stopPropagation()">
+            <div class="uz-icon">📁</div>
+            <div class="uz-label">اضغط لاختيار الملف</div>
+            <div class="uz-hint">PDF, Word, أو صورة — الحد الأقصى 5MB</div>
+            <div class="uz-file" id="uz_name_${d.id}"></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function handleFileSelect(input, docId) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    alert('حجم الملف يتجاوز 5MB. يرجى اختيار ملف أصغر.');
+    input.value = '';
+    return;
+  }
+  const zone = document.getElementById('uz_'+docId);
+  const nameEl = document.getElementById('uz_name_'+docId);
+  if (zone) zone.classList.add('has-file');
+  if (nameEl) nameEl.textContent = '✅ ' + file.name;
 }
 
 function renderCustomQuestions() {
@@ -700,6 +768,25 @@ async function submitApp() {
     }
   }
 
+  // Validate required file uploads
+  const fc = partnerData?.form_config;
+  const presetLabels = { cv: 'السيرة الذاتية', reg: 'السجل التجاري', cert: 'شهادات الخبرة', id: 'صورة الهوية' };
+  const presetIds = ['cv','reg','cert','id'];
+  for (const id of presetIds) {
+    const d = fc?.required_docs?.[id];
+    if (d?.active && d?.required) {
+      const inp = document.getElementById('uf_'+id);
+      if (!inp?.files?.[0]) { alert(`يرجى رفع: ${presetLabels[id]}`); return; }
+    }
+  }
+  const cDocs = fc?.custom_docs || [];
+  for (let i = 0; i < cDocs.length; i++) {
+    if (cDocs[i].label && cDocs[i].required) {
+      const inp = document.getElementById('uf_cdoc_'+i);
+      if (!inp?.files?.[0]) { alert(`يرجى رفع: ${cDocs[i].label}`); return; }
+    }
+  }
+
   [1,2,3,4].forEach(i => document.getElementById('s'+i).classList.remove('show'));
   document.getElementById('progWrap').style.display = 'none';
   document.getElementById('aiPage').classList.add('show');
@@ -708,22 +795,49 @@ async function submitApp() {
   const data = collect();
   appRefNum = 'APP-' + Date.now().toString().slice(-8);
 
-  // Save to Supabase in background
+  // Upload files + save application in background
   if (partnerData) {
-    _sb.from('applications').insert([{
-      partner_id: partnerData.id,
-      partner_ref: partnerData.ref_num,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      company: data.company,
-      sector: data.sectorName,
-      score: data.score,
-      grade: data.grade,
-      result: data.accepted ? 'approved' : 'rejected',
-      ref_num: appRefNum,
-      challenges: data.challenges,
-    }]).then(({ error }) => { if(error) console.error('Save error:', error); });
+    (async () => {
+      // Upload files to Supabase Storage
+      const uploadedDocs = {};
+      const fc = partnerData.form_config;
+      const presetIds = ['cv','reg','cert','id'];
+      const allDocIds = [
+        ...presetIds.filter(id => fc?.required_docs?.[id]?.active),
+        ...(fc?.custom_docs || []).map((_, i) => 'cdoc_'+i),
+      ];
+
+      for (const docId of allDocIds) {
+        const input = document.getElementById('uf_'+docId);
+        if (!input?.files?.[0]) continue;
+        const file = input.files[0];
+        const filePath = `${partnerData.ref_num}/${appRefNum}/${docId}_${file.name}`;
+        const { error: upErr } = await _sb.storage.from('applicant-docs').upload(filePath, file, { upsert: true });
+        if (!upErr) {
+          const { data: { publicUrl } } = _sb.storage.from('applicant-docs').getPublicUrl(filePath);
+          uploadedDocs[docId] = { name: file.name, url: publicUrl };
+        }
+      }
+
+      const row = {
+        partner_id: partnerData.id,
+        partner_ref: partnerData.ref_num,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company,
+        sector: data.sectorName,
+        score: data.score,
+        grade: data.grade,
+        result: data.accepted ? 'approved' : 'rejected',
+        ref_num: appRefNum,
+        challenges: data.challenges,
+      };
+      if (Object.keys(uploadedDocs).length) row.docs = uploadedDocs;
+
+      const { error } = await _sb.from('applications').insert([row]);
+      if (error) console.error('Save error:', error);
+    })();
   }
 
   runTerminal(data);
