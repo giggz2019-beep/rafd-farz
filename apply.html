@@ -94,6 +94,9 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 .upload-zone:hover{border-color:#1a3a4a;background:#f8fafc}
 .upload-zone p{font-size:.85rem;color:#64748b;margin-top:.4rem}
 .fnav{display:flex;justify-content:space-between;align-items:center;margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid #f1f5f9}
+.fld.err>input,.fld.err>select,.fld.err>textarea{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.09)!important}
+.radio-opts.err .ropt{border-color:#ef4444!important}
+.step-err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);color:#dc2626;border-radius:10px;padding:.65rem 1rem;font-size:.82rem;margin-bottom:.75rem;text-align:right;display:none}
 .btn-prev{background:#f1f5f9;color:#64748b;border:none;padding:.7rem 1.4rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-prev:hover{background:#e2e8f0}
 .btn-next{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.75rem 1.75rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
@@ -893,7 +896,109 @@ function startApp() {
   go(1);
 }
 
+// ===== STEP VALIDATION =====
+function _stepErrShow(stepId, msg) {
+  const s = document.getElementById(stepId);
+  if (!s) return;
+  let d = s.querySelector('.step-err');
+  if (!d) {
+    d = document.createElement('div');
+    d.className = 'step-err';
+    const fnav = s.querySelector('.fnav');
+    fnav ? fnav.before(d) : s.appendChild(d);
+  }
+  d.textContent = '⚠ ' + msg;
+  d.style.display = 'block';
+  d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function _stepErrClear(stepId) {
+  const s = document.getElementById(stepId);
+  s?.querySelector('.step-err')?.style && (s.querySelector('.step-err').style.display = 'none');
+  s?.querySelectorAll('.fld.err').forEach(f => f.classList.remove('err'));
+  s?.querySelectorAll('.radio-opts.err').forEach(r => r.classList.remove('err'));
+}
+function _fieldFail(fieldId, msg, stepId) {
+  const el = document.getElementById(fieldId);
+  el?.closest('.fld')?.classList.add('err');
+  _stepErrShow(stepId, msg);
+  el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => el?.focus(), 400);
+  return false;
+}
+function _radioFail(groupId, msg, stepId) {
+  document.getElementById(groupId)?.classList.add('err');
+  document.getElementById(groupId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  _stepErrShow(stepId, msg);
+  return false;
+}
+
+function validateStep1() {
+  _stepErrClear('s1');
+  const v = id => (document.getElementById(id)?.value || '').trim();
+
+  if (!v('f_name')) return _fieldFail('f_name', 'يرجى إدخال الاسم الكامل', 's1');
+  if (v('f_name').split(/\s+/).filter(Boolean).length < 2) return _fieldFail('f_name', 'يرجى إدخال الاسم الثنائي على الأقل كما في الهوية', 's1');
+
+  const nid = v('f_national_id');
+  if (!/^[12]\d{9}$/.test(nid)) return _fieldFail('f_national_id', 'رقم الهوية يجب أن يبدأ بـ 1 (سعودي) أو 2 (مقيم) ومكوّن من 10 أرقام فقط', 's1');
+
+  const dob = v('f_dob');
+  if (!dob) return _fieldFail('f_dob', 'يرجى إدخال تاريخ الميلاد', 's1');
+  const ageYrs = (Date.now() - new Date(dob)) / (365.25 * 86400000);
+  if (ageYrs < 15) return _fieldFail('f_dob', 'يجب أن يكون عمرك 15 سنة على الأقل للتقديم', 's1');
+  if (ageYrs > 85) return _fieldFail('f_dob', 'تاريخ الميلاد المدخل يبدو غير صحيح — يرجى التحقق', 's1');
+
+  if (!v('f_gender')) return _fieldFail('f_gender', 'يرجى اختيار الجنس', 's1');
+  if (!v('f_nat')) return _fieldFail('f_nat', 'يرجى اختيار الجنسية', 's1');
+  if (!v('f_city')) return _fieldFail('f_city', 'يرجى اختيار المدينة', 's1');
+
+  const phone = v('f_phone');
+  if (!/^05\d{8}$/.test(phone)) return _fieldFail('f_phone', 'رقم الجوال يجب أن يبدأ بـ 05 ويكون 10 أرقام (مثال: 0512345678)', 's1');
+
+  const email = v('f_email');
+  if (!email || !email.includes('@') || !email.split('@')[1]?.includes('.')) return _fieldFail('f_email', 'يرجى إدخال بريد إلكتروني صحيح (مثال: name@domain.com)', 's1');
+
+  if (!v('f_company')) return _fieldFail('f_company', `يرجى إدخال ${(document.getElementById('lbl_company')?.textContent || 'اسم الجهة').replace('*','').trim()}`, 's1');
+  if (!v('f_sector')) return _fieldFail('f_sector', 'يرجى اختيار القطاع', 's1');
+
+  const desc = v('f_desc');
+  if (!desc) return _fieldFail('f_desc', 'يرجى إدخال وصف مختصر', 's1');
+  if (desc.length < 20) return _fieldFail('f_desc', `الوصف قصير جداً (${desc.length} حرف) — يرجى كتابة 20 حرف على الأقل`, 's1');
+
+  return true;
+}
+
+function validateStep2() {
+  _stepErrClear('s2');
+  if (!document.getElementById('f_edu')?.querySelector('.ropt.sel')) return _radioFail('f_edu', 'يرجى اختيار أعلى مؤهل أكاديمي', 's2');
+  const gpaConf = partnerData?.form_config?.edu_gpa;
+  if (gpaConf?.enabled) {
+    const gpa = parseFloat(document.getElementById('f_gpa')?.value);
+    const max = gpaConf.scale || 5;
+    if (isNaN(gpa) || gpa <= 0) return _fieldFail('f_gpa', 'يرجى إدخال المعدل التراكمي (GPA)', 's2');
+    if (gpa > max) return _fieldFail('f_gpa', `المعدل لا يمكن أن يتجاوز ${max}`, 's2');
+  }
+  if (!document.getElementById('f_team')?.value) return _fieldFail('f_team', 'يرجى اختيار عدد أعضاء الفريق', 's2');
+  if (!document.getElementById('f_prev')?.querySelector('.ropt.sel')) return _radioFail('f_prev', 'يرجى الإجابة عن التجربة السابقة في تأسيس شركة', 's2');
+  return true;
+}
+
+function validateStep3() {
+  _stepErrClear('s3');
+  if (!document.getElementById('f_stage')?.querySelector('.ropt.sel')) return _radioFail('f_stage', 'يرجى اختيار مرحلة المشروع الحالية', 's3');
+  if (!document.getElementById('f_cust')?.querySelector('.ropt.sel')) return _radioFail('f_cust', 'يرجى الإجابة عن وضع العملاء الحاليين', 's3');
+  if (!document.getElementById('f_seeking')?.value) return _fieldFail('f_seeking', 'يرجى اختيار التمويل المطلوب', 's3');
+  return true;
+}
+
 function go(n) {
+  // Validate before moving forward (not backward)
+  if (n > curStep) {
+    if (curStep === 1 && !validateStep1()) return;
+    if (curStep === 2 && !validateStep2()) return;
+    if (curStep === 3 && !validateStep3()) return;
+  }
+
   const nf = partnerData?.form_config?.nafath;
 
   // Going from step 1 to step 2: show nafath verification if enabled
