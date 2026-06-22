@@ -719,14 +719,24 @@ async function submitForm() {
     notes:    document.getElementById('f_notes').value.trim(),
   };
 
-  try {
-    const { error } = await _sb.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: true }
-    });
-    if (error) throw error;
+  // توليد رمز OTP محلياً
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+  sessionStorage.setItem('rafd_otp', JSON.stringify({
+    otp, email, expiry: Date.now() + 10 * 60 * 1000
+  }));
 
-    // أظهر شاشة إدخال الرمز
+  try {
+    const res = await fetch('/.netlify/functions/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp, fname: pendingPartner.fname })
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData?.error?.message || errData?.error || 'تعذّر إرسال الرمز');
+    }
+
     document.getElementById('formSection').style.display = 'none';
     document.getElementById('otpSection').style.display = 'block';
     document.getElementById('otpEmailDisplay').textContent = email;
@@ -735,11 +745,8 @@ async function submitForm() {
     setTimeout(() => document.getElementById('otp0').focus(), 300);
 
   } catch (err) {
-    console.error('OTP error:', err);
-    const msg = err?.message || err?.error_description ||
-                (err?.status ? 'خطأ ' + err.status : '') ||
-                'تعذّر إرسال الرمز — تأكد من البريد أو حاول لاحقاً';
-    setErr('f_email', msg);
+    console.error('OTP send error:', err);
+    setErr('f_email', err?.message || 'تعذّر إرسال الرمز — تأكد من البريد أو حاول لاحقاً');
     document.getElementById('f_email').scrollIntoView({behavior:'smooth', block:'center'});
   } finally {
     btn.disabled = false;
@@ -759,17 +766,29 @@ async function verifyOTP() {
   verifyBtn.disabled = true;
   verifyBtn.textContent = 'جاري التحقق...';
 
-  // Verify the 6-digit code with Supabase Auth
-  const { data: authData, error: authError } = await _sb.auth.verifyOtp({
-    email: pendingPartner.email,
-    token: entered,
-    type: 'email'
-  });
+  // التحقق من الرمز عبر sessionStorage
+  let stored = {};
+  try { stored = JSON.parse(sessionStorage.getItem('rafd_otp') || '{}'); } catch(e) {}
 
-  if (authError) {
+  if (!stored.otp || stored.email !== pendingPartner.email) {
+    showOTPError('انتهت صلاحية الرمز — اضغط "إعادة الإرسال"');
     verifyBtn.disabled = false;
     verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
-    showOTPError('رمز التفعيل غير صحيح أو منتهي الصلاحية، يرجى المحاولة مجدداً');
+    return;
+  }
+
+  if (Date.now() > stored.expiry) {
+    sessionStorage.removeItem('rafd_otp');
+    showOTPError('انتهت صلاحية الرمز — اضغط "إعادة الإرسال"');
+    verifyBtn.disabled = false;
+    verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
+    return;
+  }
+
+  if (entered !== stored.otp) {
+    verifyBtn.disabled = false;
+    verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
+    showOTPError('رمز التفعيل غير صحيح، يرجى المحاولة مجدداً');
     const wrap = document.getElementById('otpInputWrap');
     wrap.style.animation = 'none';
     wrap.offsetHeight;
@@ -780,12 +799,10 @@ async function verifyOTP() {
     return;
   }
 
-  // OTP correct — set password in Supabase Auth so future signInWithPassword works
+  // الرمز صحيح
+  sessionStorage.removeItem('rafd_otp');
   clearInterval(timerInterval);
   verifyBtn.textContent = 'جاري الحفظ...';
-  try {
-    await _sb.auth.updateUser({ password: pendingPartner.password_plain });
-  } catch(e) { console.warn('Auth updateUser:', e); }
 
   try {
     const { data, error } = await _sb.from('partners').insert([
@@ -796,7 +813,7 @@ async function verifyOTP() {
         org_type: pendingPartner.orgtype,
         city: pendingPartner.city,
         password: pendingPartner.password,
-        status: 'pending',
+        status: 'approved',
         fname: pendingPartner.fname,
         lname: pendingPartner.lname,
         title: pendingPartner.title,
@@ -833,7 +850,7 @@ async function verifyOTP() {
           org_type: pendingPartner.orgtype,
           city: pendingPartner.city,
           password: pendingPartner.password,
-          status: 'pending',
+          status: 'approved',
         }
       ]).select().single();
       if (error) throw error;
