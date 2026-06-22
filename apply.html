@@ -653,16 +653,17 @@ async function init() {
     const programDesc = fc?.program_desc || `قدّم طلبك وستتلقى قراراً فورياً خلال دقيقتين بناءً على معايير ${data.org_name}.`;
     const orgInitial = (data.org_name || 'R')[0];
 
-    document.getElementById('pageTitle').textContent = `التقديم لـ ${data.org_name} — RAFD Digital`;
-    document.getElementById('hdrOrgName').textContent = data.org_name;
-    document.getElementById('hdrOrgType').textContent = data.org_type || 'جهة شريكة';
-    document.getElementById('welcomePartnerName').textContent = data.org_name;
-    document.getElementById('ph_org_type').textContent = (data.org_type || 'جهة شريكة') + (data.city ? ' · ' + data.city : '');
-    document.getElementById('ph_program_name').textContent = programName;
-    document.getElementById('ph_avatar').textContent = orgInitial;
-    document.getElementById('modalPartnerName').textContent = programName;
-    document.getElementById('termPartnerName').textContent = data.org_name;
-    document.getElementById('welcomeDesc').textContent = programDesc;
+    const _set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+    _set('pageTitle', `التقديم لـ ${data.org_name} — RAFD Digital`);
+    _set('hdrOrgName', data.org_name);
+    _set('hdrOrgType', data.org_type || 'جهة شريكة');
+    _set('welcomePartnerName', data.org_name);
+    _set('ph_org_type', (data.org_type || 'جهة شريكة') + (data.city ? ' · ' + data.city : ''));
+    _set('ph_program_name', programName);
+    _set('ph_avatar', orgInitial);
+    _set('modalPartnerName', programName);
+    _set('termPartnerName', data.org_name);
+    _set('welcomeDesc', programDesc);
 
     // Show pending banner if not yet approved
     if (data.status === 'pending') {
