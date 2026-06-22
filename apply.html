@@ -183,6 +183,9 @@ input[type=number]{-moz-appearance:textfield}
 .cert-ref{font-size:.78rem;color:#475569;font-weight:600}
 .cert-date{font-size:.75rem;color:#64748b}
 .cert-powered{font-size:.72rem;color:#94a3b8;margin-top:.1rem}
+.gauge-card{background:#fff;border-radius:20px;padding:1.5rem 1rem 1rem;margin-bottom:1.1rem;box-shadow:0 4px 20px rgba(0,0,0,.09);border:1px solid #e2e8f0;text-align:center}
+.gauge-verdict{font-size:1rem;font-weight:800;margin-top:.6rem;padding:.4rem 1.4rem;border-radius:20px;display:inline-block;letter-spacing:.3px}
+.gv-ok{background:#dcfce7;color:#059669}.gv-fail{background:#fee2e2;color:#dc2626}
 .result-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
 .btn-cta-p{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.9rem 1.75rem;border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
 .btn-cta-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,58,74,.28)}
@@ -590,6 +593,7 @@ input[type=number]{-moz-appearance:textfield}
 <!-- Result -->
 <div class="result-page" id="resultPage">
   <div id="rHero"></div>
+  <div id="rGauge"></div>
   <div class="reasons-card">
     <h4>📊 تفاصيل التقييم</h4>
     <div id="rReasons"></div>
@@ -1391,6 +1395,44 @@ function runTerminal(data) {
   }, 9000);
 }
 
+function buildGaugeSVG(score, grade, accepted) {
+  const cx = 150, cy = 145, r = 105;
+  const toRad = d => d * Math.PI / 180;
+  const pt = (s, rd) => {
+    const a = toRad(180 - s * 1.8);
+    return [(cx + rd * Math.cos(a)).toFixed(1), (cy - rd * Math.sin(a)).toFixed(1)];
+  };
+  const arcPath = (f, t, col) => {
+    const [x1,y1] = pt(f,r), [x2,y2] = pt(t,r);
+    const la = (t-f)*1.8 > 180 ? 1 : 0;
+    return `<path d="M${x1} ${y1} A${r} ${r} 0 ${la} 0 ${x2} ${y2}" fill="none" stroke="${col}" stroke-width="22" stroke-linecap="round"/>`;
+  };
+  const [nx, ny] = pt(score, 88);
+  const gc = accepted ? '#059669' : '#dc2626';
+  const finalRot = (score / 100 * 180) - 90;
+  return `<div class="gauge-card">
+    <svg viewBox="0 0 300 220" width="100%" style="max-width:280px;display:block;margin:0 auto">
+      <path d="M45 145 A105 105 0 0 0 255 145" fill="none" stroke="#f0f4f8" stroke-width="22"/>
+      ${arcPath(0, 50, '#ef4444')}
+      ${arcPath(50, 70, '#f59e0b')}
+      ${arcPath(70, 100, '#10b981')}
+      <g transform="translate(${cx},${cy})">
+        <line x1="0" y1="-10" x2="0" y2="-88" stroke="#1e293b" stroke-width="4" stroke-linecap="round">
+          <animateTransform attributeName="transform" type="rotate" from="-90" to="${finalRot.toFixed(1)}" dur="1.2s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.22 1 0.36 1"/>
+        </line>
+        <circle r="12" fill="#1e293b"/>
+        <circle r="6.5" fill="#f8fafc"/>
+      </g>
+      <text x="38" y="168" text-anchor="middle" font-size="9" fill="#ef4444" font-family="Arial,sans-serif">غير مقبول</text>
+      <text x="150" y="23" text-anchor="middle" font-size="9" fill="#d97706" font-family="Arial,sans-serif">متوسط</text>
+      <text x="262" y="168" text-anchor="middle" font-size="9" fill="#059669" font-family="Arial,sans-serif">مقبول</text>
+      <text x="${cx}" y="190" text-anchor="middle" font-size="40" font-weight="900" fill="${gc}" font-family="Arial,sans-serif">${grade}</text>
+      <text x="${cx}" y="212" text-anchor="middle" font-size="13" fill="#6b7280" font-family="Arial,sans-serif">${score} / 100</text>
+    </svg>
+    <div class="gauge-verdict ${accepted ? 'gv-ok' : 'gv-fail'}">${accepted ? '✔ مقبول' : '✕ غير مقبول'}</div>
+  </div>`;
+}
+
 function showResult(data) {
   const rp = document.getElementById('resultPage');
   rp.classList.add('show');
@@ -1401,13 +1443,13 @@ function showResult(data) {
   const orgName = partnerData?.org_name || 'RAFD Digital';
   const hero = document.getElementById('rHero');
 
+  document.getElementById('rGauge').innerHTML = buildGaugeSVG(data.score, data.grade, data.accepted);
   if(data.accepted) {
     hero.innerHTML = `
     <div class="result-hero accepted">
       <div class="rh-trophy">🏆</div>
       <div class="rh-title">تهانينا ${data.name}!</div>
       <div class="rh-sub">تم قبول طلبك في <strong>${orgName}</strong></div>
-      <div class="score-box"><div class="sb-label">درجتك النهائية</div><div class="sb-score">${data.score}</div><div class="sb-grade">تقدير ${data.grade}</div></div>
     </div>
     <div class="cert-card accepted-cert">
       <div class="cert-header">
@@ -1430,7 +1472,7 @@ function showResult(data) {
       <div class="cert-footer">
         <div class="cert-ref">رقم الطلب: <strong>${appRefNum}</strong></div>
         <div class="cert-date">تاريخ التقييم: ${today}</div>
-        <div class="cert-powered">معتمد بذكاء اصطناعي RAFD ⚡</div>
+        <div class="cert-powered">RAFD Digital ⚡</div>
       </div>
     </div>`;
     launchConfetti();
@@ -1440,7 +1482,6 @@ function showResult(data) {
       <div class="rh-trophy">📋</div>
       <div class="rh-title">شكراً لتقديمك، ${data.name}</div>
       <div class="rh-sub">للأسف لم يستوفِ طلبك معايير <strong>${orgName}</strong> في هذه الدورة</div>
-      <div class="score-box"><div class="sb-label">درجتك النهائية</div><div class="sb-score">${data.score}</div><div class="sb-grade">تقدير ${data.grade}</div></div>
     </div>
     <div class="cert-card rejected-cert">
       <div class="cert-header">
@@ -1462,7 +1503,7 @@ function showResult(data) {
       <div class="cert-footer">
         <div class="cert-ref">رقم الطلب: <strong>${appRefNum}</strong></div>
         <div class="cert-date">تاريخ التقييم: ${today}</div>
-        <div class="cert-powered">معتمد بذكاء اصطناعي RAFD ⚡</div>
+        <div class="cert-powered">RAFD Digital ⚡</div>
       </div>
     </div>`;
   }
