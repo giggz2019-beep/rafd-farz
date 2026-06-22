@@ -430,6 +430,9 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
       <label class="ropt" onclick="selR(this,'f_commit','no')"><input type="radio" name="commit" value="no"><span>لا، لدي قيود على الوقت</span></label>
     </div>
   </div>
+  <!-- Custom criteria added by partner -->
+  <div id="custom_q_container"></div>
+
   <div class="fnav">
     <button class="btn-prev" onclick="go(3)">← السابق</button>
     <span class="step-ctr">4 / 4</span>
@@ -529,11 +532,40 @@ async function init() {
     document.getElementById('termPartnerName').textContent = data.org_name;
     document.getElementById('welcomeDesc').textContent = programDesc;
 
+    renderCustomQuestions();
+
     document.getElementById('loadingScreen').style.display = 'none';
     document.getElementById('mainContent').style.display = 'block';
   } catch(e) {
     showError('حدث خطأ أثناء تحميل الصفحة. حاول مرة أخرى.');
   }
+}
+
+function renderCustomQuestions() {
+  const container = document.getElementById('custom_q_container');
+  if (!container) return;
+  const custom = partnerData?.form_config?.custom_criteria;
+  if (!custom?.length) return;
+
+  const validQ = custom.filter(c => c.label && c.options?.length >= 2);
+  if (!validQ.length) return;
+
+  container.innerHTML = `<div style="border-top:1px solid #e5e7eb;padding-top:1.1rem;margin-top:.5rem">
+    <div style="font-size:.78rem;font-weight:700;color:#64748b;margin-bottom:.9rem">أسئلة إضافية خاصة بالجهة</div>
+    ${validQ.map((c, i) => `
+    <div class="fld">
+      <label>${c.label} <span class="req">*</span></label>
+      <div class="radio-opts" id="fcq_${i}">
+        ${c.options.map((opt, oi) => `
+          <label class="ropt" onclick="selR(this,'fcq_${i}','${opt.score}')">
+            <input type="radio" name="fcq_${i}" value="${opt.score}">
+            <span>${opt.text}</span>
+          </label>
+        `).join('')}
+      </div>
+    </div>
+  `).join('')}
+  </div>`;
 }
 
 function showError(msg) {
@@ -629,6 +661,15 @@ function collect() {
   const commitSC = W.commit ? Math.round(commitRatio*W.commit) : 0;
   if(W.commit){ score += commitSC; bd.push({l:'الالتزام بمتطلبات البرنامج',s:commitSC,m:W.commit,p:commitSC>=W.commit*0.6}); }
 
+  // Custom criteria scoring
+  const customList = partnerData?.form_config?.custom_criteria?.filter(c => c.label && c.options?.length >= 2) || [];
+  customList.forEach((c, i) => {
+    const checked = document.querySelector(`input[name="fcq_${i}"]:checked`);
+    const s = checked ? parseInt(checked.value) || 0 : 0;
+    score += s;
+    bd.push({l: c.label, s, m: c.weight, p: s >= c.weight * 0.5});
+  });
+
   score = Math.min(100, score);
   const minScore = partnerData?.form_config?.min_score ?? 55;
   const accepted = score >= minScore;
@@ -649,6 +690,15 @@ async function submitApp() {
   let ok = true;
   req.forEach(id => { const el = document.getElementById(id); if(!el.value.trim()){el.style.borderColor='#ef4444';ok=false;}else{el.style.borderColor='';} });
   if(!ok){ alert('يرجى إكمال الحقول المطلوبة'); return; }
+
+  // Validate custom criteria answers
+  const customList = partnerData?.form_config?.custom_criteria?.filter(c => c.label && c.options?.length >= 2) || [];
+  for (let i = 0; i < customList.length; i++) {
+    if (!document.querySelector(`input[name="fcq_${i}"]:checked`)) {
+      alert(`يرجى الإجابة على: ${customList[i].label}`);
+      return;
+    }
+  }
 
   [1,2,3,4].forEach(i => document.getElementById('s'+i).classList.remove('show'));
   document.getElementById('progWrap').style.display = 'none';

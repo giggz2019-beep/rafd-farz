@@ -660,12 +660,23 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_commit" value="5" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
       </div>
 
-      <div class="weight-total">
-        <span>مجموع الأوزان الحالي</span>
+      <!-- Custom criteria -->
+      <div style="border-top:1px solid #1e293b;margin-top:.75rem;padding-top:.75rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+          <div style="font-size:.8rem;color:#64748b;font-weight:600">معايير مخصصة إضافية</div>
+          <button onclick="addCustomCriterion()" style="display:flex;align-items:center;gap:.35rem;background:rgba(74,157,111,.15);border:1px solid rgba(74,157,111,.3);color:#4a9d6f;border-radius:8px;padding:.4rem .85rem;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">
+            ➕ إضافة معيار خاص
+          </button>
+        </div>
+        <div id="custom_criteria_container"></div>
+      </div>
+
+      <div class="weight-total" style="margin-top:.75rem">
+        <span>مجموع الأوزان الكلي</span>
         <strong id="weight_total_display">100</strong>
       </div>
       <div id="weight_warning" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:.6rem 1rem;margin-top:.5rem;font-size:.78rem;color:#f87171">
-        ⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة بالضبط لضمان دقة التقييم.
+        ⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة بالضبط.
       </div>
     </div>
 
@@ -1223,6 +1234,7 @@ function copyEmbed() {
 // ===== FORM BUILDER =====
 const CRITERIA_IDS = ['edu','exp','prev','stage','cust','team','commit'];
 const qStates = {};
+let customCriteria = [];
 
 function toggleQ(id) {
   qStates[id] = !qStates[id];
@@ -1244,15 +1256,79 @@ function toggleQ(id) {
 function updateWeightTotal() {
   let total = 0;
   CRITERIA_IDS.forEach(id => {
-    if (qStates[id] !== false) {
-      total += parseInt(document.getElementById('qw_'+id)?.value || 0);
-    }
+    if (qStates[id] !== false) total += parseInt(document.getElementById('qw_'+id)?.value || 0);
   });
+  customCriteria.forEach(c => { total += c.weight || 0; });
   const display = document.getElementById('weight_total_display');
   const warning = document.getElementById('weight_warning');
-  if (display) display.textContent = total;
-  if (display) display.style.color = total === 100 ? '#10b981' : '#ef4444';
+  if (display) { display.textContent = total; display.style.color = total === 100 ? '#10b981' : '#ef4444'; }
   if (warning) warning.style.display = total !== 100 ? 'block' : 'none';
+}
+
+function addCustomCriterion() {
+  customCriteria.push({ label: '', weight: 10, options: [{text:'',score:10},{text:'',score:0}] });
+  renderCustomCriteria();
+  updateWeightTotal();
+}
+
+function removeCustomCriterion(idx) {
+  customCriteria.splice(idx, 1);
+  renderCustomCriteria();
+  updateWeightTotal();
+}
+
+function addCustomOption(cIdx) {
+  if (customCriteria[cIdx].options.length >= 4) return;
+  customCriteria[cIdx].options.push({text:'', score:0});
+  renderCustomCriteria();
+}
+
+function removeCustomOption(cIdx, oIdx) {
+  if (customCriteria[cIdx].options.length <= 2) return;
+  customCriteria[cIdx].options.splice(oIdx, 1);
+  renderCustomCriteria();
+}
+
+function renderCustomCriteria() {
+  const container = document.getElementById('custom_criteria_container');
+  if (!container) return;
+  if (!customCriteria.length) { container.innerHTML = ''; return; }
+
+  container.innerHTML = customCriteria.map((c, ci) => `
+    <div style="background:#0f172a;border:1px solid rgba(74,157,111,.25);border-radius:12px;padding:1rem 1.1rem;margin-bottom:.75rem">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;flex-wrap:wrap">
+        <span style="background:rgba(74,157,111,.15);color:#4a9d6f;border-radius:6px;padding:.2rem .55rem;font-size:.7rem;font-weight:700;flex-shrink:0">معيار ${ci+1}</span>
+        <input type="text" value="${c.label}" placeholder="اكتب نص السؤال... مثال: هل لديك براءة اختراع؟"
+          oninput="customCriteria[${ci}].label=this.value"
+          style="flex:1;min-width:180px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.5rem .8rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.82rem;outline:none">
+        <div style="display:flex;align-items:center;gap:.35rem;flex-shrink:0">
+          <span style="font-size:.72rem;color:#64748b">الوزن:</span>
+          <input type="number" value="${c.weight}" min="1" max="40"
+            oninput="customCriteria[${ci}].weight=parseInt(this.value)||0;updateWeightTotal()"
+            style="width:48px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.35rem .4rem;color:#38bdf8;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
+          <span style="font-size:.72rem;color:#64748b">نقطة</span>
+        </div>
+        <button onclick="removeCustomCriterion(${ci})" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171;border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.75rem;font-family:'Cairo',sans-serif">🗑️</button>
+      </div>
+      <div style="font-size:.72rem;color:#475569;margin-bottom:.5rem">خيارات الإجابة (حدد النقاط لكل خيار):</div>
+      ${c.options.map((opt, oi) => `
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <input type="text" value="${opt.text}" placeholder="نص الخيار..."
+            oninput="customCriteria[${ci}].options[${oi}].text=this.value"
+            style="flex:1;background:#1e293b;border:1px solid #1e293b;border-radius:6px;padding:.38rem .65rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.78rem;outline:none">
+          <input type="number" value="${opt.score}" min="0" max="${c.weight}"
+            oninput="customCriteria[${ci}].options[${oi}].score=parseInt(this.value)||0"
+            style="width:44px;background:#1e293b;border:1px solid #1e293b;border-radius:6px;padding:.38rem .3rem;color:#10b981;font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:700;text-align:center;outline:none">
+          <span style="font-size:.7rem;color:#475569;white-space:nowrap">نقطة</span>
+          ${c.options.length > 2 ? `<button onclick="removeCustomOption(${ci},${oi})" style="background:none;border:none;color:#334155;cursor:pointer;font-size:.9rem;padding:0 .2rem">✕</button>` : '<span style="width:20px"></span>'}
+        </div>
+      `).join('')}
+      ${c.options.length < 4 ? `
+        <button onclick="addCustomOption(${ci})" style="background:none;border:1px dashed #334155;border-radius:6px;color:#475569;padding:.3rem .75rem;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.75rem;width:100%;margin-top:.25rem;transition:.15s" onmouseover="this.style.borderColor='#4a9d6f';this.style.color='#4a9d6f'" onmouseout="this.style.borderColor='#334155';this.style.color='#475569'">
+          + إضافة خيار
+        </button>` : ''}
+    </div>
+  `).join('');
 }
 
 function loadFormConfigUI() {
@@ -1276,8 +1352,11 @@ function loadFormConfigUI() {
       else { toggle.classList.remove('on'); card.classList.add('disabled'); if(weightInput) weightInput.disabled = true; }
       if (fc.criteria?.[id]?.weight && weightInput) weightInput.value = fc.criteria[id].weight;
     });
+    customCriteria = fc.custom_criteria || [];
+    renderCustomCriteria();
   } else {
-    CRITERIA_IDS.forEach(id => { qStates[id] = true; });
+    customCriteria = [];
+    renderCustomCriteria();
   }
 
   updateWeightTotal();
@@ -1302,12 +1381,25 @@ async function saveFormConfig() {
 
   if (total !== 100) { toast('⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة', 'warn'); return; }
 
+  // Validate custom criteria
+  for (let i = 0; i < customCriteria.length; i++) {
+    if (!customCriteria[i].label.trim()) {
+      toast(`⚠️ يرجى كتابة نص المعيار المخصص رقم ${i+1}`, 'warn'); return;
+    }
+    for (let o = 0; o < customCriteria[i].options.length; o++) {
+      if (!customCriteria[i].options[o].text.trim()) {
+        toast(`⚠️ يرجى كتابة نص الخيار في المعيار ${i+1}`, 'warn'); return;
+      }
+    }
+  }
+
   const fc = {
     program_name: programName,
     program_desc: document.getElementById('fc_program_desc').value.trim(),
     min_score: parseInt(document.getElementById('fc_min_score').value) || 55,
     is_active: document.getElementById('fc_status').value === 'active',
     criteria,
+    custom_criteria: customCriteria,
     updated_at: new Date().toISOString(),
   };
 
@@ -1347,10 +1439,12 @@ function resetFormConfig() {
     const weightInput = document.getElementById('qw_'+id);
     if (toggle) toggle.classList.add('on');
     if (card) card.classList.remove('disabled');
-    if (weightInput) { weightInput.disabled = false; }
+    if (weightInput) weightInput.disabled = false;
   });
   const defaults = {edu:15,exp:20,prev:15,stage:20,cust:15,team:10,commit:5};
   CRITERIA_IDS.forEach(id => { const el = document.getElementById('qw_'+id); if(el) el.value = defaults[id]; });
+  customCriteria = [];
+  renderCustomCriteria();
   updateWeightTotal();
 }
 
