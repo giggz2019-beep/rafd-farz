@@ -44,7 +44,7 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 
 <div class="card">
   <div class="logo-wrap">
-    <div class="logo-icon"><img src="/images/rafd-logo.png" alt="RAFD" style="width:90px;height:auto;object-fit:contain;background:transparent" onerror="this.parentElement.style.background='linear-gradient(135deg,#1a3a4a,#4a9d6f)';this.outerHTML='<span style=&quot;font-size:1.5rem;font-weight:900;color:#fff&quot;>R</span>'"></div>
+    <div class="logo-icon"><img src="/rafd-logo.png" alt="RAFD Digital" style="width:90px;height:auto;object-fit:contain"></div>
     <div class="logo-title">RAFD Digital</div>
     <div class="logo-sub">بوابة الشركاء</div>
     <div class="badge">🤝 منطقة الشركاء</div>
@@ -90,31 +90,31 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
       </div>
     </div>
 
-    <!-- Step 1: National ID -->
+    <!-- Step 1: National ID + Email -->
     <div id="nf_step1">
-      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:1.1rem;text-align:right">أدخل رقم هويتك الوطنية ورقم جوالك للتحقق</div>
+      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:1.1rem;text-align:right">أدخل رقم هويتك الوطنية والبريد الإلكتروني المسجّل</div>
       <input type="text" id="nf_id" placeholder="رقم الهوية الوطنية (10 أرقام)" maxlength="10" inputmode="numeric"
         style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;letter-spacing:.1em;direction:ltr;margin-bottom:.75rem">
-      <input type="tel" id="nf_phone" placeholder="رقم الجوال  05xxxxxxxx" maxlength="10" inputmode="numeric"
-        style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;direction:ltr;margin-bottom:.75rem">
+      <input type="email" id="nf_email" placeholder="البريد الإلكتروني المسجّل"
+        style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right;margin-bottom:.75rem">
       <div id="nf_err1" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
-      <button onclick="sendNafathOtp()" id="nf_send_btn"
+      <button onclick="initNafathLogin()" id="nf_send_btn"
         style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
-        إرسال رمز التحقق
+        طلب التحقق عبر نفاذ
       </button>
       <button onclick="closeNafathModal()" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer">إلغاء</button>
     </div>
 
-    <!-- Step 2: OTP -->
+    <!-- Step 2: Nafath App confirmation -->
     <div id="nf_step2" style="display:none">
-      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:.5rem">تم إرسال رمز التحقق لجوالك</div>
-      <div style="font-size:.72rem;color:#4ade80;margin-bottom:1.1rem" id="nf_phone_hint"></div>
-      <input type="text" id="nf_otp" placeholder="000000" maxlength="6" inputmode="numeric"
-        style="width:100%;padding:1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:1.6rem;font-weight:900;color:#4ade80;outline:none;text-align:center;letter-spacing:.4em;direction:ltr;margin-bottom:.75rem">
+      <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.75rem">افتح تطبيق نفاذ على جوالك وأكّد الطلب</div>
+      <div style="font-size:.75rem;color:#64748b;margin-bottom:.5rem">الرقم العشوائي الذي سيظهر في التطبيق:</div>
+      <div id="nf_random_num" style="font-size:2.4rem;font-weight:900;letter-spacing:.25em;color:#4ade80;font-family:monospace;background:rgba(10,95,63,.15);border:2px solid rgba(10,95,63,.4);border-radius:16px;padding:1.1rem;margin-bottom:1rem;direction:ltr">——</div>
+      <div style="font-size:.72rem;color:#4ade80;margin-bottom:1.1rem">📱 تحقق من إشعار تطبيق نفاذ وأكّد الرقم أعلاه</div>
       <div id="nf_err2" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
-      <button onclick="verifyNafathOtp()" id="nf_verify_btn"
+      <button onclick="confirmNafathLogin()" id="nf_verify_btn"
         style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
-        تأكيد الرمز والدخول
+        ✓ تم التأكيد في تطبيق نفاذ — دخول
       </button>
       <button onclick="document.getElementById('nf_step1').style.display='block';document.getElementById('nf_step2').style.display='none'" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer">← رجوع</button>
     </div>
@@ -185,68 +185,45 @@ function closeNafathModal() {
   document.getElementById('nafathModal').style.display = 'none';
 }
 
-async function sendNafathOtp() {
+let _nafathLoginData = null;
+
+function initNafathLogin() {
   const nid = document.getElementById('nf_id').value.trim();
-  const phone = document.getElementById('nf_phone').value.trim();
+  const email = document.getElementById('nf_email').value.trim();
   const errEl = document.getElementById('nf_err1');
   errEl.style.display = 'none';
 
   if (!/^\d{10}$/.test(nid)) { errEl.textContent = 'رقم الهوية يجب أن يكون 10 أرقام'; errEl.style.display='block'; return; }
-  if (!/^05\d{8}$/.test(phone)) { errEl.textContent = 'يرجى إدخال رقم جوال صحيح يبدأ بـ 05'; errEl.style.display='block'; return; }
+  if (!email.includes('@')) { errEl.textContent = 'يرجى إدخال بريد إلكتروني صحيح'; errEl.style.display='block'; return; }
 
-  const btn = document.getElementById('nf_send_btn');
-  btn.disabled = true; btn.textContent = '⏳ جارٍ التحقق...';
+  // Generate 6-digit random number (simulates what Nafath app would show)
+  const randNum = Math.floor(100000 + Math.random() * 900000).toString();
+  _nafathLoginData = { nid, email, randNum };
 
-  // Look up partner by national_id or phone (or just allow any, OTP confirms identity)
-  _nafathOtp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiry = Date.now() + 10 * 60 * 1000;
-  sessionStorage.setItem('rafd_nafath_otp', JSON.stringify({ otp: _nafathOtp, expiry, nid, phone }));
-
-  try {
-    await fetch('/.netlify/functions/send-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: phone + '@nafath-verify.local', otp: _nafathOtp, fname: 'المستخدم' }),
-    });
-  } catch(e) {}
-
-  // In production, send SMS via Nafath or a gateway. For now, show OTP in console during testing.
-  console.log('Nafath OTP (testing):', _nafathOtp);
-
-  btn.disabled = false; btn.textContent = 'إرسال رمز التحقق';
-  document.getElementById('nf_phone_hint').textContent = '📱 تم إرسال الرمز إلى ' + phone.slice(0,4) + '****' + phone.slice(-2);
+  document.getElementById('nf_random_num').textContent = randNum;
   document.getElementById('nf_step1').style.display = 'none';
   document.getElementById('nf_step2').style.display = 'block';
 }
 
-async function verifyNafathOtp() {
-  const otp = document.getElementById('nf_otp').value.trim();
+async function confirmNafathLogin() {
+  if (!_nafathLoginData) return;
   const errEl = document.getElementById('nf_err2');
   const btn = document.getElementById('nf_verify_btn');
   errEl.style.display = 'none';
+  btn.disabled = true; btn.textContent = '⏳ جارٍ التحقق...';
 
-  const stored = JSON.parse(sessionStorage.getItem('rafd_nafath_otp') || 'null');
-  if (!stored || stored.otp !== otp || Date.now() > stored.expiry) {
-    errEl.textContent = 'رمز التحقق غير صحيح أو انتهت صلاحيته (10 دقائق)';
+  const { data: p, error } = await _sb.from('partners').select('*')
+    .eq('email', _nafathLoginData.email)
+    .maybeSingle();
+
+  btn.disabled = false; btn.textContent = '✓ تم التأكيد في تطبيق نفاذ — دخول';
+
+  if (error || !p) {
+    errEl.textContent = 'لم يُعثر على حساب بهذا البريد. سجّل الدخول بالبريد وكلمة المرور أولاً.';
     errEl.style.display = 'block'; return;
   }
 
-  btn.disabled = true; btn.textContent = '⏳ جارٍ الدخول...';
-
-  // Find partner by national_id stored in notes OR by phone
-  const nid = stored.nid;
-  const { data: p } = await _sb.from('partners').select('*').maybeSingle().or(
-    `national_id.eq.${nid},phone.eq.${stored.phone}`
-  ).limit(1);
-
-  btn.disabled = false; btn.textContent = 'تأكيد الرمز والدخول';
-
-  if (!p) {
-    errEl.textContent = 'لم يتم العثور على حساب مرتبط بهذه البيانات. يرجى تسجيل الدخول بالبريد وكلمة المرور أولاً.';
-    errEl.style.display = 'block'; return;
-  }
-
-  sessionStorage.removeItem('rafd_nafath_otp');
+  _nafathLoginData = null;
   closeNafathModal();
   localStorage.setItem('rafd_partner_session', JSON.stringify({ id: p.id, email: p.email, org: p.org_name }));
   window.location.href = '/partner-dashboard.html';
