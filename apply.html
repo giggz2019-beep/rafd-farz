@@ -226,7 +226,7 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
     <div class="modal-hdr">ℹ️ قبل البدء — ملاحظة مهمة</div>
     <div class="modal-body">
       هذا التقييم يعتمد على إجاباتك الفعلية. يرجى الإجابة بصدق لأن النتيجة تعكس مدى استيفائك لمعايير <strong>الجهة</strong>.<br><br>
-      بعد الإرسال يحلّل الذكاء الاصطناعي بياناتك ويُصدر قراراً.
+      بعد الإرسال تُراجَع بياناتك وفق معايير الجهة ويُصدر قرار خلال دقيقتين.
     </div>
     <button class="btn-modal" onclick="startApp()">ابدأ التقديم الآن ←</button>
   </div>
@@ -292,8 +292,8 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
       </div>
       <div class="step-card">
         <div class="step-num">2</div>
-        <div class="step-title">التحليل الذكي</div>
-        <div class="step-desc">يحلّل النظام بياناتك وفق معايير الجهة</div>
+        <div class="step-title">مراجعة الطلب</div>
+        <div class="step-desc">تُراجَع بياناتك وفق معايير الجهة الشريكة</div>
       </div>
       <div class="step-card">
         <div class="step-num">3</div>
@@ -557,13 +557,13 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 <!-- AI Terminal -->
 <div class="ai-page" id="aiPage">
   <div class="ai-intro">
-    <h2>🤖 جارٍ تحليل طلبك بالذكاء الاصطناعي</h2>
-    <p>يقوم النظام بمعالجة بياناتك وفق معايير <span id="termPartnerName">الجهة</span> — يُرجى الانتظار</p>
+    <h2>⏳ جارٍ مراجعة طلبك</h2>
+    <p>تُعالَج بياناتك وفق معايير <span id="termPartnerName">الجهة</span> — يُرجى الانتظار</p>
   </div>
   <div class="terminal">
     <div class="t-hdr">
       <div class="td r"></div><div class="td y"></div><div class="td g"></div>
-      <span class="t-title">&lt;&gt; Rafd AI Analysis Terminal v2.4</span>
+      <span class="t-title">&lt;&gt; RAFD Assessment System v2.4</span>
     </div>
     <div class="t-body" id="termBody">
       <div class="t-progress-bar"><div class="t-progress-fill" id="tProg"></div></div>
@@ -1301,7 +1301,7 @@ function runTerminal(data) {
     {t:`جارٍ البحث في قاعدة بيانات <span class="hi">${orgName}</span> عن المتقدم...`,d:500},
     {t:`التحقق من هوية <span class="hi">${data.name}</span> عبر نفاذ (سدايا)... ✓`,d:1100},
     {t:`تحليل قطاع <span class="hi">${data.sectorName}</span> ومعايير السوق...`,d:1800},
-    {t:'استدعاء نموذج التقييم <span class="hi">Rafd-AI v2.4</span>...',d:2500},
+    {t:'تطبيق معايير التقييم المعتمدة لدى الجهة...',d:2500},
     {t:'تحليل المؤهلات الأكاديمية والخبرة العملية...',d:3200},
     {t:'تقييم مرحلة المشروع وجاهزيته للسوق...',d:3900},
     {t:'فحص سجل المؤسس والمشاريع السابقة...',d:4600},
