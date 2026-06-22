@@ -141,13 +141,15 @@ input[type=number]{-moz-appearance:textfield}
 .tl-text .bl{color:#60a5fa}
 .result-page{display:none;max-width:660px;margin:2rem auto;padding:0 1.5rem}
 .result-page.show{display:block}
-.result-hero{border-radius:20px;padding:2.25rem;text-align:center;color:#fff;margin-bottom:1.25rem;position:relative;overflow:hidden}
+.result-merged{border-radius:20px;overflow:hidden;margin-bottom:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.14)}
+.result-hero{padding:1.75rem 2rem 1.5rem;text-align:center;color:#fff;position:relative;overflow:hidden}
 .result-hero.accepted{background:linear-gradient(135deg,#064e3b,#065f46)}
 .result-hero.rejected{background:linear-gradient(135deg,#7f1d1d,#991b1b)}
 .result-hero::before{content:'';position:absolute;top:-40%;right:-10%;width:180px;height:180px;background:rgba(255,255,255,.06);border-radius:50%}
-.rh-trophy{font-size:2.75rem;margin-bottom:.6rem;position:relative}
-.rh-title{font-size:1.65rem;font-weight:900;margin-bottom:.4rem;position:relative}
-.rh-sub{font-size:.9rem;opacity:.8;margin-bottom:1.4rem;position:relative}
+.rh-trophy{font-size:2.5rem;margin-bottom:.5rem;position:relative}
+.rh-title{font-size:1.5rem;font-weight:900;margin-bottom:.35rem;position:relative}
+.rh-sub{font-size:.88rem;opacity:.85;position:relative}
+.result-gauge-body{background:#fff;padding:1.25rem 1rem .9rem;text-align:center}
 .score-box{background:rgba(255,255,255,.12);border-radius:14px;padding:1.25rem 2rem;display:inline-block;position:relative}
 .sb-label{font-size:.75rem;opacity:.7;margin-bottom:.25rem}
 .sb-score{font-size:2.75rem;font-weight:900;line-height:1}
@@ -1420,27 +1422,24 @@ function buildGaugeSVG(score, grade, accepted) {
   const [nx, ny] = pt(score, 88);
   const gc = accepted ? '#059669' : '#dc2626';
   const finalRot = (score / 100 * 180) - 90;
-  return `<div class="gauge-card">
-    <svg viewBox="0 0 300 220" width="100%" style="max-width:280px;display:block;margin:0 auto">
-      <path d="M45 145 A105 105 0 0 0 255 145" fill="none" stroke="#f0f4f8" stroke-width="22"/>
-      ${arcPath(0, 50, '#ef4444')}
-      ${arcPath(50, 70, '#f59e0b')}
-      ${arcPath(70, 100, '#10b981')}
-      <g transform="translate(${cx},${cy})">
-        <line x1="0" y1="-10" x2="0" y2="-88" stroke="#1e293b" stroke-width="4" stroke-linecap="round">
-          <animateTransform attributeName="transform" type="rotate" from="-90" to="${finalRot.toFixed(1)}" dur="1.2s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.22 1 0.36 1"/>
-        </line>
-        <circle r="12" fill="#1e293b"/>
-        <circle r="6.5" fill="#f8fafc"/>
-      </g>
-      <text x="38" y="168" text-anchor="middle" font-size="9" fill="#ef4444" font-family="Arial,sans-serif">غير مقبول</text>
-      <text x="150" y="23" text-anchor="middle" font-size="9" fill="#d97706" font-family="Arial,sans-serif">متوسط</text>
-      <text x="262" y="168" text-anchor="middle" font-size="9" fill="#059669" font-family="Arial,sans-serif">مقبول</text>
-      <text x="${cx}" y="190" text-anchor="middle" font-size="40" font-weight="900" fill="${gc}" font-family="Arial,sans-serif">${grade}</text>
-      <text x="${cx}" y="212" text-anchor="middle" font-size="13" fill="#6b7280" font-family="Arial,sans-serif">${score} / 100</text>
-    </svg>
-    <div class="gauge-verdict ${accepted ? 'gv-ok' : 'gv-fail'}">${accepted ? '✔ مقبول' : '✕ غير مقبول'}</div>
-  </div>`;
+  return `<svg viewBox="0 0 300 220" width="100%" style="max-width:270px;display:block;margin:0 auto">
+    <path d="M45 145 A105 105 0 0 0 255 145" fill="none" stroke="#f0f4f8" stroke-width="22"/>
+    ${arcPath(0, 50, '#ef4444')}
+    ${arcPath(50, 70, '#f59e0b')}
+    ${arcPath(70, 100, '#10b981')}
+    <g transform="translate(${cx},${cy})">
+      <line x1="0" y1="-10" x2="0" y2="-88" stroke="#1e293b" stroke-width="4" stroke-linecap="round">
+        <animateTransform attributeName="transform" type="rotate" from="-90" to="${finalRot.toFixed(1)}" dur="1.2s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.22 1 0.36 1"/>
+      </line>
+      <circle r="12" fill="#1e293b"/>
+      <circle r="6.5" fill="#f8fafc"/>
+    </g>
+    <text x="38" y="168" text-anchor="middle" font-size="9" fill="#ef4444" font-family="Arial,sans-serif">غير مقبول</text>
+    <text x="150" y="23" text-anchor="middle" font-size="9" fill="#d97706" font-family="Arial,sans-serif">متوسط</text>
+    <text x="262" y="168" text-anchor="middle" font-size="9" fill="#059669" font-family="Arial,sans-serif">مقبول</text>
+    <text x="${cx}" y="190" text-anchor="middle" font-size="40" font-weight="900" fill="${gc}" font-family="Arial,sans-serif">${grade}</text>
+    <text x="${cx}" y="212" text-anchor="middle" font-size="13" fill="#6b7280" font-family="Arial,sans-serif">${score} / 100</text>
+  </svg>`;
 }
 
 function showResult(data) {
@@ -1453,70 +1452,47 @@ function showResult(data) {
   const orgName = partnerData?.org_name || 'RAFD Digital';
   const hero = document.getElementById('rHero');
 
-  document.getElementById('rGauge').innerHTML = buildGaugeSVG(data.score, data.grade, data.accepted);
-  if(data.accepted) {
-    hero.innerHTML = `
-    <div class="result-hero accepted">
-      <div class="rh-trophy">🏆</div>
-      <div class="rh-title">تهانينا ${data.name}!</div>
-      <div class="rh-sub">تم قبول طلبك في <strong>${orgName}</strong></div>
+  document.getElementById('rGauge').innerHTML = '';
+  const isOk = data.accepted;
+  hero.innerHTML = `
+  <div class="result-merged">
+    <div class="result-hero ${isOk ? 'accepted' : 'rejected'}">
+      <div class="rh-trophy">${isOk ? '🏆' : '📋'}</div>
+      <div class="rh-title">${isOk ? 'تهانينا ' + data.name + '!' : 'شكراً لتقديمك، ' + data.name}</div>
+      <div class="rh-sub">${isOk ? 'تم قبول طلبك في <strong>' + orgName + '</strong>' : 'للأسف لم يستوفِ طلبك معايير <strong>' + orgName + '</strong> في هذه الدورة'}</div>
     </div>
-    <div class="cert-card accepted-cert">
-      <div class="cert-header">
-        <div style="font-size:.85rem;font-weight:700;color:#1a3a4a">🏢 ${orgName}</div>
-        <div class="cert-badge-accepted">✔ مقبول</div>
-      </div>
-      <div class="cert-divider"></div>
-      <div class="cert-body">
-        <div class="cert-label">بطاقة قبول رسمية</div>
-        <div class="cert-name">${data.name}</div>
-        <div class="cert-detail">تم قبول طلبك لدى <strong>${orgName}</strong></div>
-        <div class="cert-detail">الشركة: <strong>${data.company}</strong> | القطاع: <strong>${data.sectorName}</strong></div>
-        <div class="cert-score-row">
-          <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">الدرجة</div></div>
-          <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">التقدير</div></div>
-          <div class="cert-score-item"><div class="csi-val">✔ مقبول</div><div class="csi-lbl">القرار</div></div>
-        </div>
-      </div>
-      <div class="cert-divider"></div>
-      <div class="cert-footer">
-        <div class="cert-ref">رقم الطلب: <strong>${appRefNum}</strong></div>
-        <div class="cert-date">تاريخ التقييم: ${today}</div>
-        <div class="cert-powered">RAFD Digital ⚡</div>
-      </div>
-    </div>`;
-    launchConfetti();
-  } else {
-    hero.innerHTML = `
-    <div class="result-hero rejected">
-      <div class="rh-trophy">📋</div>
-      <div class="rh-title">شكراً لتقديمك، ${data.name}</div>
-      <div class="rh-sub">للأسف لم يستوفِ طلبك معايير <strong>${orgName}</strong> في هذه الدورة</div>
+    <div class="result-gauge-body">
+      ${buildGaugeSVG(data.score, data.grade, isOk)}
+      <div class="gauge-verdict ${isOk ? 'gv-ok' : 'gv-fail'}">${isOk ? '✔ مقبول' : '✕ غير مقبول'}</div>
     </div>
-    <div class="cert-card rejected-cert">
-      <div class="cert-header">
-        <div style="font-size:.85rem;font-weight:700;color:#1a3a4a">🏢 ${orgName}</div>
-        <div class="cert-badge-rejected">✕ غير مقبول</div>
+  </div>
+  <div class="cert-card ${isOk ? 'accepted-cert' : 'rejected-cert'}">
+    <div class="cert-header">
+      <div style="font-size:.85rem;font-weight:700;color:#1a3a4a">🏢 ${orgName}</div>
+      <div class="${isOk ? 'cert-badge-accepted' : 'cert-badge-rejected'}">${isOk ? '✔ مقبول' : '✕ غير مقبول'}</div>
+    </div>
+    <div class="cert-divider"></div>
+    <div class="cert-body">
+      <div class="cert-label">${isOk ? 'بطاقة قبول رسمية' : 'إشعار رسمي'}</div>
+      <div class="cert-name">${data.name}</div>
+      ${isOk
+        ? `<div class="cert-detail">تم قبول طلبك لدى <strong>${orgName}</strong></div>
+           <div class="cert-detail">الشركة: <strong>${data.company}</strong> | القطاع: <strong>${data.sectorName}</strong></div>`
+        : `<div class="cert-detail cert-sorry">نعتذر عن عدم استيفاء طلبك للمعايير في هذه الدورة. نتمنى لك التوفيق.</div>`}
+      <div class="cert-score-row">
+        <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">الدرجة</div></div>
+        <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">التقدير</div></div>
+        <div class="cert-score-item"><div class="csi-val">${isOk ? '✔ مقبول' : '✕ مرفوض'}</div><div class="csi-lbl">القرار</div></div>
       </div>
-      <div class="cert-divider"></div>
-      <div class="cert-body">
-        <div class="cert-label">إشعار رسمي</div>
-        <div class="cert-name">${data.name}</div>
-        <div class="cert-detail cert-sorry">نعتذر عن عدم استيفاء طلبك للمعايير في هذه الدورة. نتمنى لك التوفيق.</div>
-        <div class="cert-score-row">
-          <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">الدرجة</div></div>
-          <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">التقدير</div></div>
-          <div class="cert-score-item"><div class="csi-val">✕ مرفوض</div><div class="csi-lbl">القرار</div></div>
-        </div>
-      </div>
-      <div class="cert-divider"></div>
-      <div class="cert-footer">
-        <div class="cert-ref">رقم الطلب: <strong>${appRefNum}</strong></div>
-        <div class="cert-date">تاريخ التقييم: ${today}</div>
-        <div class="cert-powered">RAFD Digital ⚡</div>
-      </div>
-    </div>`;
-  }
+    </div>
+    <div class="cert-divider"></div>
+    <div class="cert-footer">
+      <div class="cert-ref">رقم الطلب: <strong>${appRefNum}</strong></div>
+      <div class="cert-date">تاريخ التقييم: ${today}</div>
+      <div class="cert-powered">RAFD Digital ⚡</div>
+    </div>
+  </div>`;
+  if (isOk) launchConfetti();
 
   const rl = document.getElementById('rReasons');
   data.bd.forEach(item => {
