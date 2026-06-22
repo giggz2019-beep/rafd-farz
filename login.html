@@ -22,6 +22,8 @@ h1{font-size:1.5rem;font-weight:800;color:#0f172a;text-align:center;margin-botto
 .forgot a{font-size:.8rem;color:#1a3a4a;text-decoration:none}
 .btn-login{width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:1rem;border-radius:12px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:.5rem}
 .btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,58,74,.25)}
+.btn-login:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#dc2626;border-radius:10px;padding:.7rem 1rem;font-size:.85rem;margin-bottom:1rem;display:none;text-align:center}
 .divider{display:flex;align-items:center;gap:1rem;margin:1.5rem 0}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:#e2e8f0}
 .divider span{font-size:.8rem;color:#94a3b8}
@@ -39,19 +41,94 @@ h1{font-size:1.5rem;font-weight:800;color:#0f172a;text-align:center;margin-botto
   </div>
   <h1>أهلاً بعودتك</h1>
   <p class="sub">سجّل دخولك للوصول إلى لوحة التحكم</p>
+
+  <div class="err" id="errMsg"></div>
+
   <div class="field">
     <label>البريد الإلكتروني</label>
-    <input type="email" placeholder="example@company.com">
+    <input type="email" id="loginEmail" placeholder="example@company.com" onkeydown="if(event.key==='Enter')doLogin()">
   </div>
   <div class="field">
     <label>كلمة المرور</label>
-    <input type="password" placeholder="••••••••">
+    <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     <div class="forgot"><a href="#">نسيت كلمة المرور؟</a></div>
   </div>
-  <button class="btn-login" onclick="window.location.href='/dashboard.html'">تسجيل الدخول</button>
+  <button class="btn-login" id="loginBtn" onclick="doLogin()">تسجيل الدخول</button>
   <div class="divider"><span>أو</span></div>
   <div class="signup-link">ليس لديك حساب؟ <a href="/signup.html">أنشئ حساباً مجانياً</a></div>
   <div class="back-link"><a href="/">← العودة للرئيسية</a></div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('errMsg');
+  const btn   = document.getElementById('loginBtn');
+
+  errEl.style.display = 'none';
+
+  if (!email || !pass) {
+    errEl.textContent = 'يرجى إدخال البريد الإلكتروني وكلمة المرور.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'جاري التحقق...';
+
+  try {
+    const { data: partner, error } = await supabase
+      .from('partners')
+      .select('*')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!partner) {
+      errEl.textContent = 'البريد الإلكتروني غير مسجّل. يرجى إنشاء حساب جديد.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    let passwordMatch = false;
+    try { passwordMatch = (atob(partner.password || '') === pass); }
+    catch(e) { passwordMatch = (partner.password === pass); }
+
+    if (!passwordMatch) {
+      errEl.textContent = 'كلمة المرور غير صحيحة.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    if (partner.status === 'rejected') {
+      errEl.textContent = 'عذراً، حسابك تم رفضه. تواصل مع الدعم للمزيد.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    localStorage.setItem('rafd_session', JSON.stringify({
+      id: partner.id,
+      email: partner.email,
+      org: partner.org_name
+    }));
+    window.location.href = '/dashboard.html';
+
+  } catch(err) {
+    console.error('Login error:', err);
+    errEl.textContent = 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'تسجيل الدخول';
+  }
+}
+</script>
 </body>
 </html>

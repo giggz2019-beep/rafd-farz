@@ -21,6 +21,9 @@ h1{font-size:1.4rem;font-weight:800;color:#0f172a;text-align:center;margin-botto
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .btn-signup{width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:1rem;border-radius:12px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:.5rem}
 .btn-signup:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,58,74,.25)}
+.btn-signup:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#dc2626;border-radius:10px;padding:.7rem 1rem;font-size:.85rem;margin-bottom:1rem;display:none;text-align:center}
+.success{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#059669;border-radius:10px;padding:1rem;font-size:.88rem;margin-bottom:1rem;display:none;text-align:center;line-height:1.8}
 .terms{font-size:.78rem;color:#94a3b8;text-align:center;margin-top:1rem;line-height:1.6}
 .terms a{color:#1a3a4a}
 .login-link{text-align:center;font-size:.875rem;color:#64748b;margin-top:1rem}
@@ -38,44 +41,141 @@ h1{font-size:1.4rem;font-weight:800;color:#0f172a;text-align:center;margin-botto
   </div>
   <h1>أنشئ حسابك مجاناً</h1>
   <p class="sub">ابدأ في أتمتة قرارات جهتك اليوم</p>
-  <div class="field-row">
-    <div class="field">
-      <label>الاسم الأول</label>
-      <input type="text" placeholder="محمد">
+
+  <div class="err" id="errMsg"></div>
+  <div class="success" id="successMsg"></div>
+
+  <div id="formArea">
+    <div class="field-row">
+      <div class="field">
+        <label>الاسم الأول</label>
+        <input type="text" id="fname" placeholder="محمد">
+      </div>
+      <div class="field">
+        <label>اسم العائلة</label>
+        <input type="text" id="lname" placeholder="الأحمدي">
+      </div>
     </div>
     <div class="field">
-      <label>اسم العائلة</label>
-      <input type="text" placeholder="الأحمدي">
+      <label>اسم الجهة / الشركة</label>
+      <input type="text" id="orgname" placeholder="مسرعة الأعمال السعودية">
     </div>
+    <div class="field">
+      <label>نوع الجهة</label>
+      <select id="orgtype">
+        <option value="">اختر نوع الجهة...</option>
+        <option>بنك أو مؤسسة مالية</option>
+        <option>جامعة أو مؤسسة تعليمية</option>
+        <option>مسرعة أو حاضنة أعمال</option>
+        <option>جهة حكومية</option>
+        <option>شركة خاصة</option>
+        <option>أخرى</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="email" placeholder="name@company.com">
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="pass" placeholder="8 أحرف على الأقل">
+    </div>
+    <button class="btn-signup" id="signupBtn" onclick="doSignup()">إنشاء الحساب والبدء</button>
+    <p class="terms">بإنشاء حساب، أنت توافق على <a href="/terms.html">شروط الخدمة</a> و<a href="/privacy.html">سياسة الخصوصية</a></p>
+    <div class="login-link">لديك حساب بالفعل؟ <a href="/login.html">سجّل دخولك</a></div>
+    <div class="back-link"><a href="/">← العودة للرئيسية</a></div>
   </div>
-  <div class="field">
-    <label>اسم الجهة / الشركة</label>
-    <input type="text" placeholder="مسرعة الأعمال السعودية">
-  </div>
-  <div class="field">
-    <label>نوع الجهة</label>
-    <select>
-      <option value="">اختر نوع الجهة...</option>
-      <option>بنك أو مؤسسة مالية</option>
-      <option>جامعة أو مؤسسة تعليمية</option>
-      <option>مسرعة أو حاضنة أعمال</option>
-      <option>جهة حكومية</option>
-      <option>شركة خاصة</option>
-      <option>أخرى</option>
-    </select>
-  </div>
-  <div class="field">
-    <label>البريد الإلكتروني</label>
-    <input type="email" placeholder="name@company.com">
-  </div>
-  <div class="field">
-    <label>كلمة المرور</label>
-    <input type="password" placeholder="8 أحرف على الأقل">
-  </div>
-  <button class="btn-signup" onclick="window.location.href='/dashboard.html'">إنشاء الحساب والبدء</button>
-  <p class="terms">بإنشاء حساب، أنت توافق على <a href="#">شروط الخدمة</a> و<a href="#">سياسة الخصوصية</a></p>
-  <div class="login-link">لديك حساب بالفعل؟ <a href="/login.html">سجّل دخولك</a></div>
-  <div class="back-link"><a href="/">← العودة للرئيسية</a></div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function doSignup() {
+  const fname   = document.getElementById('fname').value.trim();
+  const lname   = document.getElementById('lname').value.trim();
+  const orgname = document.getElementById('orgname').value.trim();
+  const orgtype = document.getElementById('orgtype').value;
+  const email   = document.getElementById('email').value.trim();
+  const pass    = document.getElementById('pass').value;
+  const errEl   = document.getElementById('errMsg');
+  const sucEl   = document.getElementById('successMsg');
+  const btn     = document.getElementById('signupBtn');
+
+  errEl.style.display = 'none';
+  sucEl.style.display = 'none';
+
+  if (!fname || !lname) { showErr('يرجى إدخال الاسم الأول واسم العائلة.'); return; }
+  if (!orgname)         { showErr('يرجى إدخال اسم الجهة.'); return; }
+  if (!orgtype)         { showErr('يرجى اختيار نوع الجهة.'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('يرجى إدخال بريد إلكتروني صحيح.'); return; }
+  if (pass.length < 8)  { showErr('كلمة المرور يجب أن تكون 8 أحرف على الأقل.'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'جاري إنشاء الحساب...';
+
+  try {
+    // Check if email already registered
+    const { data: existing } = await supabase
+      .from('partners')
+      .select('email')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (existing) {
+      showErr('هذا البريد الإلكتروني مسجّل مسبقاً. يرجى تسجيل الدخول.');
+      return;
+    }
+
+    const refNum = 'RAFD-' + new Date().getFullYear() + '-' + (Math.floor(Math.random() * 90000) + 10000);
+
+    const { data, error } = await supabase
+      .from('partners')
+      .insert([{
+        fname,
+        lname,
+        org_name: orgname,
+        org_type: orgtype,
+        email,
+        password: btoa(pass),
+        status: 'approved',
+        plan: 'trial',
+        ref_num: refNum,
+        phone: '',
+        city: '',
+        title: '',
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    localStorage.setItem('rafd_session', JSON.stringify({
+      id: data.id,
+      email: data.email,
+      org: data.org_name
+    }));
+
+    document.getElementById('formArea').style.display = 'none';
+    sucEl.innerHTML = '✅ تم إنشاء حسابك بنجاح!<br>رقم الحساب: <strong>' + refNum + '</strong><br><br><a href="/dashboard.html" style="color:#059669;font-weight:700">الذهاب للوحة التحكم ←</a>';
+    sucEl.style.display = 'block';
+
+  } catch(err) {
+    console.error('Signup error:', err);
+    showErr('حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'إنشاء الحساب والبدء';
+  }
+}
+
+function showErr(msg) {
+  const errEl = document.getElementById('errMsg');
+  errEl.textContent = msg;
+  errEl.style.display = 'block';
+}
+</script>
 </body>
 </html>
