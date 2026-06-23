@@ -235,18 +235,17 @@
     </div>
 
     <!-- أساسية -->
-    <div class="pricing-card popular">
-      <div class="popular-badge">⭐ الأكثر طلباً</div>
+    <div class="pricing-card">
       <div class="card-icon icon-basic">🚀</div>
       <div class="card-name">الأساسية</div>
       <div class="card-desc">مثالية للجهات الناشئة التي تحتاج أتمتة فعّالة بتكلفة معقولة</div>
       <div class="price-wrap">
         <div class="price-main">
-          <span class="price-num" id="basicPrice">499</span>
+          <span class="price-num" id="basicPrice">249</span>
           <span class="price-currency">ر.س</span>
         </div>
         <div class="price-period" id="basicPeriod">شهرياً</div>
-        <div class="price-annual" id="basicAnnual">4,790 ر.س سنوياً — وفّر 198 ر.س</div>
+        <div class="price-annual" id="basicAnnual">2,390 ر.س سنوياً — وفّر 98 ر.س</div>
       </div>
       <ul class="features-list">
         <li>
@@ -290,17 +289,18 @@
     </div>
 
     <!-- متقدمة -->
-    <div class="pricing-card">
+    <div class="pricing-card popular">
+      <div class="popular-badge">⭐ الأكثر طلباً</div>
       <div class="card-icon icon-advanced">💎</div>
       <div class="card-name">المتقدمة</div>
       <div class="card-desc">للجهات الكبيرة التي تحتاج طاقة استيعابية عالية وتكاملات متقدمة</div>
       <div class="price-wrap">
         <div class="price-main">
-          <span class="price-num" id="advPrice">999</span>
+          <span class="price-num" id="advPrice">499</span>
           <span class="price-currency">ر.س</span>
         </div>
         <div class="price-period" id="advPeriod">شهرياً</div>
-        <div class="price-annual" id="advAnnual">9,590 ر.س سنوياً — وفّر 398 ر.س</div>
+        <div class="price-annual" id="advAnnual">4,790 ر.س سنوياً — وفّر 198 ر.س</div>
       </div>
       <ul class="features-list">
         <li>
@@ -362,8 +362,8 @@
         <tr>
           <th style="width:35%">الميزة</th>
           <th class="th-trial">تجريبية<br><small style="font-weight:400;opacity:.8">مجاناً</small></th>
-          <th class="th-basic">الأساسية<br><small style="font-weight:400;opacity:.8">499 ر.س/شهر</small></th>
-          <th class="th-advanced">المتقدمة<br><small style="font-weight:400;opacity:.8">999 ر.س/شهر</small></th>
+          <th class="th-basic">الأساسية<br><small style="font-weight:400;opacity:.8">249 ر.س/شهر</small></th>
+          <th class="th-advanced">المتقدمة<br><small style="font-weight:400;opacity:.8">499 ر.س/شهر</small></th>
         </tr>
       </thead>
       <tbody>
@@ -668,11 +668,11 @@ function toggleBilling() {
   const toggle = document.getElementById('billingToggle');
   toggle.classList.toggle('active', isAnnual);
 
-  document.getElementById('basicPrice').textContent = isAnnual ? '399' : '499';
+  document.getElementById('basicPrice').textContent = isAnnual ? '199' : '249';
   document.getElementById('basicPeriod').textContent = isAnnual ? 'شهرياً (عند الدفع سنوياً)' : 'شهرياً';
   document.getElementById('basicAnnual').classList.toggle('show', isAnnual);
 
-  document.getElementById('advPrice').textContent = isAnnual ? '799' : '999';
+  document.getElementById('advPrice').textContent = isAnnual ? '399' : '499';
   document.getElementById('advPeriod').textContent = isAnnual ? 'شهرياً (عند الدفع سنوياً)' : 'شهرياً';
   document.getElementById('advAnnual').classList.toggle('show', isAnnual);
 }
