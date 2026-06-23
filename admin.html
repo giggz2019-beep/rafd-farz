@@ -154,22 +154,22 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
   <div class="login-card">
     <div class="login-logo">
       <img src="/rafd-logo.png" alt="RAFD" onerror="this.style.display='none'">
-      <h2>لوحة تحكم المدير</h2>
+      <h2 data-i18n="adm.login-h2">لوحة تحكم المدير</h2>
       <p>RAFD Digital Platform</p>
     </div>
     <div style="text-align:center;margin-bottom:1.5rem">
-      <span class="login-badge">🔒 وصول مقيّد — المدير فقط</span>
+      <span class="login-badge" data-i18n="adm.login-badge">🔒 وصول مقيّد — المدير فقط</span>
     </div>
     <div class="form-group">
-      <label>اسم المستخدم</label>
+      <label data-i18n="adm.lbl-user">اسم المستخدم</label>
       <input type="text" id="adminUser" placeholder="admin" autocomplete="off">
     </div>
     <div class="form-group">
-      <label>كلمة المرور</label>
+      <label data-i18n="adm.lbl-pass">كلمة المرور</label>
       <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <button class="btn-login" onclick="doLogin()">دخول للوحة التحكم</button>
-    <p class="login-hint" id="loginErr" style="color:#ef4444;display:none">بيانات خاطئة. حاول مجدداً.</p>
+    <button class="btn-login" onclick="doLogin()"><span data-i18n="adm.btn-login">دخول للوحة التحكم</span></button>
+    <p class="login-hint" id="loginErr" style="color:#ef4444;display:none" data-i18n="adm.login-err">بيانات خاطئة. حاول مجدداً.</p>
   </div>
 </div>
 
@@ -230,8 +230,8 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
           <div class="page-sub" data-i18n="adm.clients-sub">إدارة جميع أصحاب الأعمال المشتركين في المنصة</div>
         </div>
         <div style="display:flex;gap:.5rem">
-          <button class="btn-add" style="background:#334155" onclick="loadFromSupabase()">↻ تحديث</button>
-          <button class="btn-add" onclick="openAddModal()">＋ إضافة شريك</button>
+          <button class="btn-add" style="background:#334155" onclick="loadFromSupabase()"><span data-i18n="adm.btn-refresh">↻ تحديث</span></button>
+          <button class="btn-add" onclick="openAddModal()"><span data-i18n="adm.btn-add-partner">＋ إضافة شريك</span></button>
         </div>
       </div>
 
@@ -239,72 +239,72 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">👥</div>
-          <div class="stat-label">إجمالي العملاء</div>
+          <div class="stat-label" data-i18n="adm.stat-total-clients">إجمالي العملاء</div>
           <div class="stat-value" id="statTotal">0</div>
-          <div class="stat-change up" id="statActive">0 نشط</div>
+          <div class="stat-change up" id="statActive" data-i18n-js="adm.stat-active">0 نشط</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">💰</div>
-          <div class="stat-label">الإيراد الشهري</div>
+          <div class="stat-label" data-i18n="adm.stat-monthly-rev">الإيراد الشهري</div>
           <div class="stat-value" id="statRevenue">0</div>
-          <div class="stat-change up">ريال/شهر</div>
+          <div class="stat-change up" data-i18n="adm.sar-month">ريال/شهر</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">⏳</div>
-          <div class="stat-label">تجارب مجانية</div>
+          <div class="stat-label" data-i18n="adm.stat-trials">تجارب مجانية</div>
           <div class="stat-value" id="statTrials">0</div>
-          <div class="stat-change">تنتهي قريباً</div>
+          <div class="stat-change" data-i18n="adm.expires-soon">تنتهي قريباً</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🏆</div>
-          <div class="stat-label">باقات متقدمة</div>
+          <div class="stat-label" data-i18n="adm.stat-advanced">باقات متقدمة</div>
           <div class="stat-value" id="statPro">0</div>
-          <div class="stat-change up">عميل</div>
+          <div class="stat-change up" data-i18n="adm.clients-lbl">عميل</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">📋</div>
-          <div class="stat-label">إجمالي الطلبات</div>
+          <div class="stat-label" data-i18n="adm.stat-total-req">إجمالي الطلبات</div>
           <div class="stat-value" id="statApps">0</div>
-          <div class="stat-change up">طلب مُقيَّم</div>
+          <div class="stat-change up" data-i18n="adm.req-evaluated">طلب مُقيَّم</div>
         </div>
       </div>
 
       <!-- FILTERS -->
       <div class="filters-bar">
-        <input class="search-box" type="text" placeholder="🔍  ابحث بالاسم أو الجهة أو البريد..." oninput="filterClients(this.value)">
+        <input class="search-box" type="text" placeholder="🔍  ابحث بالاسم أو الجهة أو البريد..." data-i18n-placeholder="adm.search-clients" oninput="filterClients(this.value)">
         <select class="filter-select" onchange="filterByPlan(this.value)">
-          <option value="">جميع الباقات</option>
-          <option value="trial">التجريبية</option>
-          <option value="basic">الأساسية</option>
-          <option value="pro">المتقدمة</option>
+          <option value="" data-i18n-opt="adm.all-plans">جميع الباقات</option>
+          <option value="trial" data-i18n-opt="adm.plan-trial">التجريبية</option>
+          <option value="basic" data-i18n-opt="adm.plan-basic">الأساسية</option>
+          <option value="pro" data-i18n-opt="adm.plan-pro">المتقدمة</option>
         </select>
         <select class="filter-select" onchange="filterByStatus(this.value)">
-          <option value="">جميع الحالات</option>
-          <option value="active">نشط</option>
-          <option value="expired">منتهي</option>
-          <option value="pending">معلّق</option>
+          <option value="" data-i18n-opt="adm.all-status">جميع الحالات</option>
+          <option value="active" data-i18n-opt="adm.status-active">نشط</option>
+          <option value="expired" data-i18n-opt="adm.status-expired">منتهي</option>
+          <option value="pending" data-i18n-opt="adm.status-pending">معلّق</option>
         </select>
       </div>
 
       <!-- TABLE -->
       <div class="table-card">
         <div class="table-head">
-          <span class="table-title">قائمة العملاء</span>
-          <span class="table-count" id="tableCount">0 عميل</span>
+          <span class="table-title" data-i18n="adm.clients-list">قائمة العملاء</span>
+          <span class="table-count" id="tableCount">0</span>
         </div>
         <div style="overflow-x:auto">
           <table>
             <thead>
               <tr>
                 <th>#</th>
-                <th>العميل / الجهة</th>
-                <th>البريد الإلكتروني</th>
-                <th>الباقة</th>
-                <th>تاريخ الاشتراك</th>
-                <th>تاريخ الانتهاء</th>
-                <th>السعر/شهر</th>
-                <th>الحالة</th>
-                <th>إجراءات</th>
+                <th data-i18n="adm.th-client">العميل / الجهة</th>
+                <th data-i18n="adm.th-email">البريد الإلكتروني</th>
+                <th data-i18n="adm.th-plan">الباقة</th>
+                <th data-i18n="adm.th-start">تاريخ الاشتراك</th>
+                <th data-i18n="adm.th-end">تاريخ الانتهاء</th>
+                <th data-i18n="adm.th-price">السعر/شهر</th>
+                <th data-i18n="adm.th-status">الحالة</th>
+                <th data-i18n="adm.th-actions">إجراءات</th>
               </tr>
             </thead>
             <tbody id="clientsTable"></tbody>
@@ -317,38 +317,38 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
     <div id="page-revenue" style="display:none">
       <div class="page-header">
         <div>
-          <div class="page-title">الإيرادات</div>
-          <div class="page-sub">ملخص الإيرادات الشهرية والسنوية</div>
+          <div class="page-title" data-i18n="adm.revenue">الإيرادات</div>
+          <div class="page-sub" data-i18n="adm.revenue-sub">ملخص الإيرادات الشهرية والسنوية</div>
         </div>
       </div>
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">📅</div>
-          <div class="stat-label">الإيراد الشهري الحالي</div>
+          <div class="stat-label" data-i18n="adm.rev-monthly">الإيراد الشهري الحالي</div>
           <div class="stat-value" id="revMonthly">0</div>
-          <div class="stat-change">ريال</div>
+          <div class="stat-change" data-i18n="adm.sar">ريال</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">📊</div>
-          <div class="stat-label">الإيراد السنوي المتوقع</div>
+          <div class="stat-label" data-i18n="adm.rev-annual">الإيراد السنوي المتوقع</div>
           <div class="stat-value" id="revAnnual">0</div>
-          <div class="stat-change">ريال</div>
+          <div class="stat-change" data-i18n="adm.sar">ريال</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🔵</div>
-          <div class="stat-label">باقات أساسية</div>
+          <div class="stat-label" data-i18n="adm.plan-basic">باقات أساسية</div>
           <div class="stat-value" id="revBasic">0</div>
-          <div class="stat-change">ريال/شهر</div>
+          <div class="stat-change" data-i18n="adm.sar-month">ريال/شهر</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🟣</div>
-          <div class="stat-label">باقات متقدمة</div>
+          <div class="stat-label" data-i18n="adm.stat-advanced">باقات متقدمة</div>
           <div class="stat-value" id="revPro">0</div>
-          <div class="stat-change">ريال/شهر</div>
+          <div class="stat-change" data-i18n="adm.sar-month">ريال/شهر</div>
         </div>
       </div>
       <div class="table-card" style="padding:1.5rem">
-        <div class="table-title" style="margin-bottom:1rem">توزيع الإيرادات حسب الباقة</div>
+        <div class="table-title" style="margin-bottom:1rem" data-i18n="adm.rev-by-plan">توزيع الإيرادات حسب الباقة</div>
         <div id="revenueChart"></div>
       </div>
     </div>
@@ -357,34 +357,34 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
     <div id="page-partners" style="display:none">
       <div class="page-header">
         <div>
-          <div class="page-title">إدارة الشركاء</div>
-          <div class="page-sub">الجهات المسجّلة — قبول أو رفض طلباتها</div>
+          <div class="page-title" data-i18n="adm.partners">إدارة الشركاء</div>
+          <div class="page-sub" data-i18n="adm.partners-sub">الجهات المسجّلة — قبول أو رفض طلباتها</div>
         </div>
-        <a href="/register-partner.html" target="_blank" class="btn-add" style="text-decoration:none">🔗 رابط التسجيل</a>
+        <a href="/register-partner.html" target="_blank" class="btn-add" style="text-decoration:none"><span data-i18n="adm.reg-link">🔗 رابط التسجيل</span></a>
       </div>
 
       <!-- Partner Stats -->
       <div class="stats-grid" style="margin-bottom:1.5rem">
-        <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-label">إجمالي الطلبات</div><div class="stat-value" id="ps_total">0</div></div>
-        <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-label">قيد المراجعة</div><div class="stat-value" id="ps_pending">0</div></div>
-        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label">مقبولون</div><div class="stat-value" id="ps_approved">0</div></div>
-        <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-label">مرفوضون</div><div class="stat-value" id="ps_rejected">0</div></div>
+        <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-label" data-i18n="adm.stat-total-req">إجمالي الطلبات</div><div class="stat-value" id="ps_total">0</div></div>
+        <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-label" data-i18n="adm.stat-pending">قيد المراجعة</div><div class="stat-value" id="ps_pending">0</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label" data-i18n="adm.stat-approved">مقبولون</div><div class="stat-value" id="ps_approved">0</div></div>
+        <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-label" data-i18n="adm.stat-rejected">مرفوضون</div><div class="stat-value" id="ps_rejected">0</div></div>
       </div>
 
       <!-- Filter -->
       <div class="filters-bar" style="margin-bottom:1rem">
-        <input class="search-box" type="text" id="partner_search" placeholder="🔍 بحث بالاسم أو البريد..." oninput="filterPartners()">
+        <input class="search-box" type="text" id="partner_search" placeholder="🔍 بحث بالاسم أو البريد..." data-i18n-placeholder="adm.search-partners" oninput="filterPartners()">
         <select class="filter-select" id="partner_filter" onchange="filterPartners()">
-          <option value="">كل الحالات</option>
-          <option value="pending">قيد المراجعة</option>
-          <option value="approved">مقبول</option>
-          <option value="rejected">مرفوض</option>
+          <option value="" data-i18n-opt="adm.all-status">كل الحالات</option>
+          <option value="pending" data-i18n-opt="adm.status-pending">قيد المراجعة</option>
+          <option value="approved" data-i18n-opt="adm.status-approved">مقبول</option>
+          <option value="rejected" data-i18n-opt="adm.status-rejected">مرفوض</option>
         </select>
       </div>
 
       <div class="table-card">
         <div class="table-head">
-          <span class="table-title">قائمة الشركاء المسجّلين</span>
+          <span class="table-title" data-i18n="adm.partners-list">قائمة الشركاء المسجّلين</span>
           <span class="table-count" id="partnersCount">0</span>
         </div>
         <div style="overflow-x:auto">
@@ -392,19 +392,19 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
             <thead>
               <tr>
                 <th>#</th>
-                <th>الجهة</th>
-                <th>نوع الجهة</th>
-                <th>المسؤول</th>
-                <th>البريد</th>
+                <th data-i18n="adm.th-org">الجهة</th>
+                <th data-i18n="adm.th-org-type">نوع الجهة</th>
+                <th data-i18n="adm.th-admin">المسؤول</th>
+                <th data-i18n="adm.th-mail">البريد</th>
                 <th>الباقة</th>
-                <th>تاريخ التسجيل</th>
-                <th>الطلبات</th>
-                <th>الحالة</th>
-                <th>إجراءات</th>
+                <th data-i18n="adm.th-reg-date">تاريخ التسجيل</th>
+                <th data-i18n="adm.th-apps">الطلبات</th>
+                <th data-i18n="adm.th-status">الحالة</th>
+                <th data-i18n="adm.th-actions">إجراءات</th>
               </tr>
             </thead>
             <tbody id="partnersTable">
-              <tr><td colspan="10" style="text-align:center;color:#475569;padding:2rem">لا يوجد شركاء مسجّلون بعد — <a href="/register-partner.html" target="_blank" style="color:#38bdf8">افتح رابط التسجيل</a></td></tr>
+              <tr><td colspan="10" style="text-align:center;color:#475569;padding:2rem"><span data-i18n="adm.no-partners">لا يوجد شركاء مسجّلون بعد</span> — <a href="/register-partner.html" target="_blank" style="color:#38bdf8" data-i18n="adm.open-reg-link">افتح رابط التسجيل</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -415,23 +415,23 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
     <div id="page-trials" style="display:none">
       <div class="page-header">
         <div>
-          <div class="page-title">التجارب المجانية</div>
-          <div class="page-sub">متابعة العملاء في فترة التجربة</div>
+          <div class="page-title" data-i18n="adm.trials">التجارب المجانية</div>
+          <div class="page-sub" data-i18n="adm.trials-sub">متابعة العملاء في فترة التجربة</div>
         </div>
       </div>
       <div class="table-card">
         <div class="table-head">
-          <span class="table-title">عملاء التجربة المجانية</span>
+          <span class="table-title" data-i18n="adm.trials-list">عملاء التجربة المجانية</span>
         </div>
         <div style="overflow-x:auto">
           <table>
             <thead>
               <tr>
-                <th>العميل</th>
-                <th>تاريخ البدء</th>
-                <th>الأيام المتبقية</th>
-                <th>نسبة الاستخدام</th>
-                <th>إجراءات</th>
+                <th data-i18n="adm.th-client-s">العميل</th>
+                <th data-i18n="adm.th-start-date">تاريخ البدء</th>
+                <th data-i18n="adm.th-days-left">الأيام المتبقية</th>
+                <th data-i18n="adm.th-usage">نسبة الاستخدام</th>
+                <th data-i18n="adm.th-actions">إجراءات</th>
               </tr>
             </thead>
             <tbody id="trialsTable"></tbody>
@@ -444,65 +444,65 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
     <div id="page-reports" style="display:none">
       <div class="page-header">
         <div>
-          <div class="page-title">التقارير المتقدمة</div>
-          <div class="page-sub">مؤشرات الأداء وتحليل البيانات</div>
+          <div class="page-title" data-i18n="adm.reports">التقارير المتقدمة</div>
+          <div class="page-sub" data-i18n="adm.reports-sub">مؤشرات الأداء وتحليل البيانات</div>
         </div>
-        <button class="btn-add" onclick="exportCSV()">&#8595; تصدير CSV</button>
+        <button class="btn-add" onclick="exportCSV()"><span data-i18n="adm.btn-export">&#8595; تصدير CSV</span></button>
       </div>
       <!-- KPI CARDS -->
       <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
         <div class="stat-card">
           <div class="stat-icon">💰</div>
-          <div class="stat-label">إجمالي الإيرادات</div>
+          <div class="stat-label" data-i18n="adm.kpi-total-rev">إجمالي الإيرادات</div>
           <div class="stat-value" id="kpi_total_rev">0</div>
-          <div class="stat-change up">ريال/شهر</div>
+          <div class="stat-change up" data-i18n="adm.sar-month">ريال/شهر</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">📈</div>
-          <div class="stat-label">معدل التحويل</div>
+          <div class="stat-label" data-i18n="adm.kpi-conversion">معدل التحويل</div>
           <div class="stat-value" id="kpi_conversion">0%</div>
-          <div class="stat-change up">من تجريبي إلى مدفوع</div>
+          <div class="stat-change up" data-i18n="adm.kpi-conv-sub">من تجريبي إلى مدفوع</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🎯</div>
-          <div class="stat-label">متوسط قيمة العميل</div>
+          <div class="stat-label" data-i18n="adm.kpi-arpu">متوسط قيمة العميل</div>
           <div class="stat-value" id="kpi_arpu">0</div>
-          <div class="stat-change">ريال/شهر</div>
+          <div class="stat-change" data-i18n="adm.sar-month">ريال/شهر</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🤝</div>
-          <div class="stat-label">إيراد الشركاء</div>
+          <div class="stat-label" data-i18n="adm.kpi-partner-rev">إيراد الشركاء</div>
           <div class="stat-value" id="kpi_partner_rev">0</div>
-          <div class="stat-change up">ريال/شهر</div>
+          <div class="stat-change up" data-i18n="adm.sar-month">ريال/شهر</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">📉</div>
-          <div class="stat-label">معدل التخلي</div>
+          <div class="stat-label" data-i18n="adm.kpi-churn">معدل التخلي</div>
           <div class="stat-value" id="kpi_churn">0%</div>
-          <div class="stat-change down">من إجمالي العملاء</div>
+          <div class="stat-change down" data-i18n="adm.kpi-churn-sub">من إجمالي العملاء</div>
         </div>
       </div>
       <!-- CHARTS -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-top:1.5rem">
         <div class="table-card" style="padding:1.5rem">
-          <div class="table-title" style="margin-bottom:1rem">📊 توزيع الباقات</div>
+          <div class="table-title" style="margin-bottom:1rem" data-i18n="adm.chart-plans">📊 توزيع الباقات</div>
           <div id="chartPlans"></div>
         </div>
         <div class="table-card" style="padding:1.5rem">
-          <div class="table-title" style="margin-bottom:1rem">🏢 توزيع أنواع الجهات</div>
+          <div class="table-title" style="margin-bottom:1rem" data-i18n="adm.chart-types">🏢 توزيع أنواع الجهات</div>
           <div id="chartTypes"></div>
         </div>
       </div>
       <!-- EXPORT TABLE -->
       <div class="table-card" style="margin-top:1.5rem">
         <div class="table-head">
-          <span class="table-title">تقرير العملاء الكامل</span>
+          <span class="table-title" data-i18n="adm.full-report">تقرير العملاء الكامل</span>
           <span class="table-count" id="reportCount">0</span>
         </div>
         <div style="overflow-x:auto">
           <table>
             <thead><tr>
-              <th>العميل</th><th>الجهة</th><th>الباقة</th><th>السعر</th><th>الحالة</th><th>تاريخ الاشتراك</th>
+              <th data-i18n="adm.th-client-s">العميل</th><th data-i18n="adm.th-org">الجهة</th><th>الباقة</th><th data-i18n="adm.th-price-s">السعر</th><th>الحالة</th><th data-i18n="adm.th-start">تاريخ الاشتراك</th>
             </tr></thead>
             <tbody id="reportTable"></tbody>
           </table>
@@ -517,7 +517,7 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
 <div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
   <div class="detail-panel">
     <div class="detail-header">
-      <span class="detail-title" id="detailName">تفاصيل العميل</span>
+      <span class="detail-title" id="detailName" data-i18n="adm.client-detail">تفاصيل العميل</span>
       <button class="btn-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body" id="detailBody"></div>
@@ -528,16 +528,16 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
 <div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
   <div class="modal-card">
     <div class="modal-header">
-      <span class="modal-title">إضافة عميل جديد</span>
+      <span class="modal-title" data-i18n="adm.add-client">إضافة عميل جديد</span>
       <button class="btn-close" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-body">
       <div class="form-row">
-        <div class="form-group"><label>الاسم الأول</label><input type="text" id="f_fname" placeholder="محمد"></div>
-        <div class="form-group"><label>اسم العائلة</label><input type="text" id="f_lname" placeholder="الأحمدي"></div>
+        <div class="form-group"><label data-i18n="adm.lbl-fname">الاسم الأول</label><input type="text" id="f_fname" placeholder="محمد"></div>
+        <div class="form-group"><label data-i18n="adm.lbl-lname">اسم العائلة</label><input type="text" id="f_lname" placeholder="الأحمدي"></div>
       </div>
-      <div class="form-group-m"><label>اسم الجهة / الشركة</label><input type="text" id="f_org" placeholder="شركة الأفق للتقنية"></div>
-      <div class="form-group-m"><label>نوع الجهة</label>
+      <div class="form-group-m"><label data-i18n="adm.lbl-org">اسم الجهة / الشركة</label><input type="text" id="f_org" placeholder="شركة الأفق للتقنية"></div>
+      <div class="form-group-m"><label data-i18n="adm.lbl-org-type">نوع الجهة</label>
         <select id="f_type">
           <option value="شركة">شركة</option>
           <option value="جامعة">جامعة</option>
@@ -548,23 +548,23 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
           <option value="أخرى">أخرى</option>
         </select>
       </div>
-      <div class="form-group-m"><label>البريد الإلكتروني</label><input type="email" id="f_email" placeholder="name@company.com"></div>
-      <div class="form-group-m"><label>رقم الجوال</label><input type="tel" id="f_phone" placeholder="05xxxxxxxx"></div>
+      <div class="form-group-m"><label data-i18n="adm.lbl-email">البريد الإلكتروني</label><input type="email" id="f_email" placeholder="name@company.com"></div>
+      <div class="form-group-m"><label data-i18n="adm.lbl-phone">رقم الجوال</label><input type="tel" id="f_phone" placeholder="05xxxxxxxx"></div>
       <div class="form-row">
-        <div class="form-group"><label>الباقة</label>
+        <div class="form-group"><label data-i18n="adm.lbl-plan">الباقة</label>
           <select id="f_plan">
-            <option value="trial">التجريبية (مجانية)</option>
-            <option value="basic">الأساسية (499 ر)</option>
-            <option value="pro">المتقدمة (999 ر)</option>
+            <option value="trial" data-i18n-opt="adm.plan-trial-full">التجريبية (مجانية)</option>
+            <option value="basic" data-i18n-opt="adm.plan-basic-full">الأساسية (499 ر)</option>
+            <option value="pro" data-i18n-opt="adm.plan-pro-full">المتقدمة (999 ر)</option>
           </select>
         </div>
-        <div class="form-group"><label>تاريخ الاشتراك</label><input type="date" id="f_date"></div>
+        <div class="form-group"><label data-i18n="adm.lbl-sub-date">تاريخ الاشتراك</label><input type="date" id="f_date"></div>
       </div>
-      <div class="form-group-m"><label>ملاحظات</label><input type="text" id="f_notes" placeholder="أي ملاحظات إضافية..."></div>
+      <div class="form-group-m"><label data-i18n="adm.lbl-notes">ملاحظات</label><input type="text" id="f_notes" placeholder="أي ملاحظات إضافية..."></div>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeAddModal()">إلغاء</button>
-      <button class="btn-save" onclick="saveClient()">حفظ العميل</button>
+      <button class="btn-cancel" onclick="closeAddModal()"><span data-i18n="db.btn-cancel">إلغاء</span></button>
+      <button class="btn-save" onclick="saveClient()"><span data-i18n="adm.btn-save-client">حفظ العميل</span></button>
     </div>
   </div>
 </div>
@@ -920,7 +920,7 @@ function renderPartnersTable(list) {
   if(countEl) countEl.textContent = partners.length;
   if(!tbody) return;
   if(partners.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#475569;padding:2rem">لا يوجد شركاء مسجّلون بعد — <a href="/register-partner.html" target="_blank" style="color:#38bdf8">افتح رابط التسجيل</a></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#475569;padding:2rem"><span data-i18n="adm.no-partners">لا يوجد شركاء مسجّلون بعد</span> — <a href="/register-partner.html" target="_blank" style="color:#38bdf8" data-i18n="adm.open-reg-link">افتح رابط التسجيل</a></td></tr>';
     return;
   }
   const planLabels = {trial:'تجريبية', basic:'أساسية', pro:'متقدمة'};
@@ -1123,4 +1123,8 @@ function showPage(page) {
 </script>
 <script src="/i18n.js"></script></body>
 </html>
+
+
+
+
 

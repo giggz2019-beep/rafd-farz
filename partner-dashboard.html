@@ -273,10 +273,10 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   <div class="page active" id="page-overview">
     <div class="page-hdr">
       <div>
-        <div class="page-title">مرحباً، <span id="welcome_name">—</span> 👋</div>
+        <div class="page-title"><span data-i18n="db.hello">مرحباً،</span> <span id="welcome_name">—</span> 👋</div>
         <div class="page-sub" id="welcome_sub" data-i18n="db.welcome-sub">لوحة التحكم الخاصة بجهتك</div>
       </div>
-      <button class="btn-primary" onclick="showPage('new-request',document.querySelector('[onclick*=\"new-request\"]'))">➕ طلب جديد</button>
+      <button class="btn-primary" onclick="showPage('new-request',document.querySelector('[onclick*=\"new-request\"]'))"><span data-i18n="db.btn-new-ov">➕ طلب جديد</span></button>
     </div>
 
     <div id="status_alert"></div>
@@ -304,7 +304,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <div class="stat-icon">⏳</div>
         <div class="stat-label" data-i18n="db.stat-pending">قيد المراجعة</div>
         <div class="stat-val" id="stat_pending_req">0</div>
-        <div class="stat-note">طلب</div>
+        <div class="stat-note" data-i18n="db.stat-req">طلب</div>
       </div>
     </div>
 
@@ -314,25 +314,25 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <div style="display:flex;align-items:center;gap:.75rem">
           <span style="font-size:1.5rem">🔗</span>
           <div>
-            <div style="font-weight:800;color:#fff;font-size:.95rem">رابط التقديم الخاص بجهتك</div>
-            <div style="color:#64748b;font-size:.78rem">شاركه مع المتقدمين ليقدّموا مباشرةً</div>
+            <div style="font-weight:800;color:#fff;font-size:.95rem" data-i18n="db.ov-link-title">رابط التقديم الخاص بجهتك</div>
+            <div style="color:#64748b;font-size:.78rem" data-i18n="db.ov-link-sub">شاركه مع المتقدمين ليقدّموا مباشرةً</div>
           </div>
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <button class="btn-sm" id="ov_copy_btn" onclick="copyPartnerLink()" style="background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.3);font-size:.8rem;padding:.4rem .9rem">📋 نسخ الرابط</button>
-          <button class="btn-sm" onclick="gotoLinkPage()" style="font-size:.8rem;padding:.4rem .9rem">عرض الرابط ←</button>
+          <button class="btn-sm" id="ov_copy_btn" onclick="copyPartnerLink()" style="background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.3);font-size:.8rem;padding:.4rem .9rem"><span data-i18n="db.btn-copy">📋 نسخ الرابط</span></button>
+          <button class="btn-sm" onclick="gotoLinkPage()" style="font-size:.8rem;padding:.4rem .9rem"><span data-i18n="db.btn-view-link">عرض الرابط ←</span></button>
         </div>
       </div>
     </div>
 
     <!-- Recent Requests -->
     <div class="card">
-      <div class="card-title">📋 آخر الطلبات</div>
+      <div class="card-title" data-i18n="db.recent-title">📋 آخر الطلبات</div>
       <div class="tbl-wrap">
         <table>
-          <thead><tr><th>#</th><th>اسم المتقدم</th><th>الغرض</th><th>التاريخ</th><th>النتيجة</th></tr></thead>
+          <thead><tr><th>#</th><th data-i18n="db.th-name">اسم المتقدم</th><th data-i18n="db.th-purpose">الغرض</th><th data-i18n="db.th-date">التاريخ</th><th data-i18n="db.th-result">النتيجة</th></tr></thead>
           <tbody id="recent_requests_table">
-            <tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">لا توجد طلبات بعد — <button onclick="showPage('new-request',null)" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.83rem">أضف أول طلب</button></td></tr>
+            <tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span> — <button onclick="showPage('new-request',null)" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.83rem"><span data-i18n="db.add-first">أضف أول طلب</span></button></td></tr>
           </tbody>
         </table>
       </div>
@@ -340,9 +340,9 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
 
     <!-- Usage Bar -->
     <div class="card">
-      <div class="card-title">📊 استخدام الباقة الشهري</div>
+      <div class="card-title" data-i18n="db.usage-title">📊 استخدام الباقة الشهري</div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
-        <span style="color:#94a3b8;font-size:.82rem">الطلبات المستخدمة</span>
+        <span style="color:#94a3b8;font-size:.82rem" data-i18n="db.usage-used">الطلبات المستخدمة</span>
         <span style="color:#e2e8f0;font-weight:700;font-size:.85rem" id="usage_text">0 / —</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" id="usage_bar" style="width:0%"></div></div>
@@ -354,28 +354,28 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   <div class="page" id="page-requests">
     <div class="page-hdr">
       <div>
-        <div class="page-title">الطلبات</div>
-        <div class="page-sub">جميع الطلبات المقدّمة عبر منصتك</div>
+        <div class="page-title" data-i18n="db.requests-title">الطلبات</div>
+        <div class="page-sub" data-i18n="db.requests-sub">جميع الطلبات المقدّمة عبر منصتك</div>
       </div>
-      <button class="btn-primary" onclick="showPage('new-request',null)">➕ طلب جديد</button>
+      <button class="btn-primary" onclick="showPage('new-request',null)"><span data-i18n="db.btn-new">➕ طلب جديد</span></button>
     </div>
     <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.25rem">
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
         <input type="text" id="req_search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.85rem;outline:none" oninput="filterRequests()">
         <select id="req_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'Cairo',sans-serif;font-size:.82rem;outline:none" onchange="filterRequests()">
-          <option value="">كل الحالات</option>
-          <option value="approved">مقبول</option>
-          <option value="rejected">مرفوض</option>
-          <option value="pending">قيد المراجعة</option>
+          <option value="" data-i18n-opt="db.all-status">كل الحالات</option>
+          <option value="approved" data-i18n-opt="db.opt-approved">مقبول</option>
+          <option value="rejected" data-i18n-opt="db.opt-rejected">مرفوض</option>
+          <option value="pending" data-i18n-opt="db.opt-pending">قيد المراجعة</option>
         </select>
       </div>
     </div>
     <div class="card" style="padding:0;overflow:hidden">
       <div class="tbl-wrap">
         <table>
-          <thead><tr><th>#</th><th>اسم المتقدم</th><th>رقم الهوية</th><th>الغرض</th><th>الدرجة</th><th>التاريخ</th><th>النتيجة</th><th>إجراءات</th></tr></thead>
+          <thead><tr><th>#</th><th data-i18n="db.th-name">اسم المتقدم</th><th data-i18n="db.th-id">رقم الهوية</th><th data-i18n="db.th-purpose">الغرض</th><th data-i18n="db.th-score">الدرجة</th><th data-i18n="db.th-date">التاريخ</th><th data-i18n="db.th-result">النتيجة</th><th data-i18n="db.th-actions">إجراءات</th></tr></thead>
           <tbody id="all_requests_table">
-            <tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem">لا توجد طلبات بعد</td></tr>
+            <tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -386,29 +386,29 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   <div class="page" id="page-new-request">
     <div class="page-hdr">
       <div>
-        <div class="page-title">إضافة طلب جديد</div>
-        <div class="page-sub">أدخل بيانات المتقدم لتحليله وفرزه</div>
+        <div class="page-title" data-i18n="db.new-req-title">إضافة طلب جديد</div>
+        <div class="page-sub" data-i18n="db.new-req-sub">أدخل بيانات المتقدم لتحليله وفرزه</div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">👤 بيانات المتقدم</div>
+      <div class="card-title" data-i18n="db.applicant-data">👤 بيانات المتقدم</div>
       <div class="frow">
         <div class="fld-m">
-          <label>الاسم الكامل <span style="color:#ef4444">*</span></label>
+          <label data-i18n="db.lbl-name">الاسم الكامل <span style="color:#ef4444">*</span></label>
           <input type="text" id="nf_name" placeholder="محمد أحمد الغامدي">
         </div>
         <div class="fld-m">
-          <label>رقم الهوية / الإقامة</label>
+          <label data-i18n="db.lbl-id">رقم الهوية / الإقامة</label>
           <input type="text" id="nf_id" placeholder="1XXXXXXXXX">
         </div>
       </div>
       <div class="frow">
         <div class="fld-m">
-          <label>البريد الإلكتروني</label>
+          <label data-i18n="db.lbl-email">البريد الإلكتروني</label>
           <input type="email" id="nf_email" placeholder="applicant@email.com">
         </div>
         <div class="fld-m">
-          <label>رقم الجوال</label>
+          <label data-i18n="db.lbl-phone">رقم الجوال</label>
           <div style="display:flex">
             <select id="nf_phone_cc" style="background:#1e293b;border:1px solid #334155;border-left:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
             <input type="tel" id="nf_phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
@@ -417,29 +417,29 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
       </div>
       <div class="frow">
         <div class="fld-m">
-          <label>غرض الطلب <span style="color:#ef4444">*</span></label>
+          <label data-i18n="db.lbl-purpose">غرض الطلب <span style="color:#ef4444">*</span></label>
           <select id="nf_purpose">
-            <option value="">اختر...</option>
-            <option>توظيف</option>
-            <option>تمويل</option>
-            <option>قبول جامعي</option>
-            <option>انضمام للحاضنة</option>
-            <option>دعم حكومي</option>
-            <option>أخرى</option>
+            <option value="" data-i18n-opt="db.opt-select">اختر...</option>
+            <option data-i18n-opt="db.opt-job">توظيف</option>
+            <option data-i18n-opt="db.opt-fund">تمويل</option>
+            <option data-i18n-opt="db.opt-univ">قبول جامعي</option>
+            <option data-i18n-opt="db.opt-incub">انضمام للحاضنة</option>
+            <option data-i18n-opt="db.opt-gov">دعم حكومي</option>
+            <option data-i18n-opt="db.opt-other">أخرى</option>
           </select>
         </div>
         <div class="fld-m">
-          <label>درجة التقييم (0-100)</label>
+          <label data-i18n="db.lbl-score">درجة التقييم (0-100)</label>
           <input type="number" id="nf_score" placeholder="مثال: 85" min="0" max="100">
         </div>
       </div>
       <div class="fld-m">
-        <label>ملاحظات</label>
+        <label data-i18n="db.lbl-notes">ملاحظات</label>
         <textarea id="nf_notes" placeholder="أي ملاحظات إضافية على هذا الطلب..."></textarea>
       </div>
       <div style="display:flex;gap:.75rem;margin-top.5rem">
-        <button class="btn-primary" onclick="submitRequest()">✓ حفظ وتحليل الطلب</button>
-        <button class="btn-ghost" onclick="clearRequestForm()">مسح</button>
+        <button class="btn-primary" onclick="submitRequest()"><span data-i18n="db.btn-save">✓ حفظ وتحليل الطلب</span></button>
+        <button class="btn-ghost" onclick="clearRequestForm()"><span data-i18n="db.btn-clear">مسح</span></button>
       </div>
     </div>
   </div>
@@ -448,52 +448,52 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   <div class="page" id="page-settings">
     <div class="page-hdr">
       <div>
-        <div class="page-title">الإعدادات</div>
-        <div class="page-sub">إدارة بيانات الجهة والمسؤول</div>
+        <div class="page-title" data-i18n="db.settings-title">الإعدادات</div>
+        <div class="page-sub" data-i18n="db.settings-sub">إدارة بيانات الجهة والمسؤول</div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">🏢 بيانات الجهة</div>
+      <div class="card-title" data-i18n="db.org-data">🏢 بيانات الجهة</div>
       <div class="frow">
         <div class="fld-m">
-          <label>اسم الجهة</label>
+          <label data-i18n="db.lbl-org">اسم الجهة</label>
           <input type="text" id="set_orgname">
         </div>
         <div class="fld-m">
-          <label>نوع الجهة</label>
+          <label data-i18n="db.lbl-org-type">نوع الجهة</label>
           <input type="text" id="set_orgtype" readonly style="opacity:.6">
         </div>
       </div>
       <div class="frow">
         <div class="fld-m">
-          <label>المدينة</label>
+          <label data-i18n="db.lbl-city">المدينة</label>
           <input type="text" id="set_city">
         </div>
         <div class="fld-m">
-          <label>الموقع الإلكتروني</label>
+          <label data-i18n="db.lbl-website">الموقع الإلكتروني</label>
           <input type="url" id="set_website">
         </div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">👤 بيانات المسؤول</div>
+      <div class="card-title" data-i18n="db.admin-data">👤 بيانات المسؤول</div>
       <div class="frow">
         <div class="fld-m">
-          <label>الاسم الأول</label>
+          <label data-i18n="db.lbl-fname">الاسم الأول</label>
           <input type="text" id="set_fname">
         </div>
         <div class="fld-m">
-          <label>اسم العائلة</label>
+          <label data-i18n="db.lbl-lname">اسم العائلة</label>
           <input type="text" id="set_lname">
         </div>
       </div>
       <div class="frow">
         <div class="fld-m">
-          <label>المسمى الوظيفي</label>
+          <label data-i18n="db.lbl-jobtitle">المسمى الوظيفي</label>
           <input type="text" id="set_title">
         </div>
         <div class="fld-m">
-          <label>رقم الجوال</label>
+          <label data-i18n="db.lbl-phone">رقم الجوال</label>
           <div style="display:flex">
             <select id="set_phone_cc" style="background:#1e293b;border:1px solid #334155;border-left:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
             <input type="tel" id="set_phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
@@ -501,49 +501,49 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         </div>
       </div>
       <div class="fld-m">
-        <label>البريد الإلكتروني (لا يمكن تغييره)</label>
+        <label data-i18n="db.lbl-email-ro">البريد الإلكتروني (لا يمكن تغييره)</label>
         <input type="email" id="set_email" readonly style="opacity:.6">
       </div>
-      <button class="btn-primary" onclick="saveSettings()">💾 حفظ التغييرات</button>
+      <button class="btn-primary" onclick="saveSettings()"><span data-i18n="db.btn-save-changes">💾 حفظ التغييرات</span></button>
     </div>
 
     <div class="card">
-      <div class="card-title">🎨 مظهر اللوحة</div>
+      <div class="card-title" data-i18n="db.theme-title">🎨 مظهر اللوحة</div>
       <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.25rem">
         <label onclick="setDashTheme('light')" id="theme_light_lbl" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.7rem 1rem;display:block;background:rgba(74,157,111,.07);text-align:right">
           <input type="radio" name="dash_theme" id="theme_light" value="light" checked style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
-          <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle">☀️ فاتح (أبيض)</span>
-          <div style="font-size:.71rem;color:#64748b;margin-top:.25rem">الوضع الافتراضي — خلفية بيضاء مناسبة للطباعة والعرض الرسمي</div>
+          <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle"><span data-i18n="db.theme-light">☀️ فاتح (أبيض)</span></span>
+          <div style="font-size:.71rem;color:#64748b;margin-top:.25rem" data-i18n="db.theme-light-desc">الوضع الافتراضي — خلفية بيضاء مناسبة للطباعة والعرض الرسمي</div>
         </label>
         <label onclick="setDashTheme('dark')" id="theme_dark_lbl" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.7rem 1rem;display:block;text-align:right">
           <input type="radio" name="dash_theme" id="theme_dark" value="dark" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
-          <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle">🌑 داكن (أسود)</span>
-          <div style="font-size:.71rem;color:#64748b;margin-top:.25rem">خلفية داكنة مريحة للعين في الأماكن المضاءة</div>
+          <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle"><span data-i18n="db.theme-dark">🌑 داكن (أسود)</span></span>
+          <div style="font-size:.71rem;color:#64748b;margin-top:.25rem" data-i18n="db.theme-dark-desc">خلفية داكنة مريحة للعين في الأماكن المضاءة</div>
         </label>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">🔒 تغيير كلمة المرور</div>
+      <div class="card-title" data-i18n="db.change-pass">🔒 تغيير كلمة المرور</div>
       <div class="frow">
         <div class="fld-m">
-          <label>كلمة المرور الجديدة</label>
+          <label data-i18n="db.lbl-newpass">كلمة المرور الجديدة</label>
           <input type="password" id="set_newpass" placeholder="8 أحرف على الأقل">
         </div>
         <div class="fld-m">
-          <label>تأكيد كلمة المرور</label>
+          <label data-i18n="db.lbl-confirmpass">تأكيد كلمة المرور</label>
           <input type="password" id="set_newpass2" placeholder="أعد كتابتها">
         </div>
       </div>
-      <button class="btn-primary" onclick="changePassword()">تحديث كلمة المرور</button>
+      <button class="btn-primary" onclick="changePassword()"><span data-i18n="db.btn-update-pass">تحديث كلمة المرور</span></button>
     </div>
     <div class="card">
-      <div class="card-title">🔌 الوصول للـ API</div>
-      <p style="font-size:.88rem;color:#64748b;line-height:1.8;margin-bottom:1.25rem">تتيح لك واجهة برمجة التطبيقات (API) ربط نظام RAFD مباشرةً بأنظمتك الداخلية. هذه الخدمة متاحة فقط لباقة <strong style="color:#a78bfa">المتقدمة</strong> وتتطلب موافقة مسبقة من فريق RAFD.</p>
-      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:1rem;margin-bottom:1.25rem;font-size:.82rem;color:#fbbf24;line-height:1.7">
+      <div class="card-title" data-i18n="db.api-title">🔌 الوصول للـ API</div>
+      <p style="font-size:.88rem;color:#64748b;line-height:1.8;margin-bottom:1.25rem" data-i18n="db.api-desc">تتيح لك واجهة برمجة التطبيقات (API) ربط نظام RAFD مباشرةً بأنظمتك الداخلية. هذه الخدمة متاحة فقط لباقة <strong style="color:#a78bfa">المتقدمة</strong> وتتطلب موافقة مسبقة من فريق RAFD.</p>
+      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:1rem;margin-bottom:1.25rem;font-size:.82rem;color:#fbbf24;line-height:1.7" data-i18n="db.api-warn">
         ⚠️ يُمنح الوصول للـ API بعد مراجعة الطلب والتحقق من هوية الجهة. لن يُشارَك أي توثيق تقني قبل الموافقة الرسمية.
       </div>
-      <button class="btn-primary" onclick="requestApiAccess()" style="background:linear-gradient(135deg,#4a9d6f,#2d7a54)">📩 طلب الوصول للـ API</button>
+      <button class="btn-primary" onclick="requestApiAccess()" style="background:linear-gradient(135deg,#4a9d6f,#2d7a54)"><span data-i18n="db.btn-api">📩 طلب الوصول للـ API</span></button>
     </div>
   </div>
 
@@ -551,48 +551,48 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   <div class="page" id="page-subscription">
     <div class="page-hdr">
       <div>
-        <div class="page-title">الاشتراك</div>
-        <div class="page-sub">إدارة باقتك الحالية</div>
+        <div class="page-title" data-i18n="db.sub-title">الاشتراك</div>
+        <div class="page-sub" data-i18n="db.sub-sub">إدارة باقتك الحالية</div>
       </div>
     </div>
     <div class="card" id="current_plan_card">
-      <div class="card-title">💳 باقتك الحالية</div>
+      <div class="card-title" data-i18n="db.cur-plan">💳 باقتك الحالية</div>
       <div id="current_plan_info"></div>
     </div>
     <div class="card">
-      <div class="card-title">📦 الباقات المتاحة</div>
+      <div class="card-title" data-i18n="db.avail-plans">📦 الباقات المتاحة</div>
       <div class="plan-grid">
         <div class="plan-card" id="plan_trial">
-          <div class="plan-name">🎯 التجريبية</div>
-          <div class="plan-price">مجاناً</div>
-          <div class="plan-period">7 أيام</div>
+          <div class="plan-name" data-i18n="db.plan-trial">🎯 التجريبية</div>
+          <div class="plan-price" data-i18n="pg.free">مجاناً</div>
+          <div class="plan-period" data-i18n="db.plan-7days">7 أيام</div>
           <ul class="plan-features">
-            <li>حتى 50 طلب</li>
-            <li>تقارير أساسية</li>
+            <li data-i18n="db.plan-trial-f1">حتى 50 طلب</li>
+            <li data-i18n="db.plan-trial-f2">تقارير أساسية</li>
           </ul>
-          <button class="btn-upgrade" id="btn_trial" onclick="requestUpgrade('trial')">الباقة الحالية</button>
+          <button class="btn-upgrade" id="btn_trial" onclick="requestUpgrade('trial')"><span data-i18n="db.cur-plan-btn">الباقة الحالية</span></button>
         </div>
         <div class="plan-card" id="plan_basic">
-          <div class="plan-name">⚡ الأساسية</div>
-          <div class="plan-price">249 ريال</div>
-          <div class="plan-period">/شهر</div>
+          <div class="plan-name" data-i18n="db.plan-basic">⚡ الأساسية</div>
+          <div class="plan-price" data-i18n="db.plan-basic-price">249 ريال</div>
+          <div class="plan-period" data-i18n="db.per-month">/شهر</div>
           <ul class="plan-features">
-            <li>حتى 500 طلب/شهر</li>
-            <li>تقارير تفصيلية</li>
-            <li>تخصيص المعايير</li>
+            <li data-i18n="db.plan-basic-f1">حتى 500 طلب/شهر</li>
+            <li data-i18n="db.plan-basic-f2">تقارير تفصيلية</li>
+            <li data-i18n="db.plan-basic-f3">تخصيص المعايير</li>
           </ul>
-          <button class="btn-upgrade" id="btn_basic" onclick="requestUpgrade('basic')">الترقية لهذه الباقة</button>
+          <button class="btn-upgrade" id="btn_basic" onclick="requestUpgrade('basic')"><span data-i18n="db.btn-upgrade">الترقية لهذه الباقة</span></button>
         </div>
         <div class="plan-card" id="plan_pro">
-          <div class="plan-name">🚀 المتقدمة</div>
-          <div class="plan-price">499 ريال</div>
-          <div class="plan-period">/شهر</div>
+          <div class="plan-name" data-i18n="db.plan-adv">🚀 المتقدمة</div>
+          <div class="plan-price" data-i18n="db.plan-adv-price">499 ريال</div>
+          <div class="plan-period" data-i18n="db.per-month">/شهر</div>
           <ul class="plan-features">
-            <li>طلبات غير محدودة</li>
-            <li>تكامل API</li>
-            <li>مدير حساب مخصص</li>
+            <li data-i18n="db.plan-adv-f1">طلبات غير محدودة</li>
+            <li data-i18n="db.plan-adv-f2">تكامل API</li>
+            <li data-i18n="db.plan-adv-f3">مدير حساب مخصص</li>
           </ul>
-          <button class="btn-upgrade" id="btn_pro" onclick="requestUpgrade('pro')">الترقية لهذه الباقة</button>
+          <button class="btn-upgrade" id="btn_pro" onclick="requestUpgrade('pro')"><span data-i18n="db.btn-upgrade">الترقية لهذه الباقة</span></button>
         </div>
       </div>
     </div>
@@ -602,49 +602,49 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   <div class="page" id="page-link">
     <div class="page-hdr">
       <div>
-        <div class="page-title">رابط التقديم</div>
-        <div class="page-sub">شارك هذا الرابط مع المتقدمين لجهتك</div>
+        <div class="page-title" data-i18n="db.link-title">رابط التقديم</div>
+        <div class="page-sub" data-i18n="db.link-sub">شارك هذا الرابط مع المتقدمين لجهتك</div>
       </div>
     </div>
 
     <div class="link-hero">
       <div class="link-icon">🔗</div>
-      <div class="link-title">رابط تقديم جهتك الخاص</div>
-      <div class="link-sub">كل من يفتح هذا الرابط يرى اسم جهتك ويملأ النموذج ويحصل على قرار فوري</div>
+      <div class="link-title" data-i18n="db.link-hero-title">رابط تقديم جهتك الخاص</div>
+      <div class="link-sub" data-i18n="db.link-hero-sub">كل من يفتح هذا الرابط يرى اسم جهتك ويملأ النموذج ويحصل على قرار فوري</div>
       <div class="link-box">
         <span class="link-url" id="partner_link_url">—</span>
-        <button class="btn-copy" id="copy_btn" onclick="copyPartnerLink()">📋 نسخ</button>
+        <button class="btn-copy" id="copy_btn" onclick="copyPartnerLink()"><span data-i18n="db.btn-copy-short">📋 نسخ</span></button>
       </div>
       <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
-        <button class="btn-primary" onclick="openPartnerLink()" style="font-size:.85rem;padding:.6rem 1.25rem">🌐 فتح الرابط</button>
-        <button class="btn-ghost" onclick="gotoFormSetup()" style="font-size:.85rem;padding:.6rem 1.25rem">⚙️ تخصيص النموذج</button>
+        <button class="btn-primary" onclick="openPartnerLink()" style="font-size:.85rem;padding:.6rem 1.25rem"><span data-i18n="db.btn-open-link">🌐 فتح الرابط</span></button>
+        <button class="btn-ghost" onclick="gotoFormSetup()" style="font-size:.85rem;padding:.6rem 1.25rem"><span data-i18n="db.btn-customize">⚙️ تخصيص النموذج</span></button>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">📤 كيفية المشاركة</div>
+      <div class="card-title" data-i18n="db.share-title">📤 كيفية المشاركة</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem">
         <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.4rem">💬</div>
-          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem">واتساب / رسالة</div>
-          <div style="font-size:.75rem;color:#64748b">انسخ الرابط وأرسله مباشرةً</div>
+          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem" data-i18n="db.share-wa">واتساب / رسالة</div>
+          <div style="font-size:.75rem;color:#64748b" data-i18n="db.share-wa-sub">انسخ الرابط وأرسله مباشرةً</div>
         </div>
         <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.4rem">📧</div>
-          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem">البريد الإلكتروني</div>
-          <div style="font-size:.75rem;color:#64748b">ضمّنه في نشرتك البريدية</div>
+          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem" data-i18n="db.share-email">البريد الإلكتروني</div>
+          <div style="font-size:.75rem;color:#64748b" data-i18n="db.share-email-sub">ضمّنه في نشرتك البريدية</div>
         </div>
         <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.4rem">🌐</div>
-          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem">موقعك الإلكتروني</div>
-          <div style="font-size:.75rem;color:#64748b">ضع الرابط في صفحة التقديم</div>
+          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem" data-i18n="db.share-web">موقعك الإلكتروني</div>
+          <div style="font-size:.75rem;color:#64748b" data-i18n="db.share-web-sub">ضع الرابط في صفحة التقديم</div>
         </div>
       </div>
     </div>
 
     <!-- Embed section (advanced only) -->
     <div class="card">
-      <div class="card-title">🖥️ تضمين النموذج في موقعك (Embed)</div>
+      <div class="card-title" data-i18n="db.embed-title">🖥️ تضمين النموذج في موقعك (Embed)</div>
       <div id="embed_section_content">
         <!-- filled by JS based on plan -->
       </div>
@@ -655,10 +655,10 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   <div class="page" id="page-form-setup">
     <div class="page-hdr">
       <div>
-        <div class="page-title">إعداد نموذج التقديم</div>
-        <div class="page-sub">خصّص اسم البرنامج ومعايير القبول الخاصة بجهتك</div>
+        <div class="page-title" data-i18n="db.form-title">إعداد نموذج التقديم</div>
+        <div class="page-sub" data-i18n="db.form-sub">خصّص اسم البرنامج ومعايير القبول الخاصة بجهتك</div>
       </div>
-      <button class="btn-primary" onclick="saveFormConfig()">💾 حفظ الإعدادات</button>
+      <button class="btn-primary" onclick="saveFormConfig()"><span data-i18n="db.btn-save-form">💾 حفظ الإعدادات</span></button>
     </div>
 
     <!-- SQL reminder (hidden by default, shows on error) -->
@@ -684,22 +684,22 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     <!-- النماذج المحفوظة -->
     <div class="card" id="saved_forms_card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem">
-        <div class="card-title" style="margin-bottom:0">📁 النماذج المحفوظة</div>
-        <button onclick="saveCurrentForm()" style="background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:8px;padding:.45rem 1rem;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem">💾 حفظ كنموذج</button>
+        <div class="card-title" style="margin-bottom:0" data-i18n="db.saved-forms">📁 النماذج المحفوظة</div>
+        <button onclick="saveCurrentForm()" style="background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:8px;padding:.45rem 1rem;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem"><span data-i18n="db.btn-save-tmpl">💾 حفظ كنموذج</span></button>
       </div>
       <div id="saved_forms_list">
-        <div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem">لا توجد نماذج محفوظة بعد — اضبط النموذج واضغط "حفظ كنموذج"</div>
+        <div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem" data-i18n="db.no-saved-forms">لا توجد نماذج محفوظة بعد — اضبط النموذج واضغط "حفظ كنموذج"</div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">📋 معلومات البرنامج</div>
+      <div class="card-title" data-i18n="db.prog-info">📋 معلومات البرنامج</div>
       <div class="fld-m">
-        <label>اسم البرنامج / المبادرة <span style="color:#ef4444">*</span></label>
+        <label data-i18n="db.lbl-prog-name">اسم البرنامج / المبادرة <span style="color:#ef4444">*</span></label>
         <input type="text" id="fc_program_name" placeholder="مثال: برنامج دعم الشركات الناشئة 2026">
       </div>
       <div class="fld-m">
-        <label>نوع التقديم <span style="color:#ef4444">*</span></label>
+        <label data-i18n="db.lbl-app-type">نوع التقديم <span style="color:#ef4444">*</span></label>
         <select id="fc_app_type">
           <option value="project">🚀 مشروع / شركة ناشئة</option>
           <option value="job">💼 توظيف واختيار كوادر</option>
@@ -710,20 +710,20 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <option value="npo">🌱 منظمة غير ربحية / تطوعي</option>
           <option value="general">📋 عام (بدون تصنيف محدد)</option>
         </select>
-        <div style="font-size:.7rem;color:#64748b;margin-top:.3rem">يحدد صياغة أسئلة النموذج تلقائياً</div>
+        <div style="font-size:.7rem;color:#64748b;margin-top:.3rem" data-i18n="db.hint-form-type">يحدد صياغة أسئلة النموذج تلقائياً</div>
       </div>
       <div class="fld-m">
-        <label>وصف البرنامج</label>
+        <label data-i18n="db.lbl-prog-desc">وصف البرنامج</label>
         <textarea id="fc_program_desc" placeholder="اشرح هدف البرنامج والفئة المستهدفة..."></textarea>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
         <div class="fld-m">
-          <label>الحد الأدنى للقبول (من 100)</label>
+          <label data-i18n="db.lbl-min-score">الحد الأدنى للقبول (من 100)</label>
           <input type="number" id="fc_min_score" min="1" max="100" value="55" placeholder="55">
-          <div style="font-size:.72rem;color:#64748b;margin-top:.3rem">المتقدم الحاصل على هذه الدرجة فأكثر يجتاز المرحلة الأولى</div>
+          <div style="font-size:.72rem;color:#64748b;margin-top:.3rem" data-i18n="db.hint-min-score">المتقدم الحاصل على هذه الدرجة فأكثر يجتاز المرحلة الأولى</div>
         </div>
         <div class="fld-m">
-          <label>حالة النموذج</label>
+          <label data-i18n="db.lbl-form-status">حالة النموذج</label>
           <select id="fc_status">
             <option value="active">✅ نشط — يقبل التقديمات</option>
             <option value="paused">⏸️ متوقف مؤقتاً</option>
@@ -733,51 +733,51 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 
       <!-- طريقة القبول -->
       <div class="fld-m" style="margin-top:.85rem">
-        <label>طريقة القبول</label>
+        <label data-i18n="db.lbl-accept-mode">طريقة القبول</label>
         <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem">
           <label id="am_instant_lbl" onclick="selectAcceptMode('instant')" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;background:rgba(74,157,111,.07);text-align:right">
             <div>
               <input type="radio" name="accept_mode" id="am_instant" value="instant" checked style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
-              <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle">⚡ قبول فوري</span>
+              <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.accept-instant">⚡ قبول فوري</span>
             </div>
-            <div style="font-size:.71rem;color:#64748b;margin-top:.3rem">النتيجة تظهر للمتقدم مباشرة بعد التقييم</div>
+            <div style="font-size:.71rem;color:#64748b;margin-top:.3rem" data-i18n="db.accept-instant-desc">النتيجة تظهر للمتقدم مباشرة بعد التقييم</div>
           </label>
           <label id="am_competitive_lbl" onclick="selectAcceptMode('competitive')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right">
             <div>
               <input type="radio" name="accept_mode" id="am_competitive" value="competitive" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
-              <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle">🏅 مفاضلة</span>
+              <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.accept-comp">🏅 مفاضلة</span>
             </div>
-            <div style="font-size:.71rem;color:#64748b;margin-top:.3rem">يرى قبولاً مبدئياً ويُبلَّغ بالقرار النهائي لاحقاً</div>
+            <div style="font-size:.71rem;color:#64748b;margin-top:.3rem" data-i18n="db.accept-comp-desc">يرى قبولاً مبدئياً ويُبلَّغ بالقرار النهائي لاحقاً</div>
           </label>
         </div>
 
         <!-- رسالة القبول المبدئي — تظهر فقط في وضع المفاضلة -->
         <div id="pending_msg_section" style="display:none;margin-top:.85rem">
-          <label style="font-size:.78rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">✏️ رسالة القبول المبدئي للمتقدم</label>
+          <label style="font-size:.78rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem" data-i18n="db.pending-msg-lbl">✏️ رسالة القبول المبدئي للمتقدم</label>
           <textarea id="fc_pending_msg" rows="3"
             placeholder="مثال: تم قبولك مبدئياً في برنامجنا، وسيتم التواصل معك خلال أسبوعين بالقرار النهائي."
             style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.82rem;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box"></textarea>
-          <div style="font-size:.7rem;color:#475569;margin-top:.3rem">هذه الرسالة ستظهر للمتقدم داخل بطاقة القبول المبدئي.</div>
+          <div style="font-size:.7rem;color:#475569;margin-top:.3rem" data-i18n="db.pending-msg-hint">هذه الرسالة ستظهر للمتقدم داخل بطاقة القبول المبدئي.</div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">⚖️ معايير التقييم والأوزان</div>
-      <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان يجب أن يساوي 100 نقطة.</p>
+      <div class="card-title" data-i18n="db.criteria-title">⚖️ معايير التقييم والأوزان</div>
+      <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7" data-i18n="db.criteria-desc">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان يجب أن يساوي 100 نقطة.</p>
 
       <div class="q-card" id="qc_edu" style="flex-wrap:wrap;gap:.6rem">
         <button class="q-toggle on" id="qt_edu" onclick="toggleQ('edu')"></button>
-        <div class="q-label" style="flex:1">🎓 المؤهل الأكاديمي</div>
+        <div class="q-label" style="flex:1" data-i18n="db.q-edu">🎓 المؤهل الأكاديمي</div>
         <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_edu" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
         <!-- GPA sub-option -->
         <div style="width:100%;padding-top:.5rem;border-top:1px solid #1e293b;margin-top:.25rem;display:flex;flex-direction:column;gap:.6rem" id="edu_gpa_section">
           <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:.78rem;color:#64748b">
             <input type="checkbox" id="edu_gpa_enabled" style="accent-color:#10b981;width:15px;height:15px" onchange="toggleGpaOptions()">
-            <span>طلب المعدل التراكمي (GPA) من المتقدم</span>
+            <span data-i18n="db.gpa-lbl">طلب المعدل التراكمي (GPA) من المتقدم</span>
           </label>
           <div id="gpa_config" style="display:none;background:#0f172a;border-radius:8px;padding:.65rem .85rem;display:none;gap:.85rem;flex-wrap:wrap;align-items:center">
-            <div style="font-size:.72rem;color:#64748b;font-weight:600">نظام التقييم:</div>
+            <div style="font-size:.72rem;color:#64748b;font-weight:600" data-i18n="db.gpa-scale">نظام التقييم:</div>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
               <input type="radio" name="gpa_scale" id="gpa_5" value="5" checked style="accent-color:#10b981" onchange="toggleGpaBands()"> من 5
             </label>
@@ -787,98 +787,98 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
               <input type="radio" name="gpa_scale" id="gpa_100" value="100" style="accent-color:#10b981" onchange="toggleGpaBands()"> نسبة مئوية (%)
             </label>
-            <div style="font-size:.7rem;color:#475569;width:100%">سيظهر حقل المعدل تلقائياً أسفل سؤال المؤهل في نموذج التقديم</div>
+            <div style="font-size:.7rem;color:#475569;width:100%" data-i18n="db.gpa-hint">سيظهر حقل المعدل تلقائياً أسفل سؤال المؤهل في نموذج التقديم</div>
             <!-- نطاقات الدرجات — تظهر لجميع المقاييس -->
             <div id="gpa_bands_section" style="display:none;width:100%;border-top:1px solid #1e293b;padding-top:.6rem">
-              <div style="font-size:.72rem;color:#64748b;font-weight:700;margin-bottom:.5rem">🎯 نقاط كل نطاق: <span id="gpa_bands_scale_lbl">%</span></div>
+              <div style="font-size:.72rem;color:#64748b;font-weight:700;margin-bottom:.5rem"><span data-i18n="db.gpa-bands-lbl">🎯 نقاط كل نطاق:</span> <span id="gpa_bands_scale_lbl">%</span></div>
               <div id="gpa_bands_container"></div>
-              <button onclick="addGpaBand()" style="background:none;border:1px dashed #334155;color:#475569;border-radius:8px;padding:.35rem .75rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem;width:100%">+ إضافة نطاق</button>
+              <button onclick="addGpaBand()" style="background:none;border:1px dashed #334155;color:#475569;border-radius:8px;padding:.35rem .75rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem;width:100%"><span data-i18n="db.gpa-add-band">+ إضافة نطاق</span></button>
             </div>
           </div>
         </div>
       </div>
       <div class="q-card" id="qc_exp">
         <button class="q-toggle on" id="qt_exp" onclick="toggleQ('exp')"></button>
-        <div class="q-label">💼 سنوات الخبرة</div>
+        <div class="q-label" data-i18n="db.q-exp">💼 سنوات الخبرة</div>
         <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_exp" value="20" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
       </div>
       <div class="q-card" id="qc_prev">
         <button class="q-toggle on" id="qt_prev" onclick="toggleQ('prev')"></button>
-        <div class="q-label">🚀 الخبرة الريادية السابقة</div>
+        <div class="q-label" data-i18n="db.q-prev">🚀 الخبرة الريادية السابقة</div>
         <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_prev" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
       </div>
       <div class="q-card" id="qc_stage">
         <button class="q-toggle on" id="qt_stage" onclick="toggleQ('stage')"></button>
-        <div class="q-label">📈 مرحلة المشروع</div>
+        <div class="q-label" data-i18n="db.q-stage">📈 مرحلة المشروع</div>
         <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_stage" value="20" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
       </div>
       <div class="q-card" id="qc_cust">
         <button class="q-toggle on" id="qt_cust" onclick="toggleQ('cust')"></button>
-        <div class="q-label">👥 وجود عملاء حاليين</div>
+        <div class="q-label" data-i18n="db.q-cust">👥 وجود عملاء حاليين</div>
         <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_cust" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
       </div>
       <div class="q-card" id="qc_team">
         <button class="q-toggle on" id="qt_team" onclick="toggleQ('team')"></button>
-        <div class="q-label">🤝 حجم الفريق</div>
+        <div class="q-label" data-i18n="db.q-team">🤝 حجم الفريق</div>
         <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_team" value="10" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
       </div>
       <div class="q-card" id="qc_commit">
         <button class="q-toggle on" id="qt_commit" onclick="toggleQ('commit')"></button>
-        <div class="q-label">✅ الالتزام بمتطلبات البرنامج</div>
+        <div class="q-label" data-i18n="db.q-commit">✅ الالتزام بمتطلبات البرنامج</div>
         <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_commit" value="5" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
       </div>
 
       <!-- Custom criteria -->
       <div style="border-top:1px solid #1e293b;margin-top:.75rem;padding-top:.75rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
-          <div style="font-size:.8rem;color:#64748b;font-weight:600">معايير مخصصة إضافية</div>
+          <div style="font-size:.8rem;color:#64748b;font-weight:600" data-i18n="db.custom-criteria">معايير مخصصة إضافية</div>
           <button onclick="addCustomCriterion()" style="display:flex;align-items:center;gap:.35rem;background:rgba(74,157,111,.15);border:1px solid rgba(74,157,111,.3);color:#4a9d6f;border-radius:8px;padding:.4rem .85rem;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">
-            ➕ إضافة معيار خاص
+            <span data-i18n="db.add-custom-crit">➕ إضافة معيار خاص</span>
           </button>
         </div>
         <div id="custom_criteria_container"></div>
       </div>
 
       <div class="weight-total" style="margin-top:.75rem">
-        <span>مجموع الأوزان الكلي</span>
+        <span data-i18n="db.weight-total">مجموع الأوزان الكلي</span>
         <strong id="weight_total_display">100</strong>
       </div>
       <div id="weight_warning" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:.6rem 1rem;margin-top:.5rem;font-size:.78rem;color:#f87171">
-        ⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة بالضبط.
+        <span data-i18n="db.weight-warn">⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة بالضبط.</span>
       </div>
     </div>
 
     <!-- Nafath Verification Requirement -->
     <div class="card">
-      <div class="card-title">🔐 التحقق الهوياتي</div>
-      <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem">اختر هل تشترط على المتقدمين التحقق من هويتهم عبر منصة نفاذ الحكومية</div>
+      <div class="card-title" data-i18n="db.nafath-title">🔐 التحقق الهوياتي</div>
+      <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem" data-i18n="db.nafath-desc">اختر هل تشترط على المتقدمين التحقق من هويتهم عبر منصة نفاذ الحكومية</div>
 
       <div style="display:flex;align-items:center;gap:1rem;background:#0a1a0f;border:1.5px solid rgba(10,95,63,.35);border-radius:14px;padding:1rem 1.2rem">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#0a5f3f,#0d7a52);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#fff;flex-shrink:0">نفاذ</div>
         <div style="flex:1">
-          <div style="font-size:.85rem;font-weight:700;color:#e2e8f0">التحقق عبر نفاذ</div>
-          <div style="font-size:.73rem;color:#4ade80;margin-top:.15rem">المنصة الوطنية الموحّدة للهوية الرقمية — يُرسَل رمز OTP للجوال</div>
+          <div style="font-size:.85rem;font-weight:700;color:#e2e8f0" data-i18n="db.nafath-lbl">التحقق عبر نفاذ</div>
+          <div style="font-size:.73rem;color:#4ade80;margin-top:.15rem" data-i18n="db.nafath-sub">المنصة الوطنية الموحّدة للهوية الرقمية — يُرسَل رمز OTP للجوال</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:.4rem">
           <button class="q-toggle" id="nafath_toggle" onclick="toggleNafath()"></button>
-          <span id="nafath_status_lbl" style="font-size:.65rem;color:#475569">معطّل</span>
+          <span id="nafath_status_lbl" style="font-size:.65rem;color:#475569" data-i18n="db.nafath-off">معطّل</span>
         </div>
       </div>
 
       <div id="nafath_options" style="display:none;margin-top:.85rem;padding:.85rem 1rem;background:rgba(10,95,63,.06);border:1px solid rgba(10,95,63,.2);border-radius:10px">
-        <div style="font-size:.75rem;color:#64748b;margin-bottom:.65rem;font-weight:600">خيارات التحقق:</div>
+        <div style="font-size:.75rem;color:#64748b;margin-bottom:.65rem;font-weight:600" data-i18n="db.nafath-opts">خيارات التحقق:</div>
         <label style="display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem;cursor:pointer">
           <input type="radio" name="nafath_mode" id="nafath_mode_required" value="required" checked style="accent-color:#0a5f3f">
           <div>
-            <div style="font-size:.8rem;color:#e2e8f0;font-weight:600">إلزامي — لا يكتمل الطلب بدون التحقق</div>
-            <div style="font-size:.7rem;color:#64748b">المتقدم لا يستطيع الإرسال إلا بعد التحقق من نفاذ</div>
+            <div style="font-size:.8rem;color:#e2e8f0;font-weight:600" data-i18n="db.nafath-req">إلزامي — لا يكتمل الطلب بدون التحقق</div>
+            <div style="font-size:.7rem;color:#64748b" data-i18n="db.nafath-req-desc">المتقدم لا يستطيع الإرسال إلا بعد التحقق من نفاذ</div>
           </div>
         </label>
         <label style="display:flex;align-items:center;gap:.65rem;cursor:pointer">
           <input type="radio" name="nafath_mode" id="nafath_mode_optional" value="optional" style="accent-color:#0a5f3f">
           <div>
-            <div style="font-size:.8rem;color:#e2e8f0;font-weight:600">اختياري — يُشجَّع عليه ويُضيف نقاط</div>
-            <div style="font-size:.7rem;color:#64748b">التحقق يمنح المتقدم +5 نقاط إضافية على الدرجة</div>
+            <div style="font-size:.8rem;color:#e2e8f0;font-weight:600" data-i18n="db.nafath-opt">اختياري — يُشجَّع عليه ويُضيف نقاط</div>
+            <div style="font-size:.7rem;color:#64748b" data-i18n="db.nafath-opt-desc">التحقق يمنح المتقدم +5 نقاط إضافية على الدرجة</div>
           </div>
         </label>
       </div>
@@ -886,36 +886,36 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 
     <!-- Required Documents -->
     <div class="card">
-      <div class="card-title">📎 المستندات المطلوبة من المتقدم</div>
-      <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem">فعّل المستندات التي تريد من المتقدمين رفعها مع طلبهم</div>
+      <div class="card-title" data-i18n="db.docs-title">📎 المستندات المطلوبة من المتقدم</div>
+      <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem" data-i18n="db.docs-desc">فعّل المستندات التي تريد من المتقدمين رفعها مع طلبهم</div>
 
       <div style="display:flex;flex-direction:column;gap:.6rem" id="docs_preset_container">
         <div class="q-card" id="doc_cv">
           <button class="q-toggle on" id="dt_cv" onclick="toggleDoc('cv')"></button>
-          <div class="q-label" style="flex:1">📄 السيرة الذاتية / ملف CV</div>
+          <div class="q-label" style="flex:1" data-i18n="db.doc-cv">📄 السيرة الذاتية / ملف CV</div>
           <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-            <input type="checkbox" id="dr_cv" style="accent-color:#10b981"> إلزامي
+            <input type="checkbox" id="dr_cv" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
           </label>
         </div>
         <div class="q-card" id="doc_reg">
           <button class="q-toggle on" id="dt_reg" onclick="toggleDoc('reg')"></button>
-          <div class="q-label" style="flex:1">🏢 سجل تجاري / وثيقة تأسيس</div>
+          <div class="q-label" style="flex:1" data-i18n="db.doc-reg">🏢 سجل تجاري / وثيقة تأسيس</div>
           <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-            <input type="checkbox" id="dr_reg" style="accent-color:#10b981"> إلزامي
+            <input type="checkbox" id="dr_reg" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
           </label>
         </div>
         <div class="q-card" id="doc_cert">
           <button class="q-toggle" id="dt_cert" onclick="toggleDoc('cert')"></button>
-          <div class="q-label" style="flex:1">🎓 شهادات خبرة ومؤهلات</div>
+          <div class="q-label" style="flex:1" data-i18n="db.doc-cert">🎓 شهادات خبرة ومؤهلات</div>
           <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-            <input type="checkbox" id="dr_cert" style="accent-color:#10b981"> إلزامي
+            <input type="checkbox" id="dr_cert" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
           </label>
         </div>
         <div class="q-card" id="doc_id">
           <button class="q-toggle" id="dt_id" onclick="toggleDoc('id')"></button>
-          <div class="q-label" style="flex:1">🪪 صورة هوية وطنية</div>
+          <div class="q-label" style="flex:1" data-i18n="db.doc-id">🪪 صورة هوية وطنية</div>
           <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-            <input type="checkbox" id="dr_id" style="accent-color:#10b981"> إلزامي
+            <input type="checkbox" id="dr_id" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
           </label>
         </div>
       </div>
@@ -923,15 +923,15 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <!-- Custom documents -->
       <div style="border-top:1px solid #1e293b;margin-top:.85rem;padding-top:.85rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem">
-          <div style="font-size:.75rem;color:#64748b">مستندات مخصصة إضافية</div>
-          <button onclick="addCustomDoc()" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:#7dd3fc;border-radius:7px;padding:.3rem .7rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة مستند</button>
+          <div style="font-size:.75rem;color:#64748b" data-i18n="db.custom-docs">مستندات مخصصة إضافية</div>
+          <button onclick="addCustomDoc()" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:#7dd3fc;border-radius:7px;padding:.3rem .7rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer"><span data-i18n="db.add-custom-doc">+ إضافة مستند</span></button>
         </div>
         <div id="custom_docs_container"></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">💡 معاينة الرابط بعد الحفظ</div>
+      <div class="card-title" data-i18n="db.link-preview">💡 معاينة الرابط بعد الحفظ</div>
       <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:1rem;font-size:.82rem;color:#94a3b8;line-height:1.8">
         بعد حفظ الإعدادات، سيعرض نموذج التقديم اسم برنامجك وسيقبل المتقدمين تلقائياً بناءً على الأوزان التي حددتها.
         <br><strong style="color:#38bdf8">الرابط:</strong> <span id="fc_preview_link" style="font-family:monospace;direction:ltr;display:inline-block">—</span>
@@ -957,45 +957,45 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
   <div class="page" id="page-support">
     <div class="page-hdr">
       <div>
-        <div class="page-title">الدعم والتواصل</div>
-        <div class="page-sub">نحن هنا لمساعدتك</div>
+        <div class="page-title" data-i18n="db.support-title">الدعم والتواصل</div>
+        <div class="page-sub" data-i18n="db.support-sub">نحن هنا لمساعدتك</div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">📨 إرسال رسالة للدعم</div>
+      <div class="card-title" data-i18n="db.sup-send">📨 إرسال رسالة للدعم</div>
       <div class="fld-m">
-        <label>موضوع الرسالة</label>
+        <label data-i18n="db.sup-subject">موضوع الرسالة</label>
         <select id="sup_subject">
           <option>استفسار عن الباقة</option>
           <option>مشكلة تقنية</option>
           <option>طلب ترقية</option>
           <option>إلغاء الاشتراك</option>
-          <option>أخرى</option>
+          <option data-i18n-opt="db.opt-other">أخرى</option>
         </select>
       </div>
       <div class="fld-m">
-        <label>نص الرسالة</label>
+        <label data-i18n="db.sup-msg">نص الرسالة</label>
         <textarea id="sup_msg" placeholder="اكتب رسالتك هنا..." style="min-height:120px"></textarea>
       </div>
-      <button class="btn-primary" onclick="sendSupport()">إرسال الرسالة</button>
+      <button class="btn-primary" onclick="sendSupport()"><span data-i18n="db.btn-send">إرسال الرسالة</span></button>
     </div>
     <div class="card">
-      <div class="card-title">📞 معلومات التواصل المباشر</div>
+      <div class="card-title" data-i18n="db.contact-info">📞 معلومات التواصل المباشر</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
         <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.5rem">📧</div>
-          <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem">البريد الإلكتروني</div>
+          <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem" data-i18n="db.lbl-email">البريد الإلكتروني</div>
           <div style="font-size:.88rem;color:#38bdf8;font-weight:700">partners@rafd.digital</div>
         </div>
         <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.5rem">💬</div>
-          <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem">واتساب</div>
+          <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem" data-i18n="db.lbl-whatsapp">واتساب</div>
           <div style="font-size:.88rem;color:#38bdf8;font-weight:700">+966 5X XXX XXXX</div>
         </div>
         <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.5rem">🕐</div>
-          <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem">أوقات الدعم</div>
-          <div style="font-size:.88rem;color:#e2e8f0;font-weight:700">الأحد–الخميس<br>9ص – 5م</div>
+          <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem" data-i18n="db.sup-hours">أوقات الدعم</div>
+          <div style="font-size:.88rem;color:#e2e8f0;font-weight:700" data-i18n="db.sup-hours-val">الأحد–الخميس<br>9ص – 5م</div>
         </div>
       </div>
     </div>
@@ -1007,12 +1007,12 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 <div class="modal-overlay" id="reqModal">
   <div class="modal">
     <div class="modal-hdr">
-      <div class="modal-title">تفاصيل الطلب</div>
+      <div class="modal-title" data-i18n="db.req-detail">تفاصيل الطلب</div>
       <button class="btn-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body" id="reqModalBody"></div>
     <div class="modal-footer">
-      <button class="btn-ghost" onclick="closeModal()">إغلاق</button>
+      <button class="btn-ghost" onclick="closeModal()"><span data-i18n="db.btn-close">إغلاق</span></button>
     </div>
   </div>
 </div>
@@ -1021,7 +1021,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 <div class="modal-overlay" id="saveFormModal">
   <div class="modal" style="max-width:400px">
     <div class="modal-hdr">
-      <div class="modal-title">💾 حفظ كنموذج</div>
+      <div class="modal-title" data-i18n="db.btn-save-tmpl">💾 حفظ كنموذج</div>
       <button class="btn-close" onclick="document.getElementById('saveFormModal').classList.remove('open')">✕</button>
     </div>
     <div class="modal-body">
@@ -1031,8 +1031,8 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div id="saveFormErr" style="color:#ef4444;font-size:.78rem;margin-top:.4rem;display:none">يرجى كتابة اسم للنموذج</div>
     </div>
     <div class="modal-footer">
-      <button class="btn-ghost" onclick="document.getElementById('saveFormModal').classList.remove('open')">إلغاء</button>
-      <button class="btn-primary" onclick="confirmSaveForm()">حفظ ✓</button>
+      <button class="btn-ghost" onclick="document.getElementById('saveFormModal').classList.remove('open')"><span data-i18n="db.btn-cancel">إلغاء</span></button>
+      <button class="btn-primary" onclick="confirmSaveForm()"><span data-i18n="db.btn-save-ok">حفظ ✓</span></button>
     </div>
   </div>
 </div>
@@ -1201,7 +1201,7 @@ function renderAllRequests(list) {
   const reqs = list || allApplications;
   const tbody = document.getElementById('all_requests_table');
   if (!reqs.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem">لا توجد طلبات بعد</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span></td></tr>';
     return;
   }
   tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal('${r.id}')" style="cursor:pointer">
@@ -2016,7 +2016,7 @@ function renderSavedFormsList() {
   const el = document.getElementById('saved_forms_list');
   if (!el) return;
   if (!savedForms.length) {
-    el.innerHTML = '<div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem">لا توجد نماذج محفوظة بعد — اضبط النموذج واضغط "حفظ كنموذج"</div>';
+    el.innerHTML = '<div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem" data-i18n="db.no-saved-forms">لا توجد نماذج محفوظة بعد — اضبط النموذج واضغط "حفظ كنموذج"</div>';
     return;
   }
   el.innerHTML = savedForms.map(f => `
@@ -2310,4 +2310,14 @@ loadPartnerData();
 </script>
 <script src="/i18n.js"></script></body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
