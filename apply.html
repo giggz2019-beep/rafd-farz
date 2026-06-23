@@ -1210,8 +1210,18 @@ function collect() {
     if (gpaConf?.enabled) {
       const gpaVal = parseFloat(document.getElementById('f_gpa')?.value) || 0;
       const gpaMax = gpaConf.scale || 5;
-      const gpaRatio = Math.min(1, gpaVal / gpaMax);
-      eduSC = Math.round(baseScore * 0.6 + gpaRatio * W.edu * 0.4);
+      const bands = partnerData?.form_config?.gpa_bands;
+      let gpaScore;
+      if (bands?.length && gpaMax === 100) {
+        // استخدم النطاقات المخصصة
+        const pct = Math.min(100, gpaVal);
+        const band = bands.find(b => pct >= b.min && pct <= b.max);
+        gpaScore = band ? (band.score ?? 0) : 0;
+        eduSC = Math.round(baseScore * 0.6 + gpaScore * 0.4);
+      } else {
+        const gpaRatio = Math.min(1, gpaVal / gpaMax);
+        eduSC = Math.round(baseScore * 0.6 + gpaRatio * W.edu * 0.4);
+      }
     } else {
       eduSC = baseScore;
     }

@@ -685,15 +685,23 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <div id="gpa_config" style="display:none;background:#0f172a;border-radius:8px;padding:.65rem .85rem;display:none;gap:.85rem;flex-wrap:wrap;align-items:center">
             <div style="font-size:.72rem;color:#64748b;font-weight:600">نظام التقييم:</div>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
-              <input type="radio" name="gpa_scale" id="gpa_5" value="5" checked style="accent-color:#10b981"> من 5
+              <input type="radio" name="gpa_scale" id="gpa_5" value="5" checked style="accent-color:#10b981" onchange="toggleGpaBands()"> من 5
             </label>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
-              <input type="radio" name="gpa_scale" id="gpa_4" value="4" style="accent-color:#10b981"> من 4
+              <input type="radio" name="gpa_scale" id="gpa_4" value="4" style="accent-color:#10b981" onchange="toggleGpaBands()"> من 4
             </label>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
-              <input type="radio" name="gpa_scale" id="gpa_100" value="100" style="accent-color:#10b981"> نسبة مئوية (%)
+              <input type="radio" name="gpa_scale" id="gpa_100" value="100" style="accent-color:#10b981" onchange="toggleGpaBands()"> نسبة مئوية (%)
             </label>
             <div style="font-size:.7rem;color:#475569;width:100%">سيظهر حقل المعدل تلقائياً أسفل سؤال المؤهل في نموذج التقديم</div>
+            <!-- نطاقات النسبة — تظهر فقط عند اختيار نسبة مئوية -->
+            <div id="gpa_bands_section" style="display:none;width:100%;border-top:1px solid #1e293b;padding-top:.6rem">
+              <div style="font-size:.72rem;color:#64748b;font-weight:700;margin-bottom:.5rem">🎯 نقاط كل نطاق نسبة مئوية:</div>
+              <div id="gpa_bands_container">
+                <!-- تُولَّد ديناميكياً -->
+              </div>
+              <button onclick="addGpaBand()" style="background:none;border:1px dashed #334155;color:#475569;border-radius:8px;padding:.35rem .75rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem;width:100%">+ إضافة نطاق</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1100,6 +1108,7 @@ function filterRequests() {
 function resultBadge(result, score) {
   if (result === 'approved') return '<span class="badge b-active">✓ مقبول</span>';
   if (result === 'rejected') return '<span class="badge b-rejected">✕ مرفوض</span>';
+  if (result === 'pending') return '<span class="badge b-pending">🎖️ قبول مبدئي</span>';
   return '<span class="badge b-pending">⏳ قيد المراجعة</span>';
 }
 
@@ -1159,6 +1168,7 @@ function openReqModal(id) {
   const r = allApplications.find(x => x.id === id);
   if (!r) return;
   const scoreColor = r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444';
+  const isPending = r.result === 'pending';
   document.getElementById('reqModalBody').innerHTML = `
     <div style="display:grid;gap:.75rem">
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الاسم</span><span style="color:#e2e8f0;font-weight:700">${r.name}</span></div>
@@ -1172,10 +1182,48 @@ function openReqModal(id) {
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التاريخ</span><span style="color:#e2e8f0">${fmtDate(r.created_at)}</span></div>
       ${r.challenges ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">التحديات الرئيسية</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.challenges}</div></div>` : ''}
       ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">ملاحظات</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.notes}</div></div>` : ''}
+      ${isPending ? `
+      <div style="border-top:1px solid #334155;padding-top:.85rem;display:flex;gap:.6rem">
+        <button onclick="finalAccept('${r.id}')" id="btn_final_accept"
+          style="flex:1;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:10px;padding:.75rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer">
+          ✅ تأكيد القبول النهائي
+        </button>
+        <button onclick="finalReject('${r.id}')"
+          style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.75rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
+          ✕ رفض
+        </button>
+      </div>` : ''}
     </div>`;
   document.getElementById('reqModal').classList.add('open');
 }
 function closeModal() { document.getElementById('reqModal').classList.remove('open'); }
+
+async function finalAccept(id) {
+  const btn = document.getElementById('btn_final_accept');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ جارٍ التأكيد...'; }
+  const { error } = await _sb.from('applications').update({ result: 'approved' }).eq('id', id);
+  if (error) { toast('خطأ: ' + error.message, 'error'); if (btn) { btn.disabled = false; btn.textContent = '✅ تأكيد القبول النهائي'; } return; }
+  const app = allApplications.find(x => x.id === id);
+  if (app) app.result = 'approved';
+  closeModal();
+  renderStats();
+  renderRecentRequests();
+  renderAllRequests();
+  toast('✅ تم قبول ' + (app?.name || 'الطالب') + ' نهائياً', 'success');
+}
+
+async function finalReject(id) {
+  if (!confirm('هل تريد رفض هذا الطلب نهائياً؟')) return;
+  const { error } = await _sb.from('applications').update({ result: 'rejected' }).eq('id', id);
+  if (error) { toast('خطأ: ' + error.message, 'error'); return; }
+  const app = allApplications.find(x => x.id === id);
+  if (app) app.result = 'rejected';
+  closeModal();
+  renderStats();
+  renderRecentRequests();
+  renderAllRequests();
+  toast('تم رفض الطلب', 'warn');
+}
 
 // ===== SETTINGS =====
 function renderSettings() {
@@ -1525,6 +1573,53 @@ function toggleGpaOptions() {
   const enabled = document.getElementById('edu_gpa_enabled')?.checked;
   const cfg = document.getElementById('gpa_config');
   if (cfg) cfg.style.display = enabled ? 'flex' : 'none';
+  if (enabled) toggleGpaBands();
+}
+
+// ===== نطاقات النسبة المئوية =====
+let gpaBands = [
+  {min:90, max:100, score:null},
+  {min:80, max:89,  score:null},
+  {min:70, max:79,  score:null},
+  {min:60, max:69,  score:null},
+  {min:0,  max:59,  score:0},
+];
+
+function toggleGpaBands() {
+  const is100 = document.getElementById('gpa_100')?.checked;
+  const sec = document.getElementById('gpa_bands_section');
+  if (!sec) return;
+  sec.style.display = is100 ? 'block' : 'none';
+  if (is100) renderGpaBands();
+}
+
+function renderGpaBands() {
+  const container = document.getElementById('gpa_bands_container');
+  if (!container) return;
+  const w = parseInt(document.getElementById('qw_edu')?.value) || 15;
+  container.innerHTML = gpaBands.map((b, i) => `
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+      <input type="number" value="${b.min}" min="0" max="100" placeholder="من"
+        oninput="gpaBands[${i}].min=parseInt(this.value)||0"
+        style="width:52px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'Cairo',sans-serif;font-size:.78rem;text-align:center;outline:none">
+      <span style="color:#475569;font-size:.75rem">—</span>
+      <input type="number" value="${b.max}" min="0" max="100" placeholder="إلى"
+        oninput="gpaBands[${i}].max=parseInt(this.value)||0"
+        style="width:52px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'Cairo',sans-serif;font-size:.78rem;text-align:center;outline:none">
+      <span style="color:#475569;font-size:.72rem">%</span>
+      <span style="color:#475569;font-size:.72rem;margin-right:.25rem">→</span>
+      <input type="number" value="${b.score ?? ''}" min="0" max="${w}" placeholder="نقطة"
+        oninput="gpaBands[${i}].score=parseInt(this.value)||0"
+        style="width:54px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#10b981;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
+      <span style="color:#475569;font-size:.7rem">نقطة</span>
+      <button onclick="gpaBands.splice(${i},1);renderGpaBands()" style="background:none;border:none;color:#475569;cursor:pointer;font-size:.85rem;padding:0 .2rem">✕</button>
+    </div>
+  `).join('');
+}
+
+function addGpaBand() {
+  gpaBands.push({min:0, max:0, score:0});
+  renderGpaBands();
 }
 
 function toggleNafath() {
@@ -1650,7 +1745,8 @@ function loadFormConfigUI() {
       const gpaChk = document.getElementById('edu_gpa_enabled');
       if (gpaChk) { gpaChk.checked = true; toggleGpaOptions(); }
       const scaleEl = document.getElementById('gpa_' + (fc.edu_gpa.scale || 5));
-      if (scaleEl) scaleEl.checked = true;
+      if (scaleEl) { scaleEl.checked = true; toggleGpaBands(); }
+      if (fc.gpa_bands?.length) { gpaBands = fc.gpa_bands; renderGpaBands(); }
     }
     document.getElementById('fc_program_desc').value = fc.program_desc || '';
     document.getElementById('fc_min_score').value = fc.min_score || 55;
@@ -1777,6 +1873,7 @@ async function saveFormConfig() {
     min_score: parseInt(document.getElementById('fc_min_score').value) || 55,
     acceptance_mode: document.querySelector('input[name="accept_mode"]:checked')?.value || 'instant',
     pending_msg: document.getElementById('fc_pending_msg')?.value.trim() || '',
+    gpa_bands: document.getElementById('gpa_100')?.checked ? gpaBands.filter(b => b.score !== null) : undefined,
     is_active: document.getElementById('fc_status').value === 'active',
     criteria,
     edu_gpa: { enabled: gpaEnabled, scale: gpaScale },
