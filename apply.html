@@ -100,8 +100,12 @@ input[type=number]{-moz-appearance:textfield}
 .upload-zone:hover{border-color:#1a3a4a;background:#f8fafc}
 .upload-zone p{font-size:.85rem;color:#64748b;margin-top:.4rem}
 .fnav{display:flex;justify-content:space-between;align-items:center;margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid #f1f5f9}
-.fld.err>input,.fld.err>select,.fld.err>textarea{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.09)!important}
+.fld.err>input,.fld.err>select,.fld.err>textarea,.fld.err>.phone-wrap input{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.09)!important}
 .radio-opts.err .ropt{border-color:#ef4444!important}
+.fld input.valid,.fld select.valid,.fld textarea.valid,.fld .phone-wrap input.valid{border-color:#10b981!important;box-shadow:0 0 0 3px rgba(16,185,129,.09)!important}
+.search-sel-wrap{position:relative}.search-sel-inp{width:100%;padding:.62rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px 10px 0 0 !important;font-family:'Cairo',sans-serif;font-size:.85rem;color:#1e293b;outline:none;background:#fff;border-bottom:none!important}
+.search-sel-inp:focus{border-color:#1a3a4a}
+.search-sel-wrap select{border-radius:0 0 10px 10px!important;border-top:1px solid #e2e8f0!important;max-height:180px;overflow-y:auto}
 .step-err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);color:#dc2626;border-radius:10px;padding:.65rem 1rem;font-size:.82rem;margin-bottom:.75rem;text-align:right;display:none}
 .btn-prev{background:#f1f5f9;color:#64748b;border:none;padding:.7rem 1.4rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-prev:hover{background:#e2e8f0}
@@ -331,8 +335,8 @@ input[type=number]{-moz-appearance:textfield}
 
   <div class="sec-lbl">🪪 الهوية والبيانات الرسمية</div>
   <div class="frow">
-    <div class="fld"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="f_name" placeholder="الاسم الرباعي كما في الهوية"></div>
-    <div class="fld"><label>رقم الهوية الوطنية / الإقامة <span class="req">*</span></label><input type="text" id="f_national_id" placeholder="10 أرقام" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"></div>
+    <div class="fld"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="f_name" placeholder="الاسم الرباعي كما في الهوية" oninput="if(this.value.trim().split(/\s+/).filter(Boolean).length>=2)this.classList.add('valid');else this.classList.remove('valid')"></div>
+    <div class="fld"><label>رقم الهوية الوطنية / الإقامة <span class="req">*</span></label><input type="text" id="f_national_id" placeholder="10 أرقام" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" oninput="if(/^[12]\d{9}$/.test(this.value))this.classList.add('valid');else this.classList.remove('valid')"></div>
   </div>
   <div class="frow">
     <div class="fld">
@@ -345,15 +349,26 @@ input[type=number]{-moz-appearance:textfield}
       </div>
     </div>
     <div class="fld"><label>الجنس <span class="req">*</span></label>
-      <select id="f_gender"><option value="">اختر...</option><option value="male">ذكر</option><option value="female">أنثى</option></select>
+      <select id="f_gender" onchange="markValid(this)"><option value="">اختر...</option><option value="male">ذكر</option><option value="female">أنثى</option></select>
     </div>
   </div>
   <div class="frow">
     <div class="fld"><label>الجنسية <span class="req">*</span></label>
-      <select id="f_nat"><option value="">اختر...</option><option value="sa">سعودي</option><option value="gcc">خليجي</option><option value="arab">عربي</option><option value="other">غير ذلك</option></select>
+      <div class="search-sel-wrap">
+        <input class="search-sel-inp" type="text" id="f_nat_search" placeholder="🔍 ابحث عن الجنسية..." oninput="filterSel(this,'f_nat',NAT_LIST,'natSel')">
+        <select id="f_nat" onchange="markValid(this)" size="1"><option value="">اختر...</option></select>
+      </div>
     </div>
+    <div class="fld"><label>دولة الإقامة <span class="req">*</span></label>
+      <div class="search-sel-wrap">
+        <input class="search-sel-inp" type="text" id="f_country_search" placeholder="🔍 ابحث عن الدولة..." oninput="filterSel(this,'f_country',COUNTRY_LIST,'countrySel')">
+        <select id="f_country" onchange="markValid(this)" size="1"><option value="">اختر...</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="frow">
     <div class="fld"><label>المدينة <span class="req">*</span></label>
-      <select id="f_city">
+      <select id="f_city" onchange="markValid(this)">
         <option value="">اختر المدينة...</option>
         <option value="riyadh">الرياض</option><option value="jeddah">جدة</option><option value="makkah">مكة المكرمة</option>
         <option value="madinah">المدينة المنورة</option><option value="dammam">الدمام</option><option value="khobar">الخبر</option>
@@ -368,11 +383,11 @@ input[type=number]{-moz-appearance:textfield}
   <div class="frow">
     <div class="fld"><label>رقم الجوال <span class="req">*</span></label>
       <div class="phone-wrap">
-        <select class="cc-select" id="f_phone_cc"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
-        <input type="tel" id="f_phone" placeholder="5XXXXXXXX" maxlength="9" inputmode="numeric">
+        <select class="cc-select" id="f_phone_cc"></select>
+        <input type="tel" id="f_phone" placeholder="5XXXXXXXX" maxlength="9" inputmode="numeric" oninput="if(/^\d{7,}$/.test(this.value))this.classList.add('valid');else this.classList.remove('valid')">
       </div>
     </div>
-    <div class="fld"><label>البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com"></div>
+    <div class="fld"><label>البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com" oninput="if(this.value.includes('@')&&this.value.split('@')[1]?.includes('.'))this.classList.add('valid');else this.classList.remove('valid')"></div>
   </div>
 
   <div class="sec-lbl" id="lbl_entity_section" style="margin-top:1.1rem">🏢 معلومات المشروع / الشركة</div>
@@ -993,6 +1008,84 @@ function _radioFail(groupId, msg, stepId) {
   return false;
 }
 
+// ===== بيانات الجنسيات والدول ورموز الاتصال =====
+const NAT_LIST = [
+  {v:'sa',n:'🇸🇦 سعودي'},{v:'ae',n:'🇦🇪 إماراتي'},{v:'bh',n:'🇧🇭 بحريني'},{v:'kw',n:'🇰🇼 كويتي'},{v:'om',n:'🇴🇲 عُماني'},{v:'qa',n:'🇶🇦 قطري'},
+  {v:'ye',n:'🇾🇪 يمني'},{v:'jo',n:'🇯🇴 أردني'},{v:'eg',n:'🇪🇬 مصري'},{v:'sy',n:'🇸🇾 سوري'},{v:'lb',n:'🇱🇧 لبناني'},{v:'iq',n:'🇮🇶 عراقي'},
+  {v:'ps',n:'🇵🇸 فلسطيني'},{v:'tn',n:'🇹🇳 تونسي'},{v:'ly',n:'🇱🇾 ليبي'},{v:'dz',n:'🇩🇿 جزائري'},{v:'ma',n:'🇲🇦 مغربي'},{v:'sd',n:'🇸🇩 سوداني'},
+  {v:'mr',n:'🇲🇷 موريتاني'},{v:'so',n:'🇸🇴 صومالي'},{v:'dj',n:'🇩🇯 جيبوتي'},{v:'km',n:'🇰🇲 قمري'},{v:'pk',n:'🇵🇰 باكستاني'},{v:'af',n:'🇦🇫 أفغاني'},
+  {v:'in',n:'🇮🇳 هندي'},{v:'bd',n:'🇧🇩 بنغلاديشي'},{v:'lk',n:'🇱🇰 سريلانكي'},{v:'np',n:'🇳🇵 نيبالي'},{v:'id',n:'🇮🇩 إندونيسي'},{v:'ph',n:'🇵🇭 فلبيني'},
+  {v:'tr',n:'🇹🇷 تركي'},{v:'ir',n:'🇮🇷 إيراني'},{v:'et',n:'🇪🇹 إثيوبي'},{v:'ke',n:'🇰🇪 كيني'},{v:'ng',n:'🇳🇬 نيجيري'},{v:'gh',n:'🇬🇭 غاني'},
+  {v:'tz',n:'🇹🇿 تنزاني'},{v:'ug',n:'🇺🇬 أوغندي'},{v:'er',n:'🇪🇷 إريتري'},{v:'us',n:'🇺🇸 أمريكي'},{v:'gb',n:'🇬🇧 بريطاني'},{v:'ca',n:'🇨🇦 كندي'},
+  {v:'au',n:'🇦🇺 أسترالي'},{v:'fr',n:'🇫🇷 فرنسي'},{v:'de',n:'🇩🇪 ألماني'},{v:'es',n:'🇪🇸 إسباني'},{v:'it',n:'🇮🇹 إيطالي'},{v:'nl',n:'🇳🇱 هولندي'},
+  {v:'be',n:'🇧🇪 بلجيكي'},{v:'ch',n:'🇨🇭 سويسري'},{v:'se',n:'🇸🇪 سويدي'},{v:'no',n:'🇳🇴 نرويجي'},{v:'dk',n:'🇩🇰 دنماركي'},{v:'fi',n:'🇫🇮 فنلندي'},
+  {v:'pl',n:'🇵🇱 بولندي'},{v:'ro',n:'🇷🇴 روماني'},{v:'ru',n:'🇷🇺 روسي'},{v:'cn',n:'🇨🇳 صيني'},{v:'jp',n:'🇯🇵 ياباني'},{v:'kr',n:'🇰🇷 كوري'},
+  {v:'my',n:'🇲🇾 ماليزي'},{v:'th',n:'🇹🇭 تايلاندي'},{v:'vn',n:'🇻🇳 فيتنامي'},{v:'mx',n:'🇲🇽 مكسيكي'},{v:'br',n:'🇧🇷 برازيلي'},{v:'ar',n:'🇦🇷 أرجنتيني'},
+  {v:'other',n:'🌍 جنسية أخرى'}
+];
+
+const COUNTRY_LIST = [
+  {v:'sa',n:'🇸🇦 المملكة العربية السعودية'},{v:'ae',n:'🇦🇪 الإمارات العربية المتحدة'},{v:'bh',n:'🇧🇭 البحرين'},{v:'kw',n:'🇰🇼 الكويت'},
+  {v:'om',n:'🇴🇲 عُمان'},{v:'qa',n:'🇶🇦 قطر'},{v:'ye',n:'🇾🇪 اليمن'},{v:'jo',n:'🇯🇴 الأردن'},{v:'eg',n:'🇪🇬 مصر'},{v:'sy',n:'🇸🇾 سوريا'},
+  {v:'lb',n:'🇱🇧 لبنان'},{v:'iq',n:'🇮🇶 العراق'},{v:'ps',n:'🇵🇸 فلسطين'},{v:'tn',n:'🇹🇳 تونس'},{v:'ly',n:'🇱🇾 ليبيا'},{v:'dz',n:'🇩🇿 الجزائر'},
+  {v:'ma',n:'🇲🇦 المغرب'},{v:'sd',n:'🇸🇩 السودان'},{v:'mr',n:'🇲🇷 موريتانيا'},{v:'so',n:'🇸🇴 الصومال'},{v:'dj',n:'🇩🇯 جيبوتي'},{v:'km',n:'🇰🇲 جزر القمر'},
+  {v:'pk',n:'🇵🇰 باكستان'},{v:'af',n:'🇦🇫 أفغانستان'},{v:'in',n:'🇮🇳 الهند'},{v:'bd',n:'🇧🇩 بنغلاديش'},{v:'lk',n:'🇱🇰 سريلانكا'},{v:'np',n:'🇳🇵 نيبال'},
+  {v:'id',n:'🇮🇩 إندونيسيا'},{v:'ph',n:'🇵🇭 الفلبين'},{v:'my',n:'🇲🇾 ماليزيا'},{v:'th',n:'🇹🇭 تايلاند'},{v:'vn',n:'🇻🇳 فيتنام'},{v:'sg',n:'🇸🇬 سنغافورة'},
+  {v:'tr',n:'🇹🇷 تركيا'},{v:'ir',n:'🇮🇷 إيران'},{v:'et',n:'🇪🇹 إثيوبيا'},{v:'ke',n:'🇰🇪 كينيا'},{v:'ng',n:'🇳🇬 نيجيريا'},{v:'gh',n:'🇬🇭 غانا'},
+  {v:'tz',n:'🇹🇿 تنزانيا'},{v:'ug',n:'🇺🇬 أوغندا'},{v:'er',n:'🇪🇷 إريتريا'},{v:'rw',n:'🇷🇼 رواندا'},{v:'tz',n:'🇹🇿 تنزانيا'},{v:'zm',n:'🇿🇲 زامبيا'},
+  {v:'us',n:'🇺🇸 الولايات المتحدة'},{v:'gb',n:'🇬🇧 المملكة المتحدة'},{v:'ca',n:'🇨🇦 كندا'},{v:'au',n:'🇦🇺 أستراليا'},{v:'nz',n:'🇳🇿 نيوزيلندا'},
+  {v:'fr',n:'🇫🇷 فرنسا'},{v:'de',n:'🇩🇪 ألمانيا'},{v:'es',n:'🇪🇸 إسبانيا'},{v:'it',n:'🇮🇹 إيطاليا'},{v:'nl',n:'🇳🇱 هولندا'},{v:'be',n:'🇧🇪 بلجيكا'},
+  {v:'ch',n:'🇨🇭 سويسرا'},{v:'se',n:'🇸🇪 السويد'},{v:'no',n:'🇳🇴 النرويج'},{v:'dk',n:'🇩🇰 الدنمارك'},{v:'fi',n:'🇫🇮 فنلندا'},{v:'pl',n:'🇵🇱 بولندا'},
+  {v:'ro',n:'🇷🇴 رومانيا'},{v:'hu',n:'🇭🇺 المجر'},{v:'cz',n:'🇨🇿 التشيك'},{v:'pt',n:'🇵🇹 البرتغال'},{v:'gr',n:'🇬🇷 اليونان'},{v:'at',n:'🇦🇹 النمسا'},
+  {v:'ru',n:'🇷🇺 روسيا'},{v:'ua',n:'🇺🇦 أوكرانيا'},{v:'cn',n:'🇨🇳 الصين'},{v:'jp',n:'🇯🇵 اليابان'},{v:'kr',n:'🇰🇷 كوريا الجنوبية'},
+  {v:'mx',n:'🇲🇽 المكسيك'},{v:'br',n:'🇧🇷 البرازيل'},{v:'ar',n:'🇦🇷 الأرجنتين'},{v:'co',n:'🇨🇴 كولومبيا'},{v:'cl',n:'🇨🇱 تشيلي'},
+  {v:'other',n:'🌍 دولة أخرى'}
+];
+
+const CC_LIST = [
+  {v:'+966',n:'🇸🇦 +966'},{v:'+971',n:'🇦🇪 +971'},{v:'+973',n:'🇧🇭 +973'},{v:'+965',n:'🇰🇼 +965'},{v:'+968',n:'🇴🇲 +968'},{v:'+974',n:'🇶🇦 +974'},
+  {v:'+967',n:'🇾🇪 +967'},{v:'+962',n:'🇯🇴 +962'},{v:'+20',n:'🇪🇬 +20'},{v:'+963',n:'🇸🇾 +963'},{v:'+961',n:'🇱🇧 +961'},{v:'+964',n:'🇮🇶 +964'},
+  {v:'+970',n:'🇵🇸 +970'},{v:'+216',n:'🇹🇳 +216'},{v:'+218',n:'🇱🇾 +218'},{v:'+213',n:'🇩🇿 +213'},{v:'+212',n:'🇲🇦 +212'},{v:'+249',n:'🇸🇩 +249'},
+  {v:'+222',n:'🇲🇷 +222'},{v:'+252',n:'🇸🇴 +252'},{v:'+92',n:'🇵🇰 +92'},{v:'+93',n:'🇦🇫 +93'},{v:'+91',n:'🇮🇳 +91'},{v:'+880',n:'🇧🇩 +880'},
+  {v:'+94',n:'🇱🇰 +94'},{v:'+977',n:'🇳🇵 +977'},{v:'+62',n:'🇮🇩 +62'},{v:'+63',n:'🇵🇭 +63'},{v:'+60',n:'🇲🇾 +60'},{v:'+66',n:'🇹🇭 +66'},
+  {v:'+84',n:'🇻🇳 +84'},{v:'+65',n:'🇸🇬 +65'},{v:'+90',n:'🇹🇷 +90'},{v:'+98',n:'🇮🇷 +98'},{v:'+251',n:'🇪🇹 +251'},{v:'+254',n:'🇰🇪 +254'},
+  {v:'+234',n:'🇳🇬 +234'},{v:'+233',n:'🇬🇭 +233'},{v:'+255',n:'🇹🇿 +255'},{v:'+256',n:'🇺🇬 +256'},{v:'+291',n:'🇪🇷 +291'},
+  {v:'+1',n:'🇺🇸 +1'},{v:'+44',n:'🇬🇧 +44'},{v:'+1',n:'🇨🇦 +1'},{v:'+61',n:'🇦🇺 +61'},{v:'+64',n:'🇳🇿 +64'},
+  {v:'+33',n:'🇫🇷 +33'},{v:'+49',n:'🇩🇪 +49'},{v:'+34',n:'🇪🇸 +34'},{v:'+39',n:'🇮🇹 +39'},{v:'+31',n:'🇳🇱 +31'},{v:'+32',n:'🇧🇪 +32'},
+  {v:'+41',n:'🇨🇭 +41'},{v:'+46',n:'🇸🇪 +46'},{v:'+47',n:'🇳🇴 +47'},{v:'+45',n:'🇩🇰 +45'},{v:'+358',n:'🇫🇮 +358'},
+  {v:'+7',n:'🇷🇺 +7'},{v:'+86',n:'🇨🇳 +86'},{v:'+81',n:'🇯🇵 +81'},{v:'+82',n:'🇰🇷 +82'},
+  {v:'+52',n:'🇲🇽 +52'},{v:'+55',n:'🇧🇷 +55'},{v:'+54',n:'🇦🇷 +54'}
+];
+
+function filterSel(inp, selId, arr, cacheKey) {
+  const q = inp.value.trim();
+  const sel = document.getElementById(selId);
+  const cur = sel.value;
+  const filtered = q ? arr.filter(x => x.n.includes(q) || x.v.includes(q)) : arr;
+  sel.innerHTML = '<option value="">اختر...</option>' + filtered.map(x =>
+    `<option value="${x.v}"${x.v===cur?' selected':''}>${x.n}</option>`).join('');
+  if (cur && sel.value !== cur) { sel.value = ''; }
+}
+
+function markValid(el) {
+  if (el.value) el.classList.add('valid'); else el.classList.remove('valid');
+}
+
+function initSelectLists() {
+  // الجنسيات
+  const natSel = document.getElementById('f_nat');
+  if (natSel) natSel.innerHTML = '<option value="">اختر...</option>' + NAT_LIST.map(x=>`<option value="${x.v}">${x.n}</option>`).join('');
+  // الدول
+  const countrySel = document.getElementById('f_country');
+  if (countrySel) countrySel.innerHTML = '<option value="">اختر...</option>' + COUNTRY_LIST.map(x=>`<option value="${x.v}">${x.n}</option>`).join('');
+  // رموز الدول
+  document.querySelectorAll('.cc-select').forEach(sel => {
+    sel.innerHTML = CC_LIST.map((x,i) => `<option value="${x.v}"${i===0?' selected':''}>${x.n}</option>`).join('');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initSelectLists);
+
 function validateStep1() {
   _stepErrClear('s1');
   const v = id => (document.getElementById(id)?.value || '').trim();
@@ -1016,6 +1109,7 @@ function validateStep1() {
 
   if (!v('f_gender')) return _fieldFail('f_gender', 'يرجى اختيار الجنس', 's1');
   if (!v('f_nat')) return _fieldFail('f_nat', 'يرجى اختيار الجنسية', 's1');
+  if (!v('f_country')) return _fieldFail('f_country', 'يرجى اختيار دولة الإقامة', 's1');
   if (!v('f_city')) return _fieldFail('f_city', 'يرجى اختيار المدينة', 's1');
 
   const phone = v('f_phone');
@@ -1288,6 +1382,7 @@ function collect() {
     dob: document.getElementById('f_dob').value,
     gender: document.getElementById('f_gender').value,
     nationality: document.getElementById('f_nat').value,
+    country: document.getElementById('f_country')?.value || '',
     city: document.getElementById('f_city').value,
   };
 }
