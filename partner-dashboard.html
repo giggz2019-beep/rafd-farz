@@ -624,7 +624,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div class="fld-m">
           <label>الحد الأدنى للقبول (من 100)</label>
           <input type="number" id="fc_min_score" min="1" max="100" value="55" placeholder="55">
-          <div style="font-size:.72rem;color:#64748b;margin-top:.3rem">المتقدم الحاصل على هذه الدرجة فأكثر يُقبل تلقائياً</div>
+          <div style="font-size:.72rem;color:#64748b;margin-top:.3rem">المتقدم الحاصل على هذه الدرجة فأكثر يجتاز المرحلة الأولى</div>
         </div>
         <div class="fld-m">
           <label>حالة النموذج</label>
@@ -632,6 +632,36 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
             <option value="active">✅ نشط — يقبل التقديمات</option>
             <option value="paused">⏸️ متوقف مؤقتاً</option>
           </select>
+        </div>
+      </div>
+
+      <!-- طريقة القبول -->
+      <div class="fld-m" style="margin-top:.85rem">
+        <label>طريقة القبول</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem">
+          <label id="am_instant_lbl" onclick="selectAcceptMode('instant')" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.75rem 1rem;display:flex;gap:.7rem;align-items:flex-start;transition:.2s;background:rgba(74,157,111,.07)">
+            <input type="radio" name="accept_mode" id="am_instant" value="instant" checked style="accent-color:#10b981;margin-top:.15rem;flex-shrink:0">
+            <div>
+              <div style="font-size:.82rem;font-weight:700;color:#e2e8f0">⚡ قبول فوري</div>
+              <div style="font-size:.71rem;color:#64748b;margin-top:.25rem;line-height:1.5">المتقدم يرى نتيجته مباشرة. من تجاوز الحد الأدنى يحصل على رسالة قبول في الحال.</div>
+            </div>
+          </label>
+          <label id="am_competitive_lbl" onclick="selectAcceptMode('competitive')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:flex;gap:.7rem;align-items:flex-start;transition:.2s">
+            <input type="radio" name="accept_mode" id="am_competitive" value="competitive" style="accent-color:#10b981;margin-top:.15rem;flex-shrink:0">
+            <div>
+              <div style="font-size:.82rem;font-weight:700;color:#e2e8f0">🏅 مفاضلة</div>
+              <div style="font-size:.71rem;color:#64748b;margin-top:.25rem;line-height:1.5">يُجمع الطلبات أولاً ثم تختار أفضلها. المتقدم يرى "قبول مبدئي" وتُبلَّغه بالقرار النهائي لاحقاً.</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- رسالة القبول المبدئي — تظهر فقط في وضع المفاضلة -->
+        <div id="pending_msg_section" style="display:none;margin-top:.85rem">
+          <label style="font-size:.78rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">✏️ رسالة القبول المبدئي للمتقدم</label>
+          <textarea id="fc_pending_msg" rows="3"
+            placeholder="مثال: تم قبولك مبدئياً في برنامجنا، وسيتم التواصل معك خلال أسبوعين بالقرار النهائي."
+            style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.82rem;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box"></textarea>
+          <div style="font-size:.7rem;color:#475569;margin-top:.3rem">هذه الرسالة ستظهر للمتقدم داخل بطاقة القبول المبدئي.</div>
         </div>
       </div>
     </div>
@@ -979,6 +1009,7 @@ function initUI() {
   renderSettings();
   renderSubscription();
   renderLinkPage();
+  initScoreCustomUIs();
   loadFormConfigUI();
 }
 
@@ -1369,6 +1400,94 @@ const docStates = { cv: true, reg: true, cert: false, id: false };
 let customCriteria = [];
 let customDocs = [];
 
+// ===== تخصيص الدرجات لكل معيار =====
+const CRITERIA_OPTIONS = {
+  edu:    [{key:'phd',label:'دكتوراه'},{key:'master',label:'ماجستير'},{key:'bachelor',label:'بكالوريوس'},{key:'diploma',label:'دبلوم أو أقل'}],
+  exp:    [{key:'10+',label:'10 سنوات فأكثر'},{key:'7-10',label:'7–10 سنوات'},{key:'5-7',label:'5–7 سنوات'},{key:'3-5',label:'3–5 سنوات'},{key:'1-3',label:'1–3 سنوات'},{key:'<1',label:'أقل من سنة'}],
+  prev:   [{key:'yes_exit',label:'مشروع ناجح ومُباع'},{key:'yes_active',label:'مشروع نشط حالياً'},{key:'yes_closed',label:'مشروع مُغلق'},{key:'no',label:'لا خبرة سابقة'}],
+  stage:  [{key:'growth',label:'مرحلة نمو (إيرادات مرتفعة)'},{key:'revenue',label:'بدأت تحقيق إيرادات'},{key:'mvp',label:'نموذج أولي (MVP)'},{key:'idea',label:'فكرة فقط'}],
+  cust:   [{key:'paying',label:'عملاء يدفعون فعلاً'},{key:'free',label:'مستخدمون مجانيون'},{key:'pilot',label:'فترة تجريبية'},{key:'none',label:'لا يوجد عملاء بعد'}],
+  team:   [{key:'6+',label:'6 أعضاء فأكثر'},{key:'3-5',label:'3–5 أعضاء'},{key:'2',label:'مؤسسان'},{key:'1',label:'مؤسس واحد'}],
+  commit: [{key:'yes',label:'نعم، بالكامل'},{key:'maybe',label:'ربما، مع بعض التحفظات'},{key:'no',label:'لا أستطيع الالتزام'}],
+};
+let optionScores = {}; // {edu:{phd:15,master:12,...}, exp:{...}, ...}
+
+function initScoreCustomUIs() {
+  CRITERIA_IDS.forEach(id => {
+    const card = document.getElementById('qc_' + id);
+    if (!card || !CRITERIA_OPTIONS[id]) return;
+    card.style.flexWrap = 'wrap';
+    // زر التخصيص
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'width:100%;padding-top:.45rem;border-top:1px solid #1e293b;margin-top:.3rem';
+    wrap.innerHTML = `<button onclick="toggleScoreCustom('${id}')" id="sc_btn_${id}" style="background:none;border:none;color:#475569;font-family:\'Cairo\',sans-serif;font-size:.72rem;cursor:pointer;display:flex;align-items:center;gap:.3rem;padding:0">
+      <span id="sc_arrow_${id}" style="transition:.2s">▶</span> تخصيص الدرجات لكل إجابة
+    </button>`;
+    card.appendChild(wrap);
+    // الحاوية المخفية
+    const box = document.createElement('div');
+    box.id = 'score_custom_' + id;
+    box.style.cssText = 'display:none;width:100%;background:#0f172a;border-radius:8px;padding:.65rem .85rem;margin-top:.4rem';
+    box.innerHTML = `<div style="font-size:.71rem;color:#64748b;margin-bottom:.5rem;font-weight:700">نقاط كل إجابة (من الوزن الكلي للمعيار):</div><div id="score_inputs_${id}"></div>`;
+    card.appendChild(box);
+  });
+}
+
+function toggleScoreCustom(id) {
+  const box = document.getElementById('score_custom_' + id);
+  const arrow = document.getElementById('sc_arrow_' + id);
+  if (!box) return;
+  const open = box.style.display !== 'none';
+  box.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.textContent = open ? '▶' : '▼';
+  if (!open) {
+    // تهيئة افتراضية لو مش محددة
+    if (!optionScores[id]) {
+      const w = parseInt(document.getElementById('qw_' + id)?.value) || 10;
+      optionScores[id] = {};
+      CRITERIA_OPTIONS[id].forEach((opt, i) => {
+        const defs = [1, 0.8, 0.5, 0.2, 0.1, 0];
+        optionScores[id][opt.key] = Math.round((defs[i] ?? 0) * w);
+      });
+    }
+    renderScoreCustomUI(id);
+  }
+}
+
+function renderScoreCustomUI(id) {
+  const container = document.getElementById('score_inputs_' + id);
+  if (!container) return;
+  const scores = optionScores[id] || {};
+  container.innerHTML = CRITERIA_OPTIONS[id].map(opt => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.38rem 0;border-bottom:1px solid rgba(255,255,255,.04)">
+      <span style="font-size:.78rem;color:#94a3b8">${opt.label}</span>
+      <div style="display:flex;align-items:center;gap:.4rem">
+        <input type="number" value="${scores[opt.key] ?? 0}" min="0" max="40"
+          oninput="if(!optionScores['${id}'])optionScores['${id}']={};optionScores['${id}']['${opt.key}']=parseInt(this.value)||0"
+          style="width:54px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#10b981;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
+        <span style="font-size:.7rem;color:#475569">نقطة</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectAcceptMode(mode) {
+  document.getElementById('am_instant').checked = mode === 'instant';
+  document.getElementById('am_competitive').checked = mode === 'competitive';
+  const iLbl = document.getElementById('am_instant_lbl');
+  const cLbl = document.getElementById('am_competitive_lbl');
+  const msgSec = document.getElementById('pending_msg_section');
+  if (iLbl) {
+    iLbl.style.borderColor = mode === 'instant' ? 'rgba(74,157,111,.5)' : '#334155';
+    iLbl.style.background  = mode === 'instant' ? 'rgba(74,157,111,.07)' : 'transparent';
+  }
+  if (cLbl) {
+    cLbl.style.borderColor = mode === 'competitive' ? 'rgba(74,157,111,.5)' : '#334155';
+    cLbl.style.background  = mode === 'competitive' ? 'rgba(74,157,111,.07)' : 'transparent';
+  }
+  if (msgSec) msgSec.style.display = mode === 'competitive' ? 'block' : 'none';
+}
+
 function toggleQ(id) {
   qStates[id] = !qStates[id];
   const toggle = document.getElementById('qt_'+id);
@@ -1534,6 +1653,8 @@ function loadFormConfigUI() {
     document.getElementById('fc_program_desc').value = fc.program_desc || '';
     document.getElementById('fc_min_score').value = fc.min_score || 55;
     document.getElementById('fc_status').value = fc.is_active === false ? 'paused' : 'active';
+    selectAcceptMode(fc.acceptance_mode || 'instant');
+    if (fc.pending_msg) document.getElementById('fc_pending_msg').value = fc.pending_msg;
 
     CRITERIA_IDS.forEach(id => {
       const enabled = fc.criteria?.[id]?.active !== false;
@@ -1548,6 +1669,16 @@ function loadFormConfigUI() {
     });
     customCriteria = fc.custom_criteria || [];
     renderCustomCriteria();
+
+    // Load option_scores
+    optionScores = fc.option_scores || {};
+    CRITERIA_IDS.forEach(id => {
+      if (optionScores[id]) {
+        // أظهر أن التخصيص مفعّل بتغيير لون الزر
+        const btn = document.getElementById('sc_btn_' + id);
+        if (btn) btn.style.color = '#10b981';
+      }
+    });
 
     // Load nafath config
     const nf = fc.nafath || {};
@@ -1642,10 +1773,13 @@ async function saveFormConfig() {
     app_type: appType,
     program_desc: document.getElementById('fc_program_desc').value.trim(),
     min_score: parseInt(document.getElementById('fc_min_score').value) || 55,
+    acceptance_mode: document.querySelector('input[name="accept_mode"]:checked')?.value || 'instant',
+    pending_msg: document.getElementById('fc_pending_msg')?.value.trim() || '',
     is_active: document.getElementById('fc_status').value === 'active',
     criteria,
     edu_gpa: { enabled: gpaEnabled, scale: gpaScale },
     custom_criteria: customCriteria,
+    option_scores: Object.keys(optionScores).length ? optionScores : undefined,
     required_docs,
     custom_docs: customDocs,
     nafath: { enabled: nafathOn, mode: nafathMode },

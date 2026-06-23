@@ -94,13 +94,13 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
       </div>
     </div>
 
-    <!-- Step 1: National ID + Email -->
+    <!-- Step 1: National ID only -->
     <div id="nf_step1">
-      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:1.1rem;text-align:right">أدخل رقم هويتك الوطنية والبريد الإلكتروني المسجّل</div>
+      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:1.1rem;text-align:right">أدخل رقم هويتك الوطنية ثم أكّد الرقم العشوائي في تطبيق نفاذ</div>
       <input type="text" id="nf_id" placeholder="رقم الهوية الوطنية (10 أرقام)" maxlength="10" inputmode="numeric"
-        style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;letter-spacing:.1em;direction:ltr;margin-bottom:.75rem">
-      <input type="email" id="nf_email" placeholder="البريد الإلكتروني المسجّل"
-        style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right;margin-bottom:.75rem">
+        oninput="this.value=this.value.replace(/\D/g,'')"
+        onkeydown="if(event.key==='Enter')initNafathLogin()"
+        style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;letter-spacing:.15em;direction:ltr;margin-bottom:.75rem">
       <div id="nf_err1" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
       <button onclick="initNafathLogin()" id="nf_send_btn"
         style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
@@ -111,10 +111,10 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 
     <!-- Step 2: Nafath App confirmation -->
     <div id="nf_step2" style="display:none">
-      <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.75rem">افتح تطبيق نفاذ على جوالك وأكّد الطلب</div>
-      <div style="font-size:.75rem;color:#64748b;margin-bottom:.5rem">الرقم العشوائي الذي سيظهر في التطبيق:</div>
-      <div id="nf_random_num" style="font-size:2.4rem;font-weight:900;letter-spacing:.25em;color:#4ade80;font-family:monospace;background:rgba(10,95,63,.15);border:2px solid rgba(10,95,63,.4);border-radius:16px;padding:1.1rem;margin-bottom:1rem;direction:ltr">——</div>
-      <div style="font-size:.72rem;color:#4ade80;margin-bottom:1.1rem">📱 تحقق من إشعار تطبيق نفاذ وأكّد الرقم أعلاه</div>
+      <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.85rem">افتح تطبيق <strong style="color:#4ade80">نفاذ</strong> على جوالك وستجد إشعاراً فيه هذا الرقم — اضغط تأكيد</div>
+      <div style="font-size:.73rem;color:#64748b;margin-bottom:.45rem;letter-spacing:.02em">الرقم العشوائي</div>
+      <div id="nf_random_num" style="font-size:2.8rem;font-weight:900;letter-spacing:.3em;color:#4ade80;font-family:monospace;background:rgba(10,95,63,.15);border:2px solid rgba(10,95,63,.4);border-radius:16px;padding:1.25rem;margin-bottom:.75rem;direction:ltr">——</div>
+      <div style="font-size:.72rem;color:#475569;margin-bottom:1.1rem">📱 تحقق من تطبيق نفاذ واضغط الرقم المطابق</div>
       <div id="nf_err2" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
       <button onclick="confirmNafathLogin()" id="nf_verify_btn"
         style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
@@ -244,16 +244,17 @@ let _nafathLoginData = null;
 
 function initNafathLogin() {
   const nid = document.getElementById('nf_id').value.trim();
-  const email = document.getElementById('nf_email').value.trim();
   const errEl = document.getElementById('nf_err1');
   errEl.style.display = 'none';
 
-  if (!/^\d{10}$/.test(nid)) { errEl.textContent = 'رقم الهوية يجب أن يكون 10 أرقام'; errEl.style.display='block'; return; }
-  if (!email.includes('@')) { errEl.textContent = 'يرجى إدخال بريد إلكتروني صحيح'; errEl.style.display='block'; return; }
+  if (!/^\d{10}$/.test(nid)) {
+    errEl.textContent = 'رقم الهوية يجب أن يكون 10 أرقام';
+    errEl.style.display = 'block'; return;
+  }
 
-  // Generate 6-digit random number (simulates what Nafath app would show)
-  const randNum = Math.floor(100000 + Math.random() * 900000).toString();
-  _nafathLoginData = { nid, email, randNum };
+  // رقم عشوائي مكوّن من رقمين — مطابق لآلية نفاذ الفعلية
+  const randNum = Math.floor(10 + Math.random() * 90).toString();
+  _nafathLoginData = { nid, randNum };
 
   document.getElementById('nf_random_num').textContent = randNum;
   document.getElementById('nf_step1').style.display = 'none';
@@ -268,19 +269,19 @@ async function confirmNafathLogin() {
   btn.disabled = true; btn.textContent = '⏳ جارٍ التحقق...';
 
   const { data: p, error } = await _sb.from('partners').select('*')
-    .eq('email', _nafathLoginData.email)
+    .eq('national_id', _nafathLoginData.nid)
     .maybeSingle();
 
   btn.disabled = false; btn.textContent = '✓ تم التأكيد في تطبيق نفاذ — دخول';
 
   if (error || !p) {
-    errEl.textContent = 'لم يُعثر على حساب بهذا البريد. سجّل الدخول بالبريد وكلمة المرور أولاً.';
+    errEl.textContent = 'لم يُعثر على حساب بهذا الرقم. تأكد من رقم هويتك أو سجّل الدخول بالبريد وكلمة المرور.';
     errEl.style.display = 'block'; return;
   }
 
   _nafathLoginData = null;
   closeNafathModal();
-  localStorage.setItem('rafd_partner_session', JSON.stringify({ id: p.id, email: p.email, org: p.org_name }));
+  localStorage.setItem('rafd_partner_session', JSON.stringify({ id: p.id, email: p.email, org: p.org_name, fname: p.fname, lname: p.lname, orgtype: p.org_type, plan: p.plan, ref_num: p.ref_num, title: p.title }));
   window.location.href = '/partner-dashboard.html';
 }
 
