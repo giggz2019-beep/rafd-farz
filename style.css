@@ -104,15 +104,22 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .hero-visual { display: none; }
 
 /* ===== 3D LAPTOP ===== */
-.laptop-scene{perspective:1600px;perspective-origin:48% 42%;display:flex;justify-content:center;align-items:center;width:100%;padding-bottom:30px}
-.laptop-3d{transform:rotateX(4deg) rotateY(20deg) rotateZ(-1deg);transform-style:preserve-3d;filter:drop-shadow(0 40px 70px rgba(0,0,0,.35)) drop-shadow(0 8px 20px rgba(0,0,0,.15));width:100%;max-width:520px}
+.laptop-scene{perspective:1400px;perspective-origin:50% 30%;display:flex;justify-content:center;align-items:center;width:100%;padding-bottom:20px}
+.laptop-3d{transform:rotateX(14deg) rotateY(22deg) rotateZ(-1.5deg);transform-style:preserve-3d;filter:drop-shadow(0 50px 80px rgba(0,0,0,.4)) drop-shadow(0 10px 25px rgba(0,0,0,.18));width:100%;max-width:560px}
 .laptop-lid{background:linear-gradient(150deg,#3a3a3a 0%,#1c1c1c 100%);border-radius:14px 14px 4px 4px;padding:10px 10px 7px;border:1.5px solid rgba(255,255,255,.07);position:relative}
 .laptop-lid::before{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.1)}
 .laptop-screen{background:#0f172a;border-radius:7px;overflow:hidden;border:2px solid #0a0a0a}
-.laptop-hinge{height:6px;background:linear-gradient(180deg,#777 0%,#555 100%);border-radius:0}
-.laptop-base{height:26px;background:linear-gradient(180deg,#cecece 0%,#aaa 100%);border-radius:0 0 8px 8px;position:relative}
-.laptop-base::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.4);border-radius:0}
-.laptop-base::after{content:'';position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:72px;height:4px;background:rgba(0,0,0,.15);border-radius:3px}
+.laptop-hinge{height:4px;background:linear-gradient(180deg,#aaa 0%,#888 100%)}
+.laptop-base{background:linear-gradient(175deg,#dcdcdc 0%,#c4c4c4 50%,#b4b4b4 100%);border-radius:0 0 14px 14px;position:relative;padding:7px 5% 14px}
+.laptop-base::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:rgba(255,255,255,.55)}
+.laptop-keyboard{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}
+.kb-row{display:flex;gap:1.5px}
+.kb-row span{flex:1;height:5.5px;background:#2a2a2a;border-radius:1.5px;box-shadow:0 1.5px 0 rgba(0,0,0,.5),inset 0 .5px 0 rgba(255,255,255,.08)}
+.kb-fn span{height:3.5px;background:#333}
+.kb-space{justify-content:center;gap:2px}
+.kb-space .sp{width:38%;flex:none;height:5.5px;background:#2a2a2a;border-radius:1.5px;box-shadow:0 1.5px 0 rgba(0,0,0,.5)}
+.kb-space .arr{width:4.5%;flex:none;height:5.5px;background:#2e2e2e;border-radius:1.5px;box-shadow:0 1.5px 0 rgba(0,0,0,.5)}
+.laptop-trackpad{width:20%;height:12px;background:linear-gradient(180deg,#ccc 0%,#bbb 100%);border-radius:5px;margin:0 auto;border:1px solid rgba(0,0,0,.1);box-shadow:inset 0 0 4px rgba(0,0,0,.07)}
 
 /* ===== DASHBOARD MOCKUP ===== */
 .dashboard-mockup { background: #fff; border-radius: 0; box-shadow: none; overflow: hidden; width: 100%; max-width: none; border: none; }
