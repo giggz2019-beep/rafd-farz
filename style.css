@@ -18,6 +18,7 @@
   --shadow-lg: 0 20px 60px rgba(0,0,0,.12);
   --font-heading: 'Tajawal', 'Cairo', sans-serif;
   --font-body: 'Cairo', 'Tajawal', sans-serif;
+  --font-en: 'Inter', 'Segoe UI', sans-serif;
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
@@ -33,10 +34,10 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .navbar { position: fixed; top: 0; right: 0; left: 0; z-index: 1000; background: rgba(255,255,255,.97); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); transition: all .3s; }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; padding: 0 1rem; }
 .brand { display: flex; align-items: center; gap: .5rem; text-decoration: none; }
-.brand-logo { height: 40px; width: auto; max-width: 140px; object-fit: contain; mix-blend-mode: multiply; filter: contrast(1.05); }
+.brand-logo { height: 54px; width: auto; max-width: 160px; object-fit: contain; mix-blend-mode: multiply; filter: contrast(1.05); }
 .brand-text { display: flex; flex-direction: column; }
-.brand-name { font-size: 1.1rem; font-weight: 900; color: var(--primary); line-height: 1.2; font-family: var(--font-heading); }
-.brand-tagline { font-size: .65rem; color: var(--muted); font-weight: 500; }
+.brand-name { font-size: 1.25rem; font-weight: 800; color: var(--primary); line-height: 1.2; font-family: var(--font-en); letter-spacing: -.02em; }
+.brand-tagline { font-size: .66rem; color: var(--muted); font-weight: 500; font-family: var(--font-body); }
 .nav-links { display: none; list-style: none; gap: 1.5rem; }
 .nav-links a { text-decoration: none; color: var(--muted); font-size: .9rem; font-weight: 600; transition: color .2s; }
 .nav-links a:hover { color: var(--primary); }
@@ -209,6 +210,11 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .btn-cta-white:active { transform: scale(.98); }
 .btn-cta-outline { background: transparent; color: #fff; text-decoration: none; font-size: .95rem; font-weight: 700; padding: .95rem 1.5rem; border-radius: 12px; border: 2px solid rgba(255,255,255,.4); transition: all .2s; display: block; }
 .btn-cta-outline:active { border-color: #fff; background: rgba(255,255,255,.1); }
+
+/* ===== PHONE WITH COUNTRY CODE ===== */
+.phone-wrap { display: flex; gap: 0; }
+.phone-wrap select.cc-select { background: var(--bg); border: 1.5px solid var(--border); border-left: none; border-radius: 10px 0 0 10px; padding: .55rem .5rem; font-family: var(--font-en); font-size: .8rem; font-weight: 600; color: var(--primary); cursor: pointer; outline: none; flex-shrink: 0; direction: ltr; }
+.phone-wrap input { border-radius: 0 10px 10px 0 !important; flex: 1; }
 
 /* ===== FOOTER ===== */
 .footer { background: var(--dark); color: rgba(255,255,255,.7); padding: 2.5rem 0 1.5rem; }

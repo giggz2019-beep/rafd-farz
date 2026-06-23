@@ -4,10 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة تحكم الشريك — RAFD Digital</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Cairo',sans-serif;background:#0f172a;color:#e2e8f0;direction:rtl;min-height:100vh}
+
+/* ===== LIGHT THEME ===== */
+body.theme-light{background:#f1f5f9;color:#1e293b}
+body.theme-light .sidebar{background:#fff;border-color:#e2e8f0}
+body.theme-light .sb-logo{border-color:#e2e8f0}
+body.theme-light .nav-item{color:#475569}
+body.theme-light .nav-item:hover,body.theme-light .nav-item.active{background:rgba(26,58,74,.08);color:#1a3a4a}
+body.theme-light .main{background:#f1f5f9}
+body.theme-light .card{background:#fff;border-color:#e2e8f0;color:#1e293b}
+body.theme-light .card-title{color:#1a3a4a}
+body.theme-light .fld-m label,body.theme-light .fld-m input,body.theme-light .fld-m select,body.theme-light .fld-m textarea{color:#1e293b;background:#f8fafc;border-color:#e2e8f0}
+body.theme-light .q-card{background:#f8fafc;border-color:#e2e8f0;color:#1e293b}
+body.theme-light .q-label{color:#1e293b}
+body.theme-light .q-weight input{background:#fff;color:#1a3a4a;border-color:#e2e8f0}
+body.theme-light .page-title{color:#1a3a4a}
+body.theme-light .stat-card{background:#fff;border-color:#e2e8f0}
+body.theme-light .stat-val{color:#1a3a4a}
+body.theme-light table{color:#1e293b}
+body.theme-light th{background:#f1f5f9;color:#475569}
+body.theme-light td{border-color:#f1f5f9}
+body.theme-light tr:hover{background:#f8fafc}
+body.theme-light .sb-uname{color:#1e293b}
+body.theme-light .sb-urole{color:#64748b}
 
 /* ===== SIDEBAR ===== */
 .sidebar{width:250px;background:#1e293b;border-left:1px solid #334155;position:fixed;top:0;right:0;bottom:0;z-index:100;display:flex;flex-direction:column;transition:.3s}
@@ -349,7 +372,10 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         </div>
         <div class="fld-m">
           <label>رقم الجوال</label>
-          <input type="tel" id="nf_phone" placeholder="05XXXXXXXX">
+          <div style="display:flex">
+            <select id="nf_phone_cc" style="background:#1e293b;border:1px solid #334155;border-left:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
+            <input type="tel" id="nf_phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
+          </div>
         </div>
       </div>
       <div class="frow">
@@ -431,7 +457,10 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         </div>
         <div class="fld-m">
           <label>رقم الجوال</label>
-          <input type="tel" id="set_phone">
+          <div style="display:flex">
+            <select id="set_phone_cc" style="background:#1e293b;border:1px solid #334155;border-left:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
+            <input type="tel" id="set_phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
+          </div>
         </div>
       </div>
       <div class="fld-m">
@@ -440,6 +469,23 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
       </div>
       <button class="btn-primary" onclick="saveSettings()">💾 حفظ التغييرات</button>
     </div>
+
+    <div class="card">
+      <div class="card-title">🎨 مظهر اللوحة</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.25rem">
+        <label onclick="setDashTheme('dark')" id="theme_dark_lbl" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.7rem 1rem;display:block;background:rgba(74,157,111,.07);text-align:right">
+          <input type="radio" name="dash_theme" id="theme_dark" value="dark" checked style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+          <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle">🌑 داكن (أسود)</span>
+          <div style="font-size:.71rem;color:#64748b;margin-top:.25rem">الوضع الحالي — خلفية داكنة مريحة للعين في الأماكن المضاءة</div>
+        </label>
+        <label onclick="setDashTheme('light')" id="theme_light_lbl" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.7rem 1rem;display:block;text-align:right">
+          <input type="radio" name="dash_theme" id="theme_light" value="light" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+          <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle">☀️ فاتح (أبيض)</span>
+          <div style="font-size:.71rem;color:#64748b;margin-top:.25rem">خلفية بيضاء مناسبة للطباعة والعرض الرسمي</div>
+        </label>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-title">🔒 تغيير كلمة المرور</div>
       <div class="frow">
@@ -596,6 +642,17 @@ CREATE TABLE IF NOT EXISTS applications (
 );
 ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div style="font-size:.78rem;color:#fca5a5">بعد التشغيل، اضغط حفظ مرة أخرى.</div>
+    </div>
+
+    <!-- النماذج المحفوظة -->
+    <div class="card" id="saved_forms_card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem">
+        <div class="card-title" style="margin-bottom:0">📁 النماذج المحفوظة</div>
+        <button onclick="saveCurrentForm()" style="background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:8px;padding:.45rem 1rem;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem">💾 حفظ كنموذج</button>
+      </div>
+      <div id="saved_forms_list">
+        <div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem">لا توجد نماذج محفوظة بعد — اضبط النموذج واضغط "حفظ كنموذج"</div>
+      </div>
     </div>
 
     <div class="card">
@@ -996,6 +1053,9 @@ function normalizePartner(p) {
 }
 
 // ===== INIT UI =====
+// تطبيق الثيم المحفوظ فور التحميل
+(function(){ const t=localStorage.getItem('rafd_dash_theme'); if(t==='light') document.body.classList.add('theme-light'); })();
+
 function initUI() {
   document.getElementById('sb_orgname').textContent = partner.org;
   document.getElementById('sb_orgtype').textContent = partner.orgtype;
@@ -1127,7 +1187,7 @@ async function submitRequest() {
     name,
     national_id: document.getElementById('nf_id').value.trim(),
     email: document.getElementById('nf_email').value.trim(),
-    phone: document.getElementById('nf_phone').value.trim(),
+    phone: (document.getElementById('nf_phone_cc')?.value||'+966') + document.getElementById('nf_phone').value.trim(),
     company: purpose,
     score,
     result,
@@ -1227,6 +1287,8 @@ async function finalReject(id) {
 
 // ===== SETTINGS =====
 function renderSettings() {
+  const savedTheme = localStorage.getItem('rafd_dash_theme') || 'dark';
+  setDashTheme(savedTheme);
   document.getElementById('set_orgname').value = partner.org || '';
   document.getElementById('set_orgtype').value = partner.orgtype || '';
   document.getElementById('set_city').value = partner.city || '';
@@ -1245,7 +1307,7 @@ async function saveSettings() {
   partner.fname = document.getElementById('set_fname').value.trim();
   partner.lname = document.getElementById('set_lname').value.trim();
   partner.title = document.getElementById('set_title').value.trim();
-  partner.phone = document.getElementById('set_phone').value.trim();
+  partner.phone = (document.getElementById('set_phone_cc')?.value||'+966') + document.getElementById('set_phone').value.trim();
   await updatePartnerInStorage();
   initUI();
   toast('✅ تم حفظ التغييرات بنجاح!');
@@ -1521,6 +1583,19 @@ function renderScoreCustomUI(id) {
   `).join('');
 }
 
+function setDashTheme(theme) {
+  localStorage.setItem('rafd_dash_theme', theme);
+  document.body.className = theme === 'light' ? 'theme-light' : '';
+  const dLbl = document.getElementById('theme_dark_lbl');
+  const lLbl = document.getElementById('theme_light_lbl');
+  const dRad = document.getElementById('theme_dark');
+  const lRad = document.getElementById('theme_light');
+  if (dLbl) { dLbl.style.borderColor = theme==='dark'?'rgba(74,157,111,.5)':'#334155'; dLbl.style.background = theme==='dark'?'rgba(74,157,111,.07)':'transparent'; }
+  if (lLbl) { lLbl.style.borderColor = theme==='light'?'rgba(74,157,111,.5)':'#334155'; lLbl.style.background = theme==='light'?'rgba(74,157,111,.07)':'transparent'; }
+  if (dRad) dRad.checked = theme === 'dark';
+  if (lRad) lRad.checked = theme === 'light';
+}
+
 function selectAcceptMode(mode) {
   document.getElementById('am_instant').checked = mode === 'instant';
   document.getElementById('am_competitive').checked = mode === 'competitive';
@@ -1733,6 +1808,110 @@ function renderCustomCriteria() {
   `).join('');
 }
 
+// ===== النماذج المحفوظة =====
+let savedForms = [];
+
+async function saveCurrentForm() {
+  const name = prompt('اسم النموذج:');
+  if (!name?.trim()) return;
+  const config = buildFormConfig();
+  const newForm = { id: Date.now().toString(), name: name.trim(), config, saved_at: new Date().toISOString() };
+  savedForms.push(newForm);
+  await persistSavedForms();
+  renderSavedFormsList();
+  toast('✅ تم حفظ النموذج: ' + name.trim(), 'success');
+}
+
+async function persistSavedForms() {
+  const fc = { ...(partner.formConfig || {}), saved_forms: savedForms };
+  await _sb.from('partners').update({ form_config: fc }).eq('id', partner.id);
+  partner.formConfig = fc;
+}
+
+function loadSavedForm(id) {
+  const f = savedForms.find(x => x.id === id);
+  if (!f) return;
+  if (!confirm('سيتم تحميل النموذج "' + f.name + '" — هل تريد المتابعة؟')) return;
+  applyFormConfig(f.config);
+  toast('تم تحميل النموذج: ' + f.name);
+}
+
+async function deleteSavedForm(id) {
+  if (!confirm('حذف هذا النموذج؟')) return;
+  savedForms = savedForms.filter(x => x.id !== id);
+  await persistSavedForms();
+  renderSavedFormsList();
+  toast('تم حذف النموذج');
+}
+
+function renderSavedFormsList() {
+  const el = document.getElementById('saved_forms_list');
+  if (!el) return;
+  if (!savedForms.length) {
+    el.innerHTML = '<div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem">لا توجد نماذج محفوظة بعد — اضبط النموذج واضغط "حفظ كنموذج"</div>';
+    return;
+  }
+  el.innerHTML = savedForms.map(f => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.55rem .75rem;background:#1e293b;border-radius:8px;margin-bottom:.4rem">
+      <div>
+        <div style="font-size:.82rem;font-weight:700;color:#e2e8f0">${f.name}</div>
+        <div style="font-size:.68rem;color:#475569">${new Date(f.saved_at).toLocaleDateString('ar-SA')}</div>
+      </div>
+      <div style="display:flex;gap:.4rem">
+        <button onclick="loadSavedForm('${f.id}')" style="background:rgba(74,157,111,.15);color:#4ade80;border:none;border-radius:6px;padding:.3rem .65rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">تحميل</button>
+        <button onclick="deleteSavedForm('${f.id}')" style="background:rgba(239,68,68,.1);color:#f87171;border:none;border-radius:6px;padding:.3rem .55rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildFormConfig() {
+  // يُعيد كائن fc من الـ UI الحالية (نفس منطق حفظ النموذج الموجودة)
+  const programName = document.getElementById('fc_program_name')?.value.trim() || '';
+  const appType = document.getElementById('fc_app_type')?.value || 'project';
+  const criteria = {};
+  CRITERIA_IDS.forEach(id => {
+    criteria[id] = { active: qStates[id] !== false, weight: parseInt(document.getElementById('qw_'+id)?.value)||10 };
+  });
+  return {
+    program_name: programName, app_type: appType,
+    program_desc: document.getElementById('fc_program_desc')?.value.trim()||'',
+    min_score: parseInt(document.getElementById('fc_min_score')?.value)||55,
+    acceptance_mode: document.querySelector('input[name="accept_mode"]:checked')?.value||'instant',
+    pending_msg: document.getElementById('fc_pending_msg')?.value.trim()||'',
+    is_active: document.getElementById('fc_status')?.value==='active',
+    criteria, custom_criteria: customCriteria,
+    option_scores: Object.keys(optionScores).length ? optionScores : undefined,
+    edu_gpa: { enabled: document.getElementById('edu_gpa_enabled')?.checked??false, scale: parseInt(document.querySelector('input[name="gpa_scale"]:checked')?.value||5) },
+    gpa_bands: document.getElementById('gpa_100')?.checked ? gpaBands.filter(b=>b.score!==null) : undefined,
+  };
+}
+
+function applyFormConfig(fc) {
+  if (!fc) return;
+  if (fc.program_name) document.getElementById('fc_program_name').value = fc.program_name;
+  if (fc.app_type) document.getElementById('fc_app_type').value = fc.app_type;
+  if (fc.program_desc) document.getElementById('fc_program_desc').value = fc.program_desc;
+  if (fc.min_score) document.getElementById('fc_min_score').value = fc.min_score;
+  if (fc.acceptance_mode) selectAcceptMode(fc.acceptance_mode);
+  if (fc.pending_msg) document.getElementById('fc_pending_msg').value = fc.pending_msg;
+  CRITERIA_IDS.forEach(id => {
+    const enabled = fc.criteria?.[id]?.active !== false;
+    qStates[id] = enabled;
+    const toggle = document.getElementById('qt_'+id);
+    const card = document.getElementById('qc_'+id);
+    if (toggle) { toggle.className = 'q-toggle' + (enabled?' on':''); }
+    if (card) card.style.opacity = enabled ? '1' : '.45';
+    const w = document.getElementById('qw_'+id);
+    if (w && fc.criteria?.[id]?.weight) w.value = fc.criteria[id].weight;
+  });
+  customCriteria = fc.custom_criteria || [];
+  renderCustomCriteria();
+  optionScores = fc.option_scores || {};
+  if (fc.option_scores) CRITERIA_IDS.forEach(id => { if (optionScores[id]) { const btn=document.getElementById('sc_btn_'+id); if(btn) btn.style.color='#10b981'; }});
+  updateWeightTotal();
+}
+
 function loadFormConfigUI() {
   CRITERIA_IDS.forEach(id => { qStates[id] = true; });
 
@@ -1753,6 +1932,10 @@ function loadFormConfigUI() {
     document.getElementById('fc_status').value = fc.is_active === false ? 'paused' : 'active';
     selectAcceptMode(fc.acceptance_mode || 'instant');
     if (fc.pending_msg) document.getElementById('fc_pending_msg').value = fc.pending_msg;
+
+    // تحميل النماذج المحفوظة
+    savedForms = fc.saved_forms || [];
+    renderSavedFormsList();
 
     CRITERIA_IDS.forEach(id => {
       const enabled = fc.criteria?.[id]?.active !== false;

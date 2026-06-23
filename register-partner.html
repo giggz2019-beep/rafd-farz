@@ -267,7 +267,10 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
       </div>
       <div class="fld">
         <label><span class="req">*</span>رقم الجوال</label>
-        <input type="tel" id="f_phone" placeholder="05XXXXXXXX" maxlength="10">
+        <div class="phone-wrap">
+          <select class="cc-select" id="f_phone_cc"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
+          <input type="tel" id="f_phone" placeholder="5XXXXXXXX" maxlength="9">
+        </div>
       </div>
     </div>
     <div class="fld">
@@ -648,8 +651,8 @@ async function submitForm() {
   }
 
   const phone = document.getElementById('f_phone').value.trim();
-  if (phone && !/^05\d{8}$/.test(phone)) {
-    const e = setErr('f_phone','يجب أن يبدأ بـ 05 ويتكون من 10 أرقام');
+  if (phone && !/^\d{7,10}$/.test(phone)) {
+    const e = setErr('f_phone','رقم الجوال غير صحيح');
     if (!firstErr) firstErr = e; ok = false;
   }
 
@@ -721,7 +724,7 @@ async function submitForm() {
     fname:    document.getElementById('f_fname').value.trim(),
     lname:    document.getElementById('f_lname').value.trim(),
     title:    document.getElementById('f_title').value.trim(),
-    phone, email,
+    phone: (document.getElementById('f_phone_cc')?.value || '+966') + phone, email,
     password: btoa(pass),
     password_plain: pass,
     plan:     selectedPkg,

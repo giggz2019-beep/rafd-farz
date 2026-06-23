@@ -366,7 +366,12 @@ input[type=number]{-moz-appearance:textfield}
 
   <div class="sec-lbl" style="margin-top:1.1rem">📱 بيانات التواصل</div>
   <div class="frow">
-    <div class="fld"><label>رقم الجوال <span class="req">*</span></label><input type="tel" id="f_phone" placeholder="05xxxxxxxx" maxlength="10" inputmode="numeric"></div>
+    <div class="fld"><label>رقم الجوال <span class="req">*</span></label>
+      <div class="phone-wrap">
+        <select class="cc-select" id="f_phone_cc"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
+        <input type="tel" id="f_phone" placeholder="5XXXXXXXX" maxlength="9" inputmode="numeric">
+      </div>
+    </div>
     <div class="fld"><label>البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com"></div>
   </div>
 
@@ -1014,7 +1019,7 @@ function validateStep1() {
   if (!v('f_city')) return _fieldFail('f_city', 'يرجى اختيار المدينة', 's1');
 
   const phone = v('f_phone');
-  if (!/^05\d{8}$/.test(phone)) return _fieldFail('f_phone', 'رقم الجوال يجب أن يبدأ بـ 05 ويكون 10 أرقام (مثال: 0512345678)', 's1');
+  if (!/^\d{7,10}$/.test(phone)) return _fieldFail('f_phone', 'رقم الجوال غير صحيح', 's1');
 
   const email = v('f_email');
   if (!email || !email.includes('@') || !email.split('@')[1]?.includes('.')) return _fieldFail('f_email', 'يرجى إدخال بريد إلكتروني صحيح (مثال: name@domain.com)', 's1');
@@ -1276,7 +1281,7 @@ function collect() {
 
   return {name, score, grade, accepted, pending, bd, sectorName,
     email: document.getElementById('f_email').value.trim(),
-    phone: document.getElementById('f_phone').value.trim(),
+    phone: (document.getElementById('f_phone_cc')?.value || '+966') + document.getElementById('f_phone').value.trim(),
     company: document.getElementById('f_company').value.trim(),
     challenges: document.getElementById('f_challenges').value.trim(),
     national_id: document.getElementById('f_national_id').value.trim(),
