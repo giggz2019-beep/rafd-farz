@@ -55,11 +55,30 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
 .fld input::placeholder,.fld textarea::placeholder{color:#475569}
 .fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#38bdf8;background:rgba(15,23,42,.8);box-shadow:0 0 0 3px rgba(56,189,248,.08)}
 .fld select option{background:#1e293b;color:#e2e8f0}
-.search-sel-wrap{position:relative}
-.search-sel-inp{width:100%;padding:.62rem 1rem;background:rgba(15,23,42,.6)!important;border:1.5px solid rgba(255,255,255,.1)!important;border-radius:12px 12px 0 0!important;font-family:'Cairo',sans-serif;font-size:.85rem;color:#e2e8f0!important;outline:none;box-sizing:border-box;border-bottom:none!important}
-.search-sel-inp:focus{border-color:#38bdf8!important}
-.search-sel-inp::placeholder{color:#475569}
-.search-sel-wrap select{border-radius:0 0 12px 12px!important;border-top:1px solid rgba(255,255,255,.07)!important;max-height:180px;overflow-y:auto}
+/* ===== Custom Select (csel) ===== */
+.csel{position:relative;direction:ltr}
+.csel-btn{width:100%;padding:.72rem 1rem;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(15,23,42,.6);display:flex;align-items:center;gap:.55rem;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.88rem;color:#e2e8f0;transition:border-color .2s}
+.csel-btn:focus{outline:none;border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.08)}
+.csel-btn.sel-valid{border-color:#10b981!important}
+.csel-btn.sel-err{border-color:#ef4444!important}
+.csel-flag{font-size:1.1rem;flex-shrink:0}
+.csel-lbl{flex:1;text-align:right;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.csel-lbl.has-val{color:#e2e8f0}
+.csel-arr{color:#475569;font-size:.65rem;flex-shrink:0;transition:transform .2s;margin-right:auto}
+.csel.open .csel-arr{transform:rotate(180deg)}
+.csel-panel{position:absolute;top:calc(100% + 4px);right:0;left:0;background:#1e293b;border:1.5px solid #334155;border-radius:12px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.4);overflow:hidden;display:none}
+.csel-q{width:100%;padding:.65rem 1rem;border:none;border-bottom:1px solid #334155;outline:none;font-family:'Cairo',sans-serif;font-size:.85rem;direction:rtl;box-sizing:border-box;background:#0f172a;color:#e2e8f0}
+.csel-q::placeholder{color:#475569}
+.csel-opts{max-height:210px;overflow-y:auto}
+.csel-opt{padding:.52rem 1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;font-size:.84rem;color:#e2e8f0;direction:rtl;transition:background .1s}
+.csel-opt:hover,.csel-opt.kbfocus{background:rgba(255,255,255,.06)}
+.csel-opt.is-active{background:rgba(16,185,129,.1);color:#10b981;font-weight:700}
+.csel-opt-flag{font-size:1.05rem;flex-shrink:0}
+.cc-csel-wrap{display:flex;gap:0}
+.cc-csel{flex-shrink:0}
+.cc-csel .csel-btn{border-radius:12px 0 0 12px;border-left:none;padding:.7rem .65rem;gap:.3rem;min-width:90px;direction:ltr;justify-content:center}
+.cc-csel .csel-panel{right:auto;left:0;min-width:240px}
+.cc-inp{border-radius:0 12px 12px 0!important;flex:1}
 .fld textarea{resize:vertical;min-height:90px;line-height:1.7}
 .fld .hint{font-size:.72rem;color:#475569;margin-top:.3rem}
 
@@ -225,6 +244,23 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
         <input type="text" id="f_crnum" placeholder="10 أرقام" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
       </div>
       <div class="fld">
+        <label><span class="req">*</span>دولة الجهة</label>
+        <div class="csel" id="csel_country">
+          <button type="button" class="csel-btn" onclick="cselToggle('country')">
+            <span class="csel-flag" id="csel_country_flag">🌍</span>
+            <span class="csel-lbl" id="csel_country_lbl">اختر الدولة...</span>
+            <span class="csel-arr">▾</span>
+          </button>
+          <div class="csel-panel" id="csel_country_panel">
+            <input class="csel-q" id="csel_country_q" type="text" placeholder="🔍 ابحث عن الدولة..." oninput="_cselFilter('country')">
+            <div class="csel-opts" id="csel_country_opts"></div>
+          </div>
+          <input type="hidden" id="f_country">
+        </div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fld">
         <label><span class="req">*</span>المدينة</label>
         <select id="f_city">
           <option value="">اختر...</option>
@@ -272,25 +308,37 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
       </div>
       <div class="fld">
         <label><span class="req">*</span>رقم الجوال</label>
-        <div class="phone-wrap">
-          <select class="cc-select" id="f_phone_cc"></select>
-          <input type="tel" id="f_phone" placeholder="5XXXXXXXX" maxlength="9">
+        <div class="cc-csel-wrap">
+          <div class="csel cc-csel" id="csel_phone_cc">
+            <button type="button" class="csel-btn" onclick="cselToggle('phone_cc')">
+              <span class="csel-flag" id="csel_phone_cc_flag">🇸🇦</span>
+              <span class="csel-lbl has-val" id="csel_phone_cc_lbl">+966</span>
+              <span class="csel-arr">▾</span>
+            </button>
+            <div class="csel-panel" id="csel_phone_cc_panel">
+              <input class="csel-q" id="csel_phone_cc_q" type="text" placeholder="🔍 ابحث..." oninput="_cselFilter('phone_cc')">
+              <div class="csel-opts" id="csel_phone_cc_opts"></div>
+            </div>
+            <input type="hidden" id="f_phone_cc" value="+966">
+          </div>
+          <input type="tel" id="f_phone" placeholder="5XXXXXXXX" maxlength="9" class="cc-inp" style="border-radius:0 12px 12px 0!important">
         </div>
       </div>
     </div>
     <div class="frow">
       <div class="fld">
-        <label><span class="req">*</span>الجنسية</label>
-        <div class="search-sel-wrap">
-          <input class="search-sel-inp" type="text" placeholder="🔍 ابحث عن الجنسية..." oninput="filterSel(this,'f_nat',NAT_LIST)">
-          <select id="f_nat"><option value="">اختر...</option></select>
-        </div>
-      </div>
-      <div class="fld">
-        <label><span class="req">*</span>دولة الإقامة</label>
-        <div class="search-sel-wrap">
-          <input class="search-sel-inp" type="text" placeholder="🔍 ابحث عن الدولة..." oninput="filterSel(this,'f_country',COUNTRY_LIST)">
-          <select id="f_country"><option value="">اختر...</option></select>
+        <label><span class="req">*</span>جنسية المسؤول</label>
+        <div class="csel" id="csel_nat">
+          <button type="button" class="csel-btn" onclick="cselToggle('nat')">
+            <span class="csel-flag" id="csel_nat_flag">🌍</span>
+            <span class="csel-lbl" id="csel_nat_lbl">اختر الجنسية...</span>
+            <span class="csel-arr">▾</span>
+          </button>
+          <div class="csel-panel" id="csel_nat_panel">
+            <input class="csel-q" id="csel_nat_q" type="text" placeholder="🔍 ابحث عن الجنسية..." oninput="_cselFilter('nat')">
+            <div class="csel-opts" id="csel_nat_opts"></div>
+          </div>
+          <input type="hidden" id="f_nat">
         </div>
       </div>
     </div>
@@ -547,24 +595,102 @@ const CC_LIST = [
   {v:'+1',n:'🇺🇸 +1'},{v:'+44',n:'🇬🇧 +44'},{v:'+1',n:'🇨🇦 +1'},{v:'+61',n:'🇦🇺 +61'},
   {v:'+33',n:'🇫🇷 +33'},{v:'+49',n:'🇩🇪 +49'},{v:'+7',n:'🇷🇺 +7'},{v:'+86',n:'🇨🇳 +86'},{v:'+81',n:'🇯🇵 +81'},{v:'+82',n:'🇰🇷 +82'}
 ];
-function filterSel(inp, selId, arr) {
-  const q = inp.value.trim();
-  const sel = document.getElementById(selId);
-  const cur = sel.value;
-  const filtered = q ? arr.filter(x => x.n.includes(q) || x.v.includes(q)) : arr;
-  sel.innerHTML = '<option value="">اختر...</option>' + filtered.map(x =>
-    `<option value="${x.v}"${x.v===cur?' selected':''}>${x.n}</option>`).join('');
+// ===== Custom Select (csel) Engine =====
+const _cselData = {};
+const _cselVal  = {};
+function cselInit(id, arr, defaultVal, isCC) {
+  _cselData[id] = arr;
+  _cselVal[id]  = defaultVal || '';
+  _cselRenderOpts(id, arr);
+  if (defaultVal) {
+    const item = arr.find(x => x.v === defaultVal);
+    if (item) {
+      const parts = item.n.split(' ');
+      const flag  = parts[0];
+      const lbl   = isCC ? parts[1] : parts.slice(1).join(' ');
+      const flagEl = document.getElementById('csel_' + id + '_flag');
+      const lblEl  = document.getElementById('csel_' + id + '_lbl');
+      if (flagEl) flagEl.textContent = flag;
+      if (lblEl)  { lblEl.textContent = lbl; lblEl.classList.add('has-val'); }
+      const hidden = document.getElementById(isCC ? 'f_' + id : 'f_' + id);
+      if (hidden) hidden.value = defaultVal;
+    }
+  }
 }
+function cselToggle(id) {
+  const panel = document.getElementById('csel_' + id + '_panel');
+  const wrap  = document.getElementById('csel_' + id);
+  if (!panel) return;
+  const isOpen = panel.style.display === 'block';
+  document.querySelectorAll('.csel-panel').forEach(p => { p.style.display = 'none'; });
+  document.querySelectorAll('.csel').forEach(w => w.classList.remove('open'));
+  if (!isOpen) {
+    panel.style.display = 'block';
+    wrap.classList.add('open');
+    const q = document.getElementById('csel_' + id + '_q');
+    if (q) { q.value = ''; _cselRenderOpts(id, _cselData[id]); setTimeout(() => q.focus(), 50); }
+  }
+}
+function _cselRenderOpts(id, arr) {
+  const container = document.getElementById('csel_' + id + '_opts');
+  if (!container) return;
+  const cur = _cselVal[id];
+  container.innerHTML = arr.map(item => {
+    const parts = item.n.split(' ');
+    const flag  = parts[0];
+    const label = parts.slice(1).join(' ');
+    return `<div class="csel-opt${item.v===cur?' is-active':''}" onmousedown="_cselPick('${id}','${item.v}',${JSON.stringify(item.n)},${id==='phone_cc'})">
+      <span class="csel-opt-flag">${flag}</span><span>${label}</span></div>`;
+  }).join('');
+}
+function _cselPick(id, val, label, isCC) {
+  _cselVal[id] = val;
+  const parts = label.split(' ');
+  const flag  = parts[0];
+  const lbl   = isCC ? parts[1] : parts.slice(1).join(' ');
+  const flagEl = document.getElementById('csel_' + id + '_flag');
+  const lblEl  = document.getElementById('csel_' + id + '_lbl');
+  if (flagEl) flagEl.textContent = flag;
+  if (lblEl)  { lblEl.textContent = lbl; lblEl.classList.add('has-val'); }
+  const hiddenId = isCC ? 'f_phone_cc' : 'f_' + id;
+  const hidden = document.getElementById(hiddenId);
+  if (hidden) hidden.value = val;
+  const panel = document.getElementById('csel_' + id + '_panel');
+  const wrap  = document.getElementById('csel_' + id);
+  if (panel) panel.style.display = 'none';
+  if (wrap)  wrap.classList.remove('open');
+  const btn = wrap?.querySelector('.csel-btn');
+  if (btn) { btn.classList.remove('sel-err'); btn.classList.add('sel-valid'); }
+}
+function _cselFilter(id) {
+  const q = document.getElementById('csel_' + id + '_q')?.value.trim().toLowerCase() || '';
+  const filtered = q ? _cselData[id].filter(x => x.n.toLowerCase().includes(q) || x.v.toLowerCase().includes(q)) : _cselData[id];
+  _cselRenderOpts_filtered(id, filtered);
+}
+function _cselRenderOpts_filtered(id, arr) {
+  const container = document.getElementById('csel_' + id + '_opts');
+  if (!container) return;
+  const cur = _cselVal[id];
+  container.innerHTML = arr.map(item => {
+    const parts = item.n.split(' ');
+    const flag  = parts[0];
+    const label = parts.slice(1).join(' ');
+    return `<div class="csel-opt${item.v===cur?' is-active':''}" onmousedown="_cselPick('${id}','${item.v}',${JSON.stringify(item.n)},${id==='phone_cc'})">
+      <span class="csel-opt-flag">${flag}</span><span>${label}</span></div>`;
+  }).join('');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.csel')) {
+    document.querySelectorAll('.csel-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.csel').forEach(w => w.classList.remove('open'));
+  }
+});
 
 document.addEventListener('DOMContentLoaded', function() {
-  // تعبئة قوائم الدول والجنسيات ورموز الاتصال
-  const natSel = document.getElementById('f_nat');
-  if (natSel) natSel.innerHTML = '<option value="">اختر...</option>' + NAT_LIST.map(x=>`<option value="${x.v}">${x.n}</option>`).join('');
-  const countrySel = document.getElementById('f_country');
-  if (countrySel) countrySel.innerHTML = '<option value="">اختر...</option>' + COUNTRY_LIST.map(x=>`<option value="${x.v}">${x.n}</option>`).join('');
-  document.querySelectorAll('.cc-select').forEach(sel => {
-    sel.innerHTML = CC_LIST.map((x,i) => `<option value="${x.v}"${i===0?' selected':''}>${x.n}</option>`).join('');
-  });
+  // تهيئة القوائم المخصصة
+  cselInit('nat',      NAT_LIST,     '',     false);
+  cselInit('country',  COUNTRY_LIST, 'sa',   false);
+  cselInit('phone_cc', CC_LIST,      '+966', true);
   // مسح الخطأ تلقائياً عند الكتابة
   ['f_orgname','f_orgtype','f_city','f_fname','f_lname','f_title',
    'f_phone','f_email','f_pass','f_pass2'].forEach(id => {
@@ -699,10 +825,22 @@ async function submitForm() {
   ok = req('f_orgname','اسم الجهة') & ok;
   ok = req('f_orgtype','نوع الجهة') & ok;
   ok = req('f_crnum','رقم السجل التجاري') & ok;
+  // التحقق من الدولة (csel)
+  if (!document.getElementById('f_country')?.value) {
+    document.querySelector('#csel_country .csel-btn')?.classList.add('sel-err');
+    if (!firstErr) firstErr = document.querySelector('#csel_country .csel-btn');
+    ok = false;
+  }
   ok = req('f_city','المدينة') & ok;
   ok = req('f_fname','الاسم الأول') & ok;
   ok = req('f_lname','اسم العائلة') & ok;
   ok = req('f_title','المسمى الوظيفي') & ok;
+  // التحقق من الجنسية (csel)
+  if (!document.getElementById('f_nat')?.value) {
+    document.querySelector('#csel_nat .csel-btn')?.classList.add('sel-err');
+    if (!firstErr) firstErr = document.querySelector('#csel_nat .csel-btn');
+    ok = false;
+  }
   ok = req('f_phone','رقم الجوال') & ok;
   ok = req('f_email','البريد الإلكتروني') & ok;
   ok = req('f_pass','كلمة المرور') & ok;
@@ -796,7 +934,7 @@ async function submitForm() {
     fname:    document.getElementById('f_fname').value.trim(),
     lname:    document.getElementById('f_lname').value.trim(),
     title:    document.getElementById('f_title').value.trim(),
-    phone: (document.getElementById('f_phone_cc')?.value || '+966') + phone, email,
+    phone: (_cselVal['phone_cc'] || '+966') + phone, email,
     password: btoa(pass),
     password_plain: pass,
     plan:     selectedPkg,
