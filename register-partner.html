@@ -225,34 +225,32 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     </div>
     <div class="frow">
       <div class="fld">
-        <label><span class="req">*</span>اسم الجهة الرسمي</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-orgname">اسم الجهة الرسمي</span></label>
         <input type="text" id="f_orgname" placeholder="مثال: شركة النخبة للتطوير">
       </div>
       <div class="fld">
-        <label><span class="req">*</span>نوع الجهة</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-orgtype">نوع الجهة</span></label>
         <select id="f_orgtype">
-          <option value="">اختر...</option>
-          <option value="جامعة أو مؤسسة تعليمية">جامعة أو مؤسسة تعليمية</option>
-          <option value="بنك أو مؤسسة مالية">بنك أو مؤسسة مالية</option>
-          <option value="مسرعة أو حاضنة أعمال">مسرعة أو حاضنة أعمال</option>
-          <option value="جهة حكومية">جهة حكومية</option>
-          <option value="شركة خاصة">شركة خاصة</option>
-          <option value="منظمة غير ربحية">منظمة غير ربحية</option>
-          <option value="أخرى">أخرى</option>
-        </select>
-      </div>
+          <option value="" data-i18n="rp.opt-choose">اختر...</option>
+          <option value="جامعة أو مؤسسة تعليمية" data-i18n="rp.ot-uni">جامعة أو مؤسسة تعليمية</option>
+          <option value="بنك أو مؤسسة مالية" data-i18n="rp.ot-bank">بنك أو مؤسسة مالية</option>
+          <option value="مسرعة أو حاضنة أعمال" data-i18n="rp.ot-acc">مسرعة أو حاضنة أعمال</option>
+          <option value="جهة حكومية" data-i18n="rp.ot-gov">جهة حكومية</option>
+          <option value="شركة خاصة" data-i18n="rp.ot-corp">شركة خاصة</option>
+          <option value="منظمة غير ربحية" data-i18n="rp.ot-ngo">منظمة غير ربحية</option>
+          <option value="أخرى" data-i18n="rp.opt-other">أخرى</option></select></div>
     </div>
     <div class="frow">
       <div class="fld">
-        <label><span class="req">*</span>رقم السجل التجاري</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-crnum">رقم السجل التجاري</span></label>
         <input type="text" id="f_crnum" placeholder="10 أرقام" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
       </div>
       <div class="fld">
-        <label><span class="req">*</span>دولة الجهة</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-country">دولة الجهة</span></label>
         <div class="csel" id="csel_country">
           <button type="button" class="csel-btn" onclick="cselToggle('country')">
             <span class="csel-flag" id="csel_country_flag">🌍</span>
-            <span class="csel-lbl" id="csel_country_lbl">اختر الدولة...</span>
+            <span class="csel-lbl" id="csel_country_lbl" data-i18n="rp.sel-country">اختر الدولة...</span>
             <span class="csel-arr">▾</span>
           </button>
           <div class="csel-panel" id="csel_country_panel">
@@ -265,9 +263,9 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     </div>
     <div class="frow">
       <div class="fld">
-        <label><span class="req">*</span>المدينة</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-city">المدينة</span></label>
         <select id="f_city">
-          <option value="">اختر...</option>
+          <option value="" data-i18n="rp.opt-choose">اختر...</option>
           <option>الرياض</option><option>جدة</option><option>مكة المكرمة</option>
           <option>المدينة المنورة</option><option>الدمام</option><option>الخبر</option>
           <option>الظهران</option><option>أبها</option><option>تبوك</option>
@@ -276,12 +274,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
         </select>
       </div>
       <div class="fld">
-        <label>الموقع الإلكتروني</label>
+        <label data-i18n="rp.lbl-website">الموقع الإلكتروني</label>
         <input type="url" id="f_website" placeholder="https://example.com">
       </div>
     </div>
     <div class="fld">
-      <label>وصف مختصر للجهة</label>
+      <label data-i18n="rp.lbl-orgdesc">وصف مختصر للجهة</label>
       <textarea id="f_orgdesc" placeholder="اكتب وصفاً مختصراً عن جهتك وطبيعة عملها..."></textarea>
     </div>
   </div>
@@ -297,21 +295,21 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     </div>
     <div class="frow">
       <div class="fld">
-        <label><span class="req">*</span>الاسم الأول</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-fname">الاسم الأول</span></label>
         <input type="text" id="f_fname" placeholder="محمد">
       </div>
       <div class="fld">
-        <label><span class="req">*</span>اسم العائلة</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-lname">اسم العائلة</span></label>
         <input type="text" id="f_lname" placeholder="الأحمدي">
       </div>
     </div>
     <div class="frow">
       <div class="fld">
-        <label><span class="req">*</span>المسمى الوظيفي</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-title">المسمى الوظيفي</span></label>
         <input type="text" id="f_title" placeholder="مدير البرامج">
       </div>
       <div class="fld">
-        <label><span class="req">*</span>رقم الجوال</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-phone">رقم الجوال</span></label>
         <div class="cc-csel-wrap">
           <div class="csel cc-csel" id="csel_phone_cc">
             <button type="button" class="csel-btn" onclick="cselToggle('phone_cc')">
@@ -331,11 +329,11 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     </div>
     <div class="frow">
       <div class="fld">
-        <label><span class="req">*</span>جنسية المسؤول</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-nat">جنسية المسؤول</span></label>
         <div class="csel" id="csel_nat">
           <button type="button" class="csel-btn" onclick="cselToggle('nat')">
             <span class="csel-flag" id="csel_nat_flag">🌍</span>
-            <span class="csel-lbl" id="csel_nat_lbl">اختر الجنسية...</span>
+            <span class="csel-lbl" id="csel_nat_lbl" data-i18n="rp.sel-nat">اختر الجنسية...</span>
             <span class="csel-arr">▾</span>
           </button>
           <div class="csel-panel" id="csel_nat_panel">
@@ -347,17 +345,17 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       </div>
     </div>
     <div class="fld">
-      <label><span class="req">*</span>البريد الإلكتروني الرسمي</label>
+      <label><span class="req">*</span><span data-i18n="rp.lbl-email">البريد الإلكتروني الرسمي</span></label>
       <input type="email" id="f_email" placeholder="name@company.com">
-      <div class="hint">سيُرسَل رمز التفعيل على هذا البريد</div>
+      <div class="hint" data-i18n="rp.email-hint">سيُرسَل رمز التفعيل على هذا البريد</div>
     </div>
     <div class="frow">
       <div class="fld">
-        <label><span class="req">*</span>كلمة المرور</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-pass">كلمة المرور</span></label>
         <input type="password" id="f_pass" placeholder="8 أحرف على الأقل" oninput="updatePassStrength()">
       </div>
       <div class="fld">
-        <label><span class="req">*</span>تأكيد كلمة المرور</label>
+        <label><span class="req">*</span><span data-i18n="rp.lbl-pass2">تأكيد كلمة المرور</span></label>
         <input type="password" id="f_pass2" placeholder="أعد كتابة كلمة المرور">
       </div>
     </div>
@@ -370,10 +368,10 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
         <div class="pass-bar" id="pb4"></div>
       </div>
       <div class="pass-rules">
-        <span class="pr" id="pr_len">8 أحرف على الأقل</span>
-        <span class="pr" id="pr_up">حرف كبير (A-Z)</span>
-        <span class="pr" id="pr_num">رقم (0-9)</span>
-        <span class="pr" id="pr_sym">رمز خاص (!@#$%)</span>
+        <span class="pr" id="pr_len" data-i18n="rp.pr-len">8 أحرف على الأقل</span>
+        <span class="pr" id="pr_up" data-i18n="rp.pr-up">حرف كبير (A-Z)</span>
+        <span class="pr" id="pr_num" data-i18n="rp.pr-num">رقم (0-9)</span>
+        <span class="pr" id="pr_sym" data-i18n="rp.pr-sym">رمز خاص (!@#$%)</span>
       </div>
     </div>
   </div>
@@ -394,31 +392,31 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
         <div class="pkg-price" data-i18n="trial.price">مجاناً</div>
         <div class="pkg-period" data-i18n="rp.trial-period">لمدة 7 أيام</div>
         <ul class="pkg-features">
-          <li>حتى 50 طلب/شهر</li>
-          <li>تقارير أساسية</li>
-          <li>دعم بالبريد</li>
+          <li data-i18n="rp.trial-f1">حتى 50 طلب/شهر</li>
+          <li data-i18n="rp.trial-f2">تقارير أساسية</li>
+          <li data-i18n="rp.trial-f3">دعم بالبريد</li>
         </ul>
       </div>
       <div class="pkg-card selected" id="pkg_basic" onclick="selectPkg('basic')">
         <div class="pkg-icon">🚀</div>
         <div class="pkg-name" data-i18n="rp.pkg-basic">أساسية</div>
-        <div class="pkg-price">249 ر.س</div>
-        <div class="pkg-period">/شهرياً</div>
+        <div class="pkg-price" data-i18n="rp.basic-price">249 ر.س</div>
+        <div class="pkg-period" data-i18n="rp.per-month">/شهرياً</div>
         <ul class="pkg-features">
-          <li>حتى 500 طلب/شهر</li>
-          <li>تقارير متقدمة</li>
-          <li>دعم أولوية</li>
+          <li data-i18n="rp.basic-f1">حتى 500 طلب/شهر</li>
+          <li data-i18n="rp.basic-f2">تقارير متقدمة</li>
+          <li data-i18n="rp.basic-f3">دعم أولوية</li>
         </ul>
       </div>
       <div class="pkg-card" id="pkg_pro" onclick="selectPkg('pro')">
         <div class="pkg-icon">💎</div>
         <div class="pkg-name" data-i18n="rp.pkg-adv">متقدمة</div>
-        <div class="pkg-price">499 ر.س</div>
-        <div class="pkg-period">/شهرياً</div>
+        <div class="pkg-price" data-i18n="rp.pro-price">499 ر.س</div>
+        <div class="pkg-period" data-i18n="rp.per-month">/شهرياً</div>
         <ul class="pkg-features">
-          <li>طلبات غير محدودة</li>
-          <li>API كامل</li>
-          <li>مدير حساب مخصص</li>
+          <li data-i18n="rp.pro-f1">طلبات غير محدودة</li>
+          <li data-i18n="rp.pro-f2">API كامل</li>
+          <li data-i18n="rp.pro-f3">مدير حساب مخصص</li>
         </ul>
       </div>
     </div>
@@ -435,57 +433,54 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     </div>
     <div class="frow">
       <div class="fld">
-        <label>الغرض الرئيسي من الاستخدام</label>
+        <label data-i18n="rp.lbl-purpose">الغرض الرئيسي من الاستخدام</label>
         <select id="f_purpose">
-          <option value="">اختر...</option>
-          <option value="فرز طلبات التوظيف">فرز طلبات التوظيف</option>
-          <option value="فرز طلبات التمويل">فرز طلبات التمويل</option>
-          <option value="فرز طلبات القبول الجامعي">فرز طلبات القبول الجامعي</option>
-          <option value="فرز طلبات الحاضنات والمسرعات">فرز طلبات الحاضنات والمسرعات</option>
-          <option value="فرز طلبات الدعم الحكومي">فرز طلبات الدعم الحكومي</option>
-          <option value="أخرى">أخرى</option>
-        </select>
-      </div>
+          <option value="" data-i18n="rp.opt-choose">اختر...</option>
+          <option value="فرز طلبات التوظيف" data-i18n="rp.pur-hire">فرز طلبات التوظيف</option>
+          <option value="فرز طلبات التمويل" data-i18n="rp.pur-fund">فرز طلبات التمويل</option>
+          <option value="فرز طلبات القبول الجامعي" data-i18n="rp.pur-edu">فرز طلبات القبول الجامعي</option>
+          <option value="فرز طلبات الحاضنات والمسرعات" data-i18n="rp.pur-acc">فرز طلبات الحاضنات والمسرعات</option>
+          <option value="فرز طلبات الدعم الحكومي" data-i18n="rp.pur-gov">فرز طلبات الدعم الحكومي</option>
+          <option value="أخرى" data-i18n="rp.opt-other">أخرى</option></select></div>
       <div class="fld">
-        <label>عدد الطلبات المتوقعة شهرياً</label>
+        <label data-i18n="rp.lbl-volume">عدد الطلبات المتوقعة شهرياً</label>
         <select id="f_volume">
-          <option value="">اختر...</option>
-          <option value="أقل من 50">أقل من 50</option>
+          <option value="" data-i18n="rp.opt-choose">اختر...</option>
+          <option value="أقل من 50" data-i18n="rp.vol-50">أقل من 50</option>
           <option value="50 - 200">50 - 200</option>
           <option value="200 - 500">200 - 500</option>
           <option value="500 - 1000">500 - 1000</option>
-          <option value="أكثر من 1000">أكثر من 1000</option>
+          <option value="أكثر من 1000" data-i18n="rp.vol-1000">أكثر من 1000</option>
         </select>
       </div>
     </div>
     <div class="fld">
-      <label>ملاحظات أو متطلبات خاصة</label>
+      <label data-i18n="rp.lbl-notes">ملاحظات أو متطلبات خاصة</label>
       <textarea id="f_notes" placeholder="أي متطلبات أو تساؤلات تريد إيصالها لفريقنا..."></textarea>
     </div>
   </div>
 
   <!-- 5. الشروط -->
   <div class="section-card">
-    <div class="terms-box">
-      <h4>شروط وأحكام الشراكة</h4>
-      <p>بالتسجيل في منصة RAFD Digital كشريك، تقر الجهة المسجّلة بما يلي:</p>
-      <p>١. تُلتزم الجهة باستخدام المنصة وفق الغرض المحدد في نموذج التسجيل.</p>
-      <p>٢. تتعهد الجهة بالحفاظ على سرية بيانات المتقدمين وعدم مشاركتها مع أطراف ثالثة.</p>
-      <p>٣. تحتفظ RAFD Digital بحق مراجعة الطلبات والموافقة عليها أو رفضها دون إبداء الأسباب.</p>
-      <p>٤. يُحق لـ RAFD Digital إيقاف الحساب في حال مخالفة الشروط.</p>
-      <p>٥. تسري الاشتراكات الشهرية ولا يُسترد المبلغ المدفوع بعد بدء الفترة.</p>
-      <p>٦. تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.</p>
+    <div class="terms-box"><h4 data-i18n="rp.terms-h4">شروط وأحكام الشراكة</h4>
+      <p data-i18n="rp.terms-p0">بالتسجيل في منصة RAFD Digital كشريك، تقر الجهة المسجّلة بما يلي:</p>
+      <p data-i18n="rp.terms-p1">١. تُلتزم الجهة باستخدام المنصة وفق الغرض المحدد في نموذج التسجيل.</p>
+      <p data-i18n="rp.terms-p2">٢. تتعهد الجهة بالحفاظ على سرية بيانات المتقدمين وعدم مشاركتها مع أطراف ثالثة.</p>
+      <p data-i18n="rp.terms-p3">٣. تحتفظ RAFD Digital بحق مراجعة الطلبات والموافقة عليها أو رفضها دون إبداء الأسباب.</p>
+      <p data-i18n="rp.terms-p4">٤. يُحق لـ RAFD Digital إيقاف الحساب في حال مخالفة الشروط.</p>
+      <p data-i18n="rp.terms-p5">٥. تسري الاشتراكات الشهرية ولا يُسترد المبلغ المدفوع بعد بدء الفترة.</p>
+      <p data-i18n="rp.terms-p6">٦. تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.</p>
     </div>
     <label class="check-row" style="margin-bottom:.4rem">
       <input type="checkbox" id="chk_terms">
-      <span>أوافق على <a href="#">شروط وأحكام</a> الشراكة مع RAFD Digital</span>
+      <span data-i18n="rp.chk-terms">أوافق على <a href="#">شروط وأحكام</a> الشراكة مع RAFD Digital</span>
     </label>
-    <div class="ferr" id="terms_err" style="margin-bottom:.6rem;padding-right:.1rem">⚠ يرجى الموافقة على الشروط والأحكام</div>
+    <div class="ferr" id="terms_err" style="margin-bottom:.6rem;padding-right:.1rem" data-i18n="rp.err-terms">⚠ يرجى الموافقة على الشروط والأحكام</div>
     <label class="check-row">
       <input type="checkbox" id="chk_privacy">
-      <span>أوافق على <a href="/privacy.html">سياسة الخصوصية</a> وطريقة معالجة البيانات</span>
+      <span data-i18n="rp.chk-privacy">أوافق على <a href="/privacy.html">سياسة الخصوصية</a> وطريقة معالجة البيانات</span>
     </label>
-    <div class="ferr" id="privacy_err" style="padding-right:.1rem">⚠ يرجى الموافقة على سياسة الخصوصية</div>
+    <div class="ferr" id="privacy_err" style="padding-right:.1rem" data-i18n="rp.err-privacy">⚠ يرجى الموافقة على سياسة الخصوصية</div>
   </div>
 
   <button class="btn-submit" id="submitBtn" onclick="submitForm()">
@@ -511,12 +506,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp5">
   </div>
   
-  <div class="otp-error" id="otpError">رمز التفعيل غير صحيح، يرجى المحاولة مجدداً</div>
+  <div class="otp-error" id="otpError" data-i18n="rp.otp-err">رمز التفعيل غير صحيح، يرجى المحاولة مجدداً</div>
   
   <button class="btn-verify" id="verifyBtn" onclick="verifyOTP()" data-i18n="rp.verify-btn">تحقق وفعّل الحساب ✓</button>
   
   <div class="resend-row">
-    <span class="otp-timer" id="otpTimerText">إعادة الإرسال بعد <span id="otpTimer">10:00</span></span>
+    <span class="otp-timer" id="otpTimerText"><span data-i18n="rp.resend-after">إعادة الإرسال بعد</span> <span id="otpTimer">10:00</span></span>
     <button class="btn-resend" id="resendBtn" onclick="resendOTP()" disabled data-i18n="rp.resend-btn">إعادة الإرسال</button>
   </div>
 </div>
@@ -534,15 +529,15 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <h4 data-i18n="rp.now-title">ماذا يمكنك فعله الآن؟</h4>
     <div class="ss-item">
       <div class="ss-num">1</div>
-      <div class="ss-text">سجّل دخولك مباشرة بالبريد وكلمة المرور</div>
+      <div class="ss-text" data-i18n="rp.ss1">سجّل دخولك مباشرة بالبريد وكلمة المرور</div>
     </div>
     <div class="ss-item">
       <div class="ss-num">2</div>
-      <div class="ss-text">استكشف لوحة التحكم وابدأ بإضافة طلباتك</div>
+      <div class="ss-text" data-i18n="rp.ss2">استكشف لوحة التحكم وابدأ بإضافة طلباتك</div>
     </div>
     <div class="ss-item">
       <div class="ss-num">3</div>
-      <div class="ss-text">تواصل مع فريقنا لأي استفسار أو دعم</div>
+      <div class="ss-text" data-i18n="rp.ss3">تواصل مع فريقنا لأي استفسار أو دعم</div>
     </div>
   </div>
   <a href="/partner-login.html" class="btn-login-now" data-i18n="rp.go-login">الذهاب لصفحة الدخول ←</a>
@@ -1133,4 +1128,8 @@ async function resendOTP() {
 </script>
 <script src="/i18n.js"></script></body>
 </html>
+
+
+
+
 

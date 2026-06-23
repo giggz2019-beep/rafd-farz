@@ -245,16 +245,16 @@ input[type=number]{-moz-appearance:textfield}
 <!-- Loading -->
 <div class="loading-screen" id="loadingScreen">
   <div class="spinner"></div>
-  <p style="color:#64748b;font-size:.9rem">جارٍ تحميل نموذج التقديم...</p>
+  <p style="color:#64748b;font-size:.9rem" data-i18n="apply.loading">جارٍ تحميل نموذج التقديم...</p>
 </div>
 
 <!-- Error -->
 <div id="errorScreen" style="display:none">
   <div class="error-card">
     <div style="font-size:2.5rem;margin-bottom:1rem">⚠️</div>
-    <div style="font-size:1.2rem;font-weight:800;color:#0f172a;margin-bottom:.5rem">رابط التقديم غير صحيح</div>
-    <div style="font-size:.88rem;color:#64748b;line-height:1.8" id="errorMsg">تحقق من الرابط أو تواصل مع الجهة التي أرسلته لك.</div>
-    <a href="/" style="display:inline-block;margin-top:1.5rem;color:#1a3a4a;font-weight:700;font-size:.88rem">← العودة للرئيسية</a>
+    <div style="font-size:1.2rem;font-weight:800;color:#0f172a;margin-bottom:.5rem" data-i18n="apply.bad-link">رابط التقديم غير صحيح</div>
+    <div style="font-size:.88rem;color:#64748b;line-height:1.8" id="errorMsg" data-i18n="apply.bad-link-sub">تحقق من الرابط أو تواصل مع الجهة التي أرسلته لك.</div>
+    <a href="/" style="display:inline-block;margin-top:1.5rem;color:#1a3a4a;font-weight:700;font-size:.88rem"><span data-i18n="apply.back-home">← العودة للرئيسية</span></a>
   </div>
 </div>
 
@@ -264,12 +264,9 @@ input[type=number]{-moz-appearance:textfield}
 <!-- Modal -->
 <div class="modal-bg" id="modal">
   <div class="modal-box">
-    <div class="modal-hdr">🛡️ قبل البدء — ملاحظة مهمة</div>
-    <div class="modal-body">
-      هذا التقييم يعتمد على إجاباتك الفعلية. يرجى الإجابة بصدق لأن النتيجة تعكس مدى استيفائك لمعايير <strong>الجهة</strong>.<br><br>
-      بعد إرسال الطلب سيتم تحليل البيانات ومراجعتها وفق معايير الجهة، وستظهر النتيجة خلال دقيقتين.
-    </div>
-    <button class="btn-modal" onclick="startApp()">ابدأ التقديم الآن ←</button>
+    <div class="modal-hdr" data-i18n="apply.modal-hdr">🛡️ قبل البدء — ملاحظة مهمة</div>
+    <div class="modal-body" data-i18n="apply.modal-body">هذا التقييم يعتمد على إجاباتك الفعلية. يرجى الإجابة بصدق لأن النتيجة تعكس مدى استيفائك لمعايير <strong>الجهة</strong>.<br><br>بعد إرسال الطلب سيتم تحليل البيانات ومراجعتها وفق معايير الجهة، وستظهر النتيجة خلال دقيقتين.</div>
+    <button class="btn-modal" onclick="startApp()"><span data-i18n="apply.start-btn">ابدأ التقديم الآن ←</span></button>
   </div>
 </div>
 
@@ -277,7 +274,7 @@ input[type=number]{-moz-appearance:textfield}
 <header class="hdr">
   <div id="hdrPartnerBadge" style="display:flex;align-items:center;gap:.4rem;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:20px;padding:.25rem .75rem;font-size:.75rem;color:#7dd3fc">
     <img src="/rafd-logo.png" alt="RAFD" style="height:20px;width:auto;vertical-align:middle;margin-left:.3rem">
-    <span id="hdrOrgName">جهة شريكة</span>
+    <span id="hdrOrgName" data-i18n="apply.hdr-org-default">جهة شريكة</span>
   </div>
   <a href="/" class="hdr-logo">
     <img src="/rafd-logo.png" alt="RAFD Digital" style="height:58px;width:auto;border-radius:10px;background:#fff;padding:4px;box-shadow:0 1px 4px rgba(0,0,0,.12)">
@@ -310,78 +307,78 @@ input[type=number]{-moz-appearance:textfield}
 
   <!-- Hero -->
   <div class="partner-hero-section">
-    <div class="ph-rafd-badge"><img src="/rafd-logo.png" alt="RAFD" style="height:22px;width:auto;vertical-align:middle;margin-left:.4rem;background:#fff;border-radius:5px;padding:2px"> RAFD Digital — منصة التقييم الذكي</div>
+    <div class="ph-rafd-badge"><img src="/rafd-logo.png" alt="RAFD" style="height:22px;width:auto;vertical-align:middle;margin-left:.4rem;background:#fff;border-radius:5px;padding:2px"> <span data-i18n="apply.rafd-badge">RAFD Digital — منصة التقييم الذكي</span></div>
     <div class="ph-org-avatar" id="ph_avatar">🏢</div>
     <h1 class="ph-org-name" id="welcomePartnerName">—</h1>
-    <div class="ph-org-type" id="ph_org_type">جهة شريكة معتمدة</div>
+    <div class="ph-org-type" id="ph_org_type" data-i18n="apply.org-type-default">جهة شريكة معتمدة</div>
     <div class="ph-divider"></div>
-    <div class="ph-program-name" id="ph_program_name">برنامج التقديم</div>
-    <p class="ph-program-desc" id="welcomeDesc">قدّم طلبك الآن واحصل على نتيجة التقديم خلال دقيقتين.</p>
+    <div class="ph-program-name" id="ph_program_name" data-i18n="apply.prog-default">برنامج التقديم</div>
+    <p class="ph-program-desc" id="welcomeDesc" data-i18n="apply.prog-desc-default">قدّم طلبك الآن واحصل على نتيجة التقديم خلال دقيقتين.</p>
     <div class="ph-stats">
-      <div class="ph-stat"><div class="ph-stat-val">2 دقيقة</div><div class="ph-stat-lbl">وقت التقييم</div></div>
-      <div class="ph-stat"><div class="ph-stat-val">فوري</div><div class="ph-stat-lbl">القرار</div></div>
+      <div class="ph-stat"><div class="ph-stat-val" data-i18n="apply.stat-time">2 دقيقة</div><div class="ph-stat-lbl" data-i18n="apply.stat-time-lbl">وقت التقييم</div></div>
+      <div class="ph-stat"><div class="ph-stat-val" data-i18n="apply.stat-instant">فوري</div><div class="ph-stat-lbl" data-i18n="apply.stat-decision-lbl">القرار</div></div>
     </div>
-    <button class="btn-start" onclick="showModal()">ابدأ التقديم الآن ←</button>
-    <p class="ph-note">⚠️ تأكد من صحة بياناتك — القرار يصدر فور الإرسال ولا يمكن تعديله</p>
+    <button class="btn-start" onclick="showModal()"><span data-i18n="apply.start-btn">ابدأ التقديم الآن ←</span></button>
+    <p class="ph-note" data-i18n="apply.ph-note">⚠️ تأكد من صحة بياناتك — القرار يصدر فور الإرسال ولا يمكن تعديله</p>
   </div>
 
   <!-- How it works -->
   <div class="partner-steps-section">
-    <div class="steps-title">كيف يعمل النظام</div>
+    <div class="steps-title" data-i18n="apply.steps-title">كيف يعمل النظام</div>
     <div class="steps-grid">
       <div class="step-card">
         <div class="step-num">1</div>
-        <div class="step-title">أملأ النموذج</div>
-        <div class="step-desc">أدخل بياناتك الشخصية ومعلومات مشروعك</div>
+        <div class="step-title" data-i18n="apply.step1-title">أملأ النموذج</div>
+        <div class="step-desc" data-i18n="apply.step1-desc">أدخل بياناتك الشخصية ومعلومات مشروعك</div>
       </div>
       <div class="step-card">
         <div class="step-num">2</div>
-        <div class="step-title">مراجعة الطلب</div>
-        <div class="step-desc">تُراجَع بياناتك وفق معايير الجهة الشريكة</div>
+        <div class="step-title" data-i18n="apply.step2-title">مراجعة الطلب</div>
+        <div class="step-desc" data-i18n="apply.step2-desc">تُراجَع بياناتك وفق معايير الجهة الشريكة</div>
       </div>
       <div class="step-card">
         <div class="step-num">3</div>
-        <div class="step-title">القرار الفوري</div>
-        <div class="step-desc">تحصل على درجتك ونتيجتك خلال ثوانٍ</div>
+        <div class="step-title" data-i18n="apply.step3-title">القرار الفوري</div>
+        <div class="step-desc" data-i18n="apply.step3-desc">تحصل على درجتك ونتيجتك خلال ثوانٍ</div>
       </div>
     </div>
   </div>
 
   <div class="partner-footer">
-    <span>مدعوم بـ <strong>RAFD Digital</strong> — منصة التقييم الذكي للجهات</span>
+    <span data-i18n="apply.footer-powered">مدعوم بـ <strong>RAFD Digital</strong> — منصة التقييم الذكي للجهات</span>
   </div>
 </div>
 
 <!-- Step 1 -->
 <div class="wrap form-card" id="s1">
-  <div class="fc-title">المعلومات الشخصية</div>
-  <div class="fc-sub">الخطوة 1 من 4 — بياناتك الشخصية (يجب أن تطابق هويتك الرسمية)</div>
+  <div class="fc-title" data-i18n="apply.s1-title">المعلومات الشخصية</div>
+  <div class="fc-sub" data-i18n="apply.s1-sub">الخطوة 1 من 4 — بياناتك الشخصية (يجب أن تطابق هويتك الرسمية)</div>
 
-  <div class="sec-lbl">🪪 الهوية والبيانات الرسمية</div>
+  <div class="sec-lbl" data-i18n="apply.sec-id">🪪 الهوية والبيانات الرسمية</div>
   <div class="frow">
-    <div class="fld"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="f_name" placeholder="الاسم الرباعي كما في الهوية" oninput="if(this.value.trim().split(/\s+/).filter(Boolean).length>=2)this.classList.add('valid');else this.classList.remove('valid')"></div>
-    <div class="fld"><label>رقم الهوية الوطنية / الإقامة <span class="req">*</span></label><input type="text" id="f_national_id" placeholder="10 أرقام" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" oninput="if(/^[12]\d{9}$/.test(this.value))this.classList.add('valid');else this.classList.remove('valid')"></div>
+    <div class="fld"><label data-i18n="apply.lbl-name">الاسم الكامل <span class="req">*</span></label><input type="text" id="f_name" placeholder="الاسم الرباعي كما في الهوية" oninput="if(this.value.trim().split(/\s+/).filter(Boolean).length>=2)this.classList.add('valid');else this.classList.remove('valid')"></div>
+    <div class="fld"><label data-i18n="apply.lbl-nid">رقم الهوية الوطنية / الإقامة <span class="req">*</span></label><input type="text" id="f_national_id" placeholder="10 أرقام" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" oninput="if(/^[12]\d{9}$/.test(this.value))this.classList.add('valid');else this.classList.remove('valid')"></div>
   </div>
   <div class="frow">
     <div class="fld">
-      <label>تاريخ الميلاد <span class="req">*</span></label>
+      <label data-i18n="apply.lbl-dob">تاريخ الميلاد <span class="req">*</span></label>
       <input type="hidden" id="f_dob">
       <div class="dob-row" id="f_dob_row">
-        <select id="f_dob_d" onchange="syncDob()"><option value="">اليوم</option></select>
-        <select id="f_dob_m" onchange="syncDob()"><option value="">الشهر</option></select>
-        <select id="f_dob_y" onchange="syncDob()"><option value="">السنة</option></select>
+        <select id="f_dob_d" onchange="syncDob()"><option value=""><span data-i18n="apply.dob-day">اليوم</span></option></select>
+        <select id="f_dob_m" onchange="syncDob()"><option value="" data-i18n="apply.dob-month">الشهر</option></select>
+        <select id="f_dob_y" onchange="syncDob()"><option value="" data-i18n="apply.dob-year">السنة</option></select>
       </div>
     </div>
-    <div class="fld"><label>الجنس <span class="req">*</span></label>
-      <select id="f_gender" onchange="markValid(this)"><option value="">اختر...</option><option value="male">ذكر</option><option value="female">أنثى</option></select>
+    <div class="fld"><label data-i18n="apply.lbl-gender">الجنس <span class="req">*</span></label>
+      <select id="f_gender" onchange="markValid(this)"><option value="" data-i18n="apply.opt-choose">اختر...</option><option value="male" data-i18n="apply.gender-male">ذكر</option><option value="female" data-i18n="apply.gender-female">أنثى</option></select>
     </div>
   </div>
   <div class="frow">
-    <div class="fld"><label>الجنسية <span class="req">*</span></label>
+    <div class="fld"><label data-i18n="apply.lbl-nat">الجنسية <span class="req">*</span></label>
       <div class="csel" id="csel_nat">
         <button type="button" class="csel-btn" onclick="cselToggle('nat')" id="csel_nat_btn">
           <span class="csel-flag" id="csel_nat_flag">🌍</span>
-          <span class="csel-lbl" id="csel_nat_lbl">اختر الجنسية...</span>
+          <span class="csel-lbl" id="csel_nat_lbl" data-i18n="apply.sel-nat">اختر الجنسية...</span>
           <span class="csel-arr">▾</span>
         </button>
         <div class="csel-panel" id="csel_nat_panel">
@@ -391,11 +388,11 @@ input[type=number]{-moz-appearance:textfield}
         <input type="hidden" id="f_nat">
       </div>
     </div>
-    <div class="fld"><label>دولة الإقامة <span class="req">*</span></label>
+    <div class="fld"><label data-i18n="apply.lbl-country">دولة الإقامة <span class="req">*</span></label>
       <div class="csel" id="csel_country">
         <button type="button" class="csel-btn" onclick="cselToggle('country')" id="csel_country_btn">
           <span class="csel-flag" id="csel_country_flag">🌍</span>
-          <span class="csel-lbl" id="csel_country_lbl">اختر الدولة...</span>
+          <span class="csel-lbl" id="csel_country_lbl" data-i18n="apply.sel-country">اختر الدولة...</span>
           <span class="csel-arr">▾</span>
         </button>
         <div class="csel-panel" id="csel_country_panel">
@@ -407,21 +404,21 @@ input[type=number]{-moz-appearance:textfield}
     </div>
   </div>
   <div class="frow">
-    <div class="fld"><label>المدينة <span class="req">*</span></label>
+    <div class="fld"><label data-i18n="apply.lbl-city">المدينة <span class="req">*</span></label>
       <select id="f_city" onchange="markValid(this)">
-        <option value="">اختر المدينة...</option>
+        <option value="" data-i18n="apply.sel-city">اختر المدينة...</option>
         <option value="riyadh">الرياض</option><option value="jeddah">جدة</option><option value="makkah">مكة المكرمة</option>
         <option value="madinah">المدينة المنورة</option><option value="dammam">الدمام</option><option value="khobar">الخبر</option>
         <option value="dhahran">الظهران</option><option value="taif">الطائف</option><option value="abha">أبها</option>
         <option value="tabuk">تبوك</option><option value="hail">حائل</option><option value="jizan">جيزان</option>
-        <option value="najran">نجران</option><option value="qassim">القصيم</option><option value="other">مدينة أخرى</option>
+        <option value="najran">نجران</option><option value="qassim">القصيم</option><option value="other" data-i18n="apply.city-other">مدينة أخرى</option>
       </select>
     </div>
   </div>
 
-  <div class="sec-lbl" style="margin-top:1.1rem">📱 بيانات التواصل</div>
+  <div class="sec-lbl" style="margin-top:1.1rem" data-i18n="apply.sec-contact">📱 بيانات التواصل</div>
   <div class="frow">
-    <div class="fld"><label>رقم الجوال <span class="req">*</span></label>
+    <div class="fld"><label data-i18n="apply.lbl-phone">رقم الجوال <span class="req">*</span></label>
       <div class="cc-csel-wrap">
         <div class="csel cc-csel" id="csel_phone_cc">
           <button type="button" class="csel-btn" onclick="cselToggle('phone_cc')">
@@ -438,34 +435,33 @@ input[type=number]{-moz-appearance:textfield}
         <input type="tel" id="f_phone" placeholder="5XXXXXXXX" maxlength="9" inputmode="numeric" class="cc-inp" style="border-radius:0 10px 10px 0!important" oninput="if(/^\d{7,}$/.test(this.value))this.classList.add('valid');else this.classList.remove('valid')">
       </div>
     </div>
-    <div class="fld"><label>البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com" oninput="if(this.value.includes('@')&&this.value.split('@')[1]?.includes('.'))this.classList.add('valid');else this.classList.remove('valid')"></div>
+    <div class="fld"><label data-i18n="apply.lbl-email">البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com" oninput="if(this.value.includes('@')&&this.value.split('@')[1]?.includes('.'))this.classList.add('valid');else this.classList.remove('valid')"></div>
   </div>
 
-  <div class="sec-lbl" id="lbl_entity_section" style="margin-top:1.1rem">🏢 معلومات المشروع / الشركة</div>
+  <div class="sec-lbl" id="lbl_entity_section" style="margin-top:1.1rem" data-i18n="apply.sec-project">🏢 معلومات المشروع / الشركة</div>
   <div class="fld"><label id="lbl_company">اسم الشركة / المشروع <span class="req">*</span></label><input type="text" id="f_company" placeholder="اسم شركتك أو مشروعك"></div>
   <div class="frow">
-    <div class="fld"><label id="lbl_sector">القطاع <span class="req">*</span></label>
-      <select id="f_sector">
-        <option value="">اختر...</option>
-        <option value="fintech">التقنية المالية</option>
-        <option value="health">الصحة والرعاية</option>
-        <option value="edu">التعليم والتدريب</option>
-        <option value="ecom">التجارة الإلكترونية</option>
-        <option value="ai">الذكاء الاصطناعي</option>
-        <option value="logistics">اللوجستيات</option>
-        <option value="agri">الزراعة والغذاء</option>
-        <option value="energy">الطاقة والبيئة</option>
+    <div class="fld"><label id="lbl_sector" data-i18n="apply.lbl-sector">القطاع <span class="req">*</span></label>
+      <select id="f_sector" onchange="markValid(this)"><option value="" data-i18n="apply.opt-choose">اختر...</option>
+        <option value="fintech" data-i18n="apply.sec-fintech">التقنية المالية</option>
+        <option value="health" data-i18n="apply.sec-health">الصحة والرعاية</option>
+        <option value="edu" data-i18n="apply.sec-edu">التعليم والتدريب</option>
+        <option value="ecom" data-i18n="apply.sec-ecom">التجارة الإلكترونية</option>
+        <option value="ai" data-i18n="apply.sec-ai">الذكاء الاصطناعي</option>
+        <option value="logistics" data-i18n="apply.sec-logistics">اللوجستيات</option>
+        <option value="agri" data-i18n="apply.sec-agri">الزراعة والغذاء</option>
+        <option value="energy" data-i18n="apply.sec-energy">الطاقة والبيئة</option>
         <option value="other">أخرى</option>
       </select>
     </div>
-    <div class="fld" id="year_fld"><label id="lbl_year">سنة التأسيس</label>
-      <select id="f_year"><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021 أو قبل</option></select>
+    <div class="fld" id="year_fld"><label id="lbl_year" data-i18n="apply.lbl-year">سنة التأسيس</label>
+      <select id="f_year"><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021" data-i18n="apply.year-before">2021 أو قبل</option></select>
     </div>
   </div>
   <div class="fld"><label id="lbl_desc">وصف مختصر <span class="req">*</span></label><textarea id="f_desc" placeholder="اشرح مشروعك..."></textarea></div>
 
   <div style="background:#fef9ec;border:1px solid #fde68a;border-radius:10px;padding:.75rem 1rem;font-size:.75rem;color:#92400e;margin-top:.5rem">
-    ⚠️ تأكد من صحة بياناتك — المعلومات الشخصية يجب أن تطابق هويتك الرسمية وتُستخدم لتحقق الجهة
+    <span data-i18n="apply.data-warn">⚠️ تأكد من صحة بياناتك — المعلومات الشخصية يجب أن تطابق هويتك الرسمية وتُستخدم لتحقق الجهة</span>
   </div>
 
   <div class="fnav"><span class="step-ctr">1 / 5</span><button class="btn-next" onclick="go(2)" data-i18n="da.next">التالي ←</button></div>
@@ -475,108 +471,105 @@ input[type=number]{-moz-appearance:textfield}
 <div class="wrap form-card" id="s_nafath">
   <div style="text-align:center;margin-bottom:1.5rem">
     <div style="width:64px;height:64px;background:linear-gradient(135deg,#0a5f3f,#0d7a52);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;color:#fff;margin:0 auto .75rem">نفاذ</div>
-    <div class="fc-title" style="margin:0">التحقق عبر نفاذ</div>
-    <div class="fc-sub" style="margin:.25rem 0 0">المنصة الوطنية الموحّدة للهوية الرقمية</div>
+    <div class="fc-title" style="margin:0" data-i18n="apply.nafath-title">التحقق عبر نفاذ</div>
+    <div class="fc-sub" style="margin:.25rem 0 0" data-i18n="apply.nafath-sub">المنصة الوطنية الموحّدة للهوية الرقمية</div>
   </div>
 
   <div id="nafath_required_badge" style="display:none;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:.6rem 1rem;font-size:.78rem;color:#f87171;margin-bottom:1rem;text-align:center">
-    ⚠️ التحقق عبر نفاذ <strong>إلزامي</strong> لهذا البرنامج — لا يمكن إكمال الطلب بدونه
+    <span data-i18n="apply.nafath-req">⚠️ التحقق عبر نفاذ <strong>إلزامي</strong> لهذا البرنامج — لا يمكن إكمال الطلب بدونه</span>
   </div>
   <div id="nafath_optional_badge" style="display:none;background:rgba(10,95,63,.08);border:1px solid rgba(10,95,63,.2);border-radius:10px;padding:.6rem 1rem;font-size:.78rem;color:#4ade80;margin-bottom:1rem;text-align:center">
-    ✨ التحقق اختياري — يمنحك <strong>+5 نقاط</strong> إضافية على درجتك
+    <span data-i18n="apply.nafath-opt">✨ التحقق اختياري — يمنحك <strong>+5 نقاط</strong> إضافية على درجتك</span>
   </div>
 
   <!-- Not yet verified -->
   <div id="nafath_form">
-    <div style="font-size:.82rem;color:#64748b;margin-bottom:1.1rem">رقم هويتك الوطنية (<span id="nfah_id_preview" style="font-family:monospace;color:#1a3a4a;direction:ltr;display:inline-block">—</span>)</div>
+    <div style="font-size:.82rem;color:#64748b;margin-bottom:1.1rem"><span data-i18n="apply.nafath-id-hint">رقم هويتك الوطنية</span> (<span id="nfah_id_preview" style="font-family:monospace;color:#1a3a4a;direction:ltr;display:inline-block">—</span>)</div>
     <div class="fld">
-      <label>رقم الهوية الوطنية <span class="req">*</span></label>
+      <label data-i18n="apply.lbl-nid2">رقم الهوية الوطنية <span class="req">*</span></label>
       <input type="text" id="nfah_id" placeholder="10 أرقام" maxlength="10" inputmode="numeric" style="font-family:monospace;letter-spacing:.08em;direction:ltr;text-align:center">
     </div>
     <button onclick="sendNafathApplicantOtp()" id="nfah_send_btn"
       style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.6rem">
       <span style="font-size:.7rem;background:rgba(255,255,255,.2);border-radius:4px;padding:.15rem .4rem;font-weight:900">نفاذ</span>
-      طلب التحقق عبر نفاذ
-    </button>
+      <span data-i18n="apply.nafath-btn">طلب التحقق عبر نفاذ</span></button>
   </div>
 
   <!-- Nafath App confirmation (replaces OTP entry) -->
   <div id="nafath_otp_form" style="display:none;text-align:center">
-    <div style="font-size:.82rem;color:#64748b;margin-bottom:.5rem">افتح تطبيق نفاذ وأكّد الطلب</div>
-    <div style="font-size:.72rem;color:#64748b;margin-bottom:.4rem">الرقم العشوائي الذي سيظهر في التطبيق:</div>
+    <div style="font-size:.82rem;color:#64748b;margin-bottom:.5rem" data-i18n="apply.nafath-open-app">افتح تطبيق نفاذ وأكّد الطلب</div>
+    <div style="font-size:.72rem;color:#64748b;margin-bottom:.4rem" data-i18n="apply.nafath-random-num">الرقم العشوائي الذي سيظهر في التطبيق:</div>
     <div id="nfah_sent_to" style="font-size:2.2rem;font-weight:900;letter-spacing:.25em;color:#059669;font-family:monospace;background:rgba(5,150,105,.06);border:2px solid rgba(5,150,105,.25);border-radius:14px;padding:1rem;margin-bottom:.75rem;direction:ltr">——</div>
-    <div style="font-size:.72rem;color:#4ade80;margin-bottom:1rem">📱 تحقق من إشعار تطبيق نفاذ وأكّد الرقم أعلاه</div>
+    <div style="font-size:.72rem;color:#4ade80;margin-bottom:1rem" data-i18n="apply.nafath-confirm-hint">📱 تحقق من إشعار تطبيق نفاذ وأكّد الرقم أعلاه</div>
     <button onclick="verifyNafathApplicantOtp()" id="nfah_verify_btn"
       style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
-      ✓ تم التأكيد في تطبيق نفاذ
-    </button>
+      <span data-i18n="apply.nafath-confirmed">✓ تم التأكيد في تطبيق نفاذ</span></button>
     <button onclick="document.getElementById('nafath_form').style.display='block';document.getElementById('nafath_otp_form').style.display='none'"
       style="width:100%;background:none;border:1px solid #e2e8f0;color:#64748b;border-radius:10px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.8rem;cursor:pointer">
-      ← رجوع
-    </button>
+      <span data-i18n="apply.back-btn2">← رجوع</span></button>
   </div>
 
   <!-- Verified -->
   <div id="nafath_verified" style="display:none;text-align:center;padding:1.5rem 0">
     <div style="font-size:2.5rem;margin-bottom:.5rem">✅</div>
-    <div style="font-size:1.1rem;font-weight:800;color:#059669">تم التحقق من هويتك بنجاح</div>
-    <div style="font-size:.78rem;color:#64748b;margin-top:.35rem">هويتك موثّقة عبر منصة نفاذ الوطنية</div>
+    <div style="font-size:1.1rem;font-weight:800;color:#059669" data-i18n="apply.nafath-success">تم التحقق من هويتك بنجاح</div>
+    <div style="font-size:.78rem;color:#64748b;margin-top:.35rem" data-i18n="apply.nafath-verified">هويتك موثّقة عبر منصة نفاذ الوطنية</div>
   </div>
 
   <div class="fnav">
     <button class="btn-prev" onclick="go(1)" data-i18n="da.back-btn">← السابق</button>
     <span class="step-ctr" id="nafath_step_ctr">1.5 / 5</span>
-    <button id="nafath_next_btn" class="btn-next" onclick="go(2)" style="opacity:.4;pointer-events:none">التالي ←</button>
-    <button id="nafath_skip_btn" class="btn-next" style="background:#64748b" onclick="skipNafath()">تخطي ←</button>
+    <button id="nafath_next_btn" class="btn-next" onclick="go(2)" style="opacity:.4;pointer-events:none"><span data-i18n="da.next">التالي ←</span></button>
+    <button id="nafath_skip_btn" class="btn-next" style="background:#64748b" onclick="skipNafath()"><span data-i18n="apply.skip">تخطي ←</span></button>
   </div>
 </div>
 
 <!-- Step 2 -->
 <div class="wrap form-card" id="s2">
   <div class="fc-title" data-i18n="da.s2-title">المؤهلات والخبرة</div>
-  <div class="fc-sub">الخطوة 2 من 4 — خلفيتك الأكاديمية والمهنية</div>
-  <div class="fld"><label>أعلى مؤهل أكاديمي <span class="req">*</span></label>
+  <div class="fc-sub" data-i18n="apply.s2-sub">الخطوة 2 من 4 — خلفيتك الأكاديمية والمهنية</div>
+  <div class="fld"><label data-i18n="apply.lbl-edu">أعلى مؤهل أكاديمي <span class="req">*</span></label>
     <div class="radio-opts" id="f_edu">
-      <label class="ropt" onclick="selR(this,'f_edu','phd')"><input type="radio" name="edu" value="phd"><span>دكتوراه</span></label>
-      <label class="ropt" onclick="selR(this,'f_edu','master')"><input type="radio" name="edu" value="master"><span>ماجستير</span></label>
-      <label class="ropt" onclick="selR(this,'f_edu','bachelor')"><input type="radio" name="edu" value="bachelor"><span>بكالوريوس</span></label>
-      <label class="ropt" onclick="selR(this,'f_edu','diploma')"><input type="radio" name="edu" value="diploma"><span>دبلوم أو أقل</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','phd')"><input type="radio" name="edu" value="phd"><span data-i18n="apply.edu-phd">دكتوراه</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','master')"><input type="radio" name="edu" value="master"><span data-i18n="apply.edu-master">ماجستير</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','bachelor')"><input type="radio" name="edu" value="bachelor"><span data-i18n="apply.edu-bachelor">بكالوريوس</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','diploma')"><input type="radio" name="edu" value="diploma"><span data-i18n="apply.edu-diploma">دبلوم أو أقل</span></label>
     </div>
   </div>
   <!-- GPA field — shown only if partner enables it -->
   <div class="frow" id="gpa_field_container" style="display:none">
     <div class="fld">
-      <label>المعدل التراكمي (GPA) <span class="req">*</span> <span id="gpa_scale_hint" style="font-size:.72rem;color:#94a3b8;font-weight:400">من 5</span></label>
+      <label data-i18n="apply.lbl-gpa">المعدل التراكمي (GPA) <span class="req">*</span> <span id="gpa_scale_hint" style="font-size:.72rem;color:#94a3b8;font-weight:400">من 5</span></label>
       <input type="number" id="f_gpa" min="0" step="0.01" placeholder="مثال: 4.25" style="font-family:monospace">
-      <div class="hint">أدخل معدلك التراكمي كما هو مذكور في وثائقك الرسمية</div>
+      <div class="hint" data-i18n="apply.gpa-hint">أدخل معدلك التراكمي كما هو مذكور في وثائقك الرسمية</div>
     </div>
   </div>
   <div class="frow">
-    <div class="fld"><label>سنوات الخبرة في المجال</label>
+    <div class="fld"><label data-i18n="apply.lbl-exp">سنوات الخبرة في المجال</label>
       <div class="range-row">
         <input type="range" min="0" max="20" value="3" id="f_exp" oninput="document.getElementById('expV').textContent=this.value+' سنوات';this.dataset.v=this.value" data-v="3">
-        <span class="range-val" id="expV">3 سنوات</span>
+        <span class="range-val" id="expV" data-i18n="apply.exp-default">3 سنوات</span>
       </div>
     </div>
-    <div class="fld"><label>عدد أعضاء الفريق <span class="req">*</span></label>
-      <select id="f_team"><option value="">اختر...</option><option value="1">مؤسس منفرد</option><option value="2">2 أعضاء</option><option value="3-5">3-5 أعضاء</option><option value="6+">أكثر من 5</option></select>
+    <div class="fld"><label data-i18n="apply.lbl-team">عدد أعضاء الفريق <span class="req">*</span></label>
+      <select id="f_team"><option value="" data-i18n="apply.opt-choose">اختر...</option><option value="1" data-i18n="apply.team-solo">مؤسس منفرد</option><option value="2" data-i18n="apply.team-2">2 أعضاء</option><option value="3-5" data-i18n="apply.team-35">3-5 أعضاء</option><option value="6+" data-i18n="apply.team-6">أكثر من 5</option></select>
     </div>
   </div>
-  <div class="fld"><label>هل سبق لك تأسيس شركة؟ <span class="req">*</span></label>
+  <div class="fld"><label data-i18n="apply.lbl-prev">هل سبق لك تأسيس شركة؟ <span class="req">*</span></label>
     <div class="radio-opts" id="f_prev">
-      <label class="ropt" onclick="selR(this,'f_prev','yes_exit')"><input type="radio" name="prev" value="yes_exit"><span>نعم، وحققت خروجاً ناجحاً (Exit)</span></label>
-      <label class="ropt" onclick="selR(this,'f_prev','yes_active')"><input type="radio" name="prev" value="yes_active"><span>نعم، ولا تزال نشطة</span></label>
-      <label class="ropt" onclick="selR(this,'f_prev','yes_closed')"><input type="radio" name="prev" value="yes_closed"><span>نعم، لكنها أُغلقت</span></label>
-      <label class="ropt" onclick="selR(this,'f_prev','no')"><input type="radio" name="prev" value="no"><span>لا، هذا مشروعي الأول</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','yes_exit')"><input type="radio" name="prev" value="yes_exit"><span data-i18n="apply.prev-exit">نعم، وحققت خروجاً ناجحاً (Exit)</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','yes_active')"><input type="radio" name="prev" value="yes_active"><span data-i18n="apply.prev-active">نعم، ولا تزال نشطة</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','yes_closed')"><input type="radio" name="prev" value="yes_closed"><span data-i18n="apply.prev-closed">نعم، لكنها أُغلقت</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','no')"><input type="radio" name="prev" value="no"><span data-i18n="apply.prev-no">لا، هذا مشروعي الأول</span></label>
     </div>
   </div>
-  <div class="fld"><label>المهارات الرئيسية (اختر كل ما ينطبق)</label>
+  <div class="fld"><label data-i18n="apply.lbl-skills">المهارات الرئيسية (اختر كل ما ينطبق)</label>
     <div class="check-opts" id="f_skills">
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="tech"><span>تطوير تقني / برمجة</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="biz"><span>إدارة أعمال وتطوير</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mkt"><span>تسويق ومبيعات</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="fin"><span>مالية ومحاسبة</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="des"><span>تصميم وتجربة مستخدم</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="tech"><span data-i18n="apply.skill-tech">تطوير تقني / برمجة</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="biz"><span data-i18n="apply.skill-biz">إدارة أعمال وتطوير</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mkt"><span data-i18n="apply.skill-mkt">تسويق ومبيعات</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="fin"><span data-i18n="apply.skill-fin">مالية ومحاسبة</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="des"><span data-i18n="apply.skill-des">تصميم وتجربة مستخدم</span></label>
     </div>
   </div>
   <div class="fnav"><button class="btn-prev" onclick="go(1)" data-i18n="da.back-btn">← السابق</button><span class="step-ctr">2 / 5</span><button class="btn-next" onclick="go(3)" data-i18n="da.next">التالي ←</button></div>
@@ -584,30 +577,30 @@ input[type=number]{-moz-appearance:textfield}
 
 <!-- Step 3 -->
 <div class="wrap form-card" id="s3">
-  <div class="fc-title">المشروع والتمويل</div>
-  <div class="fc-sub">الخطوة 3 من 4 — وضع مشروعك الحالي</div>
-  <div class="fld"><label>مرحلة المشروع الحالية <span class="req">*</span></label>
+  <div class="fc-title" data-i18n="apply.s3-title">المشروع والتمويل</div>
+  <div class="fc-sub" data-i18n="apply.s3-sub">الخطوة 3 من 4 — وضع مشروعك الحالي</div>
+  <div class="fld"><label data-i18n="apply.lbl-stage">مرحلة المشروع الحالية <span class="req">*</span></label>
     <div class="radio-opts" id="f_stage">
-      <label class="ropt" onclick="selR(this,'f_stage','idea')"><input type="radio" name="stage" value="idea"><span>فكرة (Idea Stage)</span></label>
-      <label class="ropt" onclick="selR(this,'f_stage','mvp')"><input type="radio" name="stage" value="mvp"><span>نموذج أولي (MVP)</span></label>
-      <label class="ropt" onclick="selR(this,'f_stage','revenue')"><input type="radio" name="stage" value="revenue"><span>مرحلة الإيرادات (Revenue)</span></label>
-      <label class="ropt" onclick="selR(this,'f_stage','growth')"><input type="radio" name="stage" value="growth"><span>مرحلة النمو (Growth)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','idea')"><input type="radio" name="stage" value="idea"><span data-i18n="apply.stage-idea">فكرة (Idea Stage)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','mvp')"><input type="radio" name="stage" value="mvp"><span data-i18n="apply.stage-mvp">نموذج أولي (MVP)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','revenue')"><input type="radio" name="stage" value="revenue"><span data-i18n="apply.stage-rev">مرحلة الإيرادات (Revenue)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','growth')"><input type="radio" name="stage" value="growth"><span data-i18n="apply.stage-growth">مرحلة النمو (Growth)</span></label>
     </div>
   </div>
   <div class="frow">
-    <div class="fld"><label>التمويل المُحصَّل حتى الآن</label>
-      <select id="f_raised"><option value="0">لم أحصل على تمويل</option><option value="seed">أقل من 500 ألف ريال</option><option value="pre-a">500 ألف — 2 مليون</option><option value="series-a">أكثر من 2 مليون</option></select>
+    <div class="fld"><label data-i18n="apply.lbl-raised">التمويل المُحصَّل حتى الآن</label>
+      <select id="f_raised"><option value="0" data-i18n="apply.raised-0">لم أحصل على تمويل</option><option value="seed" data-i18n="apply.raised-seed">أقل من 500 ألف ريال</option><option value="pre-a" data-i18n="apply.raised-prea">500 ألف — 2 مليون</option><option value="series-a" data-i18n="apply.raised-seriesa">أكثر من 2 مليون</option></select>
     </div>
-    <div class="fld"><label>التمويل المطلوب <span class="req">*</span></label>
-      <select id="f_seeking"><option value="">اختر...</option><option value="100k">أقل من 100 ألف</option><option value="500k">100 — 500 ألف</option><option value="1m">500 ألف — مليون</option><option value="2m+">أكثر من مليون</option></select>
+    <div class="fld"><label data-i18n="apply.lbl-seeking">التمويل المطلوب <span class="req">*</span></label>
+      <select id="f_seeking"><option value="" data-i18n="apply.opt-choose">اختر...</option><option value="100k" data-i18n="apply.seek-100k">أقل من 100 ألف</option><option value="500k" data-i18n="apply.seek-500k">100 — 500 ألف</option><option value="1m" data-i18n="apply.seek-1m">500 ألف — مليون</option><option value="2m+" data-i18n="apply.seek-2m">أكثر من مليون</option></select>
     </div>
   </div>
-  <div class="fld"><label>هل لديك عملاء أو مستخدمون حاليون؟ <span class="req">*</span></label>
+  <div class="fld"><label data-i18n="apply.lbl-cust">هل لديك عملاء أو مستخدمون حاليون؟ <span class="req">*</span></label>
     <div class="radio-opts" id="f_cust">
-      <label class="ropt" onclick="selR(this,'f_cust','paying')"><input type="radio" name="cust" value="paying"><span>نعم، عملاء يدفعون</span></label>
-      <label class="ropt" onclick="selR(this,'f_cust','free')"><input type="radio" name="cust" value="free"><span>نعم، مستخدمون مجانيون</span></label>
-      <label class="ropt" onclick="selR(this,'f_cust','pilot')"><input type="radio" name="cust" value="pilot"><span>في مرحلة التجريب (Pilot)</span></label>
-      <label class="ropt" onclick="selR(this,'f_cust','none')"><input type="radio" name="cust" value="none"><span>لا يوجد بعد</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','paying')"><input type="radio" name="cust" value="paying"><span data-i18n="apply.cust-paying">نعم، عملاء يدفعون</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','free')"><input type="radio" name="cust" value="free"><span data-i18n="apply.cust-free">نعم، مستخدمون مجانيون</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','pilot')"><input type="radio" name="cust" value="pilot"><span data-i18n="apply.cust-pilot">في مرحلة التجريب (Pilot)</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','none')"><input type="radio" name="cust" value="none"><span data-i18n="apply.cust-none">لا يوجد بعد</span></label>
     </div>
   </div>
   <div class="fnav"><button class="btn-prev" onclick="go(2)" data-i18n="da.back-btn">← السابق</button><span class="step-ctr">3 / 5</span><button class="btn-next" onclick="go(4)" data-i18n="da.next">التالي ←</button></div>
@@ -616,24 +609,24 @@ input[type=number]{-moz-appearance:textfield}
 <!-- Step 4 -->
 <div class="wrap form-card" id="s4">
   <div class="fc-title" data-i18n="da.s4-title">أسئلة إضافية</div>
-  <div class="fc-sub">الخطوة 4 من 4 — الخطوة الأخيرة قبل التقييم</div>
-  <div class="fld"><label>لماذا تريد الانضمام؟ (اختر كل ما ينطبق)</label>
+  <div class="fc-sub" data-i18n="apply.s4-sub">الخطوة 4 من 4 — الخطوة الأخيرة قبل التقييم</div>
+  <div class="fld"><label data-i18n="apply.lbl-reasons">لماذا تريد الانضمام؟ (اختر كل ما ينطبق)</label>
     <div class="check-opts" id="f_reasons">
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="funding"><span>الحصول على تمويل</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mentor"><span>الإرشاد والتوجيه</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="network"><span>بناء الشبكة والعلاقات</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="market"><span>الوصول للسوق</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="training"><span>التدريب وبناء القدرات</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="funding"><span data-i18n="apply.reason-fund">الحصول على تمويل</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mentor"><span data-i18n="apply.reason-mentor">الإرشاد والتوجيه</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="network"><span data-i18n="apply.reason-network">بناء الشبكة والعلاقات</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="market"><span data-i18n="apply.reason-market">الوصول للسوق</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="training"><span data-i18n="apply.reason-train">التدريب وبناء القدرات</span></label>
     </div>
   </div>
-  <div class="fld"><label>ما هي أكبر تحدياتك الحالية؟ <span class="req">*</span></label>
+  <div class="fld"><label data-i18n="apply.lbl-challenges">ما هي أكبر تحدياتك الحالية؟ <span class="req">*</span></label>
     <textarea id="f_challenges" placeholder="اشرح التحديات التي تواجهها في مشروعك..."></textarea>
   </div>
-  <div class="fld"><label>هل أنت مستعد للالتزام بمتطلبات البرنامج؟ <span class="req">*</span></label>
+  <div class="fld"><label data-i18n="apply.lbl-commit">هل أنت مستعد للالتزام بمتطلبات البرنامج؟ <span class="req">*</span></label>
     <div class="radio-opts" id="f_commit">
-      <label class="ropt" onclick="selR(this,'f_commit','yes')"><input type="radio" name="commit" value="yes"><span>نعم، ملتزم بالكامل</span></label>
-      <label class="ropt" onclick="selR(this,'f_commit','maybe')"><input type="radio" name="commit" value="maybe"><span>ربما، أحتاج لمعرفة التفاصيل</span></label>
-      <label class="ropt" onclick="selR(this,'f_commit','no')"><input type="radio" name="commit" value="no"><span>لا، لدي قيود على الوقت</span></label>
+      <label class="ropt" onclick="selR(this,'f_commit','yes')"><input type="radio" name="commit" value="yes"><span data-i18n="apply.commit-yes">نعم، ملتزم بالكامل</span></label>
+      <label class="ropt" onclick="selR(this,'f_commit','maybe')"><input type="radio" name="commit" value="maybe"><span data-i18n="apply.commit-maybe">ربما، أحتاج لمعرفة التفاصيل</span></label>
+      <label class="ropt" onclick="selR(this,'f_commit','no')"><input type="radio" name="commit" value="no"><span data-i18n="apply.commit-no">لا، لدي قيود على الوقت</span></label>
     </div>
   </div>
   <!-- Custom criteria added by partner -->
@@ -653,7 +646,7 @@ input[type=number]{-moz-appearance:textfield}
 <div class="ai-page" id="aiPage">
   <div class="ai-intro">
     <h2 data-i18n="apply.ai-title">⏳ جارٍ مراجعة طلبك</h2>
-    <p>تُعالَج بياناتك وفق معايير <span id="termPartnerName">الجهة</span> — يُرجى الانتظار</p>
+    <p data-i18n-split="apply.ai-wait"><span data-i18n="apply.ai-wait-pre">تُعالَج بياناتك وفق معايير</span> <span id="termPartnerName">الجهة</span><span data-i18n="apply.ai-wait-suf"> — يُرجى الانتظار</span></p>
   </div>
   <div class="terminal">
     <div class="t-hdr">
@@ -671,7 +664,7 @@ input[type=number]{-moz-appearance:textfield}
   <div id="rHero"></div>
   <div id="rGauge"></div>
   <div class="reasons-card">
-    <h4>📊 تفاصيل التقييم</h4>
+    <h4 data-i18n="apply.eval-details">📊 تفاصيل التقييم</h4>
     <div id="rReasons"></div>
   </div>
   <div class="result-actions">
@@ -1817,4 +1810,11 @@ init();
 </script>
 <script src="/i18n.js"></script></body>
 </html>
+
+
+
+
+
+
+
 
