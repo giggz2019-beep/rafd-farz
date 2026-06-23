@@ -29,6 +29,10 @@
       <li><a href="/how-it-works.html">كيف نعمل</a></li>
       <li><a href="/about.html">من نحن</a></li>
       <li><a href="#pricing">الأسعار</a></li>
+      <li class="mobile-nav-sep"></li>
+      <li class="mobile-nav-login"><a href="/partner-login.html">🤝 دخول الشركاء</a></li>
+      <li class="mobile-nav-login"><a href="/admin.html">🛡️ دخول الإدارة</a></li>
+      <li class="mobile-nav-login mobile-nav-cta"><a href="/register-partner.html">← انضم كشريك</a></li>
     </ul>
     <div class="nav-actions">
       <div class="login-dropdown-wrap" id="loginDropWrap">
@@ -475,16 +479,24 @@
 <script>
 document.getElementById('hamburger').addEventListener('click', function() {
   const nav = document.querySelector('.nav-links');
-  nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
-  nav.style.flexDirection = 'column';
-  nav.style.position = 'absolute';
-  nav.style.top = '72px';
-  nav.style.right = '0';
-  nav.style.left = '0';
-  nav.style.background = '#fff';
-  nav.style.padding = '1rem 2rem';
-  nav.style.borderBottom = '1px solid #e2e8f0';
-  nav.style.zIndex = '999';
+  const isOpen = nav.classList.contains('mobile-open');
+  if (isOpen) {
+    nav.classList.remove('mobile-open');
+    nav.style.display = 'none';
+  } else {
+    nav.classList.add('mobile-open');
+    nav.style.display = 'flex';
+    nav.style.flexDirection = 'column';
+    nav.style.position = 'absolute';
+    nav.style.top = '72px';
+    nav.style.right = '0';
+    nav.style.left = '0';
+    nav.style.background = '#fff';
+    nav.style.padding = '1rem 1.5rem 1.5rem';
+    nav.style.borderBottom = '2px solid #e2e8f0';
+    nav.style.zIndex = '999';
+    nav.style.boxShadow = '0 8px 24px rgba(0,0,0,.08)';
+  }
 });
 window.addEventListener('scroll', function() {
   const nb = document.getElementById('navbar');

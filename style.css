@@ -51,6 +51,18 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .hamburger { display: flex; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--primary); padding: .4rem; align-items: center; justify-content: center; border-radius: 8px; transition: background .2s; }
 .hamburger:hover { background: var(--bg); }
 
+/* روابط الدخول في القائمة على الجوال فقط */
+.nav-links .mobile-nav-login,
+.nav-links .mobile-nav-sep { display: none; }
+.nav-links.mobile-open .mobile-nav-login { display: list-item; }
+.nav-links.mobile-open .mobile-nav-sep { display: list-item; border-top: 1px solid #e2e8f0; margin: .4rem 0; list-style: none; }
+.nav-links .mobile-nav-login a { display: block; padding: .7rem 0; color: var(--primary); font-size: .9rem; font-weight: 600; text-decoration: none; }
+.nav-links .mobile-nav-cta a { color: #4a9d6f; font-weight: 800; }
+@media (min-width: 1024px) {
+  .nav-links .mobile-nav-login,
+  .nav-links .mobile-nav-sep { display: none !important; }
+}
+
 /* Mobile nav menu */
 .mobile-menu { display: none; position: fixed; top: 60px; right: 0; left: 0; background: #fff; border-bottom: 1px solid var(--border); z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,.1); padding: 1rem; }
 .mobile-menu.open { display: block; }
