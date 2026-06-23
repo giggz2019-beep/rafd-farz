@@ -217,7 +217,7 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
     <div class="frow">
       <div class="fld">
         <label><span class="req">*</span>رقم السجل التجاري</label>
-        <input type="text" id="f_crnum" placeholder="1010XXXXXX" maxlength="15">
+        <input type="text" id="f_crnum" placeholder="1010XXXXXX" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
       </div>
       <div class="fld">
         <label><span class="req">*</span>المدينة</label>
@@ -638,6 +638,12 @@ async function submitForm() {
   const email = document.getElementById('f_email').value.trim();
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     const e = setErr('f_email','بريد إلكتروني غير صحيح');
+    if (!firstErr) firstErr = e; ok = false;
+  }
+
+  const crnum = document.getElementById('f_crnum').value.trim();
+  if (crnum && !/^\d{10}$/.test(crnum)) {
+    const e = setErr('f_crnum','رقم السجل التجاري يجب أن يتكون من 10 أرقام');
     if (!firstErr) firstErr = e; ok = false;
   }
 
