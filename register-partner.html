@@ -216,6 +216,10 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a 0%
     </div>
     <div class="frow">
       <div class="fld">
+        <label><span class="req">*</span>رقم السجل التجاري</label>
+        <input type="text" id="f_crnum" placeholder="1010XXXXXX" maxlength="15">
+      </div>
+      <div class="fld">
         <label><span class="req">*</span>المدينة</label>
         <select id="f_city">
           <option value="">اختر...</option>
@@ -621,6 +625,7 @@ async function submitForm() {
   let ok = true;
   ok = req('f_orgname','اسم الجهة') & ok;
   ok = req('f_orgtype','نوع الجهة') & ok;
+  ok = req('f_crnum','رقم السجل التجاري') & ok;
   ok = req('f_city','المدينة') & ok;
   ok = req('f_fname','الاسم الأول') & ok;
   ok = req('f_lname','اسم العائلة') & ok;
@@ -704,6 +709,7 @@ async function submitForm() {
     refNum,
     org:      document.getElementById('f_orgname').value.trim(),
     orgtype:  document.getElementById('f_orgtype').value,
+    crnum:    document.getElementById('f_crnum').value.trim(),
     city:     document.getElementById('f_city').value,
     website:  document.getElementById('f_website').value.trim(),
     fname:    document.getElementById('f_fname').value.trim(),
@@ -811,6 +817,7 @@ async function verifyOTP() {
         email: pendingPartner.email,
         phone: pendingPartner.phone,
         org_type: pendingPartner.orgtype,
+        cr_num: pendingPartner.crnum,
         city: pendingPartner.city,
         password: pendingPartner.password,
         status: 'approved',
