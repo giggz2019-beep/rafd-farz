@@ -641,19 +641,19 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div class="fld-m" style="margin-top:.85rem">
         <label>طريقة القبول</label>
         <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem">
-          <label id="am_instant_lbl" onclick="selectAcceptMode('instant')" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;background:rgba(74,157,111,.07)">
-            <div style="display:flex;align-items:center;gap:.5rem;direction:rtl">
-              <input type="radio" name="accept_mode" id="am_instant" value="instant" checked style="accent-color:#10b981">
-              <span style="font-size:.83rem;font-weight:700;color:#e2e8f0">⚡ قبول فوري</span>
+          <label id="am_instant_lbl" onclick="selectAcceptMode('instant')" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;background:rgba(74,157,111,.07);text-align:right">
+            <div>
+              <input type="radio" name="accept_mode" id="am_instant" value="instant" checked style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+              <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle">⚡ قبول فوري</span>
             </div>
-            <div style="font-size:.71rem;color:#64748b;margin-top:.3rem;padding-right:1.3rem">النتيجة تظهر للمتقدم مباشرة بعد التقييم</div>
+            <div style="font-size:.71rem;color:#64748b;margin-top:.3rem">النتيجة تظهر للمتقدم مباشرة بعد التقييم</div>
           </label>
-          <label id="am_competitive_lbl" onclick="selectAcceptMode('competitive')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s">
-            <div style="display:flex;align-items:center;gap:.5rem;direction:rtl">
-              <input type="radio" name="accept_mode" id="am_competitive" value="competitive" style="accent-color:#10b981">
-              <span style="font-size:.83rem;font-weight:700;color:#e2e8f0">🏅 مفاضلة</span>
+          <label id="am_competitive_lbl" onclick="selectAcceptMode('competitive')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right">
+            <div>
+              <input type="radio" name="accept_mode" id="am_competitive" value="competitive" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+              <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle">🏅 مفاضلة</span>
             </div>
-            <div style="font-size:.71rem;color:#64748b;margin-top:.3rem;padding-right:1.3rem">يرى قبولاً مبدئياً ويُبلَّغ بالقرار النهائي لاحقاً</div>
+            <div style="font-size:.71rem;color:#64748b;margin-top:.3rem">يرى قبولاً مبدئياً ويُبلَّغ بالقرار النهائي لاحقاً</div>
           </label>
         </div>
 
