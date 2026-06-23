@@ -21,7 +21,7 @@ input, textarea, select, [contenteditable] { -webkit-user-select: text; user-sel
   --shadow-lg: 0 20px 60px rgba(0,0,0,.12);
   --font-heading: 'Tajawal', 'Cairo', sans-serif;
   --font-body: 'Cairo', 'Tajawal', sans-serif;
-  --font-en: 'Inter', 'Segoe UI', sans-serif;
+  --font-en: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', sans-serif;
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
