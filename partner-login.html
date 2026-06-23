@@ -38,6 +38,23 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .btn-nafath:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(10,95,63,.35)}
 .nafath-icon{width:28px;height:28px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#0a5f3f;letter-spacing:-.02em;flex-shrink:0}
 .nafath-link-badge{display:none;align-items:center;gap:.5rem;background:rgba(10,95,63,.15);border:1px solid rgba(10,95,63,.3);border-radius:10px;padding:.6rem .9rem;font-size:.78rem;color:#34d399;margin-top:.75rem}
+/* OTP Screen */
+.otp-screen{display:none;text-align:center}
+.otp-icon{font-size:2.8rem;margin-bottom:.5rem}
+.otp-title{font-size:1.15rem;font-weight:900;color:#fff;margin-bottom:.3rem}
+.otp-desc{font-size:.8rem;color:#64748b;margin-bottom:.3rem}
+.otp-email-display{font-size:.85rem;font-weight:700;color:#38bdf8;margin-bottom:1.25rem;direction:ltr}
+.otp-input-wrap{display:flex;gap:.5rem;justify-content:center;margin-bottom:1rem;direction:ltr}
+.otp-digit{width:44px;height:52px;text-align:center;font-size:1.35rem;font-weight:900;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;color:#38bdf8;font-family:'Cairo',monospace;outline:none;transition:.2s}
+.otp-digit:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.1)}
+.otp-digit.filled{border-color:#4a9d6f;background:rgba(74,157,111,.08)}
+.otp-error{color:#f87171;font-size:.78rem;margin-bottom:.75rem;display:none}
+.btn-verify{width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:.75rem;transition:.2s}
+.btn-verify:disabled{opacity:.5;cursor:not-allowed}
+.resend-row{display:flex;align-items:center;justify-content:center;gap:.75rem;font-size:.78rem;color:#64748b}
+.btn-resend{background:none;border:none;color:#38bdf8;font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer}
+.btn-resend:disabled{color:#475569;cursor:not-allowed}
+.btn-back-login{background:none;border:none;color:#64748b;font-family:'Cairo',sans-serif;font-size:.8rem;cursor:pointer;margin-top:.5rem;text-decoration:underline dotted}
 </style>
 </head>
 <body>
@@ -51,35 +68,61 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="badge">🤝 منطقة الشركاء</div>
   </div>
 
-  <div class="err" id="errMsg">بيانات الدخول غير صحيحة. تحقق من البريد وكلمة المرور.</div>
-  <div class="pending-msg" id="pendingMsg">⏳ حسابك قيد المراجعة. سيتم إشعارك عند التفعيل.</div>
+  <!-- نموذج الدخول -->
+  <div id="loginForm">
+    <div class="err" id="errMsg">بيانات الدخول غير صحيحة. تحقق من البريد وكلمة المرور.</div>
+    <div class="pending-msg" id="pendingMsg">⏳ حسابك قيد المراجعة. سيتم إشعارك عند التفعيل.</div>
 
-  <div class="fld">
-    <label>البريد الإلكتروني أو اسم المستخدم</label>
-    <input type="text" id="loginEmail" placeholder="name@company.com أو RAFD-2025-XXXXX" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="username">
-  </div>
-  <div class="fld">
-    <label>كلمة المرور</label>
-    <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-  </div>
-  <button class="btn-login" id="loginBtn" onclick="doLogin()">دخول للوحة التحكم</button>
+    <div class="fld">
+      <label>البريد الإلكتروني أو اسم المستخدم</label>
+      <input type="text" id="loginEmail" placeholder="name@company.com أو RAFD-2025-XXXXX" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="username">
+    </div>
+    <div class="fld">
+      <label>كلمة المرور</label>
+      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">دخول للوحة التحكم</button>
 
-  <div class="or-div">أو</div>
-  <button class="btn-nafath" onclick="openNafathLogin()">
-    <div class="nafath-icon">نفاذ</div>
-    تسجيل الدخول عبر نفاذ
-  </button>
-  <div id="nafathLinkedBadge" class="nafath-link-badge">
-    ✅ تم ربط حسابك بنفاذ — هويتك موثّقة
+    <div class="or-div">أو</div>
+    <button class="btn-nafath" onclick="openNafathLogin()">
+      <div class="nafath-icon">نفاذ</div>
+      تسجيل الدخول عبر نفاذ
+    </button>
+    <div id="nafathLinkedBadge" class="nafath-link-badge">
+      ✅ تم ربط حسابك بنفاذ — هويتك موثّقة
+    </div>
+
+    <div class="links">
+      <a href="/register-partner.html" class="reg-link">تسجيل جهة جديدة ←</a>
+      <a href="#" onclick="showForgot();return false;" style="color:#64748b">نسيت كلمة المرور؟</a>
+    </div>
+    <div style="text-align:center;margin-top:.6rem;display:flex;justify-content:center;gap:1.25rem">
+      <a href="#" onclick="showForgotEmail();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted">نسيت بريدك الإلكتروني؟</a>
+      <a href="#" onclick="showForgotUsername();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted">نسيت اسم المستخدم؟</a>
+    </div>
   </div>
 
-  <div class="links">
-    <a href="/register-partner.html" class="reg-link">تسجيل جهة جديدة ←</a>
-    <a href="#" onclick="showForgot();return false;" style="color:#64748b">نسيت كلمة المرور؟</a>
-  </div>
-  <div style="text-align:center;margin-top:.6rem;display:flex;justify-content:center;gap:1.25rem">
-    <a href="#" onclick="showForgotEmail();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted">نسيت بريدك الإلكتروني؟</a>
-    <a href="#" onclick="showForgotUsername();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted">نسيت اسم المستخدم؟</a>
+  <!-- شاشة OTP -->
+  <div class="otp-screen" id="otpScreen">
+    <div class="otp-icon">📧</div>
+    <div class="otp-title">تحقق من بريدك</div>
+    <div class="otp-desc">أرسلنا رمز تحقق مكوّن من 6 أرقام إلى</div>
+    <div class="otp-email-display" id="otpEmailShow">—</div>
+    <div class="otp-input-wrap">
+      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" id="lotp0">
+      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" id="lotp1">
+      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" id="lotp2">
+      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" id="lotp3">
+      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" id="lotp4">
+      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" id="lotp5">
+    </div>
+    <div class="otp-error" id="lotpErr">رمز التحقق غير صحيح أو انتهت صلاحيته</div>
+    <button class="btn-verify" id="verifyLoginBtn" onclick="verifyLoginOtp()">✓ تحقق وادخل للوحة التحكم</button>
+    <div class="resend-row">
+      <span id="lotpTimerText">إعادة الإرسال بعد <span id="lotpTimer">05:00</span></span>
+      <button class="btn-resend" id="lotpResendBtn" onclick="resendLoginOtp()" disabled>إعادة الإرسال</button>
+    </div>
+    <button class="btn-back-login" onclick="backToLoginForm()">← تغيير البيانات</button>
   </div>
 </div>
 
@@ -227,6 +270,98 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ===== LOGIN OTP =====
+let _loginOtp = '';
+let _loginPartner = null;
+let _loginTimerInterval = null;
+
+function _startLoginTimer(secs) {
+  clearInterval(_loginTimerInterval);
+  let remaining = secs;
+  const timerEl = document.getElementById('lotpTimer');
+  const textEl  = document.getElementById('lotpTimerText');
+  const resendBtn = document.getElementById('lotpResendBtn');
+  resendBtn.disabled = true;
+  textEl.style.display = 'inline';
+  _loginTimerInterval = setInterval(function() {
+    remaining--;
+    const m = Math.floor(remaining / 60), s = remaining % 60;
+    timerEl.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    if (remaining <= 0) {
+      clearInterval(_loginTimerInterval);
+      textEl.style.display = 'none';
+      resendBtn.disabled = false;
+    }
+  }, 1000);
+}
+
+function _showOtpScreen(email) {
+  document.getElementById('loginForm').style.display = 'none';
+  const scr = document.getElementById('otpScreen');
+  scr.style.display = 'block';
+  document.getElementById('otpEmailShow').textContent = email;
+  document.getElementById('lotpErr').style.display = 'none';
+  for (let i = 0; i < 6; i++) {
+    const d = document.getElementById('lotp' + i);
+    d.value = ''; d.classList.remove('filled');
+  }
+  _startLoginTimer(300);
+  setTimeout(() => document.getElementById('lotp0').focus(), 200);
+}
+
+function backToLoginForm() {
+  clearInterval(_loginTimerInterval);
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('otpScreen').style.display = 'none';
+  _loginPartner = null;
+  _loginOtp = '';
+}
+
+async function resendLoginOtp() {
+  if (!_loginPartner) return;
+  _loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
+  sessionStorage.setItem('rafd_login_otp', JSON.stringify({ otp: _loginOtp, email: _loginPartner.email, expiry: Date.now() + 5 * 60 * 1000 }));
+  try {
+    await fetch('/.netlify/functions/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: _loginPartner.email, otp: _loginOtp, fname: _loginPartner.fname || _loginPartner.org_name }),
+    });
+  } catch(e) { console.error(e); }
+  for (let i = 0; i < 6; i++) { const d = document.getElementById('lotp' + i); d.value = ''; d.classList.remove('filled'); }
+  document.getElementById('lotpErr').style.display = 'none';
+  _startLoginTimer(300);
+  setTimeout(() => document.getElementById('lotp0').focus(), 100);
+}
+
+async function verifyLoginOtp() {
+  const entered = [0,1,2,3,4,5].map(i => document.getElementById('lotp' + i).value).join('');
+  const errEl = document.getElementById('lotpErr');
+  const btn = document.getElementById('verifyLoginBtn');
+  errEl.style.display = 'none';
+
+  if (entered.length < 6) { errEl.textContent = 'يرجى إدخال الرمز كاملاً (6 أرقام)'; errEl.style.display = 'block'; return; }
+
+  const stored = JSON.parse(sessionStorage.getItem('rafd_login_otp') || 'null');
+  if (!stored || stored.otp !== entered || Date.now() > stored.expiry) {
+    errEl.textContent = 'رمز التحقق غير صحيح أو انتهت صلاحيته';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  clearInterval(_loginTimerInterval);
+  sessionStorage.removeItem('rafd_login_otp');
+  btn.disabled = true; btn.textContent = '⏳ جاري الدخول...';
+
+  const p = _loginPartner;
+  localStorage.setItem('rafd_partner_session', JSON.stringify({
+    id: p.id, email: p.email, org: p.org_name,
+    fname: p.fname, lname: p.lname, orgtype: p.org_type,
+    plan: p.plan, ref_num: p.ref_num, title: p.title
+  }));
+  window.location.href = '/partner-dashboard.html';
+}
 
 // ===== NAFATH LOGIN =====
 let _nafathOtp = '';
@@ -462,6 +597,34 @@ async function doReset() {
   pendingEl.style.color = '#34d399';
 }
 
+// OTP digit keyboard wiring
+document.addEventListener('DOMContentLoaded', function() {
+  for (let i = 0; i < 6; i++) {
+    const el = document.getElementById('lotp' + i);
+    el.addEventListener('input', function(e) {
+      const v = e.target.value.replace(/\D/g,'');
+      e.target.value = v;
+      e.target.classList.toggle('filled', !!v);
+      if (v && i < 5) document.getElementById('lotp' + (i+1)).focus();
+      if ([0,1,2,3,4,5].map(j=>document.getElementById('lotp'+j).value).join('').length === 6)
+        verifyLoginOtp();
+    });
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !e.target.value && i > 0)
+        document.getElementById('lotp' + (i-1)).focus();
+    });
+    el.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const paste = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      for (let j = 0; j < paste.length; j++) {
+        const d = document.getElementById('lotp'+j);
+        if (d) { d.value = paste[j]; d.classList.add('filled'); }
+      }
+      if (paste.length === 6) verifyLoginOtp();
+    });
+  }
+});
+
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pass = document.getElementById('loginPass').value;
@@ -541,13 +704,22 @@ async function doLogin() {
       return;
     }
 
-    // احفظ الجلسة واذهب للداشبورد
-    localStorage.setItem('rafd_partner_session', JSON.stringify({
-      id: partner.id,
-      email: partner.email,
-      org: partner.org_name
-    }));
-    window.location.href = '/partner-dashboard.html';
+    // تحقق بالبريد الإلكتروني قبل الدخول
+    _loginPartner = partner;
+    _loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    sessionStorage.setItem('rafd_login_otp', JSON.stringify({ otp: _loginOtp, email: partner.email, expiry: Date.now() + 5 * 60 * 1000 }));
+
+    btn.textContent = '⏳ جارٍ إرسال الرمز...';
+    try {
+      await fetch('/.netlify/functions/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: partner.email, otp: _loginOtp, fname: partner.fname || partner.org_name }),
+      });
+    } catch(e) { console.error('OTP send:', e); }
+
+    btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
+    _showOtpScreen(partner.email);
 
   } catch(err) {
     console.error('Login error:', err);
