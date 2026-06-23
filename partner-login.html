@@ -54,8 +54,8 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
   <div class="pending-msg" id="pendingMsg">⏳ حسابك قيد المراجعة. سيتم إشعارك عند التفعيل.</div>
 
   <div class="fld">
-    <label>البريد الإلكتروني</label>
-    <input type="email" id="loginEmail" placeholder="name@company.com" onkeydown="if(event.key==='Enter')doLogin()">
+    <label>البريد الإلكتروني أو اسم المستخدم</label>
+    <input type="text" id="loginEmail" placeholder="name@company.com أو RAFD-2025-XXXXX" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="username">
   </div>
   <div class="fld">
     <label>كلمة المرور</label>
@@ -76,8 +76,9 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
     <a href="/register-partner.html" class="reg-link">تسجيل جهة جديدة ←</a>
     <a href="#" onclick="showForgot();return false;" style="color:#64748b">نسيت كلمة المرور؟</a>
   </div>
-  <div style="text-align:center;margin-top:.6rem">
+  <div style="text-align:center;margin-top:.6rem;display:flex;justify-content:center;gap:1.25rem">
     <a href="#" onclick="showForgotEmail();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted">نسيت بريدك الإلكتروني؟</a>
+    <a href="#" onclick="showForgotUsername();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted">نسيت اسم المستخدم؟</a>
   </div>
 </div>
 
@@ -172,15 +173,8 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 <!-- Forgot Email Modal -->
 <div id="forgotEmailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;padding:1rem">
   <div style="background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:380px">
-    <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">📱 استرجاع البريد الإلكتروني</div>
-    <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">ابحث برقم الجوال أو اسم الجهة للعثور على بريدك المسجّل</div>
-    <div class="fld">
-      <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">رقم الجوال</label>
-      <input type="tel" id="fe_phone" placeholder="05XXXXXXXX" maxlength="10" inputmode="numeric"
-        style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;direction:ltr;margin-bottom:.65rem"
-        onkeydown="if(event.key==='Enter')findEmailByPhone()">
-    </div>
-    <div style="text-align:center;font-size:.75rem;color:#475569;margin:-0.3rem 0 .65rem">— أو —</div>
+    <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">📧 استرجاع البريد الإلكتروني</div>
+    <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">أدخل اسم جهتك للعثور على بريدك المسجّل</div>
     <div class="fld">
       <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">اسم الجهة</label>
       <input type="text" id="fe_orgname" placeholder="مثال: جامعة الملك عبدالعزيز"
@@ -198,6 +192,32 @@ body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1
       بحث
     </button>
     <button onclick="hideForgotEmail()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer">إلغاء</button>
+  </div>
+</div>
+
+<!-- Forgot Username Modal -->
+<div id="forgotUsernameModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:380px">
+    <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">👤 استرجاع اسم المستخدم</div>
+    <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">أدخل اسم جهتك وسيظهر لك اسم المستخدم الخاص بك</div>
+    <div class="fld">
+      <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">اسم الجهة</label>
+      <input type="text" id="fu_orgname" placeholder="مثال: شركة الأفق للتقنية"
+        style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
+        onkeydown="if(event.key==='Enter')findUsername()">
+    </div>
+    <div id="fu_err" style="display:none;font-size:.78rem;color:#f87171;margin:.5rem 0 .75rem"></div>
+    <div id="fu_result" style="display:none;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.9rem;text-align:center">
+      <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem">اسم المستخدم الخاص بك</div>
+      <div id="fu_username_show" style="font-size:1rem;font-weight:800;color:#38bdf8;direction:ltr;letter-spacing:.05em"></div>
+      <div style="font-size:.72rem;color:#64748b;margin-top:.4rem">استخدمه مع كلمة المرور لتسجيل الدخول</div>
+      <button id="fu_use_btn" onclick="useFoundUsername()" style="margin-top:.75rem;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">استخدم اسم المستخدم للدخول ←</button>
+    </div>
+    <button onclick="findUsername()" id="fu_search_btn"
+      style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
+      بحث
+    </button>
+    <button onclick="hideForgotUsername()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer">إلغاء</button>
   </div>
 </div>
 
@@ -273,7 +293,6 @@ function showForgotEmail() {
   document.getElementById('forgotEmailModal').style.display = 'flex';
   document.getElementById('fe_err').style.display = 'none';
   document.getElementById('fe_result').style.display = 'none';
-  document.getElementById('fe_phone').value = '';
   document.getElementById('fe_orgname').value = '';
   _foundEmail = '';
 }
@@ -281,36 +300,24 @@ function hideForgotEmail() {
   document.getElementById('forgotEmailModal').style.display = 'none';
 }
 async function findEmailByPhone() {
-  const phone = document.getElementById('fe_phone').value.trim();
   const orgname = document.getElementById('fe_orgname').value.trim();
   const errEl = document.getElementById('fe_err');
   errEl.style.display = 'none';
   document.getElementById('fe_result').style.display = 'none';
-  if (!phone && !orgname) {
-    errEl.textContent = 'أدخل رقم الجوال أو اسم الجهة للبحث';
+  if (!orgname) {
+    errEl.textContent = 'أدخل اسم الجهة للبحث';
     errEl.style.display = 'block'; return;
   }
   const btn = document.getElementById('fe_search_btn');
   btn.textContent = 'جارٍ البحث...'; btn.disabled = true;
-  let found = null;
-  // Search by phone first
-  if (phone) {
-    const clean = phone.replace(/\s|-/g, '');
-    const { data: p1 } = await _sb.from('partners').select('email,org_name').eq('phone', clean).maybeSingle();
-    if (p1?.email) found = p1;
-  }
-  // Fallback: search by org_name (partial match)
-  if (!found && orgname) {
-    const { data: list } = await _sb.from('partners').select('email,org_name').ilike('org_name', `%${orgname}%`).limit(1);
-    if (list?.length) found = list[0];
-  }
+  const { data: list } = await _sb.from('partners').select('email,org_name').ilike('org_name', `%${orgname}%`).limit(1);
   btn.textContent = 'بحث'; btn.disabled = false;
-  if (!found?.email) {
-    errEl.textContent = 'لم يُعثر على حساب. تأكد من البيانات أو تواصل مع الدعم.';
+  if (!list?.length) {
+    errEl.textContent = 'لم يُعثر على حساب. تأكد من اسم الجهة أو تواصل مع الدعم.';
     errEl.style.display = 'block'; return;
   }
-  _foundEmail = found.email;
-  const [u, d] = found.email.split('@');
+  _foundEmail = list[0].email;
+  const [u, d] = _foundEmail.split('@');
   const masked = u.slice(0,2) + '***@' + d;
   document.getElementById('fe_email_show').textContent = masked;
   document.getElementById('fe_result').style.display = 'block';
@@ -319,6 +326,46 @@ function useFoundEmail() {
   if (!_foundEmail) return;
   document.getElementById('loginEmail').value = _foundEmail;
   hideForgotEmail();
+  document.getElementById('loginPass').focus();
+}
+
+// ===== FORGOT USERNAME =====
+let _foundUsername = '';
+function showForgotUsername() {
+  document.getElementById('forgotUsernameModal').style.display = 'flex';
+  document.getElementById('fu_err').style.display = 'none';
+  document.getElementById('fu_result').style.display = 'none';
+  document.getElementById('fu_orgname').value = '';
+  _foundUsername = '';
+}
+function hideForgotUsername() {
+  document.getElementById('forgotUsernameModal').style.display = 'none';
+}
+async function findUsername() {
+  const orgname = document.getElementById('fu_orgname').value.trim();
+  const errEl = document.getElementById('fu_err');
+  errEl.style.display = 'none';
+  document.getElementById('fu_result').style.display = 'none';
+  if (!orgname) {
+    errEl.textContent = 'أدخل اسم الجهة للبحث';
+    errEl.style.display = 'block'; return;
+  }
+  const btn = document.getElementById('fu_search_btn');
+  btn.textContent = 'جارٍ البحث...'; btn.disabled = true;
+  const { data: list } = await _sb.from('partners').select('ref_num,org_name,email').ilike('org_name', `%${orgname}%`).limit(1);
+  btn.textContent = 'بحث'; btn.disabled = false;
+  if (!list?.length || !list[0].ref_num) {
+    errEl.textContent = 'لم يُعثر على حساب. تأكد من اسم الجهة.';
+    errEl.style.display = 'block'; return;
+  }
+  _foundUsername = list[0].ref_num;
+  document.getElementById('fu_username_show').textContent = _foundUsername;
+  document.getElementById('fu_result').style.display = 'block';
+}
+function useFoundUsername() {
+  if (!_foundUsername) return;
+  document.getElementById('loginEmail').value = _foundUsername;
+  hideForgotUsername();
   document.getElementById('loginPass').focus();
 }
 
@@ -424,7 +471,7 @@ async function doLogin() {
   pendingEl.style.display = 'none';
 
   if (!email || !pass) {
-    errEl.textContent = 'يرجى إدخال البريد الإلكتروني وكلمة المرور.';
+    errEl.textContent = 'يرجى إدخال البريد أو اسم المستخدم وكلمة المرور.';
     errEl.style.display = 'block';
     return;
   }
@@ -435,22 +482,30 @@ async function doLogin() {
   try {
     let partner = null;
 
-    // المحاولة الأولى: تسجيل دخول عبر Supabase Auth (للحسابات الجديدة)
-    const { data: authData, error: authError } = await _sb.auth.signInWithPassword({ email, password: pass });
+    // هل المُدخَل ref_num (اسم المستخدم) أم بريد؟
+    const isRefNum = email.startsWith('RAFD-') || email.startsWith('rafd-');
 
-    if (!authError && authData.user) {
-      // نجح Auth — اجلب بيانات الشريك
-      const { data: p } = await _sb.from('partners').select('*').eq('email', email).maybeSingle();
-      partner = p;
+    if (!isRefNum) {
+      // المحاولة الأولى: تسجيل دخول عبر Supabase Auth (للحسابات الجديدة)
+      const { data: authData, error: authError } = await _sb.auth.signInWithPassword({ email, password: pass });
+      if (!authError && authData.user) {
+        const { data: p } = await _sb.from('partners').select('*').eq('email', email).maybeSingle();
+        partner = p;
+      }
     }
 
-    // المحاولة الثانية: فحص يدوي من جدول partners (للحسابات القديمة)
+    // المحاولة الثانية: فحص يدوي (بريد أو ref_num)
     if (!partner) {
-      const { data: p, error: pErr } = await _sb.from('partners').select('*').eq('email', email).maybeSingle();
+      const query = isRefNum
+        ? _sb.from('partners').select('*').eq('ref_num', email.toUpperCase()).maybeSingle()
+        : _sb.from('partners').select('*').eq('email', email).maybeSingle();
+      const { data: p, error: pErr } = await query;
       if (pErr) throw pErr;
 
       if (!p) {
-        errEl.textContent = 'البريد الإلكتروني غير مسجّل. هل تريد التسجيل كشريك جديد؟';
+        errEl.textContent = isRefNum
+          ? 'اسم المستخدم غير موجود. تحقق من الرقم أو استخدم بريدك الإلكتروني.'
+          : 'البريد الإلكتروني غير مسجّل. هل تريد التسجيل كشريك جديد؟';
         errEl.style.display = 'block';
         btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
         return;
