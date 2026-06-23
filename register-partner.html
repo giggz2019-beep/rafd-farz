@@ -75,11 +75,11 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .csel-opt:hover,.csel-opt.kbfocus{background:rgba(255,255,255,.06)}
 .csel-opt.is-active{background:rgba(16,185,129,.1);color:#10b981;font-weight:700}
 .csel-opt-flag{font-size:1.05rem;flex-shrink:0}
-.cc-csel-wrap{display:flex;gap:0}
+.cc-csel-wrap{display:flex;gap:0;direction:ltr}
 .cc-csel{flex-shrink:0}
-.cc-csel .csel-btn{border-radius:12px 0 0 12px;border-left:none;padding:.7rem .65rem;gap:.3rem;min-width:90px;direction:ltr;justify-content:center}
+.cc-csel .csel-btn{border-radius:12px 0 0 12px;border-right:none;padding:.7rem .65rem;gap:.3rem;min-width:90px;direction:ltr;justify-content:center}
 .cc-csel .csel-panel{right:auto;left:0;min-width:240px}
-.cc-inp{border-radius:0 12px 12px 0!important;flex:1}
+.cc-inp{border-radius:0 12px 12px 0!important;flex:1;text-align:left}
 .fld textarea{resize:vertical;min-height:90px;line-height:1.7}
 .fld .hint{font-size:.72rem;color:#475569;margin-top:.3rem}
 
