@@ -1,5 +1,6 @@
 /* ===== RAFD SMART PLATFORM — MOBILE-FIRST CSS ===== */
 /* Colors: #1a3a4a (dark blue) + #4a9d6f (green) */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 body { -webkit-user-select: none; user-select: none; }
@@ -38,7 +39,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .brand { display: flex; align-items: center; gap: .75rem; text-decoration: none; }
 .brand-logo { height: 88px; width: auto; max-width: 220px; object-fit: contain; filter: contrast(1.05) drop-shadow(0 2px 6px rgba(0,0,0,.10)); }
 .brand-text { display: flex; flex-direction: column; }
-.brand-name { font-size: 1.45rem; font-weight: 900; color: var(--primary); line-height: 1.2; font-family: var(--font-en); letter-spacing: -.03em; }
+.brand-name { font-size: 1.35rem; font-weight: 700; color: var(--primary); line-height: 1.2; font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; letter-spacing: -.02em; }
 .brand-tagline { font-size: .7rem; color: var(--muted); font-weight: 600; font-family: var(--font-body); }
 .nav-links { display: none; list-style: none; gap: 1.5rem; }
 .nav-links a { text-decoration: none; color: var(--muted); font-size: .9rem; font-weight: 600; transition: color .2s; }
