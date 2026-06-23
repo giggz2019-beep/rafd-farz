@@ -640,19 +640,19 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <!-- طريقة القبول -->
       <div class="fld-m" style="margin-top:.85rem">
         <label>طريقة القبول</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem">
-          <label id="am_instant_lbl" onclick="selectAcceptMode('instant')" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.75rem 1rem;display:flex;gap:.7rem;align-items:flex-start;transition:.2s;background:rgba(74,157,111,.07)">
-            <input type="radio" name="accept_mode" id="am_instant" value="instant" checked style="accent-color:#10b981;margin-top:.15rem;flex-shrink:0">
+        <div style="display:flex;gap:.65rem;margin-top:.5rem;flex-wrap:wrap">
+          <label id="am_instant_lbl" onclick="selectAcceptMode('instant')" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.6rem .9rem;display:flex;gap:.6rem;align-items:center;transition:.2s;background:rgba(74,157,111,.07);flex:1;min-width:140px">
+            <input type="radio" name="accept_mode" id="am_instant" value="instant" checked style="accent-color:#10b981;flex-shrink:0">
             <div>
               <div style="font-size:.82rem;font-weight:700;color:#e2e8f0">⚡ قبول فوري</div>
-              <div style="font-size:.71rem;color:#64748b;margin-top:.25rem;line-height:1.5">المتقدم يرى نتيجته مباشرة. من تجاوز الحد الأدنى يحصل على رسالة قبول في الحال.</div>
+              <div style="font-size:.69rem;color:#64748b;margin-top:.15rem;line-height:1.4">النتيجة تظهر مباشرة للمتقدم</div>
             </div>
           </label>
-          <label id="am_competitive_lbl" onclick="selectAcceptMode('competitive')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:flex;gap:.7rem;align-items:flex-start;transition:.2s">
-            <input type="radio" name="accept_mode" id="am_competitive" value="competitive" style="accent-color:#10b981;margin-top:.15rem;flex-shrink:0">
+          <label id="am_competitive_lbl" onclick="selectAcceptMode('competitive')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.6rem .9rem;display:flex;gap:.6rem;align-items:center;transition:.2s;flex:1;min-width:140px">
+            <input type="radio" name="accept_mode" id="am_competitive" value="competitive" style="accent-color:#10b981;flex-shrink:0">
             <div>
               <div style="font-size:.82rem;font-weight:700;color:#e2e8f0">🏅 مفاضلة</div>
-              <div style="font-size:.71rem;color:#64748b;margin-top:.25rem;line-height:1.5">يُجمع الطلبات أولاً ثم تختار أفضلها. المتقدم يرى "قبول مبدئي" وتُبلَّغه بالقرار النهائي لاحقاً.</div>
+              <div style="font-size:.69rem;color:#64748b;margin-top:.15rem;line-height:1.4">يرى "قبول مبدئي" وتُبلَّغه لاحقاً</div>
             </div>
           </label>
         </div>
