@@ -10,27 +10,47 @@
 body{font-family:'Cairo',sans-serif;background:#0f172a;color:#e2e8f0;direction:rtl;min-height:100vh}
 
 /* ===== LIGHT THEME ===== */
-body.theme-light{background:#f1f5f9;color:#1e293b}
-body.theme-light .sidebar{background:#fff;border-color:#e2e8f0}
-body.theme-light .sb-logo{border-color:#e2e8f0}
-body.theme-light .nav-item{color:#475569}
-body.theme-light .nav-item:hover,body.theme-light .nav-item.active{background:rgba(26,58,74,.08);color:#1a3a4a}
-body.theme-light .main{background:#f1f5f9}
-body.theme-light .card{background:#fff;border-color:#e2e8f0;color:#1e293b}
+body.theme-light{background:#f0f4f8;color:#1e293b}
+body.theme-light .sidebar{background:#1a3a4a;border-color:#15303f}
+body.theme-light .sb-logo{border-color:rgba(255,255,255,.12)}
+body.theme-light .sb-logo-text{color:#fff}
+body.theme-light .sb-logo-sub{color:rgba(255,255,255,.5)}
+body.theme-light .nav-sec{color:rgba(255,255,255,.4)}
+body.theme-light .nav-item{color:rgba(255,255,255,.65)}
+body.theme-light .nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+body.theme-light .nav-item.active{color:#fff;background:rgba(255,255,255,.12);border-right-color:#4ade80}
+body.theme-light .sb-footer{border-color:rgba(255,255,255,.1)}
+body.theme-light .sb-uname{color:#fff}
+body.theme-light .sb-urole{color:rgba(255,255,255,.5)}
+body.theme-light .btn-logout{color:rgba(255,255,255,.45)}
+body.theme-light .btn-logout:hover{color:#fca5a5}
+body.theme-light .sb-av{background:linear-gradient(135deg,#2d5a6e,#4a9d6f)}
+body.theme-light .main{background:#f0f4f8}
+body.theme-light .page-title{color:#1a3a4a;font-weight:900}
+body.theme-light .page-sub{color:#64748b}
+body.theme-light .card{background:#fff;border:1px solid #dde3ec;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 body.theme-light .card-title{color:#1a3a4a}
-body.theme-light .fld-m label,body.theme-light .fld-m input,body.theme-light .fld-m select,body.theme-light .fld-m textarea{color:#1e293b;background:#f8fafc;border-color:#e2e8f0}
-body.theme-light .q-card{background:#f8fafc;border-color:#e2e8f0;color:#1e293b}
+body.theme-light .stat-card{background:#fff;border:1px solid #dde3ec;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+body.theme-light .stat-label{color:#64748b}
+body.theme-light .stat-val{color:#1a3a4a;font-weight:900}
+body.theme-light .stat-note{color:#94a3b8}
+body.theme-light .fld-m label{color:#334155}
+body.theme-light .fld-m input,body.theme-light .fld-m select,body.theme-light .fld-m textarea{color:#1e293b;background:#f8fafc;border-color:#dde3ec}
+body.theme-light .fld-m input:focus,body.theme-light .fld-m select:focus{border-color:#1a3a4a;background:#fff}
+body.theme-light .q-card{background:#f8fafc;border-color:#dde3ec}
 body.theme-light .q-label{color:#1e293b}
-body.theme-light .q-weight input{background:#fff;color:#1a3a4a;border-color:#e2e8f0}
-body.theme-light .page-title{color:#1a3a4a}
-body.theme-light .stat-card{background:#fff;border-color:#e2e8f0}
-body.theme-light .stat-val{color:#1a3a4a}
-body.theme-light table{color:#1e293b}
-body.theme-light th{background:#f1f5f9;color:#475569}
-body.theme-light td{border-color:#f1f5f9}
-body.theme-light tr:hover{background:#f8fafc}
-body.theme-light .sb-uname{color:#1e293b}
-body.theme-light .sb-urole{color:#64748b}
+body.theme-light .q-weight input{background:#fff;color:#1a3a4a;border-color:#dde3ec}
+body.theme-light .q-toggle{background:#dde3ec}
+body.theme-light .q-toggle.on{background:#1a3a4a}
+body.theme-light thead tr{background:#f0f4f8}
+body.theme-light th{color:#64748b}
+body.theme-light tbody tr{border-color:#f0f4f8;color:#1e293b}
+body.theme-light tbody tr:hover{background:#f8fafc}
+body.theme-light td{color:#1e293b}
+body.theme-light .page-hdr{border-bottom:none}
+body.theme-light .alert{background:#fff;border-color:#dde3ec;color:#1e293b}
+body.theme-light .alert-warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+body.theme-light #status_alert .alert{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
 
 /* ===== SIDEBAR ===== */
 .sidebar{width:250px;background:#1e293b;border-left:1px solid #334155;position:fixed;top:0;right:0;bottom:0;z-index:100;display:flex;flex-direction:column;transition:.3s}
@@ -193,9 +213,9 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
 <aside class="sidebar" id="sidebar">
   <div class="sb-logo">
     <a href="/" style="display:flex;align-items:center;gap:.7rem;text-decoration:none">
-    <img src="/rafd-logo.png" alt="RAFD Digital" style="height:40px;width:auto;border-radius:8px;background:#fff;padding:3px">
+    <img src="/rafd-logo.png" alt="RAFD Digital" style="height:62px;width:auto;border-radius:10px;background:#fff;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.25)">
     <div>
-      <div class="sb-logo-text">RAFD Digital</div>
+      <div class="sb-logo-text" style="font-size:1.15rem;font-family:'Inter','Segoe UI',sans-serif;font-weight:900;letter-spacing:-.02em">RAFD Digital</div>
       <div class="sb-logo-sub">لوحة تحكم الشريك</div>
     </div>
     </a>
