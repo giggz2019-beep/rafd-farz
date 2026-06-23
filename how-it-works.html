@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -116,7 +116,7 @@
     <ul class="nav-links">
       <li><a href="/#features">المميزات</a></li>
       <li><a href="/how-it-works.html" class="active">كيف نعمل</a></li>
-      <li><a href="/about.html">من نحن</a></li>
+      <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
       <li><a href="/#pricing">الأسعار</a></li>
       <li class="mobile-nav-sep"></li>
       <li class="mobile-nav-login"><a href="/partner-login.html">🤝 دخول الشركاء</a></li>
@@ -124,6 +124,7 @@
       <li class="mobile-nav-login mobile-nav-cta"><a href="/register-partner.html">← انضم كشريك</a></li>
     </ul>
     <div class="nav-actions">
+      <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
       <div class="login-dropdown-wrap" id="loginDropWrap">
         <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem">
           تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span>
@@ -440,7 +441,7 @@
         <h4>المنصة</h4>
         <ul>
           <li><a href="/#features">المميزات</a></li>
-          <li><a href="/how-it-works.html">كيف نعمل</a></li>
+          <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
           <li><a href="/#pricing">الأسعار</a></li>
           <li><a href="/demo-apply.html">تجربة مجانية</a></li>
         </ul>
@@ -448,7 +449,7 @@
       <div class="footer-col">
         <h4>الشركة</h4>
         <ul>
-          <li><a href="/about.html">من نحن</a></li>
+          <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
           <li><a href="mailto:info@rafd-digital.com">تواصل معنا</a></li>
           <li><a href="/privacy.html">سياسة الخصوصية</a></li>
           <li><a href="/terms.html">الشروط والأحكام</a></li>
@@ -495,5 +496,7 @@ document.addEventListener('click', () => {
   document.getElementById('loginDrop')?.classList.remove('open');
 });
 </script>
+<script src="/i18n.js"></script>
 </body>
 </html>
+

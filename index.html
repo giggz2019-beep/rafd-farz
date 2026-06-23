@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -25,32 +25,33 @@
       </div>
     </a>
     <ul class="nav-links">
-      <li><a href="#features">المميزات</a></li>
-      <li><a href="/how-it-works.html">كيف نعمل</a></li>
-      <li><a href="/about.html">من نحن</a></li>
-      <li><a href="#pricing">الأسعار</a></li>
+      <li><a href="#features" data-i18n="nav.features">المميزات</a></li>
+      <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
+      <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
+      <li><a href="#pricing" data-i18n="nav.pricing">الأسعار</a></li>
       <li class="mobile-nav-sep"></li>
-      <li class="mobile-nav-login"><a href="/partner-login.html">🤝 دخول الشركاء</a></li>
-      <li class="mobile-nav-login"><a href="/admin.html">🛡️ دخول الإدارة</a></li>
-      <li class="mobile-nav-login mobile-nav-cta"><a href="/register-partner.html">← انضم كشريك</a></li>
+      <li class="mobile-nav-login"><a href="/partner-login.html">🤝 <span data-i18n="nav.partner-login">دخول الشركاء</span></a></li>
+      <li class="mobile-nav-login"><a href="/admin.html">🛡️ <span data-i18n="nav.admin">دخول الإدارة</span></a></li>
+      <li class="mobile-nav-login mobile-nav-cta"><a href="/register-partner.html" data-i18n="nav.join">انضم كشريك</a></li>
     </ul>
     <div class="nav-actions">
+      <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
       <div class="login-dropdown-wrap" id="loginDropWrap">
-        <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem">
+        <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem" data-i18n="nav.login">
           تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span>
         </button>
         <div class="login-drop" id="loginDrop">
           <a href="/partner-login.html" class="login-drop-item">
             <span style="font-size:1.1rem">🤝</span>
-            <div><div style="font-weight:700;font-size:.88rem">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6">لوحة تحكم الجهات</div></div>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.partner-login">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.partner-login-sub">لوحة تحكم الجهات</div></div>
           </a>
           <a href="/admin.html" class="login-drop-item">
             <span style="font-size:1.1rem">🛡️</span>
-            <div><div style="font-weight:700;font-size:.88rem">الإدارة</div><div style="font-size:.72rem;opacity:.6">دخول مشرفي النظام</div></div>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.admin">الإدارة</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.admin-sub">دخول مشرفي النظام</div></div>
           </a>
         </div>
       </div>
-      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f">انضم كشريك</a>
+      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f" data-i18n="nav.join">انضم كشريك</a>
     </div>
     <button class="hamburger" id="hamburger">&#9776;</button>
   </div>
@@ -65,40 +66,35 @@
   </div>
   <div class="container hero-inner">
     <div class="hero-content">
-      <h1 class="hero-title">
-        مرحباً بكم في<br>
-        <span class="gradient-text">مستقبل التقييم</span><br>
-        الذكي
-      </h1>
+      <h1 class="hero-title" data-i18n="hero.title">مرحباً بكم في<br><span class="gradient-text">مستقبل التقييم</span><br>الذكي</h1>
       <p class="hero-desc">
-        RAFD — منصة الذكاء الاصطناعي للتقييم الفوري. تُمكّن الشركات والبنوك والجامعات والحاضنات من أتمتة قرارات القبول والرفض بناءً على معاييرها الخاصة — بدون تحيّز.
-      </p>
+        <span data-i18n="hero.desc">RAFD — منصة الذكاء الاصطناعي للتقييم الفوري. تُمكّن الشركات والبنوك والجامعات والحاضنات من أتمتة قرارات القبول والرفض بناءً على معاييرها الخاصة — بدون تحيّز.</span></p>
       <div class="hero-cta">
-        <a href="/signup.html" class="btn-hero-primary">ابدأ تجربتك المجانية ←</a>
+        <a href="/signup.html" class="btn-hero-primary"><span data-i18n="hero.cta1">ابدأ تجربتك المجانية ←</span></a>
         <a href="/demo-apply.html" class="btn-hero-ghost">
           <span class="play-icon">▶</span>
-          جرّب النظام الآن
+          <span data-i18n="hero.cta2">جرّب النظام الآن</span>
         </a>
       </div>
       <div class="hero-stats">
         <div class="stat">
           <span class="stat-num">+20</span>
-          <span class="stat-label">جهة مسجّلة</span>
+          <span class="stat-label"><span data-i18n="hero.stat1">جهة مسجّلة</span></span>
         </div>
         <div class="stat-divider"></div>
         <div class="stat">
           <span class="stat-num">99.9%</span>
-          <span class="stat-label">دقة التصنيف</span>
+          <span class="stat-label"><span data-i18n="hero.stat2">دقة التصنيف</span></span>
         </div>
         <div class="stat-divider"></div>
         <div class="stat">
-          <span class="stat-num">فوري ⚡</span>
-          <span class="stat-label">وقت المعالجة</span>
+          <span class="stat-num"><span data-i18n="hero.stat3">فوري ⚡</span></span>
+          <span class="stat-label"><span data-i18n="hero.stat3-lbl">وقت المعالجة</span></span>
         </div>
         <div class="stat-divider"></div>
         <div class="stat">
           <span class="stat-num">80%</span>
-          <span class="stat-label">توفير التكاليف</span>
+          <span class="stat-label"><span data-i18n="hero.stat4-lbl">توفير التكاليف</span></span>
         </div>
       </div>
     </div>
@@ -193,30 +189,30 @@
 <section id="how-it-works" class="how-section">
   <div class="container">
     <div class="section-header">
-      <span class="section-tag">كيف يعمل النظام</span>
-      <h2 class="section-title">أربع خطوات لأتمتة قراراتك</h2>
-      <p class="section-desc">من إعداد المعايير إلى إصدار القرار — كل شيء يعمل تلقائياً بدون تدخل بشري</p>
+      <span class="section-tag"><span data-i18n="how.tag">كيف يعمل النظام</span></span>
+      <h2 class="section-title"><span data-i18n="how.title">أربع خطوات لأتمتة قراراتك</span></h2>
+      <p class="section-desc"><span data-i18n="how.desc">من إعداد المعايير إلى إصدار القرار — كل شيء يعمل تلقائياً بدون تدخل بشري</span></p>
     </div>
     <div class="how-steps">
       <div class="how-step">
         <div class="step-num">1</div>
-        <div class="step-title">حدّد معاييرك</div>
-        <div class="step-desc">أدخل معايير القبول والرفض الخاصة بجهتك عبر لوحة التحكم — بدون أي برمجة</div>
+        <div class="step-title"><span data-i18n="how.s1t">حدّد معاييرك</span></div>
+        <div class="step-desc"><span data-i18n="how.s1d">أدخل معايير القبول والرفض الخاصة بجهتك عبر لوحة التحكم — بدون أي برمجة</span></div>
       </div>
       <div class="how-step">
         <div class="step-num">2</div>
-        <div class="step-title">استقبل الطلبات</div>
-        <div class="step-desc">شارك رابط النموذج مع المتقدمين — يُقدّمون طلباتهم مباشرة عبر المنصة</div>
+        <div class="step-title"><span data-i18n="how.s2t">استقبل الطلبات</span></div>
+        <div class="step-desc"><span data-i18n="how.s2d">شارك رابط النموذج مع المتقدمين — يُقدّمون طلباتهم مباشرة عبر المنصة</span></div>
       </div>
       <div class="how-step">
         <div class="step-num">3</div>
-        <div class="step-title">التحليل الذكي</div>
-        <div class="step-desc">يحلّل الذكاء الاصطناعي كل طلب ويُقيّمه وفق معاييرك بشكل فوري</div>
+        <div class="step-title"><span data-i18n="how.s3t">التحليل الذكي</span></div>
+        <div class="step-desc"><span data-i18n="how.s3d">يحلّل الذكاء الاصطناعي كل طلب ويُقيّمه وفق معاييرك بشكل فوري</span></div>
       </div>
       <div class="how-step">
         <div class="step-num">4</div>
-        <div class="step-title">القرار الفوري</div>
-        <div class="step-desc">يصدر القرار تلقائياً مع تقرير مفصّل — ويُرسَل للمتقدم فوراً</div>
+        <div class="step-title"><span data-i18n="how.s4t">القرار الفوري</span></div>
+        <div class="step-desc"><span data-i18n="how.s4d">يصدر القرار تلقائياً مع تقرير مفصّل — ويُرسَل للمتقدم فوراً</span></div>
       </div>
     </div>
   </div>
@@ -226,40 +222,40 @@
 <section id="features" class="features-section">
   <div class="container">
     <div class="section-header">
-      <span class="section-tag">المميزات</span>
-      <h2 class="section-title">كل ما تحتاجه في منصة واحدة</h2>
-      <p class="section-desc">تقنية متقدمة مصممة خصيصاً لاحتياجات الجهات السعودية</p>
+      <span class="section-tag"><span data-i18n="feat.tag">المميزات</span></span>
+      <h2 class="section-title"><span data-i18n="feat.title">كل ما تحتاجه في منصة واحدة</span></h2>
+      <p class="section-desc"><span data-i18n="feat.desc">تقنية متقدمة مصممة خصيصاً لاحتياجات الجهات السعودية</span></p>
     </div>
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">🤖</div>
-        <div class="feature-title">ذكاء اصطناعي متقدم</div>
-        <div class="feature-desc">محرك تقييم ذكي يتعلم من بياناتك ويُحسّن قراراته باستمرار</div>
+        <div class="feature-title"><span data-i18n="feat1t">ذكاء اصطناعي متقدم</span></div>
+        <div class="feature-desc"><span data-i18n="feat1d">محرك تقييم ذكي يتعلم من بياناتك ويُحسّن قراراته باستمرار</span></div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🔐</div>
-        <div class="feature-title">تحقق الهوية</div>
-        <div class="feature-desc">التحقق من هوية المتقدمين بشكل آمن وسريع عبر منصة التحقق الرقمي</div>
+        <div class="feature-title"><span data-i18n="feat2t">تحقق الهوية</span></div>
+        <div class="feature-desc"><span data-i18n="feat2d">التحقق من هوية المتقدمين بشكل آمن وسريع عبر منصة التحقق الرقمي</span></div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">⚙️</div>
-        <div class="feature-title">معايير مخصصة</div>
-        <div class="feature-desc">حدّد معايير القبول والرفض بدقة — وزن لكل معيار، حد أدنى، شروط إلزامية</div>
+        <div class="feature-title"><span data-i18n="feat3t">معايير مخصصة</span></div>
+        <div class="feature-desc"><span data-i18n="feat3d">حدّد معايير القبول والرفض بدقة — وزن لكل معيار، حد أدنى، شروط إلزامية</span></div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📊</div>
-        <div class="feature-title">تقارير وتحليلات</div>
-        <div class="feature-desc">لوحة تحكم شاملة بإحصائيات تفصيلية وتقارير قابلة للتصدير</div>
+        <div class="feature-title"><span data-i18n="feat4t">تقارير وتحليلات</span></div>
+        <div class="feature-desc"><span data-i18n="feat4d">لوحة تحكم شاملة بإحصائيات تفصيلية وتقارير قابلة للتصدير</span></div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🔔</div>
-        <div class="feature-title">إشعارات فورية</div>
-        <div class="feature-desc">إشعارات تلقائية للمتقدمين عبر البريد الإلكتروني والرسائل النصية</div>
+        <div class="feature-title"><span data-i18n="feat5t">إشعارات فورية</span></div>
+        <div class="feature-desc"><span data-i18n="feat5d">إشعارات تلقائية للمتقدمين عبر البريد الإلكتروني والرسائل النصية</span></div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🏢</div>
-        <div class="feature-title">حسابات مستقلة</div>
-        <div class="feature-desc">كل جهة لها حساب مستقل وبيانات معزولة تماماً عن الجهات الأخرى</div>
+        <div class="feature-title"><span data-i18n="feat6t">حسابات مستقلة</span></div>
+        <div class="feature-desc"><span data-i18n="feat6d">كل جهة لها حساب مستقل وبيانات معزولة تماماً عن الجهات الأخرى</span></div>
       </div>
     </div>
   </div>
@@ -269,40 +265,40 @@
 <section id="sectors" class="sectors-section">
   <div class="container">
     <div class="section-header">
-      <span class="section-tag">القطاعات</span>
-      <h2 class="section-title">مصمّم لكل القطاعات</h2>
-      <p class="section-desc">سواء كنت بنكاً أو جامعة أو مسرعة أعمال — النظام يتكيّف مع احتياجاتك</p>
+      <span class="section-tag"><span data-i18n="sec.tag">القطاعات</span></span>
+      <h2 class="section-title"><span data-i18n="sec.title">مصمّم لكل القطاعات</span></h2>
+      <p class="section-desc"><span data-i18n="sec.desc">سواء كنت بنكاً أو جامعة أو مسرعة أعمال — النظام يتكيّف مع احتياجاتك</span></p>
     </div>
     <div class="sectors-grid">
       <div class="sector-card">
         <div class="sector-icon">🏦</div>
-        <div class="sector-name">البنوك والمالية</div>
-        <div class="sector-desc">فرز طلبات القروض والتمويل وفق معايير الجدارة الائتمانية</div>
+        <div class="sector-name"><span data-i18n="sec1n">البنوك والمالية</span></div>
+        <div class="sector-desc"><span data-i18n="sec1d">فرز طلبات القروض والتمويل وفق معايير الجدارة الائتمانية</span></div>
       </div>
       <div class="sector-card">
         <div class="sector-icon">🎓</div>
-        <div class="sector-name">الجامعات والتعليم</div>
-        <div class="sector-desc">قبول الطلاب والمنح الدراسية وفق المعدل والمؤهلات</div>
+        <div class="sector-name"><span data-i18n="sec2n">الجامعات والتعليم</span></div>
+        <div class="sector-desc"><span data-i18n="sec2d">قبول الطلاب والمنح الدراسية وفق المعدل والمؤهلات</span></div>
       </div>
       <div class="sector-card">
         <div class="sector-icon">🚀</div>
-        <div class="sector-name">المسرعات والحاضنات</div>
-        <div class="sector-desc">تقييم الشركات الناشئة وفق نضج الفكرة والفريق والسوق</div>
+        <div class="sector-name"><span data-i18n="sec3n">المسرعات والحاضنات</span></div>
+        <div class="sector-desc"><span data-i18n="sec3d">تقييم الشركات الناشئة وفق نضج الفكرة والفريق والسوق</span></div>
       </div>
       <div class="sector-card">
         <div class="sector-icon">💼</div>
-        <div class="sector-name">التوظيف والموارد البشرية</div>
-        <div class="sector-desc">فرز السير الذاتية وتقييم المتقدمين للوظائف تلقائياً</div>
+        <div class="sector-name"><span data-i18n="sec4n">التوظيف والموارد البشرية</span></div>
+        <div class="sector-desc"><span data-i18n="sec4d">فرز السير الذاتية وتقييم المتقدمين للوظائف تلقائياً</span></div>
       </div>
       <div class="sector-card">
         <div class="sector-icon">🏛️</div>
-        <div class="sector-name">الجهات الحكومية</div>
-        <div class="sector-desc">معالجة طلبات التراخيص والدعم والبرامج الحكومية</div>
+        <div class="sector-name"><span data-i18n="sec5n">الجهات الحكومية</span></div>
+        <div class="sector-desc"><span data-i18n="sec5d">معالجة طلبات التراخيص والدعم والبرامج الحكومية</span></div>
       </div>
       <div class="sector-card">
         <div class="sector-icon">🤝</div>
-        <div class="sector-name">برامج الشراكات</div>
-        <div class="sector-desc">تقييم طلبات الشراكة والتعاون وفق معايير الأهلية</div>
+        <div class="sector-name"><span data-i18n="sec6n">برامج الشراكات</span></div>
+        <div class="sector-desc"><span data-i18n="sec6d">تقييم طلبات الشراكة والتعاون وفق معايير الأهلية</span></div>
       </div>
     </div>
   </div>
@@ -360,8 +356,8 @@
 <section id="pricing" class="pricing-section">
   <div class="container">
     <div class="section-header">
-      <span class="section-tag">الأسعار</span>
-      <h2 class="section-title">خطط مرنة لكل جهة</h2>
+      <span class="section-tag"><span data-i18n="price.tag">الأسعار</span></span>
+      <h2 class="section-title"><span data-i18n="price.title">خطط مرنة لكل جهة</span></h2>
       <p class="section-desc">ابدأ مجاناً وتوسّع حسب احتياجاتك</p>
     </div>
     <div class="pricing-grid">
@@ -369,9 +365,9 @@
       <!-- باقة تجريبية -->
       <div class="price-card">
         <div class="price-text">
-          <div class="price-plan">🎯 تجريبية</div>
-          <div style="margin-bottom:.5rem"><span class="price-amount">مجاناً</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> / 7 أيام</span></div>
-          <p class="price-desc" style="margin-bottom:1.25rem">جرّب المنصة كاملاً بدون أي التزام</p>
+          <div class="price-plan"><span data-i18n="trial.plan">🎯 تجريبية</span></div>
+          <div style="margin-bottom:.5rem"><span class="price-amount"><span data-i18n="trial.price">مجاناً</span></span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> / 7 أيام</span></div>
+          <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="trial.desc">جرّب المنصة كاملاً بدون أي التزام</span></p>
           <ul class="price-features" style="margin-bottom:1.75rem">
             <li>50 طلب تجريبي</li>
             <li>رابط تقديم خاص بجهتك</li>
@@ -413,9 +409,9 @@
       <!-- باقة أساسية -->
       <div class="price-card">
         <div class="price-text">
-          <div class="price-plan">⚡ الأساسية</div>
+          <div class="price-plan"><span data-i18n="basic.plan">⚡ الأساسية</span></div>
           <div style="margin-bottom:.5rem"><span class="price-amount">249</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> ر.س / شهر</span></div>
-          <p class="price-desc" style="margin-bottom:1.25rem">للجهات المتوسطة والنامية</p>
+          <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="basic.desc">للجهات المتوسطة والنامية</span></p>
           <ul class="price-features" style="margin-bottom:1.75rem">
             <li>500 طلب شهرياً</li>
             <li>معايير تقييم غير محدودة</li>
@@ -470,11 +466,11 @@
 
       <!-- باقة متقدمة -->
       <div class="price-card popular">
-        <div class="popular-badge">الأكثر طلباً ⭐</div>
+        <div class="popular-badge"><span data-i18n="adv.badge">الأكثر طلباً ⭐</span></div>
         <div class="price-text">
-          <div class="price-plan">🚀 المتقدمة</div>
+          <div class="price-plan"><span data-i18n="adv.plan">🚀 المتقدمة</span></div>
           <div style="margin-bottom:.5rem"><span class="price-amount">499</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> ر.س / شهر</span></div>
-          <p class="price-desc" style="margin-bottom:1.25rem">للجهات الكبيرة والمتوسعة</p>
+          <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="adv.desc">للجهات الكبيرة والمتوسعة</span></p>
           <ul class="price-features" style="margin-bottom:1.75rem">
             <li>طلبات غير محدودة</li>
             <li>تحليلات وذكاء اصطناعي متقدم</li>
@@ -524,8 +520,8 @@
 <section class="cta-section">
   <div class="container">
     <div class="cta-box">
-      <h2 class="cta-title">جاهز لأتمتة قراراتك؟</h2>
-      <p class="cta-desc">انضم لأكثر من 20 جهة تستخدم Rafd لتوفير الوقت وتحسين جودة القرارات</p>
+      <h2 class="cta-title"><span data-i18n="cta.title">جاهز لأتمتة قراراتك؟</span></h2>
+      <p class="cta-desc"><span data-i18n="cta.desc">انضم لأكثر من 20 جهة تستخدم Rafd لتوفير الوقت وتحسين جودة القرارات</span></p>
       <div class="cta-actions">
         <a href="/signup.html" class="btn-cta-white">ابدأ تجربتك المجانية ←</a>
         <a href="/demo-apply.html" class="btn-cta-outline">جرّب النظام أولاً</a>
@@ -550,7 +546,7 @@
             </div>
           </div>
         </div>
-        <p class="footer-desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
+        <p class="footer-desc"><span data-i18n="footer.desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</span></p>
       </div>
       <div class="footer-col">
         <h4>المنصة</h4>
@@ -593,7 +589,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copy">© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span>
+      <span class="footer-copy"><span data-i18n="footer.copy">© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span></span>
       <div class="footer-links">
         <a href="#">Twitter</a>
         <a href="https://www.linkedin.com/in/مـريـم-العبـيـد🪽-922465377" target="_blank">LinkedIn</a>
@@ -869,5 +865,7 @@ document.addEventListener('click', () => {
   document.getElementById('loginDrop')?.classList.remove('open');
 });
 </script>
+<script src="/i18n.js"></script>
 </body>
 </html>
+

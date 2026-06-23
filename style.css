@@ -51,6 +51,8 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .btn-primary-sm:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,58,74,.25); }
 .hamburger { display: flex; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--primary); padding: .4rem; align-items: center; justify-content: center; border-radius: 8px; transition: background .2s; }
 .hamburger:hover { background: var(--bg); }
+.lang-toggle { background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: .35rem .8rem; font-size: .78rem; font-weight: 700; color: var(--primary); cursor: pointer; transition: all .2s; font-family: 'Plus Jakarta Sans', sans-serif; white-space: nowrap; }
+.lang-toggle:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 .login-dropdown-wrap { position: relative; }
 .login-drop { display: none; position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,.14); min-width: 200px; overflow: hidden; z-index: 999; }
 .login-drop.open { display: block; }
