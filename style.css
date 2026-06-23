@@ -32,12 +32,12 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 
 /* ===== NAVBAR ===== */
 .navbar { position: fixed; top: 0; right: 0; left: 0; z-index: 1000; background: rgba(255,255,255,.97); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); transition: all .3s; }
-.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; padding: 0 1rem; }
-.brand { display: flex; align-items: center; gap: .5rem; text-decoration: none; }
-.brand-logo { height: 72px; width: auto; max-width: 200px; object-fit: contain; mix-blend-mode: multiply; filter: contrast(1.05); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 80px; padding: 0 1rem; }
+.brand { display: flex; align-items: center; gap: .75rem; text-decoration: none; }
+.brand-logo { height: 88px; width: auto; max-width: 220px; object-fit: contain; filter: contrast(1.05) drop-shadow(0 2px 6px rgba(0,0,0,.10)); }
 .brand-text { display: flex; flex-direction: column; }
-.brand-name { font-size: 1.25rem; font-weight: 800; color: var(--primary); line-height: 1.2; font-family: var(--font-en); letter-spacing: -.02em; }
-.brand-tagline { font-size: .66rem; color: var(--muted); font-weight: 500; font-family: var(--font-body); }
+.brand-name { font-size: 1.45rem; font-weight: 900; color: var(--primary); line-height: 1.2; font-family: var(--font-en); letter-spacing: -.03em; }
+.brand-tagline { font-size: .7rem; color: var(--muted); font-weight: 600; font-family: var(--font-body); }
 .nav-links { display: none; list-style: none; gap: 1.5rem; }
 .nav-links a { text-decoration: none; color: var(--muted); font-size: .9rem; font-weight: 600; transition: color .2s; }
 .nav-links a:hover { color: var(--primary); }
@@ -253,7 +253,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 /* ===== DESKTOP (min-width: 1024px) ===== */
 @media (min-width: 1024px) {
   .container { padding: 0 2rem; }
-  .nav-inner { height: 72px; padding: 0 2rem; }
+  .nav-inner { height: 90px; padding: 0 2rem; }
   .nav-links { display: flex; }
   .nav-actions { display: flex; }
   .hamburger { display: none; }
