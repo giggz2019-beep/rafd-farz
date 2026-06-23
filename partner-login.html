@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -58,55 +58,56 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 </style>
 </head>
 <body>
-<div class="top-link"><a href="/">← الرئيسية</a></div>
+<div class="top-link" style="display:flex;align-items:center;gap:1rem">
+  <a href="/"><span data-i18n="pl.back-home">← الرئيسية</span></a>
+  <button id="langToggleBtn" onclick="toggleLang()" style="background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);color:#38bdf8;border-radius:20px;padding:.25rem .85rem;font-family:'Cairo',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer">🌐 EN</button>
+</div>
 
 <div class="card">
   <div class="logo-wrap">
     <div class="logo-icon"><img src="/rafd-logo.png" alt="RAFD Digital" style="width:90px;height:auto;object-fit:contain"></div>
     <div class="logo-title">RAFD Digital</div>
-    <div class="logo-sub">بوابة الشركاء</div>
-    <div class="badge">🤝 منطقة الشركاء</div>
+    <div class="logo-sub" data-i18n="pl.portal-sub">بوابة الشركاء</div>
+    <div class="badge" data-i18n="pl.badge">🤝 منطقة الشركاء</div>
   </div>
 
   <!-- نموذج الدخول -->
   <div id="loginForm">
-    <div class="err" id="errMsg">بيانات الدخول غير صحيحة. تحقق من البريد وكلمة المرور.</div>
-    <div class="pending-msg" id="pendingMsg">⏳ حسابك قيد المراجعة. سيتم إشعارك عند التفعيل.</div>
+    <div class="err" id="errMsg" data-i18n="pl.err-login">بيانات الدخول غير صحيحة. تحقق من البريد وكلمة المرور.</div>
+    <div class="pending-msg" id="pendingMsg" data-i18n="pl.pending">⏳ حسابك قيد المراجعة. سيتم إشعارك عند التفعيل.</div>
 
     <div class="fld">
-      <label>البريد الإلكتروني أو اسم المستخدم</label>
+      <label data-i18n="pl.lbl-email-user">البريد الإلكتروني أو اسم المستخدم</label>
       <input type="text" id="loginEmail" placeholder="name@company.com أو RAFD-2025-XXXXX" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="username">
     </div>
     <div class="fld">
-      <label>كلمة المرور</label>
+      <label data-i18n="pl.lbl-pass">كلمة المرور</label>
       <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <button class="btn-login" id="loginBtn" onclick="doLogin()">دخول للوحة التحكم</button>
+    <button class="btn-login" id="loginBtn" onclick="doLogin()"><span data-i18n="pl.btn-login">دخول للوحة التحكم</span></button>
 
-    <div class="or-div">أو</div>
-    <button class="btn-nafath" onclick="openNafathLogin()">
-      <div class="nafath-icon">نفاذ</div>
-      تسجيل الدخول عبر نفاذ
+    <div class="or-div" data-i18n="pl.or">أو</div>
+    <button class="btn-nafath" onclick="openNafathLogin()"><div class="nafath-icon">نفاذ</div><span data-i18n="pl.nafath-login">تسجيل الدخول عبر نفاذ</span>
     </button>
     <div id="nafathLinkedBadge" class="nafath-link-badge">
-      ✅ تم ربط حسابك بنفاذ — هويتك موثّقة
+      <span data-i18n="pl.nafath-linked">✅ تم ربط حسابك بنفاذ — هويتك موثّقة</span>
     </div>
 
     <div class="links">
-      <a href="/register-partner.html" class="reg-link">تسجيل جهة جديدة ←</a>
-      <a href="#" onclick="showForgot();return false;" style="color:#64748b">نسيت كلمة المرور؟</a>
+      <a href="/register-partner.html" class="reg-link" data-i18n="pl.link-register">تسجيل جهة جديدة ←</a>
+      <a href="#" onclick="showForgot();return false;" style="color:#64748b"><span data-i18n="pl.link-forgot-pass">نسيت كلمة المرور؟</span></a>
     </div>
     <div style="text-align:center;margin-top:.6rem;display:flex;justify-content:center;gap:1.25rem">
-      <a href="#" onclick="showForgotEmail();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted">نسيت بريدك الإلكتروني؟</a>
-      <a href="#" onclick="showForgotUsername();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted">نسيت اسم المستخدم؟</a>
+      <a href="#" onclick="showForgotEmail();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted"><span data-i18n="pl.link-forgot-email">نسيت بريدك الإلكتروني؟</span></a>
+      <a href="#" onclick="showForgotUsername();return false;" style="font-size:.78rem;color:#94a3b8;text-decoration:underline dotted"><span data-i18n="pl.link-forgot-user">نسيت اسم المستخدم؟</span></a>
     </div>
   </div>
 
   <!-- شاشة OTP -->
   <div class="otp-screen" id="otpScreen">
     <div class="otp-icon">📧</div>
-    <div class="otp-title">تحقق من بريدك</div>
-    <div class="otp-desc">أرسلنا رمز تحقق مكوّن من 6 أرقام إلى</div>
+    <div class="otp-title" data-i18n="pl.otp-title">تحقق من بريدك</div>
+    <div class="otp-desc" data-i18n="pl.otp-desc">أرسلنا رمز تحقق مكوّن من 6 أرقام إلى</div>
     <div class="otp-email-display" id="otpEmailShow">—</div>
     <div class="otp-input-wrap">
       <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" id="lotp0">
@@ -116,13 +117,13 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" id="lotp4">
       <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" id="lotp5">
     </div>
-    <div class="otp-error" id="lotpErr">رمز التحقق غير صحيح أو انتهت صلاحيته</div>
-    <button class="btn-verify" id="verifyLoginBtn" onclick="verifyLoginOtp()">✓ تحقق وادخل للوحة التحكم</button>
+    <div class="otp-error" id="lotpErr" data-i18n="pl.otp-err">رمز التحقق غير صحيح أو انتهت صلاحيته</div>
+    <button class="btn-verify" id="verifyLoginBtn" onclick="verifyLoginOtp()"><span data-i18n="pl.btn-verify">✓ تحقق وادخل للوحة التحكم</span></button>
     <div class="resend-row">
-      <span id="lotpTimerText">إعادة الإرسال بعد <span id="lotpTimer">05:00</span></span>
-      <button class="btn-resend" id="lotpResendBtn" onclick="resendLoginOtp()" disabled>إعادة الإرسال</button>
+      <span id="lotpTimerText"><span data-i18n="pl.resend-after">إعادة الإرسال بعد</span> <span id="lotpTimer">05:00</span></span>
+      <button class="btn-resend" id="lotpResendBtn" onclick="resendLoginOtp()" disabled><span data-i18n="pl.btn-resend">إعادة الإرسال</span></button>
     </div>
-    <button class="btn-back-login" onclick="backToLoginForm()">← تغيير البيانات</button>
+    <button class="btn-back-login" onclick="backToLoginForm()"><span data-i18n="pl.btn-change-data">← تغيير البيانات</span></button>
   </div>
 </div>
 
@@ -133,38 +134,36 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div style="display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:1.5rem">
       <div style="width:48px;height:48px;background:linear-gradient(135deg,#0a5f3f,#0d7a52);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#fff">نفاذ</div>
       <div style="text-align:right">
-        <div style="font-size:1rem;font-weight:900;color:#fff">تسجيل الدخول بنفاذ</div>
-        <div style="font-size:.72rem;color:#4ade80">المنصة الوطنية الموحّدة للهوية الرقمية</div>
+        <div style="font-size:1rem;font-weight:900;color:#fff" data-i18n="pl.nf-title">تسجيل الدخول بنفاذ</div>
+        <div style="font-size:.72rem;color:#4ade80" data-i18n="pl.nf-sub">المنصة الوطنية الموحّدة للهوية الرقمية</div>
       </div>
     </div>
 
     <!-- Step 1: National ID only -->
     <div id="nf_step1">
-      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:1.1rem;text-align:right">أدخل رقم هويتك الوطنية ثم أكّد الرقم العشوائي في تطبيق نفاذ</div>
+      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:1.1rem;text-align:right" data-i18n="pl.nf-instructions">أدخل رقم هويتك الوطنية ثم أكّد الرقم العشوائي في تطبيق نفاذ</div>
       <input type="text" id="nf_id" placeholder="رقم الهوية الوطنية (10 أرقام)" maxlength="10" inputmode="numeric"
         oninput="this.value=this.value.replace(/\D/g,'')"
         onkeydown="if(event.key==='Enter')initNafathLogin()"
         style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;letter-spacing:.15em;direction:ltr;margin-bottom:.75rem">
       <div id="nf_err1" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
       <button onclick="initNafathLogin()" id="nf_send_btn"
-        style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
-        طلب التحقق عبر نفاذ
-      </button>
-      <button onclick="closeNafathModal()" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer">إلغاء</button>
+        style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.nf-send-btn">طلب التحقق عبر نفاذ</span></button>
+      <button onclick="closeNafathModal()" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
     </div>
 
     <!-- Step 2: Nafath App confirmation -->
     <div id="nf_step2" style="display:none">
-      <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.85rem">افتح تطبيق <strong style="color:#4ade80">نفاذ</strong> على جوالك وستجد إشعاراً فيه هذا الرقم — اضغط تأكيد</div>
-      <div style="font-size:.73rem;color:#64748b;margin-bottom:.45rem;letter-spacing:.02em">الرقم العشوائي</div>
+      <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.85rem"><span data-i18n="pl.nf-step2-hint">افتح تطبيق <strong style="color:#4ade80">نفاذ</strong> على جوالك وستجد إشعاراً فيه هذا الرقم — اضغط تأكيد</span></div>
+      <div style="font-size:.73rem;color:#64748b;margin-bottom:.45rem;letter-spacing:.02em" data-i18n="pl.nf-random-lbl">الرقم العشوائي</div>
       <div id="nf_random_num" style="font-size:2.8rem;font-weight:900;letter-spacing:.3em;color:#4ade80;font-family:monospace;background:rgba(10,95,63,.15);border:2px solid rgba(10,95,63,.4);border-radius:16px;padding:1.25rem;margin-bottom:.75rem;direction:ltr">——</div>
-      <div style="font-size:.72rem;color:#475569;margin-bottom:1.1rem">📱 تحقق من تطبيق نفاذ واضغط الرقم المطابق</div>
+      <div style="font-size:.72rem;color:#475569;margin-bottom:1.1rem" data-i18n="pl.nf-random-hint">📱 تحقق من تطبيق نفاذ واضغط الرقم المطابق</div>
       <div id="nf_err2" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
       <button onclick="confirmNafathLogin()" id="nf_verify_btn"
         style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
-        ✓ تم التأكيد في تطبيق نفاذ — دخول
+        <span data-i18n="pl.nf-confirm-btn">✓ تم التأكيد في تطبيق نفاذ — دخول</span>
       </button>
-      <button onclick="document.getElementById('nf_step1').style.display='block';document.getElementById('nf_step2').style.display='none'" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer">← رجوع</button>
+      <button onclick="document.getElementById('nf_step1').style.display='block';document.getElementById('nf_step2').style.display='none'" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer"><span data-i18n="pl.btn-back">← رجوع</span></button>
     </div>
   </div>
 </div>
@@ -174,42 +173,38 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   <div style="background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:400px">
     <!-- Step A: Enter email -->
     <div id="fp_step_email">
-      <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">🔑 نسيت كلمة المرور؟</div>
-      <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">أدخل بريدك الإلكتروني المسجّل وسنرسل لك رمز التحقق</div>
+      <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem" data-i18n="pl.fp-title">🔑 نسيت كلمة المرور؟</div>
+      <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fp-sub">أدخل بريدك الإلكتروني المسجّل وسنرسل لك رمز التحقق</div>
       <div class="fld">
-        <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">البريد الإلكتروني</label>
+        <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-fp-email">البريد الإلكتروني</span></label>
         <input type="email" id="fp_email" placeholder="name@company.com"
           style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none"
           onkeydown="if(event.key==='Enter')sendResetOtp()">
       </div>
       <div id="fp_err" style="display:none;font-size:.78rem;color:#f87171;margin-bottom:.75rem"></div>
       <button onclick="sendResetOtp()" id="fp_send_btn"
-        style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem">
-        إرسال رمز التحقق
-      </button>
-      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer">إلغاء</button>
+        style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem"><span data-i18n="pl.btn-send-otp">إرسال رمز التحقق</span></button>
+      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
     </div>
 
     <!-- Step B: Enter OTP + new password -->
     <div id="fp_step_reset" style="display:none">
-      <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">📨 أدخل رمز التحقق</div>
-      <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">تم إرسال رمز مكوّن من 6 أرقام إلى بريدك</div>
+      <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem" data-i18n="pl.fp-otp-title">📨 أدخل رمز التحقق</div>
+      <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fp-otp-sub">تم إرسال رمز مكوّن من 6 أرقام إلى بريدك</div>
       <div class="fld">
-        <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">رمز التحقق</label>
+        <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-otp">رمز التحقق</span></label>
         <input type="text" id="fp_otp" placeholder="000000" maxlength="6" inputmode="numeric"
           style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:1.3rem;color:#38bdf8;outline:none;text-align:center;letter-spacing:.3em;direction:ltr">
       </div>
       <div class="fld">
-        <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">كلمة المرور الجديدة</label>
+        <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-new-pass">كلمة المرور الجديدة</span></label>
         <input type="password" id="fp_newpass" placeholder="••••••••"
           style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none">
       </div>
       <div id="fp_reset_err" style="display:none;font-size:.78rem;color:#f87171;margin-bottom:.75rem"></div>
       <button onclick="doReset()" id="fp_reset_btn"
-        style="width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem">
-        تغيير كلمة المرور
-      </button>
-      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer">إلغاء</button>
+        style="width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem"><span data-i18n="pl.btn-change-pass">تغيير كلمة المرور</span></button>
+      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
     </div>
   </div>
 </div>
@@ -217,54 +212,51 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 <!-- Forgot Email Modal -->
 <div id="forgotEmailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;padding:1rem">
   <div style="background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:380px">
-    <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">📧 استرجاع البريد الإلكتروني</div>
-    <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">أدخل اسم جهتك للعثور على بريدك المسجّل</div>
+    <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem" data-i18n="pl.fe-title">📧 استرجاع البريد الإلكتروني</div>
+    <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fe-sub">أدخل اسم جهتك للعثور على بريدك المسجّل</div>
     <div class="fld">
-      <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">اسم الجهة</label>
+      <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-orgname">اسم الجهة</span></label>
       <input type="text" id="fe_orgname" placeholder="مثال: جامعة الملك عبدالعزيز"
         style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
         onkeydown="if(event.key==='Enter')findEmailByPhone()">
     </div>
     <div id="fe_err" style="display:none;font-size:.78rem;color:#f87171;margin:.5rem 0 .75rem"></div>
     <div id="fe_result" style="display:none;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.9rem;text-align:center">
-      <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem">البريد الإلكتروني المسجّل</div>
+      <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem" data-i18n="pl.fe-result-lbl">البريد الإلكتروني المسجّل</div>
       <div id="fe_email_show" style="font-size:1rem;font-weight:800;color:#34d399;direction:ltr"></div>
-      <button id="fe_use_btn" onclick="useFoundEmail()" style="margin-top:.75rem;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">استخدم هذا البريد للدخول ←</button>
+      <button id="fe_use_btn" onclick="useFoundEmail()" style="margin-top:.75rem;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fe-use-btn">استخدم هذا البريد للدخول ←</span></button>
     </div>
     <button onclick="findEmailByPhone()" id="fe_search_btn"
-      style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
-      بحث
-    </button>
-    <button onclick="hideForgotEmail()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer">إلغاء</button>
+      style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.btn-search">بحث</span></button>
+    <button onclick="hideForgotEmail()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
   </div>
 </div>
 
 <!-- Forgot Username Modal -->
 <div id="forgotUsernameModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;padding:1rem">
   <div style="background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:380px">
-    <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem">👤 استرجاع اسم المستخدم</div>
-    <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem">أدخل اسم جهتك وسيظهر لك اسم المستخدم الخاص بك</div>
+    <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem" data-i18n="pl.fu-title">👤 استرجاع اسم المستخدم</div>
+    <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fu-sub">أدخل اسم جهتك وسيظهر لك اسم المستخدم الخاص بك</div>
     <div class="fld">
-      <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem">اسم الجهة</label>
+      <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-orgname">اسم الجهة</span></label>
       <input type="text" id="fu_orgname" placeholder="مثال: شركة الأفق للتقنية"
         style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
         onkeydown="if(event.key==='Enter')findUsername()">
     </div>
     <div id="fu_err" style="display:none;font-size:.78rem;color:#f87171;margin:.5rem 0 .75rem"></div>
     <div id="fu_result" style="display:none;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.9rem;text-align:center">
-      <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem">اسم المستخدم الخاص بك</div>
+      <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem" data-i18n="pl.fu-result-lbl">اسم المستخدم الخاص بك</div>
       <div id="fu_username_show" style="font-size:1rem;font-weight:800;color:#38bdf8;direction:ltr;letter-spacing:.05em"></div>
-      <div style="font-size:.72rem;color:#64748b;margin-top:.4rem">استخدمه مع كلمة المرور لتسجيل الدخول</div>
-      <button id="fu_use_btn" onclick="useFoundUsername()" style="margin-top:.75rem;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">استخدم اسم المستخدم للدخول ←</button>
+      <div style="font-size:.72rem;color:#64748b;margin-top:.4rem" data-i18n="pl.fu-hint">استخدمه مع كلمة المرور لتسجيل الدخول</div>
+      <button id="fu_use_btn" onclick="useFoundUsername()" style="margin-top:.75rem;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fu-use-btn">استخدم اسم المستخدم للدخول ←</span></button>
     </div>
     <button onclick="findUsername()" id="fu_search_btn"
-      style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
-      بحث
-    </button>
-    <button onclick="hideForgotUsername()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer">إلغاء</button>
+      style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.btn-search">بحث</span></button>
+    <button onclick="hideForgotUsername()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
   </div>
 </div>
 
+<script src="/i18n.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
@@ -732,3 +724,6 @@ async function doLogin() {
 </script>
 </body>
 </html>
+
+
+

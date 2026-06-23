@@ -701,14 +701,14 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div class="fld-m">
         <label data-i18n="db.lbl-app-type">نوع التقديم <span style="color:#ef4444">*</span></label>
         <select id="fc_app_type">
-          <option value="project">🚀 مشروع / شركة ناشئة</option>
-          <option value="job">💼 توظيف واختيار كوادر</option>
-          <option value="funding">💰 تمويل واستثمار</option>
-          <option value="academic">🎓 قبول أكاديمي / تدريب</option>
-          <option value="member">🤝 عضوية وانتساب</option>
-          <option value="gov">🏛️ خدمة حكومية</option>
-          <option value="npo">🌱 منظمة غير ربحية / تطوعي</option>
-          <option value="general">📋 عام (بدون تصنيف محدد)</option>
+          <option value="project" data-i18n="db.opt-project">🚀 مشروع / شركة ناشئة</option>
+          <option value="job" data-i18n="db.opt-job">💼 توظيف واختيار كوادر</option>
+          <option value="funding" data-i18n="db.opt-funding">💰 تمويل واستثمار</option>
+          <option value="academic" data-i18n="db.opt-academic">🎓 قبول أكاديمي / تدريب</option>
+          <option value="member" data-i18n="db.opt-member">🤝 عضوية وانتساب</option>
+          <option value="gov" data-i18n="db.opt-gov">🏛️ خدمة حكومية</option>
+          <option value="npo" data-i18n="db.opt-npo">🌱 منظمة غير ربحية / تطوعي</option>
+          <option value="general" data-i18n="db.opt-general">📋 عام (بدون تصنيف محدد)</option>
         </select>
         <div style="font-size:.7rem;color:#64748b;margin-top:.3rem" data-i18n="db.hint-form-type">يحدد صياغة أسئلة النموذج تلقائياً</div>
       </div>
@@ -725,8 +725,8 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div class="fld-m">
           <label data-i18n="db.lbl-form-status">حالة النموذج</label>
           <select id="fc_status">
-            <option value="active">✅ نشط — يقبل التقديمات</option>
-            <option value="paused">⏸️ متوقف مؤقتاً</option>
+            <option value="active" data-i18n="db.opt-active">✅ نشط — يقبل التقديمات</option>
+            <option value="paused" data-i18n="db.opt-paused">⏸️ متوقف مؤقتاً</option>
           </select>
         </div>
       </div>
@@ -769,7 +769,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div class="q-card" id="qc_edu" style="flex-wrap:wrap;gap:.6rem">
         <button class="q-toggle on" id="qt_edu" onclick="toggleQ('edu')"></button>
         <div class="q-label" style="flex:1" data-i18n="db.q-edu">🎓 المؤهل الأكاديمي</div>
-        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_edu" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+        <div class="q-weight"><label data-i18n="db.lbl-weight">الوزن:</label><input type="number" id="qw_edu" value="15" min="1" max="30" oninput="updateWeightTotal()"><label data-i18n="db.lbl-pt">نقطة</label></div>
         <!-- GPA sub-option -->
         <div style="width:100%;padding-top:.5rem;border-top:1px solid #1e293b;margin-top:.25rem;display:flex;flex-direction:column;gap:.6rem" id="edu_gpa_section">
           <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:.78rem;color:#64748b">
@@ -800,32 +800,32 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div class="q-card" id="qc_exp">
         <button class="q-toggle on" id="qt_exp" onclick="toggleQ('exp')"></button>
         <div class="q-label" data-i18n="db.q-exp">💼 سنوات الخبرة</div>
-        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_exp" value="20" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+        <div class="q-weight"><label data-i18n="db.lbl-weight">الوزن:</label><input type="number" id="qw_exp" value="20" min="1" max="30" oninput="updateWeightTotal()"><label data-i18n="db.lbl-pt">نقطة</label></div>
       </div>
       <div class="q-card" id="qc_prev">
         <button class="q-toggle on" id="qt_prev" onclick="toggleQ('prev')"></button>
         <div class="q-label" data-i18n="db.q-prev">🚀 الخبرة الريادية السابقة</div>
-        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_prev" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+        <div class="q-weight"><label data-i18n="db.lbl-weight">الوزن:</label><input type="number" id="qw_prev" value="15" min="1" max="30" oninput="updateWeightTotal()"><label data-i18n="db.lbl-pt">نقطة</label></div>
       </div>
       <div class="q-card" id="qc_stage">
         <button class="q-toggle on" id="qt_stage" onclick="toggleQ('stage')"></button>
         <div class="q-label" data-i18n="db.q-stage">📈 مرحلة المشروع</div>
-        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_stage" value="20" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+        <div class="q-weight"><label data-i18n="db.lbl-weight">الوزن:</label><input type="number" id="qw_stage" value="20" min="1" max="30" oninput="updateWeightTotal()"><label data-i18n="db.lbl-pt">نقطة</label></div>
       </div>
       <div class="q-card" id="qc_cust">
         <button class="q-toggle on" id="qt_cust" onclick="toggleQ('cust')"></button>
         <div class="q-label" data-i18n="db.q-cust">👥 وجود عملاء حاليين</div>
-        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_cust" value="15" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+        <div class="q-weight"><label data-i18n="db.lbl-weight">الوزن:</label><input type="number" id="qw_cust" value="15" min="1" max="30" oninput="updateWeightTotal()"><label data-i18n="db.lbl-pt">نقطة</label></div>
       </div>
       <div class="q-card" id="qc_team">
         <button class="q-toggle on" id="qt_team" onclick="toggleQ('team')"></button>
         <div class="q-label" data-i18n="db.q-team">🤝 حجم الفريق</div>
-        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_team" value="10" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+        <div class="q-weight"><label data-i18n="db.lbl-weight">الوزن:</label><input type="number" id="qw_team" value="10" min="1" max="30" oninput="updateWeightTotal()"><label data-i18n="db.lbl-pt">نقطة</label></div>
       </div>
       <div class="q-card" id="qc_commit">
         <button class="q-toggle on" id="qt_commit" onclick="toggleQ('commit')"></button>
         <div class="q-label" data-i18n="db.q-commit">✅ الالتزام بمتطلبات البرنامج</div>
-        <div class="q-weight"><label>الوزن:</label><input type="number" id="qw_commit" value="5" min="1" max="30" oninput="updateWeightTotal()"><label>نقطة</label></div>
+        <div class="q-weight"><label data-i18n="db.lbl-weight">الوزن:</label><input type="number" id="qw_commit" value="5" min="1" max="30" oninput="updateWeightTotal()"><label data-i18n="db.lbl-pt">نقطة</label></div>
       </div>
 
       <!-- Custom criteria -->
@@ -933,23 +933,23 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     <div class="card">
       <div class="card-title" data-i18n="db.link-preview">💡 معاينة الرابط بعد الحفظ</div>
       <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:1rem;font-size:.82rem;color:#94a3b8;line-height:1.8">
-        بعد حفظ الإعدادات، سيعرض نموذج التقديم اسم برنامجك وسيقبل المتقدمين تلقائياً بناءً على الأوزان التي حددتها.
-        <br><strong style="color:#38bdf8">الرابط:</strong> <span id="fc_preview_link" style="font-family:monospace;direction:ltr;display:inline-block">—</span>
+        <span data-i18n="db.link-preview-text">بعد حفظ الإعدادات، سيعرض نموذج التقديم اسم برنامجك وسيقبل المتقدمين تلقائياً بناءً على الأوزان التي حددتها.</span>
+        <br><strong style="color:#38bdf8" data-i18n="db.lbl-link">الرابط:</strong> <span id="fc_preview_link" style="font-family:monospace;direction:ltr;display:inline-block">—</span>
       </div>
     </div>
 
     <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-bottom:6rem">
-      <button class="btn-ghost" onclick="resetFormConfig()">↩️ إعادة تعيين</button>
-      <button class="btn-primary" onclick="saveFormConfig()">💾 حفظ وتفعيل النموذج</button>
+      <button class="btn-ghost" onclick="resetFormConfig()"><span data-i18n="db.btn-reset">↩️ إعادة تعيين</span></button>
+      <button class="btn-primary" onclick="saveFormConfig()"><span data-i18n="db.btn-save-form">💾 حفظ وتفعيل النموذج</span></button>
     </div>
   </div>
 
   <!-- Sticky save bar for form-setup page -->
   <div id="formStickyBar" style="display:none;position:fixed;bottom:0;right:250px;left:0;background:#1e293b;border-top:1px solid #334155;padding:.85rem 2rem;align-items:center;justify-content:space-between;gap:1rem;z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,.3)">
-    <div id="stickyWeightBadge" style="font-size:.78rem;color:#64748b">مجموع الأوزان: <strong id="sticky_weight" style="color:#10b981">100</strong>/100</div>
+    <div id="stickyWeightBadge" style="font-size:.78rem;color:#64748b"><span data-i18n="db.weight-total">مجموع الأوزان:</span> <strong id="sticky_weight" style="color:#10b981">100</strong>/100</div>
     <div style="display:flex;gap:.65rem">
-      <button class="btn-ghost" onclick="resetFormConfig()" style="padding:.55rem 1rem;font-size:.82rem">↩️ إعادة تعيين</button>
-      <button class="btn-primary" onclick="saveFormConfig()" style="padding:.55rem 1.25rem;font-size:.85rem">💾 حفظ وتفعيل النموذج</button>
+      <button class="btn-ghost" onclick="resetFormConfig()" style="padding:.55rem 1rem;font-size:.82rem"><span data-i18n="db.btn-reset">↩️ إعادة تعيين</span></button>
+      <button class="btn-primary" onclick="saveFormConfig()" style="padding:.55rem 1.25rem;font-size:.85rem"><span data-i18n="db.btn-save-form">💾 حفظ وتفعيل النموذج</span></button>
     </div>
   </div>
 
@@ -966,10 +966,10 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div class="fld-m">
         <label data-i18n="db.sup-subject">موضوع الرسالة</label>
         <select id="sup_subject">
-          <option>استفسار عن الباقة</option>
-          <option>مشكلة تقنية</option>
-          <option>طلب ترقية</option>
-          <option>إلغاء الاشتراك</option>
+          <option data-i18n="db.sup-pkg">استفسار عن الباقة</option>
+          <option data-i18n="db.sup-tech">مشكلة تقنية</option>
+          <option data-i18n="db.sup-upgrade">طلب ترقية</option>
+          <option data-i18n="db.sup-cancel">إلغاء الاشتراك</option>
           <option data-i18n-opt="db.opt-other">أخرى</option>
         </select>
       </div>
@@ -1025,10 +1025,10 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <button class="btn-close" onclick="document.getElementById('saveFormModal').classList.remove('open')">✕</button>
     </div>
     <div class="modal-body">
-      <label style="display:block;margin-bottom:.5rem;font-size:.85rem;color:#94a3b8">اسم النموذج</label>
+      <label style="display:block;margin-bottom:.5rem;font-size:.85rem;color:#94a3b8" data-i18n="db.lbl-form-name">اسم النموذج</label>
       <input class="save-form-inp" id="saveFormNameInp" type="text" placeholder="مثال: نموذج برنامج الابتعاث 2026" maxlength="60"
         onkeydown="if(event.key==='Enter')confirmSaveForm()">
-      <div id="saveFormErr" style="color:#ef4444;font-size:.78rem;margin-top:.4rem;display:none">يرجى كتابة اسم للنموذج</div>
+      <div id="saveFormErr" style="color:#ef4444;font-size:.78rem;margin-top:.4rem;display:none" data-i18n="db.err-form-name">يرجى كتابة اسم للنموذج</div>
     </div>
     <div class="modal-footer">
       <button class="btn-ghost" onclick="document.getElementById('saveFormModal').classList.remove('open')"><span data-i18n="db.btn-cancel">إلغاء</span></button>
@@ -2310,6 +2310,7 @@ loadPartnerData();
 </script>
 <script src="/i18n.js"></script></body>
 </html>
+
 
 
 
