@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -182,39 +182,40 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
       <img src="/rafd-logo.png" alt="RAFD" onerror="this.style.display='none'">
       <div>
         <div class="sidebar-logo-text">RAFD Admin</div>
-        <div class="sidebar-logo-sub">لوحة التحكم</div>
+        <div class="sidebar-logo-sub" data-i18n="adm.title">لوحة التحكم</div>
       </div>
     </div>
     <nav class="sidebar-nav">
-      <div class="nav-section">الرئيسية</div>
+      <div class="nav-section" data-i18n="db.nav-main">الرئيسية</div>
       <div class="nav-item active" onclick="showPage('clients')">
-        <span class="nav-icon">👥</span> العملاء والاشتراكات
+        <span class="nav-icon">👥</span> <span data-i18n="adm.clients">العملاء والاشتراكات</span>
       </div>
       <div class="nav-item" onclick="showPage('revenue')">
-        <span class="nav-icon">💰</span> الإيرادات
+        <span class="nav-icon">💰</span> <span data-i18n="adm.revenue">الإيرادات</span>
       </div>
-      <div class="nav-section">الإدارة</div>
+      <div class="nav-section" data-i18n="db.nav-admin">الإدارة</div>
       <div class="nav-item" onclick="showPage('partners')">
-        <span class="nav-icon">🤝</span> طلبات الشراكة
+        <span class="nav-icon">🤝</span> <span data-i18n="adm.partners">طلبات الشراكة</span>
       </div>
       <div class="nav-item" onclick="showPage('trials')">
-        <span class="nav-icon">⏳</span> التجارب المجانية
+        <span class="nav-icon">⏳</span> <span data-i18n="adm.trials">التجارب المجانية</span>
       </div>
       <div class="nav-item" onclick="showPage('reports')">
-        <span class="nav-icon">📊</span> التقارير المتقدمة
+        <span class="nav-icon">📊</span> <span data-i18n="adm.reports">التقارير المتقدمة</span>
       </div>
       <div class="nav-item" onclick="window.open('/','_blank')">
-        <span class="nav-icon">🌐</span> الموقع الرئيسي
+        <span class="nav-icon">🌐</span> <span data-i18n="adm.main-site">الموقع الرئيسي</span>
       </div>
     </nav>
     <div class="sidebar-footer">
       <div class="admin-profile">
         <div class="admin-av">م</div>
         <div>
-          <div class="admin-name">المدير العام</div>
+          <div class="admin-name" data-i18n="adm.admin-name">المدير العام</div>
           <div class="admin-role">RAFD Digital</div>
         </div>
       </div>
+      <button id="langToggleBtn" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')" style="background:none;border:1px solid #334155;border-radius:6px;padding:.25rem .6rem;color:#94a3b8;font-size:.75rem;cursor:pointer;font-family:Cairo,sans-serif;margin-top:.5rem;width:100%;white-space:nowrap">🌐 EN</button>
     </div>
   </aside>
 
@@ -225,8 +226,8 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
     <div id="page-clients">
       <div class="page-header">
         <div>
-          <div class="page-title">العملاء والاشتراكات</div>
-          <div class="page-sub">إدارة جميع أصحاب الأعمال المشتركين في المنصة</div>
+          <div class="page-title" data-i18n="adm.clients">العملاء والاشتراكات</div>
+          <div class="page-sub" data-i18n="adm.clients-sub">إدارة جميع أصحاب الأعمال المشتركين في المنصة</div>
         </div>
         <div style="display:flex;gap:.5rem">
           <button class="btn-add" style="background:#334155" onclick="loadFromSupabase()">↻ تحديث</button>
@@ -1120,5 +1121,6 @@ function showPage(page) {
   if(page === 'reports') renderReports();
 }
 </script>
-</body>
+<script src="/i18n.js"></script></body>
 </html>
+

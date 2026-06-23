@@ -52,29 +52,29 @@
       </div>
     </a>
     <ul class="nav-links">
-      <li><a href="/">الرئيسية</a></li>
+      <li><a href="/" data-i18n="nav.home">الرئيسية</a></li>
       <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
       <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
-      <li><a href="/#pricing">الأسعار</a></li>
+      <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
     </ul>
         <div class="nav-actions">
       <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
       <div class="login-dropdown-wrap" id="loginDropWrap">
         <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem">
-          تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span>
+          <span data-i18n="nav.login">تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span></span>
         </button>
         <div class="login-drop" id="loginDrop">
           <a href="/partner-login.html" class="login-drop-item">
             <span style="font-size:1.1rem">🤝</span>
-            <div><div style="font-weight:700;font-size:.88rem">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6">لوحة تحكم الجهات</div></div>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.partner-login">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.partner-login-sub">لوحة تحكم الجهات</div></div>
           </a>
           <a href="/admin.html" class="login-drop-item">
             <span style="font-size:1.1rem">🛡️</span>
-            <div><div style="font-weight:700;font-size:.88rem">الإدارة</div><div style="font-size:.72rem;opacity:.6">دخول مشرفي النظام</div></div>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.admin">الإدارة</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.admin-sub">دخول مشرفي النظام</div></div>
           </a>
         </div>
       </div>
-      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f">انضم كشريك</a>
+      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f" data-i18n="nav.join">انضم كشريك</a>
     </div>
     <button class="hamburger" id="hamburger">&#9776;</button>
   </div>
@@ -83,33 +83,33 @@
 <!-- HERO -->
 <section class="page-hero">
   <div class="container">
-    <h1>الشروط والأحكام</h1>
-    <p>يرجى قراءة هذه الشروط بعناية قبل استخدام منصة Rafd Digital</p>
+    <h1 data-i18n="terms.hero-h1">الشروط والأحكام</h1>
+    <p data-i18n="terms.hero-p">يرجى قراءة هذه الشروط بعناية قبل استخدام منصة Rafd Digital</p>
   </div>
 </section>
 
 <section class="legal-section">
   <div class="legal-container">
-    <div class="last-updated">📅 آخر تحديث: يناير 2025 | تسري هذه الشروط على جميع مستخدمي المنصة</div>
+    <div class="last-updated" data-i18n="terms.updated">📅 آخر تحديث: يناير 2025 | تسري هذه الشروط على جميع مستخدمي المنصة</div>
 
     <div class="legal-toc">
-      <h4>📋 فهرس المحتويات</h4>
+      <h4 data-i18n="priv.toc-title">📋 فهرس المحتويات</h4>
       <ol>
-        <li><a href="#art1">تعريفات وأحكام عامة</a></li>
-        <li><a href="#art2">شروط الاستخدام</a></li>
-        <li><a href="#art3">الحسابات والاشتراكات</a></li>
-        <li><a href="#art4">البيانات والخصوصية</a></li>
-        <li><a href="#art5">الملكية الفكرية</a></li>
-        <li><a href="#art6">المسؤولية والضمانات</a></li>
-        <li><a href="#art7">الإنهاء والتعليق</a></li>
-        <li><a href="#art8">التعديلات على الشروط</a></li>
-        <li><a href="#art9">القانون المطبّق</a></li>
-        <li><a href="#art10">التواصل معنا</a></li>
+        <li><a href="#art1" data-i18n="terms.a1-title">تعريفات وأحكام عامة</a></li>
+        <li><a href="#art2" data-i18n="terms.a2-title">شروط الاستخدام</a></li>
+        <li><a href="#art3" data-i18n="terms.a3-title">الحسابات والاشتراكات</a></li>
+        <li><a href="#art4" data-i18n="terms.a4-title">البيانات والخصوصية</a></li>
+        <li><a href="#art5" data-i18n="terms.a5-title">الملكية الفكرية</a></li>
+        <li><a href="#art6" data-i18n="terms.a6-title">المسؤولية والضمانات</a></li>
+        <li><a href="#art7" data-i18n="terms.a7-title">الإنهاء والتعليق</a></li>
+        <li><a href="#art8" data-i18n="terms.a8-title">التعديلات على الشروط</a></li>
+        <li><a href="#art9" data-i18n="terms.a9-title">القانون المطبّق</a></li>
+        <li><a href="#art10" data-i18n="terms.a10-title">التواصل معنا</a></li>
       </ol>
     </div>
 
     <div class="legal-article" id="art1">
-      <h2><span class="art-num">1</span> تعريفات وأحكام عامة</h2>
+      <h2><span class="art-num">1</span> <span data-i18n="terms.a1-title">تعريفات وأحكام عامة</span></h2>
       <p>تُشكّل هذه الشروط والأحكام اتفاقية ملزمة قانونياً بين المستخدم وشركة <strong>Rafd Digital</strong> ("الشركة") فيما يخص استخدام منصة الفرز الذكي ("المنصة").</p>
       <ul>
         <li><strong>المنصة:</strong> نظام الذكاء الاصطناعي لأتمتة قرارات القبول والرفض المقدّم من Rafd Digital</li>
@@ -117,12 +117,12 @@
         <li><strong>المتقدم:</strong> أي شخص يُقدّم طلباً عبر نموذج جهة مسجّلة في المنصة</li>
         <li><strong>البيانات:</strong> جميع المعلومات المُدخلة أو المرفوعة عبر المنصة</li>
       </ul>
-      <p>باستخدام المنصة، تُقرّ بأنك قرأت هذه الشروط وفهمتها ووافقت عليها بالكامل.</p>
+      <p data-i18n="terms.a1-confirm">باستخدام المنصة، تُقرّ بأنك قرأت هذه الشروط وفهمتها ووافقت عليها بالكامل.</p>
     </div>
 
     <div class="legal-article" id="art2">
-      <h2><span class="art-num">2</span> شروط الاستخدام</h2>
-      <p>يُسمح باستخدام المنصة للأغراض المشروعة فقط وفق الشروط التالية:</p>
+      <h2><span class="art-num">2</span> <span data-i18n="terms.a2-title">شروط الاستخدام</span></h2>
+      <p data-i18n="terms.a2-p">يُسمح باستخدام المنصة للأغراض المشروعة فقط وفق الشروط التالية:</p>
       <ul>
         <li>يجب أن يكون المستخدم شخصاً طبيعياً بالغاً أو ممثلاً قانونياً لجهة مسجّلة</li>
         <li>يُحظر استخدام المنصة لأي غرض غير مشروع أو مخالف للأنظمة السعودية</li>
@@ -134,8 +134,8 @@
     </div>
 
     <div class="legal-article" id="art3">
-      <h2><span class="art-num">3</span> الحسابات والاشتراكات</h2>
-      <p>تتوفر ثلاث باقات اشتراك: التجريبية (7 أيام)، الأساسية، والمتقدمة. تُحدَّد مميزات كل باقة في صفحة الأسعار.</p>
+      <h2><span class="art-num">3</span> <span data-i18n="terms.a3-title">الحسابات والاشتراكات</span></h2>
+      <p data-i18n="terms.a3-p">تتوفر ثلاث باقات اشتراك: التجريبية (7 أيام)، الأساسية، والمتقدمة. تُحدَّد مميزات كل باقة في صفحة الأسعار.</p>
       <ul>
         <li>الباقة التجريبية مجانية لمدة 7 أيام مع وصول محدود للميزات</li>
         <li>رسوم الاشتراك تُدفع مسبقاً وغير قابلة للاسترداد إلا في حالات استثنائية</li>
@@ -146,7 +146,7 @@
     </div>
 
     <div class="legal-article" id="art4">
-      <h2><span class="art-num">4</span> البيانات والخصوصية</h2>
+      <h2><span class="art-num">4</span> <span data-i18n="terms.a4-title">البيانات والخصوصية</span></h2>
       <p>تلتزم الشركة بحماية بيانات المستخدمين وفق أعلى المعايير. للتفاصيل الكاملة، يُرجى الاطلاع على <a href="/privacy.html" style="color:#4a9d6f">سياسة الخصوصية</a>.</p>
       <ul>
         <li>بيانات المتقدمين تُستخدم فقط لأغراض التقييم ولا تُشارَك مع أطراف ثالثة</li>
@@ -157,8 +157,8 @@
     </div>
 
     <div class="legal-article" id="art5">
-      <h2><span class="art-num">5</span> الملكية الفكرية</h2>
-      <p>جميع حقوق الملكية الفكرية للمنصة — بما يشمل الكود البرمجي، الخوارزميات، التصاميم، والعلامات التجارية — محفوظة حصرياً لشركة Rafd Digital.</p>
+      <h2><span class="art-num">5</span> <span data-i18n="terms.a5-title">الملكية الفكرية</span></h2>
+      <p data-i18n="terms.a5-p">جميع حقوق الملكية الفكرية للمنصة محفوظة حصرياً لشركة Rafd Digital.</p>
       <ul>
         <li>يُمنح المستخدم ترخيصاً محدوداً وغير حصري لاستخدام المنصة</li>
         <li>يُحظر نسخ أو تعديل أو توزيع أي جزء من المنصة</li>
@@ -167,8 +167,8 @@
     </div>
 
     <div class="legal-article" id="art6">
-      <h2><span class="art-num">6</span> المسؤولية والضمانات</h2>
-      <p>تُقدّم المنصة "كما هي" مع السعي الدائم لتحسينها. تُحدَّد مسؤولية الشركة على النحو التالي:</p>
+      <h2><span class="art-num">6</span> <span data-i18n="terms.a6-title">المسؤولية والضمانات</span></h2>
+      <p data-i18n="terms.a6-p">تُقدّم المنصة "كما هي" مع السعي الدائم لتحسينها.</p>
       <ul>
         <li>الشركة غير مسؤولة عن القرارات النهائية التي تتخذها الجهة بناءً على نتائج التقييم</li>
         <li>نتائج الذكاء الاصطناعي استشارية وتُكمّل — لا تُحلّ محلّ — الحكم البشري</li>
@@ -179,33 +179,33 @@
     </div>
 
     <div class="legal-article" id="art7">
-      <h2><span class="art-num">7</span> الإنهاء والتعليق</h2>
-      <p>يحق للشركة تعليق أو إنهاء أي حساب في الحالات التالية:</p>
+      <h2><span class="art-num">7</span> <span data-i18n="terms.a7-title">الإنهاء والتعليق</span></h2>
+      <p data-i18n="terms.a7-p">يحق للشركة تعليق أو إنهاء أي حساب في الحالات التالية:</p>
       <ul>
         <li>انتهاك أي من شروط الاستخدام</li>
         <li>عدم سداد رسوم الاشتراك</li>
         <li>الاشتباه في نشاط احتيالي أو ضار</li>
         <li>طلب الجهة نفسها إنهاء الحساب</li>
       </ul>
-      <p>يحق للمستخدم إلغاء اشتراكه في أي وقت من إعدادات الحساب أو عبر البريد الإلكتروني.</p>
+      <p data-i18n="terms.a7-cancel">يحق للمستخدم إلغاء اشتراكه في أي وقت من إعدادات الحساب أو عبر البريد الإلكتروني.</p>
     </div>
 
     <div class="legal-article" id="art8">
-      <h2><span class="art-num">8</span> التعديلات على الشروط</h2>
-      <p>تحتفظ الشركة بحق تعديل هذه الشروط في أي وقت. سيُبلَّغ المستخدمون بأي تعديلات جوهرية عبر البريد الإلكتروني المسجّل قبل 14 يوماً من سريانها. الاستمرار في استخدام المنصة بعد سريان التعديلات يُعدّ موافقة عليها.</p>
+      <h2><span class="art-num">8</span> <span data-i18n="terms.a8-title">التعديلات على الشروط</span></h2>
+      <p data-i18n="terms.a8-p">تحتفظ الشركة بحق تعديل هذه الشروط في أي وقت. سيُبلَّغ المستخدمون بأي تعديلات جوهرية قبل 14 يوماً.</p>
     </div>
 
     <div class="legal-article" id="art9">
-      <h2><span class="art-num">9</span> القانون المطبّق</h2>
-      <p>تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية. أي نزاع ينشأ عن تفسير أو تطبيق هذه الشروط يُحسم أولاً بالتفاوض الودّي، وعند تعذّره يُحال للجهات القضائية المختصة في المملكة العربية السعودية.</p>
+      <h2><span class="art-num">9</span> <span data-i18n="terms.a9-title">القانون المطبّق</span></h2>
+      <p data-i18n="terms.a9-p">تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية. أي نزاع يُحسم أولاً بالتفاوض الودّي، وعند تعذّره يُحال للجهات القضائية المختصة.</p>
     </div>
 
     <div class="legal-article" id="art10">
-      <h2><span class="art-num">10</span> التواصل معنا</h2>
-      <p>لأي استفسار حول هذه الشروط أو المنصة، يُرجى التواصل معنا:</p>
+      <h2><span class="art-num">10</span> <span data-i18n="terms.a10-title">التواصل معنا</span></h2>
+      <p data-i18n="terms.a10-p">لأي استفسار حول هذه الشروط أو المنصة، يُرجى التواصل معنا:</p>
       <div class="contact-box">
-        <h3>تواصل مع فريق Rafd Digital</h3>
-        <p>نحن هنا للإجابة على جميع استفساراتك</p>
+        <h3 data-i18n="terms.contact-h3">تواصل مع فريق Rafd Digital</h3>
+        <p data-i18n="terms.contact-p">نحن هنا للإجابة على جميع استفساراتك</p>
         <a href="mailto:info@rafd-digital.com">✉ info@rafd-digital.com</a>
       </div>
     </div>
@@ -219,24 +219,24 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
-        <p class="footer-desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض</p>
+        <p class="footer-desc" data-i18n="footer.desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
       </div>
       <div class="footer-col">
-        <h4>المنصة</h4>
+        <h4 data-i18n="footer.platform">المنصة</h4>
         <ul>
-          <li><a href="/#features">المميزات</a></li>
+          <li><a href="/#features" data-i18n="nav.features">المميزات</a></li>
           <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
-          <li><a href="/#pricing">الأسعار</a></li>
-          <li><a href="/demo-apply.html">تجربة مجانية</a></li>
+          <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
+          <li><a href="/demo-apply.html" data-i18n="footer.trial">تجربة مجانية</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>الشركة</h4>
+        <h4 data-i18n="footer.company">الشركة</h4>
         <ul>
           <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
-          <li><a href="mailto:info@rafd-digital.com">تواصل معنا</a></li>
-          <li><a href="/privacy.html">سياسة الخصوصية</a></li>
-          <li><a href="/terms.html">الشروط والأحكام</a></li>
+          <li><a href="mailto:info@rafd-digital.com" data-i18n="footer.contact">تواصل معنا</a></li>
+          <li><a href="/privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a></li>
+          <li><a href="/terms.html" data-i18n="footer.terms">الشروط والأحكام</a></li>
         </ul>
         <div style="margin-top:1rem">
           <a href="mailto:info@rafd-digital.com" style="color:#4a9d6f;font-size:.82rem;font-weight:600;text-decoration:none">✉ info@rafd-digital.com</a>
@@ -244,7 +244,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copy">© 2025 Rafd Digital. جميع الحقوق محفوظة</span>
+      <span class="footer-copy"><span data-i18n="footer.copy">© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span></span>
     </div>
   </div>
 </footer>
@@ -272,5 +272,9 @@ window.addEventListener('scroll', function() {
 <script src="/i18n.js"></script>
 </body>
 </html>
+
+
+
+
 
 

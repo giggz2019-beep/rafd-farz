@@ -38,7 +38,7 @@
       <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
       <div class="login-dropdown-wrap" id="loginDropWrap">
         <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem" data-i18n="nav.login">
-          تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span>
+          <span data-i18n="nav.login">تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span></span>
         </button>
         <div class="login-drop" id="loginDrop">
           <a href="/partner-login.html" class="login-drop-item">
@@ -120,44 +120,44 @@
               </div>
               <div class="mockup-content">
                 <div class="mc-header">
-                  <span class="mc-title">الطلبات الواردة</span>
-                  <span class="mc-badge">12 جديد</span>
+                  <span class="mc-title" data-i18n="demo.mc-title">الطلبات الواردة</span>
+                  <span class="mc-badge" data-i18n="demo.mc-badge">12 جديد</span>
                 </div>
                 <div class="mc-cards">
                   <div class="mc-card accepted">
                     <span class="mc-name">أحمد محمد</span>
                     <span class="mc-score">92%</span>
-                    <span class="mc-status green">مقبول ✓</span>
+                    <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
                   </div>
                   <div class="mc-card rejected">
                     <span class="mc-name">سارة علي</span>
                     <span class="mc-score">41%</span>
-                    <span class="mc-status red">مرفوض ✗</span>
+                    <span class="mc-status red" data-i18n="demo.rejected">مرفوض ✗</span>
                   </div>
                   <div class="mc-card accepted">
                     <span class="mc-name">خالد عبدالله</span>
                     <span class="mc-score">78%</span>
-                    <span class="mc-status green">مقبول ✓</span>
+                    <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
                   </div>
                   <div class="mc-card processing">
                     <span class="mc-name">نورة السالم</span>
                     <span class="mc-score">--</span>
-                    <span class="mc-status yellow">جارٍ... ⟳</span>
+                    <span class="mc-status yellow" data-i18n="demo.pending">جارٍ... ⟳</span>
                   </div>
                   <div class="mc-card accepted">
                     <span class="mc-name">نواف العتيبي</span>
                     <span class="mc-score">85%</span>
-                    <span class="mc-status green">مقبول ✓</span>
+                    <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
                   </div>
                   <div class="mc-card rejected">
                     <span class="mc-name">لمى الحربي</span>
                     <span class="mc-score">33%</span>
-                    <span class="mc-status red">مرفوض ✗</span>
+                    <span class="mc-status red" data-i18n="demo.rejected">مرفوض ✗</span>
                   </div>
                   <div class="mc-card accepted">
                     <span class="mc-name">عبدالله سعد</span>
                     <span class="mc-score">71%</span>
-                    <span class="mc-status green">مقبول ✓</span>
+                    <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
                   </div>
                 </div>
               </div>
@@ -173,14 +173,14 @@
 <!-- ===== TRUSTED BY ===== -->
 <section class="trusted">
   <div class="container">
-    <p class="trusted-label">موثوق من قِبَل</p>
+    <p class="trusted-label" data-i18n="hero.trusted">موثوق من قِبَل</p>
     <div class="trusted-logos">
-      <div class="trusted-item">🏦 البنوك</div>
-      <div class="trusted-item">🎓 الجامعات</div>
-      <div class="trusted-item">🚀 المسرعات</div>
-      <div class="trusted-item">🏢 الحاضنات</div>
-      <div class="trusted-item">💼 الشركات</div>
-      <div class="trusted-item">🏛️ الجهات الحكومية</div>
+      <div class="trusted-item">🏦 <span data-i18n="footer.banks">البنوك</span></div>
+      <div class="trusted-item">🎓 <span data-i18n="footer.unis">الجامعات</span></div>
+      <div class="trusted-item">🚀 <span data-i18n="footer.accel">المسرعات</span></div>
+      <div class="trusted-item">🏢 <span data-i18n="sec.incubators">الحاضنات</span></div>
+      <div class="trusted-item">💼 <span data-i18n="sec.companies">الشركات</span></div>
+      <div class="trusted-item">🏛️ <span data-i18n="footer.gov">الجهات الحكومية</span></div>
     </div>
   </div>
 </section>
@@ -310,25 +310,25 @@
     <div class="demo-inner">
       <div class="demo-text">
         <div class="section-header" style="text-align:right;margin-bottom:2rem">
-          <span class="section-tag">تجربة مباشرة</span>
-          <h2 class="section-title" style="color:#fff">شاهد النظام يعمل بنفسك</h2>
-          <p class="section-desc" style="text-align:right">قدّم طلباً تجريبياً الآن وشاهد كيف يحلّل الذكاء الاصطناعي بياناتك ويُصدر قراراً فورياً على الفور</p>
+          <span class="section-tag"><span data-i18n="demo.tag">تجربة مباشرة</span></span>
+          <h2 class="section-title" style="color:#fff"><span data-i18n="demo.title">شاهد النظام يعمل بنفسك</span></h2>
+          <p class="section-desc" style="text-align:right" data-i18n="demo.desc">قدّم طلباً تجريبياً الآن وشاهد كيف يحلّل الذكاء الاصطناعي بياناتك ويُصدر قراراً فورياً على الفور</p>
         </div>
         <div class="demo-steps-list">
           <div class="demo-step-item">
             <div class="dsi-num">1</div>
-            <div class="dsi-text">أجب على 4 خطوات بسيطة من النموذج</div>
+            <div class="dsi-text"><span data-i18n="demo.step1">أجب على 4 خطوات بسيطة من النموذج</span></div>
           </div>
           <div class="demo-step-item">
             <div class="dsi-num">2</div>
-            <div class="dsi-text">شاهد الذكاء الاصطناعي يحلّل بياناتك في الوقت الفعلي</div>
+            <div class="dsi-text"><span data-i18n="demo.step2">شاهد الذكاء الاصطناعي يحلّل بياناتك في الوقت الفعلي</span></div>
           </div>
           <div class="demo-step-item">
             <div class="dsi-num">3</div>
-            <div class="dsi-text">احصل على قرار فوري مع درجة وتفاصيل التقييم</div>
+            <div class="dsi-text"><span data-i18n="demo.step3">احصل على قرار فوري مع درجة وتفاصيل التقييم</span></div>
           </div>
         </div>
-        <a href="/demo-apply.html" class="btn-demo-cta">ابدأ التجربة المجانية ←</a>
+        <a href="/demo-apply.html" class="btn-demo-cta"><span data-i18n="demo.btn">ابدأ التجربة المجانية ←</span></a>
       </div>
       <div class="demo-terminal">
         <div class="dt-header">
@@ -338,11 +338,11 @@
           <span class="dt-title">&lt;&gt; Rafd AI Terminal</span>
         </div>
         <div class="dt-body">
-          <div class="dt-line"><span class="g">✓</span> تحليل البيانات الشخصية...</div>
-          <div class="dt-line"><span class="g">✓</span> التحقق من <span class="b">هوية المتقدم</span>...</div>
-          <div class="dt-line"><span class="g">✓</span> تقييم المؤهلات الأكاديمية...</div>
-          <div class="dt-line"><span class="g">✓</span> تحليل الخبرة العملية...</div>
-          <div class="dt-line"><span class="y">⟳</span> تطبيق معايير البرنامج...</div>
+          <div class="dt-line"><span class="g">✓</span> <span data-i18n="demo.ai1">تحليل البيانات الشخصية...</span></div>
+          <div class="dt-line"><span class="g">✓</span> <span data-i18n="demo.ai2">التحقق من <span class="b">هوية المتقدم</span>...</span></div>
+          <div class="dt-line"><span class="g">✓</span> <span data-i18n="demo.ai3">تقييم المؤهلات الأكاديمية...</span></div>
+          <div class="dt-line"><span class="g">✓</span> <span data-i18n="demo.ai4">تحليل الخبرة العملية...</span></div>
+          <div class="dt-line"><span class="y">⟳</span> <span data-i18n="demo.ai5">تطبيق معايير البرنامج...</span></div>
           <div class="dt-line" style="margin-top:.75rem;padding:.5rem;background:rgba(16,185,129,.1);border-radius:6px">
             <span class="g">✓ القرار: <strong>مقبول</strong> — الدرجة: 87/100</span>
           </div>
@@ -358,7 +358,7 @@
     <div class="section-header">
       <span class="section-tag"><span data-i18n="price.tag">الأسعار</span></span>
       <h2 class="section-title"><span data-i18n="price.title">خطط مرنة لكل جهة</span></h2>
-      <p class="section-desc">ابدأ مجاناً وتوسّع حسب احتياجاتك</p>
+      <p class="section-desc"><span data-i18n="price.desc">ابدأ مجاناً وتوسّع حسب احتياجاتك</span></p>
     </div>
     <div class="pricing-grid">
 
@@ -369,12 +369,12 @@
           <div style="margin-bottom:.5rem"><span class="price-amount"><span data-i18n="trial.price">مجاناً</span></span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> / 7 أيام</span></div>
           <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="trial.desc">جرّب المنصة كاملاً بدون أي التزام</span></p>
           <ul class="price-features" style="margin-bottom:1.75rem">
-            <li>50 طلب تجريبي</li>
-            <li>رابط تقديم خاص بجهتك</li>
-            <li>لوحة تحكم أساسية</li>
-            <li>دعم فني خلال التجربة</li>
+            <li><span data-i18n="trial.f1">50 طلب تجريبي</span></li>
+            <li><span data-i18n="trial.f2">رابط تقديم خاص بجهتك</span></li>
+            <li><span data-i18n="trial.f3">لوحة تحكم أساسية</span></li>
+            <li><span data-i18n="trial.f4">دعم فني خلال التجربة</span></li>
           </ul>
-          <a href="/register-partner.html" class="btn-price outline">ابدأ التجربة مجاناً</a>
+          <a href="/register-partner.html" class="btn-price outline" data-i18n="trial.btn">ابدأ التجربة مجاناً</a>
         </div>
         <!-- mockup: نموذج تقديم بسيط -->
         <div class="price-visual">
@@ -413,14 +413,14 @@
           <div style="margin-bottom:.5rem"><span class="price-amount">249</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> ر.س / شهر</span></div>
           <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="basic.desc">للجهات المتوسطة والنامية</span></p>
           <ul class="price-features" style="margin-bottom:1.75rem">
-            <li>500 طلب شهرياً</li>
-            <li>معايير تقييم غير محدودة</li>
-            <li>تحقق هوية رقمي (نفاذ)</li>
-            <li>تقارير وإحصائيات</li>
-            <li>إشعارات SMS وبريد إلكتروني</li>
-            <li>دعم فني أولوية</li>
+            <li><span data-i18n="basic.f1">500 طلب شهرياً</span></li>
+            <li><span data-i18n="basic.f2">معايير تقييم غير محدودة</span></li>
+            <li><span data-i18n="basic.f3">تحقق هوية رقمي (نفاذ)</span></li>
+            <li><span data-i18n="basic.f4">تقارير وإحصائيات</span></li>
+            <li><span data-i18n="basic.f5">إشعارات SMS وبريد إلكتروني</span></li>
+            <li><span data-i18n="basic.f6">دعم فني أولوية</span></li>
           </ul>
-          <a href="/register-partner.html" class="btn-price solid">ابدأ الآن</a>
+          <a href="/register-partner.html" class="btn-price solid" data-i18n="basic.btn">ابدأ الآن</a>
         </div>
         <!-- mockup: لوحة تحكم مع فرز الطلبات -->
         <div class="price-visual" style="background:#f0fdf4;border-color:rgba(74,157,111,.2)">
@@ -472,14 +472,14 @@
           <div style="margin-bottom:.5rem"><span class="price-amount">499</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> ر.س / شهر</span></div>
           <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="adv.desc">للجهات الكبيرة والمتوسعة</span></p>
           <ul class="price-features" style="margin-bottom:1.75rem">
-            <li>طلبات غير محدودة</li>
-            <li>تحليلات وذكاء اصطناعي متقدم</li>
-            <li>API كامل للتكامل</li>
-            <li>تكاملات مخصصة</li>
-            <li>SLA مضمون 99.9%</li>
-            <li>مدير حساب مخصص</li>
+            <li><span data-i18n="adv.f1">طلبات غير محدودة</span></li>
+            <li><span data-i18n="adv.f2">تحليلات وذكاء اصطناعي متقدم</span></li>
+            <li><span data-i18n="adv.f3">API كامل للتكامل</span></li>
+            <li><span data-i18n="adv.f4">تكاملات مخصصة</span></li>
+            <li><span data-i18n="adv.f5">SLA مضمون 99.9%</span></li>
+            <li><span data-i18n="adv.f6">مدير حساب مخصص</span></li>
           </ul>
-          <a href="/register-partner.html" class="btn-price gold">ابدأ بالمتقدمة ←</a>
+          <a href="/register-partner.html" class="btn-price gold" data-i18n="adv.btn">ابدأ بالمتقدمة ←</a>
         </div>
         <!-- mockup: تحليلات متقدمة + API -->
         <div class="price-visual">
@@ -523,9 +523,9 @@
       <h2 class="cta-title"><span data-i18n="cta.title">جاهز لأتمتة قراراتك؟</span></h2>
       <p class="cta-desc"><span data-i18n="cta.desc">انضم لأكثر من 20 جهة تستخدم Rafd لتوفير الوقت وتحسين جودة القرارات</span></p>
       <div class="cta-actions">
-        <a href="/signup.html" class="btn-cta-white">ابدأ تجربتك المجانية ←</a>
-        <a href="/demo-apply.html" class="btn-cta-outline">جرّب النظام أولاً</a>
-        <a href="/register-partner.html" class="btn-cta-outline" style="border-color:#4a9d6f;color:#4a9d6f">🤝 انضم كشريك</a>
+        <a href="/signup.html" class="btn-cta-white" data-i18n="cta.btn1">ابدأ تجربتك المجانية ←</a>
+        <a href="/demo-apply.html" class="btn-cta-outline" data-i18n="cta.btn2">جرّب النظام أولاً</a>
+        <a href="/register-partner.html" class="btn-cta-outline" style="border-color:#4a9d6f;color:#4a9d6f" data-i18n="cta.btn3">🤝 انضم كشريك</a>
       </div>
     </div>
   </div>
@@ -549,38 +549,38 @@
         <p class="footer-desc"><span data-i18n="footer.desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</span></p>
       </div>
       <div class="footer-col">
-        <h4>المنصة</h4>
+        <h4 data-i18n="footer.platform">المنصة</h4>
         <ul>
-          <li><a href="#features">المميزات</a></li>
-          <li><a href="/how-it-works.html">كيف نعمل</a></li>
-          <li><a href="#pricing">الأسعار</a></li>
-          <li><a href="/demo-apply.html">تجربة مجانية</a></li>
+          <li><a href="#features" data-i18n="footer.features">المميزات</a></li>
+          <li><a href="/how-it-works.html" data-i18n="footer.how">كيف نعمل</a></li>
+          <li><a href="#pricing" data-i18n="footer.pricing">الأسعار</a></li>
+          <li><a href="/demo-apply.html" data-i18n="footer.trial">تجربة مجانية</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>القطاعات</h4>
+        <h4 data-i18n="footer.sectors">القطاعات</h4>
         <ul>
-          <li><a href="#">البنوك</a></li>
-          <li><a href="#">الجامعات</a></li>
-          <li><a href="#">المسرعات</a></li>
-          <li><a href="#">الحكومية</a></li>
+          <li><a href="#" data-i18n="footer.banks">البنوك</a></li>
+          <li><a href="#" data-i18n="footer.unis">الجامعات</a></li>
+          <li><a href="#" data-i18n="footer.accel">المسرعات</a></li>
+          <li><a href="#" data-i18n="footer.gov">الحكومية</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>الشركة</h4>
+        <h4 data-i18n="footer.company">الشركة</h4>
         <ul>
-          <li><a href="/about.html">من نحن</a></li>
-          <li><a href="mailto:info@rafd-digital.com">تواصل معنا</a></li>
-          <li><a href="/privacy.html">سياسة الخصوصية</a></li>
-          <li><a href="/terms.html">الشروط والأحكام</a></li>
+          <li><a href="/about.html" data-i18n="footer.about">من نحن</a></li>
+          <li><a href="mailto:info@rafd-digital.com" data-i18n="footer.contact">تواصل معنا</a></li>
+          <li><a href="/privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a></li>
+          <li><a href="/terms.html" data-i18n="footer.terms">الشروط والأحكام</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>الشركاء</h4>
+        <h4 data-i18n="footer.partners">الشركاء</h4>
         <ul>
-          <li><a href="/partners.html">برنامج الشراكة</a></li>
-          <li><a href="/register-partner.html">سجّل كشريك</a></li>
-          <li><a href="/partner-login.html">دخول الشركاء</a></li>
+          <li><a href="/partners.html" data-i18n="footer.prog">برنامج الشراكة</a></li>
+          <li><a href="/register-partner.html" data-i18n="footer.reg">سجّل كشريك</a></li>
+          <li><a href="/partner-login.html" data-i18n="footer.plogin">دخول الشركاء</a></li>
           
         </ul>
         <div style="margin-top:1rem">
@@ -589,7 +589,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copy"><span data-i18n="footer.copy">© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span></span>
+      <span class="footer-copy"><span data-i18n="footer.copy">© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span></span></span>
       <div class="footer-links">
         <a href="#">Twitter</a>
         <a href="https://www.linkedin.com/in/مـريـم-العبـيـد🪽-922465377" target="_blank">LinkedIn</a>
@@ -667,7 +667,7 @@ window.addEventListener('scroll', function() {
 <button class="kh-btn" onclick="toggleKhalid()" title="تحدث مع خالد">
   <div class="kh-dot"></div>
   <img src="/khalid.png" alt="خالد" class="kh-avatar">
-  <span class="kh-label">خالد — مساعدك الذكي</span>
+  <span class="kh-label"><span data-i18n="chat.label">خالد — مساعدك الذكي</span></span>
 </button>
 
 <div class="kh-panel" id="khalidPanel">
@@ -675,7 +675,7 @@ window.addEventListener('scroll', function() {
     <img src="/khalid.png" alt="خالد" class="kh-head-av">
     <div class="kh-head-info">
       <div class="kh-head-name">خالد</div>
-      <div class="kh-head-status">متاح الآن · مساعد RAFD الذكي</div>
+      <div class="kh-head-status"><span data-i18n="chat.status">متاح الآن · مساعد RAFD الذكي</span></div>
     </div>
     <button class="kh-close" onclick="toggleKhalid()">✕</button>
   </div>
@@ -683,15 +683,15 @@ window.addEventListener('scroll', function() {
     <div class="kh-msg bot">مرحباً! أنا خالد، مساعدك الذكي في منصة RAFD 👋<br>كيف أقدر أساعدك اليوم؟</div>
   </div>
     <div class="kh-quick" id="khalidQuick">
-    <button class="kh-q" onclick="khSend('كيف اشترك')">كيف اشترك؟</button>
-    <button class="kh-q" onclick="khSend('طريقة عملكم')">طريقة عملكم</button>
-    <button class="kh-q" onclick="khSend('الباقات')">الباقات والأسعار</button>
-    <button class="kh-q" onclick="khSend('كيف اسجل حساب')">كيف أسجل؟</button>
-    <button class="kh-q" onclick="khSend('كيف ادخل')">كيف أدخل؟</button>
-    <button class="kh-q" onclick="khSend('تواصل معنا')">تواصل معنا</button>
+    <button class="kh-q" onclick="khSend('كيف اشترك')"><span data-i18n="chat.q1">كيف اشترك؟</span></button>
+    <button class="kh-q" onclick="khSend('طريقة عملكم')"><span data-i18n="chat.q2">طريقة عملكم</span></button>
+    <button class="kh-q" onclick="khSend('الباقات')"><span data-i18n="chat.q3">الباقات والأسعار</span></button>
+    <button class="kh-q" onclick="khSend('كيف اسجل حساب')"><span data-i18n="chat.q4">كيف أسجل؟</span></button>
+    <button class="kh-q" onclick="khSend('كيف ادخل')"><span data-i18n="chat.q5">كيف أدخل؟</span></button>
+    <button class="kh-q" onclick="khSend('تواصل معنا')"><span data-i18n="chat.q6">تواصل معنا</span></button>
   </div>
   <div class="kh-input-row">
-    <input class="kh-input" id="khalidInput" placeholder="اكتب سؤالك..." onkeydown="if(event.key==='Enter')khSend()">
+    <input class="kh-input" id="khalidInput" placeholder="اكتب سؤالك..." data-i18n-placeholder="chat.placeholder" onkeydown="if(event.key==='Enter')khSend()">
     <button class="kh-send" onclick="khSend()">➤</button>
   </div>
 </div>
@@ -868,4 +868,9 @@ document.addEventListener('click', () => {
 <script src="/i18n.js"></script>
 </body>
 </html>
+
+
+
+
+
 

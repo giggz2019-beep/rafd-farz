@@ -114,33 +114,33 @@
       </div>
     </a>
     <ul class="nav-links">
-      <li><a href="/#features">المميزات</a></li>
-      <li><a href="/how-it-works.html" class="active">كيف نعمل</a></li>
+      <li><a href="/#features" data-i18n="nav.features">المميزات</a></li>
+      <li><a href="/how-it-works.html" class="active" data-i18n="nav.how">كيف نعمل</a></li>
       <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
-      <li><a href="/#pricing">الأسعار</a></li>
+      <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
       <li class="mobile-nav-sep"></li>
-      <li class="mobile-nav-login"><a href="/partner-login.html">🤝 دخول الشركاء</a></li>
-      <li class="mobile-nav-login"><a href="/admin.html">🛡️ دخول الإدارة</a></li>
-      <li class="mobile-nav-login mobile-nav-cta"><a href="/register-partner.html">← انضم كشريك</a></li>
+      <li class="mobile-nav-login"><a href="/partner-login.html">🤝 <span data-i18n="nav.partner-login">دخول الشركاء</span></a></li>
+      <li class="mobile-nav-login"><a href="/admin.html">🛡️ <span data-i18n="nav.admin">دخول الإدارة</span></a></li>
+      <li class="mobile-nav-login mobile-nav-cta"><a href="/register-partner.html">← <span data-i18n="nav.join">انضم كشريك</span></a></li>
     </ul>
     <div class="nav-actions">
       <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
       <div class="login-dropdown-wrap" id="loginDropWrap">
         <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem">
-          تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span>
+          <span data-i18n="nav.login">تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span></span>
         </button>
         <div class="login-drop" id="loginDrop">
           <a href="/partner-login.html" class="login-drop-item">
             <span style="font-size:1.1rem">🤝</span>
-            <div><div style="font-weight:700;font-size:.88rem">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6">لوحة تحكم الجهات</div></div>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.partner-login">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.partner-login-sub">لوحة تحكم الجهات</div></div>
           </a>
           <a href="/admin.html" class="login-drop-item">
             <span style="font-size:1.1rem">🛡️</span>
-            <div><div style="font-weight:700;font-size:.88rem">الإدارة</div><div style="font-size:.72rem;opacity:.6">دخول مشرفي النظام</div></div>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.admin">الإدارة</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.admin-sub">دخول مشرفي النظام</div></div>
           </a>
         </div>
       </div>
-      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f">انضم كشريك</a>
+      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f" data-i18n="nav.join">انضم كشريك</a>
     </div>
     <button class="hamburger" id="hamburger">&#9776;</button>
   </div>
@@ -149,9 +149,9 @@
 <!-- PAGE HERO -->
 <section class="page-hero">
   <div class="container">
-    <span class="page-hero-tag">كيف نعمل</span>
-    <h1>من الطلب إلى القرار<br>في ثوانٍ معدودة</h1>
-    <p>عملية واضحة ومبسّطة — الجهة تُحدد معاييرها مرة واحدة، والذكاء الاصطناعي يتولى الباقي</p>
+    <span class="page-hero-tag" data-i18n="hiw.hero-tag">كيف نعمل</span>
+    <h1 data-i18n="hiw.hero-h1">من الطلب إلى القرار<br>في ثوانٍ معدودة</h1>
+    <p data-i18n="hiw.hero-p">عملية واضحة ومبسّطة — الجهة تُحدد معاييرها مرة واحدة، والذكاء الاصطناعي يتولى الباقي</p>
   </div>
 </section>
 
@@ -159,8 +159,8 @@
 <section class="steps-section">
   <div class="container">
     <div class="section-header" style="text-align:center">
-      <span class="section-tag">الخطوات</span>
-      <h2 class="section-title">كيف يعمل النظام خطوة بخطوة</h2>
+      <span class="section-tag" data-i18n="hiw.steps-tag">الخطوات</span>
+      <h2 class="section-title" data-i18n="hiw.steps-title">كيف يعمل النظام خطوة بخطوة</h2>
     </div>
     <div class="steps-timeline">
 
@@ -169,18 +169,18 @@
           <div class="step-circle">1</div>
         </div>
         <div class="step-right">
-          <span class="step-tag">الإعداد — مرة واحدة</span>
-          <h3>تُسجّل جهتك وتُحدد معاييرك</h3>
-          <p>تُنشئ حساباً لجهتك وتُدخل معايير القبول والرفض الخاصة بك — كل معيار له وزن ومستوى أدنى مطلوب.</p>
+          <span class="step-tag" data-i18n="hiw.s1-tag">الإعداد — مرة واحدة</span>
+          <h3 data-i18n="hiw.s1-h">تُسجّل جهتك وتُحدد معاييرك</h3>
+          <p data-i18n="hiw.s1-p">تُنشئ حساباً لجهتك وتُدخل معايير القبول والرفض الخاصة بك — كل معيار له وزن ومستوى أدنى مطلوب.</p>
           <div class="step-details">
-            <div class="step-detail">تحديد أوزان المعايير (مثال: الخبرة 40%، المؤهل 30%، المهارات 30%)</div>
-            <div class="step-detail">تعيين نسبة الاجتياز المطلوبة (مثال: 80% للقبول)</div>
-            <div class="step-detail">إضافة شروط إلزامية لا يمكن تجاوزها</div>
+            <div class="step-detail" data-i18n="hiw.s1-d1">تحديد أوزان المعايير (مثال: الخبرة 40%، المؤهل 30%، المهارات 30%)</div>
+            <div class="step-detail" data-i18n="hiw.s1-d2">تعيين نسبة الاجتياز المطلوبة (مثال: 80% للقبول)</div>
+            <div class="step-detail" data-i18n="hiw.s1-d3">إضافة شروط إلزامية لا يمكن تجاوزها</div>
           </div>
           <div class="step-visual">
-            <div class="sv-row"><span class="sv-icon">⚙️</span> معيار الخبرة — الوزن: 40% — الحد الأدنى: 3 سنوات</div>
-            <div class="sv-row"><span class="sv-icon">🎓</span> المؤهل الأكاديمي — الوزن: 30% — الحد الأدنى: بكالوريوس</div>
-            <div class="sv-row"><span class="sv-icon">💡</span> المهارات التقنية — الوزن: 30% — الحد الأدنى: 3 مهارات</div>
+            <div class="sv-row"><span class="sv-icon">⚙️</span> <span data-i18n="hiw.sv1">معيار الخبرة — الوزن: 40% — الحد الأدنى: 3 سنوات</span></div>
+            <div class="sv-row"><span class="sv-icon">🎓</span> <span data-i18n="hiw.sv2">المؤهل الأكاديمي — الوزن: 30% — الحد الأدنى: بكالوريوس</span></div>
+            <div class="sv-row"><span class="sv-icon">💡</span> <span data-i18n="hiw.sv3">المهارات التقنية — الوزن: 30% — الحد الأدنى: 3 مهارات</span></div>
           </div>
         </div>
       </div>
@@ -190,13 +190,13 @@
           <div class="step-circle">2</div>
         </div>
         <div class="step-right">
-          <span class="step-tag">الاستقبال — مستمر</span>
-          <h3>المتقدمون يُقدّمون طلباتهم</h3>
-          <p>تُشارك رابط النموذج مع المتقدمين — يملؤون بياناتهم ويرفعون مستنداتهم مباشرة عبر المنصة.</p>
+          <span class="step-tag" data-i18n="hiw.s2-tag">الاستقبال — مستمر</span>
+          <h3 data-i18n="hiw.s2-h">المتقدمون يُقدّمون طلباتهم</h3>
+          <p data-i18n="hiw.s2-p">تُشارك رابط النموذج مع المتقدمين — يملؤون بياناتهم ويرفعون مستنداتهم مباشرة عبر المنصة.</p>
           <div class="step-details">
-            <div class="step-detail">نموذج تقديم مخصص لكل جهة</div>
-            <div class="step-detail">رفع السيرة الذاتية والمستندات</div>
-            <div class="step-detail">التحقق من الهوية الرقمية</div>
+            <div class="step-detail" data-i18n="hiw.s2-d1">نموذج تقديم مخصص لكل جهة</div>
+            <div class="step-detail" data-i18n="hiw.s2-d2">رفع السيرة الذاتية والمستندات</div>
+            <div class="step-detail" data-i18n="hiw.s2-d3">التحقق من الهوية الرقمية</div>
           </div>
         </div>
       </div>
@@ -206,18 +206,18 @@
           <div class="step-circle">3</div>
         </div>
         <div class="step-right">
-          <span class="step-tag">التحليل — فوري</span>
-          <h3>الذكاء الاصطناعي يُحلّل الطلب</h3>
-          <p>يقرأ النظام كل البيانات والمستندات المرفقة ويُقيّمها وفق معاييرك المحددة — في ثوانٍ معدودة.</p>
+          <span class="step-tag" data-i18n="hiw.s3-tag">التحليل — فوري</span>
+          <h3 data-i18n="hiw.s3-h">الذكاء الاصطناعي يُحلّل الطلب</h3>
+          <p data-i18n="hiw.s3-p">يقرأ النظام كل البيانات والمستندات المرفقة ويُقيّمها وفق معاييرك المحددة — في ثوانٍ معدودة.</p>
           <div class="step-details">
-            <div class="step-detail">قراءة وتحليل السيرة الذاتية تلقائياً</div>
-            <div class="step-detail">مطابقة المعايير وحساب الدرجة لكل بند</div>
-            <div class="step-detail">كشف التناقضات والبيانات المفقودة</div>
+            <div class="step-detail" data-i18n="hiw.s3-d1">قراءة وتحليل السيرة الذاتية تلقائياً</div>
+            <div class="step-detail" data-i18n="hiw.s3-d2">مطابقة المعايير وحساب الدرجة لكل بند</div>
+            <div class="step-detail" data-i18n="hiw.s3-d3">كشف التناقضات والبيانات المفقودة</div>
           </div>
           <div class="step-visual">
-            <div class="sv-row"><span class="sv-icon">✅</span> الخبرة: 5 سنوات — الدرجة: 40/40</div>
-            <div class="sv-row"><span class="sv-icon">✅</span> المؤهل: ماجستير — الدرجة: 30/30</div>
-            <div class="sv-row"><span class="sv-icon">⚠️</span> المهارات: 2 مهارات — الدرجة: 20/30</div>
+            <div class="sv-row"><span class="sv-icon">✅</span> <span data-i18n="hiw.sv4">الخبرة: 5 سنوات — الدرجة: 40/40</span></div>
+            <div class="sv-row"><span class="sv-icon">✅</span> <span data-i18n="hiw.sv5">المؤهل: ماجستير — الدرجة: 30/30</span></div>
+            <div class="sv-row"><span class="sv-icon">⚠️</span> <span data-i18n="hiw.sv6">المهارات: 2 مهارات — الدرجة: 20/30</span></div>
           </div>
         </div>
       </div>
@@ -227,13 +227,13 @@
           <div class="step-circle">4</div>
         </div>
         <div class="step-right">
-          <span class="step-tag">القرار — فوري</span>
-          <h3>إصدار القرار وإرساله للمتقدم</h3>
-          <p>يُصدر النظام قراراً فورياً مع تقرير مفصّل — ويُرسل للمتقدم إشعاراً بالنتيجة مع التفاصيل.</p>
+          <span class="step-tag" data-i18n="hiw.s4-tag">القرار — فوري</span>
+          <h3 data-i18n="hiw.s4-h">إصدار القرار وإرساله للمتقدم</h3>
+          <p data-i18n="hiw.s4-p">يُصدر النظام قراراً فورياً مع تقرير مفصّل — ويُرسل للمتقدم إشعاراً بالنتيجة مع التفاصيل.</p>
           <div class="step-details">
-            <div class="step-detail">قرار مقبول أو مرفوض مع الدرجة الإجمالية</div>
-            <div class="step-detail">تقرير تفصيلي بأداء كل معيار</div>
-            <div class="step-detail">إشعار فوري للمتقدم عبر البريد الإلكتروني</div>
+            <div class="step-detail" data-i18n="hiw.s4-d1">قرار مقبول أو مرفوض مع الدرجة الإجمالية</div>
+            <div class="step-detail" data-i18n="hiw.s4-d2">تقرير تفصيلي بأداء كل معيار</div>
+            <div class="step-detail" data-i18n="hiw.s4-d3">إشعار فوري للمتقدم عبر البريد الإلكتروني</div>
           </div>
         </div>
       </div>
@@ -243,13 +243,13 @@
           <div class="step-circle">5</div>
         </div>
         <div class="step-right">
-          <span class="step-tag">الفرز — للجهة</span>
-          <h3>الجهة تستلم المجتازين فقط</h3>
-          <p>تصل للجهة قائمة بالمتقدمين الذين تجاوزوا نسبة الاجتياز المحددة — مرتّبين حسب الدرجة.</p>
+          <span class="step-tag" data-i18n="hiw.s5-tag">الفرز — للجهة</span>
+          <h3 data-i18n="hiw.s5-h">الجهة تستلم المجتازين فقط</h3>
+          <p data-i18n="hiw.s5-p">تصل للجهة قائمة بالمتقدمين الذين تجاوزوا نسبة الاجتياز المحددة — مرتّبين حسب الدرجة.</p>
           <div class="step-details">
-            <div class="step-detail">قائمة مفلترة بالمجتازين فقط (لا مراجعة يدوية)</div>
-            <div class="step-detail">تصدير البيانات بصيغ متعددة (Excel، PDF)</div>
-            <div class="step-detail">إمكانية المراجعة البشرية لحالات الحدود</div>
+            <div class="step-detail" data-i18n="hiw.s5-d1">قائمة مفلترة بالمجتازين فقط (لا مراجعة يدوية)</div>
+            <div class="step-detail" data-i18n="hiw.s5-d2">تصدير البيانات بصيغ متعددة (Excel، PDF)</div>
+            <div class="step-detail" data-i18n="hiw.s5-d3">إمكانية المراجعة البشرية لحالات الحدود</div>
           </div>
         </div>
       </div>
@@ -262,64 +262,64 @@
 <section class="entities-section">
   <div class="container">
     <div class="section-header" style="text-align:center">
-      <span class="section-tag">القطاعات</span>
-      <h2 class="section-title">يعمل مع كل أنواع الجهات</h2>
-      <p class="section-desc">كل جهة تُحدد معاييرها الخاصة — النظام يتكيّف معها</p>
+      <span class="section-tag" data-i18n="hiw.ent-tag">القطاعات</span>
+      <h2 class="section-title" data-i18n="hiw.ent-title">يعمل مع كل أنواع الجهات</h2>
+      <p class="section-desc" data-i18n="hiw.ent-desc">كل جهة تُحدد معاييرها الخاصة — النظام يتكيّف معها</p>
     </div>
     <div class="entities-grid">
       <div class="entity-card">
         <div class="entity-icon">💼</div>
-        <div class="entity-name">التوظيف</div>
-        <div class="entity-desc">فرز السير الذاتية وتقييم المتقدمين للوظائف وفق متطلبات كل وظيفة</div>
+        <div class="entity-name" data-i18n="hiw.ent1n">التوظيف</div>
+        <div class="entity-desc" data-i18n="hiw.ent1d">فرز السير الذاتية وتقييم المتقدمين للوظائف وفق متطلبات كل وظيفة</div>
         <div class="entity-examples">
-          <span class="entity-tag">الشركات</span>
-          <span class="entity-tag">الحكومية</span>
+          <span class="entity-tag" data-i18n="hiw.ent-companies">الشركات</span>
+          <span class="entity-tag" data-i18n="hiw.ent-gov">الحكومية</span>
           <span class="entity-tag">HR</span>
         </div>
       </div>
       <div class="entity-card">
         <div class="entity-icon">💰</div>
-        <div class="entity-name">التمويل والقروض</div>
-        <div class="entity-desc">تقييم طلبات التمويل والقروض وفق معايير الجدارة الائتمانية والأهلية</div>
+        <div class="entity-name" data-i18n="hiw.ent2n">التمويل والقروض</div>
+        <div class="entity-desc" data-i18n="hiw.ent2d">تقييم طلبات التمويل والقروض وفق معايير الجدارة الائتمانية والأهلية</div>
         <div class="entity-examples">
-          <span class="entity-tag">البنوك</span>
-          <span class="entity-tag">صناديق التمويل</span>
+          <span class="entity-tag" data-i18n="hiw.ent-banks">البنوك</span>
+          <span class="entity-tag" data-i18n="hiw.ent-funds">صناديق التمويل</span>
         </div>
       </div>
       <div class="entity-card">
         <div class="entity-icon">🎓</div>
-        <div class="entity-name">القبول الجامعي</div>
-        <div class="entity-desc">قبول الطلاب في البرامج الأكاديمية والمنح الدراسية وفق المعدل والمؤهلات</div>
+        <div class="entity-name" data-i18n="hiw.ent3n">القبول الجامعي</div>
+        <div class="entity-desc" data-i18n="hiw.ent3d">قبول الطلاب في البرامج الأكاديمية والمنح الدراسية وفق المعدل والمؤهلات</div>
         <div class="entity-examples">
-          <span class="entity-tag">الجامعات</span>
-          <span class="entity-tag">المعاهد</span>
+          <span class="entity-tag" data-i18n="hiw.ent-uni">الجامعات</span>
+          <span class="entity-tag" data-i18n="hiw.ent-inst">المعاهد</span>
         </div>
       </div>
       <div class="entity-card">
         <div class="entity-icon">🚀</div>
-        <div class="entity-name">برامج الدعم</div>
-        <div class="entity-desc">تقييم الشركات الناشئة للحاضنات والمسرعات وبرامج الدعم الحكومي</div>
+        <div class="entity-name" data-i18n="hiw.ent4n">برامج الدعم</div>
+        <div class="entity-desc" data-i18n="hiw.ent4d">تقييم الشركات الناشئة للحاضنات والمسرعات وبرامج الدعم الحكومي</div>
         <div class="entity-examples">
-          <span class="entity-tag">المسرعات</span>
-          <span class="entity-tag">الحاضنات</span>
+          <span class="entity-tag" data-i18n="hiw.ent-acc">المسرعات</span>
+          <span class="entity-tag" data-i18n="hiw.ent-inc">الحاضنات</span>
         </div>
       </div>
       <div class="entity-card">
         <div class="entity-icon">🏛️</div>
-        <div class="entity-name">الخدمات الحكومية</div>
-        <div class="entity-desc">معالجة طلبات التراخيص والدعم والبرامج الحكومية بشكل آلي</div>
+        <div class="entity-name" data-i18n="hiw.ent5n">الخدمات الحكومية</div>
+        <div class="entity-desc" data-i18n="hiw.ent5d">معالجة طلبات التراخيص والدعم والبرامج الحكومية بشكل آلي</div>
         <div class="entity-examples">
-          <span class="entity-tag">الوزارات</span>
-          <span class="entity-tag">الهيئات</span>
+          <span class="entity-tag" data-i18n="hiw.ent-min">الوزارات</span>
+          <span class="entity-tag" data-i18n="hiw.ent-auth">الهيئات</span>
         </div>
       </div>
       <div class="entity-card">
         <div class="entity-icon">🤝</div>
-        <div class="entity-name">برامج الشراكات</div>
-        <div class="entity-desc">تقييم طلبات الشراكة والتعاون وفق معايير الأهلية والتوافق</div>
+        <div class="entity-name" data-i18n="hiw.ent6n">برامج الشراكات</div>
+        <div class="entity-desc" data-i18n="hiw.ent6d">تقييم طلبات الشراكة والتعاون وفق معايير الأهلية والتوافق</div>
         <div class="entity-examples">
-          <span class="entity-tag">الشراكات</span>
-          <span class="entity-tag">الموردون</span>
+          <span class="entity-tag" data-i18n="hiw.ent-part">الشراكات</span>
+          <span class="entity-tag" data-i18n="hiw.ent-supp">الموردون</span>
         </div>
       </div>
     </div>
@@ -332,30 +332,30 @@
     <div class="ai-grid">
       <div class="ai-text">
         <div class="section-header" style="text-align:right;margin-bottom:1.5rem">
-          <span class="section-tag">التقنية</span>
-          <h2 class="section-title" style="font-size:1.8rem">الذكاء الاصطناعي خلف القرار</h2>
+          <span class="section-tag" data-i18n="hiw.ai-tag">التقنية</span>
+          <h2 class="section-title" style="font-size:1.8rem" data-i18n="hiw.ai-title">الذكاء الاصطناعي خلف القرار</h2>
         </div>
-        <p>يستخدم نظام RAFD نماذج ذكاء اصطناعي متقدمة قادرة على قراءة وتحليل أي نوع من البيانات — نصوص، أرقام، مستندات — وتحويلها إلى درجة موضوعية.</p>
+        <p data-i18n="hiw.ai-p">يستخدم نظام RAFD نماذج ذكاء اصطناعي متقدمة قادرة على قراءة وتحليل أي نوع من البيانات — نصوص، أرقام، مستندات — وتحويلها إلى درجة موضوعية.</p>
         <div class="ai-features">
           <div class="ai-feat">
             <div class="ai-feat-icon">📄</div>
             <div class="ai-feat-text">
-              <h5>قراءة المستندات</h5>
-              <p>يقرأ السير الذاتية والشهادات والمستندات تلقائياً ويستخرج المعلومات المطلوبة</p>
+              <h5 data-i18n="hiw.ai-f1h">قراءة المستندات</h5>
+              <p data-i18n="hiw.ai-f1p">يقرأ السير الذاتية والشهادات والمستندات تلقائياً ويستخرج المعلومات المطلوبة</p>
             </div>
           </div>
           <div class="ai-feat">
             <div class="ai-feat-icon">⚖️</div>
             <div class="ai-feat-text">
-              <h5>التقييم الموزون</h5>
-              <p>يُطبّق أوزان المعايير المحددة بدقة رياضية — لا تحيّز ولا استثناءات</p>
+              <h5 data-i18n="hiw.ai-f2h">التقييم الموزون</h5>
+              <p data-i18n="hiw.ai-f2p">يُطبّق أوزان المعايير المحددة بدقة رياضية — لا تحيّز ولا استثناءات</p>
             </div>
           </div>
           <div class="ai-feat">
             <div class="ai-feat-icon">🔄</div>
             <div class="ai-feat-text">
-              <h5>التعلم المستمر</h5>
-              <p>يتحسّن النظام مع كل دفعة من الطلبات ليُقدّم نتائج أكثر دقة</p>
+              <h5 data-i18n="hiw.ai-f3h">التعلم المستمر</h5>
+              <p data-i18n="hiw.ai-f3p">يتحسّن النظام مع كل دفعة من الطلبات ليُقدّم نتائج أكثر دقة</p>
             </div>
           </div>
         </div>
@@ -389,29 +389,29 @@
 <section class="faq-section">
   <div class="container">
     <div class="section-header" style="text-align:center">
-      <span class="section-tag">الأسئلة الشائعة</span>
-      <h2 class="section-title">أسئلة يسألها العملاء</h2>
+      <span class="section-tag" data-i18n="hiw.faq-tag">الأسئلة الشائعة</span>
+      <h2 class="section-title" data-i18n="hiw.faq-title">أسئلة يسألها العملاء</h2>
     </div>
     <div class="faq-list">
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">هل يمكنني تغيير معايير التقييم بعد البدء؟</div>
-        <div class="faq-a">نعم، يمكنك تعديل المعايير والأوزان في أي وقت من لوحة التحكم. التغييرات تُطبَّق على الطلبات الجديدة فقط.</div>
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="hiw.faq1q">هل يمكنني تغيير معايير التقييم بعد البدء؟</span></div>
+        <div class="faq-a" data-i18n="hiw.faq1a">نعم، يمكنك تعديل المعايير والأوزان في أي وقت من لوحة التحكم. التغييرات تُطبَّق على الطلبات الجديدة فقط.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">كيف يتعامل النظام مع الطلبات الناقصة؟</div>
-        <div class="faq-a">يُنبّه النظام المتقدم فوراً لإكمال البيانات الناقصة قبل إرسال الطلب. إذا كانت هناك بيانات إلزامية مفقودة، لا يُقبل الطلب.</div>
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="hiw.faq2q">كيف يتعامل النظام مع الطلبات الناقصة؟</span></div>
+        <div class="faq-a" data-i18n="hiw.faq2a">يُنبّه النظام المتقدم فوراً لإكمال البيانات الناقصة قبل إرسال الطلب. إذا كانت هناك بيانات إلزامية مفقودة، لا يُقبل الطلب.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">هل يمكن للجهة مراجعة القرارات يدوياً؟</div>
-        <div class="faq-a">نعم، يمكن للجهة تفعيل خيار "المراجعة البشرية" للطلبات التي تقع في نطاق الحدود (مثلاً بين 75-85%). الطلبات الواضحة تُعالَج تلقائياً.</div>
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="hiw.faq3q">هل يمكن للجهة مراجعة القرارات يدوياً؟</span></div>
+        <div class="faq-a" data-i18n="hiw.faq3a">نعم، يمكن للجهة تفعيل خيار "المراجعة البشرية" للطلبات التي تقع في نطاق الحدود. الطلبات الواضحة تُعالَج تلقائياً.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">ما أنواع الملفات المدعومة للرفع؟</div>
-        <div class="faq-a">يدعم النظام PDF، Word، وصور JPG/PNG. يمكن رفع السيرة الذاتية، الشهادات، والمستندات الداعمة.</div>
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="hiw.faq4q">ما أنواع الملفات المدعومة للرفع؟</span></div>
+        <div class="faq-a" data-i18n="hiw.faq4a">يدعم النظام PDF، Word، وصور JPG/PNG. يمكن رفع السيرة الذاتية، الشهادات، والمستندات الداعمة.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">كيف تُحدد الجهة نسبة الاجتياز؟</div>
-        <div class="faq-a">من لوحة التحكم، تُحدد الجهة النسبة المطلوبة للقبول (مثلاً 80%). يمكن تغييرها في أي وقت وتُطبَّق على الطلبات القادمة.</div>
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="hiw.faq5q">كيف تُحدد الجهة نسبة الاجتياز؟</span></div>
+        <div class="faq-a" data-i18n="hiw.faq5a">من لوحة التحكم، تُحدد الجهة النسبة المطلوبة للقبول (مثلاً 80%). يمكن تغييرها في أي وقت وتُطبَّق على الطلبات القادمة.</div>
       </div>
     </div>
   </div>
@@ -420,11 +420,11 @@
 <!-- CTA -->
 <section class="cta-section">
   <div class="container">
-    <h2>جرّب النظام بنفسك</h2>
-    <p>قدّم طلباً تجريبياً وشاهد كيف يعمل الذكاء الاصطناعي في الوقت الفعلي</p>
+    <h2 data-i18n="hiw.cta-title">جرّب النظام بنفسك</h2>
+    <p data-i18n="hiw.cta-p">قدّم طلباً تجريبياً وشاهد كيف يعمل الذكاء الاصطناعي في الوقت الفعلي</p>
     <div class="cta-btns">
-      <a href="/demo-apply.html" class="cta-btn-primary">ابدأ التجربة المجانية ←</a>
-      <a href="/signup.html" class="cta-btn-ghost">سجّل جهتك الآن</a>
+      <a href="/demo-apply.html" class="cta-btn-primary" data-i18n="hiw.cta-btn1">ابدأ التجربة المجانية ←</a>
+      <a href="/signup.html" class="cta-btn-ghost" data-i18n="hiw.cta-btn2">سجّل جهتك الآن</a>
     </div>
   </div>
 </section>
@@ -435,24 +435,24 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <img src="/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
-        <p class="footer-desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
+        <p class="footer-desc" data-i18n="footer.desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
       </div>
       <div class="footer-col">
-        <h4>المنصة</h4>
+        <h4 data-i18n="footer.platform">المنصة</h4>
         <ul>
-          <li><a href="/#features">المميزات</a></li>
+          <li><a href="/#features" data-i18n="nav.features">المميزات</a></li>
           <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
-          <li><a href="/#pricing">الأسعار</a></li>
-          <li><a href="/demo-apply.html">تجربة مجانية</a></li>
+          <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
+          <li><a href="/demo-apply.html" data-i18n="footer.trial">تجربة مجانية</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>الشركة</h4>
+        <h4 data-i18n="footer.company">الشركة</h4>
         <ul>
           <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
-          <li><a href="mailto:info@rafd-digital.com">تواصل معنا</a></li>
-          <li><a href="/privacy.html">سياسة الخصوصية</a></li>
-          <li><a href="/terms.html">الشروط والأحكام</a></li>
+          <li><a href="mailto:info@rafd-digital.com" data-i18n="footer.contact">تواصل معنا</a></li>
+          <li><a href="/privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a></li>
+          <li><a href="/terms.html" data-i18n="footer.terms">الشروط والأحكام</a></li>
         </ul>
         <div style="margin-top:1rem">
           <a href="mailto:info@rafd-digital.com" style="color:#4a9d6f;font-size:.82rem;font-weight:600;text-decoration:none">✉ info@rafd-digital.com</a>
@@ -460,7 +460,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copy">© 2025 Rafd Digital. جميع الحقوق محفوظة</span>
+      <span class="footer-copy"><span data-i18n="footer.copy">© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span></span>
     </div>
   </div>
 </footer>
@@ -499,4 +499,8 @@ document.addEventListener('click', () => {
 <script src="/i18n.js"></script>
 </body>
 </html>
+
+
+
+
 

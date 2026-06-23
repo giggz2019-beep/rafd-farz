@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -164,7 +164,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   .steps-row{display:none}
   .otp-digit{width:44px;height:52px;font-size:1.3rem}
 }
-</style>
+.lang-toggle{background:none;border:1.5px solid rgba(255,255,255,.3);border-radius:8px;padding:.3rem .7rem;font-size:.78rem;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;font-family:Cairo,sans-serif;white-space:nowrap}.lang-toggle:hover{background:rgba(255,255,255,.1)}</style>
 </head>
 <body>
 
@@ -177,33 +177,36 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <div class="logo-sub">Digital Company</div>
     </div>
   </a>
-  <a href="/partner-login.html" class="login-link">لديك حساب؟ سجّل دخولك ←</a>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
+    <a href="/partner-login.html" class="login-link" data-i18n="rp.login-link">لديك حساب؟ سجّل دخولك ←</a>
+  </div>
 </div>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-badge">🤝 انضم كشريك رسمي</div>
-  <h1>سجّل جهتك في<br><span>منصة RAFD</span></h1>
-  <p>احصل على لوحة تحكم كاملة لإدارة طلبات الفرز، ومتابعة النتائج، وتخصيص المعايير لجهتك</p>
+  <div class="hero-badge" data-i18n="rp.badge">🤝 انضم كشريك رسمي</div>
+  <h1 data-i18n="rp.h1">سجّل جهتك في<br><span>منصة RAFD</span></h1>
+  <p data-i18n="rp.hero-p">احصل على لوحة تحكم كاملة لإدارة طلبات الفرز، ومتابعة النتائج، وتخصيص المعايير لجهتك</p>
   <div class="steps-row">
     <div class="step-item">
       <div class="step-num">1</div>
-      <div class="step-label">أدخل بيانات<br>جهتك</div>
+      <div class="step-label" data-i18n="rp.step1">أدخل بيانات<br>جهتك</div>
     </div>
     <div class="step-line"></div>
     <div class="step-item">
       <div class="step-num">2</div>
-      <div class="step-label">اختر<br>الباقة</div>
+      <div class="step-label" data-i18n="rp.step2">اختر<br>الباقة</div>
     </div>
     <div class="step-line"></div>
     <div class="step-item">
       <div class="step-num">3</div>
-      <div class="step-label">تحقق من<br>الإيميل</div>
+      <div class="step-label" data-i18n="rp.step3">تحقق من<br>الإيميل</div>
     </div>
     <div class="step-line"></div>
     <div class="step-item">
       <div class="step-num">4</div>
-      <div class="step-label">ابدأ<br>الاستخدام</div>
+      <div class="step-label" data-i18n="rp.step4">ابدأ<br>الاستخدام</div>
     </div>
   </div>
 </div>
@@ -216,8 +219,8 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="section-header">
       <div class="section-icon si-blue">🏢</div>
       <div>
-        <div class="section-title">معلومات الجهة</div>
-        <div class="section-sub">البيانات الرسمية للمؤسسة أو الشركة</div>
+        <div class="section-title" data-i18n="rp.s1-title">معلومات الجهة</div>
+        <div class="section-sub" data-i18n="rp.s1-sub">البيانات الرسمية للمؤسسة أو الشركة</div>
       </div>
     </div>
     <div class="frow">
@@ -288,8 +291,8 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="section-header">
       <div class="section-icon si-green">👤</div>
       <div>
-        <div class="section-title">معلومات المسؤول</div>
-        <div class="section-sub">بيانات الشخص المسؤول عن الحساب</div>
+        <div class="section-title" data-i18n="rp.s2-title">معلومات المسؤول</div>
+        <div class="section-sub" data-i18n="rp.s2-sub">بيانات الشخص المسؤول عن الحساب</div>
       </div>
     </div>
     <div class="frow">
@@ -380,16 +383,16 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="section-header">
       <div class="section-icon si-purple">📦</div>
       <div>
-        <div class="section-title">اختر الباقة المناسبة</div>
-        <div class="section-sub">يمكنك الترقية في أي وقت لاحقاً</div>
+        <div class="section-title" data-i18n="rp.s3-title">اختر الباقة المناسبة</div>
+        <div class="section-sub" data-i18n="rp.s3-sub">يمكنك الترقية في أي وقت لاحقاً</div>
       </div>
     </div>
     <div class="pkg-grid">
       <div class="pkg-card" id="pkg_trial" onclick="selectPkg('trial')">
         <div class="pkg-icon">🎯</div>
-        <div class="pkg-name">تجريبية</div>
-        <div class="pkg-price">مجاناً</div>
-        <div class="pkg-period">لمدة 14 يوم</div>
+        <div class="pkg-name" data-i18n="pg.trial-name">تجريبية</div>
+        <div class="pkg-price" data-i18n="trial.price">مجاناً</div>
+        <div class="pkg-period" data-i18n="rp.trial-period">لمدة 7 أيام</div>
         <ul class="pkg-features">
           <li>حتى 50 طلب/شهر</li>
           <li>تقارير أساسية</li>
@@ -398,8 +401,8 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       </div>
       <div class="pkg-card selected" id="pkg_basic" onclick="selectPkg('basic')">
         <div class="pkg-icon">🚀</div>
-        <div class="pkg-name">أساسية</div>
-        <div class="pkg-price">499 ر.س</div>
+        <div class="pkg-name" data-i18n="rp.pkg-basic">أساسية</div>
+        <div class="pkg-price">249 ر.س</div>
         <div class="pkg-period">/شهرياً</div>
         <ul class="pkg-features">
           <li>حتى 500 طلب/شهر</li>
@@ -409,8 +412,8 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       </div>
       <div class="pkg-card" id="pkg_pro" onclick="selectPkg('pro')">
         <div class="pkg-icon">💎</div>
-        <div class="pkg-name">متقدمة</div>
-        <div class="pkg-price">999 ر.س</div>
+        <div class="pkg-name" data-i18n="rp.pkg-adv">متقدمة</div>
+        <div class="pkg-price">499 ر.س</div>
         <div class="pkg-period">/شهرياً</div>
         <ul class="pkg-features">
           <li>طلبات غير محدودة</li>
@@ -426,8 +429,8 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="section-header">
       <div class="section-icon si-orange">📊</div>
       <div>
-        <div class="section-title">الاستخدام المتوقع</div>
-        <div class="section-sub">يساعدنا في تهيئة حسابك بشكل مناسب</div>
+        <div class="section-title" data-i18n="rp.s4-title">الاستخدام المتوقع</div>
+        <div class="section-sub" data-i18n="rp.s4-sub">يساعدنا في تهيئة حسابك بشكل مناسب</div>
       </div>
     </div>
     <div class="frow">
@@ -486,17 +489,17 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   </div>
 
   <button class="btn-submit" id="submitBtn" onclick="submitForm()">
-    <span id="submitBtnText">إرسال رمز التفعيل</span>
+    <span id="submitBtnText" data-i18n="rp.submit-btn">إرسال رمز التفعيل</span>
     <span id="submitBtnIcon">←</span>
   </button>
-  <p style="text-align:center;color:#475569;font-size:.78rem;margin-top:.75rem">سيُرسَل رمز تفعيل مكوّن من 6 أرقام على بريدك الإلكتروني</p>
+  <p style="text-align:center;color:#475569;font-size:.78rem;margin-top:.75rem" data-i18n="rp.submit-hint">سيُرسَل رمز تفعيل مكوّن من 6 أرقام على بريدك الإلكتروني</p>
 </div>
 
 <!-- OTP SCREEN -->
 <div class="otp-screen" id="otpSection">
   <div class="otp-icon">📧</div>
-  <div class="otp-title">تحقق من بريدك</div>
-  <div class="otp-desc">أرسلنا رمز تفعيل مكوّن من 6 أرقام إلى</div>
+  <div class="otp-title" data-i18n="rp.otp-title">تحقق من بريدك</div>
+  <div class="otp-desc" data-i18n="rp.otp-desc">أرسلنا رمز تفعيل مكوّن من 6 أرقام إلى</div>
   <div class="otp-email-display" id="otpEmailDisplay">—</div>
   
   <div class="otp-input-wrap" id="otpInputWrap">
@@ -510,25 +513,25 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   
   <div class="otp-error" id="otpError">رمز التفعيل غير صحيح، يرجى المحاولة مجدداً</div>
   
-  <button class="btn-verify" id="verifyBtn" onclick="verifyOTP()">تحقق وفعّل الحساب ✓</button>
+  <button class="btn-verify" id="verifyBtn" onclick="verifyOTP()" data-i18n="rp.verify-btn">تحقق وفعّل الحساب ✓</button>
   
   <div class="resend-row">
     <span class="otp-timer" id="otpTimerText">إعادة الإرسال بعد <span id="otpTimer">10:00</span></span>
-    <button class="btn-resend" id="resendBtn" onclick="resendOTP()" disabled>إعادة الإرسال</button>
+    <button class="btn-resend" id="resendBtn" onclick="resendOTP()" disabled data-i18n="rp.resend-btn">إعادة الإرسال</button>
   </div>
 </div>
 
 <!-- SUCCESS -->
 <div class="success-screen" id="successSection">
   <div class="success-icon">✓</div>
-  <div class="success-title">تم تفعيل حسابك!</div>
-  <div class="success-desc">مرحباً بك في منصة RAFD Digital. تم التحقق من بريدك الإلكتروني وتفعيل حسابك بنجاح.</div>
+  <div class="success-title" data-i18n="rp.success-title">تم تفعيل حسابك!</div>
+  <div class="success-desc" data-i18n="rp.success-desc">مرحباً بك في منصة RAFD Digital. تم التحقق من بريدك الإلكتروني وتفعيل حسابك بنجاح.</div>
   <div class="ref-box">
-    <div class="ref-label">رقم الحساب المرجعي</div>
+    <div class="ref-label" data-i18n="rp.ref-label">رقم الحساب المرجعي</div>
     <div class="ref-num" id="refNum">—</div>
   </div>
   <div class="success-steps">
-    <h4>ماذا يمكنك فعله الآن؟</h4>
+    <h4 data-i18n="rp.now-title">ماذا يمكنك فعله الآن؟</h4>
     <div class="ss-item">
       <div class="ss-num">1</div>
       <div class="ss-text">سجّل دخولك مباشرة بالبريد وكلمة المرور</div>
@@ -542,7 +545,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <div class="ss-text">تواصل مع فريقنا لأي استفسار أو دعم</div>
     </div>
   </div>
-  <a href="/partner-login.html" class="btn-login-now">الذهاب لصفحة الدخول ←</a>
+  <a href="/partner-login.html" class="btn-login-now" data-i18n="rp.go-login">الذهاب لصفحة الدخول ←</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1128,5 +1131,6 @@ async function resendOTP() {
   document.getElementById('otp0').focus();
 }
 </script>
-</body>
+<script src="/i18n.js"></script></body>
 </html>
+

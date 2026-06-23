@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -212,24 +212,24 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 <!-- MODAL -->
 <div class="modal-bg" id="modal">
   <div class="modal-box">
-    <div class="modal-hdr">ℹ️ قبل البدء — ملاحظة مهمة</div>
+    <div class="modal-hdr" data-i18n="da.modal-title">ℹ️ قبل البدء — ملاحظة مهمة</div>
     <div class="modal-body">
       هذه تجربة تفاعلية حقيقية تُظهر كيف يعمل نظام Rafd الذكي.<br><br>
       بعد إرسال الطلب، سيحلّل الذكاء الاصطناعي إجاباتك ويُصدر قراراً فورياً بالقبول أو الرفض مع تفاصيل التقييم.<br><br>
       <strong>هذا مثال على برنامج دعم الشركات الناشئة — كل جهة تُحدد معاييرها الخاصة.</strong>
     </div>
-    <button class="btn-modal" onclick="startApp()">ابدأ التقديم الآن ←</button>
+    <button class="btn-modal" onclick="startApp()" data-i18n="da.modal-btn">ابدأ التقديم الآن ←</button>
   </div>
 </div>
 
 <!-- HEADER -->
 <header class="hdr">
-  <a href="/" class="hdr-back">← الرئيسية</a>
+  <a href="/" class="hdr-back" data-i18n="da.back">← الرئيسية</a>
   <a href="/" class="hdr-logo">
     <div class="hdr-icon">R</div>
     <span class="hdr-name">Rafd</span>
   </a>
-  <span class="hdr-badge">تجربة مجانية</span>
+  <button id="langToggleBtn" class="lang-toggle" style="font-size:.78rem;font-family:Cairo,sans-serif;background:none;border:1.5px solid #e2e8f0;border-radius:8px;padding:.3rem .7rem;cursor:pointer;font-weight:700;color:#1e293b;white-space:nowrap" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button><span class="hdr-badge" data-i18n="da.badge">تجربة مجانية</span>
 </header>
 
 <!-- PROGRESS -->
@@ -237,22 +237,22 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
   <div class="prog-steps">
     <div class="ps-col">
       <div class="ps-circle active" id="sc1">1</div>
-      <div class="ps-label active" id="sl1">المعلومات</div>
+      <div class="ps-label active" id="sl1" data-i18n="da.step1">المعلومات</div>
     </div>
     <div class="ps-line" id="ln1"></div>
     <div class="ps-col">
       <div class="ps-circle idle" id="sc2">2</div>
-      <div class="ps-label" id="sl2">المؤهلات</div>
+      <div class="ps-label" id="sl2" data-i18n="da.step2">المؤهلات</div>
     </div>
     <div class="ps-line" id="ln2"></div>
     <div class="ps-col">
       <div class="ps-circle idle" id="sc3">3</div>
-      <div class="ps-label" id="sl3">المشروع</div>
+      <div class="ps-label" id="sl3" data-i18n="da.step3">المشروع</div>
     </div>
     <div class="ps-line" id="ln3"></div>
     <div class="ps-col">
       <div class="ps-circle idle" id="sc4">4</div>
-      <div class="ps-label" id="sl4">أسئلة</div>
+      <div class="ps-label" id="sl4" data-i18n="da.step4">أسئلة</div>
     </div>
   </div>
   <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:25%"></div></div>
@@ -262,7 +262,7 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 <div class="wrap" id="welcomeWrap">
   <div class="welcome-card">
     <div class="wc-icon">🚀</div>
-    <h1 class="wc-title">جرّب نظام Rafd الآن</h1>
+    <h1 class="wc-title" data-i18n="da.wc-title">جرّب نظام Rafd الآن</h1>
     <p class="wc-desc">
       قدّم طلباً تجريبياً لبرنامج دعم الشركات الناشئة وشاهد كيف يحلّل الذكاء الاصطناعي بياناتك ويُصدر قراراً فورياً خلال دقيقتين — تماماً كما ستعمل منصتك بعد الاشتراك.
     </p>
@@ -284,14 +284,14 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
       <strong>⚡ تجربة تفاعلية</strong>
       <p>البيانات التي ستدخلها تُستخدم فقط لإظهار كيف يعمل النظام. هذا مثال على برنامج دعم الشركات الناشئة — كل جهة تُحدد معاييرها الخاصة.</p>
     </div>
-    <button class="btn-start" onclick="showModal()">ابدأ التجربة المجانية ←</button>
+    <button class="btn-start" onclick="showModal()" data-i18n="da.start-btn">ابدأ التجربة المجانية ←</button>
   </div>
 </div>
 
 <!-- ===== STEP 1 ===== -->
 <div class="wrap form-card" id="s1">
-  <div class="fc-title">المعلومات الأساسية</div>
-  <div class="fc-sub">الخطوة 1 من 4 — أخبرنا عن نفسك ومشروعك</div>
+  <div class="fc-title" data-i18n="da.s1-title">المعلومات الأساسية</div>
+  <div class="fc-sub" data-i18n="da.s1-sub">الخطوة 1 من 4 — أخبرنا عن نفسك ومشروعك</div>
   <div class="frow">
     <div class="fld"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="f_name" placeholder="مثال: محمد أحمد الغامدي"></div>
     <div class="fld"><label>البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com"></div>
@@ -321,13 +321,13 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
     </div>
   </div>
   <div class="fld"><label>وصف مختصر للمشروع <span class="req">*</span></label><textarea id="f_desc" placeholder="اشرح فكرة مشروعك في جملتين أو ثلاث..."></textarea></div>
-  <div class="fnav"><span class="step-ctr">1 / 4</span><button class="btn-next" onclick="go(2)">التالي ←</button></div>
+  <div class="fnav"><span class="step-ctr">1 / 4</span><button class="btn-next" onclick="go(2)" data-i18n="da.next">التالي ←</button></div>
 </div>
 
 <!-- ===== STEP 2 ===== -->
 <div class="wrap form-card" id="s2">
-  <div class="fc-title">المؤهلات والخبرة</div>
-  <div class="fc-sub">الخطوة 2 من 4 — خلفيتك الأكاديمية والمهنية</div>
+  <div class="fc-title" data-i18n="da.s2-title">المؤهلات والخبرة</div>
+  <div class="fc-sub" data-i18n="da.s2-sub">الخطوة 2 من 4 — خلفيتك الأكاديمية والمهنية</div>
   <div class="fld"><label>أعلى مؤهل أكاديمي <span class="req">*</span></label>
     <div class="radio-opts" id="f_edu">
       <label class="ropt" onclick="selR(this,'f_edu','phd')"><input type="radio" name="edu" value="phd"><span>دكتوراه</span></label>
@@ -364,13 +364,13 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
       <label class="copt" onclick="togC(this)"><input type="checkbox" value="des"><span>تصميم وتجربة مستخدم</span></label>
     </div>
   </div>
-  <div class="fnav"><button class="btn-prev" onclick="go(1)">← السابق</button><span class="step-ctr">2 / 4</span><button class="btn-next" onclick="go(3)">التالي ←</button></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(1)">← السابق</button><span class="step-ctr">2 / 4</span><button class="btn-next" onclick="go(3)" data-i18n="da.next">التالي ←</button></div>
 </div>
 
 <!-- ===== STEP 3 ===== -->
 <div class="wrap form-card" id="s3">
   <div class="fc-title">المشروع والتمويل</div>
-  <div class="fc-sub">الخطوة 3 من 4 — وضع مشروعك الحالي</div>
+  <div class="fc-sub" data-i18n="da.s3-sub">الخطوة 3 من 4 — تفاصيل مشروعك الريادي</div>
   <div class="fld"><label>مرحلة المشروع الحالية <span class="req">*</span></label>
     <div class="radio-opts" id="f_stage">
       <label class="ropt" onclick="selR(this,'f_stage','idea')"><input type="radio" name="stage" value="idea"><span>فكرة (Idea Stage)</span></label>
@@ -402,13 +402,13 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
       <p style="font-size:.72rem;color:#94a3b8">الحد الأقصى 10MB</p>
     </div>
   </div>
-  <div class="fnav"><button class="btn-prev" onclick="go(2)">← السابق</button><span class="step-ctr">3 / 4</span><button class="btn-next" onclick="go(4)">التالي ←</button></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(2)">← السابق</button><span class="step-ctr">3 / 4</span><button class="btn-next" onclick="go(4)" data-i18n="da.next">التالي ←</button></div>
 </div>
 
 <!-- ===== STEP 4 ===== -->
 <div class="wrap form-card" id="s4">
-  <div class="fc-title">أسئلة إضافية</div>
-  <div class="fc-sub">الخطوة 4 من 4 — الخطوة الأخيرة قبل التقييم</div>
+  <div class="fc-title" data-i18n="da.s4-title">أسئلة إضافية</div>
+  <div class="fc-sub" data-i18n="da.s4-sub">الخطوة 4 من 4 — أسئلة للتأهل النهائي</div>
   <div class="fld"><label>لماذا تريد الانضمام للبرنامج؟ (اختر كل ما ينطبق)</label>
     <div class="check-opts" id="f_reasons">
       <label class="copt" onclick="togC(this)"><input type="checkbox" value="funding"><span>الحصول على تمويل</span></label>
@@ -732,5 +732,6 @@ function launchConfetti() {
   setTimeout(() => c.innerHTML='', 6000);
 }
 </script>
-</body>
+<script src="/i18n.js"></script></body>
 </html>
+

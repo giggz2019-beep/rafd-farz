@@ -133,30 +133,28 @@
       </div>
     </a>
     <ul class="nav-links">
-      <li><a href="/">الرئيسية</a></li>
+      <li><a href="/" data-i18n="nav.home">الرئيسية</a></li>
       <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
       <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
-      <li><a href="/pricing.html" class="active">الأسعار</a></li>
-      <li><a href="/register-partner.html" style="color:#4a9d6f;font-weight:700">🤝 انضم كشريك</a></li>
+      <li><a href="/pricing.html" class="active" data-i18n="nav.pricing">الأسعار</a></li>
+      <li><a href="/register-partner.html" style="color:#4a9d6f;font-weight:700">🤝 <span data-i18n="nav.join">انضم كشريك</span></a></li>
     </ul>
         <div class="nav-actions">
       <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
       <div class="login-dropdown-wrap" id="loginDropWrap">
-        <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem">
-          تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span>
-        </button>
+        <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem"><span data-i18n="nav.login">تسجيل الدخول</span> <span style="font-size:.7rem;opacity:.7">▼</span></button>
         <div class="login-drop" id="loginDrop">
           <a href="/partner-login.html" class="login-drop-item">
             <span style="font-size:1.1rem">🤝</span>
-            <div><div style="font-weight:700;font-size:.88rem">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6">لوحة تحكم الجهات</div></div>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.partner-login">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.partner-login-sub">لوحة تحكم الجهات</div></div>
           </a>
           <a href="/admin.html" class="login-drop-item">
             <span style="font-size:1.1rem">🛡️</span>
-            <div><div style="font-weight:700;font-size:.88rem">الإدارة</div><div style="font-size:.72rem;opacity:.6">دخول مشرفي النظام</div></div>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.admin">الإدارة</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.admin-sub">دخول مشرفي النظام</div></div>
           </a>
         </div>
       </div>
-      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f">انضم كشريك</a>
+      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f" data-i18n="nav.join">انضم كشريك</a>
     </div>
     <button class="hamburger" id="hamburger">&#9776;</button>
   </div>
@@ -165,16 +163,16 @@
 <!-- PAGE HERO -->
 <section class="page-hero">
   <div class="container">
-    <span class="page-hero-tag">الباقات والأسعار</span>
-    <h1>اختر الباقة المناسبة<br>لجهتك</h1>
-    <p>ابدأ مجاناً وطوّر باقتك عند الحاجة — بدون عقود طويلة أو رسوم خفية</p>
+    <span class="page-hero-tag" data-i18n="pg.hero-tag">الباقات والأسعار</span>
+    <h1 data-i18n="pg.hero-h1">اختر الباقة المناسبة<br>لجهتك</h1>
+    <p data-i18n="pg.hero-p">ابدأ مجاناً وطوّر باقتك عند الحاجة — بدون عقود طويلة أو رسوم خفية</p>
     <div class="billing-toggle">
-      <span class="toggle-label">شهري</span>
+      <span data-i18n="pg.toggle-monthly">شهري</span>
       <div class="toggle-wrap" id="billingToggle" onclick="toggleBilling()">
         <div class="toggle-knob"></div>
       </div>
-      <span class="toggle-label">سنوي</span>
-      <span class="save-badge">وفّر 20%</span>
+      <span data-i18n="pg.toggle-annual">سنوي</span>
+      <span class="save-badge" data-i18n="pg.save-badge">وفّر 20%</span>
     </div>
   </div>
 </section>
@@ -186,357 +184,357 @@
     <!-- تجريبية -->
     <div class="pricing-card">
       <div class="card-icon icon-trial">🎯</div>
-      <div class="card-name">تجريبية</div>
-      <div class="card-desc">جرّب المنصة كاملاً لمدة 7 أيام — بدون أي التزام مالي</div>
+      <div class="card-name" data-i18n="pg.trial-name">تجريبية</div>
+      <div class="card-desc" data-i18n="pg.trial-desc">جرّب المنصة كاملاً لمدة 7 أيام — بدون أي التزام مالي</div>
       <div class="price-wrap">
         <div class="price-main">
-          <span class="price-num free">مجاناً</span>
+          <span class="price-num free" data-i18n="pg.free">مجاناً</span>
         </div>
-        <div class="price-period">7 أيام تجريبية</div>
+        <div class="price-period" data-i18n="pg.trial-period">7 أيام تجريبية</div>
       </div>
       <ul class="features-list">
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text"><strong>50 طلباً</strong> كحد أقصى خلال التجربة</div>
+          <div class="feat-text" data-i18n="pg.trial-f1"><strong>50 طلباً</strong> كحد أقصى خلال التجربة</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text"><strong>نموذج طلب واحد</strong> قابل للتخصيص</div>
+          <div class="feat-text" data-i18n="pg.trial-f2"><strong>نموذج طلب واحد</strong> قابل للتخصيص</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">تقييم ذكي بالذكاء الاصطناعي</div>
+          <div class="feat-text" data-i18n="pg.trial-f3">تقييم ذكي بالذكاء الاصطناعي</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">لوحة تحكم أساسية</div>
+          <div class="feat-text" data-i18n="pg.trial-f4">لوحة تحكم أساسية</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">تقارير أساسية</div>
+          <div class="feat-text" data-i18n="pg.trial-f5">تقارير أساسية</div>
         </li>
         <li>
           <div class="feat-icon no">✗</div>
-          <div class="feat-text" style="color:#94a3b8">تحقق الهوية</div>
+          <div class="feat-text" style="color:#94a3b8" data-i18n="pg.trial-f6">تحقق الهوية</div>
         </li>
         <li>
           <div class="feat-icon no">✗</div>
-          <div class="feat-text" style="color:#94a3b8">إشعارات البريد الإلكتروني</div>
+          <div class="feat-text" style="color:#94a3b8" data-i18n="pg.trial-f7">إشعارات البريد الإلكتروني</div>
         </li>
         <li>
           <div class="feat-icon no">✗</div>
-          <div class="feat-text" style="color:#94a3b8">تكامل API</div>
+          <div class="feat-text" style="color:#94a3b8" data-i18n="pg.trial-f8">تكامل API</div>
         </li>
         <li>
           <div class="feat-icon no">✗</div>
-          <div class="feat-text" style="color:#94a3b8">دعم فني مخصص</div>
+          <div class="feat-text" style="color:#94a3b8" data-i18n="pg.trial-f9">دعم فني مخصص</div>
         </li>
       </ul>
-      <a href="/register-partner.html?plan=trial" class="btn-plan btn-trial">ابدأ مجاناً ←</a>
+      <a href="/register-partner.html?plan=trial" class="btn-plan btn-trial"><span data-i18n="pg.trial-btn">ابدأ مجاناً ←</span></a>
     </div>
 
     <!-- أساسية -->
     <div class="pricing-card">
       <div class="card-icon icon-basic">🚀</div>
-      <div class="card-name">الأساسية</div>
-      <div class="card-desc">مثالية للجهات الناشئة التي تحتاج أتمتة فعّالة بتكلفة معقولة</div>
+      <div class="card-name" data-i18n="pg.basic-name">الأساسية</div>
+      <div class="card-desc" data-i18n="pg.basic-desc">مثالية للجهات الناشئة التي تحتاج أتمتة فعّالة بتكلفة معقولة</div>
       <div class="price-wrap">
         <div class="price-main">
           <span class="price-num" id="basicPrice">249</span>
-          <span class="price-currency">ر.س</span>
+          <span class="price-currency" data-i18n="pg.sar">ر.س</span>
         </div>
-        <div class="price-period" id="basicPeriod">شهرياً</div>
-        <div class="price-annual" id="basicAnnual">2,390 ر.س سنوياً — وفّر 98 ر.س</div>
+        <div class="price-period" id="basicPeriod" data-i18n="pg.basic-period">شهرياً</div>
+        <div class="price-annual" id="basicAnnual" data-i18n="pg.basic-annual">2,390 ر.س سنوياً — وفّر 98 ر.س</div>
       </div>
       <ul class="features-list">
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text"><strong>500 طلب</strong> شهرياً</div>
+          <div class="feat-text" data-i18n="pg.basic-f1"><strong>500 طلب</strong> شهرياً</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text"><strong>3 نماذج طلبات</strong> مخصصة</div>
+          <div class="feat-text" data-i18n="pg.basic-f2"><strong>3 نماذج طلبات</strong> مخصصة</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">تقييم ذكي متقدم بالذكاء الاصطناعي</div>
+          <div class="feat-text" data-i18n="pg.basic-f3">تقييم ذكي متقدم بالذكاء الاصطناعي</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">لوحة تحكم كاملة</div>
+          <div class="feat-text" data-i18n="pg.basic-f4">لوحة تحكم كاملة</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">تقارير وتحليلات تفصيلية</div>
+          <div class="feat-text" data-i18n="pg.basic-f5">تقارير وتحليلات تفصيلية</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text"><strong>تحقق الهوية</strong> للمتقدمين</div>
+          <div class="feat-text" data-i18n="pg.basic-f6"><strong>تحقق الهوية</strong> للمتقدمين</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">إشعارات بريد إلكتروني تلقائية</div>
+          <div class="feat-text" data-i18n="pg.basic-f7">إشعارات بريد إلكتروني تلقائية</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">تصدير البيانات (Excel / PDF)</div>
+          <div class="feat-text" data-i18n="pg.basic-f8">تصدير البيانات (Excel / PDF)</div>
         </li>
         <li>
           <div class="feat-icon partial">~</div>
-          <div class="feat-text">دعم فني عبر البريد (خلال 48 ساعة)</div>
+          <div class="feat-text" data-i18n="pg.basic-f9">دعم فني عبر البريد (خلال 48 ساعة)</div>
         </li>
       </ul>
-      <a href="/register-partner.html?plan=basic" class="btn-plan btn-basic">ابدأ بالأساسية ←</a>
+      <a href="/register-partner.html?plan=basic" class="btn-plan btn-basic"><span data-i18n="pg.basic-btn">ابدأ بالأساسية ←</span></a>
     </div>
 
     <!-- متقدمة -->
     <div class="pricing-card popular">
-      <div class="popular-badge">⭐ الأكثر طلباً</div>
+      <div class="popular-badge" data-i18n="pg.adv-badge">⭐ الأكثر طلباً</div>
       <div class="card-icon icon-advanced">💎</div>
-      <div class="card-name">المتقدمة</div>
-      <div class="card-desc">للجهات الكبيرة التي تحتاج طاقة استيعابية عالية وتكاملات متقدمة</div>
+      <div class="card-name" data-i18n="pg.adv-name">المتقدمة</div>
+      <div class="card-desc" data-i18n="pg.adv-desc">للجهات الكبيرة التي تحتاج طاقة استيعابية عالية وتكاملات متقدمة</div>
       <div class="price-wrap">
         <div class="price-main">
           <span class="price-num" id="advPrice">499</span>
-          <span class="price-currency">ر.س</span>
+          <span class="price-currency" data-i18n="pg.sar">ر.س</span>
         </div>
-        <div class="price-period" id="advPeriod">شهرياً</div>
-        <div class="price-annual" id="advAnnual">4,790 ر.س سنوياً — وفّر 198 ر.س</div>
+        <div class="price-period" id="advPeriod" data-i18n="pg.adv-period">شهرياً</div>
+        <div class="price-annual" id="advAnnual" data-i18n="pg.adv-annual">4,790 ر.س سنوياً — وفّر 198 ر.س</div>
       </div>
       <ul class="features-list">
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text"><strong>طلبات غير محدودة</strong></div>
+          <div class="feat-text" data-i18n="pg.adv-f1"><strong>طلبات غير محدودة</strong></div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text"><strong>نماذج غير محدودة</strong></div>
+          <div class="feat-text" data-i18n="pg.adv-f2"><strong>نماذج غير محدودة</strong></div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">تقييم ذكي متقدم + تخصيص الأوزان</div>
+          <div class="feat-text" data-i18n="pg.adv-f3">تقييم ذكي متقدم + تخصيص الأوزان</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">لوحة تحكم متقدمة مع تقارير مخصصة</div>
+          <div class="feat-text" data-i18n="pg.adv-f4">لوحة تحكم متقدمة مع تقارير مخصصة</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">تحليلات متقدمة + رسوم بيانية</div>
+          <div class="feat-text" data-i18n="pg.adv-f5">تحليلات متقدمة + رسوم بيانية</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">تحقق الهوية المتقدم</div>
+          <div class="feat-text" data-i18n="pg.adv-f6">تحقق الهوية المتقدم</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text">إشعارات SMS + بريد إلكتروني</div>
+          <div class="feat-text" data-i18n="pg.adv-f7">إشعارات SMS + بريد إلكتروني</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text"><strong>تكامل API كامل</strong> مع أنظمتك</div>
+          <div class="feat-text" data-i18n="pg.adv-f8"><strong>تكامل API كامل</strong> مع أنظمتك</div>
         </li>
         <li>
           <div class="feat-icon yes">✓</div>
-          <div class="feat-text"><strong>مدير حساب مخصص</strong> + دعم أولوية</div>
+          <div class="feat-text" data-i18n="pg.adv-f9"><strong>مدير حساب مخصص</strong> + دعم أولوية</div>
         </li>
       </ul>
-      <a href="/register-partner.html?plan=advanced" class="btn-plan btn-advanced">ابدأ بالمتقدمة ←</a>
+      <a href="/register-partner.html?plan=advanced" class="btn-plan btn-advanced"><span data-i18n="pg.adv-btn">ابدأ بالمتقدمة ←</span></a>
     </div>
 
   </div>
 
   <!-- ملاحظة -->
-  <p style="text-align:center;color:#94a3b8;font-size:.82rem;margin-top:2rem">جميع الأسعار بدون ضريبة القيمة المضافة · يمكن الإلغاء في أي وقت · لا توجد رسوم خفية</p>
+  <p style="text-align:center;color:#94a3b8;font-size:.82rem;margin-top:2rem" data-i18n="pg.price-note">جميع الأسعار بدون ضريبة القيمة المضافة · يمكن الإلغاء في أي وقت · لا توجد رسوم خفية</p>
 </section>
 
 <!-- COMPARISON TABLE -->
 <section class="compare-section">
   <div class="container">
     <div class="section-header" style="text-align:center">
-      <span class="section-tag">مقارنة تفصيلية</span>
-      <h2 class="section-title">ما الذي تحصل عليه في كل باقة؟</h2>
+      <span class="section-tag" data-i18n="pg.compare-tag">مقارنة تفصيلية</span>
+      <h2 class="section-title" data-i18n="pg.compare-title">ما الذي تحصل عليه في كل باقة؟</h2>
     </div>
     <div style="overflow-x:auto">
     <table class="compare-table">
       <thead>
         <tr>
-          <th style="width:35%">الميزة</th>
-          <th class="th-trial">تجريبية<br><small style="font-weight:400;opacity:.8">مجاناً</small></th>
-          <th class="th-basic">الأساسية<br><small style="font-weight:400;opacity:.8">249 ر.س/شهر</small></th>
-          <th class="th-advanced">المتقدمة<br><small style="font-weight:400;opacity:.8">499 ر.س/شهر</small></th>
+          <th style="width:35%" data-i18n="pg.comp-feat">الميزة</th>
+          <th class="th-trial"><span data-i18n="pg.trial-name">تجريبية</span><br><small style="font-weight:400;opacity:.8" data-i18n="pg.free">مجاناً</small></th>
+          <th class="th-basic"><span data-i18n="pg.basic-name">الأساسية</span><br><small style="font-weight:400;opacity:.8">249 ر.س/شهر</small></th>
+          <th class="th-advanced"><span data-i18n="pg.adv-name">المتقدمة</span><br><small style="font-weight:400;opacity:.8">499 ر.س/شهر</small></th>
         </tr>
       </thead>
       <tbody>
         <!-- الطاقة الاستيعابية -->
-        <tr class="section-row"><td colspan="4">📊 الطاقة الاستيعابية</td></tr>
+        <tr class="section-row"><td colspan="4" data-i18n="pg.sec-cap">📊 الطاقة الاستيعابية</td></tr>
         <tr>
-          <td>عدد الطلبات الشهرية</td>
+          <td data-i18n="pg.c-req">عدد الطلبات الشهرية</td>
           <td>50 طلباً (تجربة)</td>
           <td>500 طلب</td>
           <td>غير محدود</td>
         </tr>
         <tr>
-          <td>عدد النماذج</td>
+          <td data-i18n="pg.c-forms">عدد النماذج</td>
           <td>1 نموذج</td>
           <td>3 نماذج</td>
           <td>غير محدود</td>
         </tr>
         <tr>
-          <td>عدد المستخدمين</td>
+          <td data-i18n="pg.c-users">عدد المستخدمين</td>
           <td>1</td>
           <td>3</td>
           <td>غير محدود</td>
         </tr>
         <tr>
-          <td>مساحة التخزين</td>
+          <td data-i18n="pg.c-storage">مساحة التخزين</td>
           <td>500 MB</td>
           <td>5 GB</td>
           <td>50 GB</td>
         </tr>
 
         <!-- التقييم الذكي -->
-        <tr class="section-row"><td colspan="4">🤖 التقييم الذكي</td></tr>
+        <tr class="section-row"><td colspan="4" data-i18n="pg.sec-ai">🤖 التقييم الذكي</td></tr>
         <tr>
-          <td>تقييم بالذكاء الاصطناعي</td>
+          <td data-i18n="pg.c-ai">تقييم بالذكاء الاصطناعي</td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>تخصيص معايير التقييم</td>
-          <td><span class="check-partial">محدود</span></td>
+          <td data-i18n="pg.c-crit">تخصيص معايير التقييم</td>
+          <td><span class="check-partial" data-i18n="pg.limited">محدود</span></td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>تخصيص أوزان المعايير</td>
+          <td data-i18n="pg.c-weights">تخصيص أوزان المعايير</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>تقرير تفصيلي لكل طلب</td>
-          <td><span class="check-partial">أساسي</span></td>
+          <td data-i18n="pg.c-report">تقرير تفصيلي لكل طلب</td>
+          <td><span class="check-partial" data-i18n="pg.basic-lvl">أساسي</span></td>
           <td><span class="check-yes">✓</span></td>
-          <td><span class="check-yes">✓ متقدم</span></td>
+          <td><span class="check-yes"><span data-i18n="pg.adv-lvl">✓ متقدم</span></span></td>
         </tr>
         <tr>
-          <td>قرار فوري تلقائي</td>
+          <td data-i18n="pg.c-instant">قرار فوري تلقائي</td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
 
         <!-- التحقق والأمان -->
-        <tr class="section-row"><td colspan="4">🔐 التحقق والأمان</td></tr>
+        <tr class="section-row"><td colspan="4" data-i18n="pg.sec-sec">🔐 التحقق والأمان</td></tr>
         <tr>
-          <td>تحقق الهوية الرقمية</td>
+          <td data-i18n="pg.c-verify">تحقق الهوية الرقمية</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
-          <td><span class="check-yes">✓ متقدم</span></td>
+          <td><span class="check-yes"><span data-i18n="pg.adv-lvl">✓ متقدم</span></span></td>
         </tr>
         <tr>
-          <td>تشفير البيانات</td>
-          <td><span class="check-yes">✓</span></td>
-          <td><span class="check-yes">✓</span></td>
-          <td><span class="check-yes">✓</span></td>
-        </tr>
-        <tr>
-          <td>عزل البيانات بين الجهات</td>
+          <td data-i18n="pg.c-encrypt">تشفير البيانات</td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>سجل العمليات (Audit Log)</td>
+          <td data-i18n="pg.c-isolate">عزل البيانات بين الجهات</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="pg.c-audit">سجل العمليات (Audit Log)</td>
           <td><span class="check-no">✗</span></td>
-          <td><span class="check-partial">30 يوماً</span></td>
-          <td><span class="check-yes">✓ كامل</span></td>
+          <td><span class="check-partial" data-i18n="pg.c-30d">30 يوماً</span></td>
+          <td><span class="check-yes"><span data-i18n="pg.full-lvl">✓ كامل</span></span></td>
         </tr>
 
         <!-- التقارير والتحليلات -->
-        <tr class="section-row"><td colspan="4">📈 التقارير والتحليلات</td></tr>
+        <tr class="section-row"><td colspan="4" data-i18n="pg.sec-rep">📈 التقارير والتحليلات</td></tr>
         <tr>
-          <td>لوحة تحكم إحصائية</td>
-          <td><span class="check-partial">أساسية</span></td>
+          <td data-i18n="pg.c-dash">لوحة تحكم إحصائية</td>
+          <td><span class="check-partial" data-i18n="pg.basic-lvl">أساسية</span></td>
           <td><span class="check-yes">✓</span></td>
-          <td><span class="check-yes">✓ متقدمة</span></td>
+          <td><span class="check-yes"><span data-i18n="pg.adv-lvl">✓ متقدمة</span></span></td>
         </tr>
         <tr>
-          <td>رسوم بيانية تفاعلية</td>
+          <td data-i18n="pg.c-charts">رسوم بيانية تفاعلية</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>تصدير Excel / PDF</td>
+          <td data-i18n="pg.c-export">تصدير Excel / PDF</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>تقارير مخصصة</td>
+          <td data-i18n="pg.c-custom-rep">تقارير مخصصة</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
 
         <!-- التكامل والإشعارات -->
-        <tr class="section-row"><td colspan="4">🔗 التكامل والإشعارات</td></tr>
+        <tr class="section-row"><td colspan="4" data-i18n="pg.sec-int">🔗 التكامل والإشعارات</td></tr>
         <tr>
-          <td>إشعارات بريد إلكتروني</td>
+          <td data-i18n="pg.c-email">إشعارات بريد إلكتروني</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>إشعارات SMS</td>
+          <td data-i18n="pg.c-sms">إشعارات SMS</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>تكامل API</td>
+          <td data-i18n="pg.c-api">تكامل API</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-no">✗</span></td>
-          <td><span class="check-yes">✓ كامل</span></td>
+          <td><span class="check-yes"><span data-i18n="pg.full-lvl">✓ كامل</span></span></td>
         </tr>
         <tr>
-          <td>Webhook</td>
+          <td data-i18n="pg.c-webhook">Webhook</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>تضمين iFrame في موقعك</td>
+          <td data-i18n="pg.c-iframe">تضمين iFrame في موقعك</td>
           <td><span class="check-no">✗</span></td>
-          <td><span class="check-partial">محدود</span></td>
-          <td><span class="check-yes">✓ كامل</span></td>
+          <td><span class="check-partial" data-i18n="pg.limited">محدود</span></td>
+          <td><span class="check-yes"><span data-i18n="pg.full-lvl">✓ كامل</span></span></td>
         </tr>
 
         <!-- الدعم -->
-        <tr class="section-row"><td colspan="4">🛎 الدعم الفني</td></tr>
+        <tr class="section-row"><td colspan="4" data-i18n="pg.sec-sup">🛎 الدعم الفني</td></tr>
         <tr>
-          <td>دعم عبر البريد الإلكتروني</td>
+          <td data-i18n="pg.c-email-sup">دعم عبر البريد الإلكتروني</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓ (48 ساعة)</span></td>
           <td><span class="check-yes">✓ (24 ساعة)</span></td>
         </tr>
         <tr>
-          <td>دعم عبر الواتساب</td>
+          <td data-i18n="pg.c-whatsapp">دعم عبر الواتساب</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>مدير حساب مخصص</td>
+          <td data-i18n="pg.c-mgr">مدير حساب مخصص</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
         </tr>
         <tr>
-          <td>تدريب وتأهيل الفريق</td>
+          <td data-i18n="pg.c-train">تدريب وتأهيل الفريق</td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-no">✗</span></td>
           <td><span class="check-yes">✓</span></td>
@@ -551,57 +549,57 @@
 <section class="faq-section">
   <div class="container">
     <div class="section-header" style="text-align:center">
-      <span class="section-tag">الأسئلة الشائعة</span>
-      <h2 class="section-title">إجابات على أسئلتك</h2>
+      <span class="section-tag" data-i18n="pg.faq-tag">الأسئلة الشائعة</span>
+      <h2 class="section-title" data-i18n="pg.faq-title">إجابات على أسئلتك</h2>
     </div>
     <div class="faq-grid">
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          هل يمكنني الترقية أو التخفيض بين الباقات؟
+          <span data-i18n="pg.faq1q">هل يمكنني الترقية أو التخفيض بين الباقات؟</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-a">نعم، يمكنك الترقية في أي وقت وسيتم احتساب الفرق بالتناسب. التخفيض يسري في بداية دورة الفوترة التالية.</div>
+        <div class="faq-a" data-i18n="pg.faq1a">نعم، يمكنك الترقية في أي وقت وسيتم احتساب الفرق بالتناسب. التخفيض يسري في بداية دورة الفوترة التالية.</div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          هل هناك عقود طويلة الأمد؟
+          <span data-i18n="pg.faq2q">هل هناك عقود طويلة الأمد؟</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-a">لا، جميع باقاتنا شهرية أو سنوية بدون أي التزامات طويلة الأمد. يمكنك الإلغاء في أي وقت.</div>
+        <div class="faq-a" data-i18n="pg.faq2a">لا، جميع باقاتنا شهرية أو سنوية بدون أي التزامات طويلة الأمد. يمكنك الإلغاء في أي وقت.</div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          ماذا يحدث إذا تجاوزت حد الطلبات؟
+          <span data-i18n="pg.faq3q">ماذا يحدث إذا تجاوزت حد الطلبات؟</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-a">سنُرسل لك إشعاراً عند الوصول لـ 80% من الحد. يمكنك الترقية أو شراء طلبات إضافية. لن يتوقف النظام فجأة.</div>
+        <div class="faq-a" data-i18n="pg.faq3a">سنُرسل لك إشعاراً عند الوصول لـ 80% من الحد. يمكنك الترقية أو شراء طلبات إضافية. لن يتوقف النظام فجأة.</div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          هل البيانات محفوظة عند الإلغاء؟
+          <span data-i18n="pg.faq4q">هل البيانات محفوظة عند الإلغاء؟</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-a">نعم، يمكنك تصدير جميع بياناتك قبل الإلغاء. نحتفظ بالبيانات لمدة 30 يوماً بعد الإلغاء لإتاحة الاسترداد.</div>
+        <div class="faq-a" data-i18n="pg.faq4a">نعم، يمكنك تصدير جميع بياناتك قبل الإلغاء. نحتفظ بالبيانات لمدة 30 يوماً بعد الإلغاء لإتاحة الاسترداد.</div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          هل تدعمون الفوترة بالفاتورة الرسمية؟
+          <span data-i18n="pg.faq5q">هل تدعمون الفوترة بالفاتورة الرسمية؟</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-a">نعم، نوفر فواتير رسمية مع ضريبة القيمة المضافة لجميع الباقات المدفوعة. يمكن إصدارها باسم الجهة الرسمية.</div>
+        <div class="faq-a" data-i18n="pg.faq5a">نعم، نوفر فواتير رسمية مع ضريبة القيمة المضافة لجميع الباقات المدفوعة. يمكن إصدارها باسم الجهة الرسمية.</div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          هل يمكن تخصيص الباقة لاحتياجات خاصة؟
+          <span data-i18n="pg.faq6q">هل يمكن تخصيص الباقة لاحتياجات خاصة؟</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-a">نعم، للجهات الكبيرة التي لديها احتياجات خاصة نوفر باقات مخصصة. تواصل معنا على info@rafd-digital.com لمناقشة متطلباتك.</div>
+        <div class="faq-a" data-i18n="pg.faq6a">نعم، للجهات الكبيرة التي لديها احتياجات خاصة نوفر باقات مخصصة. تواصل معنا على info@rafd-digital.com لمناقشة متطلباتك.</div>
       </div>
 
     </div>
@@ -611,11 +609,11 @@
 <!-- CTA -->
 <section class="cta-section">
   <div class="container">
-    <h2>جاهز للبدء مع RAFD؟</h2>
-    <p>سجّل جهتك الآن وابدأ تجربتك المجانية لمدة 7 أيام</p>
+    <h2 data-i18n="pg.cta-title">جاهز للبدء مع RAFD؟</h2>
+    <p data-i18n="pg.cta-p">سجّل جهتك الآن وابدأ تجربتك المجانية لمدة 7 أيام</p>
     <div class="cta-btns">
       <a href="/register-partner.html" class="cta-btn-primary">سجّل جهتك الآن ←</a>
-      <a href="mailto:info@rafd-digital.com" class="cta-btn-ghost">✉ تواصل معنا</a>
+      <a href="mailto:info@rafd-digital.com" class="cta-btn-ghost" data-i18n="pg.cta-btn2">✉ تواصل معنا</a>
     </div>
   </div>
 </section>
@@ -626,10 +624,10 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
-        <p class="footer-desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
+        <p class="footer-desc" data-i18n="footer.desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
       </div>
       <div class="footer-col">
-        <h4>المنصة</h4>
+        <h4 data-i18n="footer.platform">المنصة</h4>
         <ul>
           <li><a href="/#features">المميزات</a></li>
           <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
@@ -638,7 +636,7 @@
         </ul>
       </div>
       <div class="footer-col">
-        <h4>الشركاء</h4>
+        <h4 data-i18n="footer.partners">الشركاء</h4>
         <ul>
           <li><a href="/register-partner.html">انضم كشريك</a></li>
           <li><a href="/partner-login.html">دخول الشركاء</a></li>
@@ -646,7 +644,7 @@
         </ul>
       </div>
       <div class="footer-col">
-        <h4>الشركة</h4>
+        <h4 data-i18n="footer.company">الشركة</h4>
         <ul>
           <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
           <li><a href="mailto:info@rafd-digital.com">تواصل معنا</a></li>
@@ -699,5 +697,10 @@ document.getElementById('hamburger').addEventListener('click', () => {
 <script src="/i18n.js"></script>
 </body>
 </html>
+
+
+
+
+
 
 

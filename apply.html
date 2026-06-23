@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -283,23 +283,24 @@ input[type=number]{-moz-appearance:textfield}
     <img src="/rafd-logo.png" alt="RAFD Digital" style="height:58px;width:auto;border-radius:10px;background:#fff;padding:4px;box-shadow:0 1px 4px rgba(0,0,0,.12)">
     <div>
       <div class="hdr-name">RAFD Digital</div>
-      <div class="hdr-sub">منصة التقييم الذكي</div>
+      <div class="hdr-sub" data-i18n="apply.hdr-sub">منصة التقييم الذكي</div>
     </div>
   </a>
+  <button id="langToggleBtn" class="lang-toggle" style="background:none;border:1.5px solid #e2e8f0;border-radius:8px;padding:.3rem .7rem;font-size:.78rem;font-weight:700;color:#1e293b;cursor:pointer;white-space:nowrap" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
 </header>
 
 <!-- Progress -->
 <div class="prog-wrap" id="progWrap">
   <div class="prog-steps">
-    <div class="ps-col"><div class="ps-circle active" id="sc1">1</div><div class="ps-label active" id="sl1">المعلومات</div></div>
+    <div class="ps-col"><div class="ps-circle active" id="sc1">1</div><div class="ps-label active" id="sl1" data-i18n="da.step1">المعلومات</div></div>
     <div class="ps-line" id="ln1"></div>
-    <div class="ps-col"><div class="ps-circle idle" id="sc2">2</div><div class="ps-label" id="sl2">المؤهلات</div></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc2">2</div><div class="ps-label" id="sl2" data-i18n="da.step2">المؤهلات</div></div>
     <div class="ps-line" id="ln2"></div>
-    <div class="ps-col"><div class="ps-circle idle" id="sc3">3</div><div class="ps-label" id="sl3">المشروع</div></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc3">3</div><div class="ps-label" id="sl3" data-i18n="da.step3">المشروع</div></div>
     <div class="ps-line" id="ln3"></div>
-    <div class="ps-col"><div class="ps-circle idle" id="sc4">4</div><div class="ps-label" id="sl4">أسئلة</div></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc4">4</div><div class="ps-label" id="sl4" data-i18n="da.step4">أسئلة</div></div>
     <div class="ps-line" id="ln4"></div>
-    <div class="ps-col"><div class="ps-circle idle" id="sc5">5</div><div class="ps-label" id="sl5">النتيجة</div></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc5">5</div><div class="ps-label" id="sl5" data-i18n="apply.result">النتيجة</div></div>
   </div>
   <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:20%"></div></div>
 </div>
@@ -467,7 +468,7 @@ input[type=number]{-moz-appearance:textfield}
     ⚠️ تأكد من صحة بياناتك — المعلومات الشخصية يجب أن تطابق هويتك الرسمية وتُستخدم لتحقق الجهة
   </div>
 
-  <div class="fnav"><span class="step-ctr">1 / 5</span><button class="btn-next" onclick="go(2)">التالي ←</button></div>
+  <div class="fnav"><span class="step-ctr">1 / 5</span><button class="btn-next" onclick="go(2)" data-i18n="da.next">التالي ←</button></div>
 </div>
 
 <!-- Nafath Verification Step (shown only if partner requires it) -->
@@ -523,7 +524,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="fnav">
-    <button class="btn-prev" onclick="go(1)">← السابق</button>
+    <button class="btn-prev" onclick="go(1)" data-i18n="da.back-btn">← السابق</button>
     <span class="step-ctr" id="nafath_step_ctr">1.5 / 5</span>
     <button id="nafath_next_btn" class="btn-next" onclick="go(2)" style="opacity:.4;pointer-events:none">التالي ←</button>
     <button id="nafath_skip_btn" class="btn-next" style="background:#64748b" onclick="skipNafath()">تخطي ←</button>
@@ -532,7 +533,7 @@ input[type=number]{-moz-appearance:textfield}
 
 <!-- Step 2 -->
 <div class="wrap form-card" id="s2">
-  <div class="fc-title">المؤهلات والخبرة</div>
+  <div class="fc-title" data-i18n="da.s2-title">المؤهلات والخبرة</div>
   <div class="fc-sub">الخطوة 2 من 4 — خلفيتك الأكاديمية والمهنية</div>
   <div class="fld"><label>أعلى مؤهل أكاديمي <span class="req">*</span></label>
     <div class="radio-opts" id="f_edu">
@@ -578,7 +579,7 @@ input[type=number]{-moz-appearance:textfield}
       <label class="copt" onclick="togC(this)"><input type="checkbox" value="des"><span>تصميم وتجربة مستخدم</span></label>
     </div>
   </div>
-  <div class="fnav"><button class="btn-prev" onclick="go(1)">← السابق</button><span class="step-ctr">2 / 5</span><button class="btn-next" onclick="go(3)">التالي ←</button></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(1)" data-i18n="da.back-btn">← السابق</button><span class="step-ctr">2 / 5</span><button class="btn-next" onclick="go(3)" data-i18n="da.next">التالي ←</button></div>
 </div>
 
 <!-- Step 3 -->
@@ -609,12 +610,12 @@ input[type=number]{-moz-appearance:textfield}
       <label class="ropt" onclick="selR(this,'f_cust','none')"><input type="radio" name="cust" value="none"><span>لا يوجد بعد</span></label>
     </div>
   </div>
-  <div class="fnav"><button class="btn-prev" onclick="go(2)">← السابق</button><span class="step-ctr">3 / 5</span><button class="btn-next" onclick="go(4)">التالي ←</button></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(2)" data-i18n="da.back-btn">← السابق</button><span class="step-ctr">3 / 5</span><button class="btn-next" onclick="go(4)" data-i18n="da.next">التالي ←</button></div>
 </div>
 
 <!-- Step 4 -->
 <div class="wrap form-card" id="s4">
-  <div class="fc-title">أسئلة إضافية</div>
+  <div class="fc-title" data-i18n="da.s4-title">أسئلة إضافية</div>
   <div class="fc-sub">الخطوة 4 من 4 — الخطوة الأخيرة قبل التقييم</div>
   <div class="fld"><label>لماذا تريد الانضمام؟ (اختر كل ما ينطبق)</label>
     <div class="check-opts" id="f_reasons">
@@ -642,16 +643,16 @@ input[type=number]{-moz-appearance:textfield}
   <div id="docs_upload_container"></div>
 
   <div class="fnav">
-    <button class="btn-prev" onclick="go(3)">← السابق</button>
+    <button class="btn-prev" onclick="go(3)" data-i18n="da.back-btn">← السابق</button>
     <span class="step-ctr">4 / 5</span>
-    <button class="btn-next btn-submit" onclick="submitApp()">إرسال الطلب ✓</button>
+    <button class="btn-next btn-submit" onclick="submitApp()" data-i18n="apply.submit">إرسال الطلب ✓</button>
   </div>
 </div>
 
 <!-- AI Terminal -->
 <div class="ai-page" id="aiPage">
   <div class="ai-intro">
-    <h2>⏳ جارٍ مراجعة طلبك</h2>
+    <h2 data-i18n="apply.ai-title">⏳ جارٍ مراجعة طلبك</h2>
     <p>تُعالَج بياناتك وفق معايير <span id="termPartnerName">الجهة</span> — يُرجى الانتظار</p>
   </div>
   <div class="terminal">
@@ -674,7 +675,7 @@ input[type=number]{-moz-appearance:textfield}
     <div id="rReasons"></div>
   </div>
   <div class="result-actions">
-    <a href="/" class="btn-cta-p">تعرّف على RAFD Digital ←</a>
+    <a href="/" class="btn-cta-p" data-i18n="apply.learn">تعرّف على RAFD Digital ←</a>
   </div>
 </div>
 
@@ -1814,5 +1815,6 @@ function launchConfetti(count=90) {
 
 init();
 </script>
-</body>
+<script src="/i18n.js"></script></body>
 </html>
+
