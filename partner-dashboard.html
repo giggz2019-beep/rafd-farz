@@ -40,8 +40,8 @@ body.theme-light .fld-m input:focus,body.theme-light .fld-m select:focus{border-
 body.theme-light .q-card{background:#f8fafc;border-color:#dde3ec}
 body.theme-light .q-label{color:#1e293b}
 body.theme-light .q-weight input{background:#fff;color:#1a3a4a;border-color:#dde3ec}
-body.theme-light .q-toggle{background:#dde3ec}
-body.theme-light .q-toggle.on{background:#1a3a4a}
+body.theme-light .q-toggle{background:#cbd5e1}
+body.theme-light .q-toggle.on{background:#10b981}
 body.theme-light thead tr{background:#f0f4f8}
 body.theme-light th{color:#64748b}
 body.theme-light tbody tr{border-color:#f0f4f8;color:#1e293b}
@@ -600,7 +600,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
       </div>
       <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
         <button class="btn-primary" onclick="openPartnerLink()" style="font-size:.85rem;padding:.6rem 1.25rem">🌐 فتح الرابط</button>
-        <button class="btn-ghost" onclick="showPage('form-setup',document.querySelector('[onclick*=\"form-setup\"]'))" style="font-size:.85rem;padding:.6rem 1.25rem">⚙️ تخصيص النموذج</button>
+        <button class="btn-ghost" onclick="gotoFormSetup()" style="font-size:.85rem;padding:.6rem 1.25rem">⚙️ تخصيص النموذج</button>
       </div>
     </div>
 
@@ -1630,34 +1630,59 @@ function applyThemeInlineOverrides(theme) {
   if (!st) { st = document.createElement('style'); st.id = '_theme_inline_override'; document.head.appendChild(st); }
   if (theme === 'light') {
     st.textContent = `
-      /* نصوص بيضاء → داكنة */
-      body.theme-light .main [style*="color:#e2e8f0"],body.theme-light .main [style*="color: #e2e8f0"]{color:#1e293b!important}
-      body.theme-light .main [style*="color:#f1f5f9"],body.theme-light .main [style*="color:#fff"]{color:#1e293b!important}
-      body.theme-light .main [style*="color:#94a3b8"],body.theme-light .main [style*="color: #94a3b8"]{color:#64748b!important}
-      body.theme-light .main [style*="color:#475569"],body.theme-light .main [style*="color: #475569"]{color:#64748b!important}
-      body.theme-light .main [style*="color:#64748b"],body.theme-light .main [style*="color: #64748b"]{color:#64748b!important}
-      body.theme-light .main [style*="color:#38bdf8"]{color:#1a3a4a!important}
+      /* ===== كل النصوص الفاتحة تصبح داكنة ===== */
+      body.theme-light .main [style*="color:#e2e8f0"]{color:#1e293b!important}
+      body.theme-light .main [style*="color: #e2e8f0"]{color:#1e293b!important}
+      body.theme-light .main [style*="color:#f1f5f9"]{color:#1e293b!important}
+      body.theme-light .main [style*="color:#fff;"]{color:#1e293b!important}
+      body.theme-light .main [style*="color:#ffffff"]{color:#1e293b!important}
+      body.theme-light .main [style*="color:#cbd5e1"]{color:#475569!important}
+      body.theme-light .main [style*="color:#94a3b8"]{color:#64748b!important}
+      body.theme-light .main [style*="color:#64748b"]{color:#64748b!important}
+      body.theme-light .main [style*="color:#475569"]{color:#64748b!important}
+      body.theme-light .main [style*="color:#334155"]{color:#475569!important}
+      body.theme-light .main [style*="color:#38bdf8"]{color:#0369a1!important}
+      body.theme-light .main [style*="color:#7dd3fc"]{color:#0369a1!important}
       body.theme-light .main [style*="color:#a78bfa"]{color:#6d28d9!important}
+      body.theme-light .main [style*="color:#c4b5fd"]{color:#6d28d9!important}
       body.theme-light .main [style*="color:#10b981"]{color:#059669!important}
       body.theme-light .main [style*="color:#4ade80"]{color:#059669!important}
-      body.theme-light .main [style*="color:#fca5a5"],body.theme-light .main [style*="color:#f87171"]{color:#dc2626!important}
-      body.theme-light .main [style*="color:#fbbf24"],body.theme-light .main [style*="color:#f59e0b"]{color:#b45309!important}
-      /* خلفيات داكنة → فاتحة */
-      body.theme-light .main [style*="background:#0f172a"],body.theme-light .main [style*="background: #0f172a"]{background:#f8fafc!important;color:#1e293b!important;border-color:#e2e8f0!important}
-      body.theme-light .main [style*="background:#1e293b"],body.theme-light .main [style*="background: #1e293b"]{background:#f1f5f9!important;color:#1e293b!important}
-      body.theme-light .main [style*="background:rgba(15,23,42"],body.theme-light .main [style*="background: rgba(15,23,42"]{background:#f0f4f8!important;border-color:#dde3ec!important}
+      body.theme-light .main [style*="color:#f87171"]{color:#dc2626!important}
+      body.theme-light .main [style*="color:#fca5a5"]{color:#dc2626!important}
+      body.theme-light .main [style*="color:#fbbf24"]{color:#b45309!important}
+      body.theme-light .main [style*="color:#f59e0b"]{color:#b45309!important}
+      body.theme-light .main [style*="color:#fb923c"]{color:#c2410c!important}
+      /* ===== الخلفيات الداكنة تصبح فاتحة ===== */
+      body.theme-light .main [style*="background:#0f172a"]{background:#f8fafc!important;border-color:#e2e8f0!important}
+      body.theme-light .main [style*="background: #0f172a"]{background:#f8fafc!important}
+      body.theme-light .main [style*="background:#1e293b"]{background:#f1f5f9!important}
+      body.theme-light .main [style*="background: #1e293b"]{background:#f1f5f9!important}
+      body.theme-light .main [style*="background:#0d1b2a"]{background:#f8fafc!important}
+      body.theme-light .main [style*="background:rgba(15,23,42"]{background:#f0f4f8!important}
+      body.theme-light .main [style*="background: rgba(15,23,42"]{background:#f0f4f8!important}
       body.theme-light .main [style*="background:rgba(30,41,59"]{background:#f0f4f8!important}
-      body.theme-light .main [style*="background:linear-gradient(135deg,#1e293b"],body.theme-light .main [style*="background:linear-gradient(135deg,#0f172a"]{background:#f8fafc!important}
-      /* حدود داكنة → فاتحة */
-      body.theme-light .main [style*="border:1px solid #334155"],body.theme-light .main [style*="border: 1px solid #334155"]{border-color:#dde3ec!important}
+      body.theme-light .main [style*="background:rgba(0,0,0"]{background:rgba(0,0,0,.04)!important}
+      body.theme-light .main [style*="background:linear-gradient(135deg,#0f172a"]{background:#fff!important}
+      body.theme-light .main [style*="background:linear-gradient(135deg,#1e293b"]{background:#fff!important}
+      body.theme-light .main [style*="background:linear-gradient(135deg,#1a3a4a"]{background:linear-gradient(135deg,#1a3a4a,#2d5a6e)!important}
+      /* ===== الحدود الداكنة ===== */
+      body.theme-light .main [style*="border:1px solid #334155"]{border-color:#dde3ec!important}
+      body.theme-light .main [style*="border: 1px solid #334155"]{border-color:#dde3ec!important}
       body.theme-light .main [style*="border-color:#334155"]{border-color:#dde3ec!important}
-      /* حقول الإدخال */
-      body.theme-light .main textarea[style],body.theme-light .main input[style]{background:#fff!important;color:#1e293b!important;border-color:#dde3ec!important}
-      /* الـ card-title المباشر */
+      body.theme-light .main [style*="border-top:1px solid #334155"]{border-color:#dde3ec!important}
+      body.theme-light .main [style*="border-bottom:1px solid #334155"]{border-color:#dde3ec!important}
+      /* ===== الحقول ===== */
+      body.theme-light .main textarea{background:#fff!important;color:#1e293b!important;border-color:#dde3ec!important}
+      body.theme-light .main input:not([type=radio]):not([type=checkbox]){background:#fff!important;color:#1e293b!important}
+      /* ===== Classes مباشرة ===== */
       body.theme-light .main .card-title{color:#1a3a4a!important}
       body.theme-light .main .page-title{color:#1a3a4a!important}
       body.theme-light .main .stat-val{color:#1a3a4a!important}
       body.theme-light .main .stat-label{color:#64748b!important}
+      body.theme-light .main .q-label{color:#1e293b!important}
+      body.theme-light .main .fld-m label{color:#334155!important}
+      body.theme-light .main .fld-m input,body.theme-light .main .fld-m select{background:#fff!important;color:#1e293b!important;border-color:#dde3ec!important}
+      body.theme-light .main pre{background:#f1f5f9!important;color:#1a3a4a!important;border-color:#dde3ec!important}
     `;
   } else {
     st.textContent = '';
@@ -1667,6 +1692,10 @@ function applyThemeInlineOverrides(theme) {
 function gotoLinkPage() {
   const navEl = Array.from(document.querySelectorAll('.nav-item')).find(n => n.textContent.includes('رابط'));
   showPage('link', navEl || null);
+}
+function gotoFormSetup() {
+  const navEl = Array.from(document.querySelectorAll('.nav-item')).find(n => n.textContent.includes('إعداد'));
+  showPage('form-setup', navEl || null);
 }
 
 function selectAcceptMode(mode) {
