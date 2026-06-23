@@ -636,17 +636,25 @@ function _cselRenderOpts(id, arr) {
   const container = document.getElementById('csel_' + id + '_opts');
   if (!container) return;
   const cur = _cselVal[id];
-  container.innerHTML = arr.map(item => {
+  const isCC = id === 'phone_cc';
+  container.innerHTML = '';
+  arr.forEach(item => {
     const parts = item.n.split(' ');
     const flag  = parts[0];
     const label = parts.slice(1).join(' ');
-    return `<div class="csel-opt${item.v===cur?' is-active':''}" onmousedown="_cselPick('${id}','${item.v}',${JSON.stringify(item.n)},${id==='phone_cc'})">
-      <span class="csel-opt-flag">${flag}</span><span>${label}</span></div>`;
-  }).join('');
+    const div = document.createElement('div');
+    div.className = 'csel-opt' + (item.v === cur ? ' is-active' : '');
+    div.innerHTML = `<span class="csel-opt-flag">${flag}</span><span>${label}</span>`;
+    div.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      _cselPick(id, item.v, item.n, isCC);
+    });
+    container.appendChild(div);
+  });
 }
-function _cselPick(id, val, label, isCC) {
+function _cselPick(id, val, fullLabel, isCC) {
   _cselVal[id] = val;
-  const parts = label.split(' ');
+  const parts = fullLabel.split(' ');
   const flag  = parts[0];
   const lbl   = isCC ? parts[1] : parts.slice(1).join(' ');
   const flagEl = document.getElementById('csel_' + id + '_flag');
@@ -666,20 +674,9 @@ function _cselPick(id, val, label, isCC) {
 function _cselFilter(id) {
   const q = document.getElementById('csel_' + id + '_q')?.value.trim().toLowerCase() || '';
   const filtered = q ? _cselData[id].filter(x => x.n.toLowerCase().includes(q) || x.v.toLowerCase().includes(q)) : _cselData[id];
-  _cselRenderOpts_filtered(id, filtered);
+  _cselRenderOpts(id, filtered);
 }
-function _cselRenderOpts_filtered(id, arr) {
-  const container = document.getElementById('csel_' + id + '_opts');
-  if (!container) return;
-  const cur = _cselVal[id];
-  container.innerHTML = arr.map(item => {
-    const parts = item.n.split(' ');
-    const flag  = parts[0];
-    const label = parts.slice(1).join(' ');
-    return `<div class="csel-opt${item.v===cur?' is-active':''}" onmousedown="_cselPick('${id}','${item.v}',${JSON.stringify(item.n)},${id==='phone_cc'})">
-      <span class="csel-opt-flag">${flag}</span><span>${label}</span></div>`;
-  }).join('');
-}
+function _cselRenderOpts_filtered(id, arr) { _cselRenderOpts(id, arr); }
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.csel')) {
     document.querySelectorAll('.csel-panel').forEach(p => p.style.display = 'none');
