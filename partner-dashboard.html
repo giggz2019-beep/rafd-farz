@@ -303,7 +303,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
           <button class="btn-sm" id="ov_copy_btn" onclick="copyPartnerLink()" style="background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.3);font-size:.8rem;padding:.4rem .9rem">📋 نسخ الرابط</button>
-          <button class="btn-sm" onclick="showPage('link',document.querySelector('[onclick*=\"link\"]'))" style="font-size:.8rem;padding:.4rem .9rem">عرض الرابط ←</button>
+          <button class="btn-sm" onclick="gotoLinkPage()" style="font-size:.8rem;padding:.4rem .9rem">عرض الرابط ←</button>
         </div>
       </div>
     </div>
@@ -1075,6 +1075,11 @@ function normalizePartner(p) {
 // ===== INIT UI =====
 // تطبيق الثيم المحفوظ فور التحميل
 (function(){ const t=localStorage.getItem('rafd_dash_theme'); if(t==='light') document.body.classList.add('theme-light'); })();
+// تطبيق inline overrides بعد تحميل الصفحة كاملاً
+window.addEventListener('load', function() {
+  const t = localStorage.getItem('rafd_dash_theme');
+  if (t === 'light') applyThemeInlineOverrides('light');
+});
 
 function initUI() {
   document.getElementById('sb_orgname').textContent = partner.org;
@@ -1434,6 +1439,9 @@ function showPage(pageId, navEl) {
   // Show/hide sticky save bar
   const stickyBar = document.getElementById('formStickyBar');
   if (stickyBar) stickyBar.style.display = pageId === 'form-setup' ? 'flex' : 'none';
+  // إعادة تطبيق inline overrides بعد رسم المحتوى الديناميكي
+  const curTheme = localStorage.getItem('rafd_dash_theme');
+  if (curTheme === 'light') setTimeout(() => applyThemeInlineOverrides('light'), 80);
 }
 
 function requestApiAccess() {
@@ -1614,6 +1622,51 @@ function setDashTheme(theme) {
   if (lLbl) { lLbl.style.borderColor = theme==='light'?'rgba(74,157,111,.5)':'#334155'; lLbl.style.background = theme==='light'?'rgba(74,157,111,.07)':'transparent'; }
   if (dRad) dRad.checked = theme === 'dark';
   if (lRad) lRad.checked = theme === 'light';
+  applyThemeInlineOverrides(theme);
+}
+
+function applyThemeInlineOverrides(theme) {
+  let st = document.getElementById('_theme_inline_override');
+  if (!st) { st = document.createElement('style'); st.id = '_theme_inline_override'; document.head.appendChild(st); }
+  if (theme === 'light') {
+    st.textContent = `
+      /* نصوص بيضاء → داكنة */
+      body.theme-light .main [style*="color:#e2e8f0"],body.theme-light .main [style*="color: #e2e8f0"]{color:#1e293b!important}
+      body.theme-light .main [style*="color:#f1f5f9"],body.theme-light .main [style*="color:#fff"]{color:#1e293b!important}
+      body.theme-light .main [style*="color:#94a3b8"],body.theme-light .main [style*="color: #94a3b8"]{color:#64748b!important}
+      body.theme-light .main [style*="color:#475569"],body.theme-light .main [style*="color: #475569"]{color:#64748b!important}
+      body.theme-light .main [style*="color:#64748b"],body.theme-light .main [style*="color: #64748b"]{color:#64748b!important}
+      body.theme-light .main [style*="color:#38bdf8"]{color:#1a3a4a!important}
+      body.theme-light .main [style*="color:#a78bfa"]{color:#6d28d9!important}
+      body.theme-light .main [style*="color:#10b981"]{color:#059669!important}
+      body.theme-light .main [style*="color:#4ade80"]{color:#059669!important}
+      body.theme-light .main [style*="color:#fca5a5"],body.theme-light .main [style*="color:#f87171"]{color:#dc2626!important}
+      body.theme-light .main [style*="color:#fbbf24"],body.theme-light .main [style*="color:#f59e0b"]{color:#b45309!important}
+      /* خلفيات داكنة → فاتحة */
+      body.theme-light .main [style*="background:#0f172a"],body.theme-light .main [style*="background: #0f172a"]{background:#f8fafc!important;color:#1e293b!important;border-color:#e2e8f0!important}
+      body.theme-light .main [style*="background:#1e293b"],body.theme-light .main [style*="background: #1e293b"]{background:#f1f5f9!important;color:#1e293b!important}
+      body.theme-light .main [style*="background:rgba(15,23,42"],body.theme-light .main [style*="background: rgba(15,23,42"]{background:#f0f4f8!important;border-color:#dde3ec!important}
+      body.theme-light .main [style*="background:rgba(30,41,59"]{background:#f0f4f8!important}
+      body.theme-light .main [style*="background:linear-gradient(135deg,#1e293b"],body.theme-light .main [style*="background:linear-gradient(135deg,#0f172a"]{background:#f8fafc!important}
+      /* حدود داكنة → فاتحة */
+      body.theme-light .main [style*="border:1px solid #334155"],body.theme-light .main [style*="border: 1px solid #334155"]{border-color:#dde3ec!important}
+      body.theme-light .main [style*="border-color:#334155"]{border-color:#dde3ec!important}
+      /* حقول الإدخال */
+      body.theme-light .main textarea[style],body.theme-light .main input[style]{background:#fff!important;color:#1e293b!important;border-color:#dde3ec!important}
+      /* الـ card-title المباشر */
+      body.theme-light .main .card-title{color:#1a3a4a!important}
+      body.theme-light .main .page-title{color:#1a3a4a!important}
+      body.theme-light .main .stat-val{color:#1a3a4a!important}
+      body.theme-light .main .stat-label{color:#64748b!important}
+    `;
+  } else {
+    st.textContent = '';
+  }
+}
+
+function gotoLinkPage() {
+  const navEl = Array.from(document.querySelectorAll('.nav-item')).find(n => n.textContent.includes('رابط'));
+  showPage('link', navEl || null);
 }
 
 function selectAcceptMode(mode) {
