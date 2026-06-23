@@ -7,8 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#f0f9ff,#e0f2fe,#f0fdf4);min-height:100vh;display:flex;align-items:center;justify-content:center;direction:rtl}
-.auth-card{background:#fff;border-radius:24px;padding:2.5rem;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.1);border:1px solid #e2e8f0}
+body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#f0f9ff,#e0f2fe,#f0fdf4);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;direction:rtl;padding:1.5rem 1rem}
+.auth-card{background:#fff;border-radius:24px;padding:2.5rem;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.1);border:1px solid #e2e8f0;margin:auto}
 .auth-logo{display:flex;align-items:center;gap:.75rem;justify-content:center;margin-bottom:2rem}
 .logo-icon{width:48px;height:48px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.3rem}
 .logo-text{font-size:1.5rem;font-weight:900;color:#0f172a}
@@ -29,6 +29,14 @@ h1{font-size:1.5rem;font-weight:800;color:#0f172a;text-align:center;margin-botto
 .signup-link a{color:#1a3a4a;font-weight:700;text-decoration:none}
 .back-link{text-align:center;margin-top:1.5rem}
 .back-link a{font-size:.8rem;color:#94a3b8;text-decoration:none}
+@media(max-width:480px){
+  .auth-card{padding:1.75rem 1.25rem;border-radius:18px}
+  h1{font-size:1.25rem}
+}
+@media(max-width:360px){
+  body{padding:.75rem}
+  .auth-card{padding:1.5rem 1rem;border-radius:14px}
+}
 </style>
 </head>
 <body>
