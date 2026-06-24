@@ -361,12 +361,12 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
     </div>
     <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.25rem">
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
-        <input type="text" id="req_search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.85rem;outline:none" oninput="filterRequests()">
+        <input type="text" id="req_search" data-i18n-placeholder="db.ph-search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.85rem;outline:none" oninput="filterRequests()">
         <select id="req_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'Cairo',sans-serif;font-size:.82rem;outline:none" onchange="filterRequests()">
-          <option value="" data-i18n-opt="db.all-status">كل الحالات</option>
-          <option value="approved" data-i18n-opt="db.opt-approved">مقبول</option>
-          <option value="rejected" data-i18n-opt="db.opt-rejected">مرفوض</option>
-          <option value="pending" data-i18n-opt="db.opt-pending">قيد المراجعة</option>
+          <option value="" data-i18n="db.all-status">كل الحالات</option>
+          <option value="approved" data-i18n="db.opt-approved">مقبول</option>
+          <option value="rejected" data-i18n="db.opt-rejected">مرفوض</option>
+          <option value="pending" data-i18n="db.opt-pending">قيد المراجعة</option>
         </select>
       </div>
     </div>
@@ -419,23 +419,23 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <div class="fld-m">
           <label data-i18n="db.lbl-purpose">غرض الطلب <span style="color:#ef4444">*</span></label>
           <select id="nf_purpose">
-            <option value="" data-i18n-opt="db.opt-select">اختر...</option>
-            <option data-i18n-opt="db.opt-job">توظيف</option>
-            <option data-i18n-opt="db.opt-fund">تمويل</option>
-            <option data-i18n-opt="db.opt-univ">قبول جامعي</option>
-            <option data-i18n-opt="db.opt-incub">انضمام للحاضنة</option>
-            <option data-i18n-opt="db.opt-gov">دعم حكومي</option>
-            <option data-i18n-opt="db.opt-other">أخرى</option>
+            <option value="" data-i18n="db.opt-select">اختر...</option>
+            <option data-i18n="db.opt-job">توظيف</option>
+            <option data-i18n="db.opt-fund">تمويل</option>
+            <option data-i18n="db.opt-univ">قبول جامعي</option>
+            <option data-i18n="db.opt-incub">انضمام للحاضنة</option>
+            <option data-i18n="db.opt-gov">دعم حكومي</option>
+            <option data-i18n="db.opt-other">أخرى</option>
           </select>
         </div>
         <div class="fld-m">
           <label data-i18n="db.lbl-score">درجة التقييم (0-100)</label>
-          <input type="number" id="nf_score" placeholder="مثال: 85" min="0" max="100">
+          <input type="number" id="nf_score" data-i18n-placeholder="db.ph-nf-score" placeholder="مثال: 85" min="0" max="100">
         </div>
       </div>
       <div class="fld-m">
         <label data-i18n="db.lbl-notes">ملاحظات</label>
-        <textarea id="nf_notes" placeholder="أي ملاحظات إضافية على هذا الطلب..."></textarea>
+        <textarea id="nf_notes" data-i18n-placeholder="db.ph-nf-notes" placeholder="أي ملاحظات إضافية على هذا الطلب..."></textarea>
       </div>
       <div style="display:flex;gap:.75rem;margin-top.5rem">
         <button class="btn-primary" onclick="submitRequest()"><span data-i18n="db.btn-save">✓ حفظ وتحليل الطلب</span></button>
@@ -714,7 +714,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       </div>
       <div class="fld-m">
         <label data-i18n="db.lbl-prog-desc">وصف البرنامج</label>
-        <textarea id="fc_program_desc" placeholder="اشرح هدف البرنامج والفئة المستهدفة..."></textarea>
+        <textarea id="fc_program_desc" data-i18n-placeholder="db.ph-prog-desc" placeholder="اشرح هدف البرنامج والفئة المستهدفة..."></textarea>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
         <div class="fld-m">
@@ -779,13 +779,13 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <div id="gpa_config" style="display:none;background:#0f172a;border-radius:8px;padding:.65rem .85rem;display:none;gap:.85rem;flex-wrap:wrap;align-items:center">
             <div style="font-size:.72rem;color:#64748b;font-weight:600" data-i18n="db.gpa-scale">نظام التقييم:</div>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
-              <input type="radio" name="gpa_scale" id="gpa_5" value="5" checked style="accent-color:#10b981" onchange="toggleGpaBands()"> من 5
+              <input type="radio" name="gpa_scale" id="gpa_5" value="5" checked style="accent-color:#10b981" onchange="toggleGpaBands()"> <span data-i18n="db.gpa-from5">من 5</span>
             </label>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
-              <input type="radio" name="gpa_scale" id="gpa_4" value="4" style="accent-color:#10b981" onchange="toggleGpaBands()"> من 4
+              <input type="radio" name="gpa_scale" id="gpa_4" value="4" style="accent-color:#10b981" onchange="toggleGpaBands()"> <span data-i18n="db.gpa-from4">من 4</span>
             </label>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
-              <input type="radio" name="gpa_scale" id="gpa_100" value="100" style="accent-color:#10b981" onchange="toggleGpaBands()"> نسبة مئوية (%)
+              <input type="radio" name="gpa_scale" id="gpa_100" value="100" style="accent-color:#10b981" onchange="toggleGpaBands()"> <span data-i18n="db.gpa-pct">نسبة مئوية (%)</span>
             </label>
             <div style="font-size:.7rem;color:#475569;width:100%" data-i18n="db.gpa-hint">سيظهر حقل المعدل تلقائياً أسفل سؤال المؤهل في نموذج التقديم</div>
             <!-- نطاقات الدرجات — تظهر لجميع المقاييس -->
@@ -970,12 +970,12 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <option data-i18n="db.sup-tech">مشكلة تقنية</option>
           <option data-i18n="db.sup-upgrade">طلب ترقية</option>
           <option data-i18n="db.sup-cancel">إلغاء الاشتراك</option>
-          <option data-i18n-opt="db.opt-other">أخرى</option>
+          <option data-i18n="db.opt-other">أخرى</option>
         </select>
       </div>
       <div class="fld-m">
         <label data-i18n="db.sup-msg">نص الرسالة</label>
-        <textarea id="sup_msg" placeholder="اكتب رسالتك هنا..." style="min-height:120px"></textarea>
+        <textarea id="sup_msg" data-i18n-placeholder="db.ph-sup-msg" placeholder="اكتب رسالتك هنا..." style="min-height:120px"></textarea>
       </div>
       <button class="btn-primary" onclick="sendSupport()"><span data-i18n="db.btn-send">إرسال الرسالة</span></button>
     </div>
@@ -1119,19 +1119,19 @@ window.addEventListener('load', function() {
 function initUI() {
   document.getElementById('sb_orgname').textContent = partner.org;
   document.getElementById('sb_orgtype').textContent = partner.orgtype;
-  const planLabels = {trial:'تجريبية', basic:'أساسية', pro:'متقدمة'};
+  const planLabels = {trial: getT('db.plan-trial-short'), basic: getT('db.plan-basic-short'), pro: getT('db.plan-adv-short')};
   document.getElementById('sb_plan').textContent = planLabels[partner.plan] || partner.plan;
   document.getElementById('sb_av').textContent = (partner.fname || '?')[0];
   document.getElementById('sb_uname').textContent = partner.fname + ' ' + partner.lname;
   document.getElementById('sb_urole').textContent = partner.title;
   document.getElementById('welcome_name').textContent = partner.fname;
-  document.getElementById('welcome_sub').textContent = 'لوحة التحكم — ' + partner.org;
+  document.getElementById('welcome_sub').textContent = getT('db.dashboard-lbl') + ' — ' + partner.org;
 
   // Status alert
   if (partner.status === 'approved') {
-    document.getElementById('status_alert').innerHTML = `<div class="alert alert-success">✅ حسابك نشط ومفعّل. يمكنك البدء في إضافة الطلبات.</div>`;
+    document.getElementById('status_alert').innerHTML = `<div class="alert alert-success">✅ ${getT('db.status-active')}</div>`;
   } else if (partner.status === 'pending') {
-    document.getElementById('status_alert').innerHTML = `<div class="alert alert-warn">⏳ حسابك قيد المراجعة من فريق RAFD. ستصلك رسالة على بريدك عند التفعيل.</div>`;
+    document.getElementById('status_alert').innerHTML = `<div class="alert alert-warn">⏳ ${getT('db.status-pending')}</div>`;
   }
 
   renderStats();
@@ -1141,6 +1141,16 @@ function initUI() {
   renderLinkPage();
   initScoreCustomUIs();
   loadFormConfigUI();
+
+  // Re-render dynamic JS sections whenever language toggles
+  document.addEventListener('rafd-lang-changed', () => {
+    const planLbls = {trial: getT('db.plan-trial-short'), basic: getT('db.plan-basic-short'), pro: getT('db.plan-adv-short')};
+    document.getElementById('sb_plan').textContent = planLbls[partner.plan] || partner.plan;
+    document.getElementById('welcome_sub').textContent = getT('db.dashboard-lbl') + ' — ' + partner.org;
+    renderSubscription();
+    renderLinkPage();
+    renderStats();
+  });
 }
 
 // ===== APPLICATIONS (Supabase) =====
@@ -1176,9 +1186,9 @@ function renderStats() {
   const limits = {trial:50, basic:500, pro:999999};
   const limit = limits[partner.plan] || 50;
   const pct = Math.min(100, Math.round(reqs.length / limit * 100));
-  document.getElementById('usage_text').textContent = reqs.length + ' / ' + (limit === 999999 ? 'غير محدود' : limit);
+  document.getElementById('usage_text').textContent = reqs.length + ' / ' + (limit === 999999 ? getT('db.unlimited') : limit);
   document.getElementById('usage_bar').style.width = pct + '%';
-  document.getElementById('usage_note').textContent = limit === 999999 ? 'باقة متقدمة — طلبات غير محدودة' : `${limit - reqs.length} طلب متبقٍ هذا الشهر`;
+  document.getElementById('usage_note').textContent = limit === 999999 ? getT('db.plan-unlimited-note') : `${limit - reqs.length} ${getT('db.reqs-remaining')}`;
 }
 
 function renderRecentRequests() {
@@ -1411,14 +1421,22 @@ async function updatePartnerInStorage() {
 
 // ===== SUBSCRIPTION =====
 function renderSubscription() {
-  const planNames = {trial:'التجريبية 🎯', basic:'الأساسية ⚡', pro:'المتقدمة 🚀'};
-  const prices = {trial:'مجاناً', basic:'249 ريال/شهر', pro:'499 ريال/شهر'};
+  const planNames = {
+    trial: getT('db.plan-trial'),
+    basic: getT('db.plan-basic'),
+    pro: getT('db.plan-adv')
+  };
+  const prices = {
+    trial: getT('db.plan-trial-price'),
+    basic: getT('db.plan-basic-price-full'),
+    pro: getT('db.plan-adv-price-full')
+  };
   document.getElementById('current_plan_info').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
       <div>
         <div style="font-size:1.2rem;font-weight:900;color:#fff">${planNames[partner.plan] || partner.plan}</div>
         <div style="color:#38bdf8;font-size:1rem;font-weight:700;margin-top:.25rem">${prices[partner.plan] || ''}</div>
-        <div style="color:#64748b;font-size:.78rem;margin-top:.25rem">تاريخ الاشتراك: ${partner.date}</div>
+        <div style="color:#64748b;font-size:.78rem;margin-top:.25rem">${getT('db.sub-date')}: ${partner.date}</div>
       </div>
       <span class="badge ${partner.plan === 'trial' ? 'b-trial' : partner.plan === 'basic' ? 'b-basic' : 'b-pro'}">${planNames[partner.plan]}</span>
     </div>`;
@@ -1428,12 +1446,12 @@ function renderSubscription() {
     const btn = document.getElementById('btn_' + p);
     if (p === partner.plan) {
       card.classList.add('current');
-      btn.textContent = '✓ باقتك الحالية';
+      btn.textContent = '✓ ' + getT('db.cur-plan-lbl');
       btn.disabled = true;
     } else {
       card.classList.remove('current');
       btn.disabled = false;
-      btn.textContent = 'طلب الترقية';
+      btn.textContent = getT('db.req-upgrade');
     }
   });
 }
@@ -1529,22 +1547,22 @@ function renderLinkPage() {
   if (partner.plan === 'pro') {
     const code = `<iframe\n  src="${url}"\n  width="100%"\n  height="820px"\n  frameborder="0"\n  style="border:none;border-radius:16px;overflow:hidden"\n  title="نموذج التقديم">\n</iframe>`;
     embedEl.innerHTML = `
-      <p style="color:#94a3b8;font-size:.83rem;line-height:1.8;margin-bottom:1rem">ضع هذا الكود في موقعك وسيظهر النموذج مباشرةً دون توجيه الزوار لرابط خارجي.</p>
-      <div class="embed-badge">🚀 باقة المتقدمة</div>
+      <p style="color:#94a3b8;font-size:.83rem;line-height:1.8;margin-bottom:1rem">${getT('db.embed-desc')}</p>
+      <div class="embed-badge">🚀 ${getT('db.plan-adv')}</div>
       <pre style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem;font-size:.75rem;color:#a78bfa;direction:ltr;text-align:left;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin-bottom:1rem">${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
-      <button class="btn-primary" onclick="copyEmbed()" style="font-size:.82rem;padding:.6rem 1.25rem">📋 نسخ كود التضمين</button>`;
+      <button class="btn-primary" onclick="copyEmbed()" style="font-size:.82rem;padding:.6rem 1.25rem">📋 ${getT('db.btn-copy-embed')}</button>`;
     window._embedCode = code;
   } else {
     embedEl.innerHTML = `
       <div style="position:relative">
         <div class="embed-lock">
-          <div class="embed-badge">🚀 باقة المتقدمة</div>
+          <div class="embed-badge">🚀 ${getT('db.plan-adv')}</div>
           <pre style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem;font-size:.75rem;color:#a78bfa;direction:ltr;text-align:left">&lt;iframe\n  src="https://rafd-digital.com/apply.html?partner=..."\n  width="100%" height="820px"\n  frameborder="0"&gt;\n&lt;/iframe&gt;</pre>
         </div>
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem">
           <div style="font-size:1.3rem">🔒</div>
-          <div style="font-size:.88rem;font-weight:700;color:#a78bfa">متاح فقط لباقة المتقدمة</div>
-          <button class="btn-primary" onclick="showPage('subscription',null)" style="font-size:.8rem;padding:.5rem 1.25rem;background:linear-gradient(135deg,#7c3aed,#6d28d9)">ترقية الباقة</button>
+          <div style="font-size:.88rem;font-weight:700;color:#a78bfa">${getT('db.embed-pro-only')}</div>
+          <button class="btn-primary" onclick="showPage('subscription',null)" style="font-size:.8rem;padding:.5rem 1.25rem;background:linear-gradient(135deg,#7c3aed,#6d28d9)">${getT('db.req-upgrade')}</button>
         </div>
       </div>`;
   }
@@ -1598,14 +1616,14 @@ function initScoreCustomUIs() {
     const wrap = document.createElement('div');
     wrap.style.cssText = 'width:100%;padding-top:.45rem;border-top:1px solid #1e293b;margin-top:.3rem';
     wrap.innerHTML = `<button onclick="toggleScoreCustom('${id}')" id="sc_btn_${id}" style="background:none;border:none;color:#475569;font-family:\'Cairo\',sans-serif;font-size:.72rem;cursor:pointer;display:flex;align-items:center;gap:.3rem;padding:0">
-      <span id="sc_arrow_${id}" style="transition:.2s">▶</span> تخصيص الدرجات لكل إجابة
+      <span id="sc_arrow_${id}" style="transition:.2s">▶</span> ${getT('db.custom-scores-btn')}
     </button>`;
     card.appendChild(wrap);
     // الحاوية المخفية
     const box = document.createElement('div');
     box.id = 'score_custom_' + id;
     box.style.cssText = 'display:none;width:100%;background:#0f172a;border-radius:8px;padding:.65rem .85rem;margin-top:.4rem';
-    box.innerHTML = `<div style="font-size:.71rem;color:#64748b;margin-bottom:.5rem;font-weight:700">نقاط كل إجابة (من الوزن الكلي للمعيار):</div><div id="score_inputs_${id}"></div>`;
+    box.innerHTML = `<div style="font-size:.71rem;color:#64748b;margin-bottom:.5rem;font-weight:700">${getT('db.score-inputs-lbl')}</div><div id="score_inputs_${id}"></div>`;
     card.appendChild(box);
   });
 }
@@ -2310,6 +2328,7 @@ loadPartnerData();
 </script>
 <script src="/i18n.js"></script></body>
 </html>
+
 
 
 

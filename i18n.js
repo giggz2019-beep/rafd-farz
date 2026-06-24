@@ -638,6 +638,18 @@ const T = {
     'db.doc-cert':'🎓 شهادات خبرة ومؤهلات','db.doc-id':'🪪 صورة هوية وطنية',
     'db.custom-docs':'مستندات مخصصة إضافية','db.add-custom-doc':'+ إضافة مستند',
     'db.mandatory':'إلزامي','db.link-preview':'💡 معاينة الرابط بعد الحفظ',
+    // === new db keys ===
+    'db.all-status':'كل الحالات','db.opt-approved':'مقبول','db.opt-rejected':'مرفوض','db.opt-pending':'قيد المراجعة',
+    'db.opt-select':'اختر...','db.opt-fund':'تمويل','db.opt-univ':'قبول جامعي','db.opt-incub':'انضمام للحاضنة','db.opt-other':'أخرى',
+    'db.plan-trial-price':'مجاناً','db.plan-basic-price-full':'249 ريال/شهر','db.plan-adv-price-full':'499 ريال/شهر',
+    'db.sub-date':'تاريخ الاشتراك','db.cur-plan-lbl':'باقتك الحالية','db.req-upgrade':'ترقية الباقة',
+    'db.plan-unlimited-note':'باقة متقدمة — طلبات غير محدودة','db.reqs-remaining':'طلب متبقٍ هذا الشهر','db.unlimited':'غير محدود',
+    'db.plan-trial-short':'تجريبية','db.plan-basic-short':'أساسية','db.plan-adv-short':'متقدمة',
+    'db.dashboard-lbl':'لوحة التحكم','db.status-active':'حسابك نشط ومفعّل. يمكنك البدء في إضافة الطلبات.','db.status-pending':'حسابك قيد المراجعة من فريق RAFD. ستصلك رسالة على بريدك عند التفعيل.',
+    'db.custom-scores-btn':'تخصيص الدرجات لكل إجابة','db.score-inputs-lbl':'نقاط كل إجابة (من الوزن الكلي للمعيار):',
+    'db.embed-desc':'ضع هذا الكود في موقعك وسيظهر النموذج مباشرةً دون توجيه الزوار لرابط خارجي.','db.btn-copy-embed':'نسخ كود التضمين','db.embed-pro-only':'متاح فقط لباقة المتقدمة',
+    'db.ph-prog-desc':'اشرح هدف البرنامج والفئة المستهدفة...','db.ph-nf-notes':'أي ملاحظات إضافية على هذا الطلب...','db.ph-sup-msg':'اكتب رسالتك هنا...','db.ph-nf-score':'مثال: 85','db.ph-search':'🔍 بحث بالاسم أو رقم الهوية...',
+    'db.gpa-from5':'من 5','db.gpa-from4':'من 4','db.gpa-pct':'نسبة مئوية (%)',
     'adm.login-err':'بيانات خاطئة. حاول مجدداً.',
     'adm.search-clients':'🔍  ابحث بالاسم أو الجهة أو البريد...',
     'adm.search-partners':'🔍 بحث بالاسم أو البريد...',
@@ -1334,6 +1346,18 @@ const T = {
     'db.doc-cert':'🎓 Experience & Qualification Certificates','db.doc-id':'🪪 National ID Copy',
     'db.custom-docs':'Additional Custom Documents','db.add-custom-doc':'+ Add Document',
     'db.mandatory':'Mandatory','db.link-preview':'💡 Link Preview After Save',
+    // === new db keys ===
+    'db.all-status':'All Statuses','db.opt-approved':'Approved','db.opt-rejected':'Rejected','db.opt-pending':'Under Review',
+    'db.opt-select':'Select...','db.opt-fund':'Funding','db.opt-univ':'University Admission','db.opt-incub':'Incubator Membership','db.opt-other':'Other',
+    'db.plan-trial-price':'Free','db.plan-basic-price-full':'249 SAR/month','db.plan-adv-price-full':'499 SAR/month',
+    'db.sub-date':'Subscription Date','db.cur-plan-lbl':'Your Current Plan','db.req-upgrade':'Request Upgrade',
+    'db.plan-unlimited-note':'Advanced plan — unlimited requests','db.reqs-remaining':'requests remaining this month','db.unlimited':'Unlimited',
+    'db.plan-trial-short':'Trial','db.plan-basic-short':'Basic','db.plan-adv-short':'Advanced',
+    'db.dashboard-lbl':'Dashboard','db.status-active':'Your account is active. You can start adding requests.','db.status-pending':'Your account is under review by the RAFD team. You will receive an email when activated.',
+    'db.custom-scores-btn':'Customize scores per answer','db.score-inputs-lbl':'Points per answer (from total criterion weight):',
+    'db.embed-desc':'Place this code on your website and the form will appear directly without redirecting visitors to an external link.','db.btn-copy-embed':'Copy Embed Code','db.embed-pro-only':'Available for Advanced plan only',
+    'db.ph-prog-desc':'Describe the program objective and target audience...','db.ph-nf-notes':'Any additional notes about this request...','db.ph-sup-msg':'Write your message here...','db.ph-nf-score':'e.g. 85','db.ph-search':'🔍 Search by name or ID...',
+    'db.gpa-from5':'out of 5','db.gpa-from4':'out of 4','db.gpa-pct':'Percentage (%)',
     // ===== ADMIN PANEL =====
     'adm.login-h2':'Admin Panel','adm.login-badge':'🔒 Restricted Access — Admins Only',
     'adm.lbl-user':'Username','adm.lbl-pass':'Password','adm.btn-login':'Enter Admin Panel',
@@ -1404,6 +1428,12 @@ function setLang(lang) {
   const btn = document.getElementById('langToggleBtn');
   if (btn) btn.textContent = isAR ? '🌐 EN' : '🌐 عربي';
   localStorage.setItem('rafd_lang', lang);
+  document.dispatchEvent(new CustomEvent('rafd-lang-changed', { detail: { lang } }));
+}
+
+function getT(key) {
+  const lang = localStorage.getItem('rafd_lang') || 'ar';
+  return (T[lang] && T[lang][key] !== undefined) ? T[lang][key] : (T['ar'][key] || key);
 }
 
 function toggleLang() {
