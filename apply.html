@@ -1639,9 +1639,9 @@ function buildGaugeSVG(score, grade, accepted) {
       <circle r="12" fill="#1e293b"/>
       <circle r="6.5" fill="#f8fafc"/>
     </g>
-    <text x="38" y="168" text-anchor="middle" font-size="9" fill="#ef4444" font-family="Arial,sans-serif">غير مقبول</text>
-    <text x="150" y="23" text-anchor="middle" font-size="9" fill="#d97706" font-family="Arial,sans-serif">متوسط</text>
-    <text x="262" y="168" text-anchor="middle" font-size="9" fill="#059669" font-family="Arial,sans-serif">مقبول</text>
+    <text x="38" y="168" text-anchor="middle" font-size="9" fill="#ef4444" font-family="Arial,sans-serif">${getT('apply.gauge-rej')}</text>
+    <text x="150" y="23" text-anchor="middle" font-size="9" fill="#d97706" font-family="Arial,sans-serif">${getT('apply.gauge-avg')}</text>
+    <text x="262" y="168" text-anchor="middle" font-size="9" fill="#059669" font-family="Arial,sans-serif">${getT('apply.gauge-acc')}</text>
     <text x="${cx}" y="190" text-anchor="middle" font-size="40" font-weight="900" fill="${gc}" font-family="Arial,sans-serif">${grade}</text>
     <text x="${cx}" y="212" text-anchor="middle" font-size="13" fill="#6b7280" font-family="Arial,sans-serif">${score} / 100</text>
   </svg>`;
@@ -1653,7 +1653,8 @@ function showResult(data) {
   document.getElementById('progWrap').style.display = 'block';
   updateProg(5);
   window.scrollTo({top:0,behavior:'smooth'});
-  const today = new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
+  const _lang = localStorage.getItem('rafd_lang') || 'ar';
+  const today = new Date().toLocaleDateString(_lang === 'ar' ? 'ar-SA' : 'en-US', {year:'numeric',month:'long',day:'numeric'});
   const orgName = partnerData?.org_name || 'RAFD Digital';
   const hero = document.getElementById('rHero');
 
