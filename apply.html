@@ -289,13 +289,13 @@ input[type=number]{-moz-appearance:textfield}
 <!-- Progress -->
 <div class="prog-wrap" id="progWrap">
   <div class="prog-steps">
-    <div class="ps-col"><div class="ps-circle active" id="sc1">1</div><div class="ps-label active" id="sl1" data-i18n="da.step1">المعلومات</div></div>
+    <div class="ps-col"><div class="ps-circle active" id="sc1">1</div><div class="ps-label active" id="sl1" data-i18n="da.step1">المعلومات الشخصية</div></div>
     <div class="ps-line" id="ln1"></div>
     <div class="ps-col"><div class="ps-circle idle" id="sc2">2</div><div class="ps-label" id="sl2" data-i18n="da.step2">المؤهلات</div></div>
     <div class="ps-line" id="ln2"></div>
-    <div class="ps-col"><div class="ps-circle idle" id="sc3">3</div><div class="ps-label" id="sl3" data-i18n="da.step3">المشروع</div></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc3">3</div><div class="ps-label" id="sl3" data-i18n="da.step3">معلومات إضافية</div></div>
     <div class="ps-line" id="ln3"></div>
-    <div class="ps-col"><div class="ps-circle idle" id="sc4">4</div><div class="ps-label" id="sl4" data-i18n="da.step4">أسئلة</div></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc4">4</div><div class="ps-label" id="sl4" data-i18n="da.step4">المستندات</div></div>
     <div class="ps-line" id="ln4"></div>
     <div class="ps-col"><div class="ps-circle idle" id="sc5">5</div><div class="ps-label" id="sl5" data-i18n="apply.result">النتيجة</div></div>
   </div>
@@ -352,7 +352,7 @@ input[type=number]{-moz-appearance:textfield}
 <!-- Step 1 -->
 <div class="wrap form-card" id="s1">
   <div class="fc-title" data-i18n="apply.s1-title">المعلومات الشخصية</div>
-  <div class="fc-sub" data-i18n="apply.s1-sub">الخطوة 1 من 4 — بياناتك الشخصية (يجب أن تطابق هويتك الرسمية)</div>
+  <div class="fc-sub" data-i18n="apply.s1-sub">الخطوة 1 من 5 — بياناتك الشخصية (يجب أن تطابق هويتك الرسمية)</div>
 
   <div class="sec-lbl" data-i18n="apply.sec-id">🪪 الهوية والبيانات الرسمية</div>
   <div class="frow">
@@ -527,7 +527,7 @@ input[type=number]{-moz-appearance:textfield}
 <!-- Step 2 -->
 <div class="wrap form-card" id="s2">
   <div class="fc-title" data-i18n="da.s2-title">المؤهلات والخبرة</div>
-  <div class="fc-sub" data-i18n="apply.s2-sub">الخطوة 2 من 4 — خلفيتك الأكاديمية والمهنية</div>
+  <div class="fc-sub" data-i18n="apply.s2-sub">الخطوة 2 من 5 — خلفيتك الأكاديمية والمهنية</div>
   <div class="fld"><label data-i18n="apply.lbl-edu">أعلى مؤهل أكاديمي <span class="req">*</span></label>
     <div class="radio-opts" id="f_edu">
       <label class="ropt" onclick="selR(this,'f_edu','phd')"><input type="radio" name="edu" value="phd"><span data-i18n="apply.edu-phd">دكتوراه</span></label>
@@ -577,8 +577,8 @@ input[type=number]{-moz-appearance:textfield}
 
 <!-- Step 3 -->
 <div class="wrap form-card" id="s3">
-  <div class="fc-title" data-i18n="apply.s3-title">المشروع والتمويل</div>
-  <div class="fc-sub" data-i18n="apply.s3-sub">الخطوة 3 من 4 — وضع مشروعك الحالي</div>
+  <div class="fc-title" data-i18n="apply.s3-title">معلومات إضافية</div>
+  <div class="fc-sub" data-i18n="apply.s3-sub">الخطوة 3 من 5 — معلومات المشروع والأسئلة الإضافية</div>
   <div class="fld"><label data-i18n="apply.lbl-stage">مرحلة المشروع الحالية <span class="req">*</span></label>
     <div class="radio-opts" id="f_stage">
       <label class="ropt" onclick="selR(this,'f_stage','idea')"><input type="radio" name="stage" value="idea"><span data-i18n="apply.stage-idea">فكرة (Idea Stage)</span></label>
@@ -603,13 +603,6 @@ input[type=number]{-moz-appearance:textfield}
       <label class="ropt" onclick="selR(this,'f_cust','none')"><input type="radio" name="cust" value="none"><span data-i18n="apply.cust-none">لا يوجد بعد</span></label>
     </div>
   </div>
-  <div class="fnav"><button class="btn-prev" onclick="go(2)" data-i18n="da.back-btn">← السابق</button><span class="step-ctr">3 / 5</span><button class="btn-next" onclick="go(4)" data-i18n="da.next">التالي ←</button></div>
-</div>
-
-<!-- Step 4 -->
-<div class="wrap form-card" id="s4">
-  <div class="fc-title" data-i18n="da.s4-title">أسئلة إضافية</div>
-  <div class="fc-sub" data-i18n="apply.s4-sub">الخطوة 4 من 4 — الخطوة الأخيرة قبل التقييم</div>
   <div class="fld"><label data-i18n="apply.lbl-reasons">لماذا تريد الانضمام؟ (اختر كل ما ينطبق)</label>
     <div class="check-opts" id="f_reasons">
       <label class="copt" onclick="togC(this)"><input type="checkbox" value="funding"><span data-i18n="apply.reason-fund">الحصول على تمويل</span></label>
@@ -620,7 +613,7 @@ input[type=number]{-moz-appearance:textfield}
     </div>
   </div>
   <div class="fld"><label data-i18n="apply.lbl-challenges">ما هي أكبر تحدياتك الحالية؟ <span class="req">*</span></label>
-    <textarea id="f_challenges" placeholder="اشرح التحديات التي تواجهها في مشروعك..."></textarea>
+    <textarea id="f_challenges" placeholder="اشرح التحديات التي تواجهها في مشروعك..." data-i18n-placeholder="apply.ph-challenges"></textarea>
   </div>
   <div class="fld"><label data-i18n="apply.lbl-commit">هل أنت مستعد للالتزام بمتطلبات البرنامج؟ <span class="req">*</span></label>
     <div class="radio-opts" id="f_commit">
@@ -631,10 +624,16 @@ input[type=number]{-moz-appearance:textfield}
   </div>
   <!-- Custom criteria added by partner -->
   <div id="custom_q_container"></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(2)" data-i18n="da.back-btn">← السابق</button><span class="step-ctr">3 / 5</span><button class="btn-next" onclick="go(4)" data-i18n="da.next">التالي ←</button></div>
+</div>
 
+<!-- Step 4: Documents -->
+<div class="wrap form-card" id="s4">
+  <div class="fc-title" data-i18n="da.s4-title">المستندات المطلوبة</div>
+  <div class="fc-sub" data-i18n="apply.s4-sub">الخطوة 4 من 5 — رفع المستندات اللازمة لاستكمال طلبك</div>
   <!-- File uploads required by partner -->
   <div id="docs_upload_container"></div>
-
+  <div id="no_docs_msg" style="display:none;text-align:center;padding:2rem;color:#64748b;font-size:.9rem" data-i18n="apply.no-docs">لا توجد مستندات مطلوبة — يمكنك المتابعة للإرسال</div>
   <div class="fnav">
     <button class="btn-prev" onclick="go(3)" data-i18n="da.back-btn">← السابق</button>
     <span class="step-ctr">4 / 5</span>
@@ -856,11 +855,13 @@ function renderDocsUpload() {
     if (d.label) docs.push({ id: 'cdoc_'+i, label: d.label, required: d.required ?? false });
   });
 
-  if (!docs.length) return;
+  const noDocsMsg = document.getElementById('no_docs_msg');
+  if (!docs.length) { if (noDocsMsg) noDocsMsg.style.display = 'block'; return; }
+  if (noDocsMsg) noDocsMsg.style.display = 'none';
 
   container.innerHTML = `
     <div style="border-top:1px solid #e5e7eb;padding-top:1.1rem;margin-top:.5rem">
-      <div style="font-size:.78rem;font-weight:700;color:#64748b;margin-bottom:.9rem">📎 المستندات المطلوبة</div>
+      <div style="font-size:.78rem;font-weight:700;color:#64748b;margin-bottom:.9rem">📎 ${getT('apply.docs-required-lbl')}</div>
       ${docs.map(d => `
         <div class="fld">
           <label>${d.label}${d.required ? ' <span class="req">*</span>' : ' <span style="font-size:.7rem;color:#94a3b8">(اختياري)</span>'}</label>
