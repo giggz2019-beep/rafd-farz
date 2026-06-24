@@ -1641,18 +1641,18 @@ function runTerminal(data) {
   const prog = document.getElementById('tProg');
   const orgName = partnerData?.org_name || 'الجهة';
   const lines = [
-    {t:`جارٍ البحث في قاعدة بيانات <span class="hi">${orgName}</span> عن المتقدم...`,d:500},
-    {t:`التحقق من هوية <span class="hi">${data.name}</span> عبر نفاذ (سدايا)... ✓`,d:1100},
-    {t:`تحليل قطاع <span class="hi">${data.sectorName}</span> ومعايير السوق...`,d:1800},
-    {t:'تطبيق معايير التقييم المعتمدة لدى الجهة...',d:2500},
-    {t:'تحليل المؤهلات الأكاديمية والخبرة العملية...',d:3200},
-    {t:'تقييم مرحلة المشروع وجاهزيته للسوق...',d:3900},
-    {t:'فحص سجل المؤسس والمشاريع السابقة...',d:4600},
-    {t:'تحليل حجم الفريق وتوزيع المهارات...',d:5300},
-    {t:`مقارنة الطلب مع <span class="wa">+2,847</span> طلب سابق في قاعدة البيانات...`,d:6000},
-    {t:`تطبيق معايير <span class="hi">${orgName}</span> على البيانات المُجمَّعة...`,d:6700},
-    {t:'حساب الدرجة النهائية وإعداد التقرير التفصيلي...',d:7400},
-    {t:`<span class="hi">✓ اكتمل التحليل — الدرجة: ${data.score}/100 — ${data.accepted?'مقبول ✓':data.pending?'قبول مبدئي ⏳':'مرفوض ✗'}</span>`,d:8100},
+    {t:`${getT('apply.ai-t1').replace('{org}',orgName)}`,d:500},
+    {t:`${getT('apply.ai-t2').replace('{name}',data.name)}`,d:1100},
+    {t:`${getT('apply.ai-t3').replace('{sector}',data.sectorName)}`,d:1800},
+    {t:getT('apply.ai-t4'),d:2500},
+    {t:getT('apply.ai-t5'),d:3200},
+    {t:getT('apply.ai-t6'),d:3900},
+    {t:getT('apply.ai-t7'),d:4600},
+    {t:getT('apply.ai-t8'),d:5300},
+    {t:getT('apply.ai-t9'),d:6000},
+    {t:`${getT('apply.ai-t10').replace('{org}',orgName)}`,d:6700},
+    {t:getT('apply.ai-t11'),d:7400},
+    {t:`<span class="hi">✓ ${getT('apply.ai-done')} ${data.score}/100 — ${data.accepted?getT('apply.res-verdict-ok')+' ✓':data.pending?getT('apply.res-verdict-prelim')+' ⏳':getT('apply.res-verdict-rej')+' ✗'}</span>`,d:8100},
   ];
   lines.forEach((line,i) => {
     setTimeout(() => {
@@ -1724,28 +1724,28 @@ function showResult(data) {
   // ألوان وأيقونات حسب الحالة
   const heroClass  = isOk ? 'accepted' : isPending ? 'pending' : 'rejected';
   const trophy     = isOk ? '🏆' : isPending ? '🎖️' : '📋';
-  const titleTxt   = isOk ? 'تهانينا ' + data.name + '!'
-                   : isPending ? 'تم قبولك مبدئياً، ' + data.name + '!'
-                   : 'شكراً لتقديمك، ' + data.name;
-  const subTxt     = isOk      ? 'تم قبول طلبك في <strong>' + orgName + '</strong>'
-                   : isPending ? 'تم قبولك مبدئياً في <strong>' + orgName + '</strong>'
-                   : 'للأسف لم يستوفِ طلبك معايير <strong>' + orgName + '</strong> في هذه الدورة';
+  const titleTxt   = isOk ? getT('apply.res-congrats').replace('{name}', data.name)
+                   : isPending ? getT('apply.res-prelim').replace('{name}', data.name)
+                   : getT('apply.res-thanks').replace('{name}', data.name);
+  const subTxt     = isOk      ? getT('apply.res-sub-ok').replace('{org}', orgName)
+                   : isPending ? getT('apply.res-sub-prelim').replace('{org}', orgName)
+                   : getT('apply.res-sub-rej').replace('{org}', orgName);
   const verdictClass = isOk ? 'gv-ok' : isPending ? 'gv-pending' : 'gv-fail';
-  const verdictTxt   = isOk ? '✔ مقبول' : isPending ? '⏳ قبول مبدئي' : '✕ غير مقبول';
+  const verdictTxt   = isOk ? `✔ ${getT('apply.res-verdict-ok')}` : isPending ? `⏳ ${getT('apply.res-verdict-prelim')}` : `✕ ${getT('apply.res-verdict-rej')}`;
   const badgeClass   = isOk ? 'cert-badge-accepted' : isPending ? 'cert-badge-pending' : 'cert-badge-rejected';
-  const badgeTxt     = isOk ? '✔ مقبول' : isPending ? '⏳ قبول مبدئي' : '✕ غير مقبول';
+  const badgeTxt     = isOk ? `✔ ${getT('apply.res-verdict-ok')}` : isPending ? `⏳ ${getT('apply.res-verdict-prelim')}` : `✕ ${getT('apply.res-verdict-rej')}`;
   const certClass    = isOk ? 'accepted-cert' : isPending ? 'pending-cert' : 'rejected-cert';
-  const labelTxt     = isOk ? 'بطاقة قبول رسمية' : isPending ? 'بطاقة قبول مبدئي' : 'إشعار رسمي';
+  const labelTxt     = isOk ? getT('apply.cert-lbl-ok') : isPending ? getT('apply.cert-lbl-prelim') : getT('apply.cert-lbl-rej');
   const bodyDetail   = isOk
-    ? `<div class="cert-detail">تم قبول طلبك لدى <strong>${orgName}</strong></div>
-       <div class="cert-detail">الشركة: <strong>${data.company}</strong> | القطاع: <strong>${data.sectorName}</strong></div>`
+    ? `<div class="cert-detail">${getT('apply.cert-detail-ok').replace('{org}', orgName)}</div>
+       <div class="cert-detail">${getT('apply.cert-company')}: <strong>${data.company}</strong> | ${getT('apply.cert-sector')}: <strong>${data.sectorName}</strong></div>`
     : isPending
     ? (() => {
         const customMsg = partnerData?.form_config?.pending_msg;
-        return `<div class="cert-detail">${customMsg || 'تم قبولك مبدئياً في <strong>' + orgName + '</strong>. طلبك مؤهل وسيدخل مرحلة المفاضلة مع بقية المتقدمين.'}</div>`;
+        return `<div class="cert-detail">${customMsg || getT('apply.cert-detail-prelim').replace('{org}', orgName)}</div>`;
       })()
-    : `<div class="cert-detail cert-sorry">نعتذر عن عدم استيفاء طلبك للمعايير في هذه الدورة. نتمنى لك التوفيق.</div>`;
-  const statusTxt = isOk ? '✔ مقبول' : isPending ? '⏳ مراجعة' : '✕ مرفوض';
+    : `<div class="cert-detail cert-sorry">${getT('apply.cert-detail-rej')}</div>`;
+  const statusTxt = isOk ? `✔ ${getT('apply.res-verdict-ok')}` : isPending ? `⏳ ${getT('apply.res-review')}` : `✕ ${getT('apply.res-verdict-rej')}`;
 
   hero.innerHTML = `
   <div class="result-merged">
@@ -1770,15 +1770,15 @@ function showResult(data) {
       <div class="cert-name">${data.name}</div>
       ${bodyDetail}
       <div class="cert-score-row">
-        <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">الدرجة</div></div>
-        <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">التقدير</div></div>
-        <div class="cert-score-item"><div class="csi-val">${statusTxt}</div><div class="csi-lbl">الحالة</div></div>
+        <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">${getT('apply.lbl-score')}</div></div>
+        <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">${getT('apply.lbl-grade')}</div></div>
+        <div class="cert-score-item"><div class="csi-val">${statusTxt}</div><div class="csi-lbl">${getT('apply.lbl-status')}</div></div>
       </div>
     </div>
     <div class="cert-divider"></div>
     <div class="cert-footer">
-      <div class="cert-ref">رقم الطلب: <strong>${appRefNum}</strong></div>
-      <div class="cert-date">تاريخ التقديم: ${today}</div>
+      <div class="cert-ref">${getT('apply.lbl-ref-num')}: <strong>${appRefNum}</strong></div>
+      <div class="cert-date">${getT('apply.lbl-sub-date')}: ${today}</div>
       <div class="cert-powered">RAFD Digital ⚡</div>
     </div>
   </div>`;
@@ -1790,7 +1790,7 @@ function showResult(data) {
     const pct = Math.round(item.s/item.m*100);
     rl.innerHTML += `<div class="reason-item ${item.p?'pos':'neg'}">
       <div class="ri-icon">${item.p?'✅':'⚠️'}</div>
-      <div class="ri-text"><span class="ri-badge">${item.s}/${item.m}</span><strong>${item.l}</strong> — ${item.p?'يستوفي المعيار':'يحتاج تحسيناً'} (${pct}%)</div>
+      <div class="ri-text"><span class="ri-badge">${item.s}/${item.m}</span><strong>${item.l}</strong> — ${item.p?getT('apply.criteria-pass'):getT('apply.criteria-fail')} (${pct}%)</div>
     </div>`;
   });
 }
@@ -1808,7 +1808,7 @@ function launchConfetti(count=90) {
 
 init();
 </script>
-<script src="/i18n.js"></script></body>
+<script src="/i18n.js" defer></script></body>
 </html>
 
 

@@ -134,7 +134,8 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
 .fld-m label{display:block;font-size:.8rem;font-weight:700;color:#94a3b8;margin-bottom:.35rem}
 .fld-m input,.fld-m select,.fld-m textarea{width:100%;padding:.7rem .9rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;color:#e2e8f0;outline:none;transition:.2s}
 .fld-m input:focus,.fld-m select:focus,.fld-m textarea:focus{border-color:#38bdf8}
-.fld-m select option{background:#1e293b}
+.fld-m select option{background:#1e293b;color:#e2e8f0}
+select option{background:#1e293b;color:#e2e8f0}
 .fld-m textarea{resize:vertical;min-height:80px;line-height:1.7}
 .btn-primary{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.7rem 1.5rem;font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:.2s}
 .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
@@ -1116,9 +1117,23 @@ window.addEventListener('load', function() {
   if (t === 'light') applyThemeInlineOverrides('light');
 });
 
+const ORGTYPE_KEYS = {
+  'جامعة أو مؤسسة تعليمية': 'db.ot-edu',
+  'بنك أو مؤسسة مالية': 'db.ot-bank',
+  'مسرعة أو حاضنة أعمال': 'db.ot-accel',
+  'جهة حكومية': 'db.ot-gov',
+  'شركة خاصة': 'db.ot-company',
+  'منظمة غير ربحية': 'db.ot-npo',
+  'أخرى': 'db.ot-other',
+};
+function getOrgTypeLabel(orgtype) {
+  const key = ORGTYPE_KEYS[orgtype];
+  return key ? getT(key) : (orgtype || '—');
+}
+
 function initUI() {
   document.getElementById('sb_orgname').textContent = partner.org;
-  document.getElementById('sb_orgtype').textContent = partner.orgtype;
+  document.getElementById('sb_orgtype').textContent = getOrgTypeLabel(partner.orgtype);
   const planLabels = {trial: getT('db.plan-trial-short'), basic: getT('db.plan-basic-short'), pro: getT('db.plan-adv-short')};
   document.getElementById('sb_plan').textContent = planLabels[partner.plan] || partner.plan;
   document.getElementById('sb_av').textContent = (partner.fname || '?')[0];
@@ -1146,10 +1161,14 @@ function initUI() {
   document.addEventListener('rafd-lang-changed', () => {
     const planLbls = {trial: getT('db.plan-trial-short'), basic: getT('db.plan-basic-short'), pro: getT('db.plan-adv-short')};
     document.getElementById('sb_plan').textContent = planLbls[partner.plan] || partner.plan;
+    document.getElementById('sb_orgtype').textContent = getOrgTypeLabel(partner.orgtype);
     document.getElementById('welcome_sub').textContent = getT('db.dashboard-lbl') + ' — ' + partner.org;
     renderSubscription();
     renderLinkPage();
     renderStats();
+    renderRecentRequests();
+    renderAllRequests();
+    renderSavedFormsList();
   });
 }
 
@@ -1181,8 +1200,8 @@ function renderStats() {
   document.getElementById('stat_approved').textContent = approved;
   document.getElementById('stat_rejected').textContent = rejected;
   document.getElementById('stat_pending_req').textContent = pending;
-  document.getElementById('stat_approved_pct').textContent = reqs.length ? Math.round(approved/reqs.length*100) + '% قبول' : '—';
-  document.getElementById('stat_rejected_pct').textContent = reqs.length ? Math.round(rejected/reqs.length*100) + '% رفض' : '—';
+  document.getElementById('stat_approved_pct').textContent = reqs.length ? Math.round(approved/reqs.length*100) + `% ${getT('db.opt-approved')}` : '—';
+  document.getElementById('stat_rejected_pct').textContent = reqs.length ? Math.round(rejected/reqs.length*100) + `% ${getT('db.opt-rejected')}` : '—';
   const limits = {trial:50, basic:500, pro:999999};
   const limit = limits[partner.plan] || 50;
   const pct = Math.min(100, Math.round(reqs.length / limit * 100));
@@ -1195,7 +1214,7 @@ function renderRecentRequests() {
   const reqs = allApplications.slice(0, 5);
   const tbody = document.getElementById('recent_requests_table');
   if (!reqs.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">لا توجد طلبات بعد — <button onclick="showPage(\'link\',null)" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:\'Cairo\',sans-serif;font-size:.83rem">شارك رابط التقديم ←</button></td></tr>';
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">${getT('db.no-requests')} — <button onclick="showPage('link',null)" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.83rem">${getT('db.share-link-prompt')}</button></td></tr>`;
     return;
   }
   tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal('${r.id}')" style="cursor:pointer">
@@ -1211,7 +1230,7 @@ function renderAllRequests(list) {
   const reqs = list || allApplications;
   const tbody = document.getElementById('all_requests_table');
   if (!reqs.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span></td></tr>';
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem">${getT('db.no-requests')}</td></tr>`;
     return;
   }
   tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal('${r.id}')" style="cursor:pointer">
@@ -1222,7 +1241,7 @@ function renderAllRequests(list) {
     <td><span style="font-weight:800;color:${r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score || '—'}</span></td>
     <td style="color:#64748b;font-size:.78rem">${fmtDate(r.created_at)}</td>
     <td>${resultBadge(r.result, r.score)}</td>
-    <td onclick="event.stopPropagation()"><button class="btn-sm danger" onclick="deleteRequest('${r.id}')">حذف</button></td>
+    <td onclick="event.stopPropagation()"><button class="btn-sm danger" onclick="deleteRequest('${r.id}')">${getT('db.btn-delete')}</button></td>
   </tr>`).join('');
 }
 
@@ -1236,10 +1255,10 @@ function filterRequests() {
 }
 
 function resultBadge(result, score) {
-  if (result === 'approved') return '<span class="badge b-active">✓ مقبول</span>';
-  if (result === 'rejected') return '<span class="badge b-rejected">✕ مرفوض</span>';
-  if (result === 'pending') return '<span class="badge b-pending">🎖️ قبول مبدئي</span>';
-  return '<span class="badge b-pending">⏳ قيد المراجعة</span>';
+  if (result === 'approved') return `<span class="badge b-active">✓ ${getT('db.opt-approved')}</span>`;
+  if (result === 'rejected') return `<span class="badge b-rejected">✕ ${getT('db.opt-rejected')}</span>`;
+  if (result === 'pending') return `<span class="badge b-pending">🎖️ ${getT('db.res-prelim')}</span>`;
+  return `<span class="badge b-pending">⏳ ${getT('db.opt-pending')}</span>`;
 }
 
 async function submitRequest() {
@@ -1274,8 +1293,8 @@ async function submitRequest() {
   renderRecentRequests();
   showPage('requests', null);
   renderAllRequests();
-  const resultLabel = result === 'approved' ? 'مقبول' : result === 'rejected' ? 'مرفوض' : 'قيد المراجعة';
-  toast('✅ تم حفظ الطلب — النتيجة: ' + resultLabel, result === 'approved' ? 'success' : result === 'rejected' ? 'error' : 'warn');
+  const resultLabel = result === 'approved' ? getT('db.opt-approved') : result === 'rejected' ? getT('db.opt-rejected') : getT('db.opt-pending');
+  toast(`✅ ${getT('db.toast-req-saved')} — ${getT('db.lbl-result')}: ` + resultLabel, result === 'approved' ? 'success' : result === 'rejected' ? 'error' : 'warn');
 }
 
 function clearRequestForm() {
@@ -2034,7 +2053,7 @@ function renderSavedFormsList() {
   const el = document.getElementById('saved_forms_list');
   if (!el) return;
   if (!savedForms.length) {
-    el.innerHTML = '<div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem" data-i18n="db.no-saved-forms">لا توجد نماذج محفوظة بعد — اضبط النموذج واضغط "حفظ كنموذج"</div>';
+    el.innerHTML = `<div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem">${getT('db.no-saved-forms')}</div>`;
     return;
   }
   el.innerHTML = savedForms.map(f => `
