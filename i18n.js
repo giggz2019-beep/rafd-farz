@@ -270,6 +270,21 @@ const T = {
     'apply.seek-100k':'أقل من 100 ألف','apply.seek-500k':'100 — 500 ألف',
     'apply.seek-1m':'500 ألف — مليون','apply.seek-2m':'أكثر من مليون',
     'apply.exp-default':'3 سنوات',
+    // === apply app-type labels ===
+    'apply.at-project-sec':'معلومات المشروع / الشركة','apply.at-project-co':'اسم المشروع / الشركة','apply.at-project-coph':'اسم شركتك أو مشروعك','apply.at-project-sector':'قطاع المشروع','apply.at-project-year':'سنة التأسيس','apply.at-project-desc':'وصف مختصر للمشروع','apply.at-project-desph':'اشرح فكرة مشروعك في جملتين أو ثلاث...',
+    'apply.at-job-sec':'بيانات طلب التوظيف','apply.at-job-co':'المسمى الوظيفي المطلوب','apply.at-job-coph':'مثال: مطور برمجيات، محاسب...','apply.at-job-sector':'مجال العمل','apply.at-job-year':'سنة بدء العمل','apply.at-job-desc':'لماذا تتقدم لهذه الوظيفة؟','apply.at-job-desph':'اشرح دوافعك ومهاراتك التي تميّزك...',
+    'apply.at-fund-sec':'معلومات طلب التمويل','apply.at-fund-co':'اسم الشركة / الكيان','apply.at-fund-coph':'اسم الكيان القانوني المسجّل','apply.at-fund-sector':'قطاع النشاط التجاري','apply.at-fund-year':'سنة تأسيس الكيان','apply.at-fund-desc':'ملخص فرصة الاستثمار','apply.at-fund-desph':'اشرح نموذج عملك والفرصة المتاحة...',
+    'apply.at-acad-sec':'بيانات الالتحاق','apply.at-acad-co':'المؤسسة أو الجهة الحالية','apply.at-acad-coph':'اسم الجامعة أو الشركة الحالية','apply.at-acad-sector':'مجال الدراسة / التخصص','apply.at-acad-year':'سنة التخرج المتوقعة','apply.at-acad-desc':'لماذا تريد الالتحاق بهذا البرنامج؟','apply.at-acad-desph':'اشرح دوافعك وما تسعى لتحقيقه...',
+    'apply.at-mem-sec':'معلومات طلب العضوية','apply.at-mem-co':'اسم المنظمة / الجهة الممثَّلة','apply.at-mem-coph':'اسم الكيان الذي تمثّله','apply.at-mem-sector':'مجال نشاط الجهة','apply.at-mem-year':'سنة تأسيس الجهة','apply.at-mem-desc':'ما الذي تتوقع تحقيقه من العضوية؟','apply.at-mem-desph':'اشرح أهدافك من الانضمام...',
+    'apply.at-gov-sec':'بيانات طلب الخدمة','apply.at-gov-co':'الجهة الحكومية مقدِّمة الطلب','apply.at-gov-coph':'اسم الجهة الحكومية','apply.at-gov-sector':'القطاع الحكومي','apply.at-gov-year':'سنة إنشاء الجهة','apply.at-gov-desc':'وصف الاحتياج أو الطلب','apply.at-gov-desph':'اشرح الغرض من الطلب بوضوح...',
+    'apply.at-npo-sec':'معلومات المنظمة / المبادرة','apply.at-npo-co':'اسم المنظمة / المبادرة','apply.at-npo-coph':'اسم منظمتك أو مبادرتك','apply.at-npo-sector':'مجال العمل التطوعي','apply.at-npo-year':'سنة التأسيس','apply.at-npo-desc':'وصف مختصر لرسالة المنظمة','apply.at-npo-desph':'اشرح هدف المنظمة وتأثيرها المجتمعي...',
+    'apply.at-gen-sec':'معلومات الطلب','apply.at-gen-co':'اسم الجهة / الكيان','apply.at-gen-coph':'اسم جهتك أو مؤسستك','apply.at-gen-sector':'المجال','apply.at-gen-year':'السنة','apply.at-gen-desc':'وصف مختصر','apply.at-gen-desph':'أضف المعلومات الضرورية...',
+    'apply.gpa-pct-hint':'(نسبة مئوية %)','apply.gpa-from-hint':'من',
+    'apply.pending-banner':'هذه الجهة قيد مراجعة RAFD Digital — الرابط في وضع الاختبار حتى اكتمال التفعيل',
+    'apply.err-no-partner':'لم يتم تحديد جهة التقديم. تحقق من الرابط.','apply.err-not-found':'جهة التقديم غير موجودة. تحقق من الرابط أو تواصل مع من أرسل لك الرابط.','apply.err-disabled':'هذه الجهة غير مفعّلة. تواصل مع RAFD Digital للمزيد.','apply.err-paused':'نموذج التقديم متوقف مؤقتاً من قِبَل الجهة. تواصل معهم للمزيد.','apply.err-load':'حدث خطأ أثناء تحميل الصفحة. حاول مرة أخرى.',
+    'apply.default-desc':'قدّم طلبك الآن واحصل على نتيجة التقديم خلال دقيقتين.',
+    // === pricing period ===
+    'price.trial-period':'7 أيام','price.period':'ر.س / شهر',
     // === apply result page ===
     'apply.res-congrats':'تهانينا {name}!','apply.res-prelim':'تم قبولك مبدئياً، {name}!','apply.res-thanks':'شكراً لتقديمك، {name}',
     'apply.res-sub-ok':'تم قبول طلبك في <strong>{org}</strong>','apply.res-sub-prelim':'تم قبولك مبدئياً في <strong>{org}</strong>','apply.res-sub-rej':'للأسف لم يستوفِ طلبك معايير <strong>{org}</strong> في هذه الدورة',
@@ -998,6 +1013,21 @@ const T = {
     'apply.seek-100k':'Less than 100K','apply.seek-500k':'100K — 500K',
     'apply.seek-1m':'500K — 1 Million','apply.seek-2m':'More than 1 Million',
     'apply.exp-default':'3 years',
+    // === apply app-type labels ===
+    'apply.at-project-sec':'Project / Company Info','apply.at-project-co':'Project / Company Name','apply.at-project-coph':'Your company or project name','apply.at-project-sector':'Project Sector','apply.at-project-year':'Year Founded','apply.at-project-desc':'Brief Project Description','apply.at-project-desph':'Describe your project idea in two or three sentences...',
+    'apply.at-job-sec':'Employment Application Details','apply.at-job-co':'Desired Job Title','apply.at-job-coph':'e.g. Software Developer, Accountant...','apply.at-job-sector':'Field of Work','apply.at-job-year':'Work Start Year','apply.at-job-desc':'Why are you applying for this position?','apply.at-job-desph':'Describe your motivations and distinguishing skills...',
+    'apply.at-fund-sec':'Funding Request Details','apply.at-fund-co':'Company / Entity Name','apply.at-fund-coph':'Name of the registered legal entity','apply.at-fund-sector':'Business Activity Sector','apply.at-fund-year':'Entity Founding Year','apply.at-fund-desc':'Investment Opportunity Summary','apply.at-fund-desph':'Describe your business model and the opportunity...',
+    'apply.at-acad-sec':'Enrollment Details','apply.at-acad-co':'Current Institution / Organization','apply.at-acad-coph':'Name of your current university or company','apply.at-acad-sector':'Field of Study / Specialization','apply.at-acad-year':'Expected Graduation Year','apply.at-acad-desc':'Why do you want to join this program?','apply.at-acad-desph':'Describe your motivations and what you aim to achieve...',
+    'apply.at-mem-sec':'Membership Request Details','apply.at-mem-co':'Represented Organization Name','apply.at-mem-coph':'Name of the entity you represent','apply.at-mem-sector':'Organization\'s Activity Field','apply.at-mem-year':'Organization Founding Year','apply.at-mem-desc':'What do you expect to achieve from membership?','apply.at-mem-desph':'Describe your goals from joining...',
+    'apply.at-gov-sec':'Service Request Details','apply.at-gov-co':'Government Entity Submitting','apply.at-gov-coph':'Name of the government entity','apply.at-gov-sector':'Government Sector','apply.at-gov-year':'Entity Establishment Year','apply.at-gov-desc':'Description of the Need / Request','apply.at-gov-desph':'Clearly describe the purpose of the request...',
+    'apply.at-npo-sec':'Organization / Initiative Details','apply.at-npo-co':'Organization / Initiative Name','apply.at-npo-coph':'Your organization or initiative name','apply.at-npo-sector':'Volunteer Work Field','apply.at-npo-year':'Year Founded','apply.at-npo-desc':'Brief Mission Statement','apply.at-npo-desph':'Describe the organization\'s goal and community impact...',
+    'apply.at-gen-sec':'Application Details','apply.at-gen-co':'Entity / Organization Name','apply.at-gen-coph':'Your entity or institution name','apply.at-gen-sector':'Field','apply.at-gen-year':'Year','apply.at-gen-desc':'Brief Description','apply.at-gen-desph':'Add the necessary information...',
+    'apply.gpa-pct-hint':'(Percentage %)','apply.gpa-from-hint':'out of',
+    'apply.pending-banner':'This organization is under review by RAFD Digital — link is in test mode until activation is complete',
+    'apply.err-no-partner':'No partner specified. Check the link.','apply.err-not-found':'Partner not found. Check the link or contact whoever sent it.','apply.err-disabled':'This organization is not activated. Contact RAFD Digital for more info.','apply.err-paused':'Application form is temporarily paused by this organization. Contact them for more info.','apply.err-load':'An error occurred while loading the page. Please try again.',
+    'apply.default-desc':'Submit your application now and get your result within two minutes.',
+    // === pricing period ===
+    'price.trial-period':'7 days','price.period':'SAR / month',
     // === apply result page ===
     'apply.res-congrats':'Congratulations {name}!','apply.res-prelim':'You have been preliminarily accepted, {name}!','apply.res-thanks':'Thank you for applying, {name}',
     'apply.res-sub-ok':'Your application to <strong>{org}</strong> has been accepted','apply.res-sub-prelim':'You have been preliminarily accepted by <strong>{org}</strong>','apply.res-sub-rej':'Unfortunately your application did not meet <strong>{org}</strong> requirements this round',

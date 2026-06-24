@@ -693,7 +693,7 @@ async function init() {
   const partnerRef = params.get('partner');
 
   if (!partnerRef) {
-    showError('لم يتم تحديد جهة التقديم. تحقق من الرابط.');
+    showError(getT('apply.err-no-partner'));
     return;
   }
 
@@ -718,12 +718,12 @@ async function init() {
     }
 
     if (error || !data) {
-      showError('جهة التقديم غير موجودة. تحقق من الرابط أو تواصل مع من أرسل لك الرابط.');
+      showError(getT('apply.err-not-found'));
       return;
     }
 
     if (data.status === 'rejected') {
-      showError('هذه الجهة غير مفعّلة. تواصل مع RAFD Digital للمزيد.');
+      showError(getT('apply.err-disabled'));
       return;
     }
 
@@ -731,12 +731,12 @@ async function init() {
     const fc = data.form_config;
 
     if (fc && fc.is_active === false) {
-      showError('نموذج التقديم متوقف مؤقتاً من قِبَل الجهة. تواصل معهم للمزيد.');
+      showError(getT('apply.err-paused'));
       return;
     }
 
     const programName = fc?.program_name || data.org_name;
-    const programDesc = fc?.program_desc || `قدّم طلبك الآن واحصل على نتيجة التقديم خلال دقيقتين.`;
+    const programDesc = fc?.program_desc || getT('apply.default-desc');
     const ORG_ICONS = {
       'جامعة أو مؤسسة تعليمية': '🎓',
       'بنك أو مؤسسة مالية':     '🏦',
@@ -763,8 +763,9 @@ async function init() {
     // Show pending banner if not yet approved
     if (data.status === 'pending') {
       const banner = document.createElement('div');
+      banner.id = 'pending_banner';
       banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#92400e;color:#fef3c7;text-align:center;padding:.5rem 1rem;font-size:.75rem;font-weight:700;z-index:999';
-      banner.textContent = '⏳ هذه الجهة قيد مراجعة RAFD Digital — الرابط في وضع الاختبار حتى اكتمال التفعيل';
+      banner.textContent = '⏳ ' + getT('apply.pending-banner');
       document.body.prepend(banner);
     }
 
@@ -772,100 +773,38 @@ async function init() {
     renderCustomQuestions();
     renderDocsUpload();
 
+    // Re-apply dynamic labels when language changes
+    document.addEventListener('rafd-lang-changed', () => {
+      applyAppTypeLabels();
+      const pb = document.getElementById('pending_banner');
+      if (pb) pb.textContent = '⏳ ' + getT('apply.pending-banner');
+    });
+
     document.getElementById('loadingScreen').style.display = 'none';
     document.getElementById('mainContent').style.display = 'block';
   } catch(e) {
-    showError('حدث خطأ أثناء تحميل الصفحة. حاول مرة أخرى.');
+    showError(getT('apply.err-load'));
   }
 }
 
 // ===== APP TYPE LABEL MAPPING =====
-const APP_TYPE_LABELS = {
-  project: {
-    section: '🚀 معلومات المشروع / الشركة',
-    company: 'اسم المشروع / الشركة',
-    companyPH: 'اسم شركتك أو مشروعك',
-    sector: 'قطاع المشروع',
-    year: 'سنة التأسيس',
-    yearShow: true,
-    desc: 'وصف مختصر للمشروع',
-    descPH: 'اشرح فكرة مشروعك في جملتين أو ثلاث...',
-  },
-  job: {
-    section: '💼 بيانات طلب التوظيف',
-    company: 'المسمى الوظيفي المطلوب',
-    companyPH: 'مثال: مطور برمجيات، محاسب...',
-    sector: 'مجال العمل',
-    year: 'سنة بدء العمل',
-    yearShow: true,
-    desc: 'لماذا تتقدم لهذه الوظيفة؟',
-    descPH: 'اشرح دوافعك ومهاراتك التي تميّزك...',
-  },
-  funding: {
-    section: '💰 معلومات طلب التمويل',
-    company: 'اسم الشركة / الكيان',
-    companyPH: 'اسم الكيان القانوني المسجّل',
-    sector: 'قطاع النشاط التجاري',
-    year: 'سنة تأسيس الكيان',
-    yearShow: true,
-    desc: 'ملخص فرصة الاستثمار',
-    descPH: 'اشرح نموذج عملك والفرصة المتاحة...',
-  },
-  academic: {
-    section: '🎓 بيانات الالتحاق',
-    company: 'المؤسسة أو الجهة الحالية',
-    companyPH: 'اسم الجامعة أو الشركة الحالية',
-    sector: 'مجال الدراسة / التخصص',
-    year: 'سنة التخرج المتوقعة',
-    yearShow: true,
-    desc: 'لماذا تريد الالتحاق بهذا البرنامج؟',
-    descPH: 'اشرح دوافعك وما تسعى لتحقيقه...',
-  },
-  member: {
-    section: '🤝 معلومات طلب العضوية',
-    company: 'اسم المنظمة / الجهة الممثَّلة',
-    companyPH: 'اسم الكيان الذي تمثّله',
-    sector: 'مجال نشاط الجهة',
-    year: 'سنة تأسيس الجهة',
-    yearShow: true,
-    desc: 'ما الذي تتوقع تحقيقه من العضوية؟',
-    descPH: 'اشرح أهدافك من الانضمام...',
-  },
-  gov: {
-    section: '🏛️ بيانات طلب الخدمة',
-    company: 'الجهة الحكومية مقدِّمة الطلب',
-    companyPH: 'اسم الجهة الحكومية',
-    sector: 'القطاع الحكومي',
-    year: 'سنة إنشاء الجهة',
-    yearShow: true,
-    desc: 'وصف الاحتياج أو الطلب',
-    descPH: 'اشرح الغرض من الطلب بوضوح...',
-  },
-  npo: {
-    section: '🌱 معلومات المنظمة / المبادرة',
-    company: 'اسم المنظمة / المبادرة',
-    companyPH: 'اسم منظمتك أو مبادرتك',
-    sector: 'مجال العمل التطوعي',
-    year: 'سنة التأسيس',
-    yearShow: true,
-    desc: 'وصف مختصر لرسالة المنظمة',
-    descPH: 'اشرح هدف المنظمة وتأثيرها المجتمعي...',
-  },
-  general: {
-    section: '📋 معلومات الطلب',
-    company: 'اسم الجهة / الكيان',
-    companyPH: 'اسم جهتك أو مؤسستك',
-    sector: 'المجال',
-    year: 'السنة',
-    yearShow: true,
-    desc: 'وصف مختصر',
-    descPH: 'أضف المعلومات الضرورية...',
-  },
-};
+function getAppTypeLabels(appType) {
+  const types = {
+    project: { section:'🚀 '+getT('apply.at-project-sec'), company:getT('apply.at-project-co'), companyPH:getT('apply.at-project-coph'), sector:getT('apply.at-project-sector'), year:getT('apply.at-project-year'), yearShow:true, desc:getT('apply.at-project-desc'), descPH:getT('apply.at-project-desph') },
+    job:     { section:'💼 '+getT('apply.at-job-sec'),     company:getT('apply.at-job-co'),     companyPH:getT('apply.at-job-coph'),     sector:getT('apply.at-job-sector'),     year:getT('apply.at-job-year'),     yearShow:true, desc:getT('apply.at-job-desc'),     descPH:getT('apply.at-job-desph') },
+    funding: { section:'💰 '+getT('apply.at-fund-sec'),    company:getT('apply.at-fund-co'),    companyPH:getT('apply.at-fund-coph'),    sector:getT('apply.at-fund-sector'),    year:getT('apply.at-fund-year'),    yearShow:true, desc:getT('apply.at-fund-desc'),    descPH:getT('apply.at-fund-desph') },
+    academic:{ section:'🎓 '+getT('apply.at-acad-sec'),   company:getT('apply.at-acad-co'),    companyPH:getT('apply.at-acad-coph'),    sector:getT('apply.at-acad-sector'),    year:getT('apply.at-acad-year'),    yearShow:true, desc:getT('apply.at-acad-desc'),    descPH:getT('apply.at-acad-desph') },
+    member:  { section:'🤝 '+getT('apply.at-mem-sec'),    company:getT('apply.at-mem-co'),     companyPH:getT('apply.at-mem-coph'),     sector:getT('apply.at-mem-sector'),     year:getT('apply.at-mem-year'),     yearShow:true, desc:getT('apply.at-mem-desc'),     descPH:getT('apply.at-mem-desph') },
+    gov:     { section:'🏛️ '+getT('apply.at-gov-sec'),    company:getT('apply.at-gov-co'),     companyPH:getT('apply.at-gov-coph'),     sector:getT('apply.at-gov-sector'),     year:getT('apply.at-gov-year'),     yearShow:true, desc:getT('apply.at-gov-desc'),     descPH:getT('apply.at-gov-desph') },
+    npo:     { section:'🌱 '+getT('apply.at-npo-sec'),    company:getT('apply.at-npo-co'),     companyPH:getT('apply.at-npo-coph'),     sector:getT('apply.at-npo-sector'),     year:getT('apply.at-npo-year'),     yearShow:true, desc:getT('apply.at-npo-desc'),     descPH:getT('apply.at-npo-desph') },
+    general: { section:'📋 '+getT('apply.at-gen-sec'),    company:getT('apply.at-gen-co'),     companyPH:getT('apply.at-gen-coph'),     sector:getT('apply.at-gen-sector'),     year:getT('apply.at-gen-year'),     yearShow:true, desc:getT('apply.at-gen-desc'),     descPH:getT('apply.at-gen-desph') },
+  };
+  return types[appType] || types.project;
+}
 
 function applyAppTypeLabels() {
   const appType = partnerData?.form_config?.app_type || 'project';
-  const L = APP_TYPE_LABELS[appType] || APP_TYPE_LABELS.project;
+  const L = getAppTypeLabels(appType);
 
   const secEl = document.getElementById('lbl_entity_section');
   const coEl = document.getElementById('lbl_company');
@@ -892,7 +831,7 @@ function applyAppTypeLabels() {
     const hint = document.getElementById('gpa_scale_hint');
     const inp = document.getElementById('f_gpa');
     if (cont) cont.style.display = '';
-    if (hint) hint.textContent = gpa.scale === 100 ? '(نسبة مئوية %)' : 'من ' + gpa.scale;
+    if (hint) hint.textContent = gpa.scale === 100 ? getT('apply.gpa-pct-hint') : getT('apply.gpa-from-hint') + ' ' + gpa.scale;
     if (inp) { inp.max = gpa.scale; inp.placeholder = gpa.scale === 100 ? 'مثال: 87.5' : gpa.scale === 4 ? 'مثال: 3.70' : 'مثال: 4.25'; }
   }
 }
