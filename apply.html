@@ -30,33 +30,89 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .prog-fill{height:100%;background:linear-gradient(90deg,#1a3a4a,#4a9d6f);border-radius:3px;transition:width .5s ease}
 .wrap{max-width:660px;margin:2rem auto;padding:0 1.5rem}
 /* ===== PARTNER LANDING PAGE ===== */
-.partner-page{background:#0f172a;min-height:calc(100vh - 64px);padding:0 0 3rem}
-.partner-hero-section{background:linear-gradient(160deg,#0f172a 0%,#1a3a4a 50%,#0f2d1e 100%);padding:3rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden}
-.partner-hero-section::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(74,157,111,.12) 0%,transparent 70%);pointer-events:none}
-.ph-rafd-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:.3rem .85rem;font-size:.72rem;color:#94a3b8;margin-bottom:1.75rem}
-.ph-org-avatar{width:84px;height:84px;background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.6rem;margin:0 auto 1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.18)}
-.ph-org-name{font-size:1.75rem;font-weight:900;color:#fff;margin-bottom:.4rem;line-height:1.2}
-.ph-org-type{font-size:.85rem;color:#64748b;margin-bottom:.5rem}
-.ph-divider{width:48px;height:3px;background:linear-gradient(90deg,#4a9d6f,#1a3a4a);border-radius:2px;margin:.9rem auto}
-.ph-program-name{font-size:1.1rem;font-weight:700;color:#4a9d6f;margin-bottom:.6rem}
-.ph-program-desc{font-size:.9rem;color:#94a3b8;line-height:1.8;max-width:500px;margin:0 auto 2rem}
-.ph-stats{display:flex;justify-content:center;gap:2rem;margin-bottom:2rem;flex-wrap:wrap}
-.ph-stat{text-align:center}
-.ph-stat-val{font-size:1.4rem;font-weight:900;color:#10b981}
-.ph-stat-lbl{font-size:.7rem;color:#64748b;margin-top:.1rem}
-.btn-start{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;padding:1rem 2.5rem;border-radius:14px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.6rem;box-shadow:0 8px 24px rgba(16,185,129,.3)}
-.btn-start:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(16,185,129,.4)}
-.ph-note{font-size:.75rem;color:#475569;margin-top:.85rem}
+.partner-page{background:#050d1f;min-height:calc(100vh - 64px);padding:0 0 3rem}
+
+/* Hero */
+.partner-hero-section{
+  background:linear-gradient(135deg,#050d1f 0%,#0a1a3e 40%,#07132b 100%);
+  padding:4rem 1.5rem 4.5rem;position:relative;overflow:hidden;
+}
+.partner-hero-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 80% at 25% 50%,rgba(37,99,235,.14) 0%,transparent 65%);
+  pointer-events:none;
+}
+.partner-hero-section::after{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:28px 28px;pointer-events:none;
+}
+.hero-inner{max-width:1060px;margin:0 auto;display:flex;align-items:center;gap:3.5rem;position:relative;z-index:1}
+.hero-content{flex:1;text-align:right}
+.hero-mockup{flex:0 0 430px;filter:drop-shadow(0 28px 56px rgba(0,0,0,.55))}
+
+/* Content */
+.ph-rafd-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:.3rem .85rem;font-size:.72rem;color:#7aa3cc;margin-bottom:1.5rem}
+.ph-org-avatar{width:70px;height:70px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:1rem;box-shadow:0 4px 24px rgba(0,0,0,.25);border:1.5px solid rgba(255,255,255,.14)}
+.ph-org-name{font-size:2.1rem;font-weight:900;color:#fff;margin-bottom:.3rem;line-height:1.2}
+.ph-org-type{font-size:.82rem;color:#3b7dd8;margin-bottom:.55rem;font-weight:600}
+.ph-divider{width:42px;height:2.5px;background:linear-gradient(90deg,#2563eb,transparent);border-radius:2px;margin:.75rem 0}
+.ph-program-name{font-size:1rem;font-weight:700;color:#60a5fa;margin-bottom:.5rem}
+.ph-program-desc{font-size:.88rem;color:#8bacc7;line-height:1.85;max-width:400px;margin:0 0 1.6rem}
+.hero-features{display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:1.85rem}
+.hero-feat{display:flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:.28rem .7rem;font-size:.74rem;color:#94a3b8;font-weight:600}
+.ph-stats{display:none}
+.btn-start{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border:none;padding:.95rem 2.2rem;border-radius:13px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;gap:.5rem;box-shadow:0 8px 28px rgba(37,99,235,.38)}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(37,99,235,.52)}
+.ph-note{font-size:.71rem;color:#3d5a7a;margin-top:.9rem;line-height:1.6}
+
+/* Browser Mockup */
+.browser-mock{background:#111827;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.09)}
+.mock-chrome{background:#0d1424;padding:.55rem .8rem;display:flex;align-items:center;gap:.55rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.mock-dots{display:flex;gap:.32rem}
+.mock-dot{width:9px;height:9px;border-radius:50%}
+.mock-url{flex:1;background:rgba(255,255,255,.05);border-radius:5px;padding:.22rem .65rem;font-size:.62rem;color:#3d5a7a;font-family:monospace;text-align:left;direction:ltr}
+.mock-body{padding:1rem 1.1rem}
+.mock-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;padding-bottom:.7rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.mock-org-name{font-size:.76rem;font-weight:700;color:#e2e8f0}
+.mock-status-ok{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.28);border-radius:20px;padding:.18rem .6rem;font-size:.65rem;font-weight:700}
+.mock-score-section{display:flex;align-items:center;gap:.9rem;margin-bottom:.9rem}
+.mock-gauge-wrap{position:relative;flex-shrink:0}
+.mock-gauge-svg{display:block}
+.mock-score-details{flex:1}
+.mock-score-label{font-size:.62rem;color:#4a7aaa;margin-bottom:.2rem}
+.mock-score-big{font-size:1.3rem;font-weight:900;color:#10b981;line-height:1}
+.mock-score-sub{font-size:.6rem;color:#4a7aaa;margin-top:.15rem}
+.mock-verdict{display:inline-flex;align-items:center;gap:.3rem;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);border-radius:8px;padding:.3rem .7rem;font-size:.7rem;font-weight:800;color:#10b981;margin-bottom:.85rem}
+.mock-criteria-title{font-size:.6rem;font-weight:700;color:#4a7aaa;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
+.mock-crit{display:flex;align-items:center;gap:.5rem;margin-bottom:.42rem}
+.mock-crit-lbl{font-size:.62rem;color:#64748b;width:55px;flex-shrink:0;text-align:right}
+.mock-crit-track{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.mock-crit-fill{height:100%;border-radius:2px}
+.mock-crit-pct{font-size:.6rem;color:#64748b;width:24px;text-align:left;flex-shrink:0}
+
 /* Steps section */
-.partner-steps-section{max-width:640px;margin:0 auto;padding:2rem 1.5rem}
-.steps-title{font-size:.8rem;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.25rem}
+.partner-steps-section{max-width:660px;margin:0 auto;padding:2.5rem 1.5rem}
+.steps-title{font-size:.78rem;font-weight:700;color:#3d5a7a;text-align:center;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.2rem}
 .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.step-card{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:1.1rem .85rem;text-align:center}
-.step-num{width:32px;height:32px;background:rgba(74,157,111,.15);border:1.5px solid rgba(74,157,111,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#4a9d6f;margin:0 auto .6rem}
+.step-card{background:#0c1a35;border:1px solid rgba(37,99,235,.2);border-radius:14px;padding:1.1rem .85rem;text-align:center}
+.step-num{width:32px;height:32px;background:rgba(37,99,235,.15);border:1.5px solid rgba(37,99,235,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#60a5fa;margin:0 auto .6rem}
 .step-title{font-size:.78rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem}
-.step-desc{font-size:.7rem;color:#64748b;line-height:1.5}
-/* Powered footer */
-.partner-footer{text-align:center;padding:1.5rem;border-top:1px solid #1e293b}
+.step-desc{font-size:.7rem;color:#4a7aaa;line-height:1.5}
+
+/* Partner footer */
+.partner-footer{text-align:center;padding:1.5rem;border-top:1px solid #0c1a35}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero-inner{flex-direction:column;gap:2rem}
+  .hero-mockup{flex:none;width:100%;max-width:400px;margin:0 auto}
+  .hero-content{text-align:center}
+  .ph-divider{margin:.75rem auto}
+  .ph-program-desc{margin:0 auto 1.6rem}
+  .hero-features{justify-content:center}
+  .ph-org-avatar{margin:0 auto 1rem}
+}
 .partner-footer span{font-size:.75rem;color:#334155}
 .partner-footer strong{color:#475569}
 .form-card{background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(0,0,0,.06);border:1px solid #e2e8f0;display:none}
@@ -307,19 +363,94 @@ input[type=number]{-moz-appearance:textfield}
 
   <!-- Hero -->
   <div class="partner-hero-section">
-    <div class="ph-rafd-badge"><img src="/rafd-logo.png" alt="RAFD" style="height:22px;width:auto;vertical-align:middle;margin-left:.4rem;background:#fff;border-radius:5px;padding:2px"> <span data-i18n="apply.rafd-badge">RAFD Digital — منصة التقييم الذكي</span></div>
-    <div class="ph-org-avatar" id="ph_avatar">🏢</div>
-    <h1 class="ph-org-name" id="welcomePartnerName">—</h1>
-    <div class="ph-org-type" id="ph_org_type" data-i18n="apply.org-type-default">جهة شريكة معتمدة</div>
-    <div class="ph-divider"></div>
-    <div class="ph-program-name" id="ph_program_name" data-i18n="apply.prog-default">برنامج التقديم</div>
-    <p class="ph-program-desc" id="welcomeDesc" data-i18n="apply.prog-desc-default">قدّم طلبك الآن واحصل على نتيجة التقديم خلال دقيقتين.</p>
-    <div class="ph-stats">
-      <div class="ph-stat"><div class="ph-stat-val" data-i18n="apply.stat-time">2 دقيقة</div><div class="ph-stat-lbl" data-i18n="apply.stat-time-lbl">وقت التقييم</div></div>
-      <div class="ph-stat"><div class="ph-stat-val" data-i18n="apply.stat-instant">فوري</div><div class="ph-stat-lbl" data-i18n="apply.stat-decision-lbl">القرار</div></div>
+    <div class="hero-inner">
+
+      <!-- Content (RTL: right side) -->
+      <div class="hero-content">
+        <div class="ph-rafd-badge">
+          <img src="/rafd-logo.png" alt="RAFD" style="height:19px;width:auto;vertical-align:middle;margin-left:.35rem;background:#fff;border-radius:4px;padding:2px">
+          <span data-i18n="apply.rafd-badge">RAFD Digital — منصة التقييم الذكي</span>
+        </div>
+        <div class="ph-org-avatar" id="ph_avatar">🏢</div>
+        <h1 class="ph-org-name" id="welcomePartnerName">—</h1>
+        <div class="ph-org-type" id="ph_org_type" data-i18n="apply.org-type-default">جهة شريكة معتمدة</div>
+        <div class="ph-divider"></div>
+        <div class="ph-program-name" id="ph_program_name" data-i18n="apply.prog-default">برنامج التقديم</div>
+        <p class="ph-program-desc" id="welcomeDesc" data-i18n="apply.prog-desc-default">قدّم طلبك الآن واحصل على نتيجة التقديم خلال دقيقتين.</p>
+        <div class="hero-features">
+          <div class="hero-feat">⚡ <span data-i18n="apply.feat-instant">نتيجة فورية</span></div>
+          <div class="hero-feat">🎯 <span data-i18n="apply.feat-accurate">تقييم دقيق</span></div>
+          <div class="hero-feat">🔒 <span data-i18n="apply.feat-secure">آمن وموثوق</span></div>
+          <div class="hero-feat">⏱ <span data-i18n="apply.feat-time">أقل من دقيقتين</span></div>
+        </div>
+        <button class="btn-start" onclick="showModal()"><span data-i18n="apply.start-btn">ابدأ التقديم الآن ←</span></button>
+        <p class="ph-note" data-i18n="apply.ph-note">⚠️ تأكد من صحة بياناتك — القرار يصدر فور الإرسال ولا يمكن تعديله</p>
+      </div>
+
+      <!-- Browser Mockup (left side) -->
+      <div class="hero-mockup">
+        <div class="browser-mock">
+          <!-- Chrome bar -->
+          <div class="mock-chrome">
+            <div class="mock-dots">
+              <div class="mock-dot" style="background:#ff5f57"></div>
+              <div class="mock-dot" style="background:#febc2e"></div>
+              <div class="mock-dot" style="background:#28c840"></div>
+            </div>
+            <div class="mock-url">rafd-digital.com/apply</div>
+          </div>
+          <!-- Dashboard body -->
+          <div class="mock-body">
+            <!-- Top bar -->
+            <div class="mock-topbar">
+              <div class="mock-status-ok" data-i18n="apply.mock-status">✓ تقييم مكتمل</div>
+              <div class="mock-org-name" id="mockOrgName">RAFD Digital</div>
+            </div>
+            <!-- Score gauge -->
+            <div class="mock-score-section">
+              <div class="mock-gauge-wrap">
+                <svg class="mock-gauge-svg" width="72" height="72" viewBox="0 0 72 72">
+                  <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
+                  <circle cx="36" cy="36" r="28" fill="none" stroke="#10b981" stroke-width="7"
+                    stroke-dasharray="148 176" stroke-dashoffset="44" stroke-linecap="round" transform="rotate(-90 36 36)"/>
+                  <text x="36" y="41" text-anchor="middle" fill="#10b981" font-size="14" font-weight="900" font-family="Cairo,sans-serif">82</text>
+                </svg>
+              </div>
+              <div class="mock-score-details">
+                <div class="mock-score-label" data-i18n="apply.mock-score-lbl">درجة التقييم</div>
+                <div class="mock-score-big">82 / 100</div>
+                <div class="mock-score-sub" data-i18n="apply.mock-score-sub">من 100 نقطة</div>
+              </div>
+            </div>
+            <!-- Verdict -->
+            <div class="mock-verdict">✅ <span data-i18n="apply.mock-verdict">مقبول — يستوفي معايير القبول</span></div>
+            <!-- Criteria bars -->
+            <div class="mock-criteria-title" data-i18n="apply.mock-criteria">تفاصيل المعايير</div>
+            <div class="mock-crit">
+              <div class="mock-crit-lbl" data-i18n="apply.mock-c1">التعليم</div>
+              <div class="mock-crit-track"><div class="mock-crit-fill" style="width:90%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
+              <div class="mock-crit-pct">90%</div>
+            </div>
+            <div class="mock-crit">
+              <div class="mock-crit-lbl" data-i18n="apply.mock-c2">الخبرة</div>
+              <div class="mock-crit-track"><div class="mock-crit-fill" style="width:75%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div>
+              <div class="mock-crit-pct">75%</div>
+            </div>
+            <div class="mock-crit">
+              <div class="mock-crit-lbl" data-i18n="apply.mock-c3">المشروع</div>
+              <div class="mock-crit-track"><div class="mock-crit-fill" style="width:80%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)"></div></div>
+              <div class="mock-crit-pct">80%</div>
+            </div>
+            <div class="mock-crit">
+              <div class="mock-crit-lbl" data-i18n="apply.mock-c4">الالتزام</div>
+              <div class="mock-crit-track"><div class="mock-crit-fill" style="width:68%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div>
+              <div class="mock-crit-pct">68%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <button class="btn-start" onclick="showModal()"><span data-i18n="apply.start-btn">ابدأ التقديم الآن ←</span></button>
-    <p class="ph-note" data-i18n="apply.ph-note">⚠️ تأكد من صحة بياناتك — القرار يصدر فور الإرسال ولا يمكن تعديله</p>
   </div>
 
   <!-- How it works -->
@@ -769,6 +900,7 @@ async function init() {
     _set('modalPartnerName', programName);
     _set('termPartnerName', data.org_name);
     _set('welcomeDesc', programDesc);
+    _set('mockOrgName', data.org_name);
 
     // Show template badge if a specific saved form was loaded via ?form=
     if (fc?._tpl_name) {
