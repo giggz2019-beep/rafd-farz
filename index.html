@@ -71,10 +71,10 @@
       <p class="hero-desc">
         <span data-i18n="hero.desc">RAFD — منصة الذكاء الاصطناعي للتقييم الفوري. تُمكّن الشركات والبنوك والجامعات والحاضنات من أتمتة قرارات القبول والرفض بناءً على معاييرها الخاصة — بدون تحيّز.</span></p>
       <div class="hero-cta">
-        <a href="/signup.html" class="btn-hero-primary"><span data-i18n="hero.cta1">ابدأ تجربتك المجانية ←</span></a>
+        <a href="/signup.html" class="btn-hero-primary"><span data-i18n="hero.cta1">Start Free Trial →</span></a>
         <a href="/demo-apply.html" class="btn-hero-ghost">
           <span class="play-icon">▶</span>
-          <span data-i18n="hero.cta2">جرّب النظام الآن</span>
+          <span data-i18n="hero.cta2">Try the System Now</span>
         </a>
       </div>
       <div class="hero-stats">
@@ -886,6 +886,10 @@ document.addEventListener('click', () => {
 });
 </script>
 <script src="/i18n.js"></script>
+<script>
+// Ensure i18n runs after script loads (covers edge cases where DOMContentLoaded already fired)
+(function(){ if(typeof setLang==='function'){ const l=localStorage.getItem('rafd_lang')||'en'; setLang(l); } })();
+</script>
 <script>
 (function(){
   const canvas = document.getElementById('heroCanvas');
