@@ -763,6 +763,63 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       </div>
     </div>
 
+    <!-- عرض النتيجة للمتقدم -->
+    <div class="card" style="margin-top:1rem">
+      <div class="card-title" data-i18n="db.result-vis-title">👁️ عرض النتيجة للمتقدم</div>
+      <p style="color:#64748b;font-size:.82rem;margin-bottom:1rem;line-height:1.7" data-i18n="db.result-vis-desc">اختر كيف يرى المتقدم نتيجة تقييمه بعد الانتهاء من النموذج.</p>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+
+        <!-- فوري مجاني -->
+        <label id="rv_immediate_lbl" onclick="selectResultVis('immediate')" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;background:rgba(74,157,111,.07);text-align:right">
+          <div>
+            <input type="radio" name="result_vis" id="rv_immediate" value="immediate" checked style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+            <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.rv-immediate">⚡ فوري مجاني</span>
+          </div>
+          <div style="font-size:.71rem;color:#64748b;margin-top:.3rem" data-i18n="db.rv-immediate-desc">تظهر النتيجة للمتقدم مباشرة بعد التقييم — بدون أي رسوم</div>
+        </label>
+
+        <!-- مخفية -->
+        <label id="rv_hidden_lbl" onclick="selectResultVis('hidden')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right">
+          <div>
+            <input type="radio" name="result_vis" id="rv_hidden" value="hidden" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+            <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.rv-hidden">🔒 قيد المراجعة</span>
+          </div>
+          <div style="font-size:.71rem;color:#64748b;margin-top:.3rem" data-i18n="db.rv-hidden-desc">يرى المتقدم "طلبك قيد المراجعة" فقط — أنت تتحكم بتوقيت إعلان النتيجة</div>
+        </label>
+
+        <!-- مدفوع -->
+        <label id="rv_paid_lbl" onclick="selectResultVis('paid')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right;position:relative" id="rv_paid_wrap">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span id="rv_paid_plan_badge" style="font-size:.65rem;background:linear-gradient(90deg,#7c3aed,#4f46e5);color:#fff;padding:.15rem .5rem;border-radius:20px;font-weight:700;display:none" data-i18n="db.rv-paid-badge">باقة متقدمة</span>
+            <div>
+              <input type="radio" name="result_vis" id="rv_paid" value="paid" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+              <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.rv-paid">💰 نتيجة فورية بمقابل</span>
+            </div>
+          </div>
+          <div style="font-size:.71rem;color:#64748b;margin-top:.3rem" data-i18n="db.rv-paid-desc">يُعرض على المتقدم خيار الدفع لرؤية نتيجته فوراً — أو ينتظر حتى تُعلن الجهة النتائج</div>
+        </label>
+
+        <!-- تفاصيل الخيار المدفوع -->
+        <div id="rv_paid_section" style="display:none;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem;margin-top:.25rem">
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.75rem">
+            <div style="flex:1;min-width:120px">
+              <label style="font-size:.75rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.35rem" data-i18n="db.rv-price-lbl">💵 سعر الاطلاع الفوري (ريال)</label>
+              <input type="number" id="fc_result_price" min="1" max="999" value="10" placeholder="10"
+                style="width:100%;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.55rem .75rem;color:#e2e8f0;font-size:.85rem;outline:none;box-sizing:border-box">
+            </div>
+            <div style="font-size:.72rem;color:#475569;padding-bottom:.55rem" data-i18n="db.rv-price-hint">يُحوَّل المبلغ للجهة مباشرة عبر بوابة الدفع</div>
+          </div>
+          <label style="font-size:.75rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.35rem" data-i18n="db.rv-msg-lbl">✏️ رسالة الانتظار للمتقدم</label>
+          <textarea id="fc_result_pay_msg" rows="3"
+            placeholder="مثال: طلبك قيد المراجعة. إن أردت معرفة نتيجتك فوراً، يمكنك الاطلاع عليها الآن مقابل 10 ريال فقط."
+            data-i18n-placeholder="db.rv-msg-ph"
+            style="width:100%;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.82rem;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box"></textarea>
+          <div style="font-size:.7rem;color:#475569;margin-top:.3rem" data-i18n="db.rv-msg-hint">هذه الرسالة ستظهر للمتقدم بعد انتهاء التقييم قبل صفحة الدفع.</div>
+        </div>
+
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-title" data-i18n="db.criteria-title">⚖️ معايير التقييم والأوزان</div>
       <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7" data-i18n="db.criteria-desc">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان يجب أن يساوي 100 نقطة.</p>
@@ -1156,6 +1213,7 @@ function initUI() {
   renderLinkPage();
   initScoreCustomUIs();
   loadFormConfigUI();
+  initResultVisBadge();
 
   // Re-render dynamic JS sections whenever language toggles
   document.addEventListener('rafd-lang-changed', () => {
@@ -1789,6 +1847,32 @@ function selectAcceptMode(mode) {
   if (msgSec) msgSec.style.display = mode === 'competitive' ? 'block' : 'none';
 }
 
+function selectResultVis(mode) {
+  const isAdv = partner?.plan === 'pro';
+  // paid option blocked for non-adv plans
+  if (mode === 'paid' && !isAdv) {
+    toast(getT('db.rv-adv-only'), 'warn');
+    return;
+  }
+  ['immediate','hidden','paid'].forEach(m => {
+    const radio = document.getElementById('rv_'+m);
+    const lbl   = document.getElementById('rv_'+m+'_lbl');
+    if (radio) radio.checked = m === mode;
+    if (lbl) {
+      lbl.style.borderColor = m === mode ? 'rgba(74,157,111,.5)' : '#334155';
+      lbl.style.background  = m === mode ? 'rgba(74,157,111,.07)' : 'transparent';
+    }
+  });
+  const paidSec = document.getElementById('rv_paid_section');
+  if (paidSec) paidSec.style.display = mode === 'paid' ? 'block' : 'none';
+}
+
+function initResultVisBadge() {
+  const isAdv = partner?.plan === 'pro';
+  const badge = document.getElementById('rv_paid_plan_badge');
+  if (badge) badge.style.display = isAdv ? 'none' : 'inline-block';
+}
+
 function toggleQ(id) {
   qStates[id] = !qStates[id];
   const toggle = document.getElementById('qt_'+id);
@@ -2141,6 +2225,9 @@ function loadFormConfigUI() {
     document.getElementById('fc_status').value = fc.is_active === false ? 'paused' : 'active';
     selectAcceptMode(fc.acceptance_mode || 'instant');
     if (fc.pending_msg) document.getElementById('fc_pending_msg').value = fc.pending_msg;
+    selectResultVis(fc.result_visibility || 'immediate');
+    if (fc.result_price) { const rp = document.getElementById('fc_result_price'); if(rp) rp.value = fc.result_price; }
+    if (fc.result_pay_msg) { const rm = document.getElementById('fc_result_pay_msg'); if(rm) rm.value = fc.result_pay_msg; }
 
     // تحميل النماذج المحفوظة
     savedForms = fc.saved_forms || [];
@@ -2274,6 +2361,9 @@ async function saveFormConfig() {
     required_docs,
     custom_docs: customDocs,
     nafath: { enabled: nafathOn, mode: nafathMode },
+    result_visibility: document.querySelector('input[name="result_vis"]:checked')?.value || 'immediate',
+    result_price: parseInt(document.getElementById('fc_result_price')?.value) || 10,
+    result_pay_msg: document.getElementById('fc_result_pay_msg')?.value.trim() || '',
     updated_at: new Date().toISOString(),
   };
 
