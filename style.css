@@ -114,8 +114,8 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .hero-visual { display: none; }
 
 /* ===== MACBOOK MOCKUP ===== */
-.mac-mockup-wrap{position:relative;width:100%;margin:0 auto;perspective:1600px;overflow:visible}
-.mac-mockup-inner{transform:rotateX(4deg) rotateY(10deg) rotateZ(-0.4deg);transform-style:preserve-3d;filter:drop-shadow(0 40px 70px rgba(0,0,0,.38)) drop-shadow(0 8px 20px rgba(0,0,0,.18));position:relative}
+.mac-mockup-wrap{position:relative;width:100%;margin:0 auto;perspective:1400px}
+.mac-mockup-inner{transform:rotateX(5deg) rotateY(14deg) rotateZ(-0.8deg);transform-style:preserve-3d;filter:drop-shadow(0 36px 65px rgba(0,0,0,.28)) drop-shadow(0 6px 18px rgba(0,0,0,.13));position:relative}
 .mac-frame-img{width:100%;height:auto;display:block}
 .mac-screen-content{position:absolute;top:7.2%;left:5.3%;width:89.3%;height:83.9%;border-radius:5px;overflow:hidden;background:#0f172a}
 
@@ -318,7 +318,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
   .nav-links { display: flex; }
   .nav-actions { display: flex; }
   .hamburger { display: none; }
-  .hero-inner { display: grid; grid-template-columns: 0.65fr 2.35fr; gap: 1.5rem; align-items: center; padding: 4rem 0; text-align: right; }
+  .hero-inner { display: grid; grid-template-columns: 1.1fr 1.9fr; gap: 3rem; align-items: center; padding: 4rem 0; text-align: right; }
   .hero-content { align-items: flex-start; text-align: right; padding: 0; width: auto; }
   .hero-cta { justify-content: flex-start; margin-left: 0; margin-right: 0; width: auto; max-width: none; flex-direction: row; }
   .hero-stats { display: flex; align-items: flex-start; gap: 1.5rem; max-width: none; margin-left: 0; margin-right: 0; }
