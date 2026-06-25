@@ -1033,8 +1033,28 @@ function openPartnerDetail(id) {
       ${p.status !== 'approved' ? `<button class="btn-save" style="flex:1" onclick="approvePartner('${p.id}');closeDetail()">✓ قبول</button>` : '<button class="btn-save" style="flex:1;opacity:.5" disabled>✓ مقبول</button>'}
       ${p.status !== 'rejected' ? `<button class="btn-cancel" style="flex:1" onclick="rejectPartner('${p.id}');closeDetail()">✕ رفض</button>` : ''}
     </div>
+    ${p.ref_num ? `
+    <div style="border-top:1px solid #334155;margin-top:1rem;padding-top:1rem">
+      <div style="font-size:.72rem;font-weight:700;color:#64748b;margin-bottom:.6rem;letter-spacing:.05em">🛠️ أدوات الإدارة</div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn-sm" style="background:#1a3a4a;color:#38bdf8;border:1px solid #2d5a6e;padding:.45rem .9rem;font-size:.78rem;font-weight:700" onclick="previewDashboard('${p.ref_num}',false)">🔍 تجربة لوحة التحكم</button>
+        <button class="btn-sm" style="background:linear-gradient(135deg,#4c1d95,#5b21b6);color:#c4b5fd;border:1px solid #7c3aed;padding:.45rem .9rem;font-size:.78rem;font-weight:700" onclick="previewDashboard('${p.ref_num}',true)">✨ تجربة بجميع الميزات</button>
+      </div>
+      <div style="font-size:.68rem;color:#475569;margin-top:.4rem">تجربة بجميع الميزات تفتح الباقة المتقدمة مؤقتاً — لأغراض العرض التجريبي فقط</div>
+    </div>` : ''}
   `;
   document.getElementById('detailOverlay').classList.add('open');
+}
+
+// ===== ADMIN PREVIEW =====
+function previewDashboard(ref, unlockAll) {
+  const token = {
+    ref,
+    unlockAll: !!unlockAll,
+    expires: Date.now() + 5 * 60 * 1000, // 5 minutes
+  };
+  localStorage.setItem('rafd_admin_preview', JSON.stringify(token));
+  window.open('/partner-dashboard.html', '_blank');
 }
 
 // ===== REPORTS =====

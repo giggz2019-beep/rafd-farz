@@ -1110,6 +1110,23 @@ let partner = null;
 
 async function loadPartnerData() {
   try {
+    // === Admin Preview Mode ===
+    const adminPreview = JSON.parse(localStorage.getItem('rafd_admin_preview') || 'null');
+    if (adminPreview && adminPreview.ref && adminPreview.expires > Date.now()) {
+      localStorage.removeItem('rafd_admin_preview');
+      const { data: pData, error: pErr } = await _sb.from('partners').select('*').eq('ref_num', adminPreview.ref).maybeSingle();
+      if (!pErr && pData) {
+        partner = normalizePartner(pData);
+        if (adminPreview.unlockAll) partner.plan = 'pro';
+        partner._adminPreview = true;
+        partner._unlockAll = adminPreview.unlockAll;
+        await loadApplications();
+        initUI();
+        showAdminPreviewBanner(adminPreview.unlockAll);
+        return;
+      }
+    }
+
     // تحقق من جلسة Supabase Auth أولاً
     const { data: { session: authSession } } = await _sb.auth.getSession();
     const email = authSession?.user?.email || session?.email;
@@ -1134,6 +1151,15 @@ async function loadPartnerData() {
     console.error('Load partner error:', e);
     window.location.href = '/partner-login.html';
   }
+}
+
+function showAdminPreviewBanner(unlockAll) {
+  const b = document.createElement('div');
+  b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(90deg,#7c3aed,#1a3a4a);color:#fff;text-align:center;padding:.55rem 1rem;font-size:.8rem;font-weight:700;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:1rem';
+  b.innerHTML = `<span>🛠️ وضع معاينة المدير${unlockAll ? ' — ✨ جميع ميزات الباقة المتقدمة مفعّلة' : ''}</span><button onclick="this.parentElement.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:.2rem .6rem;cursor:pointer;font-size:.75rem">✕ إغلاق</button>`;
+  document.body.prepend(b);
+  // push content down
+  document.body.style.paddingTop = '36px';
 }
 
 function normalizePartner(p) {
