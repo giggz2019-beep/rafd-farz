@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:rtl;min-height:100vh}
+body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}
 
 /* ===== HEADER ===== */
 .hdr{background:#fff;border-bottom:1px solid #e2e8f0;padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.04)}
@@ -226,7 +226,7 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 <header class="hdr">
   <a href="/" class="hdr-back" data-i18n="da.back">← الرئيسية</a>
   <a href="/" class="hdr-logo">
-    <div class="hdr-icon">R</div>
+    <img src="/rafd-logo.png" alt="Rafd" style="height:38px;width:auto;object-fit:contain;border-radius:9px">
     <span class="hdr-name">Rafd</span>
   </a>
   <button id="langToggleBtn" class="lang-toggle" style="font-size:.78rem;font-family:Cairo,sans-serif;background:none;border:1.5px solid #e2e8f0;border-radius:8px;padding:.3rem .7rem;cursor:pointer;font-weight:700;color:#1e293b;white-space:nowrap" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button><span class="hdr-badge" data-i18n="da.badge">تجربة مجانية</span>
@@ -263,26 +263,26 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
   <div class="welcome-card">
     <div class="wc-icon">🚀</div>
     <h1 class="wc-title" data-i18n="da.wc-title">جرّب نظام Rafd الآن</h1>
-    <p class="wc-desc">
+    <p class="wc-desc" data-i18n="da.wc-desc">
       قدّم طلباً تجريبياً لبرنامج دعم الشركات الناشئة وشاهد كيف يحلّل الذكاء الاصطناعي بياناتك ويُصدر قراراً فورياً خلال دقيقتين — تماماً كما ستعمل منصتك بعد الاشتراك.
     </p>
     <div class="wc-features">
       <div class="wc-feat">
         <div class="wc-feat-icon">📋</div>
-        <div class="wc-feat-text">4 خطوات بسيطة</div>
+        <div class="wc-feat-text" data-i18n="da.wc-f1">4 خطوات بسيطة</div>
       </div>
       <div class="wc-feat">
         <div class="wc-feat-icon">🤖</div>
-        <div class="wc-feat-text">تحليل فوري بالذكاء الاصطناعي</div>
+        <div class="wc-feat-text" data-i18n="da.wc-f2">تحليل فوري بالذكاء الاصطناعي</div>
       </div>
       <div class="wc-feat">
         <div class="wc-feat-icon">⚡</div>
-        <div class="wc-feat-text">نتيجة خلال دقيقتين</div>
+        <div class="wc-feat-text" data-i18n="da.wc-f3">نتيجة خلال دقيقتين</div>
       </div>
     </div>
     <div class="wc-note">
-      <strong>⚡ تجربة تفاعلية</strong>
-      <p>البيانات التي ستدخلها تُستخدم فقط لإظهار كيف يعمل النظام. هذا مثال على برنامج دعم الشركات الناشئة — كل جهة تُحدد معاييرها الخاصة.</p>
+      <strong data-i18n="da.wc-note-title">⚡ تجربة تفاعلية</strong>
+      <p data-i18n="da.wc-note-p">البيانات التي ستدخلها تُستخدم فقط لإظهار كيف يعمل النظام. هذا مثال على برنامج دعم الشركات الناشئة — كل جهة تُحدد معاييرها الخاصة.</p>
     </div>
     <button class="btn-start" onclick="showModal()" data-i18n="da.start-btn">ابدأ التجربة المجانية ←</button>
   </div>
@@ -293,34 +293,34 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
   <div class="fc-title" data-i18n="da.s1-title">المعلومات الأساسية</div>
   <div class="fc-sub" data-i18n="da.s1-sub">الخطوة 1 من 4 — أخبرنا عن نفسك ومشروعك</div>
   <div class="frow">
-    <div class="fld"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="f_name" placeholder="مثال: محمد أحمد الغامدي"></div>
-    <div class="fld"><label>البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com"></div>
+    <div class="fld"><label><span data-i18n="da.lbl-name">الاسم الكامل</span> <span class="req">*</span></label><input type="text" id="f_name" data-i18n-placeholder="da.ph-name" placeholder="مثال: محمد أحمد الغامدي"></div>
+    <div class="fld"><label><span data-i18n="da.lbl-email">البريد الإلكتروني</span> <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com"></div>
   </div>
   <div class="frow">
-    <div class="fld"><label>رقم الجوال <span class="req">*</span></label><input type="tel" id="f_phone" placeholder="05xxxxxxxx"></div>
-    <div class="fld"><label>الجنسية <span class="req">*</span></label>
-      <select id="f_nat"><option value="">اختر...</option><option value="sa">سعودي</option><option value="other">غير سعودي</option></select>
+    <div class="fld"><label><span data-i18n="da.lbl-phone">رقم الجوال</span> <span class="req">*</span></label><input type="tel" id="f_phone" placeholder="05xxxxxxxx"></div>
+    <div class="fld"><label><span data-i18n="da.lbl-nat">الجنسية</span> <span class="req">*</span></label>
+      <select id="f_nat"><option value="" data-i18n="da.opt-choose">اختر...</option><option value="sa" data-i18n="da.opt-sa">سعودي</option><option value="other" data-i18n="da.opt-other">غير سعودي</option></select>
     </div>
   </div>
-  <div class="fld"><label>اسم الشركة / المشروع <span class="req">*</span></label><input type="text" id="f_company" placeholder="اسم شركتك أو مشروعك الريادي"></div>
+  <div class="fld"><label><span data-i18n="da.lbl-company">اسم الشركة / المشروع</span> <span class="req">*</span></label><input type="text" id="f_company" data-i18n-placeholder="da.ph-company" placeholder="اسم شركتك أو مشروعك الريادي"></div>
   <div class="frow">
-    <div class="fld"><label>القطاع <span class="req">*</span></label>
+    <div class="fld"><label><span data-i18n="da.lbl-sector">القطاع</span> <span class="req">*</span></label>
       <select id="f_sector">
-        <option value="">اختر القطاع...</option>
-        <option value="fintech">التقنية المالية</option>
-        <option value="health">الصحة والرعاية</option>
-        <option value="edu">التعليم والتدريب</option>
-        <option value="ecom">التجارة الإلكترونية</option>
-        <option value="ai">الذكاء الاصطناعي</option>
-        <option value="logistics">اللوجستيات</option>
-        <option value="other">أخرى</option>
+        <option value="" data-i18n="da.opt-sector">اختر القطاع...</option>
+        <option value="fintech" data-i18n="da.sec-fintech">التقنية المالية</option>
+        <option value="health" data-i18n="da.sec-health">الصحة والرعاية</option>
+        <option value="edu" data-i18n="da.sec-edu">التعليم والتدريب</option>
+        <option value="ecom" data-i18n="da.sec-ecom">التجارة الإلكترونية</option>
+        <option value="ai" data-i18n="da.sec-ai">الذكاء الاصطناعي</option>
+        <option value="logistics" data-i18n="da.sec-log">اللوجستيات</option>
+        <option value="other" data-i18n="da.opt-other2">أخرى</option>
       </select>
     </div>
-    <div class="fld"><label>سنة التأسيس</label>
-      <select id="f_year"><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021 أو قبل</option></select>
+    <div class="fld"><label data-i18n="da.lbl-year">سنة التأسيس</label>
+      <select id="f_year"><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021" data-i18n="da.year-before">2021 أو قبل</option></select>
     </div>
   </div>
-  <div class="fld"><label>وصف مختصر للمشروع <span class="req">*</span></label><textarea id="f_desc" placeholder="اشرح فكرة مشروعك في جملتين أو ثلاث..."></textarea></div>
+  <div class="fld"><label><span data-i18n="da.lbl-desc">وصف مختصر للمشروع</span> <span class="req">*</span></label><textarea id="f_desc" data-i18n-placeholder="da.ph-desc" placeholder="اشرح فكرة مشروعك في جملتين أو ثلاث..."></textarea></div>
   <div class="fnav"><span class="step-ctr">1 / 4</span><button class="btn-next" onclick="go(2)" data-i18n="da.next">التالي ←</button></div>
 </div>
 
@@ -328,118 +328,118 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:r
 <div class="wrap form-card" id="s2">
   <div class="fc-title" data-i18n="da.s2-title">المؤهلات والخبرة</div>
   <div class="fc-sub" data-i18n="da.s2-sub">الخطوة 2 من 4 — خلفيتك الأكاديمية والمهنية</div>
-  <div class="fld"><label>أعلى مؤهل أكاديمي <span class="req">*</span></label>
+  <div class="fld"><label><span data-i18n="da.lbl-edu">أعلى مؤهل أكاديمي</span> <span class="req">*</span></label>
     <div class="radio-opts" id="f_edu">
-      <label class="ropt" onclick="selR(this,'f_edu','phd')"><input type="radio" name="edu" value="phd"><span>دكتوراه</span></label>
-      <label class="ropt" onclick="selR(this,'f_edu','master')"><input type="radio" name="edu" value="master"><span>ماجستير</span></label>
-      <label class="ropt" onclick="selR(this,'f_edu','bachelor')"><input type="radio" name="edu" value="bachelor"><span>بكالوريوس</span></label>
-      <label class="ropt" onclick="selR(this,'f_edu','diploma')"><input type="radio" name="edu" value="diploma"><span>دبلوم أو أقل</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','phd')"><input type="radio" name="edu" value="phd"><span data-i18n="da.edu-phd">دكتوراه</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','master')"><input type="radio" name="edu" value="master"><span data-i18n="da.edu-master">ماجستير</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','bachelor')"><input type="radio" name="edu" value="bachelor"><span data-i18n="da.edu-bachelor">بكالوريوس</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','diploma')"><input type="radio" name="edu" value="diploma"><span data-i18n="da.edu-diploma">دبلوم أو أقل</span></label>
     </div>
   </div>
   <div class="frow">
-    <div class="fld"><label>سنوات الخبرة في المجال</label>
+    <div class="fld"><label data-i18n="da.lbl-exp">سنوات الخبرة في المجال</label>
       <div class="range-row">
-        <input type="range" min="0" max="20" value="3" id="f_exp" oninput="document.getElementById('expV').textContent=this.value+' سنوات';this.dataset.v=this.value" data-v="3">
-        <span class="range-val" id="expV">3 سنوات</span>
+        <input type="range" min="0" max="20" value="3" id="f_exp" oninput="document.getElementById('expV').textContent=this.value+(document.documentElement.lang==='ar'?' سنوات':' yrs');this.dataset.v=this.value" data-v="3">
+        <span class="range-val" id="expV">3 yrs</span>
       </div>
     </div>
-    <div class="fld"><label>عدد أعضاء الفريق <span class="req">*</span></label>
-      <select id="f_team"><option value="">اختر...</option><option value="1">مؤسس منفرد</option><option value="2">2 أعضاء</option><option value="3-5">3-5 أعضاء</option><option value="6+">أكثر من 5</option></select>
+    <div class="fld"><label><span data-i18n="da.lbl-team">عدد أعضاء الفريق</span> <span class="req">*</span></label>
+      <select id="f_team"><option value="" data-i18n="da.opt-choose">اختر...</option><option value="1" data-i18n="da.team-solo">مؤسس منفرد</option><option value="2" data-i18n="da.team-2">2 أعضاء</option><option value="3-5" data-i18n="da.team-3">3-5 أعضاء</option><option value="6+" data-i18n="da.team-6">أكثر من 5</option></select>
     </div>
   </div>
-  <div class="fld"><label>هل سبق لك تأسيس شركة؟ <span class="req">*</span></label>
+  <div class="fld"><label><span data-i18n="da.lbl-prev">هل سبق لك تأسيس شركة؟</span> <span class="req">*</span></label>
     <div class="radio-opts" id="f_prev">
-      <label class="ropt" onclick="selR(this,'f_prev','yes_exit')"><input type="radio" name="prev" value="yes_exit"><span>نعم، وحققت خروجاً ناجحاً (Exit)</span></label>
-      <label class="ropt" onclick="selR(this,'f_prev','yes_active')"><input type="radio" name="prev" value="yes_active"><span>نعم، ولا تزال نشطة</span></label>
-      <label class="ropt" onclick="selR(this,'f_prev','yes_closed')"><input type="radio" name="prev" value="yes_closed"><span>نعم، لكنها أُغلقت</span></label>
-      <label class="ropt" onclick="selR(this,'f_prev','no')"><input type="radio" name="prev" value="no"><span>لا، هذا مشروعي الأول</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','yes_exit')"><input type="radio" name="prev" value="yes_exit"><span data-i18n="da.prev-exit">نعم، وحققت خروجاً ناجحاً (Exit)</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','yes_active')"><input type="radio" name="prev" value="yes_active"><span data-i18n="da.prev-active">نعم، ولا تزال نشطة</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','yes_closed')"><input type="radio" name="prev" value="yes_closed"><span data-i18n="da.prev-closed">نعم، لكنها أُغلقت</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','no')"><input type="radio" name="prev" value="no"><span data-i18n="da.prev-no">لا، هذا مشروعي الأول</span></label>
     </div>
   </div>
-  <div class="fld"><label>المهارات الرئيسية (اختر كل ما ينطبق)</label>
+  <div class="fld"><label data-i18n="da.lbl-skills">المهارات الرئيسية (اختر كل ما ينطبق)</label>
     <div class="check-opts" id="f_skills">
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="tech"><span>تطوير تقني / برمجة</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="biz"><span>إدارة أعمال وتطوير</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mkt"><span>تسويق ومبيعات</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="fin"><span>مالية ومحاسبة</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="des"><span>تصميم وتجربة مستخدم</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="tech"><span data-i18n="da.skill-tech">تطوير تقني / برمجة</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="biz"><span data-i18n="da.skill-biz">إدارة أعمال وتطوير</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mkt"><span data-i18n="da.skill-mkt">تسويق ومبيعات</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="fin"><span data-i18n="da.skill-fin">مالية ومحاسبة</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="des"><span data-i18n="da.skill-des">تصميم وتجربة مستخدم</span></label>
     </div>
   </div>
-  <div class="fnav"><button class="btn-prev" onclick="go(1)">← السابق</button><span class="step-ctr">2 / 4</span><button class="btn-next" onclick="go(3)" data-i18n="da.next">التالي ←</button></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(1)" data-i18n="da.prev-btn">← السابق</button><span class="step-ctr">2 / 4</span><button class="btn-next" onclick="go(3)" data-i18n="da.next">التالي ←</button></div>
 </div>
 
 <!-- ===== STEP 3 ===== -->
 <div class="wrap form-card" id="s3">
-  <div class="fc-title">المشروع والتمويل</div>
+  <div class="fc-title" data-i18n="da.s3-title">المشروع والتمويل</div>
   <div class="fc-sub" data-i18n="da.s3-sub">الخطوة 3 من 4 — تفاصيل مشروعك الريادي</div>
-  <div class="fld"><label>مرحلة المشروع الحالية <span class="req">*</span></label>
+  <div class="fld"><label><span data-i18n="da.lbl-stage">مرحلة المشروع الحالية</span> <span class="req">*</span></label>
     <div class="radio-opts" id="f_stage">
-      <label class="ropt" onclick="selR(this,'f_stage','idea')"><input type="radio" name="stage" value="idea"><span>فكرة (Idea Stage)</span></label>
-      <label class="ropt" onclick="selR(this,'f_stage','mvp')"><input type="radio" name="stage" value="mvp"><span>نموذج أولي (MVP)</span></label>
-      <label class="ropt" onclick="selR(this,'f_stage','revenue')"><input type="radio" name="stage" value="revenue"><span>مرحلة الإيرادات (Revenue)</span></label>
-      <label class="ropt" onclick="selR(this,'f_stage','growth')"><input type="radio" name="stage" value="growth"><span>مرحلة النمو (Growth)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','idea')"><input type="radio" name="stage" value="idea"><span data-i18n="da.stage-idea">فكرة (Idea Stage)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','mvp')"><input type="radio" name="stage" value="mvp"><span data-i18n="da.stage-mvp">نموذج أولي (MVP)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','revenue')"><input type="radio" name="stage" value="revenue"><span data-i18n="da.stage-revenue">مرحلة الإيرادات (Revenue)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','growth')"><input type="radio" name="stage" value="growth"><span data-i18n="da.stage-growth">مرحلة النمو (Growth)</span></label>
     </div>
   </div>
   <div class="frow">
-    <div class="fld"><label>التمويل المُحصَّل حتى الآن</label>
-      <select id="f_raised"><option value="0">لم أحصل على تمويل</option><option value="seed">أقل من 500 ألف ريال</option><option value="pre-a">500 ألف — 2 مليون</option><option value="series-a">أكثر من 2 مليون</option></select>
+    <div class="fld"><label data-i18n="da.lbl-raised">التمويل المُحصَّل حتى الآن</label>
+      <select id="f_raised"><option value="0" data-i18n="da.raised-0">لم أحصل على تمويل</option><option value="seed" data-i18n="da.raised-seed">أقل من 500 ألف ريال</option><option value="pre-a" data-i18n="da.raised-prea">500 ألف — 2 مليون</option><option value="series-a" data-i18n="da.raised-a">أكثر من 2 مليون</option></select>
     </div>
-    <div class="fld"><label>التمويل المطلوب <span class="req">*</span></label>
-      <select id="f_seeking"><option value="">اختر...</option><option value="100k">أقل من 100 ألف</option><option value="500k">100 — 500 ألف</option><option value="1m">500 ألف — مليون</option><option value="2m+">أكثر من مليون</option></select>
+    <div class="fld"><label><span data-i18n="da.lbl-seeking">التمويل المطلوب</span> <span class="req">*</span></label>
+      <select id="f_seeking"><option value="" data-i18n="da.opt-choose">اختر...</option><option value="100k" data-i18n="da.seek-100k">أقل من 100 ألف</option><option value="500k" data-i18n="da.seek-500k">100 — 500 ألف</option><option value="1m" data-i18n="da.seek-1m">500 ألف — مليون</option><option value="2m+" data-i18n="da.seek-2m">أكثر من مليون</option></select>
     </div>
   </div>
-  <div class="fld"><label>هل لديك عملاء أو مستخدمون حاليون؟ <span class="req">*</span></label>
+  <div class="fld"><label><span data-i18n="da.lbl-cust">هل لديك عملاء أو مستخدمون حاليون؟</span> <span class="req">*</span></label>
     <div class="radio-opts" id="f_cust">
-      <label class="ropt" onclick="selR(this,'f_cust','paying')"><input type="radio" name="cust" value="paying"><span>نعم، عملاء يدفعون</span></label>
-      <label class="ropt" onclick="selR(this,'f_cust','free')"><input type="radio" name="cust" value="free"><span>نعم، مستخدمون مجانيون</span></label>
-      <label class="ropt" onclick="selR(this,'f_cust','pilot')"><input type="radio" name="cust" value="pilot"><span>في مرحلة التجريب (Pilot)</span></label>
-      <label class="ropt" onclick="selR(this,'f_cust','none')"><input type="radio" name="cust" value="none"><span>لا يوجد بعد</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','paying')"><input type="radio" name="cust" value="paying"><span data-i18n="da.cust-paying">نعم، عملاء يدفعون</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','free')"><input type="radio" name="cust" value="free"><span data-i18n="da.cust-free">نعم، مستخدمون مجانيون</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','pilot')"><input type="radio" name="cust" value="pilot"><span data-i18n="da.cust-pilot">في مرحلة التجريب (Pilot)</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','none')"><input type="radio" name="cust" value="none"><span data-i18n="da.cust-none">لا يوجد بعد</span></label>
     </div>
   </div>
-  <div class="fld"><label>Pitch Deck (اختياري)</label>
-    <div class="upload-zone" onclick="toast('رفع الملفات متاح في النسخة الكاملة')">
+  <div class="fld"><label data-i18n="da.lbl-pitch">Pitch Deck (اختياري)</label>
+    <div class="upload-zone" onclick="toast(getT('da.upload-toast'))">
       <div style="font-size:1.75rem">☁️</div>
-      <p>اضغط لرفع ملف PDF</p>
-      <p style="font-size:.72rem;color:#94a3b8">الحد الأقصى 10MB</p>
+      <p data-i18n="da.upload-click">اضغط لرفع ملف PDF</p>
+      <p style="font-size:.72rem;color:#94a3b8" data-i18n="da.upload-max">الحد الأقصى 10MB</p>
     </div>
   </div>
-  <div class="fnav"><button class="btn-prev" onclick="go(2)">← السابق</button><span class="step-ctr">3 / 4</span><button class="btn-next" onclick="go(4)" data-i18n="da.next">التالي ←</button></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(2)" data-i18n="da.prev-btn">← السابق</button><span class="step-ctr">3 / 4</span><button class="btn-next" onclick="go(4)" data-i18n="da.next">التالي ←</button></div>
 </div>
 
 <!-- ===== STEP 4 ===== -->
 <div class="wrap form-card" id="s4">
   <div class="fc-title" data-i18n="da.s4-title">أسئلة إضافية</div>
   <div class="fc-sub" data-i18n="da.s4-sub">الخطوة 4 من 4 — أسئلة للتأهل النهائي</div>
-  <div class="fld"><label>لماذا تريد الانضمام للبرنامج؟ (اختر كل ما ينطبق)</label>
+  <div class="fld"><label data-i18n="da.lbl-reasons">لماذا تريد الانضمام للبرنامج؟ (اختر كل ما ينطبق)</label>
     <div class="check-opts" id="f_reasons">
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="funding"><span>الحصول على تمويل</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mentor"><span>الإرشاد والتوجيه</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="network"><span>بناء الشبكة والعلاقات</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="market"><span>الوصول للسوق</span></label>
-      <label class="copt" onclick="togC(this)"><input type="checkbox" value="training"><span>التدريب وبناء القدرات</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="funding"><span data-i18n="da.reason-fund">الحصول على تمويل</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mentor"><span data-i18n="da.reason-mentor">الإرشاد والتوجيه</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="network"><span data-i18n="da.reason-net">بناء الشبكة والعلاقات</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="market"><span data-i18n="da.reason-mkt">الوصول للسوق</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="training"><span data-i18n="da.reason-train">التدريب وبناء القدرات</span></label>
     </div>
   </div>
-  <div class="fld"><label>ما هي أكبر تحدياتك الحالية؟ <span class="req">*</span></label>
-    <textarea id="f_challenges" placeholder="اشرح التحديات التي تواجهها في مشروعك..."></textarea>
+  <div class="fld"><label><span data-i18n="da.lbl-challenges">ما هي أكبر تحدياتك الحالية؟</span> <span class="req">*</span></label>
+    <textarea id="f_challenges" data-i18n-placeholder="da.ph-challenges" placeholder="اشرح التحديات التي تواجهها في مشروعك..."></textarea>
   </div>
-  <div class="fld"><label>هل أنت مستعد للالتزام بمتطلبات البرنامج؟ <span class="req">*</span></label>
+  <div class="fld"><label><span data-i18n="da.lbl-commit">هل أنت مستعد للالتزام بمتطلبات البرنامج؟</span> <span class="req">*</span></label>
     <div class="radio-opts" id="f_commit">
-      <label class="ropt" onclick="selR(this,'f_commit','yes')"><input type="radio" name="commit" value="yes"><span>نعم، ملتزم بالكامل</span></label>
-      <label class="ropt" onclick="selR(this,'f_commit','maybe')"><input type="radio" name="commit" value="maybe"><span>ربما، أحتاج لمعرفة التفاصيل</span></label>
-      <label class="ropt" onclick="selR(this,'f_commit','no')"><input type="radio" name="commit" value="no"><span>لا، لدي قيود على الوقت</span></label>
+      <label class="ropt" onclick="selR(this,'f_commit','yes')"><input type="radio" name="commit" value="yes"><span data-i18n="da.commit-yes">نعم، ملتزم بالكامل</span></label>
+      <label class="ropt" onclick="selR(this,'f_commit','maybe')"><input type="radio" name="commit" value="maybe"><span data-i18n="da.commit-maybe">ربما، أحتاج لمعرفة التفاصيل</span></label>
+      <label class="ropt" onclick="selR(this,'f_commit','no')"><input type="radio" name="commit" value="no"><span data-i18n="da.commit-no">لا، لدي قيود على الوقت</span></label>
     </div>
   </div>
   <div class="fnav">
-    <button class="btn-prev" onclick="go(3)">← السابق</button>
+    <button class="btn-prev" onclick="go(3)" data-i18n="da.prev-btn">← السابق</button>
     <span class="step-ctr">4 / 4</span>
-    <button class="btn-next btn-submit" onclick="submit()">إرسال الطلب ✓</button>
+    <button class="btn-next btn-submit" onclick="submit()" data-i18n="da.submit">إرسال الطلب ✓</button>
   </div>
 </div>
 
 <!-- ===== AI TERMINAL ===== -->
 <div class="ai-page" id="aiPage">
   <div class="ai-intro">
-    <h2>🤖 جارٍ تحليل طلبك بالذكاء الاصطناعي</h2>
-    <p>يقوم النظام بمعالجة بياناتك وفق معايير البرنامج — يُرجى الانتظار</p>
+    <h2 data-i18n="da.ai-title">🤖 جارٍ تحليل طلبك بالذكاء الاصطناعي</h2>
+    <p data-i18n="da.ai-desc">يقوم النظام بمعالجة بياناتك وفق معايير البرنامج — يُرجى الانتظار</p>
   </div>
   <div class="terminal">
     <div class="t-hdr">
