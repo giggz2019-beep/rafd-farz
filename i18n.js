@@ -91,6 +91,9 @@ const T = {
     'footer.partners':'الشركاء','footer.prog':'برنامج الشراكة',
     'footer.reg':'سجّل كشريك','footer.plogin':'دخول الشركاء',
     'footer.copy':'© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية',
+    'sdaia.title':'حوكمة متوافقة مع توجهات سدايا',
+    'sdaia.desc':'مبني على مبادئ حوكمة سعودية للذكاء الاصطناعي: الخصوصية، قابلية المراجعة، الأمان، والإشراف البشري.',
+    'sdaia.tag1':'🔒 الخصوصية','sdaia.tag2':'📋 قابلية المراجعة','sdaia.tag3':'🛡️ الأمان','sdaia.tag4':'👁️ الإشراف البشري',
     // ===== REGISTER PARTNER =====
     'rp.badge':'🤝 انضم كشريك رسمي','rp.h1':'سجّل جهتك في<br><span>منصة RAFD</span>',
     'rp.hero-p':'احصل على لوحة تحكم كاملة لإدارة طلبات الفرز، ومتابعة النتائج، وتخصيص المعايير لجهتك',
@@ -859,6 +862,9 @@ const T = {
     'footer.partners':'Partners','footer.prog':'Partnership Program',
     'footer.reg':'Register as Partner','footer.plogin':'Partner Login',
     'footer.copy':'© 2025 Rafd Digital. All rights reserved — Riyadh, Saudi Arabia',
+    'sdaia.title':'Governance Aligned with SDAIA Principles',
+    'sdaia.desc':'Built on Saudi AI governance principles: Privacy, Auditability, Security, and Human Oversight.',
+    'sdaia.tag1':'🔒 Privacy','sdaia.tag2':'📋 Auditability','sdaia.tag3':'🛡️ Security','sdaia.tag4':'👁️ Human Oversight',
     // ===== REGISTER PARTNER =====
     'rp.badge':'🤝 Join as Official Partner','rp.h1':'Register Your Organization<br>on <span>RAFD Platform</span>',
     'rp.hero-p':'Get a full dashboard to manage screening requests, track results, and customize criteria for your organization',

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <clipPath id="hex">
+      <polygon points="100,8 185,55 185,145 100,192 15,145 15,55"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#hex)">
+    <!-- Background -->
+    <rect width="200" height="200" fill="white"/>
+
+    <!-- === LEFT SIDE — Orange/Red triangles === -->
+    <!-- Row 1 -->
+    <polygon points="15,55 47,55 31,82" fill="#e8440a"/>
+    <polygon points="47,55 79,55 63,82" fill="#e05010"/>
+    <!-- Row 2 -->
+    <polygon points="15,55 31,82 15,109" fill="#c43010"/>
+    <polygon points="31,82 47,55 63,82" fill="#d84010"/>
+    <polygon points="31,82 63,82 47,109" fill="#e05010"/>
+    <polygon points="63,82 79,55 95,82" fill="#d04a08"/>
+    <!-- Row 3 -->
+    <polygon points="15,109 31,82 15,109" fill="#b02808"/>
+    <polygon points="15,109 47,109 31,136" fill="#c43010"/>
+    <polygon points="47,109 63,82 63,109" fill="#9a2010"/>
+    <polygon points="47,109 79,109 63,136" fill="#b83010"/>
+    <!-- Row 4 -->
+    <polygon points="15,145 31,136 15,145" fill="#8a1808"/>
+    <polygon points="15,145 47,145 31,136" fill="#a02010"/>
+    <polygon points="31,136 47,109 47,136" fill="#8a1808" opacity="0.85"/>
+    <polygon points="31,136 63,136 47,145" fill="#903010"/>
+    <polygon points="63,136 79,109 79,136" fill="#7a1008" opacity="0.8"/>
+    <!-- Row 5 -->
+    <polygon points="47,145 63,136 63,145" fill="#7a1008"/>
+    <polygon points="15,145 47,145 31,164" fill="#862010"/>
+    <polygon points="47,145 79,145 63,164" fill="#7a1808"/>
+
+    <!-- === RIGHT SIDE — Teal/Green triangles === -->
+    <!-- Row 1 -->
+    <polygon points="153,55 185,55 169,82" fill="#0d9e7e"/>
+    <polygon points="121,55 153,55 137,82" fill="#0ab890"/>
+    <!-- Row 2 -->
+    <polygon points="169,82 185,55 185,109" fill="#0c8870"/>
+    <polygon points="137,82 153,55 153,82" fill="#0aaa84"/>
+    <polygon points="137,82 169,82 153,109" fill="#0c9878"/>
+    <polygon points="105,82 121,55 137,82" fill="#10c094"/>
+    <!-- Row 3 -->
+    <polygon points="169,82 185,109 153,109" fill="#0b7868"/>
+    <polygon points="121,109 137,82 153,109" fill="#0e9880"/>
+    <polygon points="121,109 153,109 137,136" fill="#0c8878"/>
+    <polygon points="153,109 185,109 169,136" fill="#0a7060"/>
+    <!-- Row 4 -->
+    <polygon points="169,136 185,109 185,145" fill="#096858"/>
+    <polygon points="137,136 153,109 169,136" fill="#0b7868"/>
+    <polygon points="121,145 137,136 153,145" fill="#0a7060"/>
+    <polygon points="153,145 169,136 185,145" fill="#085850"/>
+    <!-- Row 5 -->
+    <polygon points="121,145 153,145 137,164" fill="#0a6858"/>
+    <polygon points="153,145 185,145 169,164" fill="#085048"/>
+
+    <!-- === TOP — Purple/Indigo triangles === -->
+    <polygon points="63,8 100,8 82,36" fill="#4a3aaa" opacity="0.9"/>
+    <polygon points="100,8 137,8 118,36" fill="#5540b8" opacity="0.9"/>
+    <polygon points="47,36 63,8 79,36" fill="#5040b0"/>
+    <polygon points="63,8 79,36 95,8" fill="#4838a8"/>
+    <polygon points="79,36 100,8 121,36" fill="#5848b8" opacity="0.85"/>
+    <polygon points="100,8 121,36 137,8" fill="#6050c0" opacity="0.85"/>
+    <polygon points="121,36 137,8 153,36" fill="#5040b0"/>
+    <polygon points="63,55 79,36 95,55" fill="#4a3aaa" opacity="0.8"/>
+    <polygon points="79,36 95,55 105,36" fill="#5848b8" opacity="0.75"/>
+    <polygon points="105,36 121,55 137,36" fill="#5040b0" opacity="0.75"/>
+    <polygon points="121,36 137,55 153,36" fill="#4838a8" opacity="0.8"/>
+
+    <!-- === CENTER — 3D Isometric Cube === -->
+    <!-- Top face (blue/sky) -->
+    <polygon points="100,72 122,85 100,98 78,85" fill="#5ab4e0"/>
+    <!-- Left face (orange gradient) -->
+    <polygon points="78,85 100,98 100,124 78,111" fill="#e05a20"/>
+    <!-- Right face (teal/green) -->
+    <polygon points="122,85 100,98 100,124 122,111" fill="#20b888"/>
+
+    <!-- Cube edges highlight -->
+    <polygon points="100,72 122,85 100,98 78,85" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+    <line x1="100" y1="98" x2="100" y2="124" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+  </g>
+  <!-- Hexagon border -->
+  <polygon points="100,8 185,55 185,145 100,192 15,145 15,55" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+</svg>
