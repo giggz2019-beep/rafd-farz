@@ -2,6 +2,7 @@
 const T = {
   ar: {
     dir:'rtl', lang:'ar',
+    'brand.tagline':'منصة الفرز الذكي',
     // ===== NAVBAR =====
     'nav.features':'المميزات','nav.how':'كيف نعمل','nav.about':'من نحن','nav.pricing':'الأسعار',
     'nav.login':'تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span>',
@@ -773,6 +774,7 @@ const T = {
 
   en: {
     dir:'ltr', lang:'en',
+    'brand.tagline':'Smart Screening',
     // ===== NAVBAR =====
     'nav.features':'Features','nav.how':'How It Works','nav.about':'About','nav.pricing':'Pricing',
     'nav.login':'Login <span style="font-size:.7rem;opacity:.7">▼</span>',
@@ -1575,6 +1577,11 @@ function toggleLang() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  // v2: reset old Arabic-default users to English (they never explicitly chose Arabic)
+  if (localStorage.getItem('rafd_lang_v') !== '2') {
+    localStorage.removeItem('rafd_lang');
+    localStorage.setItem('rafd_lang_v', '2');
+  }
   const saved = localStorage.getItem('rafd_lang') || 'en';
   setLang(saved);
 });
