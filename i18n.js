@@ -1539,20 +1539,18 @@ function setLang(lang) {
 }
 
 function getT(key) {
-  const lang = localStorage.getItem('rafd_lang') || 'ar';
+  const lang = localStorage.getItem('rafd_lang') || 'en';
   return (T[lang] && T[lang][key] !== undefined) ? T[lang][key] : (T['ar'][key] || key);
 }
 
 function toggleLang() {
-  const current = localStorage.getItem('rafd_lang') || 'ar';
+  const current = localStorage.getItem('rafd_lang') || 'en';
   setLang(current === 'ar' ? 'en' : 'ar');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  const saved = localStorage.getItem('rafd_lang') || 'ar';
-  const btn = document.getElementById('langToggleBtn');
-  if (btn) btn.textContent = saved === 'ar' ? '🌐 EN' : '🌐 عربي';
-  if (saved !== 'ar') setLang(saved);
+  const saved = localStorage.getItem('rafd_lang') || 'en';
+  setLang(saved);
 });
 
 
