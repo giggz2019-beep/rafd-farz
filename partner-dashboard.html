@@ -2123,6 +2123,10 @@ function saveCurrentForm() {
   document.getElementById('saveFormModal').classList.add('open');
   setTimeout(() => inp?.focus(), 120);
 }
+function genSlug() {
+  return Math.random().toString(36).slice(2, 8);
+}
+
 async function confirmSaveForm() {
   const inp = document.getElementById('saveFormNameInp');
   const err = document.getElementById('saveFormErr');
@@ -2130,7 +2134,7 @@ async function confirmSaveForm() {
   if (!name) { if (err) err.style.display = 'block'; inp?.focus(); return; }
   document.getElementById('saveFormModal').classList.remove('open');
   const config = buildFormConfig();
-  const newForm = { id: Date.now().toString(), name, config, saved_at: new Date().toISOString() };
+  const newForm = { id: Date.now().toString(), slug: genSlug(), name, config, saved_at: new Date().toISOString() };
   savedForms.push(newForm);
   await persistSavedForms();
   renderSavedFormsList();
@@ -2159,6 +2163,24 @@ async function deleteSavedForm(id) {
   toast('تم حذف النموذج');
 }
 
+function getSavedFormLink(f) {
+  const slug = f.slug || f.id;
+  return 'https://rafd-digital.com/apply.html?partner=' + (partner.refNum || '') + '&form=' + slug;
+}
+
+function copySavedFormLink(id) {
+  const f = savedForms.find(x => x.id === id);
+  if (!f) return;
+  // ensure slug exists (migrate old forms)
+  if (!f.slug) { f.slug = genSlug(); persistSavedForms(); }
+  const url = getSavedFormLink(f);
+  navigator.clipboard.writeText(url).then(() => {
+    toast('✅ تم نسخ رابط النموذج: ' + f.name);
+  }).catch(() => {
+    prompt(getT('db.share-link-prompt'), url);
+  });
+}
+
 function renderSavedFormsList() {
   const el = document.getElementById('saved_forms_list');
   if (!el) return;
@@ -2166,18 +2188,28 @@ function renderSavedFormsList() {
     el.innerHTML = `<div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem">${getT('db.no-saved-forms')}</div>`;
     return;
   }
-  el.innerHTML = savedForms.map(f => `
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:.55rem .75rem;background:#1e293b;border-radius:8px;margin-bottom:.4rem">
-      <div>
-        <div style="font-size:.82rem;font-weight:700;color:#e2e8f0">${f.name}</div>
-        <div style="font-size:.68rem;color:#475569">${new Date(f.saved_at).toLocaleDateString('ar-SA')}</div>
+  el.innerHTML = savedForms.map(f => {
+    const slug = f.slug || f.id;
+    const previewUrl = 'https://rafd-digital.com/apply.html?partner=' + (partner.refNum||'') + '&form=' + slug;
+    return `
+    <div style="background:#1e293b;border-radius:10px;padding:.65rem .85rem;margin-bottom:.5rem;border:1px solid #1e3a50">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem">
+        <div>
+          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0">${f.name}</div>
+          <div style="font-size:.67rem;color:#475569;margin-top:.1rem">${new Date(f.saved_at).toLocaleDateString('ar-SA')}</div>
+        </div>
+        <div style="display:flex;gap:.4rem">
+          <button onclick="loadSavedForm('${f.id}')" style="background:rgba(74,157,111,.15);color:#4ade80;border:none;border-radius:6px;padding:.3rem .65rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer" title="${getT('db.load-form')}">⬇ ${getT('db.load-form')}</button>
+          <button onclick="deleteSavedForm('${f.id}')" style="background:rgba(239,68,68,.1);color:#f87171;border:none;border-radius:6px;padding:.3rem .55rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">✕</button>
+        </div>
       </div>
-      <div style="display:flex;gap:.4rem">
-        <button onclick="loadSavedForm('${f.id}')" style="background:rgba(74,157,111,.15);color:#4ade80;border:none;border-radius:6px;padding:.3rem .65rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">تحميل</button>
-        <button onclick="deleteSavedForm('${f.id}')" style="background:rgba(239,68,68,.1);color:#f87171;border:none;border-radius:6px;padding:.3rem .55rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">✕</button>
+      <div style="display:flex;align-items:center;gap:.5rem;background:#0f172a;border-radius:7px;padding:.35rem .65rem">
+        <span style="font-size:.65rem;color:#475569;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:left;font-family:monospace">${previewUrl}</span>
+        <button onclick="copySavedFormLink('${f.id}')" style="background:rgba(56,189,248,.12);color:#38bdf8;border:none;border-radius:6px;padding:.28rem .65rem;font-family:'Cairo',sans-serif;font-size:.73rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">🔗 ${getT('db.copy-link')}</button>
+        <a href="${previewUrl}" target="_blank" style="background:rgba(74,157,111,.12);color:#4ade80;text-decoration:none;border-radius:6px;padding:.28rem .55rem;font-size:.73rem;font-weight:700;white-space:nowrap;flex-shrink:0">↗ ${getT('db.preview-form')}</a>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function buildFormConfig() {

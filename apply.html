@@ -727,6 +727,17 @@ async function init() {
     }
 
     partnerData = data;
+
+    // Load specific saved template if ?form=SLUG is in the URL
+    const formSlug = params.get('form');
+    if (formSlug && data.form_config?.saved_forms?.length) {
+      const tpl = data.form_config.saved_forms.find(f => f.slug === formSlug || f.id === formSlug);
+      if (tpl?.config) {
+        data.form_config = { ...tpl.config, _tpl_name: tpl.name };
+        partnerData = data;
+      }
+    }
+
     const fc = data.form_config;
 
     if (fc && fc.is_active === false) {
@@ -758,6 +769,14 @@ async function init() {
     _set('modalPartnerName', programName);
     _set('termPartnerName', data.org_name);
     _set('welcomeDesc', programDesc);
+
+    // Show template badge if a specific saved form was loaded via ?form=
+    if (fc?._tpl_name) {
+      const badge = document.createElement('div');
+      badge.style.cssText = 'position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3);color:#38bdf8;padding:.3rem .9rem;border-radius:20px;font-size:.72rem;font-weight:700;z-index:999;pointer-events:none;font-family:"Cairo",sans-serif';
+      badge.textContent = '📋 ' + fc._tpl_name;
+      document.body.appendChild(badge);
+    }
 
     // Show pending banner if not yet approved
     if (data.status === 'pending') {
