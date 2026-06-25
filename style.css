@@ -115,7 +115,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 
 /* ===== MACBOOK MOCKUP ===== */
 .mac-mockup-wrap{position:relative;width:100%;margin:0 auto;perspective:1600px}
-.mac-mockup-inner{transform:rotateX(4deg) rotateY(12deg) rotateZ(-0.5deg) scale(1.18);transform-style:preserve-3d;filter:drop-shadow(0 40px 70px rgba(0,0,0,.38)) drop-shadow(0 8px 20px rgba(0,0,0,.18));position:relative}
+.mac-mockup-inner{transform:rotateX(4deg) rotateY(12deg) rotateZ(-0.5deg) scaleX(1.18);transform-style:preserve-3d;filter:drop-shadow(0 40px 70px rgba(0,0,0,.38)) drop-shadow(0 8px 20px rgba(0,0,0,.18));position:relative}
 .mac-frame-img{width:100%;height:auto;display:block}
 .mac-screen-content{position:absolute;top:7.2%;left:5.3%;width:89.3%;height:83.9%;border-radius:5px;overflow:hidden;background:#0f172a}
 
