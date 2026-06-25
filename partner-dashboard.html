@@ -733,19 +733,19 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       </div>
 
       <!-- طريقة القبول -->
-      <div class="fld-m" style="margin-top:.85rem">
-        <label data-i18n="db.lbl-accept-mode">طريقة القبول</label>
-        <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem">
-          <label id="am_instant_lbl" onclick="selectAcceptMode('instant')" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;background:rgba(74,157,111,.07);text-align:right">
+      <div style="margin-top:.85rem;background:linear-gradient(135deg,rgba(245,158,11,.07) 0%,rgba(234,88,12,.03) 100%);border:1px solid rgba(245,158,11,.22);border-right:3px solid rgba(245,158,11,.55);border-radius:12px;padding:1rem 1.1rem">
+        <label style="font-size:.8rem;font-weight:700;color:#f59e0b;display:block;margin-bottom:.6rem" data-i18n="db.lbl-accept-mode">طريقة القبول</label>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          <label id="am_instant_lbl" onclick="selectAcceptMode('instant')" style="cursor:pointer;border:1.5px solid rgba(245,158,11,.45);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;background:rgba(245,158,11,.1);text-align:right">
             <div>
-              <input type="radio" name="accept_mode" id="am_instant" value="instant" checked style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+              <input type="radio" name="accept_mode" id="am_instant" value="instant" checked style="accent-color:#f59e0b;vertical-align:middle;margin-left:.4rem">
               <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.accept-instant">⚡ قبول فوري</span>
             </div>
-            <div style="font-size:.71rem;color:#64748b;margin-top:.3rem" data-i18n="db.accept-instant-desc">النتيجة تظهر للمتقدم مباشرة بعد التقييم</div>
+            <div style="font-size:.71rem;color:#92400e;margin-top:.3rem" data-i18n="db.accept-instant-desc">النتيجة تظهر للمتقدم مباشرة بعد التقييم</div>
           </label>
-          <label id="am_competitive_lbl" onclick="selectAcceptMode('competitive')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right">
+          <label id="am_competitive_lbl" onclick="selectAcceptMode('competitive')" style="cursor:pointer;border:1.5px solid rgba(245,158,11,.15);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right">
             <div>
-              <input type="radio" name="accept_mode" id="am_competitive" value="competitive" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+              <input type="radio" name="accept_mode" id="am_competitive" value="competitive" style="accent-color:#f59e0b;vertical-align:middle;margin-left:.4rem">
               <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.accept-comp">🏅 مفاضلة</span>
             </div>
             <div style="font-size:.71rem;color:#64748b;margin-top:.3rem" data-i18n="db.accept-comp-desc">يرى قبولاً مبدئياً ويُبلَّغ بالقرار النهائي لاحقاً</div>
@@ -764,31 +764,31 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     </div>
 
     <!-- عرض النتيجة للمتقدم -->
-    <div class="card" style="margin-top:1rem">
-      <div class="card-title" data-i18n="db.result-vis-title">👁️ عرض النتيجة للمتقدم</div>
-      <p style="color:#64748b;font-size:.82rem;margin-bottom:1rem;line-height:1.7" data-i18n="db.result-vis-desc">اختر كيف يرى المتقدم نتيجة تقييمه بعد الانتهاء من النموذج.</p>
+    <div class="card" style="margin-top:1rem;background:linear-gradient(135deg,rgba(139,92,246,.08) 0%,rgba(109,40,217,.03) 100%);border:1px solid rgba(139,92,246,.22);border-right:3px solid rgba(139,92,246,.55)">
+      <div class="card-title" style="color:#a78bfa" data-i18n="db.result-vis-title">👁️ عرض النتيجة للمتقدم</div>
+      <p style="color:#7c6fab;font-size:.82rem;margin-bottom:1rem;line-height:1.7" data-i18n="db.result-vis-desc">اختر كيف يرى المتقدم نتيجة تقييمه بعد الانتهاء من النموذج.</p>
       <div style="display:flex;flex-direction:column;gap:.5rem">
 
         <!-- فوري مجاني -->
-        <label id="rv_immediate_lbl" onclick="selectResultVis('immediate')" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;background:rgba(74,157,111,.07);text-align:right">
+        <label id="rv_immediate_lbl" onclick="selectResultVis('immediate')" style="cursor:pointer;border:1.5px solid rgba(139,92,246,.45);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;background:rgba(139,92,246,.1);text-align:right">
           <div>
-            <input type="radio" name="result_vis" id="rv_immediate" value="immediate" checked style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+            <input type="radio" name="result_vis" id="rv_immediate" value="immediate" checked style="accent-color:#8b5cf6;vertical-align:middle;margin-left:.4rem">
             <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.rv-immediate">⚡ فوري مجاني</span>
           </div>
-          <div style="font-size:.71rem;color:#64748b;margin-top:.3rem" data-i18n="db.rv-immediate-desc">تظهر النتيجة للمتقدم مباشرة بعد التقييم — بدون أي رسوم</div>
+          <div style="font-size:.71rem;color:#6d5a9c;margin-top:.3rem" data-i18n="db.rv-immediate-desc">تظهر النتيجة للمتقدم مباشرة بعد التقييم — بدون أي رسوم</div>
         </label>
 
         <!-- مخفية -->
-        <label id="rv_hidden_lbl" onclick="selectResultVis('hidden')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right">
+        <label id="rv_hidden_lbl" onclick="selectResultVis('hidden')" style="cursor:pointer;border:1.5px solid rgba(139,92,246,.18);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right">
           <div>
-            <input type="radio" name="result_vis" id="rv_hidden" value="hidden" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+            <input type="radio" name="result_vis" id="rv_hidden" value="hidden" style="accent-color:#8b5cf6;vertical-align:middle;margin-left:.4rem">
             <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.rv-hidden">🔒 قيد المراجعة</span>
           </div>
           <div style="font-size:.71rem;color:#64748b;margin-top:.3rem" data-i18n="db.rv-hidden-desc">يرى المتقدم "طلبك قيد المراجعة" فقط — أنت تتحكم بتوقيت إعلان النتيجة</div>
         </label>
 
         <!-- مدفوع -->
-        <label id="rv_paid_lbl" onclick="selectResultVis('paid')" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right;position:relative" id="rv_paid_wrap">
+        <label id="rv_paid_lbl" onclick="selectResultVis('paid')" style="cursor:pointer;border:1.5px solid rgba(139,92,246,.18);border-radius:10px;padding:.75rem 1rem;display:block;transition:.2s;text-align:right;position:relative" id="rv_paid_wrap">
           <div style="display:flex;align-items:center;justify-content:space-between">
             <span id="rv_paid_plan_badge" style="font-size:.65rem;background:linear-gradient(90deg,#7c3aed,#4f46e5);color:#fff;padding:.15rem .5rem;border-radius:20px;font-weight:700;display:none" data-i18n="db.rv-paid-badge">باقة متقدمة</span>
             <div>
@@ -1863,12 +1863,12 @@ function selectAcceptMode(mode) {
   const cLbl = document.getElementById('am_competitive_lbl');
   const msgSec = document.getElementById('pending_msg_section');
   if (iLbl) {
-    iLbl.style.borderColor = mode === 'instant' ? 'rgba(74,157,111,.5)' : '#334155';
-    iLbl.style.background  = mode === 'instant' ? 'rgba(74,157,111,.07)' : 'transparent';
+    iLbl.style.borderColor = mode === 'instant' ? 'rgba(245,158,11,.45)' : 'rgba(245,158,11,.15)';
+    iLbl.style.background  = mode === 'instant' ? 'rgba(245,158,11,.1)' : 'transparent';
   }
   if (cLbl) {
-    cLbl.style.borderColor = mode === 'competitive' ? 'rgba(74,157,111,.5)' : '#334155';
-    cLbl.style.background  = mode === 'competitive' ? 'rgba(74,157,111,.07)' : 'transparent';
+    cLbl.style.borderColor = mode === 'competitive' ? 'rgba(245,158,11,.45)' : 'rgba(245,158,11,.15)';
+    cLbl.style.background  = mode === 'competitive' ? 'rgba(245,158,11,.1)' : 'transparent';
   }
   if (msgSec) msgSec.style.display = mode === 'competitive' ? 'block' : 'none';
 }
@@ -1885,8 +1885,8 @@ function selectResultVis(mode) {
     const lbl   = document.getElementById('rv_'+m+'_lbl');
     if (radio) radio.checked = m === mode;
     if (lbl) {
-      lbl.style.borderColor = m === mode ? 'rgba(74,157,111,.5)' : '#334155';
-      lbl.style.background  = m === mode ? 'rgba(74,157,111,.07)' : 'transparent';
+      lbl.style.borderColor = m === mode ? 'rgba(139,92,246,.55)' : 'rgba(139,92,246,.18)';
+      lbl.style.background  = m === mode ? 'rgba(139,92,246,.12)' : 'transparent';
     }
   });
   const paidSec = document.getElementById('rv_paid_section');
