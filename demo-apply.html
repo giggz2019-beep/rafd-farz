@@ -213,7 +213,7 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;min-height:
 <div class="modal-bg" id="modal">
   <div class="modal-box">
     <div class="modal-hdr" data-i18n="da.modal-title">ℹ️ قبل البدء — ملاحظة مهمة</div>
-    <div class="modal-body">
+    <div class="modal-body" data-i18n="da.modal-body">
       هذه تجربة تفاعلية حقيقية تُظهر كيف يعمل نظام Rafd الذكي.<br><br>
       بعد إرسال الطلب، سيحلّل الذكاء الاصطناعي إجاباتك ويُصدر قراراً فورياً بالقبول أو الرفض مع تفاصيل التقييم.<br><br>
       <strong>هذا مثال على برنامج دعم الشركات الناشئة — كل جهة تُحدد معاييرها الخاصة.</strong>
@@ -456,16 +456,16 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;min-height:
 <div class="result-page" id="resultPage">
   <div id="rHero"></div>
   <div class="reasons-card">
-    <h4>📊 تفاصيل التقييم</h4>
+    <h4 data-i18n="da.r-details">📊 تفاصيل التقييم</h4>
     <div id="rReasons"></div>
   </div>
   <div class="platform-note">
-    <h4>💡 هذا مثال تجريبي فقط</h4>
-    <p>في النظام الحقيقي، كل جهة تُحدد معاييرها الخاصة — سواء كانت بنكاً أو جامعة أو مسرعة أعمال أو شركة توظيف. النظام يترجم هذه المعايير لذكاء اصطناعي ويُصدر القرار فورياً بدون تحيّز أو انتظار.</p>
+    <h4 data-i18n="da.r-note-title">💡 هذا مثال تجريبي فقط</h4>
+    <p data-i18n="da.r-note-p">في النظام الحقيقي، كل جهة تُحدد معاييرها الخاصة — سواء كانت بنكاً أو جامعة أو مسرعة أعمال أو شركة توظيف. النظام يترجم هذه المعايير لذكاء اصطناعي ويُصدر القرار فورياً بدون تحيّز أو انتظار.</p>
   </div>
   <div class="result-actions">
-    <a href="/signup.html" class="btn-cta-p">اطلب النظام لجهتك ←</a>
-    <a href="/" class="btn-cta-s">تعرّف على المنصة</a>
+    <a href="/signup.html" class="btn-cta-p" data-i18n="da.r-btn1">اطلب النظام لجهتك ←</a>
+    <a href="/" class="btn-cta-s" data-i18n="da.r-btn2">تعرّف على المنصة</a>
   </div>
 </div>
 
@@ -526,7 +526,8 @@ function toast(msg) {
 }
 
 function collect() {
-  const name = document.getElementById('f_name').value || 'المتقدم';
+  const ar = document.documentElement.lang === 'ar';
+  const name = document.getElementById('f_name').value || (ar ? 'المتقدم' : 'Applicant');
   const sector = document.getElementById('f_sector').value;
   const exp = parseInt(document.getElementById('f_exp').dataset.v || 3);
   const team = document.getElementById('f_team').value;
@@ -539,31 +540,34 @@ function collect() {
   let score = 0; const bd = [];
 
   const eduS = {phd:15,master:12,bachelor:9,diploma:5}[edu]||7;
-  score += eduS; bd.push({l:'المؤهل الأكاديمي',s:eduS,m:15,p:eduS>=9});
+  score += eduS; bd.push({l: ar?'المؤهل الأكاديمي':'Academic Qualification',s:eduS,m:15,p:eduS>=9});
 
   const expS = Math.min(20, exp*2);
-  score += expS; bd.push({l:'سنوات الخبرة ('+exp+' سنوات)',s:expS,m:20,p:expS>=10});
+  score += expS; bd.push({l: ar?'سنوات الخبرة ('+exp+' سنوات)':'Experience ('+exp+' yrs)',s:expS,m:20,p:expS>=10});
 
   const prevS = {yes_exit:15,yes_active:12,yes_closed:8,no:4}[prev]||4;
-  score += prevS; bd.push({l:'الخبرة الريادية السابقة',s:prevS,m:15,p:prevS>=8});
+  score += prevS; bd.push({l: ar?'الخبرة الريادية السابقة':'Prior Startup Experience',s:prevS,m:15,p:prevS>=8});
 
   const stageS = {growth:20,revenue:17,mvp:12,idea:6}[stage]||6;
-  score += stageS; bd.push({l:'مرحلة المشروع',s:stageS,m:20,p:stageS>=12});
+  score += stageS; bd.push({l: ar?'مرحلة المشروع':'Project Stage',s:stageS,m:20,p:stageS>=12});
 
   const custS = {paying:15,free:10,pilot:7,none:2}[cust]||2;
-  score += custS; bd.push({l:'وجود عملاء حاليين',s:custS,m:15,p:custS>=7});
+  score += custS; bd.push({l: ar?'وجود عملاء حاليين':'Current Customers',s:custS,m:15,p:custS>=7});
 
   const teamS = {'6+':10,'3-5':8,'2':6,'1':4}[team]||4;
-  score += teamS; bd.push({l:'حجم الفريق',s:teamS,m:10,p:teamS>=6});
+  score += teamS; bd.push({l: ar?'حجم الفريق':'Team Size',s:teamS,m:10,p:teamS>=6});
 
   const commitS = {yes:5,maybe:2,no:0}[commit]||0;
-  score += commitS; bd.push({l:'الالتزام بمتطلبات البرنامج',s:commitS,m:5,p:commitS>=3});
+  score += commitS; bd.push({l: ar?'الالتزام بمتطلبات البرنامج':'Program Commitment',s:commitS,m:5,p:commitS>=3});
 
   const accepted = score >= 55;
   const grade = score>=85?'A+':score>=75?'A':score>=65?'B+':score>=55?'B':score>=45?'C':'D';
-  const sectorName = {fintech:'التقنية المالية',health:'الصحة',edu:'التعليم',ecom:'التجارة الإلكترونية',ai:'الذكاء الاصطناعي',logistics:'اللوجستيات',other:'أخرى'}[sector]||'التقنية';
+  const sectorMap = ar
+    ? {fintech:'التقنية المالية',health:'الصحة',edu:'التعليم',ecom:'التجارة الإلكترونية',ai:'الذكاء الاصطناعي',logistics:'اللوجستيات',other:'أخرى'}
+    : {fintech:'FinTech',health:'Health',edu:'Education',ecom:'E-Commerce',ai:'AI',logistics:'Logistics',other:'Other'};
+  const sectorName = sectorMap[sector] || (ar?'التقنية':'Technology');
 
-  return {name,score,grade,accepted,bd,sectorName};
+  return {name,score,grade,accepted,bd,sectorName,ar};
 }
 
 function submit() {
@@ -578,7 +582,8 @@ function submit() {
 function runTerminal(data) {
   const body = document.getElementById('termBody');
   const prog = document.getElementById('tProg');
-  const lines = [
+  const ar = data.ar;
+  const lines = ar ? [
     {t:`جارٍ البحث في قاعدة البيانات عن <span class="hi">${data.name}</span>...`,d:500},
     {t:'التحقق من هوية المتقدم عبر <span class="hi">نفاذ</span> <span class="bl">(سدايا)</span>... ✓',d:1100},
     {t:`تحليل قطاع <span class="hi">${data.sectorName}</span> ومعايير السوق...`,d:1800},
@@ -591,6 +596,19 @@ function runTerminal(data) {
     {t:'تطبيق معايير البرنامج على البيانات المُجمَّعة...',d:6700},
     {t:'حساب الدرجة النهائية وإعداد التقرير التفصيلي...',d:7400},
     {t:`<span class="hi">✓ اكتمل التحليل — الدرجة: ${data.score}/100 — ${data.accepted?'مقبول ✓':'مرفوض ✗'}</span>`,d:8100},
+  ] : [
+    {t:`Searching database for <span class="hi">${data.name}</span>...`,d:500},
+    {t:'Verifying applicant identity via <span class="hi">Nafath</span> <span class="bl">(SDAIA)</span>... ✓',d:1100},
+    {t:`Analyzing <span class="hi">${data.sectorName}</span> sector & market benchmarks...`,d:1800},
+    {t:'Loading evaluation model <span class="hi">Rafd-AI v2.4</span>...',d:2500},
+    {t:'Analyzing academic qualifications & work experience...',d:3200},
+    {t:'Evaluating project stage & market readiness...',d:3900},
+    {t:'Reviewing founder history & previous ventures...',d:4600},
+    {t:'Analyzing team size & skill distribution...',d:5300},
+    {t:'Comparing against <span class="wa">+2,847</span> previous applications in database...',d:6000},
+    {t:'Applying program criteria to collected data...',d:6700},
+    {t:'Computing final score & preparing detailed report...',d:7400},
+    {t:`<span class="hi">✓ Analysis complete — Score: ${data.score}/100 — ${data.accepted?'ACCEPTED ✓':'REJECTED ✗'}</span>`,d:8100},
   ];
   lines.forEach((line,i) => {
     setTimeout(() => {
@@ -619,47 +637,48 @@ function showResult(data) {
   const rp = document.getElementById('resultPage');
   rp.classList.add('show');
   window.scrollTo({top:0,behavior:'smooth'});
+  const ar = data.ar;
   const refNum = 'RAFD-' + Date.now().toString().slice(-8);
-  const today = new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
+  const today = new Date().toLocaleDateString(ar?'ar-SA':'en-US',{year:'numeric',month:'long',day:'numeric'});
   const hero = document.getElementById('rHero');
 
   if(data.accepted) {
     hero.innerHTML = `
     <div class="result-hero accepted">
       <div class="rh-trophy">🏆</div>
-      <div class="rh-title">تهانينا ${data.name}!</div>
-      <div class="rh-sub">تم قبول طلبك بنجاح</div>
+      <div class="rh-title">${ar?'تهانينا':'Congratulations'} ${data.name}!</div>
+      <div class="rh-sub">${ar?'تم قبول طلبك بنجاح':'Your application has been accepted'}</div>
       <div class="score-box">
-        <div class="sb-label">درجتك النهائية</div>
+        <div class="sb-label">${ar?'درجتك النهائية':'Your Final Score'}</div>
         <div class="sb-score">${data.score}</div>
-        <div class="sb-grade">تقدير ${data.grade}</div>
+        <div class="sb-grade">${ar?'تقدير':'Grade'} ${data.grade}</div>
       </div>
     </div>
     <div class="cert-card accepted-cert">
       <div class="cert-header">
         <div class="cert-logo-wrap">
-          <img src="/images/rafd-logo.jpg" alt="RAFD" class="cert-logo" onerror="this.style.display='none'">
+          <img src="/rafd-logo.png" alt="RAFD" class="cert-logo" onerror="this.style.display='none'">
           <span class="cert-brand">RAFD</span>
         </div>
-        <div class="cert-badge-accepted">✔ مقبول</div>
+        <div class="cert-badge-accepted">✔ ${ar?'مقبول':'Accepted'}</div>
       </div>
       <div class="cert-divider"></div>
       <div class="cert-body">
-        <div class="cert-label">بطاقة قبول رسمية</div>
+        <div class="cert-label">${ar?'بطاقة قبول رسمية':'Official Acceptance Card'}</div>
         <div class="cert-name">${data.name}</div>
-        <div class="cert-detail">تم قبول طلبك في برنامج <strong>دعم الشركات الناشئة</strong></div>
-        <div class="cert-detail">قطاع: <strong>${data.sectorName}</strong></div>
+        <div class="cert-detail">${ar?'تم قبول طلبك في برنامج':'Your application has been accepted into the'} <strong>${ar?'دعم الشركات الناشئة':'Startup Support Program'}</strong></div>
+        <div class="cert-detail">${ar?'قطاع':'Sector'}: <strong>${data.sectorName}</strong></div>
         <div class="cert-score-row">
-          <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">الدرجة</div></div>
-          <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">التقدير</div></div>
-          <div class="cert-score-item"><div class="csi-val">✔ مقبول</div><div class="csi-lbl">القرار</div></div>
+          <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">${ar?'الدرجة':'Score'}</div></div>
+          <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">${ar?'التقدير':'Grade'}</div></div>
+          <div class="cert-score-item"><div class="csi-val">✔ ${ar?'مقبول':'Accepted'}</div><div class="csi-lbl">${ar?'القرار':'Decision'}</div></div>
         </div>
       </div>
       <div class="cert-divider"></div>
       <div class="cert-footer">
-        <div class="cert-ref">رقم الطلب: <strong>${refNum}</strong></div>
-        <div class="cert-date">تاريخ التقييم: ${today}</div>
-        <div class="cert-powered">معتمد بذكاء اصطناعي RAFD ⚡</div>
+        <div class="cert-ref">${ar?'رقم الطلب':'Ref No'}: <strong>${refNum}</strong></div>
+        <div class="cert-date">${ar?'تاريخ التقييم':'Evaluation Date'}: ${today}</div>
+        <div class="cert-powered">${ar?'معتمد بذكاء اصطناعي RAFD ⚡':'Powered by RAFD AI ⚡'}</div>
       </div>
     </div>`;
     launchConfetti();
@@ -667,42 +686,43 @@ function showResult(data) {
     hero.innerHTML = `
     <div class="result-hero rejected">
       <div class="rh-trophy">📋</div>
-      <div class="rh-title">شكراً لتقديمك، ${data.name}</div>
-      <div class="rh-sub">للأسف لم يستوفِ طلبك معايير القبول في هذه الدورة</div>
+      <div class="rh-title">${ar?'شكراً لتقديمك،':'Thank you for applying,'} ${data.name}</div>
+      <div class="rh-sub">${ar?'للأسف لم يستوفِ طلبك معايير القبول في هذه الدورة':'Unfortunately your application did not meet the acceptance criteria for this cycle'}</div>
       <div class="score-box">
-        <div class="sb-label">درجتك النهائية</div>
+        <div class="sb-label">${ar?'درجتك النهائية':'Your Final Score'}</div>
         <div class="sb-score">${data.score}</div>
-        <div class="sb-grade">تقدير ${data.grade}</div>
+        <div class="sb-grade">${ar?'تقدير':'Grade'} ${data.grade}</div>
       </div>
     </div>
     <div class="cert-card rejected-cert">
       <div class="cert-header">
         <div class="cert-logo-wrap">
-          <img src="/images/rafd-logo.jpg" alt="RAFD" class="cert-logo" onerror="this.style.display='none'">
+          <img src="/rafd-logo.png" alt="RAFD" class="cert-logo" onerror="this.style.display='none'">
           <span class="cert-brand">RAFD</span>
         </div>
-        <div class="cert-badge-rejected">✕ غير مقبول</div>
+        <div class="cert-badge-rejected">✕ ${ar?'غير مقبول':'Not Accepted'}</div>
       </div>
       <div class="cert-divider"></div>
       <div class="cert-body">
-        <div class="cert-label">إشعار رسمي</div>
+        <div class="cert-label">${ar?'إشعار رسمي':'Official Notice'}</div>
         <div class="cert-name">${data.name}</div>
-        <div class="cert-detail">بعد مراجعة طلبك في برنامج <strong>دعم الشركات الناشئة</strong></div>
+        <div class="cert-detail">${ar?'بعد مراجعة طلبك في برنامج':'After reviewing your application for the'} <strong>${ar?'دعم الشركات الناشئة':'Startup Support Program'}</strong></div>
         <div class="cert-detail cert-sorry">
-          نعتذر بصدق عن عدم استيفاء طلبك للمعايير المطلوبة في هذه الدورة.
-          نتمنى لك التوفيق ونشجعك على تطوير مشروعك والتقديم مجدداً في الدورة القادمة.
+          ${ar
+            ? 'نعتذر بصدق عن عدم استيفاء طلبك للمعايير المطلوبة في هذه الدورة. نتمنى لك التوفيق ونشجعك على تطوير مشروعك والتقديم مجدداً في الدورة القادمة.'
+            : 'We sincerely regret that your application did not meet the required criteria for this cycle. We wish you success and encourage you to develop your project and apply again in the next cycle.'}
         </div>
         <div class="cert-score-row">
-          <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">الدرجة</div></div>
-          <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">التقدير</div></div>
-          <div class="cert-score-item"><div class="csi-val">✕ مرفوض</div><div class="csi-lbl">القرار</div></div>
+          <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">${ar?'الدرجة':'Score'}</div></div>
+          <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">${ar?'التقدير':'Grade'}</div></div>
+          <div class="cert-score-item"><div class="csi-val">✕ ${ar?'مرفوض':'Rejected'}</div><div class="csi-lbl">${ar?'القرار':'Decision'}</div></div>
         </div>
       </div>
       <div class="cert-divider"></div>
       <div class="cert-footer">
-        <div class="cert-ref">رقم الطلب: <strong>${refNum}</strong></div>
-        <div class="cert-date">تاريخ التقييم: ${today}</div>
-        <div class="cert-powered">معتمد بذكاء اصطناعي RAFD ⚡</div>
+        <div class="cert-ref">${ar?'رقم الطلب':'Ref No'}: <strong>${refNum}</strong></div>
+        <div class="cert-date">${ar?'تاريخ التقييم':'Evaluation Date'}: ${today}</div>
+        <div class="cert-powered">${ar?'معتمد بذكاء اصطناعي RAFD ⚡':'Powered by RAFD AI ⚡'}</div>
       </div>
     </div>`;
   }
@@ -714,7 +734,7 @@ function showResult(data) {
       <div class="ri-icon">${item.p?'✅':'⚠️'}</div>
       <div class="ri-text">
         <span class="ri-badge">${item.s}/${item.m}</span>
-        <strong>${item.l}</strong> — ${item.p?'يستوفي المعيار المطلوب':'يحتاج تحسيناً'} (${pct}%)
+        <strong>${item.l}</strong> — ${item.p?(ar?'يستوفي المعيار المطلوب':'Meets the required criteria'):(ar?'يحتاج تحسيناً':'Needs improvement')} (${pct}%)
       </div>
     </div>`;
   });
