@@ -1103,6 +1103,14 @@ const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ===== AUTH CHECK =====
+// Check admin session bypass
+const _adminSess = JSON.parse(localStorage.getItem('rafd_admin_session') || 'null');
+if (_adminSess && _adminSess.loggedIn && _adminSess.expires > Date.now()) {
+  // Admin accessing partner dashboard — inject fake session so auth passes
+  if (!localStorage.getItem('rafd_partner_session')) {
+    localStorage.setItem('rafd_partner_session', JSON.stringify({ admin_bypass: true, email: 'admin@rafd.sa', org: 'RAFD Admin' }));
+  }
+}
 let session = JSON.parse(localStorage.getItem('rafd_partner_session') || 'null');
 
 // Partner data (loaded from Supabase)
@@ -1110,6 +1118,22 @@ let partner = null;
 
 async function loadPartnerData() {
   try {
+    // === Admin Bypass Mode ===
+    const adminBypass = session && session.admin_bypass;
+    if (adminBypass) {
+      const adminSessValid = JSON.parse(localStorage.getItem('rafd_admin_session') || 'null');
+      if (adminSessValid && adminSessValid.loggedIn && adminSessValid.expires > Date.now()) {
+        partner = { org: 'RAFD Admin', plan: 'pro', _adminBypass: true };
+        initUI();
+        showAdminPreviewBanner(true);
+        return;
+      } else {
+        localStorage.removeItem('rafd_partner_session');
+        window.location.href = '/admin.html';
+        return;
+      }
+    }
+
     // === Admin Preview Mode ===
     const adminPreview = JSON.parse(localStorage.getItem('rafd_admin_preview') || 'null');
     if (adminPreview && adminPreview.ref && adminPreview.expires > Date.now()) {

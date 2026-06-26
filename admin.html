@@ -200,6 +200,9 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
       <div class="nav-item" onclick="showPage('trials')">
         <span class="nav-icon">⏳</span> <span data-i18n="adm.trials">التجارب المجانية</span>
       </div>
+      <div class="nav-item" onclick="openPartnerDashboard()">
+        <span class="nav-icon">🏢</span> <span>لوحة الشركاء</span>
+      </div>
       <div class="nav-item" onclick="showPage('reports')">
         <span class="nav-icon">📊</span> <span data-i18n="adm.reports">التقارير المتقدمة</span>
       </div>
@@ -583,6 +586,7 @@ function doLogin() {
   const u = document.getElementById('adminUser').value.trim();
   const p = document.getElementById('adminPass').value.trim();
   if(u === ADMIN_USER && p === ADMIN_PASS) {
+    localStorage.setItem('rafd_admin_session', JSON.stringify({ loggedIn: true, expires: Date.now() + 8*60*60*1000 }));
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminWrap').classList.add('active');
     loadFromSupabase();
@@ -1054,6 +1058,10 @@ function previewDashboard(ref, unlockAll) {
     expires: Date.now() + 5 * 60 * 1000, // 5 minutes
   };
   localStorage.setItem('rafd_admin_preview', JSON.stringify(token));
+  window.open('/partner-dashboard.html', '_blank');
+}
+
+function openPartnerDashboard() {
   window.open('/partner-dashboard.html', '_blank');
 }
 
