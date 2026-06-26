@@ -98,9 +98,8 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .badge-dot { width: 7px; height: 7px; background: #38bdf8; border-radius: 50%; animation: pulse 2s infinite; flex-shrink: 0; }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
 .hero-title { font-weight: 900; color: #fff; margin-bottom: 1rem; font-family: 'Cairo', sans-serif; text-align: center; width: 100%; overflow: visible; display: flex; flex-direction: column; gap: .15rem; }
-.ht-pre { font-size: 1.1rem; font-weight: 700; color: #fff; }
-.ht-main { font-size: 1.6rem; font-weight: 900; line-height: 1.25; }
-.ht-sub { font-size: 1.4rem; font-weight: 800; color: rgba(255,255,255,.9); }
+.ht-pre { font-size: .9rem; font-weight: 500; color: rgba(255,255,255,.6); letter-spacing: .15em; text-transform: uppercase; }
+.ht-main { font-size: 2.8rem; font-weight: 900; line-height: 1.15; }
 .gradient-text { background: linear-gradient(135deg, #38bdf8 0%, #34d399 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline-block; padding-bottom: 0.15em; line-height: 1.6; }
 .hero-desc { font-size: .9rem; color: #7aa8cc; line-height: 1.7; margin-bottom: .75rem; max-width: 480px; text-align: center; margin-left: auto; margin-right: auto; }
 .hero-cta { display: flex; flex-direction: column; gap: .6rem; width: 100%; max-width: 340px; margin-bottom: 1rem; margin-left: auto; margin-right: auto; }
@@ -136,8 +135,8 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .mc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 .mc-title { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
 .mc-badge { background: var(--accent); color: #fff; font-size: .85rem; font-weight: 700; padding: .25rem .7rem; border-radius: 8px; }
-.mc-cards { display: flex; flex-direction: column; gap: .65rem; margin-bottom: .8rem; }
-.mc-card { display: flex; align-items: center; justify-content: space-between; padding: .75rem 1rem; border-radius: 10px; font-size: 1rem; }
+.mc-cards { display: flex; flex-direction: row; gap: .75rem; margin-bottom: .8rem; }
+.mc-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; padding: .9rem .75rem; border-radius: 10px; font-size: 1rem; flex: 1; text-align: center; }
 .mc-card.accepted { background: #f0fdf4; border: 1px solid #bbf7d0; }
 .mc-card.rejected { background: #fef2f2; border: 1px solid #fecaca; }
 .mc-card.processing { background: #fffbeb; border: 1px solid #fde68a; }
@@ -327,11 +326,10 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
   .hero-stats .stat { background: transparent; border: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: .1rem; }
   .stat-divider { display: block; width: 1px; height: 40px; background: var(--border); }
   .hero-badge { display: inline-flex; }
-  .hero-visual { display: flex; justify-content: center; align-items: center; margin-left: 0; width: 100%; max-width: 500px; }
+  .hero-visual { display: flex; justify-content: center; align-items: center; margin-left: 0; width: 100%; max-width: 860px; }
   .hero-title { text-align: center; }
   .ht-pre { font-size: 1rem; }
-  .ht-main { font-size: 2.2rem; }
-  .ht-sub { font-size: 1.8rem; }
+  .ht-main { font-size: 4rem; }
   .hero-desc { text-align: center; margin-left: auto; margin-right: auto; max-width: 600px; }
   .section-title { font-size: 2.5rem; }
   .section-header { margin-bottom: 4rem; }
