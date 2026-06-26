@@ -1,34 +1,90 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 640">
 <defs>
-  <linearGradient id="g-lid" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" stop-color="#E6E6E6"/>
-    <stop offset="100%" stop-color="#C2C2C2"/>
+  <linearGradient id="lid-grad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ECECEC"/>
+    <stop offset="100%" stop-color="#C8C8C8"/>
   </linearGradient>
-  <linearGradient id="g-base" x1="0%" y1="0%" x2="0%" y2="100%">
-    <stop offset="0%" stop-color="#D6D6D6"/>
-    <stop offset="100%" stop-color="#B4B4B4"/>
+  <linearGradient id="base-top" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#D8D8D8"/>
+    <stop offset="100%" stop-color="#B8B8B8"/>
   </linearGradient>
-  <linearGradient id="g-key" x1="0%" y1="0%" x2="0%" y2="100%">
-    <stop offset="0%" stop-color="#3C3C3C"/>
-    <stop offset="100%" stop-color="#1E1E1E"/>
+  <linearGradient id="key-area" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#C4C4C4"/>
+    <stop offset="100%" stop-color="#ABABAB"/>
   </linearGradient>
-  <filter id="sh" x="-8%" y="-5%" width="116%" height="125%">
-    <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="rgba(0,0,0,0.32)"/>
+  <linearGradient id="base-front" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#B0B0B0"/>
+    <stop offset="100%" stop-color="#989898"/>
+  </linearGradient>
+  <filter id="lid-shadow" x="-6%" y="-3%" width="112%" height="120%">
+    <feDropShadow dx="0" dy="20" stdDeviation="26" flood-color="rgba(0,0,0,0.40)"/>
+  </filter>
+  <filter id="base-shadow" x="-4%" y="-4%" width="108%" height="120%">
+    <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="rgba(0,0,0,0.20)"/>
   </filter>
 </defs>
 
-<!-- ground shadow -->
-<ellipse cx="430" cy="552" rx="370" ry="16" fill="rgba(0,0,0,0.15)"/>
+<!-- Ground shadow -->
+<ellipse cx="450" cy="634" rx="440" ry="9" fill="rgba(0,0,0,0.14)"/>
 
-<!-- ===== LID ===== -->
-<rect x="20" y="8" width="820" height="338" rx="16" fill="url(#g-lid)" filter="url(#sh)"/>
-<!-- bezel -->
-<rect x="32" y="16" width="796" height="322" rx="10" fill="#1A1A1A"/>
-<!-- screen area — transparent, HTML overlays here -->
-<rect x="46" y="26" width="768" height="302" rx="5" fill="white" opacity="0"/>
-<!-- webcam -->
-<circle cx="430" cy="13" r="5" fill="#2C2C2C"/>
-<circle cx="430" cy="13" r="2.5" fill="#141414"/>
-<!-- bottom chin -->
-<rect x="20" y="340" width="820" height="6" rx="3" fill="#B8B8B8"/>
+<!-- ===== KEYBOARD BASE ===== -->
+<!-- Main base surface (top face) -->
+<rect x="0" y="408" width="900" height="192" rx="8" fill="url(#base-top)" filter="url(#base-shadow)"/>
+<!-- Front face of base (3D depth) -->
+<rect x="0" y="590" width="900" height="10" rx="4" fill="url(#base-front)"/>
+<!-- Keyboard inset area -->
+<rect x="30" y="416" width="840" height="148" rx="5" fill="url(#key-area)"/>
+
+<!-- Function key row -->
+<rect x="40" y="420" width="820" height="12" rx="3" fill="#B2B2B2"/>
+<!-- Key row 1 (numbers row) -->
+<rect x="40" y="436" width="820" height="18" rx="3" fill="#B2B2B2"/>
+<!-- Key row 2 (QWERTY) -->
+<rect x="40" y="458" width="820" height="18" rx="3" fill="#B2B2B2"/>
+<!-- Key row 3 (ASDF) -->
+<rect x="40" y="480" width="820" height="18" rx="3" fill="#B2B2B2"/>
+<!-- Key row 4 (ZXCV) -->
+<rect x="40" y="502" width="820" height="18" rx="3" fill="#B2B2B2"/>
+<!-- Space bar -->
+<rect x="220" y="524" width="460" height="16" rx="3" fill="#B2B2B2"/>
+<!-- Arrow keys (right side) -->
+<rect x="750" y="524" width="110" height="16" rx="3" fill="#B2B2B2"/>
+
+<!-- Trackpad -->
+<rect x="295" y="547" width="310" height="54" rx="7" fill="#C0C0C0"/>
+<rect x="298" y="550" width="304" height="48" rx="5" fill="#B8B8B8"/>
+<!-- Trackpad subtle highlight -->
+<rect x="298" y="550" width="304" height="3" rx="2" fill="rgba(255,255,255,0.18)"/>
+
+<!-- Hinge line -->
+<rect x="8" y="403" width="884" height="8" rx="4" fill="#A0A0A0"/>
+
+<!-- Bottom rubber feet -->
+<rect x="40" y="596" width="32" height="4" rx="2" fill="#888"/>
+<rect x="828" y="596" width="32" height="4" rx="2" fill="#888"/>
+<rect x="200" y="596" width="32" height="4" rx="2" fill="#888"/>
+<rect x="668" y="596" width="32" height="4" rx="2" fill="#888"/>
+
+<!-- ===== LID (SCREEN) ===== -->
+<!-- Outer aluminum lid -->
+<rect x="6" y="0" width="888" height="405" rx="14" fill="url(#lid-grad)" filter="url(#lid-shadow)"/>
+<!-- Left edge shading -->
+<rect x="6" y="6" width="10" height="393" rx="5" fill="rgba(0,0,0,0.06)"/>
+<!-- Right edge shading -->
+<rect x="884" y="6" width="10" height="393" rx="5" fill="rgba(0,0,0,0.08)"/>
+<!-- Top highlight -->
+<rect x="6" y="0" width="888" height="2" rx="1" fill="rgba(255,255,255,0.55)"/>
+<!-- Inner bezel -->
+<rect x="18" y="9" width="864" height="387" rx="9" fill="#181818"/>
+<!-- Screen area - transparent, HTML goes here -->
+<rect x="30" y="17" width="840" height="371" rx="5" fill="#0D0D0D" opacity="0"/>
+<!-- Bezel top glare -->
+<rect x="18" y="9" width="864" height="2" rx="1" fill="rgba(255,255,255,0.06)"/>
+<!-- Webcam area -->
+<rect x="415" y="1" width="70" height="13" rx="6.5" fill="#1A1A1A"/>
+<circle cx="450" cy="7" r="4" fill="#222"/>
+<circle cx="450" cy="7" r="2.2" fill="#111"/>
+<circle cx="449" cy="6" r="0.9" fill="rgba(255,255,255,0.2)"/>
+<!-- Bottom chin of lid -->
+<rect x="6" y="393" width="888" height="12" rx="3" fill="rgba(185,185,185,0.5)"/>
 </svg>
