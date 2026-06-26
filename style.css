@@ -125,7 +125,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .dot.red { background: #ff5f57; } .dot.yellow { background: #ffbd2e; } .dot.green { background: #28ca41; }
 .mockup-url { font-size: .75rem; color: var(--muted); margin-right: auto; font-family: monospace; }
 .mockup-body { display: flex; height: 500px; }
-.mockup-sidebar { width: 60px; background: linear-gradient(160deg,#38BDF8 0%,#0EA5E9 50%,#38BDF8 100%); display: flex; flex-direction: column; align-items: center; padding: 1rem .5rem; gap: 1rem; }
+.mockup-sidebar { width: 60px; background: linear-gradient(160deg,#1e3a5f 0%,#0f2040 50%,#1e3a5f 100%); display: flex; flex-direction: column; align-items: center; padding: 1rem .5rem; gap: 1rem; }
 .ms-logo { width: 36px; height: 36px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 1rem; }
 .ms-item { font-size: 1.3rem; cursor: pointer; opacity: .5; transition: opacity .2s; }
 .ms-item.active { opacity: 1; }
