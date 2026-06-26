@@ -110,7 +110,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .hero-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; }
 .stat { text-align: center; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: .85rem .5rem; display: flex; flex-direction: column; align-items: center; gap: .2rem; backdrop-filter: blur(8px); }
 .stat-num { display: flex; align-items: center; justify-content: center; gap: .2rem; font-size: 1.5rem; font-weight: 900; color: #38bdf8; font-family: var(--font-heading); line-height: 1.2; white-space: nowrap; direction: rtl; }
-.stat-label { font-size: .72rem; color: #4a7aaa; font-weight: 600; line-height: 1.3; text-align: center; }
+.stat-label { font-size: .72rem; color: #4a7aaa; font-weight: 600; line-height: 1.3; text-align: center; white-space: nowrap; }
 .stat-divider { display: none; }
 .hero-visual { display: none; }
 
