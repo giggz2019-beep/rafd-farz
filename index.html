@@ -351,14 +351,24 @@
       <h2 class="section-title"><span data-i18n="price.title">خطط مرنة لكل جهة</span></h2>
       <p class="section-desc"><span data-i18n="price.desc">ابدأ مجاناً وتوسّع حسب احتياجاتك</span></p>
     </div>
-    <div class="pricing-grid">
+    <!-- toggle شهري/سنوي -->
+    <div class="billing-toggle" style="display:flex;align-items:center;justify-content:center;gap:.75rem;margin:2rem 0 0">
+      <span data-i18n="pg.toggle-monthly" style="font-weight:700;font-size:.9rem">شهري</span>
+      <div style="width:48px;height:26px;background:#e2e8f0;border-radius:999px;cursor:pointer;position:relative;transition:background .2s" id="idxBillingToggle" onclick="idxToggle()">
+        <div id="idxKnob" style="position:absolute;top:3px;right:3px;width:20px;height:20px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .2s"></div>
+      </div>
+      <span data-i18n="pg.toggle-annual" style="font-weight:700;font-size:.9rem">سنوي</span>
+      <span style="background:#dcfce7;color:#166534;font-size:.72rem;font-weight:700;padding:.2rem .7rem;border-radius:20px" data-i18n="pg.save-badge">وفّر 20%</span>
+    </div>
 
-      <!-- باقة تجريبية -->
-      <div class="price-card">
+    <div class="pricing-grid" style="margin-top:2rem">
+
+      <!-- باقة أساسية -->
+      <div class="price-card price-card-blue">
         <div class="price-text">
-          <div class="price-plan"><span data-i18n="trial.plan">🎯 تجريبية</span></div>
-          <div style="margin-bottom:.5rem"><span class="price-amount"><span data-i18n="trial.price">49</span></span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> <span data-i18n="trial.period">ر.س / شهر</span></span></div>
-          <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="trial.desc">جرّب المنصة كاملاً بدون أي التزام</span></p>
+          <div class="price-plan"><span data-i18n="trial.plan">🏁 أساسية</span></div>
+          <div style="margin-bottom:.3rem"><span class="price-amount" id="idxTrialPrice">49</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> <span id="idxTrialCurr">ر.س</span> / <span id="idxTrialPer">شهر</span></span></div>
+          <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="trial.desc">للجهات الناشئة التي تريد البدء باشتراك رمزي</span></p>
           <ul class="price-features" style="margin-bottom:1.75rem">
             <li><span data-i18n="trial.f1">50 طلب تجريبي</span></li>
             <li><span data-i18n="trial.f2">رابط تقديم خاص بجهتك</span></li>
@@ -398,12 +408,11 @@
       </div>
 
       <!-- باقة بلس -->
-      <div class="price-card popular">
-        <div class="popular-badge"><span data-i18n="adv.badge">الأكثر طلباً ⭐</span></div>
+      <div class="price-card price-card-purple">
         <div class="price-text">
           <div class="price-plan"><span data-i18n="basic.plan">⚡ بلس</span></div>
-          <div style="margin-bottom:.5rem"><span class="price-amount">249</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> <span data-i18n="price.period">ر.س / شهر</span></span></div>
-          <div style="font-size:.78rem;color:#4a9d6f;font-weight:700;margin-bottom:.5rem" data-i18n="pg.basic-trial-badge">✓ 7 أيام مجاناً عند التسجيل</div>
+          <div style="margin-bottom:.3rem"><span class="price-amount" id="idxBasicPrice">249</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> <span id="idxBasicCurr">ر.س</span> / <span id="idxBasicPer">شهر</span></span></div>
+          <div style="font-size:.78rem;color:#7c3aed;font-weight:700;margin-bottom:.5rem" data-i18n="pg.basic-trial-badge">✓ 7 أيام مجاناً عند التسجيل</div>
           <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="basic.desc">للجهات المتوسطة والنامية</span></p>
           <ul class="price-features" style="margin-bottom:1.75rem">
             <li><span data-i18n="basic.f1">500 طلب شهرياً</span></li>
@@ -458,10 +467,12 @@
       </div>
 
       <!-- باقة برو -->
-      <div class="price-card">
+      <div class="price-card price-card-gold popular">
+        <div class="popular-badge"><span data-i18n="adv.badge">الأكثر طلباً ⭐</span></div>
         <div class="price-text">
-          <div class="price-plan"><span data-i18n="adv.plan">🚀 المتقدمة</span></div>
-          <div style="margin-bottom:.5rem"><span class="price-amount">499</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> <span data-i18n="price.period">ر.س / شهر</span></span></div>
+          <div class="price-plan"><span data-i18n="adv.plan">🚀 برو</span></div>
+          <div style="margin-bottom:.3rem"><span class="price-amount" id="idxAdvPrice">499</span><span class="price-period" style="font-size:.95rem;color:var(--muted);margin-right:.35rem"> <span id="idxAdvCurr">ر.س</span> / <span id="idxAdvPer">شهر</span></span></div>
+          <div id="idxAdvAnnualNote" style="display:none;font-size:.78rem;color:#b8780a;font-weight:700;margin-bottom:.5rem"></div>
           <p class="price-desc" style="margin-bottom:1.25rem"><span data-i18n="adv.desc">للجهات الكبيرة والمتوسعة</span></p>
           <ul class="price-features" style="margin-bottom:1.75rem">
             <li><span data-i18n="adv.f1">طلبات غير محدودة</span></li>
@@ -507,6 +518,47 @@
     </div>
   </div>
 </section>
+<script>
+(function(){
+  var isAnnual=false;
+  var P={
+    ar:{trialM:'49',trialA:'49',basicM:'249',basicA:'199',advM:'499',advA:'399',curr:'ر.س',per:'شهر',perA:'شهر (سنوي)',advNote:'4,788 ر.س سنوياً — وفّر 1,200 ر.س',basicNote:'2,388 ر.س سنوياً — وفّر 600 ر.س'},
+    en:{trialM:'$13',trialA:'$13',basicM:'$66',basicA:'$53',advM:'$133',advA:'$106',curr:'',per:'month',perA:'month (annual)',advNote:'$1,272/year — Save $324',basicNote:'$636/year — Save $156'}
+  };
+  function upd(){
+    var lang=document.documentElement.lang||'ar';
+    var p=P[lang]||P.ar;
+    var a=isAnnual;
+    var t=document.getElementById('idxTrialPrice');
+    var tc=document.getElementById('idxTrialCurr');
+    var tp=document.getElementById('idxTrialPer');
+    var b=document.getElementById('idxBasicPrice');
+    var bc=document.getElementById('idxBasicCurr');
+    var bper=document.getElementById('idxBasicPer');
+    var av=document.getElementById('idxAdvPrice');
+    var ac=document.getElementById('idxAdvCurr');
+    var aper=document.getElementById('idxAdvPer');
+    var an=document.getElementById('idxAdvAnnualNote');
+    if(t)t.textContent=a?p.trialA:p.trialM;
+    if(tc)tc.textContent=p.curr;
+    if(tp)tp.textContent=a?p.perA:p.per;
+    if(b)b.textContent=a?p.basicA:p.basicM;
+    if(bc)bc.textContent=p.curr;
+    if(bper)bper.textContent=a?p.perA:p.per;
+    if(av)av.textContent=a?p.advA:p.advM;
+    if(ac)ac.textContent=p.curr;
+    if(aper)aper.textContent=a?p.perA:p.per;
+    if(an){an.textContent=a?p.advNote:'';an.style.display=a?'block':'none';}
+    var knob=document.getElementById('idxKnob');
+    var tog=document.getElementById('idxBillingToggle');
+    if(knob)knob.style.transform=a?'translateX(-22px)':'translateX(0)';
+    if(tog)tog.style.background=a?'#4a9d6f':'#e2e8f0';
+  }
+  window.idxToggle=function(){isAnnual=!isAnnual;upd();};
+  document.addEventListener('rafd-lang-changed',upd);
+  document.addEventListener('DOMContentLoaded',upd);
+})();
+</script>
 
 <!-- ===== CTA ===== -->
 <section class="cta-section">
