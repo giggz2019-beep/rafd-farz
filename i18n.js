@@ -12,7 +12,7 @@ const T = {
     'hero.trusted':'موثوق من قِبَل','sec.incubators':'الحاضنات','sec.companies':'الشركات',
     // ===== HERO =====
     'hero.title':'<span class="ht-center">مرحباً بكم</span><span class="gradient-text">في مستقبل التقييم</span><br><span class="ht-center">الذكي</span>',
-    'hero.desc':'RAFD — منصة الذكاء الاصطناعي للتقييم الفوري. تُمكّن الشركات والبنوك والجامعات والحاضنات من أتمتة قرارات القبول والرفض بناءً على معاييرها الخاصة — بدون تحيّز.',
+    'hero.desc':'تُمكّن جميع الجهات الحكومية والخاصة والغير ربحية وغيرها من أتمتة قرارات القبول والرفض للمتقدمين بدقة واحترافية عالية — بناءً على معاييرها الخاصة، بدون تحيّز، وفي ثوانٍ معدودة.',
     'hero.cta1':'ابدأ تجربتك المجانية ←','hero.cta2':'جرّب النظام الآن',
     'hero.stat1':'جهة مسجّلة','hero.stat2':'دقة التصنيف',
     'hero.stat3':'فوري <span style="font-size:.65em;vertical-align:middle">⚡</span>','hero.stat3-lbl':'وقت المعالجة','hero.stat4-lbl':'توفير التكاليف',
@@ -855,7 +855,7 @@ const T = {
     'hero.trusted':'Trusted by','sec.incubators':'Incubators','sec.companies':'Companies',
     // ===== HERO =====
     'hero.title':'Welcome to the<br><span class="gradient-text">Future of Smart</span><br>Assessment',
-    'hero.desc':'RAFD — AI-powered applicant assessment platform. Enables companies, banks, universities and incubators to automate acceptance decisions based on their own criteria — without bias.',
+    'hero.desc':'Empowers government, private, non-profit, and all other organizations to automate applicant acceptance and rejection decisions with precision and professionalism — based on their own criteria, without bias, in seconds.',
     'hero.cta1':'Start Free Trial →','hero.cta2':'Try the System Now',
     'hero.stat1':'Organizations','hero.stat2':'Classification Accuracy',
     'hero.stat3':'Instant ⚡','hero.stat3-lbl':'Processing Time','hero.stat4-lbl':'Cost Savings',
