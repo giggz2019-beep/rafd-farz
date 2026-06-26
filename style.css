@@ -98,6 +98,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .badge-dot { width: 7px; height: 7px; background: #38bdf8; border-radius: 50%; animation: pulse 2s infinite; flex-shrink: 0; }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
 .hero-title { font-size: 2.4rem; font-weight: 900; color: #fff; line-height: 1.55; margin-bottom: 1rem; font-family: var(--font-heading); text-align: center; width: 100%; overflow: visible; }
+.ht-center { display: block; text-align: center; }
 .gradient-text { background: linear-gradient(135deg, #38bdf8 0%, #34d399 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline-block; padding-bottom: 0.15em; line-height: 1.6; }
 .hero-desc { font-size: .95rem; color: #7aa8cc; line-height: 1.85; margin-bottom: 1.5rem; max-width: 480px; text-align: center; margin-left: auto; margin-right: auto; }
 .hero-cta { display: flex; flex-direction: column; gap: .85rem; width: 100%; max-width: 340px; margin-bottom: 2rem; margin-left: auto; margin-right: auto; }
