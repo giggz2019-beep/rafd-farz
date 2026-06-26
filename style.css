@@ -228,7 +228,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .popular-badge { position: absolute; top: 16px; left: 16px; background: linear-gradient(135deg,#b8780a,#e0a020,#c8920e); color: #fff; font-size: .7rem; font-weight: 700; padding: .28rem .85rem; border-radius: 20px; white-space: nowrap; z-index:2; }
 .btn-price.purple { background: linear-gradient(135deg,#7c3aed,#a855f7); color: #fff; box-shadow: 0 4px 16px rgba(124,58,237,.35); }
 .btn-price.purple:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,.5); filter: brightness(1.08); }
-.price-text { padding: 2rem; }
+.price-text { padding: 2rem; flex: 1; display: flex; flex-direction: column; }
 .price-visual { background: #f8fafc; border-top: 1.5px solid var(--border); padding: 1rem; display: flex; align-items: center; justify-content: center; min-height: 160px; overflow: hidden; }
 .price-visual .pv-window { transform: scale(0.72); transform-origin: center center; }
 .price-plan { font-size: .8rem; font-weight: 700; color: var(--muted); margin-bottom: .5rem; text-transform: uppercase; letter-spacing: .06em; }
