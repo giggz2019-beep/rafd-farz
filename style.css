@@ -124,7 +124,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .dot.red { background: #ff5f57; } .dot.yellow { background: #ffbd2e; } .dot.green { background: #28ca41; }
 .mockup-url { font-size: .75rem; color: var(--muted); margin-right: auto; font-family: monospace; }
-.mockup-body { display: flex; height: 500px; }
+.mockup-body { display: flex; height: 440px; }
 .mockup-sidebar { width: 60px; background: linear-gradient(160deg,#1e3a5f 0%,#0f2040 50%,#1e3a5f 100%); display: flex; flex-direction: column; align-items: center; padding: 1rem .5rem; gap: 1rem; }
 .ms-logo { width: 36px; height: 36px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 1rem; }
 .ms-item { font-size: 1.3rem; cursor: pointer; opacity: .5; transition: opacity .2s; }
@@ -324,7 +324,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
   .hero-stats .stat { background: transparent; border: none; padding: 0; display: flex; flex-direction: column; align-items: flex-start; gap: .1rem; }
   .stat-divider { display: block; width: 1px; height: 40px; background: var(--border); }
   .hero-badge { display: inline-flex; }
-  .hero-visual { display: flex; justify-content: center; align-items: center; }
+  .hero-visual { display: flex; justify-content: flex-start; align-items: center; padding-left: 1rem; }
   .hero-title { font-size: 2.8rem; text-align: right; line-height: 1.4; }
   .hero-desc { text-align: right; margin-left: 0; margin-right: 0; max-width: 100%; }
   .section-title { font-size: 2.5rem; }
