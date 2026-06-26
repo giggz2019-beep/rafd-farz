@@ -114,10 +114,10 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .hero-visual { display: none; }
 
 /* ===== MACBOOK MOCKUP ===== */
-.mac-mockup-wrap{position:relative;width:100%;margin:0 auto;perspective:1400px}
-.mac-mockup-inner{transform:perspective(1400px) rotateY(-22deg);filter:drop-shadow(0 40px 70px rgba(0,0,0,.40)) drop-shadow(0 8px 24px rgba(0,0,0,.18));position:relative}
+.mac-mockup-wrap{position:relative;width:100%;margin:0 auto;perspective:2000px}
+.mac-mockup-inner{transform:perspective(2000px) rotateY(-18deg);filter:drop-shadow(0 40px 80px rgba(0,0,0,.45)) drop-shadow(0 10px 30px rgba(0,0,0,.20));position:relative}
 .mac-frame-img{width:100%;height:auto;display:block}
-.mac-screen-content{position:absolute;top:2.7%;left:3.3%;width:93.3%;height:58%;border-radius:5px;overflow:hidden;background:#0f172a}
+.mac-screen-content{position:absolute;top:4%;left:4.5%;width:91%;height:68%;border-radius:3px;overflow:hidden;background:#0f172a}
 
 /* ===== DASHBOARD MOCKUP ===== */
 .dashboard-mockup { background: #fff; border-radius: 0; box-shadow: none; overflow: hidden; width: 100%; max-width: none; border: none; }
