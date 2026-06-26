@@ -243,8 +243,8 @@
           <span class="price-num" id="basicPrice">249</span>
           <span class="price-currency" data-i18n="pg.sar">ر.س</span>
         </div>
-        <div class="price-period" id="basicPeriod" data-i18n="pg.basic-period">شهرياً</div>
-        <div class="price-annual" id="basicAnnual" data-i18n="pg.basic-annual">2,390 ر.س سنوياً — وفّر 98 ر.س</div>
+        <div class="price-period" id="basicPeriod">شهرياً</div>
+        <div class="price-annual" id="basicAnnual">2,388 ر.س سنوياً — وفّر 600 ر.س</div>
       </div>
       <ul class="features-list">
         <li>
@@ -298,8 +298,8 @@
           <span class="price-num" id="advPrice">499</span>
           <span class="price-currency" data-i18n="pg.sar">ر.س</span>
         </div>
-        <div class="price-period" id="advPeriod" data-i18n="pg.adv-period">شهرياً</div>
-        <div class="price-annual" id="advAnnual" data-i18n="pg.adv-annual">4,790 ر.س سنوياً — وفّر 198 ر.س</div>
+        <div class="price-period" id="advPeriod">شهرياً</div>
+        <div class="price-annual" id="advAnnual">4,788 ر.س سنوياً — وفّر 1,200 ر.س</div>
       </div>
       <ul class="features-list">
         <li>
@@ -361,8 +361,8 @@
         <tr>
           <th style="width:35%" data-i18n="pg.comp-feat">الميزة</th>
           <th class="th-trial"><span data-i18n="pg.trial-name">تجريبية</span><br><small style="font-weight:400;opacity:.8" data-i18n="pg.free">مجاناً</small></th>
-          <th class="th-basic"><span data-i18n="pg.basic-name">الأساسية</span><br><small style="font-weight:400;opacity:.8">249 ر.س/شهر</small></th>
-          <th class="th-advanced"><span data-i18n="pg.adv-name">المتقدمة</span><br><small style="font-weight:400;opacity:.8">499 ر.س/شهر</small></th>
+          <th class="th-basic"><span data-i18n="pg.basic-name">الأساسية</span><br><small id="basicTablePrice" style="font-weight:400;opacity:.8">249 ر.س/شهر</small></th>
+          <th class="th-advanced"><span data-i18n="pg.adv-name">بلس</span><br><small id="advTablePrice" style="font-weight:400;opacity:.8">499 ر.س/شهر</small></th>
         </tr>
       </thead>
       <tbody>
@@ -660,21 +660,51 @@
 </footer>
 
 <script>
-// Billing Toggle
+// Billing Toggle + Language-aware prices
 let isAnnual = false;
+const PRICES = {
+  ar: {
+    basicMonthly:'249', basicAnnual:'199', advMonthly:'499', advAnnual:'399',
+    currency:'ر.س',
+    basicTableMonthly:'249 ر.س/شهر', advTableMonthly:'499 ر.س/شهر',
+    basicTableAnnual:'199 ر.س/شهر (سنوي)', advTableAnnual:'399 ر.س/شهر (سنوي)',
+    basicAnnualNote:'2,388 ر.س سنوياً — وفّر 600 ر.س',
+    advAnnualNote:'4,788 ر.س سنوياً — وفّر 1,200 ر.س',
+    periodMonthly:'شهرياً', periodAnnual:'شهرياً (عند الدفع سنوياً)'
+  },
+  en: {
+    basicMonthly:'$66', basicAnnual:'$53', advMonthly:'$133', advAnnual:'$106',
+    currency:'',
+    basicTableMonthly:'$66/mo', advTableMonthly:'$133/mo',
+    basicTableAnnual:'$53/mo (annual)', advTableAnnual:'$106/mo (annual)',
+    basicAnnualNote:'$636/year — Save $156',
+    advAnnualNote:'$1,272/year — Save $324',
+    periodMonthly:'Monthly', periodAnnual:'Monthly (billed annually)'
+  }
+};
+function updatePrices() {
+  const lang = document.documentElement.lang || 'ar';
+  const p = PRICES[lang] || PRICES.ar;
+  document.getElementById('basicPrice').textContent = isAnnual ? p.basicAnnual : p.basicMonthly;
+  document.getElementById('advPrice').textContent = isAnnual ? p.advAnnual : p.advMonthly;
+  document.querySelectorAll('.price-currency').forEach(el => el.textContent = p.currency);
+  document.getElementById('basicPeriod').textContent = isAnnual ? p.periodAnnual : p.periodMonthly;
+  document.getElementById('advPeriod').textContent = isAnnual ? p.periodAnnual : p.periodMonthly;
+  document.getElementById('basicAnnual').textContent = p.basicAnnualNote;
+  document.getElementById('advAnnual').textContent = p.advAnnualNote;
+  document.getElementById('basicAnnual').classList.toggle('show', isAnnual);
+  document.getElementById('advAnnual').classList.toggle('show', isAnnual);
+  const bt = document.getElementById('basicTablePrice');
+  const at = document.getElementById('advTablePrice');
+  if(bt) bt.textContent = isAnnual ? p.basicTableAnnual : p.basicTableMonthly;
+  if(at) at.textContent = isAnnual ? p.advTableAnnual : p.advTableMonthly;
+}
 function toggleBilling() {
   isAnnual = !isAnnual;
-  const toggle = document.getElementById('billingToggle');
-  toggle.classList.toggle('active', isAnnual);
-
-  document.getElementById('basicPrice').textContent = isAnnual ? '199' : '249';
-  document.getElementById('basicPeriod').textContent = isAnnual ? 'شهرياً (عند الدفع سنوياً)' : 'شهرياً';
-  document.getElementById('basicAnnual').classList.toggle('show', isAnnual);
-
-  document.getElementById('advPrice').textContent = isAnnual ? '399' : '499';
-  document.getElementById('advPeriod').textContent = isAnnual ? 'شهرياً (عند الدفع سنوياً)' : 'شهرياً';
-  document.getElementById('advAnnual').classList.toggle('show', isAnnual);
+  document.getElementById('billingToggle').classList.toggle('active', isAnnual);
+  updatePrices();
 }
+document.addEventListener('rafd-lang-changed', updatePrices);
 
 // FAQ Toggle
 function toggleFaq(el) {
