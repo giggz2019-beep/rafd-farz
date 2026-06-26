@@ -16,15 +16,15 @@
   --white: #ffffff;
   --shadow: 0 4px 24px rgba(0,0,0,.08);
   --shadow-lg: 0 20px 60px rgba(0,0,0,.12);
-  --font-heading: 'Tajawal', 'Cairo', sans-serif;
-  --font-body: 'Cairo', 'Tajawal', sans-serif;
+  --font-heading: 'Almarai', sans-serif;
+  --font-body: 'Almarai', sans-serif;
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body { font-family: var(--font-body); color: var(--text); background: var(--white); direction: rtl; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
 
-/* ===== HEADINGS — Tajawal font ===== */
+/* ===== HEADINGS — Almarai font ===== */
 h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title, .sector-name, .price-plan {
   font-family: var(--font-heading);
 }
