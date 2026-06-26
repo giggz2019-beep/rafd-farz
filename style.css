@@ -97,7 +97,10 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .hero-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(56,189,248,.1); border: 1px solid rgba(56,189,248,.25); color: #38bdf8; font-size: .78rem; font-weight: 700; padding: .4rem .9rem; border-radius: 20px; margin-bottom: 1rem; }
 .badge-dot { width: 7px; height: 7px; background: #38bdf8; border-radius: 50%; animation: pulse 2s infinite; flex-shrink: 0; }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
-.hero-title { font-size: 2.4rem; font-weight: 900; color: #fff; line-height: 1.55; margin-bottom: 1rem; font-family: var(--font-heading); text-align: center; width: 100%; overflow: visible; }
+.hero-title { font-weight: 900; color: #fff; margin-bottom: 1rem; font-family: 'Cairo', sans-serif; text-align: center; width: 100%; overflow: visible; display: flex; flex-direction: column; gap: .15rem; }
+.ht-pre { font-size: 1.1rem; font-weight: 400; color: rgba(255,255,255,.55); letter-spacing: .08em; }
+.ht-main { font-size: 3.2rem; font-weight: 900; line-height: 1.2; }
+.ht-sub { font-size: 2.2rem; font-weight: 800; color: rgba(255,255,255,.9); }
 .gradient-text { background: linear-gradient(135deg, #38bdf8 0%, #34d399 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline-block; padding-bottom: 0.15em; line-height: 1.6; }
 .hero-desc { font-size: .95rem; color: #7aa8cc; line-height: 1.85; margin-bottom: 1.5rem; max-width: 480px; text-align: center; margin-left: auto; margin-right: auto; }
 .hero-cta { display: flex; flex-direction: column; gap: .85rem; width: 100%; max-width: 340px; margin-bottom: 2rem; margin-left: auto; margin-right: auto; }
@@ -108,7 +111,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .play-icon { font-size: .9rem; }
 .hero-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; }
 .stat { text-align: center; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: .85rem .5rem; display: flex; flex-direction: column; align-items: center; gap: .2rem; backdrop-filter: blur(8px); }
-.stat-num { display: block; font-size: 1.5rem; font-weight: 900; color: #38bdf8; font-family: var(--font-heading); line-height: 1.2; }
+.stat-num { display: block; font-size: 1.5rem; font-weight: 900; color: #38bdf8; font-family: var(--font-heading); line-height: 1.2; white-space: nowrap; }
 .stat-label { font-size: .72rem; color: #4a7aaa; font-weight: 600; line-height: 1.3; text-align: center; white-space: nowrap; }
 .stat-divider { display: none; }
 .hero-visual { display: none; }
@@ -325,7 +328,9 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
   .stat-divider { display: block; width: 1px; height: 40px; background: var(--border); }
   .hero-badge { display: inline-flex; }
   .hero-visual { display: flex; justify-content: flex-start; align-items: center; padding-left: 0; margin-left: -2rem; }
-  .hero-title { font-size: 2.8rem; text-align: right; line-height: 1.4; }
+  .hero-title { text-align: right; }
+  .ht-main { font-size: 4rem; }
+  .ht-sub { font-size: 2.8rem; }
   .hero-desc { text-align: right; margin-left: 0; margin-right: 0; max-width: 100%; }
   .section-title { font-size: 2.5rem; }
   .section-header { margin-bottom: 4rem; }
