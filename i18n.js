@@ -12,7 +12,7 @@ const T = {
     'hero.trusted':'موثوق من قِبَل','sec.incubators':'الحاضنات','sec.companies':'الشركات',
     // ===== HERO =====
     'hero.title':'<span class="ht-center">مرحباً بكم</span><span class="ht-center gradient-text">في مستقبل التقييم</span><span class="ht-center">الذكي</span>',
-    'hero.desc':'حدّد معاييرك مرة واحدة — وRAFD يُقيّم كل متقدم ويمنحه درجة دقيقة بدون تحيّز، تساعدك على اتخاذ قراراتك بثقة سواءً كانت قبولاً أو رفضاً أو ترتيب أفضليات. يناسب الجهات الحكومية، الخاصة، الأكاديمية، والغير ربحية.',
+    'hero.desc':'RAFD — منصة تُمكّن جميع الجهات الحكومية والخاصة والغير ربحية وغيرها من أتمتة قرارات القبول والرفض وترتيب الأفضليات للمتقدمين بدقة واحترافية عالية — بناءً على معاييرها الخاصة، بدون تحيّز، وفي دقائق معدودة.',
     'hero.cta1':'ابدأ تجربتك المجانية ←','hero.cta2':'جرّب النظام الآن',
     'hero.stat1':'جهة مسجّلة','hero.stat2':'دقة التصنيف',
     'hero.stat3':'فوري <small style="font-size:.6em">⚡</small>','hero.stat3-lbl':'وقت المعالجة','hero.stat4-lbl':'توفير التكاليف',
@@ -871,7 +871,7 @@ const T = {
     'hero.trusted':'Trusted by','sec.incubators':'Incubators','sec.companies':'Companies',
     // ===== HERO =====
     'hero.title':'Welcome to the<br><span class="gradient-text">Future of Smart</span><br>Assessment',
-    'hero.desc':'Set your criteria once — RAFD evaluates every applicant and assigns an accurate, unbiased score to support your decisions — whether you\'re accepting, rejecting, or ranking by priority. Built for government, private, academic, and non-profit organizations.',
+    'hero.desc':'RAFD empowers government, private, non-profit, and all other organizations to automate applicant decisions — acceptance, rejection, or priority ranking — with precision and professionalism, based on their own criteria, without bias, in minutes.',
     'hero.cta1':'Start Free Trial →','hero.cta2':'Try the System Now',
     'hero.stat1':'Organizations','hero.stat2':'Classification Accuracy',
     'hero.stat3':'Instant ⚡','hero.stat3-lbl':'Processing Time','hero.stat4-lbl':'Cost Savings',
