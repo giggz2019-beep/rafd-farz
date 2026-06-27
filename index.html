@@ -967,6 +967,19 @@ async function khSend(txt) {
   document.getElementById('khalidQuick').style.display = 'none';
   khAddMsg('user', msg);
 
+  // pre-check: contact/escalation entries get handled locally — skip API
+  const preHit = khLocal(msg);
+  if (preHit && preHit.wa) {
+    const typing = khAddMsg('bot', '', true);
+    typing.innerHTML = '<span class="kh-typing"><span></span><span></span><span></span></span>';
+    document.getElementById('khalidMsgs').scrollTop = 9999;
+    await new Promise(r => setTimeout(r, 700));
+    typing.remove();
+    khAddMsg('bot', khPickR(preHit.r), true);
+    khShowWhatsApp();
+    return;
+  }
+
   // typing
   const typing = khAddMsg('bot', '', true);
   typing.innerHTML = '<span class="kh-typing"><span></span><span></span><span></span></span>';
