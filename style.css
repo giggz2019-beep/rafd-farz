@@ -1,6 +1,11 @@
 /* ===== RAFD SMART PLATFORM — MOBILE-FIRST CSS ===== */
 /* Colors: #1a3a4a (dark blue) + #4a9d6f (green) */
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Light.otf') format('opentype'); font-weight: 300; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Medium.otf') format('opentype'); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Bold.otf') format('opentype'); font-weight: 700 900; font-display: swap; }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 body { -webkit-user-select: none; user-select: none; }
@@ -19,8 +24,8 @@ input, textarea, select, [contenteditable] { -webkit-user-select: text; user-sel
   --white: #ffffff;
   --shadow: 0 4px 24px rgba(0,0,0,.08);
   --shadow-lg: 0 20px 60px rgba(0,0,0,.12);
-  --font-heading: 'Tajawal', 'Cairo', sans-serif;
-  --font-body: 'Cairo', 'Tajawal', sans-serif;
+  --font-heading: 'ThmanyahSans', sans-serif;
+  --font-body: 'ThmanyahSans', sans-serif;
   --font-en: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', sans-serif;
 }
 
