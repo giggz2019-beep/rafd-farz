@@ -69,6 +69,9 @@ const T = {
     // ===== INDEX DEMO MOCKUP =====
     'demo.mc-title':'الطلبات الواردة','demo.mc-badge':'12 جديد',
     'demo.accepted':'مقبول ✓','demo.rejected':'مرفوض ✗','demo.pending':'جارٍ... ⟳',
+    'demo.stats-title':'إحصائيات التقديم','demo.stats-badge':'هذا الشهر',
+    'demo.s-total':'إجمالي الطلبات','demo.s-accept':'معدل القبول','demo.s-pending':'قيد المراجعة',
+    'demo.s-tech':'التقنية','demo.s-health':'الصحة','demo.s-edu':'التعليم','demo.s-fin':'المالية',
     'demo.ai1':'تحليل البيانات الشخصية...','demo.ai2':'التحقق من <span class="b">هوية المتقدم</span>...',
     'demo.ai3':'تقييم المؤهلات الأكاديمية...','demo.ai4':'تحليل الخبرة العملية...',
     'demo.ai5':'تطبيق معايير البرنامج...',
@@ -918,6 +921,9 @@ const T = {
     // ===== INDEX DEMO MOCKUP =====
     'demo.mc-title':'Incoming Applications','demo.mc-badge':'12 new',
     'demo.accepted':'Accepted ✓','demo.rejected':'Rejected ✗','demo.pending':'Processing... ⟳',
+    'demo.stats-title':'Application Statistics','demo.stats-badge':'This Month',
+    'demo.s-total':'Total Applications','demo.s-accept':'Acceptance Rate','demo.s-pending':'Under Review',
+    'demo.s-tech':'Technology','demo.s-health':'Healthcare','demo.s-edu':'Education','demo.s-fin':'Finance',
     'demo.ai1':'Analyzing personal data...','demo.ai2':'Verifying <span class="b">applicant identity</span>...',
     'demo.ai3':'Evaluating academic qualifications...','demo.ai4':'Analyzing work experience...',
     'demo.ai5':'Applying program criteria...',

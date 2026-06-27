@@ -115,36 +115,81 @@
                 <div class="ms-item">📈</div>
               </div>
               <div class="mockup-content">
-                <div class="mc-header">
-                  <span class="mc-title" data-i18n="demo.mc-title">الطلبات الواردة</span>
-                  <span class="mc-badge" data-i18n="demo.mc-badge">12 جديد</span>
+                <!-- Slide 1: Requests List -->
+                <div class="mock-slide mock-slide-1">
+                  <div class="mc-header">
+                    <span class="mc-title" data-i18n="demo.mc-title">الطلبات الواردة</span>
+                    <span class="mc-badge" data-i18n="demo.mc-badge">12 جديد</span>
+                  </div>
+                  <div class="mc-cards">
+                    <div class="mc-card accepted">
+                      <span class="mc-name">أحمد محمد</span>
+                      <span class="mc-score">92%</span>
+                      <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
+                    </div>
+                    <div class="mc-card rejected">
+                      <span class="mc-name">سارة علي</span>
+                      <span class="mc-score">41%</span>
+                      <span class="mc-status red" data-i18n="demo.rejected">مرفوض ✗</span>
+                    </div>
+                    <div class="mc-card accepted">
+                      <span class="mc-name">خالد عبدالله</span>
+                      <span class="mc-score">78%</span>
+                      <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
+                    </div>
+                    <div class="mc-card processing">
+                      <span class="mc-name">نورة السالم</span>
+                      <span class="mc-score">--</span>
+                      <span class="mc-status yellow" data-i18n="demo.pending">جارٍ... ⟳</span>
+                    </div>
+                    <div class="mc-card accepted">
+                      <span class="mc-name">عبدالله سعد</span>
+                      <span class="mc-score">71%</span>
+                      <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="mc-cards">
-                  <div class="mc-card accepted">
-                    <span class="mc-name">أحمد محمد</span>
-                    <span class="mc-score">92%</span>
-                    <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
+                <!-- Slide 2: Statistics -->
+                <div class="mock-slide mock-slide-2">
+                  <div class="mc-header">
+                    <span class="mc-title" data-i18n="demo.stats-title">إحصائيات التقديم</span>
+                    <span class="mc-badge" style="background:#6366f1" data-i18n="demo.stats-badge">هذا الشهر</span>
                   </div>
-                  <div class="mc-card rejected">
-                    <span class="mc-name">سارة علي</span>
-                    <span class="mc-score">41%</span>
-                    <span class="mc-status red" data-i18n="demo.rejected">مرفوض ✗</span>
+                  <div class="ms2-stats">
+                    <div class="ms2-stat">
+                      <div class="ms2-num">247</div>
+                      <div class="ms2-lbl" data-i18n="demo.s-total">إجمالي الطلبات</div>
+                    </div>
+                    <div class="ms2-stat">
+                      <div class="ms2-num" style="color:#10b981">64%</div>
+                      <div class="ms2-lbl" data-i18n="demo.s-accept">معدل القبول</div>
+                    </div>
+                    <div class="ms2-stat">
+                      <div class="ms2-num" style="color:#f59e0b">22</div>
+                      <div class="ms2-lbl" data-i18n="demo.s-pending">قيد المراجعة</div>
+                    </div>
                   </div>
-                  <div class="mc-card accepted">
-                    <span class="mc-name">خالد عبدالله</span>
-                    <span class="mc-score">78%</span>
-                    <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
-                  </div>
-                  <div class="mc-card processing">
-                    <span class="mc-name">نورة السالم</span>
-                    <span class="mc-score">--</span>
-                    <span class="mc-status yellow" data-i18n="demo.pending">جارٍ... ⟳</span>
-                  </div>
-
-                  <div class="mc-card accepted">
-                    <span class="mc-name">عبدالله سعد</span>
-                    <span class="mc-score">71%</span>
-                    <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
+                  <div class="ms2-bars">
+                    <div class="ms2-row">
+                      <span class="ms2-bar-label" data-i18n="demo.s-tech">التقنية</span>
+                      <div class="ms2-bar-track"><div class="ms2-bar-fill" style="width:72%;background:#38bdf8"></div></div>
+                      <span class="ms2-pct">72%</span>
+                    </div>
+                    <div class="ms2-row">
+                      <span class="ms2-bar-label" data-i18n="demo.s-health">الصحة</span>
+                      <div class="ms2-bar-track"><div class="ms2-bar-fill" style="width:55%;background:#a78bfa"></div></div>
+                      <span class="ms2-pct">55%</span>
+                    </div>
+                    <div class="ms2-row">
+                      <span class="ms2-bar-label" data-i18n="demo.s-edu">التعليم</span>
+                      <div class="ms2-bar-track"><div class="ms2-bar-fill" style="width:48%;background:#fb923c"></div></div>
+                      <span class="ms2-pct">48%</span>
+                    </div>
+                    <div class="ms2-row">
+                      <span class="ms2-bar-label" data-i18n="demo.s-fin">المالية</span>
+                      <div class="ms2-bar-track"><div class="ms2-bar-fill" style="width:38%;background:#10b981"></div></div>
+                      <span class="ms2-pct">38%</span>
+                    </div>
                   </div>
                 </div>
               </div>
