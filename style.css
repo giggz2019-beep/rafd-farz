@@ -411,8 +411,8 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
   .stat-divider { display: block; width: 1px; height: 40px; background: var(--border); }
   .hero-badge { display: inline-flex; }
   .hero-visual { display: flex; justify-content: center; align-items: center; perspective: 1400px; }
-  .hero-visual .browser-frame { transform: perspective(1400px) rotateY(8deg) rotateX(3deg) scale(0.88); transform-origin: center center; transition: transform .5s ease; box-shadow: -6px 20px 50px rgba(0,0,0,.45), 0 0 18px rgba(201,168,76,.22); }
-  .hero-visual .browser-frame:hover { transform: perspective(1400px) rotateY(4deg) rotateX(1deg) scale(0.9); }
+  .hero-visual .browser-frame { transform: perspective(1400px) rotateY(0deg) rotateX(0deg) scale(0.92); transform-origin: center center; transition: transform .5s ease; box-shadow: 0 20px 50px rgba(0,0,0,.45), 0 0 18px rgba(201,168,76,.22); }
+  .hero-visual .browser-frame:hover { transform: perspective(1400px) rotateY(0deg) rotateX(0deg) scale(0.93); }
   .hero-title { font-size: 2.8rem; text-align: right; line-height: 1.4; }
   .hero-title .ht-center { text-align: right; }
   .hero-desc { text-align: right; margin-left: 0; margin-right: 0; max-width: 100%; }
