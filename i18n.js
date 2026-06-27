@@ -11,7 +11,7 @@ const T = {
     'nav.home':'الرئيسية',
     'hero.trusted':'موثوق من قِبَل','sec.incubators':'الحاضنات','sec.companies':'الشركات',
     // ===== HERO =====
-    'hero.title':'<span class="ht-center">مرحباً بكم</span><span class="gradient-text">في مستقبل التقييم</span><br><span class="ht-center">الذكي</span>',
+    'hero.title':'<span class="ht-center">حياكم الله</span><span class="gradient-text">في مستقبل التقييم</span><br><span class="ht-center">الذكي</span>',
     'hero.desc':'RAFD — منصة ذكاء اصطناعي تُمكّن جميع الجهات الحكومية والخاصة والغير ربحية وغيرها من أتمتة قرارات القبول والرفض للمتقدمين بدقة واحترافية عالية — بناءً على معاييرها الخاصة، بدون تحيّز، وفي دقائق معدودة.',
     'hero.cta1':'ابدأ تجربتك المجانية ←','hero.cta2':'جرّب النظام الآن',
     'hero.stat1':'جهة مسجّلة','hero.stat2':'دقة التصنيف',
