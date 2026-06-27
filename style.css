@@ -175,13 +175,30 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .ms3-ai-icon { font-size:1rem; flex-shrink:0; }
 .ms3-ai-rec span { font-size:.68rem; color:#92400e; font-weight:700; line-height:1.4; }
 /* ---- Slide 2: Statistics ---- */
-.ms2-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:.9rem; }
-.ms2-stat { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:.55rem .4rem; text-align:center; }
-.ms2-num { font-size:1.25rem; font-weight:800; color:#1e3a5f; line-height:1.2; }
-.ms2-lbl { font-size:.6rem; color:#64748b; font-weight:600; margin-top:.15rem; }
-.ms2-bars { display:flex; flex-direction:column; gap:.55rem; }
-.ms2-row { display:flex; align-items:center; gap:.5rem; }
-.ms2-bar-label { font-size:.65rem; color:#475569; font-weight:600; min-width:38px; text-align:right; flex-shrink:0; }
+.ms2-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:.4rem; margin-bottom:.7rem; }
+.ms2-kpi { border-radius:8px; padding:.5rem .25rem; text-align:center; }
+.ms2-kpi-blue  { background:linear-gradient(135deg,#eff6ff,#dbeafe); border:1px solid #bfdbfe; }
+.ms2-kpi-green { background:linear-gradient(135deg,#f0fdf4,#dcfce7); border:1px solid #bbf7d0; }
+.ms2-kpi-red   { background:linear-gradient(135deg,#fef2f2,#fee2e2); border:1px solid #fecaca; }
+.ms2-kpi-amber { background:linear-gradient(135deg,#fffbeb,#fef3c7); border:1px solid #fde68a; }
+.ms2-kpi-num { font-size:1.05rem; font-weight:900; color:#0f172a; line-height:1.1; }
+.ms2-kpi-lbl { font-size:.56rem; color:#64748b; font-weight:600; margin-top:.1rem; }
+/* Donut chart */
+.ms2-chart-area { display:flex; align-items:center; gap:.8rem; }
+.ms2-donut-wrap { display:flex; align-items:center; gap:.6rem; flex-shrink:0; }
+.ms2-donut { width:72px; height:72px; border-radius:50%; background:conic-gradient(#10b981 0% 64%, #ef4444 64% 91%, #f59e0b 91% 100%); position:relative; flex-shrink:0; }
+.ms2-donut::after { content:'64%'; position:absolute; inset:13px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:900; color:#10b981; }
+.ms2-donut-legend { display:flex; flex-direction:column; gap:.3rem; }
+.ms2-legend-item { display:flex; align-items:center; gap:.3rem; font-size:.62rem; color:#334155; font-weight:600; }
+.ms2-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+/* Trend bars */
+.ms2-trend { flex:1; }
+.ms2-trend-lbl { font-size:.6rem; color:#94a3b8; font-weight:600; margin-bottom:.35rem; text-align:center; }
+.ms2-trend-bars { display:flex; align-items:flex-end; justify-content:center; gap:.3rem; height:52px; }
+.ms2-tb-col { display:flex; flex-direction:column; align-items:center; gap:.2rem; height:100%; justify-content:flex-end; }
+.ms2-tb { width:14px; border-radius:3px 3px 0 0; flex-shrink:0; }
+.ms2-tb-col span { font-size:.5rem; color:#94a3b8; font-weight:600; }
+/* shared bar reuse from slide 3 */
 .ms2-bar-track { flex:1; background:#f1f5f9; border-radius:4px; height:7px; overflow:hidden; }
 .ms2-bar-fill { height:100%; border-radius:4px; }
 .ms2-pct { font-size:.62rem; color:#94a3b8; font-weight:700; min-width:24px; text-align:left; flex-shrink:0; }
