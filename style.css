@@ -136,9 +136,9 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .ms-logo { width: 36px; height: 36px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 1rem; }
 .ms-item { font-size: 1.3rem; cursor: pointer; opacity: .5; transition: opacity .2s; }
 .ms-item.active { opacity: 1; }
-.mockup-content { flex: 1; overflow: hidden; position: relative; }
+.mockup-content { flex: 1; overflow: hidden; position: relative; height: 100%; }
 /* ---- Mockup slideshow (3 screens × 4s each, 12s cycle) ---- */
-.mock-slide { position: absolute; inset: 0; padding: 1.2rem; overflow: hidden; opacity: 0; }
+.mock-slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 1.2rem; overflow: hidden; opacity: 0; box-sizing: border-box; }
 .mock-slide-1 { animation: mockFade1 12s ease-in-out infinite; }
 .mock-slide-2 { animation: mockFade2 12s ease-in-out infinite; }
 .mock-slide-3 { animation: mockFade3 12s ease-in-out infinite; }
