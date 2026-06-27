@@ -529,11 +529,11 @@ select option{background:#1e293b;color:#e2e8f0}
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-newpass">كلمة المرور الجديدة</label>
-          <input type="password" id="set_newpass" placeholder="8 أحرف على الأقل">
+          <input type="password" id="set_newpass" data-i18n-placeholder="db.ph-pass-min" placeholder="8 أحرف على الأقل">
         </div>
         <div class="fld-m">
           <label data-i18n="db.lbl-confirmpass">تأكيد كلمة المرور</label>
-          <input type="password" id="set_newpass2" placeholder="أعد كتابتها">
+          <input type="password" id="set_newpass2" data-i18n-placeholder="db.ph-pass-confirm" placeholder="أعد كتابتها">
         </div>
       </div>
       <button class="btn-primary" onclick="changePassword()"><span data-i18n="db.btn-update-pass">تحديث كلمة المرور</span></button>
@@ -1372,7 +1372,7 @@ function resultBadge(result, score) {
 async function submitRequest() {
   const name = document.getElementById('nf_name').value.trim();
   const purpose = document.getElementById('nf_purpose').value;
-  if (!name || !purpose) { toast('يرجى إدخال الاسم وغرض الطلب', 'warn'); return; }
+  if (!name || !purpose) { toast(getT('db.toast-req-required'), 'warn'); return; }
   const score = parseInt(document.getElementById('nf_score').value) || null;
   const minScore = partner.formConfig?.min_score || 55;
   const result = score !== null ? (score >= minScore ? 'approved' : 'rejected') : 'pending';
@@ -1393,7 +1393,7 @@ async function submitRequest() {
     source: 'manual',
   }]);
 
-  if (error) { toast('خطأ أثناء الحفظ: ' + error.message, 'error'); return; }
+  if (error) { toast(getT('db.toast-save-error') + ': ' + error.message, 'error'); return; }
 
   clearRequestForm();
   await loadApplications();
@@ -1411,14 +1411,14 @@ function clearRequestForm() {
 }
 
 async function deleteRequest(id) {
-  if (!window.confirm('هل تريد حذف هذا الطلب؟')) return;
+  if (!window.confirm(getT('db.toast-delete-confirm'))) return;
   const { error } = await _sb.from('applications').delete().eq('id', id);
-  if (error) { toast('خطأ أثناء الحذف', 'error'); return; }
+  if (error) { toast(getT('db.toast-delete-error'), 'error'); return; }
   await loadApplications();
   renderStats();
   renderRecentRequests();
   renderAllRequests();
-  toast('تم حذف الطلب');
+  toast(getT('db.toast-deleted'));
 }
 
 function openReqModal(id) {
@@ -1428,26 +1428,26 @@ function openReqModal(id) {
   const isPending = r.result === 'pending';
   document.getElementById('reqModalBody').innerHTML = `
     <div style="display:grid;gap:.75rem">
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الاسم</span><span style="color:#e2e8f0;font-weight:700">${r.name}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">البريد</span><span style="color:#e2e8f0">${r.email || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الجوال</span><span style="color:#e2e8f0">${r.phone || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الشركة / القطاع</span><span style="color:#e2e8f0">${r.company || r.sector || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">رقم الطلب</span><span style="color:#94a3b8;font-size:.78rem;font-family:monospace">${r.ref_num || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الدرجة</span><span style="color:${scoreColor};font-weight:900;font-size:1.1rem">${r.score != null ? r.score + '/100' : '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التقدير</span><span style="color:#e2e8f0">${r.grade || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">النتيجة</span>${resultBadge(r.result, r.score)}</div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التاريخ</span><span style="color:#e2e8f0">${fmtDate(r.created_at)}</span></div>
-      ${r.challenges ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">التحديات الرئيسية</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.challenges}</div></div>` : ''}
-      ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">ملاحظات</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.notes}</div></div>` : ''}
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-name')}</span><span style="color:#e2e8f0;font-weight:700">${r.name}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-email')}</span><span style="color:#e2e8f0">${r.email || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-phone')}</span><span style="color:#e2e8f0">${r.phone || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-company')}</span><span style="color:#e2e8f0">${r.company || r.sector || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-ref')}</span><span style="color:#94a3b8;font-size:.78rem;font-family:monospace">${r.ref_num || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-score')}</span><span style="color:${scoreColor};font-weight:900;font-size:1.1rem">${r.score != null ? r.score + '/100' : '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-grade')}</span><span style="color:#e2e8f0">${r.grade || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.lbl-result')}</span>${resultBadge(r.result, r.score)}</div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-date')}</span><span style="color:#e2e8f0">${fmtDate(r.created_at)}</span></div>
+      ${r.challenges ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">${getT('db.modal-challenges')}</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.challenges}</div></div>` : ''}
+      ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">${getT('db.modal-notes')}</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.notes}</div></div>` : ''}
       ${isPending ? `
       <div style="border-top:1px solid #334155;padding-top:.85rem;display:flex;gap:.6rem">
         <button onclick="finalAccept('${r.id}')" id="btn_final_accept"
           style="flex:1;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:10px;padding:.75rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer">
-          ✅ تأكيد القبول النهائي
+          ${getT('db.btn-confirm-accept')}
         </button>
         <button onclick="finalReject('${r.id}')"
           style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.75rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
-          ✕ رفض
+          ${getT('db.btn-final-reject')}
         </button>
       </div>` : ''}
     </div>`;
@@ -1457,29 +1457,29 @@ function closeModal() { document.getElementById('reqModal').classList.remove('op
 
 async function finalAccept(id) {
   const btn = document.getElementById('btn_final_accept');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ جارٍ التأكيد...'; }
+  if (btn) { btn.disabled = true; btn.textContent = getT('db.pending-confirm'); }
   const { error } = await _sb.from('applications').update({ result: 'approved' }).eq('id', id);
-  if (error) { toast('خطأ: ' + error.message, 'error'); if (btn) { btn.disabled = false; btn.textContent = '✅ تأكيد القبول النهائي'; } return; }
+  if (error) { toast(getT('db.toast-save-error') + ': ' + error.message, 'error'); if (btn) { btn.disabled = false; btn.textContent = getT('db.btn-confirm-accept'); } return; }
   const app = allApplications.find(x => x.id === id);
   if (app) app.result = 'approved';
   closeModal();
   renderStats();
   renderRecentRequests();
   renderAllRequests();
-  toast('✅ تم قبول ' + (app?.name || 'الطالب') + ' نهائياً', 'success');
+  toast('✅ ' + (app?.name || getT('db.modal-name')) + ' — ' + getT('db.opt-approved'), 'success');
 }
 
 async function finalReject(id) {
-  if (!confirm('هل تريد رفض هذا الطلب نهائياً؟')) return;
+  if (!confirm(getT('db.confirm-reject-final'))) return;
   const { error } = await _sb.from('applications').update({ result: 'rejected' }).eq('id', id);
-  if (error) { toast('خطأ: ' + error.message, 'error'); return; }
+  if (error) { toast(getT('db.toast-save-error') + ': ' + error.message, 'error'); return; }
   const app = allApplications.find(x => x.id === id);
   if (app) app.result = 'rejected';
   closeModal();
   renderStats();
   renderRecentRequests();
   renderAllRequests();
-  toast('تم رفض الطلب', 'warn');
+  toast(getT('db.toast-rejected'), 'warn');
 }
 
 // ===== SETTINGS =====
@@ -1507,21 +1507,21 @@ async function saveSettings() {
   partner.phone = (document.getElementById('set_phone_cc')?.value||'+966') + document.getElementById('set_phone').value.trim();
   await updatePartnerInStorage();
   initUI();
-  toast('✅ تم حفظ التغييرات بنجاح!');
+  toast(getT('db.toast-changes-saved'));
 }
 
 async function changePassword() {
   const p1 = document.getElementById('set_newpass').value;
   const p2 = document.getElementById('set_newpass2').value;
-  if (p1.length < 8) { toast('كلمة المرور يجب أن تكون 8 أحرف على الأقل', 'warn'); return; }
-  if (p1 !== p2) { toast('كلمتا المرور غير متطابقتين', 'error'); return; }
+  if (p1.length < 8) { toast(getT('db.toast-pass-short'), 'warn'); return; }
+  if (p1 !== p2) { toast(getT('db.toast-pass-mismatch'), 'error'); return; }
   partner.password = btoa(p1);
   await updatePartnerInStorage();
   // تحديث كلمة المرور في Supabase Auth أيضاً
   try { await _sb.auth.updateUser({ password: p1 }); } catch(e) { console.warn('Auth pass update:', e); }
   document.getElementById('set_newpass').value = '';
   document.getElementById('set_newpass2').value = '';
-  toast('✅ تم تحديث كلمة المرور بنجاح!');
+  toast(getT('db.toast-pass-updated'));
 }
 
 async function updatePartnerInStorage() {
@@ -1588,19 +1588,19 @@ function requestUpgrade(plan) {
   const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
   msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject: 'طلب ترقية باقة', msg: `طلب ترقية من ${partner.plan} إلى ${plan}`, date: new Date().toLocaleDateString('ar-SA')});
   localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
-  toast('✅ تم إرسال طلب الترقية! سيتواصل معك فريقنا خلال 24 ساعة.');
+  toast(getT('db.toast-upgrade-sent'));
 }
 
 // ===== SUPPORT =====
 function sendSupport() {
   const msg = document.getElementById('sup_msg').value.trim();
   const subject = document.getElementById('sup_subject').value;
-  if (!msg) { toast('يرجى كتابة نص الرسالة', 'warn'); return; }
+  if (!msg) { toast(getT('db.toast-msg-required'), 'warn'); return; }
   const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
   msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject, msg, date: new Date().toLocaleDateString('ar-SA')});
   localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
   document.getElementById('sup_msg').value = '';
-  toast('✅ تم إرسال رسالتك! سيرد عليك فريقنا خلال 24 ساعة عمل.');
+  toast(getT('db.toast-msg-sent'));
 }
 
 // ===== NAVIGATION =====
@@ -1628,7 +1628,7 @@ function showPage(pageId, navEl) {
 
 function requestApiAccess() {
   if (partner.plan !== 'pro') {
-    toast('⚠️ طلب الوصول للـ API متاح فقط لباقة المتقدمة', 'warn');
+    toast(getT('db.toast-api-pro'), 'warn');
     return;
   }
   const name = (partner.fname + ' ' + partner.lname).trim();
@@ -1702,7 +1702,7 @@ function copyPartnerLink() {
     const ovBtn = document.getElementById('ov_copy_btn');
     if (btn) { btn.textContent = '✓ تم النسخ'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = '📋 نسخ'; btn.classList.remove('copied'); }, 2000); }
     if (ovBtn) { ovBtn.textContent = '✓ تم'; setTimeout(() => { ovBtn.textContent = '📋 نسخ الرابط'; }, 2000); }
-    toast('✅ تم نسخ الرابط!');
+    toast(getT('db.toast-link-copied'));
   });
 }
 
@@ -1711,7 +1711,7 @@ function openPartnerLink() {
 }
 
 function copyEmbed() {
-  navigator.clipboard.writeText(window._embedCode || '').then(() => toast('✅ تم نسخ كود التضمين!'));
+  navigator.clipboard.writeText(window._embedCode || '').then(() => toast(getT('db.toast-embed-copied')));
 }
 
 // ===== FORM BUILDER =====
@@ -2163,7 +2163,7 @@ async function confirmSaveForm() {
   savedForms.push(newForm);
   await persistSavedForms();
   renderSavedFormsList();
-  toast('✅ تم حفظ النموذج: ' + name, 'success');
+  toast(getT('db.toast-form-saved') + ': ' + name, 'success');
 }
 
 async function persistSavedForms() {
@@ -2175,11 +2175,11 @@ async function persistSavedForms() {
 function loadSavedForm(id) {
   const f = savedForms.find(x => x.id === id);
   if (!f) return;
-  if (!confirm('سيتم تحميل النموذج "' + f.name + '" للتعديل — هل تريد المتابعة؟')) return;
+  if (!confirm('"' + f.name + '" ' + getT('db.confirm-load-form'))) return;
   applyFormConfig(f.config);
   editingFormId = id;
   showEditingBanner(f.name);
-  toast('✏️ تم تحميل النموذج للتعديل: ' + f.name);
+  toast(getT('db.toast-form-loaded') + ': ' + f.name);
   document.getElementById('fc_program_name')?.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
