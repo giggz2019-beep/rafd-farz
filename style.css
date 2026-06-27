@@ -30,7 +30,7 @@ input, textarea, select, [contenteditable] { -webkit-user-select: text; user-sel
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body { font-family: var(--font-body); color: var(--text); background: var(--white); direction: rtl; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-body); color: var(--text); background: var(--white); direction: rtl; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; font-feature-settings: 'calt' 1, 'liga' 1, 'ss01' 1; font-variant-ligatures: common-ligatures contextual; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
 
 /* ===== HEADINGS — Tajawal font ===== */
