@@ -85,7 +85,7 @@ const T = {
     'cta.desc':'انضم لأكثر من 20 جهة تستخدم Rafd لتوفير الوقت وتحسين جودة القرارات',
     'cta.btn1':'ابدأ تجربتك المجانية ←','cta.btn2':'جرّب النظام أولاً','cta.btn3':'🤝 انضم كشريك',
     // ===== CHATBOT =====
-    'chat.label':'خالد — مساعدك الذكي','chat.name':'خالد','chat.status':'متاح الآن · مساعد RAFD الذكي',
+    'chat.label':'خالد — خدمة العملاء','chat.name':'خالد','chat.status':'متاح الآن · خدمة عملاء RAFD',
     'chat.welcome':'مرحباً! أنا خالد، مساعدك الذكي في منصة RAFD 👋 كيف أقدر أساعدك اليوم؟',
     'chat.placeholder':'اكتب سؤالك...',
     'chat.q1':'كيف اشترك؟','chat.q2':'طريقة عملكم','chat.q3':'الباقات والأسعار',
@@ -944,7 +944,7 @@ const T = {
     'cta.desc':'Join 20+ organizations using Rafd to save time and improve decision quality',
     'cta.btn1':'Start Free Trial →','cta.btn2':'Try the System First','cta.btn3':'🤝 Join as Partner',
     // ===== CHATBOT =====
-    'chat.label':'Khalid — Your Smart Assistant','chat.name':'Khalid','chat.status':'Online now · RAFD Smart Assistant',
+    'chat.label':'Khalid — Customer Support','chat.name':'Khalid','chat.status':'Online now · RAFD Customer Support',
     'chat.welcome':'Hello! I\'m Khalid, your smart assistant at RAFD 👋 How can I help you today?',
     'chat.placeholder':'Type your question...',
     'chat.q1':'How to subscribe?','chat.q2':'How it works','chat.q3':'Plans & pricing',
