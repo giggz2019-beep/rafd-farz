@@ -149,7 +149,7 @@ select option{background:#1e293b;color:#e2e8f0}
 .progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#38bdf8,#4a9d6f)}
 
 /* ===== PLAN CARDS ===== */
-.plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
 .plan-card{background:rgba(15,23,42,.5);border:2px solid rgba(255,255,255,.08);border-radius:14px;padding:1.25rem;text-align:center;transition:.2s}
 .plan-card.current{border-color:#38bdf8;background:rgba(56,189,248,.08)}
 .plan-name{font-size:.95rem;font-weight:800;color:#fff;margin-bottom:.25rem}
@@ -563,17 +563,7 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="card">
       <div class="card-title" data-i18n="db.avail-plans">📦 الباقات المتاحة</div>
       <div class="plan-grid">
-        <div class="plan-card" id="plan_trial">
-          <div class="plan-name" data-i18n="db.plan-trial">🎯 التجريبية</div>
-          <div class="plan-price" data-i18n="pg.free">مجاناً</div>
-          <div class="plan-period" data-i18n="db.plan-7days">7 أيام</div>
-          <ul class="plan-features">
-            <li data-i18n="db.plan-trial-f1">50 طلب</li>
-            <li data-i18n="db.plan-trial-f2">نموذج واحد</li>
-          </ul>
-          <button class="btn-upgrade" id="btn_trial" onclick="requestUpgrade('trial')"><span data-i18n="db.cur-plan-btn">الباقة الحالية</span></button>
-        </div>
-        <div class="plan-card" id="plan_basic">
+<div class="plan-card" id="plan_basic">
           <div class="plan-name" data-i18n="db.plan-basic">⚡ الأساسية</div>
           <div class="plan-price" data-i18n="db.plan-basic-price">49</div>
           <div class="plan-period" data-i18n="db.per-month">ر.س/شهر</div>
@@ -1581,7 +1571,7 @@ function renderSubscription() {
       <span class="badge ${partner.plan === 'trial' ? 'b-trial' : partner.plan === 'pro' ? 'b-pro' : 'b-basic'}">${planNames[partner.plan]}</span>
     </div>`;
   // Mark current plan
-  ['trial','basic','plus','pro'].forEach(p => {
+  ['basic','plus','pro'].forEach(p => {
     const card = document.getElementById('plan_' + p);
     const btn = document.getElementById('btn_' + p);
     if (p === partner.plan) {
