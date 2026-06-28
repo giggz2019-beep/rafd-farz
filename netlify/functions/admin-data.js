@@ -1,5 +1,3 @@
-const { createClient } = require('@supabase/supabase-js');
-
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
 exports.handler = async (event) => {
@@ -19,55 +17,65 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
 
-  // Validate admin password server-side
   if (body.password !== adminPass) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
   }
 
-  // Service key bypasses RLS automatically
-  const sb = createClient(SUPABASE_URL, serviceKey, {
-    auth: { autoRefreshToken: false, persistSession: false }
-  });
+  const headers = {
+    'apikey': serviceKey,
+    'Authorization': `Bearer ${serviceKey}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+
+  const base = `${SUPABASE_URL}/rest/v1`;
+  const { action, data = {} } = body;
 
   try {
-    const { action, data = {} } = body;
-
     if (action === 'load') {
-      const [{ data: partners, error: pErr }, { count }] = await Promise.all([
-        sb.from('partners').select('*').order('created_at', { ascending: false }),
-        sb.from('applications').select('*', { count: 'exact', head: true })
+      const [pRes, aRes] = await Promise.all([
+        fetch(`${base}/partners?select=*&order=created_at.desc`, { headers }),
+        fetch(`${base}/applications?select=id`, { headers: { ...headers, 'Prefer': 'count=exact', 'Range-Unit': 'items', 'Range': '0-0' } })
       ]);
-      if (pErr) throw pErr;
-      return ok({ partners, appCount: count || 0 });
+      const partners = await pRes.json();
+      const appCount = parseInt(aRes.headers.get('content-range')?.split('/')[1] || '0');
+      return ok({ partners, appCount });
     }
 
     if (action === 'update_plan') {
-      const { error } = await sb.from('partners').update({ plan: data.plan }).eq('id', data.id);
-      if (error) throw error;
+      await fetch(`${base}/partners?id=eq.${data.id}`, {
+        method: 'PATCH', headers,
+        body: JSON.stringify({ plan: data.plan })
+      });
       return ok({ success: true });
     }
 
     if (action === 'update_status') {
-      const { error } = await sb.from('partners').update({ status: data.status }).eq('id', data.id);
-      if (error) throw error;
+      await fetch(`${base}/partners?id=eq.${data.id}`, {
+        method: 'PATCH', headers,
+        body: JSON.stringify({ status: data.status })
+      });
       return ok({ success: true });
     }
 
     if (action === 'delete_partner') {
-      const { error } = await sb.from('partners').delete().eq('id', data.id);
-      if (error) throw error;
+      await fetch(`${base}/partners?id=eq.${data.id}`, { method: 'DELETE', headers });
       return ok({ success: true });
     }
 
     if (action === 'insert_partner') {
-      const { error } = await sb.from('partners').insert([data.partner]);
-      if (error) throw error;
+      await fetch(`${base}/partners`, {
+        method: 'POST', headers,
+        body: JSON.stringify(data.partner)
+      });
       return ok({ success: true });
     }
 
     if (action === 'update_notes') {
-      const { error } = await sb.from('partners').update({ notes: data.notes }).eq('id', data.id);
-      if (error) throw error;
+      await fetch(`${base}/partners?id=eq.${data.id}`, {
+        method: 'PATCH', headers,
+        body: JSON.stringify({ notes: data.notes })
+      });
       return ok({ success: true });
     }
 
