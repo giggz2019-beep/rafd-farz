@@ -149,7 +149,7 @@ select option{background:#1e293b;color:#e2e8f0}
 .progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#38bdf8,#4a9d6f)}
 
 /* ===== PLAN CARDS ===== */
-.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
 .plan-card{background:rgba(15,23,42,.5);border:2px solid rgba(255,255,255,.08);border-radius:14px;padding:1.25rem;text-align:center;transition:.2s}
 .plan-card.current{border-color:#38bdf8;background:rgba(56,189,248,.08)}
 .plan-name{font-size:.95rem;font-weight:800;color:#fff;margin-bottom:.25rem}
@@ -568,32 +568,43 @@ select option{background:#1e293b;color:#e2e8f0}
           <div class="plan-price" data-i18n="pg.free">مجاناً</div>
           <div class="plan-period" data-i18n="db.plan-7days">7 أيام</div>
           <ul class="plan-features">
-            <li data-i18n="db.plan-trial-f1">حتى 50 طلب</li>
-            <li data-i18n="db.plan-trial-f2">تقارير أساسية</li>
+            <li data-i18n="db.plan-trial-f1">50 طلب</li>
+            <li data-i18n="db.plan-trial-f2">نموذج واحد</li>
           </ul>
           <button class="btn-upgrade" id="btn_trial" onclick="requestUpgrade('trial')"><span data-i18n="db.cur-plan-btn">الباقة الحالية</span></button>
         </div>
         <div class="plan-card" id="plan_basic">
           <div class="plan-name" data-i18n="db.plan-basic">⚡ الأساسية</div>
-          <div class="plan-price" data-i18n="db.plan-basic-price">249 ريال</div>
-          <div class="plan-period" data-i18n="db.per-month">/شهر</div>
+          <div class="plan-price" data-i18n="db.plan-basic-price">49</div>
+          <div class="plan-period" data-i18n="db.per-month">ر.س/شهر</div>
           <ul class="plan-features">
-            <li data-i18n="db.plan-basic-f1">حتى 500 طلب/شهر</li>
-            <li data-i18n="db.plan-basic-f2">تقارير تفصيلية</li>
-            <li data-i18n="db.plan-basic-f3">تخصيص المعايير</li>
+            <li data-i18n="db.plan-basic-f1">50 طلب/شهر</li>
+            <li data-i18n="db.plan-basic-f2">نموذج واحد</li>
+            <li data-i18n="db.plan-basic-f3">تقارير أساسية</li>
           </ul>
-          <button class="btn-upgrade" id="btn_basic" onclick="requestUpgrade('basic')"><span data-i18n="db.btn-upgrade">الترقية لهذه الباقة</span></button>
+          <button class="btn-upgrade" id="btn_basic" onclick="requestUpgrade('basic')"><span data-i18n="db.btn-upgrade">ترقية</span></button>
+        </div>
+        <div class="plan-card" id="plan_plus">
+          <div class="plan-name" data-i18n="db.plan-plus">🌟 بلس</div>
+          <div class="plan-price" data-i18n="db.plan-plus-price">249</div>
+          <div class="plan-period" data-i18n="db.per-month">ر.س/شهر</div>
+          <ul class="plan-features">
+            <li data-i18n="db.plan-plus-f1">500 طلب/شهر</li>
+            <li data-i18n="db.plan-plus-f2">3 نماذج</li>
+            <li data-i18n="db.plan-plus-f3">تقارير تفصيلية</li>
+          </ul>
+          <button class="btn-upgrade" id="btn_plus" onclick="requestUpgrade('plus')"><span data-i18n="db.btn-upgrade">ترقية</span></button>
         </div>
         <div class="plan-card" id="plan_pro">
-          <div class="plan-name" data-i18n="db.plan-adv">🚀 المتقدمة</div>
-          <div class="plan-price" data-i18n="db.plan-adv-price">499 ريال</div>
-          <div class="plan-period" data-i18n="db.per-month">/شهر</div>
+          <div class="plan-name" data-i18n="db.plan-adv">🚀 برو</div>
+          <div class="plan-price" data-i18n="db.plan-adv-price">499</div>
+          <div class="plan-period" data-i18n="db.per-month">ر.س/شهر</div>
           <ul class="plan-features">
             <li data-i18n="db.plan-adv-f1">طلبات غير محدودة</li>
-            <li data-i18n="db.plan-adv-f2">تكامل API</li>
+            <li data-i18n="db.plan-adv-f2">API كامل</li>
             <li data-i18n="db.plan-adv-f3">مدير حساب مخصص</li>
           </ul>
-          <button class="btn-upgrade" id="btn_pro" onclick="requestUpgrade('pro')"><span data-i18n="db.btn-upgrade">الترقية لهذه الباقة</span></button>
+          <button class="btn-upgrade" id="btn_pro" onclick="requestUpgrade('pro')"><span data-i18n="db.btn-upgrade">ترقية</span></button>
         </div>
       </div>
     </div>
@@ -1551,11 +1562,13 @@ function renderSubscription() {
   const planNames = {
     trial: getT('db.plan-trial'),
     basic: getT('db.plan-basic'),
+    plus: getT('db.plan-plus'),
     pro: getT('db.plan-adv')
   };
   const prices = {
     trial: getT('db.plan-trial-price'),
     basic: getT('db.plan-basic-price-full'),
+    plus: getT('db.plan-plus-price-full'),
     pro: getT('db.plan-adv-price-full')
   };
   document.getElementById('current_plan_info').innerHTML = `
@@ -1565,10 +1578,10 @@ function renderSubscription() {
         <div style="color:#38bdf8;font-size:1rem;font-weight:700;margin-top:.25rem">${prices[partner.plan] || ''}</div>
         <div style="color:#64748b;font-size:.78rem;margin-top:.25rem">${getT('db.sub-date')}: ${partner.date}</div>
       </div>
-      <span class="badge ${partner.plan === 'trial' ? 'b-trial' : partner.plan === 'basic' ? 'b-basic' : 'b-pro'}">${planNames[partner.plan]}</span>
+      <span class="badge ${partner.plan === 'trial' ? 'b-trial' : partner.plan === 'pro' ? 'b-pro' : 'b-basic'}">${planNames[partner.plan]}</span>
     </div>`;
   // Mark current plan
-  ['trial','basic','pro'].forEach(p => {
+  ['trial','basic','plus','pro'].forEach(p => {
     const card = document.getElementById('plan_' + p);
     const btn = document.getElementById('btn_' + p);
     if (p === partner.plan) {
@@ -1584,7 +1597,7 @@ function renderSubscription() {
 }
 
 function requestUpgrade(plan) {
-  const planNames = {trial:'التجريبية', basic:'الأساسية', pro:'المتقدمة'};
+  const planNames = {trial:'التجريبية', basic:'الأساسية', plus:'بلس', pro:'برو'};
   const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
   msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject: 'طلب ترقية باقة', msg: `طلب ترقية من ${partner.plan} إلى ${plan}`, date: new Date().toLocaleDateString('ar-SA')});
   localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
