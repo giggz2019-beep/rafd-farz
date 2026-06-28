@@ -32,6 +32,8 @@ exports.handler = async (event) => {
   const { action, data = {} } = body;
 
   try {
+    if (action === 'ping') return ok({ ok: true });
+
     if (action === 'load') {
       const [pRes, aRes] = await Promise.all([
         fetch(`${base}/partners?select=*&order=created_at.desc`, { headers }),

@@ -161,10 +161,6 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
       <span class="login-badge" data-i18n="adm.login-badge">🔒 وصول مقيّد — المدير فقط</span>
     </div>
     <div class="form-group">
-      <label data-i18n="adm.lbl-user">اسم المستخدم</label>
-      <input type="text" id="adminUser" placeholder="admin" autocomplete="off">
-    </div>
-    <div class="form-group">
       <label data-i18n="adm.lbl-pass">كلمة المرور</label>
       <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
@@ -579,31 +575,42 @@ const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ===== AUTH =====
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'rafd2025'; // UI check only — real auth happens server-side in admin-data function
+// كلمة السر مو مخزونة هنا — تُرسل للسيرفر مباشرة للتحقق
+let _adminPass = sessionStorage.getItem('rafd_admin_token') || '';
 
-function doLogin() {
-  const u = document.getElementById('adminUser').value.trim();
+async function doLogin() {
   const p = document.getElementById('adminPass').value.trim();
-  if(u === ADMIN_USER && p === ADMIN_PASS) {
+  if (!p) return;
+  try {
+    const res = await fetch('/.netlify/functions/admin-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'ping', password: p })
+    });
+    if (res.status === 401) {
+      document.getElementById('loginErr').style.display = 'block';
+      document.getElementById('adminPass').value = '';
+      return;
+    }
+    _adminPass = p;
+    sessionStorage.setItem('rafd_admin_token', p);
     localStorage.setItem('rafd_admin_session', JSON.stringify({ loggedIn: true, expires: Date.now() + 8*60*60*1000 }));
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminWrap').classList.add('active');
     loadFromSupabase();
-  } else {
-    document.getElementById('loginErr').style.display = 'block';
-    document.getElementById('adminPass').value = '';
+  } catch(e) {
+    alert('خطأ في الاتصال بالسيرفر');
   }
 }
 
 // ===== ADMIN API HELPER =====
-// All admin Supabase ops go through the server function (uses service key, bypasses RLS)
 async function adminApi(action, data = {}) {
   const res = await fetch('/.netlify/functions/admin-data', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, password: ADMIN_PASS, data })
+    body: JSON.stringify({ action, password: _adminPass, data })
   });
+  if (res.status === 401) { sessionStorage.removeItem('rafd_admin_token'); window.location.reload(); return; }
   if (!res.ok) throw new Error('Admin API error ' + res.status);
   return res.json();
 }
