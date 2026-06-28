@@ -580,7 +580,7 @@ const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ===== AUTH =====
 const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'rafd2025';
+const ADMIN_PASS = 'rafd2025'; // UI check only — real auth happens server-side in admin-data function
 
 function doLogin() {
   const u = document.getElementById('adminUser').value.trim();
@@ -594,6 +594,18 @@ function doLogin() {
     document.getElementById('loginErr').style.display = 'block';
     document.getElementById('adminPass').value = '';
   }
+}
+
+// ===== ADMIN API HELPER =====
+// All admin Supabase ops go through the server function (uses service key, bypasses RLS)
+async function adminApi(action, data = {}) {
+  const res = await fetch('/.netlify/functions/admin-data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, password: ADMIN_PASS, data })
+  });
+  if (!res.ok) throw new Error('Admin API error ' + res.status);
+  return res.json();
 }
 
 // ===== DATA FROM SUPABASE =====
@@ -610,20 +622,11 @@ async function loadFromSupabase() {
   document.getElementById('statRevenue').textContent = '...';
 
   try {
-    // جلب الشركاء
-    const { data: partners, error } = await _sb
-      .from('partners')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (!error && partners) allPartners = partners;
-
-    // جلب عدد الطلبات
-    const { count } = await _sb
-      .from('applications')
-      .select('*', { count: 'exact', head: true });
-    appCount = count || 0;
+    const result = await adminApi('load');
+    if (result.partners) allPartners = result.partners;
+    appCount = result.appCount || 0;
   } catch(e) {
-    console.warn('Supabase load error:', e);
+    console.warn('Admin load error:', e);
   }
 
   // حوّل شركاء Supabase لتنسيق بطاقات العملاء
@@ -790,8 +793,7 @@ async function upgradeClient(id) {
   if(idx < 2) {
     const newPlan = plans[idx+1];
     try {
-      const { error } = await _sb.from('partners').update({ plan: newPlan }).eq('id', id);
-      if(error) throw error;
+      await adminApi('update_plan', { id, plan: newPlan });
       await loadFromSupabase();
       closeDetail();
       alert('تم ترقية الباقة إلى: ' + {trial:'تجريبية',basic:'أساسية',pro:'متقدمة'}[newPlan]);
@@ -806,8 +808,7 @@ async function toggleStatus(id) {
   const idx = statuses.indexOf(p.status);
   const newStatus = statuses[(idx+1) % 3];
   try {
-    const { error } = await _sb.from('partners').update({ status: newStatus }).eq('id', id);
-    if(error) throw error;
+    await adminApi('update_status', { id, status: newStatus });
     await loadFromSupabase();
     closeDetail();
   } catch(e) { alert('خطأ: ' + e.message); }
@@ -816,8 +817,7 @@ async function toggleStatus(id) {
 async function deleteClient(id) {
   if(!confirm('هل أنت متأكد من حذف هذا الشريك؟')) return;
   try {
-    const { error } = await _sb.from('partners').delete().eq('id', id);
-    if(error) throw error;
+    await adminApi('delete_partner', { id });
     await loadFromSupabase();
   } catch(e) { alert('خطأ: ' + e.message); }
 }
@@ -839,7 +839,7 @@ async function saveClient() {
   const btn = document.querySelector('.btn-save');
   btn.disabled = true; btn.textContent = 'جاري الحفظ...';
   try {
-    const { error } = await _sb.from('partners').insert([{
+    await adminApi('insert_partner', { partner: {
       fname, lname,
       org_name: org,
       org_type: document.getElementById('f_type').value,
@@ -849,8 +849,7 @@ async function saveClient() {
       status: 'approved',
       notes: document.getElementById('f_notes').value.trim(),
       password: Math.random().toString(36).slice(2, 10)
-    }]);
-    if(error) throw error;
+    }});
     await loadFromSupabase();
     closeAddModal();
     ['f_fname','f_lname','f_org','f_email','f_phone','f_notes'].forEach(id => document.getElementById(id).value = '');
@@ -972,8 +971,7 @@ async function approvePartner(id) {
   const p = allPartners.find(x => x.id === id);
   if(!p) return;
   try {
-    const { error } = await _sb.from('partners').update({ status: 'approved' }).eq('id', id);
-    if(error) throw error;
+    await adminApi('update_status', { id, status: 'approved' });
     p.status = 'approved';
     await loadFromSupabase();
     alert('✅ تم قبول الشريك: ' + (p.org_name||p.email) + '\nيمكنه الآن الدخول للوحة التحكم.');
@@ -985,8 +983,7 @@ async function rejectPartner(id) {
   if(!p) return;
   if(!confirm('هل تريد رفض طلب: ' + (p.org_name||p.email) + '؟')) return;
   try {
-    const { error } = await _sb.from('partners').update({ status: 'rejected' }).eq('id', id);
-    if(error) throw error;
+    await adminApi('update_status', { id, status: 'rejected' });
     p.status = 'rejected';
     await loadFromSupabase();
   } catch(e) { alert('خطأ: ' + e.message); }
@@ -995,8 +992,7 @@ async function rejectPartner(id) {
 async function deletePartner(id) {
   if(!confirm('هل تريد حذف هذا الشريك نهائياً؟')) return;
   try {
-    const { error } = await _sb.from('partners').delete().eq('id', id);
-    if(error) throw error;
+    await adminApi('delete_partner', { id });
     await loadFromSupabase();
   } catch(e) { alert('خطأ: ' + e.message); }
 }
