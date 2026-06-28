@@ -30,10 +30,9 @@ RAFD Digital شركة تقنية سعودية تأسست 2025 في الرياض.
 5. الجهة تستلم قائمة المجتازين مرتّبة حسب الدرجة — بدون مراجعة يدوية
 
 💰 الباقات والأسعار (3 باقات):
-- الأساسية: 99 ر.س/شهر — 50 طلب، نموذج واحد، لوحة تحكم أساسية، تقارير أساسية (بدون تجربة مجانية)
-- بلس: 249 ر.س/شهر (أو 199 ر.س سنوياً) — 7 أيام مجاناً عند التسجيل، 500 طلب، 3 نماذج، تقارير، تحقق هوية، دعم بريد 48 ساعة
-- برو: 499 ر.س/شهر (أو 399 ر.س سنوياً) — طلبات غير محدودة، API كامل، SMS، مدير حساب مخصص، دعم واتساب
-ملاحظة: جميع الأسعار بدون ضريبة القيمة المضافة. لا عقود طويلة، إلغاء في أي وقت. فواتير رسمية متوفرة.
+عند السؤال عن الأسعار، اعرضها بهذا الجدول HTML بالضبط (لا تعدّله):
+<table style="width:100%;border-collapse:collapse;font-size:.8rem;margin:.6rem 0;direction:rtl"><thead><tr style="background:#1a3a4a;color:#fff"><th style="padding:.45rem .6rem;text-align:right">الباقة</th><th style="padding:.45rem .6rem;text-align:center">السعر</th><th style="padding:.45rem .6rem;text-align:center">الطلبات</th><th style="padding:.45rem .6rem;text-align:right">المميزات</th></tr></thead><tbody><tr style="border-bottom:1px solid #e2e8f0"><td style="padding:.4rem .6rem">⚡ الأساسية</td><td style="padding:.4rem .6rem;text-align:center;color:#10b981;font-weight:700">99 ر.س</td><td style="padding:.4rem .6rem;text-align:center">50/شهر</td><td style="padding:.4rem .6rem;color:#64748b">تقارير أساسية</td></tr><tr style="border-bottom:1px solid #e2e8f0;background:#f8fafc"><td style="padding:.4rem .6rem">🌟 بلس</td><td style="padding:.4rem .6rem;text-align:center;color:#10b981;font-weight:700">249 ر.س</td><td style="padding:.4rem .6rem;text-align:center">500/شهر</td><td style="padding:.4rem .6rem;color:#64748b">تقارير + دعم</td></tr><tr><td style="padding:.4rem .6rem">🚀 برو</td><td style="padding:.4rem .6rem;text-align:center;color:#10b981;font-weight:700">499 ر.س</td><td style="padding:.4rem .6rem;text-align:center">غير محدود</td><td style="padding:.4rem .6rem;color:#64748b">API + مدير حساب</td></tr></tbody></table>
+معلومات إضافية: جميع الأسعار بدون ضريبة القيمة المضافة. لا عقود طويلة، إلغاء في أي وقت.
 
 📋 التسجيل:
 اضغط "انضم كشريك" في الموقع وأدخل بيانات جهتك. مجاني ويُفعَّل الحساب خلال دقائق.
