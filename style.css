@@ -30,12 +30,15 @@ input, textarea, select, [contenteditable] { -webkit-user-select: text; user-sel
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body { font-family: var(--font-body); color: var(--text); background: var(--white); direction: rtl; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; font-feature-settings: 'calt' 1, 'liga' 1, 'ss01' 1; font-variant-ligatures: common-ligatures contextual; }
+body { font-family: var(--font-body); color: var(--text); background: var(--white); direction: rtl; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: geometricPrecision; font-synthesis: none; font-feature-settings: 'calt' 1, 'liga' 1, 'ss01' 1, 'salt' 1, 'kern' 1; font-variant-ligatures: common-ligatures contextual; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
 
-/* ===== HEADINGS — Tajawal font ===== */
+/* ===== HEADINGS ===== */
 h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title, .sector-name, .price-plan {
   font-family: var(--font-heading);
+  font-weight: 800;
+  font-feature-settings: 'calt' 1, 'liga' 1, 'ss01' 1, 'salt' 1, 'kern' 1;
+  letter-spacing: -0.02em;
 }
 
 /* ===== NAVBAR ===== */
