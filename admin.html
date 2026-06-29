@@ -582,7 +582,7 @@ async function doLogin() {
   const p = document.getElementById('adminPass').value.trim();
   if (!p) return;
   try {
-    const res = await fetch('/.netlify/functions/admin-data', {
+    const res = await fetch('/api/admin-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'ping', password: p })
@@ -605,7 +605,7 @@ async function doLogin() {
 
 // ===== ADMIN API HELPER =====
 async function adminApi(action, data = {}) {
-  const res = await fetch('/.netlify/functions/admin-data', {
+  const res = await fetch('/api/admin-data', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action, password: _adminPass, data })

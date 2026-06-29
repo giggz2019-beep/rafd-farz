@@ -315,7 +315,7 @@ async function resendLoginOtp() {
   _loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
   sessionStorage.setItem('rafd_login_otp', JSON.stringify({ otp: _loginOtp, email: _loginPartner.email, expiry: Date.now() + 5 * 60 * 1000 }));
   try {
-    await fetch('/.netlify/functions/send-otp', {
+    await fetch('/api/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: _loginPartner.email, otp: _loginOtp, fname: _loginPartner.fname || _loginPartner.org_name }),
@@ -537,7 +537,7 @@ async function sendResetOtp() {
 
   // Send OTP email
   try {
-    await fetch('/.netlify/functions/send-otp', {
+    await fetch('/api/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, otp: _fpOtp, fname: p.org_name }),
@@ -703,7 +703,7 @@ async function doLogin() {
 
     btn.textContent = '⏳ جارٍ إرسال الرمز...';
     try {
-      await fetch('/.netlify/functions/send-otp', {
+      await fetch('/api/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: partner.email, otp: _loginOtp, fname: partner.fname || partner.org_name }),

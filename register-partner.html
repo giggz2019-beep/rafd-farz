@@ -947,7 +947,7 @@ async function submitForm() {
   }));
 
   try {
-    const res = await fetch('/.netlify/functions/send-otp', {
+    const res = await fetch('/api/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, otp, fname: pendingPartner.fname })
