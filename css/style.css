@@ -58,6 +58,11 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .mobile-menu-actions a { flex: 1; text-align: center; padding: .75rem; border-radius: 10px; font-size: .9rem; font-weight: 700; text-decoration: none; }
 .mobile-menu-actions .m-login { background: var(--bg); color: var(--primary); border: 1.5px solid var(--border); }
 .mobile-menu-actions .m-signup { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; }
+.mobile-lang-row { margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--border); }
+.lang-toggle { background: var(--bg); border: 1.5px solid var(--border); color: var(--primary); border-radius: 8px; padding: .35rem .75rem; font-family: var(--font-body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .2s; letter-spacing: .03em; }
+.lang-toggle:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+.lang-toggle-mobile { display: flex; align-items: center; gap: .5rem; width: 100%; background: var(--bg); border: 1.5px solid var(--border); color: var(--primary); border-radius: 10px; padding: .7rem 1rem; font-family: var(--font-body); font-size: .9rem; font-weight: 700; cursor: pointer; transition: all .2s; }
+.lang-toggle-mobile:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
 /* ===== HERO ===== */
 .hero { min-height: 100svh; display: flex; align-items: center; padding-top: 60px; position: relative; overflow: hidden; background: linear-gradient(160deg, #f0f9ff 0%, #e0f2fe 40%, #f0fdf4 80%, #ecfdf5 100%); }
