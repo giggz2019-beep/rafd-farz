@@ -1073,6 +1073,7 @@ async function verifyOTP() {
           city: pendingPartner.city,
           password: pendingPartner.password,
           status: 'approved',
+          ref_num: pendingPartner.refNum,
         }
       ]).select().single();
       if (error) throw error;

@@ -67,6 +67,18 @@
 .at-line .b{color:#60a5fa}
 .at-line .w{color:#fff;font-weight:700}
 
+/* USE CASES */
+.usecases-section{padding:70px 0;background:#f8fafc}
+.uc-note{background:linear-gradient(135deg,rgba(74,157,111,.1),rgba(74,157,111,.04));border:1px solid rgba(74,157,111,.3);border-radius:16px;padding:1.25rem 1.75rem;text-align:center;margin-bottom:3rem;color:#1e293b;font-size:.93rem;line-height:1.9}
+.uc-note strong{color:#4a9d6f}
+.usecases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.usecase-card{background:#fff;border-radius:16px;padding:1.5rem;border:1px solid #e2e8f0;transition:all .3s}
+.usecase-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.08);border-color:#4a9d6f}
+.uc-icon{font-size:2rem;margin-bottom:.6rem}
+.uc-who{font-size:.74rem;font-weight:700;color:#4a9d6f;background:#f0fdf4;border:1px solid #bbf7d0;display:inline-block;padding:.2rem .7rem;border-radius:20px;margin-bottom:.6rem}
+.uc-title{font-family:'Tajawal',sans-serif;font-weight:800;color:#1e293b;font-size:1rem;margin-bottom:.5rem}
+.uc-desc{color:#64748b;font-size:.82rem;line-height:1.75}
+
 /* FAQ */
 .faq-section{padding:70px 0;background:#f8fafc}
 .faq-list{max-width:700px;margin:3rem auto 0;display:flex;flex-direction:column;gap:.75rem}
@@ -90,11 +102,13 @@
   .step-block{grid-template-columns:56px 1fr}
   .step-block:not(:last-child)::after{right:27px}
   .entities-grid{grid-template-columns:1fr 1fr}
+  .usecases-grid{grid-template-columns:1fr 1fr}
   .ai-grid{grid-template-columns:1fr}
   .ai-terminal{display:none}
 }
 @media(max-width:480px){
   .entities-grid{grid-template-columns:1fr}
+  .usecases-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -254,6 +268,59 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES EXAMPLES -->
+<section class="usecases-section">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <span class="section-tag">أمثلة تطبيقية</span>
+      <h2 class="section-title">المنصة ماهي بس لقبول الطلبات والرفض</h2>
+      <p class="section-desc">أي جهة عندها معايير وعندها أناس تقيّمهم — رفد تبني لك النموذج وتفرز وترتب تلقائياً</p>
+    </div>
+    <div class="uc-note">
+      سواء كنت <strong>مديراً يقيّم موظفيه للترقية</strong>، أو <strong>جمعية توزع مساعدات</strong>، أو <strong>لجنة تحكّم في مسابقة</strong> —<br>
+      النظام يتكيّف مع أي نموذج وأي معايير تحددها أنت
+    </div>
+    <div class="usecases-grid">
+      <div class="usecase-card">
+        <div class="uc-icon">👔</div>
+        <div class="uc-who">مدير موارد بشرية</div>
+        <div class="uc-title">تقييم أداء الموظفين</div>
+        <div class="uc-desc">يبني نموذج بمعايير المهارات والأداء والالتزام — النظام يرتب الموظفين للمفاضلة في الترقية أو تجديد العقد</div>
+      </div>
+      <div class="usecase-card">
+        <div class="uc-icon">🤲</div>
+        <div class="uc-who">جمعية خيرية</div>
+        <div class="uc-title">توزيع الدعم المالي</div>
+        <div class="uc-desc">تستقبل طلبات المحتاجين وتقيّمهم وفق معايير الدخل والحالة الاجتماعية — وتوزع الأولويات تلقائياً</div>
+      </div>
+      <div class="usecase-card">
+        <div class="uc-icon">🏆</div>
+        <div class="uc-who">لجنة تحكيم</div>
+        <div class="uc-title">تحكيم المسابقات والجوائز</div>
+        <div class="uc-desc">كل محكّم يقيّم وفق معايير محددة — النظام يجمع الدرجات ويُخرج الترتيب النهائي بدون تحيّز</div>
+      </div>
+      <div class="usecase-card">
+        <div class="uc-icon">🏗️</div>
+        <div class="uc-who">إدارة المشتريات</div>
+        <div class="uc-title">تقييم عروض الموردين</div>
+        <div class="uc-desc">تجمع عروض المقاولين والموردين وتقيّمها وفق السعر والجودة والخبرة — وتختار الأنسب آلياً</div>
+      </div>
+      <div class="usecase-card">
+        <div class="uc-icon">🏠</div>
+        <div class="uc-who">برامج الإسكان</div>
+        <div class="uc-title">طلبات الوحدات السكنية</div>
+        <div class="uc-desc">تستقبل طلبات المستحقين وتفرزهم وفق معايير الأولوية الاجتماعية والاقتصادية</div>
+      </div>
+      <div class="usecase-card">
+        <div class="uc-icon">🎓</div>
+        <div class="uc-who">برنامج تدريبي</div>
+        <div class="uc-title">انتقاء المتدربين</div>
+        <div class="uc-desc">يقيّم المتقدمين للمعسكرات والدورات وفق مستواهم وخبرتهم — ويرتبهم حسب الأولوية</div>
+      </div>
     </div>
   </div>
 </section>

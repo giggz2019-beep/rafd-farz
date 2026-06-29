@@ -9,5 +9,8 @@
   },
   "dependencies": {
     "express": "^4.22.2"
+  },
+  "devDependencies": {
+    "puppeteer": "^25.2.1"
   }
 }

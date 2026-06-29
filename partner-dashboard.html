@@ -1168,6 +1168,15 @@ async function loadPartnerData() {
     if (error || !data) { window.location.href = '/partner-login.html'; return; }
 
     partner = normalizePartner(data);
+
+    // لو الحساب ما عنده ref_num، نولّد رقم جديد ونحفظه
+    if (!partner.refNum) {
+      const now = new Date();
+      const generated = 'RAFD-' + now.getFullYear() + '-' + String(Math.floor(Math.random()*90000)+10000);
+      await _sb.from('partners').update({ ref_num: generated }).eq('id', partner.id);
+      partner.refNum = generated;
+    }
+
     session = { id: partner.id, email: partner.email, org: partner.org };
     localStorage.setItem('rafd_partner_session', JSON.stringify(session));
     await loadApplications();
