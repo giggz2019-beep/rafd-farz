@@ -896,6 +896,9 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           </button>
         </div>
         <div id="custom_criteria_container"></div>
+        <button onclick="addCustomCriterion()" id="add_crit_bottom_btn" style="display:none;width:100%;margin-top:.5rem;align-items:center;justify-content:center;gap:.35rem;background:rgba(74,157,111,.08);border:1px dashed rgba(74,157,111,.4);color:#4a9d6f;border-radius:8px;padding:.55rem;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">
+          ➕ <span data-i18n="db.add-custom-crit">إضافة معيار خاص</span>
+        </button>
       </div>
 
       <div class="weight-total" style="margin-top:.75rem">
@@ -903,7 +906,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <strong id="weight_total_display">100</strong>
       </div>
       <div id="weight_warning" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:.6rem 1rem;margin-top:.5rem;font-size:.78rem;color:#f87171">
-        <span data-i18n="db.weight-warn">⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة بالضبط.</span>
+        ⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة بالضبط — قلّل وزن أحد المعايير الأخرى لإفساح مجال للمعيار الجديد.
       </div>
     </div>
 
@@ -2083,7 +2086,7 @@ function renderCustomDocs() {
 }
 
 function addCustomCriterion() {
-  customCriteria.push({ label: '', weight: 10, options: [{text:'',score:10},{text:'',score:0}] });
+  customCriteria.push({ label: '', weight: 0, options: [{text:'',score:1},{text:'',score:0}] });
   renderCustomCriteria();
   updateWeightTotal();
 }
@@ -2109,6 +2112,8 @@ function removeCustomOption(cIdx, oIdx) {
 function renderCustomCriteria() {
   const container = document.getElementById('custom_criteria_container');
   if (!container) return;
+  const bottomBtn = document.getElementById('add_crit_bottom_btn');
+  if (bottomBtn) bottomBtn.style.display = customCriteria.length ? 'flex' : 'none';
   if (!customCriteria.length) { container.innerHTML = ''; return; }
 
   container.innerHTML = customCriteria.map((c, ci) => `
