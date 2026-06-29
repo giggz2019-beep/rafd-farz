@@ -2091,14 +2091,17 @@ function addCustomCriterion() {
   updateWeightTotal();
 }
 
-function confirmCriterion(ci) {
+async function confirmCriterion(ci) {
   if (!customCriteria[ci].label.trim()) {
-    alert('اكتب نص السؤال أولاً');
-    return;
+    toast('اكتب نص السؤال أولاً', 'warn'); return;
   }
   customCriteria[ci].confirmed = true;
   renderCustomCriteria();
   updateWeightTotal();
+  const fc = { ...(partner.formConfig || {}), custom_criteria: customCriteria };
+  await _sb.from('partners').update({ form_config: fc }).eq('id', partner.id);
+  partner.formConfig = fc;
+  toast('✓ تمت إضافة المعيار للنموذج', 'success');
 }
 
 function editCriterion(ci) {
