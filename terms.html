@@ -1,280 +1,892 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الشروط والأحكام — Rafd Digital</title>
+<title>الشروط والأحكام — RAFD Digital</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
-.page-hero{background:linear-gradient(135deg,#0f2030 0%,#1a3a4a 50%,#0f2030 100%);padding:100px 0 60px;text-align:center}
-.page-hero h1{font-family:'Tajawal',sans-serif;font-size:2.2rem;font-weight:900;color:#fff;margin-bottom:.75rem}
-.page-hero p{color:rgba(255,255,255,.7);font-size:.9rem}
-.legal-section{padding:60px 0 80px;background:#fff}
-.legal-container{max-width:780px;margin:0 auto;padding:0 1.5rem}
-.last-updated{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:.75rem 1.25rem;margin-bottom:2.5rem;color:#166534;font-size:.85rem;font-weight:600}
-.legal-toc{background:#f8fafc;border-radius:14px;padding:1.5rem;margin-bottom:2.5rem;border:1px solid #e2e8f0}
-.legal-toc h4{font-family:'Tajawal',sans-serif;font-weight:800;color:#1e293b;margin-bottom:1rem;font-size:1rem}
-.legal-toc ol{padding-right:1.25rem;margin:0}
-.legal-toc li{margin-bottom:.4rem}
-.legal-toc a{color:#1a3a4a;text-decoration:none;font-size:.85rem;font-weight:500}
+.page-hero{background:linear-gradient(135deg,#0f2030 0%,#1a3a4a 50%,#0f2030 100%);padding:100px 0 60px;text-align:center;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(74,157,111,.12),transparent 60%);pointer-events:none}
+.page-hero-tag{display:inline-block;background:rgba(74,157,111,.15);color:#4a9d6f;border:1px solid rgba(74,157,111,.3);padding:.4rem 1.2rem;border-radius:50px;font-size:.8rem;font-weight:700;margin-bottom:1rem}
+.page-hero h1{font-family:'Tajawal',sans-serif;font-size:2.4rem;font-weight:900;color:#fff;margin-bottom:.75rem;line-height:1.3}
+.page-hero p{color:rgba(255,255,255,.7);font-size:.92rem;max-width:580px;margin:0 auto}
+.legal-section{padding:60px 0 100px;background:#fff}
+.legal-container{max-width:840px;margin:0 auto;padding:0 1.5rem}
+.last-updated{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0;border-radius:12px;padding:1rem 1.5rem;margin-bottom:2.5rem;color:#166534;font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:.75rem}
+.legal-toc{background:#f8fafc;border-radius:16px;padding:1.75rem;margin-bottom:3rem;border:1px solid #e2e8f0}
+.legal-toc h4{font-family:'Tajawal',sans-serif;font-weight:800;color:#1e293b;margin-bottom:1.25rem;font-size:1.05rem}
+.legal-toc ol{padding-right:1.5rem;margin:0;columns:2;column-gap:2.5rem}
+.legal-toc li{margin-bottom:.45rem;break-inside:avoid}
+.legal-toc a{color:#1a3a4a;text-decoration:none;font-size:.82rem;font-weight:600;transition:.2s;line-height:1.5;display:block}
 .legal-toc a:hover{color:#4a9d6f}
-.legal-article{margin-bottom:2.5rem;padding-bottom:2.5rem;border-bottom:1px solid #f1f5f9}
+.legal-article{margin-bottom:3.5rem;padding-bottom:3.5rem;border-bottom:2px solid #f1f5f9}
 .legal-article:last-child{border-bottom:none}
-.legal-article h2{font-family:'Tajawal',sans-serif;font-size:1.25rem;font-weight:900;color:#1e293b;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-.legal-article h2 .art-num{background:#1a3a4a;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
-.legal-article p{color:#475569;font-size:.88rem;line-height:1.9;margin-bottom:.9rem}
-.legal-article ul{padding-right:1.5rem;margin-bottom:.9rem}
-.legal-article ul li{color:#475569;font-size:.88rem;line-height:1.9;margin-bottom:.3rem}
-.legal-article .highlight{background:#fefce8;border-right:3px solid #fbbf24;padding:.75rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0;font-size:.85rem;color:#92400e}
-.legal-article .info-box{background:#eff6ff;border-right:3px solid #3b82f6;padding:.75rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0;font-size:.85rem;color:#1e40af}
-.contact-box{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:16px;padding:2rem;text-align:center;margin-top:2rem;border:1px solid #bbf7d0}
-.contact-box h3{font-family:'Tajawal',sans-serif;font-weight:800;color:#166534;margin-bottom:.5rem}
-.contact-box p{color:#166534;font-size:.88rem;margin-bottom:1rem}
-.contact-box a{color:#166534;font-weight:700;text-decoration:none;font-size:.9rem}
+.legal-article h2{font-family:'Tajawal',sans-serif;font-size:1.35rem;font-weight:900;color:#1e293b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;padding-bottom:.75rem;border-bottom:1px solid #e2e8f0}
+.legal-article h3{font-family:'Tajawal',sans-serif;font-size:1.02rem;font-weight:800;color:#334155;margin:1.75rem 0 .75rem;display:flex;align-items:center;gap:.5rem}
+.legal-article h3::before{content:'';display:inline-block;width:4px;height:18px;background:#4a9d6f;border-radius:2px;flex-shrink:0}
+.art-num{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;flex-shrink:0}
+.legal-article p{color:#475569;font-size:.875rem;line-height:2.1;margin-bottom:1rem}
+.legal-article ul,
+.legal-article ol.content-list{padding-right:1.6rem;margin-bottom:1.25rem}
+.legal-article ul li,
+.legal-article ol.content-list li{color:#475569;font-size:.875rem;line-height:2.0;margin-bottom:.5rem}
+.legal-article ul li::marker{color:#4a9d6f}
+.def-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.25rem 0}
+.def-item{background:#f8fafc;border-radius:10px;padding:.9rem 1rem;border:1px solid #e2e8f0}
+.def-item strong{color:#1e293b;font-size:.85rem;display:block;margin-bottom:.3rem}
+.def-item span{color:#64748b;font-size:.78rem;line-height:1.7}
+.highlight{background:#fefce8;border-right:4px solid #fbbf24;padding:.9rem 1.2rem;border-radius:0 10px 10px 0;margin:1.25rem 0;font-size:.85rem;color:#92400e;line-height:1.9}
+.info-box{background:#eff6ff;border-right:4px solid #3b82f6;padding:.9rem 1.2rem;border-radius:0 10px 10px 0;margin:1.25rem 0;font-size:.85rem;color:#1e40af;line-height:1.9}
+.success-box{background:#f0fdf4;border-right:4px solid #4a9d6f;padding:.9rem 1.2rem;border-radius:0 10px 10px 0;margin:1.25rem 0;font-size:.85rem;color:#166534;line-height:1.9}
+.danger-box{background:#fef2f2;border-right:4px solid #ef4444;padding:.9rem 1.2rem;border-radius:0 10px 10px 0;margin:1.25rem 0;font-size:.85rem;color:#991b1b;line-height:1.9}
+.rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin:1.25rem 0}
+.right-card{background:#f8fafc;border-radius:12px;padding:1.1rem 1.2rem;border:1px solid #e2e8f0;transition:.25s}
+.right-card:hover{border-color:#4a9d6f;box-shadow:0 4px 16px rgba(74,157,111,.08)}
+.right-card h5{font-weight:800;color:#1e293b;margin-bottom:.45rem;font-size:.88rem;display:flex;align-items:center;gap:.4rem}
+.right-card p{color:#64748b;font-size:.8rem;line-height:1.75;margin:0}
+.services-table,.data-table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.82rem;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0}
+.services-table th,.data-table th{background:#1a3a4a;color:#fff;padding:.8rem 1rem;text-align:right;font-weight:700;font-size:.81rem}
+.services-table td,.data-table td{padding:.75rem 1rem;border-bottom:1px solid #f1f5f9;color:#475569;vertical-align:top;line-height:1.8}
+.services-table tr:nth-child(even) td,.data-table tr:nth-child(even) td{background:#f8fafc}
+.services-table tr:last-child td,.data-table tr:last-child td{border-bottom:none}
+.tier-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1.25rem 0}
+.tier-card{border-radius:14px;padding:1.25rem;border:2px solid #e2e8f0}
+.tier-card.gold{border-color:#f59e0b;background:linear-gradient(135deg,#fffbeb,#fef3c7)}
+.tier-card.blue{border-color:#3b82f6;background:linear-gradient(135deg,#eff6ff,#dbeafe)}
+.tier-card.green{border-color:#4a9d6f;background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
+.tier-card h5{font-family:'Tajawal',sans-serif;font-weight:900;font-size:.95rem;margin-bottom:.35rem}
+.tier-card .price{font-size:1.2rem;font-weight:800;margin-bottom:.5rem}
+.tier-card ul{padding-right:1.1rem;margin:0}
+.tier-card ul li{font-size:.77rem;line-height:1.7;color:#475569;margin-bottom:.2rem}
+.contact-box{background:linear-gradient(135deg,#0f2030,#1a3a4a);border-radius:20px;padding:2.5rem;text-align:center;margin-top:2.5rem;border:1px solid rgba(74,157,111,.2)}
+.contact-box h3{font-family:'Tajawal',sans-serif;font-weight:900;color:#fff;margin-bottom:.5rem;font-size:1.3rem}
+.contact-box p{color:rgba(255,255,255,.7);font-size:.88rem;margin-bottom:1.25rem}
+.contact-box a{display:inline-flex;align-items:center;gap:.4rem;background:#4a9d6f;color:#fff;padding:.7rem 1.5rem;border-radius:10px;text-decoration:none;font-weight:700;font-size:.9rem;margin:.3rem;transition:.2s}
+.contact-box a:hover{background:#3d8a5f}
+.step-flow{counter-reset:step;margin:1.25rem 0}
+.step-item{display:flex;gap:1rem;margin-bottom:1rem;counter-increment:step}
+.step-num{background:#1a3a4a;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0;margin-top:.2rem}
+.step-item div h5{font-size:.88rem;font-weight:800;color:#1e293b;margin-bottom:.2rem}
+.step-item div p{font-size:.8rem;color:#64748b;line-height:1.7;margin:0}
+@media(max-width:700px){.legal-toc ol{columns:1}.def-grid,.rights-grid,.tier-cards{grid-template-columns:1fr}.page-hero h1{font-size:1.8rem}}
 </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar" id="navbar">
   <div class="container nav-inner">
     <a href="/" class="brand">
-      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img src="/rafd-logo.png" alt="RAFD Digital" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="brand-fallback" style="display:none;align-items:center;gap:.5rem">
         <div class="brand-icon">R</div>
-        <div class="brand-text">
-          <span class="brand-name">RAFD</span>
-          <span class="brand-tagline">Digital Company</span>
-        </div>
+        <div class="brand-text"><span class="brand-name">RAFD</span><span class="brand-tagline">Digital Company</span></div>
       </div>
     </a>
     <ul class="nav-links">
-      <li><a href="/" data-i18n="nav.home">الرئيسية</a></li>
-      <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
-      <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
-      <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
+      <li><a href="/">الرئيسية</a></li>
+      <li><a href="/how-it-works.html">كيف نعمل</a></li>
+      <li><a href="/about.html">من نحن</a></li>
+      <li><a href="/#pricing">الأسعار</a></li>
     </ul>
-        <div class="nav-actions">
+    <div class="nav-actions">
       <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
       <div class="login-dropdown-wrap" id="loginDropWrap">
-        <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem">
-          <span data-i18n="nav.login">تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span></span>
-        </button>
+        <button class="btn-ghost" onclick="toggleLoginDrop(event)">تسجيل الدخول ▼</button>
         <div class="login-drop" id="loginDrop">
-          <a href="/partner-login.html" class="login-drop-item">
-            <span style="font-size:1.1rem">🤝</span>
-            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.partner-login">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.partner-login-sub">لوحة تحكم الجهات</div></div>
-          </a>
-          <a href="/admin.html" class="login-drop-item">
-            <span style="font-size:1.1rem">🛡️</span>
-            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.admin">الإدارة</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.admin-sub">دخول مشرفي النظام</div></div>
-          </a>
+          <a href="/partner-login.html" class="login-drop-item"><span>🤝</span><div><div style="font-weight:700;font-size:.88rem">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6">لوحة تحكم الجهات</div></div></a>
+          <a href="/admin.html" class="login-drop-item"><span>🛡️</span><div><div style="font-weight:700;font-size:.88rem">الإدارة</div><div style="font-size:.72rem;opacity:.6">دخول مشرفي النظام</div></div></a>
         </div>
       </div>
-      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f" data-i18n="nav.join">انضم كشريك</a>
+      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f">انضم كشريك</a>
     </div>
     <button class="hamburger" id="hamburger">&#9776;</button>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="page-hero">
   <div class="container">
-    <h1 data-i18n="terms.hero-h1">الشروط والأحكام</h1>
-    <p data-i18n="terms.hero-p">يرجى قراءة هذه الشروط بعناية قبل استخدام منصة Rafd Digital</p>
+    <span class="page-hero-tag">وثيقة قانونية مُلزِمة — اقرأها كاملة</span>
+    <h1>الشروط والأحكام العامة</h1>
+    <p>اتفاقية مفصّلة وشاملة تُنظّم العلاقة الكاملة بين RAFD Digital وجميع مستخدمي المنصة — تُغطي كل سيناريو محتمل لضمان حقوق الطرفين</p>
   </div>
 </section>
 
 <section class="legal-section">
-  <div class="legal-container">
-    <div class="last-updated" data-i18n="terms.updated">📅 آخر تحديث: يناير 2025 | تسري هذه الشروط على جميع مستخدمي المنصة</div>
+<div class="legal-container">
 
-    <div class="legal-toc">
-      <h4 data-i18n="priv.toc-title">📋 فهرس المحتويات</h4>
-      <ol>
-        <li><a href="#art1" data-i18n="terms.a1-title">تعريفات وأحكام عامة</a></li>
-        <li><a href="#art2" data-i18n="terms.a2-title">شروط الاستخدام</a></li>
-        <li><a href="#art3" data-i18n="terms.a3-title">الحسابات والاشتراكات</a></li>
-        <li><a href="#art4" data-i18n="terms.a4-title">البيانات والخصوصية</a></li>
-        <li><a href="#art5" data-i18n="terms.a5-title">الملكية الفكرية</a></li>
-        <li><a href="#art6" data-i18n="terms.a6-title">المسؤولية والضمانات</a></li>
-        <li><a href="#art7" data-i18n="terms.a7-title">الإنهاء والتعليق</a></li>
-        <li><a href="#art8" data-i18n="terms.a8-title">التعديلات على الشروط</a></li>
-        <li><a href="#art9" data-i18n="terms.a9-title">القانون المطبّق</a></li>
-        <li><a href="#art10" data-i18n="terms.a10-title">التواصل معنا</a></li>
-      </ol>
-    </div>
+  <div class="last-updated">
+    📅 &nbsp;تاريخ النفاذ: 1 يونيو 2026 &nbsp;|&nbsp; الإصدار 4.0 &nbsp;|&nbsp; يُلغي جميع الإصدارات السابقة &nbsp;|&nbsp; الرقم المرجعي: TOS-2026-V4
+  </div>
 
-    <div class="legal-article" id="art1">
-      <h2><span class="art-num">1</span> <span data-i18n="terms.a1-title">تعريفات وأحكام عامة</span></h2>
-      <p>تُشكّل هذه الشروط والأحكام اتفاقية ملزمة قانونياً بين المستخدم وشركة <strong>Rafd Digital</strong> ("الشركة") فيما يخص استخدام منصة الفرز الذكي ("المنصة").</p>
-      <ul>
-        <li><strong>المنصة:</strong> نظام الذكاء الاصطناعي لأتمتة قرارات القبول والرفض المقدّم من Rafd Digital</li>
-        <li><strong>الجهة:</strong> أي شركة أو مؤسسة أو هيئة تستخدم المنصة لفرز الطلبات</li>
-        <li><strong>المتقدم:</strong> أي شخص يُقدّم طلباً عبر نموذج جهة مسجّلة في المنصة</li>
-        <li><strong>البيانات:</strong> جميع المعلومات المُدخلة أو المرفوعة عبر المنصة</li>
-      </ul>
-      <p data-i18n="terms.a1-confirm">باستخدام المنصة، تُقرّ بأنك قرأت هذه الشروط وفهمتها ووافقت عليها بالكامل.</p>
-    </div>
+  <div class="legal-toc">
+    <h4>📋 فهرس المواد — اضغط للانتقال المباشر</h4>
+    <ol>
+      <li><a href="#art1">التعريفات والمصطلحات</a></li>
+      <li><a href="#art2">قبول الاتفاقية وتعديلاتها</a></li>
+      <li><a href="#art3">نطاق الخدمات المُقدَّمة</a></li>
+      <li><a href="#art4">الاستخدام المقبول والمحظور</a></li>
+      <li><a href="#art5">التسجيل وإدارة الحسابات</a></li>
+      <li><a href="#art6">الاشتراكات والفوترة والمدفوعات</a></li>
+      <li><a href="#art7">الباقات وحدود الاستخدام</a></li>
+      <li><a href="#art8">حقوق الجهة الشريكة</a></li>
+      <li><a href="#art9">حقوق ومحفوظات RAFD Digital</a></li>
+      <li><a href="#art10">نظام الذكاء الاصطناعي والمسؤولية</a></li>
+      <li><a href="#art11">ملكية البيانات والترخيص</a></li>
+      <li><a href="#art12">الملكية الفكرية وحقوق النشر</a></li>
+      <li><a href="#art13">واجهة برمجة التطبيقات (API)</a></li>
+      <li><a href="#art14">الميزات التجريبية والتحديثات</a></li>
+      <li><a href="#art15">مستوى الخدمة والتوافر (SLA)</a></li>
+      <li><a href="#art16">محدودية المسؤولية والضمانات</a></li>
+      <li><a href="#art17">التعويض والإعفاء من المسؤولية</a></li>
+      <li><a href="#art18">الإنهاء والتعليق والاسترداد</a></li>
+      <li><a href="#art19">السرية وعدم الإفصاح</a></li>
+      <li><a href="#art20">القوة القاهرة والأحداث الطارئة</a></li>
+      <li><a href="#art21">التعديلات على الاتفاقية</a></li>
+      <li><a href="#art22">القانون المطبّق وفض النزاعات</a></li>
+      <li><a href="#art23">أحكام عامة وختامية</a></li>
+    </ol>
+  </div>
 
-    <div class="legal-article" id="art2">
-      <h2><span class="art-num">2</span> <span data-i18n="terms.a2-title">شروط الاستخدام</span></h2>
-      <p data-i18n="terms.a2-p">يُسمح باستخدام المنصة للأغراض المشروعة فقط وفق الشروط التالية:</p>
-      <ul>
-        <li>يجب أن يكون المستخدم شخصاً طبيعياً بالغاً أو ممثلاً قانونياً لجهة مسجّلة</li>
-        <li>يُحظر استخدام المنصة لأي غرض غير مشروع أو مخالف للأنظمة السعودية</li>
-        <li>يُحظر محاولة اختراق النظام أو التلاعب بنتائج التقييم</li>
-        <li>يُحظر إدخال بيانات مزوّرة أو مضلّلة</li>
-        <li>يُحظر إعادة بيع أو نقل الاشتراك لطرف ثالث دون إذن كتابي</li>
-      </ul>
-      <div class="highlight">⚠️ أي انتهاك لشروط الاستخدام يُخوّل الشركة تعليق الحساب فوراً دون استرداد الرسوم المدفوعة.</div>
-    </div>
-
-    <div class="legal-article" id="art3">
-      <h2><span class="art-num">3</span> <span data-i18n="terms.a3-title">الحسابات والاشتراكات</span></h2>
-      <p data-i18n="terms.a3-p">تتوفر ثلاث باقات اشتراك: التجريبية (7 أيام)، الأساسية، والمتقدمة. تُحدَّد مميزات كل باقة في صفحة الأسعار.</p>
-      <ul>
-        <li>الباقة التجريبية مجانية لمدة 7 أيام مع وصول محدود للميزات</li>
-        <li>رسوم الاشتراك تُدفع مسبقاً وغير قابلة للاسترداد إلا في حالات استثنائية</li>
-        <li>التجديد التلقائي يُطبَّق ما لم يُلغَ الاشتراك قبل 48 ساعة من تاريخ التجديد</li>
-        <li>الشركة تحتفظ بحق تغيير الأسعار مع إشعار مسبق بـ 30 يوماً</li>
-      </ul>
-      <div class="info-box">ℹ️ في حال إلغاء الاشتراك، يبقى الوصول للمنصة حتى نهاية الفترة المدفوعة.</div>
-    </div>
-
-    <div class="legal-article" id="art4">
-      <h2><span class="art-num">4</span> <span data-i18n="terms.a4-title">البيانات والخصوصية</span></h2>
-      <p>تلتزم الشركة بحماية بيانات المستخدمين وفق أعلى المعايير. للتفاصيل الكاملة، يُرجى الاطلاع على <a href="/privacy.html" style="color:#4a9d6f">سياسة الخصوصية</a>.</p>
-      <ul>
-        <li>بيانات المتقدمين تُستخدم فقط لأغراض التقييم ولا تُشارَك مع أطراف ثالثة</li>
-        <li>الجهة مسؤولة عن الحصول على موافقة المتقدمين قبل إدخال بياناتهم</li>
-        <li>الشركة تحتفظ بالبيانات لمدة 12 شهراً بعد انتهاء الاشتراك ثم تُحذف</li>
-        <li>يحق للمتقدم طلب حذف بياناته في أي وقت عبر البريد الإلكتروني</li>
-      </ul>
-    </div>
-
-    <div class="legal-article" id="art5">
-      <h2><span class="art-num">5</span> <span data-i18n="terms.a5-title">الملكية الفكرية</span></h2>
-      <p data-i18n="terms.a5-p">جميع حقوق الملكية الفكرية للمنصة محفوظة حصرياً لشركة Rafd Digital.</p>
-      <ul>
-        <li>يُمنح المستخدم ترخيصاً محدوداً وغير حصري لاستخدام المنصة</li>
-        <li>يُحظر نسخ أو تعديل أو توزيع أي جزء من المنصة</li>
-        <li>بيانات الجهة المُدخلة في المنصة تبقى ملكاً للجهة</li>
-      </ul>
-    </div>
-
-    <div class="legal-article" id="art6">
-      <h2><span class="art-num">6</span> <span data-i18n="terms.a6-title">المسؤولية والضمانات</span></h2>
-      <p data-i18n="terms.a6-p">تُقدّم المنصة "كما هي" مع السعي الدائم لتحسينها.</p>
-      <ul>
-        <li>الشركة غير مسؤولة عن القرارات النهائية التي تتخذها الجهة بناءً على نتائج التقييم</li>
-        <li>نتائج الذكاء الاصطناعي استشارية وتُكمّل — لا تُحلّ محلّ — الحكم البشري</li>
-        <li>الشركة لا تضمن توافر المنصة 100% من الوقت لكنها تسعى لـ 99.9%</li>
-        <li>الحد الأقصى للتعويض لا يتجاوز قيمة الاشتراك الشهري المدفوع</li>
-      </ul>
-      <div class="highlight">⚠️ الجهة تتحمل المسؤولية الكاملة عن صحة المعايير المُدخلة وعدالة عملية الاختيار.</div>
-    </div>
-
-    <div class="legal-article" id="art7">
-      <h2><span class="art-num">7</span> <span data-i18n="terms.a7-title">الإنهاء والتعليق</span></h2>
-      <p data-i18n="terms.a7-p">يحق للشركة تعليق أو إنهاء أي حساب في الحالات التالية:</p>
-      <ul>
-        <li>انتهاك أي من شروط الاستخدام</li>
-        <li>عدم سداد رسوم الاشتراك</li>
-        <li>الاشتباه في نشاط احتيالي أو ضار</li>
-        <li>طلب الجهة نفسها إنهاء الحساب</li>
-      </ul>
-      <p data-i18n="terms.a7-cancel">يحق للمستخدم إلغاء اشتراكه في أي وقت من إعدادات الحساب أو عبر البريد الإلكتروني.</p>
-    </div>
-
-    <div class="legal-article" id="art8">
-      <h2><span class="art-num">8</span> <span data-i18n="terms.a8-title">التعديلات على الشروط</span></h2>
-      <p data-i18n="terms.a8-p">تحتفظ الشركة بحق تعديل هذه الشروط في أي وقت. سيُبلَّغ المستخدمون بأي تعديلات جوهرية قبل 14 يوماً.</p>
-    </div>
-
-    <div class="legal-article" id="art9">
-      <h2><span class="art-num">9</span> <span data-i18n="terms.a9-title">القانون المطبّق</span></h2>
-      <p data-i18n="terms.a9-p">تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية. أي نزاع يُحسم أولاً بالتفاوض الودّي، وعند تعذّره يُحال للجهات القضائية المختصة.</p>
-    </div>
-
-    <div class="legal-article" id="art10">
-      <h2><span class="art-num">10</span> <span data-i18n="terms.a10-title">التواصل معنا</span></h2>
-      <p data-i18n="terms.a10-p">لأي استفسار حول هذه الشروط أو المنصة، يُرجى التواصل معنا:</p>
-      <div class="contact-box">
-        <h3 data-i18n="terms.contact-h3">تواصل مع فريق Rafd Digital</h3>
-        <p data-i18n="terms.contact-p">نحن هنا للإجابة على جميع استفساراتك</p>
-        <a href="mailto:info@rafd-digital.com">✉ info@rafd-digital.com</a>
+  <!-- المادة 1 -->
+  <div class="legal-article" id="art1">
+    <h2><span class="art-num">1</span> التعريفات والمصطلحات</h2>
+    <p>في هذه الاتفاقية، تحمل المصطلحات والعبارات التالية المعاني المُخصَّصة لها أدناه، وتسري هذه التعريفات في المفرد والجمع والمذكر والمؤنث على حدٍّ سواء، ما لم يستلزم السياق خلاف ذلك:</p>
+    <div class="def-grid">
+      <div class="def-item">
+        <strong>"الشركة" / "RAFD Digital" / "رفد"</strong>
+        <span>الكيان القانوني المشغّل لمنصة RAFD Digital، المُسجَّل في المملكة العربية السعودية والمرخَّص بمزاولة نشاطه التجاري وفق الأنظمة السعودية النافذة</span>
+      </div>
+      <div class="def-item">
+        <strong>"الاتفاقية" / "الشروط"</strong>
+        <span>هذه الوثيقة بمجملها بما تشمله من ملاحق وإضافات وسياسات مُدرجة بالإحالة، ولا سيما سياسة الخصوصية المُرفقة</span>
+      </div>
+      <div class="def-item">
+        <strong>"المنصة"</strong>
+        <span>منظومة RAFD Digital الإلكترونية الشاملة بكل مكوناتها التقنية: الواجهة الأمامية، لوحة التحكم، الوظائف البرمجية السحابية، نماذج التقديم، واجهة برمجة التطبيقات (API)، وأي أدوات مساعدة مرتبطة بها</span>
+      </div>
+      <div class="def-item">
+        <strong>"الجهة" / "الشريك" / "العميل"</strong>
+        <span>أي شخص طبيعي أو اعتباري (شركة، مؤسسة، جهة حكومية، جمعية، هيئة) يُسجَّل حساباً على المنصة بهدف إنشاء نماذج تقييم واستخدام أدوات الفرز والتحليل الذكي</span>
+      </div>
+      <div class="def-item">
+        <strong>"المستجيب" / "المتقدم"</strong>
+        <span>أي شخص طبيعي يملأ نموذجاً أنشأته جهة شريكة عبر المنصة، بصرف النظر عن الغرض: سواء أكان مرشحاً وظيفياً، موظفاً، طالباً، مقاولاً، مستفيداً من خدمة، مشاركاً في مسابقة، أو أي صفة أخرى</span>
+      </div>
+      <div class="def-item">
+        <strong>"النموذج"</strong>
+        <span>الاستمارة الإلكترونية التفاعلية التي تُنشئها الجهة الشريكة بواسطة أدوات البناء الداخلة في المنصة، وتتضمن أسئلة ومعايير تقييم وأوزاناً وخيارات مُحددة بمعرفة الجهة</span>
+      </div>
+      <div class="def-item">
+        <strong>"درجة التقييم" / "القرار الآلي"</strong>
+        <span>الرقم أو التصنيف أو الترتيب أو التوصية الذي يُولّده النظام الذكي بناءً على مطابقة إجابات المستجيب مع معايير الجهة ومعاملاتها الوزنية المُحددة</span>
+      </div>
+      <div class="def-item">
+        <strong>"بيانات الجهة"</strong>
+        <span>جميع المحتويات التي تُدرجها الجهة في المنصة أو تُرفعها عليها أو تُنتجها بسبب استخدام الخدمة، بما في ذلك النماذج والمعايير والأسئلة والإعدادات والتقارير</span>
+      </div>
+      <div class="def-item">
+        <strong>"بيانات المستجيبين"</strong>
+        <span>المعلومات الشخصية والإجابات والمستندات التي يُدلي بها المستجيبون خلال ملء النماذج، وتكون مملوكة للجهة التي أنشأت النموذج مع التزام الطرفين بحمايتها</span>
+      </div>
+      <div class="def-item">
+        <strong>"الاشتراك"</strong>
+        <span>الترخيص المدفوع الذي يُخوّل الجهة استخدام ميزات المنصة ضمن حدود الباقة المختارة خلال فترة زمنية محددة قابلة للتجديد</span>
+      </div>
+      <div class="def-item">
+        <strong>"لوحة التحكم"</strong>
+        <span>بيئة الإدارة الخاصة بكل جهة للوصول لميزات المنصة: إنشاء النماذج، مراجعة الطلبات، استخراج التقارير، إدارة إعدادات الحساب</span>
+      </div>
+      <div class="def-item">
+        <strong>"API" (واجهة برمجة التطبيقات)</strong>
+        <span>مجموعة نقاط النهاية البرمجية التي تُتيحها الشركة للجهات التي تستوفي شروط الوصول، لدمج وظائف المنصة مع أنظمة الجهة الخارجية</span>
+      </div>
+      <div class="def-item">
+        <strong>"OTP"</strong>
+        <span>رمز التحقق المؤقت أحادي الاستخدام المُرسَل عبر البريد الإلكتروني للتحقق من هوية المستجيب قبل تقديم نموذجه</span>
+      </div>
+      <div class="def-item">
+        <strong>"الخدمات"</strong>
+        <span>جميع المنتجات والأدوات والوظائف التي تُقدمها الشركة عبر المنصة سواء المدرجة حالياً أو التي ستُضاف مستقبلاً</span>
+      </div>
+      <div class="def-item">
+        <strong>"وقت التعطل" (Downtime)</strong>
+        <span>الفترة التي تكون فيها المنصة غير قادرة على معالجة طلبات المستخدمين بشكل طبيعي لأسباب غير مجدولة ولا تعود لسبب يقع في جانب المستخدم</span>
+      </div>
+      <div class="def-item">
+        <strong>"الانتهاك"</strong>
+        <span>أي إخلال بأي بند من بنود هذه الاتفاقية من أي طرف، يستوجب المعالجة وفق الآليات المنصوص عليها في المادة 18 وما بعدها</span>
       </div>
     </div>
-
   </div>
+
+  <!-- المادة 2 -->
+  <div class="legal-article" id="art2">
+    <h2><span class="art-num">2</span> قبول الاتفاقية وتعديلاتها</h2>
+    <p>باستخدامك لأي جزء من المنصة — سواء عبر إنشاء حساب أو الضغط على زر "موافق" أو الاستمرار في الاستخدام بعد نشر التعديلات — فإنك تُعلن صراحةً وضمنياً موافقتك الكاملة غير المشروطة على جميع بنود هذه الاتفاقية وسياسة الخصوصية المُكمِّلة لها.</p>
+    <p>إذا كنت تستخدم المنصة نيابةً عن جهة قانونية (شركة، مؤسسة، جمعية...)، فإنك تُؤكّد أن لديك الصلاحية الكاملة والمخوّلة قانوناً لإلزام تلك الجهة بهذه الاتفاقية، وتتحمل شخصياً ومعها المسؤولية التضامنية عن الالتزام بها.</p>
+    <div class="highlight">⚠️ إذا كنت لا توافق على أي بند من هذه الاتفاقية، فيتعين عليك التوقف فوراً عن استخدام المنصة وطلب حذف حسابك. استمرار الاستخدام يُعدّ موافقة صريحة لا يمكن الرجوع عنها.</div>
+    <p>الاتفاقية مكتوبة باللغة العربية كلغة رسمية ومعتمدة. أي ترجمة لأغراض الفهم لا تعدو كونها وسيلة إيضاح ولا حجة عند التعارض.</p>
+  </div>
+
+  <!-- المادة 3 -->
+  <div class="legal-article" id="art3">
+    <h2><span class="art-num">3</span> نطاق الخدمات المُقدَّمة</h2>
+    <p>تعمل RAFD Digital كمزوّد منصة محايد يُتيح للجهات بناء نماذج تقييم ذكية وأتمتة قرارات الفرز والترتيب. الشركة لا تمتلك أي رأي في نتائج التقييمات ولا تُشارك في القرارات النهائية. تشمل الخدمات المُقدَّمة:</p>
+    <table class="services-table">
+      <tr><th>نوع الخدمة</th><th>الوصف التفصيلي</th><th>الجهات المستهدفة</th></tr>
+      <tr>
+        <td><strong>فرز طلبات التوظيف</strong></td>
+        <td>بناء نماذج تقييم شاملة للمرشحين تشمل الخبرات والمهارات والمتطلبات التعليمية والشخصية، مع توليد تقارير مقارنة وترتيب تلقائي للمتقدمين</td>
+        <td>شركات التوظيف، إدارات الموارد البشرية، الجهات الحكومية</td>
+      </tr>
+      <tr>
+        <td><strong>تقييم أداء الموظفين</strong></td>
+        <td>تصميم استمارات تقييم دورية لقياس الإنتاجية والمهارات والالتزام، تُستخدم في قرارات الترقية أو تجديد العقود أو إعادة توزيع المهام</td>
+        <td>مديرو الأقسام، الموارد البشرية، لجان التقييم الداخلية</td>
+      </tr>
+      <tr>
+        <td><strong>القبول الأكاديمي والتدريبي</strong></td>
+        <td>معالجة طلبات القبول في البرامج الجامعية والدراسات العليا والمنح الدراسية والبرامج التدريبية مع تصنيف المتقدمين وفق معايير القبول</td>
+        <td>الجامعات، المعاهد، مراكز التطوير المهني، برامج الزمالات</td>
+      </tr>
+      <tr>
+        <td><strong>تقييم العروض والمناقصات</strong></td>
+        <td>مقارنة عروض الموردين والمقاولين في المناقصات وفق معايير السعر والجودة والخبرة والامتثال، مع توليد تقارير المقارنة التفصيلية</td>
+        <td>إدارات المشتريات الحكومية والخاصة، لجان الشراء</td>
+      </tr>
+      <tr>
+        <td><strong>تمويل الشركات الناشئة والحاضنات</strong></td>
+        <td>تقييم طلبات الشركات الناشئة للانضمام لبرامج التسريع والحاضنات والحصول على التمويل الأولي، وفق معايير النضج التقني والتجاري والفريق</td>
+        <td>حاضنات الأعمال، المسرّعات، صناديق الاستثمار الجريء</td>
+      </tr>
+      <tr>
+        <td><strong>تحكيم المسابقات والجوائز</strong></td>
+        <td>جمع درجات المحكّمين لكل مشارك وفق معايير التحكيم المُعتمدة وحساب الدرجة الإجمالية المرجّحة لكل عمل وترتيب المشاركين تلقائياً</td>
+        <td>لجان التحكيم، الهيئات المنظِّمة للمسابقات والجوائز</td>
+      </tr>
+      <tr>
+        <td><strong>توزيع المساعدات والدعم الاجتماعي</strong></td>
+        <td>فرز طلبات المساعدة المقدَّمة للجمعيات الخيرية وبرامج الدعم الحكومي وتحديد الأولويات وفق معايير الأهلية والحاجة الحقيقية</td>
+        <td>الجمعيات الخيرية، وزارات الشؤون الاجتماعية، صناديق الدعم</td>
+      </tr>
+      <tr>
+        <td><strong>برامج الإسكان والخدمات الحكومية</strong></td>
+        <td>معالجة طلبات الاستفادة من برامج الإسكان الحكومية والخدمات المدنية وتصنيف المستحقين وفق اشتراطات البرنامج</td>
+        <td>الجهات الحكومية، البرامج الاجتماعية، الهيئات التنظيمية</td>
+      </tr>
+      <tr>
+        <td><strong>اختيار المتعاملين والموردين</strong></td>
+        <td>تصفية وتقييم طلبات انضمام البائعين والشركاء التجاريين لمنصات التجارة الإلكترونية أو برامج الشراكة وفق معايير الجودة والامتثال</td>
+        <td>منصات التجارة الإلكترونية، برامج الشراكة التجارية</td>
+      </tr>
+      <tr>
+        <td><strong>تقييم طلبات التمويل والائتمان</strong></td>
+        <td>دعم عمليات تقييم الجدارة الائتمانية وأهلية الحصول على القروض والتمويل الميسّر من خلال نماذج تقييم مخصصة</td>
+        <td>البنوك، شركات التمويل، صناديق الإقراض الحكومي</td>
+      </tr>
+    </table>
+    <div class="info-box">ℹ️ هذه الخدمات تمثل الاستخدامات الشائعة وليست قائمة حصرية مغلقة. المنصة قابلة للتخصيص لأي سيناريو تقييم مشروع آخر. إذا كنت في شك حول ملاءمة المنصة لاستخدامك، تواصل مع فريق المبيعات للحصول على استشارة مجانية.</div>
+    <p>تجدر الإشارة إلى أن الشركة تُقدم أداة تقنية محايدة. تقع على عاتق الجهة الشريكة مسؤولية ضمان أن الغرض من استخدام المنصة مشروع وفق الأنظمة والتشريعات المعمول بها في نطاق عملها الجغرافي.</p>
+  </div>
+
+  <!-- المادة 4 -->
+  <div class="legal-article" id="art4">
+    <h2><span class="art-num">4</span> الاستخدام المقبول والمحظور</h2>
+
+    <h3>أولاً: الاستخدامات المسموح بها</h3>
+    <ul>
+      <li>إنشاء نماذج تقييم لأغراض مشروعة تخدم الجهة ومتقدميها وفق القوانين السارية</li>
+      <li>مشاركة روابط نماذج التقديم مع الجمهور المستهدف أو المدعوّين لملء النموذج</li>
+      <li>تصدير البيانات والتقارير للأرشفة والتحليل الداخلي للجهة</li>
+      <li>تفويض موظفين ومسؤولين داخل الجهة للوصول للوحة التحكم تحت المسؤولية الكاملة للجهة</li>
+      <li>دمج المنصة مع أنظمة الجهة عبر الـ API ضمن حدود الباقة المؤهَّلة وشروط المادة 13</li>
+      <li>استخدام نتائج التقييم كمدخل في عمليات اتخاذ القرار الداخلية للجهة</li>
+      <li>التواصل مع فريق الدعم وطلب المساعدة التقنية والاستشارات</li>
+    </ul>
+
+    <h3>ثانياً: الاستخدامات المحظورة حظراً مطلقاً</h3>
+    <ul>
+      <li>استخدام المنصة لأي غرض مخالف للشريعة الإسلامية أو الأنظمة السعودية أو المعاهدات الدولية المُصادَق عليها</li>
+      <li>إدخال بيانات مزوّرة أو مضلّلة أو انتحال صفة جهة أو شخص آخر عند التسجيل أو الاستخدام</li>
+      <li>محاولة اختراق النظام أو تجاوز آليات المصادقة أو الوصول لبيانات جهات أخرى</li>
+      <li>هندسة عكسية للنظام أو استخلاص الكود المصدري أو بناء منتجات منافسة مستوحاة منه</li>
+      <li>إعادة بيع اشتراكات المنصة أو تأجيرها أو تفويضها لأطراف ثالثة دون إذن كتابي صريح</li>
+      <li>استخدام المنصة لجمع بيانات المتقدمين دون إعلامهم وإحاطتهم بطبيعة التقييم الذكي</li>
+      <li>بناء نماذج تُميّز تمييزاً صريحاً أو ضمنياً غير مشروع على أساس الجنسية أو العرق أو الدين أو النوع أو الإعاقة خلافاً للأنظمة النافذة</li>
+      <li>إرسال محتوى ضار أو فيروسات أو سكريبتات خبيثة عبر نماذج المنصة أو واجهة الـ API</li>
+      <li>إجراء هجمات حجب الخدمة أو التحميل المفرط المتعمد على الخوادم</li>
+      <li>استخدام أدوات الكشط التلقائي (web scraping) لاستخراج بيانات من المنصة</li>
+      <li>مشاركة بيانات تسجيل الدخول مع أشخاص من خارج الجهة دون تفويض رسمي مُسجَّل</li>
+      <li>استخدام المنصة لأغراض تتعلق بالمراقبة أو جمع المعلومات الاستخباراتية على أشخاص محددين</li>
+      <li>محاولة الوصول لأجهزة الخوادم أو قواعد البيانات الخلفية أو الأكواد المصدرية بأي وسيلة</li>
+      <li>التحايل على آليات التحقق من OTP أو إبطالها أو تجاوزها</li>
+    </ul>
+
+    <div class="danger-box">⛔ أي انتهاك لبنود الاستخدام المقبول يُعطي الشركة حق التعليق الفوري للحساب دون إشعار مسبق، وإلغاء الاشتراك دون أي استرداد للرسوم المدفوعة، والمطالبة بالتعويض عن كافة الأضرار المترتبة بما فيها الأضرار المعنوية وأتعاب المحامين.</div>
+  </div>
+
+  <!-- المادة 5 -->
+  <div class="legal-article" id="art5">
+    <h2><span class="art-num">5</span> التسجيل وإدارة الحسابات</h2>
+
+    <h3>متطلبات التسجيل</h3>
+    <p>لاستخدام الخدمات الكاملة للمنصة، يجب على الجهة إتمام عملية التسجيل بإدخال المعلومات التالية بدقة وصدق تام:</p>
+    <ul>
+      <li>الاسم الرسمي الكامل للجهة كما هو مُسجَّل رسمياً</li>
+      <li>بريد إلكتروني تجاري صالح وتحت سيطرة الجهة</li>
+      <li>رقم جوال سعودي فعّال للتحقق</li>
+      <li>نوع المؤسسة (شركة تجارية، جهة حكومية، جمعية، فرد...)</li>
+      <li>المدينة التي تعمل فيها الجهة بشكل رئيسي</li>
+      <li>كلمة مرور آمنة تستوفي متطلبات القوة المُحددة</li>
+    </ul>
+    <p>الجهة تُقرّ بأن جميع المعلومات التي تُدخلها صحيحة وحديثة، وتلتزم بتحديثها فور أي تغيير. تحتفظ الشركة بحق التحقق من صحة بيانات أي جهة في أي وقت وطلب مستندات إثبات إذا ارتأت ذلك ضرورياً.</p>
+
+    <h3>مسؤوليات أمان الحساب</h3>
+    <p>الجهة المسؤولة الوحيدة والكاملة عن:</p>
+    <ul>
+      <li>الحفاظ على سرية بيانات الدخول (البريد الإلكتروني وكلمة المرور) وعدم مشاركتها مع أطراف خارج الجهة</li>
+      <li>جميع الأنشطة التي تجري عبر حسابها بصرف النظر عمّن قام بها فعلياً</li>
+      <li>الإبلاغ الفوري عبر البريد الإلكتروني في حال الاشتباه في أي اختراق أو وصول غير مُصرَّح به</li>
+      <li>تحديد مستويات الصلاحيات للموظفين المُفوَّضين داخل الجهة ومتابعة أنشطتهم</li>
+      <li>إلغاء صلاحيات الموظفين الذين تنتهي خدمتهم أو يتغير دورهم</li>
+      <li>عدم استخدام كلمة مرور واحدة عبر أنظمة متعددة لتقليل مخاطر الاختراق</li>
+    </ul>
+    <div class="info-box">ℹ️ الشركة لا تتحمل أي مسؤولية عن الأضرار الناجمة عن اختراق حساب يعود لإهمال الجهة في الحفاظ على أمان بيانات دخولها.</div>
+
+    <h3>سياسة حساب واحد لكل جهة</h3>
+    <p>يُمنح لكل جهة حساب واحد بشكل افتراضي. في حال احتياج الجهة لحسابات متعددة لفروع أو أقسام مستقلة، يجب التواصل مع فريق المبيعات للتباحث حول الترتيبات التجارية المناسبة.</p>
+  </div>
+
+  <!-- المادة 6 -->
+  <div class="legal-article" id="art6">
+    <h2><span class="art-num">6</span> الاشتراكات والفوترة والمدفوعات</h2>
+
+    <h3>هيكل الفوترة</h3>
+    <p>تُفرَض رسوم الاشتراك على أساس دوري (شهري أو سنوي) وتُسدَّد مسبقاً قبل بدء كل دورة اشتراك. تُحدَّد الأسعار حسب الباقة المختارة كما هو مُعلَن في صفحة الأسعار، وتُضاف عليها ضريبة القيمة المضافة بنسبة 15% وفق أحكام هيئة الزكاة والضريبة والجمارك السعودية.</p>
+
+    <h3>شروط الدفع</h3>
+    <ul>
+      <li>الدفع بالريال السعودي عبر وسائل الدفع الإلكتروني المعتمدة في المنصة</li>
+      <li>تُصدر فاتورة ضريبية رسمية عن كل عملية دفع تُرسَل للبريد الإلكتروني المُسجَّل</li>
+      <li>تجديد الاشتراك تلقائي ما لم يُلغَ الاشتراك قبل 48 ساعة على الأقل من تاريخ التجديد</li>
+      <li>عند عدم نجاح عملية الدفع التلقائي يُرسَل إشعار للجهة ومنحها مهلة 7 أيام للتسوية</li>
+      <li>انقضاء مهلة التسوية دون دفع يؤدي لتعليق الحساب تلقائياً مع الاحتفاظ بالبيانات لمدة 30 يوماً</li>
+    </ul>
+
+    <h3>سياسة الاسترداد</h3>
+    <p>كقاعدة عامة، رسوم الاشتراك غير قابلة للاسترداد. تُطبَّق استثناءات في الحالات التالية حصراً:</p>
+    <ul>
+      <li><strong>خلل تقني موثَّق:</strong> تعطّل جوهري في المنصة لأكثر من 72 ساعة متواصلة خلال الدورة المدفوعة</li>
+      <li><strong>خطأ في الفوترة:</strong> رسوم مُحتجزة بشكل خاطئ نتيجة خطأ في النظام</li>
+      <li><strong>التسجيل المزدوج:</strong> دفع مكرر عن نفس الاشتراك في نفس الفترة</li>
+    </ul>
+    <p>تُرسَل طلبات الاسترداد خلال 14 يوماً من تاريخ الاستحقاق إلى billing@rafd-digital.com مع إرفاق رقم الفاتورة والمبلغ والسبب. تُراجَع الطلبات خلال 7 أيام عمل ويُرَدّ المبلغ بالطريقة الأصلية للدفع خلال 10 أيام عمل من الموافقة.</p>
+
+    <h3>تعديل الأسعار</h3>
+    <p>تحتفظ الشركة بحق مراجعة أسعار الاشتراكات. يُبلَّغ المشتركون الحاليون بأي زيادة في الأسعار قبل 30 يوماً على الأقل من تاريخ السريان. الاستمرار في الاشتراك بعد سريان الأسعار الجديدة يُعدّ موافقة عليها. في حال الاعتراض، يحق للجهة إلغاء اشتراكها دون غرامة.</p>
+
+    <h3>النزاعات المالية</h3>
+    <p>يجب الإبلاغ عن أي نزاع مالي خلال 60 يوماً من تاريخ الفاتورة المعترَض عليها. الاعتراضات المُقدَّمة بعد هذه المهلة تسقط حكماً ما لم يكن ثمة ظرف استثنائي موثَّق.</p>
+  </div>
+
+  <!-- المادة 7 -->
+  <div class="legal-article" id="art7">
+    <h2><span class="art-num">7</span> الباقات وحدود الاستخدام</h2>
+    <p>تتوفر الباقات التالية مع تفاصيلها الكاملة:</p>
+    <div class="tier-cards">
+      <div class="tier-card gold">
+        <h5>⭐ الباقة الأساسية</h5>
+        <div class="price" style="color:#b45309">99 ر.س / شهر</div>
+        <ul>
+          <li>50 طلباً / تقديماً شهرياً</li>
+          <li>نموذج واحد نشط في آن واحد</li>
+          <li>تقييم ذكي أساسي</li>
+          <li>تقارير مبسّطة</li>
+          <li>لوحة تحكم أساسية</li>
+          <li>دعم بريدي: 48 ساعة</li>
+          <li>تصدير بيانات: Excel فقط</li>
+          <li>بدون تحقق OTP (اختياري بتكلفة)</li>
+        </ul>
+      </div>
+      <div class="tier-card blue">
+        <h5>💼 باقة بلس</h5>
+        <div class="price" style="color:#1d4ed8">249 ر.س / شهر</div>
+        <ul>
+          <li>500 طلب شهرياً</li>
+          <li>3 نماذج نشطة</li>
+          <li>تقييم ذكي متقدم</li>
+          <li>تقارير تحليلية مفصّلة</li>
+          <li>تحقق OTP مُضمَّن</li>
+          <li>تصدير Excel + PDF</li>
+          <li>صفحة تقديم مخصصة</li>
+          <li>دعم بريدي: 24 ساعة</li>
+        </ul>
+      </div>
+      <div class="tier-card green">
+        <h5>🚀 الباقة المتقدمة PRO</h5>
+        <div class="price" style="color:#166534">499 ر.س / شهر</div>
+        <ul>
+          <li>طلبات غير محدودة</li>
+          <li>نماذج غير محدودة</li>
+          <li>وصول كامل للـ API</li>
+          <li>مدير حساب مخصص</li>
+          <li>دعم واتساب مباشر</li>
+          <li>SLA مضمون 99.5%</li>
+          <li>تخصيص لوحة التحكم</li>
+          <li>أولوية في الدعم</li>
+        </ul>
+      </div>
+    </div>
+    <p>الطلبات الزائدة عن حد الباقة في الشهر الواحد تستوجب إما الترقية للباقة الأعلى أو الانتظار حتى بداية الدورة الشهرية الجديدة. الشركة غير ملزمة بمعالجة طلبات تتجاوز الحد المُحدد دون تسوية مالية مسبقة.</p>
+    <div class="highlight">⚠️ تفاصيل الباقات المعروضة في صفحة الأسعار على الموقع هي التفاصيل المعتمدة والمُلزِمة وتُعدّ جزءاً لا يتجزأ من هذه الاتفاقية في حال أي تعارض.</div>
+  </div>
+
+  <!-- المادة 8 -->
+  <div class="legal-article" id="art8">
+    <h2><span class="art-num">8</span> حقوق الجهة الشريكة</h2>
+    <p>تُكرّس الشركة الحقوق الجوهرية التالية لكل جهة مشتركة وتلتزم بالدفاع عنها:</p>
+    <div class="rights-grid">
+      <div class="right-card">
+        <h5>⚙️ التخصيص الكامل للنماذج</h5>
+        <p>الحق الكامل في تصميم نماذج تقييم مخصصة بأسئلة ومعايير وأوزان ترتيب تُحددها الجهة بمعرفتها التامة، دون أي تدخل من الشركة في طبيعة المعايير ما لم تكن مخالفة للأنظمة</p>
+      </div>
+      <div class="right-card">
+        <h5>📊 ملكية البيانات الحصرية</h5>
+        <p>جميع البيانات التي تجمعها الجهة عبر نماذجها — بمن فيهم بيانات المتقدمين ونتائجهم — تبقى ملكاً حصرياً للجهة. الشركة وصيّة تقنية عليها لا مالكة لها</p>
+      </div>
+      <div class="right-card">
+        <h5>📤 تصدير كامل ودائم</h5>
+        <p>الحق غير المُقيَّد في تصدير جميع البيانات والتقارير بصيغ متعددة في أي وقت خلال فترة الاشتراك السارية، دون أي رسوم إضافية للتصدير ضمن باقات تدعم هذه الميزة</p>
+      </div>
+      <div class="right-card">
+        <h5>🔒 عزل بيانات مضمون</h5>
+        <p>ضمان صارم وتقني بعدم وصول الجهات الأخرى لبيانات الجهة تحت أي ظرف. لكل جهة قيد منطقي مستقل في قاعدة البيانات لا يُخترق</p>
+      </div>
+      <div class="right-card">
+        <h5>🔍 المراجعة البشرية الكاملة</h5>
+        <p>الحق الكامل في مراجعة أي قرار أو درجة يُصدرها النظام الذكي يدوياً، وتجاوزه، وتعديله بمعرفة الجهة ووفق تقديرها المستقل</p>
+      </div>
+      <div class="right-card">
+        <h5>📞 دعم مُتاح وموثَّق</h5>
+        <p>الحق في الحصول على دعم تقني وفق مستوى الباقة المُشترَك فيها، مع ضمان وقت استجابة محدد في اتفاقية مستوى الخدمة (SLA)</p>
+      </div>
+      <div class="right-card">
+        <h5>💾 فترة نقل البيانات بعد الإلغاء</h5>
+        <p>مهلة 30 يوماً كاملة بعد إلغاء الاشتراك لتصدير جميع البيانات قبل الحذف النهائي، مع إمكانية تمديد المهلة بتنسيق مع فريق الدعم في الحالات الاستثنائية</p>
+      </div>
+      <div class="right-card">
+        <h5>📋 الفواتير الضريبية الرسمية</h5>
+        <p>استلام فواتير ضريبية رسمية مُعتمدة بالريال السعودي عن كل عملية دفع، صالحة للخصم الضريبي وفق متطلبات هيئة الزكاة والضريبة والجمارك</p>
+      </div>
+      <div class="right-card">
+        <h5>🔔 الإشعار المسبق بالتغييرات</h5>
+        <p>الحق في استلام إشعار مسبق كافٍ عن أي تغييرات جوهرية في الأسعار أو الخدمات أو الشروط تؤثر على الجهة، وفق المُدد المحددة في الاتفاقية</p>
+      </div>
+      <div class="right-card">
+        <h5>🛡️ الحماية من إفصاح البيانات</h5>
+        <p>الالتزام بعدم الإفصاح عن بيانات الجهة لأي طرف ثالث إلا بأمر قضائي أو قانوني ملزم، مع إشعار الجهة بذلك كلما سمح القانون</p>
+      </div>
+    </div>
+    <div class="success-box">✅ هذه الحقوق غير قابلة للتنازل عنها من جانب الشركة أحادياً وتُمثّل التزاماً تعاقدياً صريحاً. أي تغيير في هذه الحقوق يستلزم موافقة الجهة المكتوبة الصريحة.</div>
+  </div>
+
+  <!-- المادة 9 -->
+  <div class="legal-article" id="art9">
+    <h2><span class="art-num">9</span> حقوق ومحفوظات RAFD Digital</h2>
+    <p>مع احترام كامل حقوق الجهات، تحتفظ الشركة بالحقوق التشغيلية والقانونية التالية لضمان استمرارية الخدمة وسلامتها:</p>
+    <ul>
+      <li><strong>التطوير المستمر:</strong> تعديل أو تحديث أو إعادة هيكلة المنصة وأدواتها في أي وقت لتحسين الأداء والأمان والميزات، مع بذل الجهد المعقول للحفاظ على التوافق مع الاستخدامات القائمة</li>
+      <li><strong>الصيانة المجدولة:</strong> إيقاف الخدمة مؤقتاً للصيانة الضرورية مع إشعار مسبق 24 ساعة كلما أمكن، ويُفضَّل اختيار ساعات منخفضة الاستخدام</li>
+      <li><strong>إزالة المحتوى المخالف:</strong> رفض أو تعليق أو حذف أي نموذج أو محتوى يخالف شروط الاستخدام أو الأنظمة النافذة دون الحاجة لإذن الجهة</li>
+      <li><strong>التعليق الوقائي:</strong> تعليق أي حساب يُشتبه في نشاطه غير المشروع ريثما تكتمل التحقيقات، مع التواصل مع الجهة لإيضاح الأسباب</li>
+      <li><strong>الاستخدام الإحصائي للبيانات المجهولة:</strong> استخدام البيانات المجمّعة والمجهولة الهوية (التي لا يمكن ربطها بأشخاص أو جهات) لتحسين خوارزميات التقييم ونشر تقارير قطاعية عامة</li>
+      <li><strong>الاستعانة بمزودين خارجيين:</strong> التعاقد مع مزودي خدمات سحابية وتقنية موثوقين لتشغيل البنية التحتية، مع إلزامهم تعاقدياً بنفس معايير السرية وحماية البيانات</li>
+      <li><strong>الامتثال للأوامر القانونية:</strong> الإفصاح عن البيانات استجابةً لأمر قضائي أو طلب حكومي ملزم قانوناً، مع السعي لإشعار الجهة قبل الإفصاح كلما سمح القانون بذلك</li>
+      <li><strong>مراجعة الأسعار:</strong> تعديل أسعار الاشتراكات بعد إشعار مسبق 30 يوماً وفق آلية المادة 6</li>
+    </ul>
+  </div>
+
+  <!-- المادة 10 -->
+  <div class="legal-article" id="art10">
+    <h2><span class="art-num">10</span> نظام الذكاء الاصطناعي والمسؤولية</h2>
+    <p>تعتمد المنصة على نماذج ذكاء اصطناعي متقدمة لمعالجة الردود وتوليد درجات التقييم. هذه المادة تُوضّح بالتفصيل طبيعة العلاقة بين النظام الذكي والمسؤوليات المترتبة على كل طرف:</p>
+
+    <h3>طبيعة مخرجات الذكاء الاصطناعي</h3>
+    <p>جميع الدرجات والترتيبات والتوصيات التي يُصدرها النظام هي مخرجات حسابية استشارية تستند للمعايير التي أدخلتها الجهة. هي ليست حكماً نهائياً ولا قراراً مُلزِماً وليس لها أي طابع قانوني مستقل.</p>
+
+    <h3>آلية عمل النظام وشفافيتها</h3>
+    <ul>
+      <li>النظام يُطابق إجابات المستجيب مع معايير الجهة المُحددة ويُصدر درجة وفق الأوزان المُعيَّنة</li>
+      <li>دقة النتائج مرتبطة مباشرة بجودة المعايير وصياغة الأسئلة التي أدخلتها الجهة — "مدخل جيد = مخرج موثوق"</li>
+      <li>النظام لا يُوجِد معلومات من العدم بل يُحلّل ما يُدخله المستجيب فعلاً</li>
+      <li>يحق لأي جهة أو مستجيب طلب شرح آلية احتساب الدرجة من فريق الدعم</li>
+    </ul>
+
+    <h3>مسؤولية الجهة الشريكة</h3>
+    <p>الجهة مسؤولة مسؤولية كاملة وتامة عن:</p>
+    <ul>
+      <li>القرار النهائي المتخذ بناءً على مخرجات النظام — سواء بالقبول أو الرفض أو الترقية أو غيرها</li>
+      <li>قانونية المعايير المُدخلة وتوافقها مع أنظمة العمل والتوظيف والمنافسة النافذة</li>
+      <li>الحصول على موافقة المتقدمين الصريحة والمُستنيرة قبل إخضاعهم للتقييم الذكي</li>
+      <li>إبلاغ المتقدمين بطبيعة النظام المستخدم وكيفية احتساب الدرجات</li>
+      <li>عدم الاعتماد على النظام كمرجع وحيد في القرارات المصيرية الحساسة</li>
+    </ul>
+
+    <h3>التحيّز والموضوعية</h3>
+    <p>تبذل الشركة جهوداً مستمرة لضمان موضوعية خوارزميات التقييم، لكن كأي نظام ذكاء اصطناعي، لا يمكن ضمان الخلو التام من التحيّز غير المقصود في جميع الحالات والسياقات. تنصح الشركة بمراجعة بشرية للقرارات ذات الأثر الكبير على الأشخاص.</p>
+    <div class="highlight">⚠️ RAFD Digital غير مسؤولة بأي شكل كان عن القرارات النهائية التي تتخذها الجهة. المسؤولية القانونية والأخلاقية الكاملة عن أي قرار يتخذه المسؤولون البشريون في الجهة تقع على عاتق الجهة وحدها.</div>
+  </div>
+
+  <!-- المادة 11 -->
+  <div class="legal-article" id="art11">
+    <h2><span class="art-num">11</span> ملكية البيانات والترخيص</h2>
+
+    <h3>ملكية بيانات الجهة</h3>
+    <p>جميع البيانات التي تُدخلها الجهة أو تُنشئها عبر استخدام المنصة — بما فيها النماذج والمعايير والأسئلة والإعدادات والتقارير — تُعدّ ملكاً فكرياً وقانونياً حصرياً للجهة. الشركة تعمل كـ "مُعالِج بيانات" بالوكالة عن الجهة لا بوصفها مالكةً مستقلة.</p>
+
+    <h3>ملكية بيانات المتقدمين</h3>
+    <p>بيانات المتقدمين أمانة في يد الجهة؛ الجهة هي المتحكمة الأصلية فيها (Data Controller)، والشركة معالجة بالنيابة (Data Processor). يتحمل كلا الطرفين مسؤوليات تتوافق مع هذا التوصيف وفق نظام حماية البيانات الشخصية.</p>
+
+    <h3>الترخيص الممنوح للشركة</h3>
+    <p>الجهة تمنح الشركة بموجب هذه الاتفاقية ترخيصاً محدوداً وغير حصري لمعالجة بياناتها لأغراض تشغيل الخدمة فقط. هذا الترخيص ينتهي تلقائياً عند إنهاء الاشتراك.</p>
+
+    <h3>الترخيص الممنوح للجهة</h3>
+    <p>الشركة تمنح الجهة المشتركة ترخيصاً محدوداً وغير حصري وغير قابل للتحويل لاستخدام المنصة خلال مدة الاشتراك السارية. ينتهي هذا الترخيص فوراً عند انتهاء الاشتراك أو تعليقه لأي سبب.</p>
+  </div>
+
+  <!-- المادة 12 -->
+  <div class="legal-article" id="art12">
+    <h2><span class="art-num">12</span> الملكية الفكرية وحقوق النشر</h2>
+    <p>جميع حقوق الملكية الفكرية المتعلقة بالمنصة ومكوناتها محفوظة حصرياً لصالح RAFD Digital وتشمل على سبيل المثال لا الحصر:</p>
+    <ul>
+      <li>الكود البرمجي المصدري والمُترجَم لجميع مكونات المنصة</li>
+      <li>خوارزميات التقييم والنماذج الإحصائية والذكاء الاصطناعي المُطوَّرة داخلياً</li>
+      <li>التصاميم البصرية والواجهات الرسومية وعناصر تجربة المستخدم</li>
+      <li>العلامة التجارية "RAFD" و"RAFD Digital" والشعارات والأسماء التجارية المرتبطة بها</li>
+      <li>الوثائق والمحتوى التعليمي والتقارير المنشورة باسم الشركة</li>
+      <li>أسرار التجارة والمعلومات التجارية السرية المتعلقة بالأعمال</li>
+    </ul>
+    <p>يُحظر على الجهات الشريكة أو أي طرف ثالث:</p>
+    <ul>
+      <li>نسخ أو استنساخ أي جزء من المنصة دون إذن كتابي مسبق</li>
+      <li>الهندسة العكسية أو تفكيك الكود أو محاولة استخلاص منطق النظام</li>
+      <li>استخدام العلامات التجارية للشركة دون ترخيص صريح</li>
+      <li>بناء أدوات أو خدمات منافسة مستوحاة جوهرياً من تصميم المنصة أو خوارزمياتها</li>
+    </ul>
+    <div class="info-box">ℹ️ الاقتراحات والمقترحات التطويرية التي تُرسلها الجهات لتحسين المنصة تُصبح ملكاً للشركة من حيث حق التطوير، مع الإشارة لمصدر الاقتراح عند الإمكان دون التزام قانوني بذلك.</div>
+  </div>
+
+  <!-- المادة 13 -->
+  <div class="legal-article" id="art13">
+    <h2><span class="art-num">13</span> واجهة برمجة التطبيقات (API)</h2>
+    <p>الوصول للـ API متاح لجهات الباقة المتقدمة (PRO) ويخضع لشروط إضافية:</p>
+    <ul>
+      <li><strong>مفاتيح الوصول:</strong> تُصدر مفاتيح API خاصة بكل جهة وهي سرية ومسؤوليتها الحفاظ عليها</li>
+      <li><strong>حدود المعدل (Rate Limits):</strong> يخضع الوصول لحدود معدل الطلبات المُحددة في وثيقة الـ API لمنع الإساءة</li>
+      <li><strong>استخدام مشروع:</strong> الـ API للاستخدام الداخلي للجهة فقط — يُحظر إتاحتها لأطراف ثالثة دون إذن</li>
+      <li><strong>التوافق:</strong> الشركة تسعى للحفاظ على التوافق الخلفي لكنها غير مُلزَمة بذلك لأجل غير مسمى</li>
+      <li><strong>الإيقاف:</strong> قد تُوقَف نقاط نهاية مُحددة مع إشعار مسبق 90 يوماً</li>
+      <li><strong>المراقبة:</strong> يُراقَب الاستخدام غير الطبيعي للـ API وقد يُعلَّق فوراً إذا استُشعر منه ضرر</li>
+    </ul>
+  </div>
+
+  <!-- المادة 14 -->
+  <div class="legal-article" id="art14">
+    <h2><span class="art-num">14</span> الميزات التجريبية والتحديثات</h2>
+    <p>قد تُقدِّم الشركة ميزات في مرحلة "تجريبية" أو "بيتا":</p>
+    <ul>
+      <li>الميزات التجريبية مُقدَّمة "كما هي" دون أي ضمان للاستقرار أو الاستمرارية</li>
+      <li>قد تُوقَف الميزات التجريبية أو تتغير بشكل جذري دون إشعار مسبق</li>
+      <li>لا ينبغي الاعتماد على الميزات التجريبية في العمليات الحرجة للجهة</li>
+      <li>بيانات المُدخَلة في بيئات اختبار قد تُحذف دورياً</li>
+      <li>التحديثات الدورية للمنصة قد تُغيّر واجهات الاستخدام والوظائف الموجودة</li>
+      <li>ستُبذل الجهود المعقولة لإبلاغ الجهات بالتغييرات الجوهرية قبل 14 يوماً</li>
+    </ul>
+  </div>
+
+  <!-- المادة 15 -->
+  <div class="legal-article" id="art15">
+    <h2><span class="art-num">15</span> مستوى الخدمة والتوافر (SLA)</h2>
+
+    <h3>هدف التوافر</h3>
+    <p>تستهدف الشركة توافر المنصة بنسبة 99.5% شهرياً لجهات باقة PRO و99% للباقات الأخرى، محسوبةً باستثناء نوافذ الصيانة المجدولة التي يُخطَر بها مسبقاً.</p>
+
+    <h3>تعريف وقت التعطل المحتسَب</h3>
+    <p>وقت التعطل المحتسَب هو الفترة التي تكون فيها المنصة غير قادرة على معالجة طلبات المستخدمين بصورة طبيعية لأسباب في جانب الشركة، ويُستثنى من الحساب:</p>
+    <ul>
+      <li>نوافذ الصيانة المجدولة المُعلَنة</li>
+      <li>الانقطاعات الناجمة عن قوة قاهرة (المادة 20)</li>
+      <li>مشكلات الاتصال في جانب المستخدم أو مزود الإنترنت</li>
+      <li>الانقطاعات الناجمة عن هجمات خارجية نشطة</li>
+      <li>أوقات الاختبار المُتفق عليها</li>
+    </ul>
+
+    <h3>أوقات الاستجابة للدعم</h3>
+    <table class="data-table">
+      <tr><th>مستوى الخطورة</th><th>الوصف</th><th>وقت الاستجابة</th></tr>
+      <tr><td>حرج (P1)</td><td>المنصة متعطلة كلياً، لا يمكن التقديم</td><td>4 ساعات (PRO) / 8 ساعات (غيره)</td></tr>
+      <tr><td>عالٍ (P2)</td><td>ميزة رئيسية متعطلة، تأثير كبير</td><td>8 ساعات (PRO) / 24 ساعة</td></tr>
+      <tr><td>متوسط (P3)</td><td>مشكلة جزئية، مؤثرة لكن يوجد بديل مؤقت</td><td>24 ساعة (PRO) / 48 ساعة</td></tr>
+      <tr><td>منخفض (P4)</td><td>استفسار عام، طلب تحسين</td><td>48 ساعة (PRO) / 72 ساعة</td></tr>
+    </table>
+    <p>تُحتسَب أوقات الاستجابة خلال ساعات العمل الرسمية (8 صباحاً — 8 مساءً بتوقيت الرياض) من الأحد للخميس. باقة PRO تُتيح دعم واتساب للطوارئ الحرجة خارج ساعات العمل.</p>
+
+    <h3>التعويض عن انقطاع الخدمة</h3>
+    <p>في حال تجاوز وقت التعطل الحد المسموح به شهرياً، يحق لجهات PRO التقدم بطلب ائتمان خدمة وفق الجدول التالي:</p>
+    <table class="data-table">
+      <tr><th>نسبة التوافر الفعلية</th><th>الائتمان الممنوح</th></tr>
+      <tr><td>99% — 99.5%</td><td>10% من رسوم الشهر</td></tr>
+      <tr><td>95% — 99%</td><td>25% من رسوم الشهر</td></tr>
+      <tr><td>أقل من 95%</td><td>50% من رسوم الشهر</td></tr>
+    </table>
+    <p>يُقدَّم طلب الائتمان خلال 15 يوماً من انتهاء الشهر المعني مع توثيق الانقطاع. الحد الأقصى للائتمان 50% من الرسوم الشهرية ولا يتحوّل لمبلغ نقدي.</p>
+  </div>
+
+  <!-- المادة 16 -->
+  <div class="legal-article" id="art16">
+    <h2><span class="art-num">16</span> محدودية المسؤولية والضمانات</h2>
+
+    <h3>إخلاء الضمانات</h3>
+    <p>تُقدَّم المنصة "كما هي" و"كما هي متاحة" (As-Is, As-Available). إلى الحد الأقصى المسموح به قانوناً، تُخلي الشركة مسؤوليتها من جميع الضمانات الصريحة والضمنية، بما في ذلك ضمان الملاءمة لغرض بعينه وضمان الاستمرارية وضمان الخلو من العيوب، إلا ما هو منصوص عليه صراحةً في هذه الاتفاقية.</p>
+
+    <h3>حدود المسؤولية المالية</h3>
+    <p>الحد الأقصى لمسؤولية الشركة المالية تجاه الجهة بموجب هذه الاتفاقية في أي حادثة أو مجموعة حوادث مترابطة لا يتجاوز إجمالي الرسوم التي دفعتها الجهة فعلياً خلال الثلاثة أشهر السابقة لتاريخ نشوء الحادثة.</p>
+
+    <h3>إخلاء المسؤولية عن الأضرار غير المباشرة</h3>
+    <p>لا تتحمل الشركة بأي حال أي أضرار غير مباشرة أو تبعية أو عرضية أو عقابية أو خسارة أرباح أو فرص أعمال، حتى لو كانت الشركة قد أُبلغت باحتمال وقوع هذه الأضرار.</p>
+
+    <h3>مسؤولية الجهة الكاملة عن</h3>
+    <ul>
+      <li>قانونية وملاءمة المعايير التي تُدخلها في النماذج</li>
+      <li>الحصول على موافقة المتقدمين وإشعارهم الكافي</li>
+      <li>جميع القرارات المتخذة على أساس مخرجات النظام</li>
+      <li>الامتثال لنظام العمل ولوائح التوظيف والأنظمة القطاعية</li>
+      <li>أي شكاوى أو مطالبات من المتقدمين أو الجهات الرقابية بسبب أفعال الجهة</li>
+    </ul>
+  </div>
+
+  <!-- المادة 17 -->
+  <div class="legal-article" id="art17">
+    <h2><span class="art-num">17</span> التعويض والإعفاء من المسؤولية</h2>
+    <p>توافق الجهة على تعويض الشركة وموظفيها ومسؤوليها ومستشاريها وإعفاءهم من أي مطالبات أو التزامات أو تعويضات أو أتعاب قانونية أو خسائر تنجم عن:</p>
+    <ul>
+      <li>استخدام الجهة للمنصة بأي طريقة مخالفة لهذه الاتفاقية</li>
+      <li>أي نزاع بين الجهة ومتقدميها أو موظفيها المتعلق بالتقييمات أو القرارات</li>
+      <li>انتهاك الجهة لأي حقوق طرف ثالث بما فيها حقوق الخصوصية والملكية الفكرية</li>
+      <li>مخالفة الجهة للأنظمة والتشريعات المحلية والدولية</li>
+      <li>إجراءات حكومية أو قانونية تنشأ بسبب طريقة استخدام الجهة للمنصة</li>
+    </ul>
+    <p>يسري هذا الالتزام بالتعويض طوال فترة الاشتراك وبعد انتهائها في الحوادث الناشئة خلال فترة الاشتراك.</p>
+  </div>
+
+  <!-- المادة 18 -->
+  <div class="legal-article" id="art18">
+    <h2><span class="art-num">18</span> الإنهاء والتعليق والاسترداد</h2>
+
+    <h3>إنهاء الجهة للاشتراك</h3>
+    <p>يحق للجهة إلغاء اشتراكها في أي وقت عبر لوحة التحكم أو بإرسال طلب كتابي لـ support@rafd-digital.com. يستمر الوصول الكامل للمنصة حتى نهاية الفترة المدفوعة بالكامل. بعد انتهاء الفترة تُمنح مهلة 30 يوماً لتصدير البيانات قبل الحذف النهائي.</p>
+
+    <h3>تعليق الشركة للحساب</h3>
+    <p>تحتفظ الشركة بحق تعليق أي حساب في الحالات التالية:</p>
+    <ul>
+      <li>انتهاك صريح لبنود الاستخدام المقبول (المادة 4)</li>
+      <li>عدم سداد رسوم الاشتراك بعد 7 أيام من الاستحقاق</li>
+      <li>الاشتباه المؤسَّس في نشاط احتيالي أو غير مشروع</li>
+      <li>تلقي شكاوى موثَّقة عديدة ومتكررة من متقدمين عبر المنصة</li>
+      <li>صدور أمر قانوني أو قضائي بالتعليق</li>
+    </ul>
+    <p>خلال فترة التعليق تبقى البيانات محفوظة ويُشعَر بالتعليق إذا كان السبب غير متعلق بأمر قانوني يمنع الإشعار.</p>
+
+    <h3>الإنهاء الدائم للحساب</h3>
+    <p>يُنهى الحساب نهائياً في الحالات التالية:</p>
+    <ul>
+      <li>عدم معالجة أسباب التعليق خلال 30 يوماً من تاريخه</li>
+      <li>انتهاك جسيم واحد أو انتهاكات متكررة</li>
+      <li>طلب الجهة الصريح للإنهاء</li>
+      <li>إفلاس الجهة أو توقفها عن النشاط</li>
+    </ul>
+    <p>بعد الإنهاء النهائي، تُمنح مهلة 30 يوماً لتصدير البيانات (إلا في حالات الانتهاكات الجسيمة)، ثم تُحذف جميع البيانات بشكل نهائي وغير قابل للاسترداد.</p>
+  </div>
+
+  <!-- المادة 19 -->
+  <div class="legal-article" id="art19">
+    <h2><span class="art-num">19</span> السرية وعدم الإفصاح</h2>
+    <p>يُقرّ الطرفان بأن بعض المعلومات المُتبادَلة بينهما تتسم بالحساسية التجارية وتستوجب الحماية. تشمل المعلومات السرية:</p>
+    <ul>
+      <li><strong>لدى الجهة:</strong> معايير التقييم ونماذج الجهة وبيانات المتقدمين ونتائجهم، والاستراتيجيات الداخلية المرتبطة بالاستخدام</li>
+      <li><strong>لدى الشركة:</strong> الكود البرمجي والخوارزميات وأسعار الخدمات الخاصة وأسرار التجارة</li>
+    </ul>
+    <p>يلتزم كلا الطرفين بـ:</p>
+    <ul>
+      <li>عدم الإفصاح عن المعلومات السرية للغير بدون إذن كتابي صريح</li>
+      <li>استخدام المعلومات السرية فقط للأغراض المُحددة في هذه الاتفاقية</li>
+      <li>تطبيق معايير حماية مماثلة لحماية معلوماتهم الخاصة</li>
+      <li>إشعار الطرف الآخر فوراً عند علمهم بأي إفصاح غير مُصرَّح به</li>
+    </ul>
+    <p>يظل الالتزام بالسرية سارياً طوال فترة الاشتراك ولمدة 3 سنوات كاملة بعد انتهاء العقد.</p>
+  </div>
+
+  <!-- المادة 20 -->
+  <div class="legal-article" id="art20">
+    <h2><span class="art-num">20</span> القوة القاهرة والأحداث الطارئة</h2>
+    <p>لا يتحمل أي طرف مسؤولية التأخر أو العجز عن أداء التزاماته الناجمة عن أسباب خارجة عن إرادته بشكل معقول، تشمل على سبيل المثال:</p>
+    <ul>
+      <li>الكوارث الطبيعية: زلازل، فيضانات، عواصف استثنائية</li>
+      <li>النزاعات المسلحة والحروب والاضطرابات المدنية الواسعة</li>
+      <li>إجراءات الحكومة والأنظمة الطارئة الصادرة من السلطات المختصة</li>
+      <li>هجمات إلكترونية واسعة النطاق تتجاوز قدرات الحماية المتاحة</li>
+      <li>انقطاعات شبكة الإنترنت الدولية أو الوطنية</li>
+      <li>تعطل البنية التحتية للاتصالات بشكل موسّع</li>
+      <li>الأوبئة والجوائح الصحية وقرارات الإغلاق الحكومية</li>
+    </ul>
+    <p>يجب على الطرف المتأثر إشعار الطرف الآخر كتابياً خلال 5 أيام عمل من وقوع الحدث مع توضيح طبيعته والمدة المتوقعة لأثره. إذا تجاوز تأثير الحادث 60 يوماً متواصلة، يحق لأي طرف إنهاء الاتفاقية بإشعار 30 يوماً دون أي غرامات.</p>
+  </div>
+
+  <!-- المادة 21 -->
+  <div class="legal-article" id="art21">
+    <h2><span class="art-num">21</span> التعديلات على الاتفاقية</h2>
+    <p>تحتفظ الشركة بحق تعديل هذه الاتفاقية في أي وقت. تنقسم التعديلات لفئتين:</p>
+
+    <h3>التعديلات الجوهرية</h3>
+    <p>تشمل التغييرات في حقوق الجهات أو التزامات الشركة أو آليات فض النزاعات أو محدودية المسؤولية. هذه التعديلات تستوجب:</p>
+    <ul>
+      <li>إشعار مسبق 30 يوماً بالبريد الإلكتروني للجهات المُسجَّلة</li>
+      <li>إشعار واضح في لوحة التحكم عند تسجيل الدخول</li>
+      <li>الإبقاء على النسخة السابقة متاحة للمقارنة لمدة 30 يوماً</li>
+      <li>حق الجهة في الإلغاء دون غرامة خلال مدة الإشعار</li>
+    </ul>
+
+    <h3>التعديلات غير الجوهرية</h3>
+    <p>تشمل التوضيحات والإضافات التقنية وتصحيح الأخطاء الإملائية والأمثلة التوضيحية. تسري فوراً مع إشعار معلوماتي فقط.</p>
+    <p>استمرار استخدام المنصة بعد سريان أي تعديل يُعدّ قبولاً صريحاً وكاملاً له.</p>
+  </div>
+
+  <!-- المادة 22 -->
+  <div class="legal-article" id="art22">
+    <h2><span class="art-num">22</span> القانون المطبّق وفض النزاعات</h2>
+
+    <h3>القانون الحاكم</h3>
+    <p>تخضع هذه الاتفاقية وتُفسَّر وفق أنظمة المملكة العربية السعودية المعمول بها، وتشمل بالإضافة للأنظمة العامة:</p>
+    <ul>
+      <li>نظام حماية البيانات الشخصية السعودي ولوائحه التنفيذية</li>
+      <li>نظام التجارة الإلكترونية السعودي</li>
+      <li>نظام مكافحة الجرائم المعلوماتية</li>
+      <li>نظام الاتصالات وتقنية المعلومات ولوائح هيئة الاتصالات</li>
+      <li>نظام العمل فيما يتعلق بحالات استخدام الجهة في مجال التوظيف</li>
+    </ul>
+
+    <h3>آلية فض النزاعات</h3>
+    <p>في حال نشوء أي نزاع حول تفسير هذه الاتفاقية أو تطبيقها، تُتبع الخطوات التالية تدريجياً:</p>
+    <div class="step-flow">
+      <div class="step-item">
+        <span class="step-num">1</span>
+        <div>
+          <h5>التفاوض الودّي المباشر (30 يوماً)</h5>
+          <p>تواصل مكتوب بين المسؤولين المخوّلين من الطرفين بهدف إيجاد حل متفق عليه دون اللجوء لجهات خارجية</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">2</span>
+        <div>
+          <h5>الوساطة التجارية المحكّمة (30 يوماً)</h5>
+          <p>اللجوء بالاتفاق لمركز تسوية منازعات محايد معتمد في المملكة العربية السعودية مع تقاسم التكاليف بالتساوي</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">3</span>
+        <div>
+          <h5>التقاضي أمام المحاكم المختصة</h5>
+          <p>المحاكم التجارية في مدينة الرياض بالمملكة العربية السعودية هي الجهة القضائية المختصة وصاحبة الولاية الحصرية في الفصل بأي نزاع يتجاوز مراحل التسوية الودية</p>
+        </div>
+      </div>
+    </div>
+    <p>لا يحق لأي طرف التوجه مباشرةً للقضاء دون اتباع مراحل التفاوض الودّي أولاً، ويُعدّ ذلك شرطاً إجرائياً لقبول الدعوى.</p>
+  </div>
+
+  <!-- المادة 23 -->
+  <div class="legal-article" id="art23">
+    <h2><span class="art-num">23</span> أحكام عامة وختامية</h2>
+
+    <h3>قابلية الانفصال</h3>
+    <p>إذا وُجد أن أي بند من بنود هذه الاتفاقية غير قابل للتطبيق قانوناً في أي ولاية قضائية، يُعدَل هذا البند لأدنى درجة ممكنة لجعله قابلاً للتطبيق، وتبقى جميع البنود الأخرى سارية وغير متأثرة.</p>
+
+    <h3>الاتفاقية الكاملة</h3>
+    <p>تمثّل هذه الاتفاقية مع سياسة الخصوصية وأي ملاحق مُصادَق عليها كتابياً الاتفاقية الكاملة بين الطرفين في موضوعها، وتحلّ محل جميع الاتفاقيات والتمثيلات والضمانات السابقة سواء كانت كتابية أو شفهية.</p>
+
+    <h3>عدم التنازل</h3>
+    <p>لا يُعدّ أي تساهل أو تغاضٍ من أي طرف عن انتهاك لبنود الاتفاقية تنازلاً عن حقه في المطالبة بتطبيق هذه البنود مستقبلاً.</p>
+
+    <h3>التنازل عن الحقوق</h3>
+    <p>لا يجوز للجهة التنازل عن حقوقها أو التزاماتها بموجب هذه الاتفاقية لأي طرف ثالث دون الحصول على موافقة كتابية مسبقة من الشركة. الشركة يحق لها نقل هذه الاتفاقية في سياق الاستحواذ أو الاندماج مع إشعار الجهة.</p>
+
+    <h3>اللغة المعتمدة</h3>
+    <p>النسخة العربية من هذه الاتفاقية هي النسخة الرسمية المعتمدة قانونياً وتعلو على أي ترجمة أخرى عند أي تعارض في التفسير.</p>
+
+    <h3>التسليم الإلكتروني</h3>
+    <p>توافق الجهة على استلام جميع المراسلات والإشعارات والوثائق إلكترونياً عبر البريد الإلكتروني المُسجَّل، ويُعدّ ذلك تسليماً رسمياً قانونياً نافذاً لجميع الأغراض.</p>
+
+    <h3>استقلالية الأطراف</h3>
+    <p>العلاقة بين الشركة والجهة هي علاقة مُزوِّد خدمة وعميل. لا تنشأ بينهما أي علاقة شراكة أو توكيل أو تمثيل أو تضامن قانوني أو علاقة عمل.</p>
+
+    <div class="contact-box">
+      <h3>للتواصل القانوني والاستفسارات</h3>
+      <p>RAFD Digital — الرياض، المملكة العربية السعودية<br>جميع المراسلات الرسمية تكون عبر البريد الإلكتروني وتُرقَّم للمتابعة</p>
+      <a href="mailto:info@rafd-digital.com">✉ info@rafd-digital.com</a>
+      <a href="mailto:legal@rafd-digital.com">⚖️ legal@rafd-digital.com</a>
+      <a href="/register-partner.html">← انضم كشريك</a>
+    </div>
+
+    <p style="margin-top:2rem;text-align:center;font-size:.8rem;color:#94a3b8;line-height:1.9">
+      باستخدامك للمنصة، تُقرّ بأنك قرأت هذه الاتفاقية بالكامل وفهمتها وقبلتها<br>
+      © 2026 RAFD Digital. جميع الحقوق محفوظة — الإصدار 4.0 — يونيو 2026
+    </p>
+  </div>
+
+</div>
 </section>
 
-<!-- FOOTER -->
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
-        <p class="footer-desc" data-i18n="footer.desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
+        <img src="/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
+        <p class="footer-desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات التقييم — مصممة للسوق السعودي</p>
       </div>
       <div class="footer-col">
-        <h4 data-i18n="footer.platform">المنصة</h4>
+        <h4>المنصة</h4>
         <ul>
-          <li><a href="/#features" data-i18n="nav.features">المميزات</a></li>
-          <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
-          <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
-          <li><a href="/demo-apply.html" data-i18n="footer.trial">تجربة مجانية</a></li>
+          <li><a href="/#features">المميزات</a></li>
+          <li><a href="/how-it-works.html">كيف نعمل</a></li>
+          <li><a href="/#pricing">الأسعار</a></li>
+          <li><a href="/demo-apply.html">تجربة مجانية</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4 data-i18n="footer.company">الشركة</h4>
+        <h4>الشركة</h4>
         <ul>
-          <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
-          <li><a href="mailto:info@rafd-digital.com" data-i18n="footer.contact">تواصل معنا</a></li>
-          <li><a href="/privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a></li>
-          <li><a href="/terms.html" data-i18n="footer.terms">الشروط والأحكام</a></li>
+          <li><a href="/about.html">من نحن</a></li>
+          <li><a href="mailto:info@rafd-digital.com">تواصل معنا</a></li>
+          <li><a href="/privacy.html">سياسة الخصوصية</a></li>
+          <li><a href="/terms.html">الشروط والأحكام</a></li>
         </ul>
-        <div style="margin-top:1rem">
-          <a href="mailto:info@rafd-digital.com" style="color:#4a9d6f;font-size:.82rem;font-weight:600;text-decoration:none">✉ info@rafd-digital.com</a>
-        </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copy"><span data-i18n="footer.copy">© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span></span>
+      <span class="footer-copy">© 2026 RAFD Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span>
     </div>
   </div>
 </footer>
 
 <script>
-document.getElementById('hamburger').addEventListener('click', function() {
-  const nav = document.querySelector('.nav-links');
-  nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
-  nav.style.flexDirection = 'column';
-  nav.style.position = 'absolute';
-  nav.style.top = '72px';
-  nav.style.right = '0';
-  nav.style.left = '0';
-  nav.style.background = '#fff';
-  nav.style.padding = '1rem 2rem';
-  nav.style.borderBottom = '1px solid #e2e8f0';
-  nav.style.zIndex = '999';
-});
-window.addEventListener('scroll', function() {
-  const nb = document.getElementById('navbar');
-  if(window.scrollY > 50) nb.style.boxShadow = '0 4px 24px rgba(0,0,0,.08)';
-  else nb.style.boxShadow = 'none';
-});
+document.getElementById('hamburger').addEventListener('click',function(){const n=document.querySelector('.nav-links');n.style.display=n.style.display==='flex'?'none':'flex';n.style.flexDirection='column';n.style.position='absolute';n.style.top='72px';n.style.right='0';n.style.left='0';n.style.background='#fff';n.style.padding='1rem 2rem';n.style.borderBottom='1px solid #e2e8f0';n.style.zIndex='999'});
+window.addEventListener('scroll',function(){const nb=document.getElementById('navbar');if(window.scrollY>50)nb.style.boxShadow='0 4px 24px rgba(0,0,0,.08)';else nb.style.boxShadow='none'});
+function toggleLoginDrop(e){e.stopPropagation();document.getElementById('loginDrop').classList.toggle('open')}
+document.addEventListener('click',()=>document.getElementById('loginDrop')?.classList.remove('open'));
 </script>
 <script src="/i18n.js"></script>
 </body>
 </html>
-
-
-
-
-
-

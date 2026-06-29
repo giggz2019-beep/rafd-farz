@@ -1,313 +1,872 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سياسة الخصوصية — Rafd Digital</title>
+<title>سياسة الخصوصية — RAFD Digital</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
-.page-hero{background:linear-gradient(135deg,#0f2030 0%,#1a3a4a 50%,#0f2030 100%);padding:100px 0 60px;text-align:center}
-.page-hero h1{font-family:'Tajawal',sans-serif;font-size:2.2rem;font-weight:900;color:#fff;margin-bottom:.75rem}
-.page-hero p{color:rgba(255,255,255,.7);font-size:.9rem}
-.legal-section{padding:60px 0 80px;background:#fff}
-.legal-container{max-width:780px;margin:0 auto;padding:0 1.5rem}
-.last-updated{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:.75rem 1.25rem;margin-bottom:2.5rem;color:#1e40af;font-size:.85rem;font-weight:600}
-.legal-toc{background:#f8fafc;border-radius:14px;padding:1.5rem;margin-bottom:2.5rem;border:1px solid #e2e8f0}
-.legal-toc h4{font-family:'Tajawal',sans-serif;font-weight:800;color:#1e293b;margin-bottom:1rem;font-size:1rem}
-.legal-toc ol{padding-right:1.25rem;margin:0}
-.legal-toc li{margin-bottom:.4rem}
-.legal-toc a{color:#1a3a4a;text-decoration:none;font-size:.85rem;font-weight:500}
+.page-hero{background:linear-gradient(135deg,#0f2030 0%,#1a3a4a 50%,#0f2030 100%);padding:100px 0 60px;text-align:center;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(74,157,111,.12),transparent 60%);pointer-events:none}
+.page-hero-tag{display:inline-block;background:rgba(74,157,111,.15);color:#4a9d6f;border:1px solid rgba(74,157,111,.3);padding:.4rem 1.2rem;border-radius:50px;font-size:.8rem;font-weight:700;margin-bottom:1rem}
+.page-hero h1{font-family:'Tajawal',sans-serif;font-size:2.4rem;font-weight:900;color:#fff;margin-bottom:.75rem}
+.page-hero p{color:rgba(255,255,255,.7);font-size:.92rem;max-width:580px;margin:0 auto}
+.legal-section{padding:60px 0 100px;background:#fff}
+.legal-container{max-width:840px;margin:0 auto;padding:0 1.5rem}
+.last-updated{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:12px;padding:1rem 1.5rem;margin-bottom:2.5rem;color:#1e40af;font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:.75rem}
+.legal-toc{background:#f8fafc;border-radius:16px;padding:1.75rem;margin-bottom:3rem;border:1px solid #e2e8f0}
+.legal-toc h4{font-family:'Tajawal',sans-serif;font-weight:800;color:#1e293b;margin-bottom:1.25rem;font-size:1.05rem}
+.legal-toc ol{padding-right:1.5rem;margin:0;columns:2;column-gap:2.5rem}
+.legal-toc li{margin-bottom:.45rem;break-inside:avoid}
+.legal-toc a{color:#1a3a4a;text-decoration:none;font-size:.82rem;font-weight:600;transition:.2s;line-height:1.5;display:block}
 .legal-toc a:hover{color:#4a9d6f}
-.legal-article{margin-bottom:2.5rem;padding-bottom:2.5rem;border-bottom:1px solid #f1f5f9}
+.legal-article{margin-bottom:3.5rem;padding-bottom:3.5rem;border-bottom:2px solid #f1f5f9}
 .legal-article:last-child{border-bottom:none}
-.legal-article h2{font-family:'Tajawal',sans-serif;font-size:1.25rem;font-weight:900;color:#1e293b;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-.legal-article h2 .art-num{background:#1a3a4a;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
-.legal-article p{color:#475569;font-size:.88rem;line-height:1.9;margin-bottom:.9rem}
-.legal-article ul{padding-right:1.5rem;margin-bottom:.9rem}
-.legal-article ul li{color:#475569;font-size:.88rem;line-height:1.9;margin-bottom:.3rem}
-.legal-article .highlight{background:#fefce8;border-right:3px solid #fbbf24;padding:.75rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0;font-size:.85rem;color:#92400e}
-.legal-article .info-box{background:#eff6ff;border-right:3px solid #3b82f6;padding:.75rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0;font-size:.85rem;color:#1e40af}
-.legal-article .success-box{background:#f0fdf4;border-right:3px solid #4a9d6f;padding:.75rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0;font-size:.85rem;color:#166534}
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.83rem}
-.data-table th{background:#1a3a4a;color:#fff;padding:.6rem .9rem;text-align:right;font-weight:600}
-.data-table td{padding:.6rem .9rem;border-bottom:1px solid #f1f5f9;color:#475569;vertical-align:top}
+.legal-article h2{font-family:'Tajawal',sans-serif;font-size:1.35rem;font-weight:900;color:#1e293b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;padding-bottom:.75rem;border-bottom:1px solid #e2e8f0}
+.legal-article h3{font-family:'Tajawal',sans-serif;font-size:1.02rem;font-weight:800;color:#334155;margin:1.75rem 0 .75rem;display:flex;align-items:center;gap:.5rem}
+.legal-article h3::before{content:'';display:inline-block;width:4px;height:18px;background:#3b82f6;border-radius:2px;flex-shrink:0}
+.art-num{background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;flex-shrink:0}
+.legal-article p{color:#475569;font-size:.875rem;line-height:2.1;margin-bottom:1rem}
+.legal-article ul,
+.legal-article ol.content-list{padding-right:1.6rem;margin-bottom:1.25rem}
+.legal-article ul li,
+.legal-article ol.content-list li{color:#475569;font-size:.875rem;line-height:2.0;margin-bottom:.5rem}
+.legal-article ul li::marker{color:#3b82f6}
+.highlight{background:#fefce8;border-right:4px solid #fbbf24;padding:.9rem 1.2rem;border-radius:0 10px 10px 0;margin:1.25rem 0;font-size:.85rem;color:#92400e;line-height:1.9}
+.info-box{background:#eff6ff;border-right:4px solid #3b82f6;padding:.9rem 1.2rem;border-radius:0 10px 10px 0;margin:1.25rem 0;font-size:.85rem;color:#1e40af;line-height:1.9}
+.success-box{background:#f0fdf4;border-right:4px solid #4a9d6f;padding:.9rem 1.2rem;border-radius:0 10px 10px 0;margin:1.25rem 0;font-size:.85rem;color:#166534;line-height:1.9}
+.danger-box{background:#fef2f2;border-right:4px solid #ef4444;padding:.9rem 1.2rem;border-radius:0 10px 10px 0;margin:1.25rem 0;font-size:.85rem;color:#991b1b;line-height:1.9}
+.data-table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.82rem;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0}
+.data-table th{background:#1a3a4a;color:#fff;padding:.8rem 1rem;text-align:right;font-weight:700;font-size:.81rem}
+.data-table td{padding:.75rem 1rem;border-bottom:1px solid #f1f5f9;color:#475569;vertical-align:top;line-height:1.8}
 .data-table tr:nth-child(even) td{background:#f8fafc}
-.contact-box{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:16px;padding:2rem;text-align:center;margin-top:2rem;border:1px solid #bbf7d0}
-.contact-box h3{font-family:'Tajawal',sans-serif;font-weight:800;color:#166534;margin-bottom:.5rem}
-.contact-box p{color:#166534;font-size:.88rem;margin-bottom:1rem}
-.contact-box a{color:#166534;font-weight:700;text-decoration:none;font-size:.9rem}
-.rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1rem 0}
-.right-card{background:#f8fafc;border-radius:10px;padding:.9rem;border:1px solid #e2e8f0}
-.right-card h5{font-weight:700;color:#1e293b;margin-bottom:.3rem;font-size:.85rem}
-.right-card p{color:#64748b;font-size:.78rem;line-height:1.6;margin:0}
-@media(max-width:480px){.rights-grid{grid-template-columns:1fr}}
+.data-table tr:last-child td{border-bottom:none}
+.rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin:1.25rem 0}
+.right-card{background:#f8fafc;border-radius:12px;padding:1.1rem 1.2rem;border:1px solid #e2e8f0;transition:.25s}
+.right-card:hover{border-color:#3b82f6;box-shadow:0 4px 16px rgba(59,130,246,.08)}
+.right-card h5{font-weight:800;color:#1e293b;margin-bottom:.45rem;font-size:.88rem}
+.right-card p{color:#64748b;font-size:.8rem;line-height:1.75;margin:0}
+.security-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin:1.25rem 0}
+.sec-card{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:12px;padding:1.1rem;border:1px solid #bae6fd;text-align:center}
+.sec-card .sec-icon{font-size:1.8rem;margin-bottom:.4rem}
+.sec-card h5{font-weight:800;color:#0c4a6e;font-size:.82rem;margin-bottom:.25rem}
+.sec-card p{color:#075985;font-size:.75rem;line-height:1.6;margin:0}
+.retention-bar{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:#f8fafc;border-radius:10px;margin:.5rem 0;border:1px solid #e2e8f0}
+.retention-bar .rb-icon{font-size:1.1rem;flex-shrink:0}
+.retention-bar .rb-label{font-size:.83rem;font-weight:700;color:#1e293b;flex:1}
+.retention-bar .rb-val{font-size:.8rem;color:#4a9d6f;font-weight:700;background:#f0fdf4;padding:.2rem .6rem;border-radius:20px;white-space:nowrap}
+.contact-box{background:linear-gradient(135deg,#0f2030,#1a3a4a);border-radius:20px;padding:2.5rem;text-align:center;margin-top:2.5rem;border:1px solid rgba(74,157,111,.2)}
+.contact-box h3{font-family:'Tajawal',sans-serif;font-weight:900;color:#fff;margin-bottom:.5rem;font-size:1.3rem}
+.contact-box p{color:rgba(255,255,255,.7);font-size:.88rem;margin-bottom:1.25rem}
+.contact-box a{display:inline-flex;align-items:center;gap:.4rem;background:#4a9d6f;color:#fff;padding:.7rem 1.5rem;border-radius:10px;text-decoration:none;font-weight:700;font-size:.9rem;margin:.3rem;transition:.2s}
+.contact-box a:hover{background:#3d8a5f}
+.principles-list{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin:1.25rem 0}
+.principle-item{display:flex;gap:.7rem;padding:.9rem 1rem;background:#fafafa;border-radius:10px;border:1px solid #f0f0f0}
+.principle-item .pi-icon{font-size:1.3rem;flex-shrink:0;margin-top:.1rem}
+.principle-item div h5{font-size:.85rem;font-weight:800;color:#1e293b;margin-bottom:.2rem}
+.principle-item div p{font-size:.78rem;color:#64748b;line-height:1.6;margin:0}
+.step-flow{counter-reset:step;margin:1.25rem 0}
+.step-item{display:flex;gap:1rem;margin-bottom:1rem;counter-increment:step}
+.step-num{background:#2563eb;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0;margin-top:.2rem}
+.step-item div h5{font-size:.88rem;font-weight:800;color:#1e293b;margin-bottom:.2rem}
+.step-item div p{font-size:.8rem;color:#64748b;line-height:1.7;margin:0}
+.basis-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin:1.25rem 0}
+.basis-card{background:#f8fafc;border-radius:12px;padding:1rem;border:1px solid #e2e8f0}
+.basis-card h5{font-size:.84rem;font-weight:800;color:#1e293b;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.basis-card p{font-size:.78rem;color:#64748b;line-height:1.7;margin:0}
+@media(max-width:700px){.legal-toc ol,.rights-grid,.security-cards,.principles-list,.basis-grid{columns:1;grid-template-columns:1fr}.page-hero h1{font-size:1.8rem}}
 </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar" id="navbar">
   <div class="container nav-inner">
     <a href="/" class="brand">
-      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img src="/rafd-logo.png" alt="RAFD Digital" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="brand-fallback" style="display:none;align-items:center;gap:.5rem">
         <div class="brand-icon">R</div>
-        <div class="brand-text">
-          <span class="brand-name">RAFD</span>
-          <span class="brand-tagline">Digital Company</span>
-        </div>
+        <div class="brand-text"><span class="brand-name">RAFD</span><span class="brand-tagline">Digital Company</span></div>
       </div>
     </a>
     <ul class="nav-links">
-      <li><a href="/" data-i18n="nav.home">الرئيسية</a></li>
-      <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
-      <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
-      <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
+      <li><a href="/">الرئيسية</a></li>
+      <li><a href="/how-it-works.html">كيف نعمل</a></li>
+      <li><a href="/about.html">من نحن</a></li>
+      <li><a href="/#pricing">الأسعار</a></li>
     </ul>
-        <div class="nav-actions">
+    <div class="nav-actions">
       <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
       <div class="login-dropdown-wrap" id="loginDropWrap">
-        <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem">
-          <span data-i18n="nav.login">تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span></span>
-        </button>
+        <button class="btn-ghost" onclick="toggleLoginDrop(event)">تسجيل الدخول ▼</button>
         <div class="login-drop" id="loginDrop">
-          <a href="/partner-login.html" class="login-drop-item">
-            <span style="font-size:1.1rem">🤝</span>
-            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.partner-login">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.partner-login-sub">لوحة تحكم الجهات</div></div>
-          </a>
-          <a href="/admin.html" class="login-drop-item">
-            <span style="font-size:1.1rem">🛡️</span>
-            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.admin">الإدارة</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.admin-sub">دخول مشرفي النظام</div></div>
-          </a>
+          <a href="/partner-login.html" class="login-drop-item"><span>🤝</span><div><div style="font-weight:700;font-size:.88rem">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6">لوحة تحكم الجهات</div></div></a>
+          <a href="/admin.html" class="login-drop-item"><span>🛡️</span><div><div style="font-weight:700;font-size:.88rem">الإدارة</div><div style="font-size:.72rem;opacity:.6">دخول مشرفي النظام</div></div></a>
         </div>
       </div>
-      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f" data-i18n="nav.join">انضم كشريك</a>
+      <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f">انضم كشريك</a>
     </div>
     <button class="hamburger" id="hamburger">&#9776;</button>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="page-hero">
   <div class="container">
-    <h1 data-i18n="priv.hero-h1">سياسة الخصوصية</h1>
-    <p data-i18n="priv.hero-p">نحن نُقدّر خصوصيتك ونلتزم بحماية بياناتك الشخصية</p>
+    <span class="page-hero-tag">الشفافية الكاملة في التعامل مع بياناتك</span>
+    <h1>سياسة الخصوصية</h1>
+    <p>توثيق شامل ومفصّل لكل جانب من جوانب جمع بياناتك ومعالجتها وحمايتها وحقوقك الكاملة تجاهها</p>
   </div>
 </section>
 
 <section class="legal-section">
-  <div class="legal-container">
-    <div class="last-updated" data-i18n="priv.updated">🔒 آخر تحديث: يناير 2025 | تتوافق هذه السياسة مع نظام حماية البيانات الشخصية السعودي</div>
+<div class="legal-container">
 
-    <div class="legal-toc">
-      <h4 data-i18n="priv.toc-title">📋 فهرس المحتويات</h4>
-      <ol>
-        <li><a href="#p1" data-i18n="priv.p1-title">ما البيانات التي نجمعها؟</a></li>
-        <li><a href="#p2" data-i18n="priv.p2-title">كيف نستخدم بياناتك؟</a></li>
-        <li><a href="#p3" data-i18n="priv.p3-title">مشاركة البيانات مع الأطراف الثالثة</a></li>
-        <li><a href="#p4" data-i18n="priv.p4-title">حماية البيانات وأمنها</a></li>
-        <li><a href="#p5" data-i18n="priv.p5-title">مدة الاحتفاظ بالبيانات</a></li>
-        <li><a href="#p6" data-i18n="priv.p6-title">حقوقك كمستخدم</a></li>
-        <li><a href="#p7" data-i18n="priv.p7-title">ملفات تعريف الارتباط (Cookies)</a></li>
-        <li><a href="#p8" data-i18n="priv.p8-title">بيانات الأطفال</a></li>
-        <li><a href="#p9" data-i18n="priv.p9-title">التغييرات على السياسة</a></li>
-        <li><a href="#p10" data-i18n="priv.p10-title">التواصل معنا</a></li>
-      </ol>
-    </div>
-
-    <div class="legal-article" id="p1">
-      <h2><span class="art-num">1</span> <span data-i18n="priv.p1-title">ما البيانات التي نجمعها؟</span></h2>
-      <p data-i18n="priv.p1-intro">نجمع أنواعاً مختلفة من البيانات حسب طبيعة استخدامك للمنصة:</p>
-      <table class="data-table">
-        <tr><th>نوع البيانات</th><th>الأمثلة</th><th>المصدر</th></tr>
-        <tr><td>بيانات الحساب</td><td>الاسم، البريد الإلكتروني، كلمة المرور</td><td>التسجيل المباشر</td></tr>
-        <tr><td>بيانات الجهة</td><td>اسم الجهة، النوع، معايير التقييم</td><td>إعداد الحساب</td></tr>
-        <tr><td>بيانات المتقدمين</td><td>السيرة الذاتية، المؤهلات، المستندات</td><td>نماذج التقديم</td></tr>
-        <tr><td>بيانات الاستخدام</td><td>صفحات مُزارة، وقت الاستخدام، الأجهزة</td><td>تلقائياً</td></tr>
-        <tr><td>بيانات الدفع</td><td>آخر 4 أرقام البطاقة، تاريخ الانتهاء</td><td>بوابة الدفع</td></tr>
-      </table>
-      <div class="success-box">✅ لا نجمع أبداً: أرقام بطاقات الائتمان الكاملة، كلمات المرور بصيغتها الأصلية، أو بيانات حساسة غير ضرورية.</div>
-    </div>
-
-    <div class="legal-article" id="p2">
-      <h2><span class="art-num">2</span> <span data-i18n="priv.p2-title">كيف نستخدم بياناتك؟</span></h2>
-      <p data-i18n="priv.p2-intro">نستخدم البيانات المجموعة للأغراض التالية حصراً:</p>
-      <ul>
-        <li><strong>تقديم الخدمة:</strong> تشغيل نظام التقييم وتحليل الطلبات وفق معايير الجهة</li>
-        <li><strong>تحسين المنصة:</strong> تطوير الخوارزميات ورفع دقة التقييم</li>
-        <li><strong>التواصل:</strong> إرسال إشعارات النتائج والتحديثات المهمة</li>
-        <li><strong>الأمان:</strong> كشف الاحتيال وحماية الحسابات</li>
-        <li><strong>الامتثال القانوني:</strong> الاستجابة للطلبات القانونية المشروعة</li>
-      </ul>
-      <div class="highlight">⚠️ لا نستخدم بياناتك لأغراض تسويقية لطرف ثالث أو لبناء ملفات تعريف خارج نطاق الخدمة.</div>
-    </div>
-
-    <div class="legal-article" id="p3">
-      <h2><span class="art-num">3</span> <span data-i18n="priv.p3-title">مشاركة البيانات مع الأطراف الثالثة</span></h2>
-      <p data-i18n="priv.p3-intro">نلتزم بعدم بيع بياناتك أو مشاركتها تجارياً. نشارك البيانات فقط في الحالات التالية:</p>
-      <ul>
-        <li><strong>مزودو الخدمات التقنية:</strong> خدمات الاستضافة السحابية وبوابات الدفع (بموجب اتفاقيات سرية)</li>
-        <li><strong>الجهة المسجّلة:</strong> تصل لنتائج تقييم متقدميها فقط — لا بيانات متقدمي الجهات الأخرى</li>
-        <li><strong>المتطلبات القانونية:</strong> عند صدور أمر قضائي أو طلب رسمي من جهة حكومية مختصة</li>
-      </ul>
-      <div class="info-box">ℹ️ في حال الاندماج أو الاستحواذ، سيُبلَّغ المستخدمون مسبقاً وتُطبَّق نفس سياسة الخصوصية.</div>
-    </div>
-
-    <div class="legal-article" id="p4">
-      <h2><span class="art-num">4</span> <span data-i18n="priv.p4-title">حماية البيانات وأمنها</span></h2>
-      <p data-i18n="priv.p4-intro">نطبّق أعلى معايير الأمان لحماية بياناتك:</p>
-      <ul>
-        <li>تشفير البيانات أثناء النقل (TLS 1.3) وأثناء التخزين (AES-256)</li>
-        <li>المصادقة الثنائية (2FA) لحسابات الجهات</li>
-        <li>مراجعات أمنية دورية واختبارات الاختراق</li>
-        <li>صلاحيات وصول محدودة للموظفين على مبدأ الحاجة للمعرفة</li>
-        <li>نسخ احتياطية مشفّرة يومية</li>
-      </ul>
-      <div class="success-box">🔒 في حال اكتشاف أي اختراق أمني يؤثر على بياناتك، سنُبلّغك خلال 72 ساعة.</div>
-    </div>
-
-    <div class="legal-article" id="p5">
-      <h2><span class="art-num">5</span> <span data-i18n="priv.p5-title">مدة الاحتفاظ بالبيانات</span></h2>
-      <p data-i18n="priv.p5-intro">نحتفظ بالبيانات للمدد التالية:</p>
-      <ul>
-        <li><strong>بيانات الحساب النشط:</strong> طوال فترة الاشتراك</li>
-        <li><strong>بيانات المتقدمين:</strong> 12 شهراً من تاريخ التقديم</li>
-        <li><strong>سجلات الاستخدام:</strong> 6 أشهر</li>
-        <li><strong>بيانات الفواتير:</strong> 5 سنوات (متطلبات قانونية)</li>
-        <li><strong>بعد إلغاء الحساب:</strong> 30 يوماً ثم حذف كامل</li>
-      </ul>
-    </div>
-
-    <div class="legal-article" id="p6">
-      <h2><span class="art-num">6</span> <span data-i18n="priv.p6-title">حقوقك كمستخدم</span></h2>
-      <p data-i18n="priv.p6-intro">وفق نظام حماية البيانات الشخصية السعودي، لديك الحقوق التالية:</p>
-      <div class="rights-grid">
-        <div class="right-card">
-          <h5>🔍 حق الاطلاع</h5>
-          <p>معرفة ما نجمعه من بياناتك وكيف نستخدمها</p>
-        </div>
-        <div class="right-card">
-          <h5>✏️ حق التصحيح</h5>
-          <p>تصحيح أي بيانات غير دقيقة أو ناقصة</p>
-        </div>
-        <div class="right-card">
-          <h5>🗑️ حق الحذف</h5>
-          <p>طلب حذف بياناتك في أي وقت</p>
-        </div>
-        <div class="right-card">
-          <h5>📤 حق النقل</h5>
-          <p>الحصول على نسخة من بياناتك بصيغة قابلة للقراءة</p>
-        </div>
-        <div class="right-card">
-          <h5>🚫 حق الاعتراض</h5>
-          <p>الاعتراض على معالجة بياناتك لأغراض معينة</p>
-        </div>
-        <div class="right-card">
-          <h5>⏸️ حق التقييد</h5>
-          <p>تقييد معالجة بياناتك في حالات معينة</p>
-        </div>
-      </div>
-      <p>لممارسة أي من هذه الحقوق، تواصل معنا على <a href="mailto:info@rafd-digital.com" style="color:#4a9d6f">info@rafd-digital.com</a> وسنستجيب خلال 15 يوم عمل.</p>
-    </div>
-
-    <div class="legal-article" id="p7">
-      <h2><span class="art-num">7</span> <span data-i18n="priv.p7-title">ملفات تعريف الارتباط (Cookies)</span></h2>
-      <p data-i18n="priv.p7-intro">نستخدم ملفات تعريف الارتباط للأغراض التالية:</p>
-      <ul>
-        <li><strong>ضرورية:</strong> الحفاظ على جلسة تسجيل الدخول وتفضيلات اللغة</li>
-        <li><strong>تحليلية:</strong> فهم كيفية استخدام المنصة لتحسينها (مجهولة الهوية)</li>
-      </ul>
-      <p>يمكنك إدارة ملفات تعريف الارتباط من إعدادات متصفحك. تعطيل الملفات الضرورية قد يؤثر على عمل المنصة.</p>
-    </div>
-
-    <div class="legal-article" id="p8">
-      <h2><span class="art-num">8</span> <span data-i18n="priv.p8-title">بيانات الأطفال</span></h2>
-      <p data-i18n="priv.p8-text">المنصة مخصصة للمستخدمين البالغين (18 سنة فأكثر). لا نجمع بيانات الأطفال عن قصد. إذا اكتشفنا أن طفلاً دون 18 سنة قدّم بياناته، سنحذفها فوراً.</p>
-    </div>
-
-    <div class="legal-article" id="p9">
-      <h2><span class="art-num">9</span> <span data-i18n="priv.p9-title">التغييرات على السياسة</span></h2>
-      <p data-i18n="priv.p9-text">قد نُحدّث هذه السياسة دورياً. سنُبلّغك بأي تغييرات جوهرية عبر البريد الإلكتروني أو إشعار في المنصة قبل 14 يوماً من سريانها.</p>
-    </div>
-
-    <div class="legal-article" id="p10">
-      <h2><span class="art-num">10</span> <span data-i18n="priv.p10-title">التواصل معنا</span></h2>
-      <p data-i18n="priv.p10-intro">لأي استفسار حول خصوصيتك أو لممارسة حقوقك:</p>
-      <div class="contact-box">
-        <h3 data-i18n="priv.contact-h3">مسؤول حماية البيانات — Rafd Digital</h3>
-        <p data-i18n="priv.contact-p">نستجيب لجميع طلبات الخصوصية خلال 15 يوم عمل</p>
-        <a href="mailto:info@rafd-digital.com">✉ info@rafd-digital.com</a>
-      </div>
-    </div>
-
+  <div class="last-updated">
+    🔒 &nbsp;تاريخ النفاذ: 1 يونيو 2026 &nbsp;|&nbsp; الإصدار 4.0 &nbsp;|&nbsp; يُلغي جميع الإصدارات السابقة &nbsp;|&nbsp; الرقم المرجعي: PP-2026-V4
   </div>
+
+  <div class="legal-toc">
+    <h4>📋 فهرس الأقسام</h4>
+    <ol>
+      <li><a href="#pr1">مقدمة ومبادئ الخصوصية</a></li>
+      <li><a href="#pr2">تعريف الأطراف ونطاق السياسة</a></li>
+      <li><a href="#pr3">البيانات التي نجمعها</a></li>
+      <li><a href="#pr4">الأساس القانوني للمعالجة</a></li>
+      <li><a href="#pr5">أغراض الاستخدام التفصيلية</a></li>
+      <li><a href="#pr6">الذكاء الاصطناعي والمعالجة الآلية</a></li>
+      <li><a href="#pr7">مشاركة البيانات مع أطراف ثالثة</a></li>
+      <li><a href="#pr8">نقل البيانات الدولي</a></li>
+      <li><a href="#pr9">الأمان والحماية التقنية</a></li>
+      <li><a href="#pr10">مدد الاحتفاظ والحذف</a></li>
+      <li><a href="#pr11">ملفات تعريف الارتباط والتتبع</a></li>
+      <li><a href="#pr12">حقوقك الكاملة كمستخدم</a></li>
+      <li><a href="#pr13">الإجراءات العملية لممارسة حقوقك</a></li>
+      <li><a href="#pr14">خصوصية القاصرين والفئات الهشة</a></li>
+      <li><a href="#pr15">البيانات الحساسة والفئات الخاصة</a></li>
+      <li><a href="#pr16">التسويق والاتصالات الترويجية</a></li>
+      <li><a href="#pr17">إشعارات الاختراق ومعالجة الحوادث</a></li>
+      <li><a href="#pr18">التغييرات على هذه السياسة</a></li>
+      <li><a href="#pr19">الشكاوى والجهات الرقابية</a></li>
+      <li><a href="#pr20">مسؤول حماية البيانات والتواصل</a></li>
+    </ol>
+  </div>
+
+  <!-- القسم 1 -->
+  <div class="legal-article" id="pr1">
+    <h2><span class="art-num">1</span> مقدمة ومبادئ الخصوصية</h2>
+    <p>تُعدّ هذه السياسة وثيقة قانونية رسمية تُصدرها شركة <strong>RAFD Digital</strong> التزاماً بمبادئ الشفافية وحماية البيانات المنصوص عليها في نظام حماية البيانات الشخصية السعودي ولوائحه التنفيذية، وتستهدف إطلاع جميع أصحاب المصلحة على ممارساتنا في التعامل مع البيانات بشكل كامل ودقيق.</p>
+    <p>تُبنى ممارساتنا في معالجة البيانات على المبادئ الجوهرية الثمانية التالية التي لا تقبل المساومة:</p>
+    <div class="principles-list">
+      <div class="principle-item">
+        <div class="pi-icon">🎯</div>
+        <div><h5>تحديد الغرض مسبقاً</h5><p>لا نجمع أي بيانات إلا بعد تحديد غرض واضح ومشروع ومُعلَن للمستخدم قبل الجمع لا بعده</p></div>
+      </div>
+      <div class="principle-item">
+        <div class="pi-icon">📏</div>
+        <div><h5>تدنية البيانات</h5><p>نقتصر على جمع البيانات اللازمة تحديداً لأداء الخدمة — لا أقل ولا أكثر من الضروري</p></div>
+      </div>
+      <div class="principle-item">
+        <div class="pi-icon">✅</div>
+        <div><h5>الدقة والتحديث</h5><p>نسعى للحفاظ على دقة البيانات المُخزَّنة ونُتيح للمستخدمين تصحيح أي معلومات غير صحيحة</p></div>
+      </div>
+      <div class="principle-item">
+        <div class="pi-icon">🔒</div>
+        <div><h5>الأمان الشامل</h5><p>تُحمى البيانات بطبقات تقنية وتنظيمية متعددة من الوصول غير المُصرَّح به أو الفقدان أو التلف</p></div>
+      </div>
+      <div class="principle-item">
+        <div class="pi-icon">👁️</div>
+        <div><h5>الشفافية الكاملة</h5><p>لا أسرار في ممارساتنا. نُفصح عن كل ما يتعلق ببياناتك في هذه الوثيقة بلغة واضحة ومفهومة</p></div>
+      </div>
+      <div class="principle-item">
+        <div class="pi-icon">✋</div>
+        <div><h5>السيطرة في يد المستخدم</h5><p>نُوفّر آليات فعلية تُتيح للمستخدمين السيطرة الحقيقية على بياناتهم وليس السيطرة الشكلية فحسب</p></div>
+      </div>
+      <div class="principle-item">
+        <div class="pi-icon">⏳</div>
+        <div><h5>محدودية الاحتفاظ</h5><p>تُحذف البيانات فور انتهاء الغرض من جمعها ضمن الجداول الزمنية الموثَّقة في القسم العاشر</p></div>
+      </div>
+      <div class="principle-item">
+        <div class="pi-icon">⚖️</div>
+        <div><h5>الامتثال القانوني</h5><p>تستند معالجة البيانات دائماً لأساس قانوني مشروع محدد مسبقاً كما هو موثَّق في القسم الرابع</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- القسم 2 -->
+  <div class="legal-article" id="pr2">
+    <h2><span class="art-num">2</span> تعريف الأطراف ونطاق السياسة</h2>
+
+    <h3>من يخضع لهذه السياسة؟</h3>
+    <p>تسري هذه السياسة على البيانات الشخصية لجميع الفئات التالية:</p>
+    <ul>
+      <li><strong>مُمثّلو الجهات الشريكة:</strong> الأفراد الذين يُسجَّلون حسابات الجهات الشريكة أو يُديرونها</li>
+      <li><strong>المستجيبون / المتقدمون:</strong> الأشخاص الذين يملؤون نماذج أنشأتها الجهات الشريكة عبر منصتنا</li>
+      <li><strong>زوار الموقع:</strong> أي شخص يتصفح موقعنا الإلكتروني أو صفحاتنا التعريفية</li>
+      <li><strong>المتواصلون:</strong> من يُراسلوننا عبر البريد الإلكتروني أو نماذج التواصل</li>
+    </ul>
+
+    <h3>الأدوار القانونية في معالجة البيانات</h3>
+    <ul>
+      <li><strong>RAFD Digital كمُتحكِّم في البيانات (Data Controller):</strong> فيما يخص بيانات مُمثّلي الجهات الشريكة وزوار الموقع</li>
+      <li><strong>RAFD Digital كمُعالِج بيانات (Data Processor):</strong> فيما يخص بيانات المتقدمين التي تجمعها الجهات عبر نماذجها — الجهة هي المتحكمة الأصلية</li>
+    </ul>
+    <div class="info-box">ℹ️ هذا التمييز مهم: عندما تُدخل بياناتك كمستجيب في نموذج جهة معينة، تتولى تلك الجهة مسؤولية التحكم الأولي في بياناتك ومعالجتها. نحن نعمل كمعالج تقني بالوكالة. لممارسة حقوقك تجاه بيانات نموذج بعينه، تواصل أولاً مع الجهة التي أنشأت النموذج.</div>
+
+    <h3>ما لا تشمله هذه السياسة</h3>
+    <p>لا تسري هذه السياسة على ممارسات الخصوصية للجهات الشريكة في تعاملها مع متقدميها خارج منصتنا، ولا على مواقع أطراف ثالثة مرتبطة بروابط من موقعنا. يجب الرجوع لسياسات خصوصية تلك الجهات والمواقع بشكل مستقل.</p>
+  </div>
+
+  <!-- القسم 3 -->
+  <div class="legal-article" id="pr3">
+    <h2><span class="art-num">3</span> البيانات التي نجمعها</h2>
+
+    <h3>أولاً: بيانات مُمثّلي الجهات الشريكة</h3>
+    <table class="data-table">
+      <tr><th>البيانات</th><th>طريقة الجمع</th><th>الغرض</th><th>إلزامية؟</th></tr>
+      <tr><td>الاسم الكامل للممثّل</td><td>إدخال مباشر عند التسجيل</td><td>التعريف والتواصل</td><td>✅ إلزامية</td></tr>
+      <tr><td>البريد الإلكتروني التجاري</td><td>إدخال مباشر عند التسجيل</td><td>الدخول والإشعارات والفواتير</td><td>✅ إلزامية</td></tr>
+      <tr><td>رقم الجوال</td><td>إدخال مباشر عند التسجيل</td><td>التحقق والدعم الطارئ</td><td>✅ إلزامية</td></tr>
+      <tr><td>اسم المؤسسة الرسمي</td><td>إدخال مباشر عند التسجيل</td><td>الفوترة والعرض في النظام</td><td>✅ إلزامية</td></tr>
+      <tr><td>نوع المؤسسة</td><td>قائمة اختيار عند التسجيل</td><td>تخصيص الخدمة</td><td>✅ إلزامية</td></tr>
+      <tr><td>المدينة الرئيسية</td><td>قائمة اختيار عند التسجيل</td><td>التقارير الإقليمية والدعم</td><td>✅ إلزامية</td></tr>
+      <tr><td>كلمة المرور (مُشفَّرة)</td><td>إنشاء الحساب</td><td>أمان الدخول</td><td>✅ إلزامية</td></tr>
+      <tr><td>بيانات الدفع والفوترة</td><td>بوابة الدفع الإلكتروني</td><td>معالجة الاشتراك وإصدار الفواتير</td><td>✅ للباقات المدفوعة</td></tr>
+      <tr><td>سجلات الدخول وبيانات الجلسات</td><td>تلقائياً عند الاستخدام</td><td>الأمان ومراجعة النشاط</td><td>تلقائية</td></tr>
+      <tr><td>سجلات الإجراءات في لوحة التحكم</td><td>تلقائياً عند الاستخدام</td><td>التدقيق ومنع الاحتيال</td><td>تلقائية</td></tr>
+      <tr><td>التفضيلات والإعدادات</td><td>خيارات المستخدم</td><td>تخصيص التجربة</td><td>اختيارية</td></tr>
+      <tr><td>مراسلات الدعم الفني</td><td>مراسلات البريد / الدردشة</td><td>حل المشكلات وتحسين الخدمة</td><td>عند التواصل</td></tr>
+    </table>
+
+    <h3>ثانياً: بيانات المتقدمين عبر النماذج</h3>
+    <p>تُحدِّد الجهة الشريكة نوع البيانات المطلوبة في نموذجها. المنصة تُعالَج ما تجمعه الجهة وقد يشمل:</p>
+    <table class="data-table">
+      <tr><th>نوع البيانات</th><th>طريقة الجمع</th><th>الغرض من المنظور التقني</th></tr>
+      <tr><td>الاسم الكامل</td><td>حقل نصي في النموذج</td><td>التعريف وربط الإجابات بالشخص</td></tr>
+      <tr><td>البريد الإلكتروني</td><td>حقل في النموذج + OTP</td><td>التحقق من الهوية ومنع التكرار</td></tr>
+      <tr><td>رقم الجوال</td><td>حقل في النموذج</td><td>التحقق والتواصل من قِبَل الجهة</td></tr>
+      <tr><td>إجابات الأسئلة التقييمية</td><td>الاختيارات والنصوص في النموذج</td><td>احتساب الدرجة وتوليد التقييم</td></tr>
+      <tr><td>الملفات المرفقة (CV، شهادات...)</td><td>رفع ملفات في النموذج</td><td>الاطلاع البشري من قِبَل الجهة</td></tr>
+      <tr><td>بيانات الجلسة (وقت التقديم، نوع الجهاز)</td><td>تلقائياً أثناء ملء النموذج</td><td>ضمان نزاهة العملية ومنع التكرار</td></tr>
+      <tr><td>عنوان IP تقريبي</td><td>تلقائياً</td><td>الأمان ومنع الاحتيال</td></tr>
+      <tr><td>الدرجة الإجمالية والتفاصيل</td><td>محتسَبة آلياً بعد التقديم</td><td>تمكين الجهة من المفاضلة</td></tr>
+      <tr><td>توقيت ومراحل التقديم</td><td>تلقائياً</td><td>التحليل والتقارير للجهة</td></tr>
+    </table>
+
+    <h3>ثالثاً: بيانات زوار الموقع</h3>
+    <ul>
+      <li>عنوان IP (يُستخدَم للأمان وتصفية الزيارات المشبوهة ولا يُخزَّن مرتبطاً بهوية شخصية)</li>
+      <li>نوع المتصفح ونسخته ونظام التشغيل والجهاز</li>
+      <li>دقة الشاشة ومنطقة التوقيت</li>
+      <li>الصفحات المزارة وترتيبها ومدة قراءة كل صفحة</li>
+      <li>مصدر الزيارة (محرك بحث، وسيلة تواصل اجتماعي، رابط مباشر، إحالة)</li>
+      <li>الإجراءات المنفَّذة على الموقع (نقرات على أزرار معينة، ملء نماذج التواصل)</li>
+    </ul>
+    <div class="success-box">✅ لا نجمع أرقام الهوية الوطنية أو بيانات البطاقات البنكية مباشرةً عبر المنصة. بيانات الدفع تُعالَج عبر بوابات دفع مُرخَّصة خارجية لا تُخزّن تفاصيل البطاقات لدينا.</div>
+  </div>
+
+  <!-- القسم 4 -->
+  <div class="legal-article" id="pr4">
+    <h2><span class="art-num">4</span> الأساس القانوني للمعالجة</h2>
+    <p>لكل نوع من أنواع معالجة البيانات أساس قانوني مشروع وفق نظام حماية البيانات الشخصية السعودي:</p>
+    <div class="basis-grid">
+      <div class="basis-card">
+        <h5>📄 تنفيذ العقد</h5>
+        <p>معالجة بيانات الجهات الشريكة لتشغيل الاشتراك والخدمات المتفق عليها في الاتفاقية — ضرورة تعاقدية لا خيارية</p>
+      </div>
+      <div class="basis-card">
+        <h5>✅ الموافقة الصريحة</h5>
+        <p>إرسال الرسائل التسويقية واشتراكات النشرة الإخبارية — لا تُرسَل إلا بعد الموافقة الإيجابية الصريحة</p>
+      </div>
+      <div class="basis-card">
+        <h5>⚖️ الالتزام القانوني</h5>
+        <p>الاحتفاظ بسجلات الفواتير والمعاملات المالية وفق متطلبات هيئة الزكاة والضريبة والجمارك (7 سنوات)</p>
+      </div>
+      <div class="basis-card">
+        <h5>🛡️ المصلحة المشروعة</h5>
+        <p>تحليلات استخدام المنصة لتحسين الخدمة، والأمن السيبراني لمنع الاحتيال والاختراق — مع مراعاة مصالح المستخدمين</p>
+      </div>
+      <div class="basis-card">
+        <h5>🤝 تنفيذ طلب المستخدم</h5>
+        <p>معالجة طلبات المستجيبين عبر النماذج — بمعنى أن المستجيب هو من يبدأ العملية طوعياً</p>
+      </div>
+      <div class="basis-card">
+        <h5>🏛️ المصلحة العامة</h5>
+        <p>الامتثال لطلبات الجهات الحكومية والقضائية ذات الصلاحية القانونية في المملكة العربية السعودية</p>
+      </div>
+    </div>
+    <div class="info-box">ℹ️ يحق لك معرفة الأساس القانوني لمعالجة أي من بياناتك الشخصية. أرسل استفساراً محدداً لـ privacy@rafd-digital.com وسنُجيبك خلال 10 أيام عمل.</div>
+  </div>
+
+  <!-- القسم 5 -->
+  <div class="legal-article" id="pr5">
+    <h2><span class="art-num">5</span> أغراض الاستخدام التفصيلية</h2>
+    <p>فيما يلي توثيق كامل ومفصَّل لجميع الأغراض التي نستخدم فيها بياناتك:</p>
+
+    <h3>تشغيل الخدمة الأساسية</h3>
+    <ul>
+      <li>إنشاء الحسابات وإدارتها والتحقق من صحة بياناتها</li>
+      <li>معالجة طلبات المتقدمين وإرسال رموز OTP للتحقق من هوياتهم</li>
+      <li>احتساب الدرجات التقييمية وترتيب المتقدمين وفق معايير الجهة</li>
+      <li>تخزين النتائج وعرضها في لوحة تحكم الجهة</li>
+      <li>تمكين وظائف التصدير والتقارير</li>
+      <li>إرسال الإشعارات الضرورية المتعلقة بالحساب والخدمة</li>
+    </ul>
+
+    <h3>الفوترة والمدفوعات</h3>
+    <ul>
+      <li>معالجة مدفوعات الاشتراكات عبر بوابات الدفع الآمنة</li>
+      <li>إصدار الفواتير الضريبية الرسمية وإرسالها</li>
+      <li>إدارة تجديدات الاشتراكات والإلغاءات</li>
+      <li>معالجة طلبات الاسترداد المؤهَّلة</li>
+      <li>الاحتفاظ بسجلات المعاملات للأغراض الضريبية والمحاسبية</li>
+    </ul>
+
+    <h3>الأمان ومنع الاحتيال</h3>
+    <ul>
+      <li>رصد الأنشطة غير الطبيعية والنماذج المشبوهة</li>
+      <li>منع التسجيل والتقديم المتكرر من مصادر مشبوهة</li>
+      <li>التحقق من مطابقة سلوك الاستخدام للأنماط الطبيعية</li>
+      <li>حماية الحسابات من محاولات الاختراق والوصول غير المُصرَّح</li>
+      <li>الاستجابة لتهديدات الأمن السيبراني والحوادث</li>
+    </ul>
+
+    <h3>تحسين الخدمة والتحليلات</h3>
+    <ul>
+      <li>تحليل أنماط استخدام المنصة بشكل مجمَّع ومجهول الهوية</li>
+      <li>اكتشاف المشكلات التقنية وأخطاء النظام</li>
+      <li>قياس أداء الصفحات والميزات وتحديد نقاط التحسين</li>
+      <li>تطوير ميزات جديدة بناءً على نمط الطلب الحقيقي</li>
+      <li>إعداد تقارير قطاعية إجمالية مجهولة الهوية</li>
+    </ul>
+
+    <h3>الدعم الفني</h3>
+    <ul>
+      <li>فهم سياق المشكلة لحلها بدقة وسرعة</li>
+      <li>تشخيص الأخطاء التقنية بمراجعة السجلات المتعلقة بالحادثة</li>
+      <li>تدريب فريق الدعم على الحالات الشائعة (بعد إزالة البيانات الشخصية)</li>
+    </ul>
+
+    <h3>الامتثال القانوني</h3>
+    <ul>
+      <li>الاستجابة للأوامر القضائية والطلبات الحكومية القانونية</li>
+      <li>الاحتفاظ بسجلات للدفاع القانوني في النزاعات</li>
+      <li>إعداد تقارير الامتثال للجهات الرقابية</li>
+    </ul>
+
+    <div class="danger-box">⛔ ما لا نفعله مطلقاً: لا نبيع بياناتك، لا نُشاركها للإعلانات المستهدفة، لا نُوجِد ملفات تعريفية للبيع، لا نُستخدَم بياناتك لأغراض خارج ما هو موثَّق هنا.</div>
+  </div>
+
+  <!-- القسم 6 -->
+  <div class="legal-article" id="pr6">
+    <h2><span class="art-num">6</span> الذكاء الاصطناعي والمعالجة الآلية</h2>
+
+    <h3>كيف يعمل النظام الذكي</h3>
+    <p>عندما يُكمل المستجيب نموذجاً، تُرسَل إجاباته النصية — دون بيانات تعريفه الشخصية — إلى نموذج لغوي ذكاء اصطناعي يُطابقها مع معايير الجهة المُحددة مسبقاً ويحتسب درجة عددية لكل معيار، ثم يُولّد الدرجة الإجمالية المرجّحة.</p>
+
+    <h3>ما يُرسَل للنموذج الذكي وما لا يُرسَل</h3>
+    <table class="data-table">
+      <tr><th>يُرسَل</th><th>لا يُرسَل</th></tr>
+      <tr><td>متن إجابات المستجيب النصية</td><td>اسم المستجيب</td></tr>
+      <tr><td>معايير الجهة وأوزانها</td><td>بريد المستجيب الإلكتروني</td></tr>
+      <tr><td>تعليمات التقييم من الجهة</td><td>رقم الجوال</td></tr>
+      <tr><td>سياق النموذج العام</td><td>IP المستجيب وموقعه</td></tr>
+      <tr><td>—</td><td>أي بيانات تعريفية تُحدِّد هويته</td></tr>
+    </table>
+
+    <h3>مزود الذكاء الاصطناعي</h3>
+    <p>نستخدم حالياً نماذج ذكاء اصطناعي من شركة
+      Anthropic
+      (نموذج
+      claude-haiku-4-5
+      ). أبرم مع
+      Anthropic
+      اتفاقية API
+      تحظر استخدام بيانات الطلبات في تدريب النماذج. كل طلب معزول ومستقل ولا تُحتفَظ بسياقه بعد إغلاق الاتصال.
+    </p>
+
+    <h3>حقوق المستجيبين تجاه المعالجة الآلية</h3>
+    <ul>
+      <li><strong>حق الإعلام:</strong> يجب أن تُبلّغك الجهة بأن تقييمك يتضمن معالجة آلية بالذكاء الاصطناعي قبل ملء النموذج</li>
+      <li><strong>حق التفسير:</strong> يمكنك طلب شرح لكيفية احتساب درجتك عبر التواصل مع الجهة أو معنا</li>
+      <li><strong>حق الاعتراض:</strong> يحق لك الاعتراض على القرار وطلب مراجعة بشرية من الجهة</li>
+      <li><strong>حق رفض التقييم الآلي الكلي:</strong> في القرارات ذات الأثر القانوني المهم، يحق لك رفض قرار يستند لمعالجة آلية بالكامل</li>
+    </ul>
+
+    <div class="info-box">ℹ️ الجهة الشريكة — لا نحن — تتحمل المسؤولية الأولى عن إعلام المستجيبين بطبيعة التقييم الذكي. لكننا نُوجِّه جميع الجهات لاتباع ممارسات الشفافية المطلوبة نظاماً.</div>
+  </div>
+
+  <!-- القسم 7 -->
+  <div class="legal-article" id="pr7">
+    <h2><span class="art-num">7</span> مشاركة البيانات مع أطراف ثالثة</h2>
+    <p><strong>المبدأ الأساسي: لا نبيع بياناتك ولا نُؤجرها لأي جهة بأي شكل كان.</strong> المشاركة الوحيدة الممكنة هي مع مزودي الخدمات الضروريين لتشغيل المنصة وفق العقود الملزمة التالية:</p>
+    <table class="data-table">
+      <tr><th>المزوّد</th><th>الموقع</th><th>البيانات المُشاركة</th><th>الغرض</th><th>الضمانات</th></tr>
+      <tr>
+        <td><strong>Supabase</strong></td>
+        <td>الولايات المتحدة / أوروبا</td>
+        <td>جميع بيانات المنصة المُخزَّنة</td>
+        <td>قاعدة البيانات الرئيسية</td>
+        <td>AES-256، SOC 2، DPA موقَّعة</td>
+      </tr>
+      <tr>
+        <td><strong>Anthropic</strong></td>
+        <td>الولايات المتحدة</td>
+        <td>إجابات المتقدمين النصية فقط (مجهولة الهوية)</td>
+        <td>توليد درجات التقييم</td>
+        <td>API ToS تحظر التدريب، معزولة لكل طلب</td>
+      </tr>
+      <tr>
+        <td><strong>Resend</strong></td>
+        <td>الولايات المتحدة</td>
+        <td>البريد الإلكتروني + رمز OTP فقط</td>
+        <td>إرسال رسائل التحقق والإشعارات</td>
+        <td>TLS، عدم تخزين دائم لمحتوى الرسائل</td>
+      </tr>
+      <tr>
+        <td><strong>Netlify</strong></td>
+        <td>الولايات المتحدة</td>
+        <td>سجلات الطلبات HTTP، الملفات الثابتة</td>
+        <td>استضافة الموقع وتشغيل الوظائف السحابية</td>
+        <td>SOC 2 Type II، GDPR Compliant</td>
+      </tr>
+      <tr>
+        <td>بوابات الدفع المعتمدة</td>
+        <td>المملكة العربية السعودية</td>
+        <td>بيانات المعاملات المالية فقط</td>
+        <td>معالجة مدفوعات الاشتراكات</td>
+        <td>مُرخَّصة من مؤسسة النقد السعودي (SAMA)</td>
+      </tr>
+      <tr>
+        <td>الجهات القضائية والحكومية</td>
+        <td>حسب الطلب</td>
+        <td>ما يُحدِّده الأمر القضائي</td>
+        <td>الامتثال للأوامر القانونية الملزمة</td>
+        <td>نُحاول الإشعار المسبق كلما سمح القانون</td>
+      </tr>
+    </table>
+    <div class="highlight">⚠️ جميع مزودي الخدمات مُرتبطون بعقود معالجة بيانات (DPA) تُلزمهم بمعايير حماية مكافئة، وتُحظر عليهم المعالجة لأغراضهم الخاصة.</div>
+
+    <h3>حالات الإفصاح الإضافية</h3>
+    <p>قد نُفصح عن البيانات أيضاً في الحالات التالية:</p>
+    <ul>
+      <li><strong>حماية الحقوق:</strong> للدفاع عن حقوق الشركة وموظفيها في نزاع قانوني موثَّق</li>
+      <li><strong>الاندماج والاستحواذ:</strong> في سياق عمليات الاندماج أو الاستحواذ مع إشعار مسبق للجهات وضمان استمرار الحماية</li>
+      <li><strong>إنقاذ الأرواح:</strong> إذا رأينا خطراً داهماً على سلامة شخص ما في حالات استثنائية موثَّقة</li>
+    </ul>
+  </div>
+
+  <!-- القسم 8 -->
+  <div class="legal-article" id="pr8">
+    <h2><span class="art-num">8</span> نقل البيانات الدولي</h2>
+    <p>تعمل بعض مكونات البنية التحتية خارج المملكة العربية السعودية. فيما يلي توثيق كامل للضمانات المُطبَّقة:</p>
+    <ul>
+      <li><strong>التشفير في النقل:</strong> جميع البيانات المنقولة مُشفَّرة بـ
+        TLS 1.3
+        — أحدث معيار أمان النقل</li>
+      <li><strong>اختيار المناطق:</strong> نُفضِّل مزودين يعملون في مناطق ذات تشريعات حماية بيانات قوية (الولايات المتحدة والاتحاد الأوروبي)</li>
+      <li><strong>عقود المعالجة القياسية:</strong> مبرمة مع جميع مزودي الخدمات الدوليين وتشمل بنود حماية البيانات المعيارية</li>
+      <li><strong>تدنية البيانات المُنقَلة:</strong> لا تُنقل بيانات تعريفية حساسة للمزودين الذين لا يحتاجونها (كعدم إرسال اسم المستجيب لنموذج الذكاء الاصطناعي)</li>
+    </ul>
+    <div class="info-box">ℹ️ نسعى للامتثال لمتطلبات نظام حماية البيانات الشخصية السعودي فيما يخص نقل البيانات عبر الحدود. في حال صدور اشتراطات أكثر صرامة من الجهة الوطنية للأمن السيبراني، نلتزم بتطبيقها فور سريانها.</div>
+  </div>
+
+  <!-- القسم 9 -->
+  <div class="legal-article" id="pr9">
+    <h2><span class="art-num">9</span> الأمان والحماية التقنية</h2>
+    <p>نُطبّق نهج "الأمان بالتصميم" (Security by Design) حيث تُبنى الحماية في صميم المنصة لا كطبقة إضافية:</p>
+
+    <div class="security-cards">
+      <div class="sec-card">
+        <div class="sec-icon">🔐</div>
+        <h5>تشفير شامل</h5>
+        <p>AES-256 للتخزين + TLS 1.3 للنقل في جميع الطبقات بلا استثناء</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🛡️</div>
+        <h5>عزل تام للبيانات</h5>
+        <p>قيود منطقية صارمة بين الجهات تمنع أي تسرّب بشكل مادي</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🔑</div>
+        <h5>صلاحيات دقيقة</h5>
+        <p>كل موظف يرى فقط ما يحتاجه حرفياً لأداء دوره الوظيفي</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">📊</div>
+        <h5>مراقبة مستمرة 24/7</h5>
+        <p>سجلات تدقيق شاملة وتنبيهات فورية للأنشطة غير الطبيعية</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🧪</div>
+        <h5>اختبارات دورية</h5>
+        <p>فحص ثغرات شهري واختبار اختراق ربعي من جهات محايدة</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">💾</div>
+        <h5>نسخ احتياطي مشفَّر</h5>
+        <p>نسخ يومية في مواقع منفصلة جغرافياً مع اختبار الاسترداد دورياً</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🚪</div>
+        <h5>المصادقة المتعددة</h5>
+        <p>إمكانية تفعيل المصادقة الثنائية (2FA) لحسابات الجهات</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🔎</div>
+        <h5>مراجعة كود الإنتاج</h5>
+        <p>مراجعة أمنية إلزامية لكل تغيير في الكود قبل النشر</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">📋</div>
+        <h5>سياسات موثَّقة</h5>
+        <p>إجراءات موثَّقة للاستجابة للحوادث ومراجعتها دورياً</p>
+      </div>
+    </div>
+
+    <h3>حدود الأمان</h3>
+    <p>رغم بذل جهود أمنية جادة، لا يمكن لأي نظام ضمان الأمان التام بنسبة 100%. نُقرّ بأن الهجمات الإلكترونية الجديدة والمتطورة تُشكّل تهديداً لأي خدمة رقمية. في حال وقوع اختراق، نتعهد بالاستجابة السريعة وفق خطة الاستجابة للحوادث الموثَّقة (القسم 17).</p>
+  </div>
+
+  <!-- القسم 10 -->
+  <div class="legal-article" id="pr10">
+    <h2><span class="art-num">10</span> مدد الاحتفاظ والحذف</h2>
+    <p>نُحدِّد مُسبقاً مدة الاحتفاظ بكل نوع من البيانات بناءً على الغرض والمتطلبات القانونية:</p>
+
+    <div class="retention-bar"><span class="rb-icon">🏢</span><span class="rb-label">بيانات حسابات الجهات الشريكة (معلومات الحساب والإعدادات)</span><span class="rb-val">طوال الاشتراك + 30 يوماً بعد الإلغاء</span></div>
+    <div class="retention-bar"><span class="rb-icon">📋</span><span class="rb-label">بيانات المتقدمين ونتائج التقييم</span><span class="rb-val">تُحدِّده الجهة (الافتراضي: 12 شهراً)</span></div>
+    <div class="retention-bar"><span class="rb-icon">🧾</span><span class="rb-label">الفواتير والمعاملات المالية</span><span class="rb-val">7 سنوات (متطلبات الزكاة والضريبة)</span></div>
+    <div class="retention-bar"><span class="rb-icon">📊</span><span class="rb-label">سجلات التدقيق الأمني الكاملة</span><span class="rb-val">90 يوماً</span></div>
+    <div class="retention-bar"><span class="rb-icon">🔍</span><span class="rb-label">سجلات تدقيق مُبسَّطة (للنزاعات)</span><span class="rb-val">12 شهراً</span></div>
+    <div class="retention-bar"><span class="rb-icon">📨</span><span class="rb-label">رموز OTP وسجلات إرسالها</span><span class="rb-val">7 أيام ثم حذف تلقائي</span></div>
+    <div class="retention-bar"><span class="rb-icon">🍪</span><span class="rb-label">جلسات المستخدمين (session tokens)</span><span class="rb-val">24 ساعة أو عند تسجيل الخروج</span></div>
+    <div class="retention-bar"><span class="rb-icon">⚙️</span><span class="rb-label">تفضيلات اللغة وإعدادات الواجهة</span><span class="rb-val">30 يوماً بعد آخر زيارة</span></div>
+    <div class="retention-bar"><span class="rb-icon">📈</span><span class="rb-label">بيانات التحليلات المجهولة الهوية</span><span class="rb-val">24 شهراً</span></div>
+    <div class="retention-bar"><span class="rb-icon">📧</span><span class="rb-label">مراسلات الدعم الفني</span><span class="rb-val">24 شهراً من إغلاق التذكرة</span></div>
+    <div class="retention-bar"><span class="rb-icon">📁</span><span class="rb-label">الملفات المرفوعة عبر النماذج (CV، شهادات)</span><span class="rb-val">تُحدِّده الجهة أو بحذف الطلب</span></div>
+
+    <h3>آلية الحذف</h3>
+    <p>عند انتهاء مدة الاحتفاظ أو استلام طلب الحذف المؤهَّل، تُنفَّذ عملية الحذف بالخطوات التالية:</p>
+    <ol class="content-list">
+      <li>حذف البيانات من قواعد البيانات الرئيسية</li>
+      <li>حذف ملفات التخزين المرتبطة</li>
+      <li>تحديث النسخ الاحتياطية في الدورة الاحتياطية التالية</li>
+      <li>التحقق من اكتمال الحذف في جميع الطبقات</li>
+    </ol>
+    <div class="success-box">✅ الحذف نهائي وكامل. لا تُحتفَظ بنسخ مخفية أو أرشيفات خاصة. البيانات المحذوفة لا يمكن استرجاعها لأي سبب.</div>
+  </div>
+
+  <!-- القسم 11 -->
+  <div class="legal-article" id="pr11">
+    <h2><span class="art-num">11</span> ملفات تعريف الارتباط والتتبع</h2>
+
+    <h3>الكوكيز الضرورية (تعمل دائماً)</h3>
+    <table class="data-table">
+      <tr><th>اسم الكوكي</th><th>الغرض</th><th>المدة</th></tr>
+      <tr><td>session_token</td><td>الحفاظ على حالة تسجيل دخول الجهة</td><td>حتى تسجيل الخروج أو 24 ساعة</td></tr>
+      <tr><td>rafd_lang</td><td>تذكّر اختيار اللغة (عربي / إنجليزي)</td><td>30 يوماً</td></tr>
+      <tr><td>csrf_token</td><td>حماية النماذج من هجمات CSRF</td><td>مدة الجلسة</td></tr>
+      <tr><td>partner_id_cache</td><td>تحميل أسرع للوحة التحكم</td><td>24 ساعة</td></tr>
+    </table>
+
+    <h3>كوكيز الأداء (قابلة للتعطيل)</h3>
+    <table class="data-table">
+      <tr><th>اسم الكوكي</th><th>الغرض</th><th>المدة</th></tr>
+      <tr><td>perf_metrics</td><td>قياس وقت تحميل الصفحات</td><td>30 يوماً</td></tr>
+      <tr><td>page_visit_id</td><td>تتبع رحلة المستخدم داخل الجلسة (مجهول)</td><td>الجلسة</td></tr>
+    </table>
+
+    <h3>إدارة الكوكيز</h3>
+    <p>يمكنك التحكم في الكوكيز من خلال:</p>
+    <ul>
+      <li>إعدادات المتصفح لحذف أو منع كوكيز معينة</li>
+      <li>الامتداد
+        uBlock Origin
+        أو مشابه لمنع كوكيز التتبع</li>
+      <li>وضع التصفح الخاص / المتخفّي الذي يحذف الكوكيز عند الإغلاق</li>
+    </ul>
+    <p>تعطيل الكوكيز الضرورية سيُعطّل وظائف أساسية كالدخول للوحة التحكم. تعطيل كوكيز الأداء لن يؤثر على وظائف المنصة.</p>
+
+    <h3>التتبع الخارجي</h3>
+    <p>لا نستخدم أدوات تتبع إعلانية خارجية (Google Ads، Facebook Pixel) ولا نُشارك بيانات سلوك المستخدم مع أي شبكة إعلانية.</p>
+  </div>
+
+  <!-- القسم 12 -->
+  <div class="legal-article" id="pr12">
+    <h2><span class="art-num">12</span> حقوقك الكاملة كمستخدم</h2>
+    <p>يُكفل نظام حماية البيانات الشخصية السعودي الحقوق الجوهرية التالية لكل شخص بياناته لدينا:</p>
+    <div class="rights-grid">
+      <div class="right-card">
+        <h5>🔍 حق الاطلاع والوصول</h5>
+        <p>الحصول على نسخة كاملة من جميع بياناتك الشخصية المُخزَّنة لدينا، ومعلومات عن كيفية معالجتها ومع من تُشارَك، خلال 30 يوماً من الطلب المكتوب</p>
+      </div>
+      <div class="right-card">
+        <h5>✏️ حق التصحيح والتحديث</h5>
+        <p>طلب تصحيح أي بيانات غير دقيقة أو مُضلِّلة أو تحديث بيانات أصبحت قديمة، وتنفيذ الطلب خلال 15 يوم عمل</p>
+      </div>
+      <div class="right-card">
+        <h5>🗑️ حق الحذف ("الطيّ والنسيان")</h5>
+        <p>طلب حذف بياناتك نهائياً عند انتفاء الغرض من جمعها أو سحب موافقتك، مع الإبقاء فقط على ما يُلزم النظام بالاحتفاظ به</p>
+      </div>
+      <div class="right-card">
+        <h5>📦 حق نقل البيانات</h5>
+        <p>الحصول على بياناتك بتنسيق منظَّم وقابل للقراءة آلياً (JSON أو CSV) لنقلها لمزود خدمة آخر بسهولة</p>
+      </div>
+      <div class="right-card">
+        <h5>⛔ حق الاعتراض على المعالجة</h5>
+        <p>الاعتراض على معالجة بياناتك بناءً على المصلحة المشروعة، وإيقاف المعالجة ما لم يثبت وجود سبب مشروع يعلو على اعتراضك</p>
+      </div>
+      <div class="right-card">
+        <h5>⏸️ حق تقييد المعالجة</h5>
+        <p>طلب تعليق معالجة بياناتك مؤقتاً — مثلاً أثناء التحقق من دقتها أو ريثما تُحسَم اعتراضاتك — مع بقائها مُخزَّنة لدينا</p>
+      </div>
+      <div class="right-card">
+        <h5>👤 حق المراجعة البشرية</h5>
+        <p>الاعتراض على أي قرار ذي أثر مهم يستند بالكامل لمعالجة آلية، وطلب تدخل إنساني لمراجعته وإعادة تقييمه</p>
+      </div>
+      <div class="right-card">
+        <h5>🔇 حق سحب الموافقة</h5>
+        <p>سحب موافقتك على أي معالجة مبنية على الموافقة (كالاشتراك في النشرة الإخبارية) في أي وقت دون أثر رجعي على ما سبق</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- القسم 13 -->
+  <div class="legal-article" id="pr13">
+    <h2><span class="art-num">13</span> الإجراءات العملية لممارسة حقوقك</h2>
+
+    <h3>كيف تتقدم بطلب</h3>
+    <div class="step-flow">
+      <div class="step-item">
+        <span class="step-num">1</span>
+        <div><h5>أرسل طلبك بالبريد الإلكتروني</h5><p>إلى privacy@rafd-digital.com مع ذكر: نوع الطلب (اطلاع / تصحيح / حذف / نقل...) + بياناتك التعريفية للتحقق</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">2</span>
+        <div><h5>التحقق من الهوية</h5><p>قد نطلب منك تأكيد هويتك بخطوة إضافية لمنع الطلبات غير المصرّح بها قبل الإفصاح عن البيانات أو حذفها</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">3</span>
+        <div><h5>استلام التأكيد</h5><p>ستستلم رسالة تأكيد بالطلب ورقماً مرجعياً خلال 48 ساعة من الاستلام</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">4</span>
+        <div><h5>المعالجة والرد</h5><p>نُعالج طلبك خلال 30 يوماً أو أقل. للطلبات المعقدة قد تمتد لـ 90 يوماً مع إشعارك بذلك ومبرراته</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">5</span>
+        <div><h5>الرد والإجراء</h5><p>نُبلّغك بنتيجة طلبك كتابياً سواء بالتنفيذ الكامل أو الجزئي أو الرفض المُبرَّر</p></div>
+      </div>
+    </div>
+
+    <h3>رسوم الطلبات</h3>
+    <p>جميع الطلبات المعقولة والأولى من نوعها مجانية. الطلبات المتكررة بشكل واضح أو المفرطة قد تستوجب رسوماً إدارية رمزية بعد إشعارك مسبقاً.</p>
+
+    <h3>حالات قد نرفض فيها الطلب</h3>
+    <ul>
+      <li>الطلب يُخلّ بحقوق خصوصية أشخاص آخرين</li>
+      <li>البيانات مطلوبة قانوناً لأغراض الامتثال والتقاضي</li>
+      <li>الطلب مُتكرر بشكل واضح أو يبدو كيدياً</li>
+      <li>عدم التحقق من هوية مقدم الطلب</li>
+    </ul>
+    <p>عند الرفض، نُبرِّره خطياً ونُخبرك بحقك في الاعتراض أمام الجهات الرقابية.</p>
+  </div>
+
+  <!-- القسم 14 -->
+  <div class="legal-article" id="pr14">
+    <h2><span class="art-num">14</span> خصوصية القاصرين والفئات الهشة</h2>
+
+    <h3>خصوصية الأطفال والقاصرين</h3>
+    <p>لا تستهدف منصتنا القاصرين (دون 18 سنة) ولا تُصمَّم لجمع بياناتهم مباشرةً. منصتنا موجَّهة للاستخدام التجاري والمؤسسي من قِبل البالغين.</p>
+    <p>في حال تصميم جهة شريكة لنموذج يستهدف قاصرين أو أشخاصاً دون 18 سنة (مثل الطلاب في برامج موهبة أو مسابقات للناشئين)، تتحمل تلك الجهة المسؤولية الكاملة والحصرية عن:</p>
+    <ul>
+      <li>الحصول على الموافقة الصريحة المكتوبة من وليّ الأمر أو الوصيّ القانوني قبل جمع أي بيانات</li>
+      <li>الإفصاح الكامل لوليّ الأمر عن طبيعة البيانات المجمّعة وكيفية استخدامها</li>
+      <li>الامتثال لنظام الأحوال الشخصية ونظام الطفل السعودي وأي أنظمة ذات صلة</li>
+      <li>توفير آلية واضحة لوليّ الأمر للاعتراض أو طلب حذف البيانات</li>
+      <li>عدم جمع أي بيانات حساسة غير ضرورية عن القاصرين</li>
+    </ul>
+    <div class="danger-box">⛔ إذا اكتشفنا أن بيانات قاصر قد جُمعت دون موافقة مناسبة، سنتخذ إجراءات فورية تشمل تعليق النموذج المعني والطلب من الجهة تصحيح الوضع، وقد يصل لحذف البيانات فوراً.</div>
+
+    <h3>ذوو الإعاقات والفئات ذات الاحتياجات الخاصة</h3>
+    <p>نسعى لضمان إمكانية الوصول لخدماتنا من قِبل الأشخاص ذوي الإعاقات، ونلتزم بعدم إقصائهم بسبب احتياجاتهم الخاصة في تجربة الاستخدام.</p>
+  </div>
+
+  <!-- القسم 15 -->
+  <div class="legal-article" id="pr15">
+    <h2><span class="art-num">15</span> البيانات الحساسة والفئات الخاصة</h2>
+    <p>بعض أنواع البيانات تُصنَّف قانونياً كـ "حساسة" وتستوجب حماية مضاعفة. تشمل هذه الفئات في نظام حماية البيانات السعودي:</p>
+    <ul>
+      <li>الأصل العرقي أو الإثني</li>
+      <li>الآراء السياسية والمعتقدات الدينية</li>
+      <li>البيانات الصحية والطبية</li>
+      <li>البيانات البيومترية (بصمات، ملامح وجه...)</li>
+      <li>البيانات الجنائية والجنائية</li>
+      <li>الميول الشخصية الحساسة</li>
+    </ul>
+    <p><strong>موقف المنصة:</strong> لا نجمع بيانات حساسة بشكل مباشر في إطار عمل المنصة. لكن إذا أنشأت جهة شريكة نموذجاً يتضمن أسئلة في هذه الفئات، تتحمل الجهة المسؤولية القانونية الكاملة عن الحصول على الموافقة الاستثنائية المطلوبة نظاماً لمعالجة هذه البيانات.</p>
+  </div>
+
+  <!-- القسم 16 -->
+  <div class="legal-article" id="pr16">
+    <h2><span class="art-num">16</span> التسويق والاتصالات الترويجية</h2>
+
+    <h3>الرسائل التسويقية</h3>
+    <p>لا نُرسل رسائل تسويقية أو ترويجية إلا بعد الحصول على موافقة صريحة إيجابية من المستلم (Opt-in). لا نعتمد على الموافقة الضمنية أو المسبقة أو التحديد المسبق لخانة "أوافق على استلام العروض".</p>
+
+    <h3>أنواع الاتصالات</h3>
+    <ul>
+      <li><strong>إشعارات الخدمة (ضرورية — لا تخضع للإلغاء):</strong> الفواتير، تغييرات الحساب، إشعارات الأمان، انتهاء الاشتراك</li>
+      <li><strong>تحديثات المنصة (اختيارية):</strong> الميزات الجديدة وتحسينات النظام — يمكن إلغاؤها</li>
+      <li><strong>النشرة الإخبارية والمحتوى (اختيارية):</strong> مقالات القطاع والأدلة الإرشادية — تتطلب تسجيلاً صريحاً</li>
+      <li><strong>عروض وخصومات (اختيارية):</strong> تتطلب موافقة إضافية صريحة</li>
+    </ul>
+
+    <h3>إلغاء الاشتراك في التسويق</h3>
+    <p>يمكن إلغاء استلام أي رسائل تسويقية في أي وقت عبر:</p>
+    <ul>
+      <li>رابط "إلغاء الاشتراك" في أسفل كل رسالة تسويقية</li>
+      <li>تعديل تفضيلات الإشعارات في لوحة التحكم</li>
+      <li>إرسال طلب مكتوب لـ privacy@rafd-digital.com</li>
+    </ul>
+    <p>يُنفَّذ إلغاء الاشتراك خلال 5 أيام عمل ولا تُرسَل أي رسالة تسويقية بعدها.</p>
+  </div>
+
+  <!-- القسم 17 -->
+  <div class="legal-article" id="pr17">
+    <h2><span class="art-num">17</span> إشعارات الاختراق ومعالجة الحوادث</h2>
+    <p>في حال وقوع أي حادثة أمنية تؤثر على البيانات الشخصية، نتبع الإجراء التالي:</p>
+    <div class="step-flow">
+      <div class="step-item">
+        <span class="step-num">1</span>
+        <div><h5>الاحتواء الفوري (خلال 1 ساعة)</h5><p>فصل الأنظمة المُخترَقة وإيقاف الوصول غير المُصرَّح به لمنع توسع الضرر</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">2</span>
+        <div><h5>التحقيق الأولي (خلال 4 ساعات)</h5><p>تحديد نطاق الاختراق والبيانات المتأثرة والجهات المعنية</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">3</span>
+        <div><h5>إشعار الجهات المتأثرة (خلال 72 ساعة)</h5><p>إشعار خطي مُفصَّل للجهات الشريكة التي تأثرت بياناتها يتضمن: طبيعة الاختراق، البيانات المتأثرة، الإجراءات المتخذة، ما يُقترَح عليهم فعله</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">4</span>
+        <div><h5>الإبلاغ للجهات الرقابية (حسب النظام)</h5><p>الإبلاغ للجهة الوطنية للأمن السيبراني والهيئة السعودية للبيانات والذكاء الاصطناعي وفق الإجراءات النظامية المطلوبة</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">5</span>
+        <div><h5>المعالجة والتعلم (خلال 30 يوماً)</h5><p>إصلاح الثغرة جذرياً، مراجعة الضوابط الأمنية، تحديث إجراءات الاستجابة للحوادث، نشر تقرير لاحق</p></div>
+      </div>
+    </div>
+    <div class="success-box">✅ نلتزم بالشفافية الكاملة في التعامل مع الحوادث الأمنية. لا نُؤخِّر إشعار المتأثرين لصون سمعتنا — الحقوق أهم من الصورة.</div>
+  </div>
+
+  <!-- القسم 18 -->
+  <div class="legal-article" id="pr18">
+    <h2><span class="art-num">18</span> التغييرات على هذه السياسة</h2>
+    <p>تتطور ممارسات الخصوصية مع تطور الخدمة والمتطلبات القانونية. نُفرِّق بين نوعين من التغييرات:</p>
+
+    <h3>التغييرات الجوهرية</h3>
+    <p>تشمل: إضافة أغراض جديدة للمعالجة، تغيير مزودي الخدمات الرئيسيين، تقليص حقوق المستخدمين، أو أي تغيير يُضعِف مستوى الحماية. هذه التغييرات تستوجب:</p>
+    <ul>
+      <li>إشعار مسبق بـ 30 يوماً عبر البريد الإلكتروني للجهات المُسجَّلة</li>
+      <li>إشعار واضح في لوحة التحكم عند تسجيل الدخول خلال فترة الإشعار</li>
+      <li>الإبقاء على النسخة السابقة متاحة للمقارنة لمدة 60 يوماً</li>
+      <li>حق الجهة في إلغاء الاشتراك بسبب التغيير دون غرامة</li>
+    </ul>
+
+    <h3>التغييرات غير الجوهرية</h3>
+    <p>تشمل: التوضيحات والأمثلة والتحديثات القانونية الشكلية. تسري فوراً مع إشعار معلوماتي فقط.</p>
+
+    <h3>أرشيف السياسات</h3>
+    <p>تُحفَظ جميع الإصدارات السابقة لهذه السياسة ويمكن طلبها عبر privacy@rafd-digital.com للمقارنة المرجعية.</p>
+  </div>
+
+  <!-- القسم 19 -->
+  <div class="legal-article" id="pr19">
+    <h2><span class="art-num">19</span> الشكاوى والجهات الرقابية</h2>
+    <p>إذا كنت غير راضٍ عن كيفية تعاملنا مع بياناتك أو طريقة معالجة طلبك، يمكنك اتخاذ الخطوات التالية بالترتيب:</p>
+    <div class="step-flow">
+      <div class="step-item">
+        <span class="step-num">1</span>
+        <div><h5>التقدم بشكوى داخلية</h5><p>إرسال شكواك المفصّلة لـ privacy@rafd-digital.com. نلتزم بالرد الكتابي المُبرَّر خلال 15 يوم عمل</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">2</span>
+        <div><h5>التصعيد لقيادة الشركة</h5><p>إذا لم تقتنع بالرد، يمكنك طلب إحالة شكواك لمستوى أعلى في هيكل القيادة لمراجعة مستقلة</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">3</span>
+        <div><h5>الجهة الوطنية للأمن السيبراني (NCA)</h5><p>تقديم شكوى رسمية للجهة الوطنية للأمن السيبراني في المملكة العربية السعودية</p></div>
+      </div>
+      <div class="step-item">
+        <span class="step-num">4</span>
+        <div><h5>الهيئة السعودية للبيانات والذكاء الاصطناعي (SDAIA)</h5><p>التواصل مع هيئة SDAIA المسؤولة عن تطبيق نظام حماية البيانات الشخصية السعودي</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- القسم 20 -->
+  <div class="legal-article" id="pr20">
+    <h2><span class="art-num">20</span> مسؤول حماية البيانات والتواصل</h2>
+    <p>عيّنت RAFD Digital مسؤول حماية بيانات (DPO) مخصصاً للإشراف على الامتثال لممارسات الخصوصية ومعالجة الاستفسارات والطلبات المتعلقة بالبيانات الشخصية.</p>
+
+    <div class="contact-box">
+      <h3>مسؤول حماية البيانات — RAFD Digital</h3>
+      <p>الرياض، المملكة العربية السعودية<br>ساعات العمل: الأحد — الخميس، 9 صباحاً — 5 مساءً (توقيت الرياض)<br>نلتزم بالرد خلال 5 أيام عمل للاستفسارات العامة و30 يوماً لطلبات الحقوق الرسمية</p>
+      <a href="mailto:privacy@rafd-digital.com">🔒 privacy@rafd-digital.com</a>
+      <a href="mailto:info@rafd-digital.com">✉ info@rafd-digital.com</a>
+    </div>
+
+    <p style="margin-top:2rem;text-align:center;font-size:.8rem;color:#94a3b8;line-height:2">
+      تسري هذه السياسة على جميع خدمات RAFD Digital وتُكمِّل شروط الاستخدام المنشورة على الموقع.<br>
+      نسخة PDF من هذه السياسة متاحة بطلب للأغراض الأرشيفية والتعاقدية.<br>
+      جميع الحقوق محفوظة © 2026 RAFD Digital — الإصدار 4.0 — يونيو 2026
+    </p>
+  </div>
+
+</div>
 </section>
 
-<!-- FOOTER -->
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
-        <p class="footer-desc" data-i18n="footer.desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
+        <img src="/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
+        <p class="footer-desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات التقييم — مصممة للسوق السعودي</p>
       </div>
       <div class="footer-col">
-        <h4 data-i18n="footer.platform">المنصة</h4>
+        <h4>المنصة</h4>
         <ul>
-          <li><a href="/#features" data-i18n="nav.features">المميزات</a></li>
-          <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
-          <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
-          <li><a href="/demo-apply.html" data-i18n="footer.trial">تجربة مجانية</a></li>
+          <li><a href="/#features">المميزات</a></li>
+          <li><a href="/how-it-works.html">كيف نعمل</a></li>
+          <li><a href="/#pricing">الأسعار</a></li>
+          <li><a href="/demo-apply.html">تجربة مجانية</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4 data-i18n="footer.company">الشركة</h4>
+        <h4>الشركة</h4>
         <ul>
-          <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
-          <li><a href="mailto:info@rafd-digital.com" data-i18n="footer.contact">تواصل معنا</a></li>
-          <li><a href="/privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a></li>
-          <li><a href="/terms.html" data-i18n="footer.terms">الشروط والأحكام</a></li>
+          <li><a href="/about.html">من نحن</a></li>
+          <li><a href="mailto:info@rafd-digital.com">تواصل معنا</a></li>
+          <li><a href="/privacy.html">سياسة الخصوصية</a></li>
+          <li><a href="/terms.html">الشروط والأحكام</a></li>
         </ul>
-        <div style="margin-top:1rem">
-          <a href="mailto:info@rafd-digital.com" style="color:#4a9d6f;font-size:.82rem;font-weight:600;text-decoration:none">✉ info@rafd-digital.com</a>
-        </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copy"><span data-i18n="footer.copy">© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span></span>
+      <span class="footer-copy">© 2026 RAFD Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span>
     </div>
   </div>
 </footer>
 
 <script>
-document.getElementById('hamburger').addEventListener('click', function() {
-  const nav = document.querySelector('.nav-links');
-  nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
-  nav.style.flexDirection = 'column';
-  nav.style.position = 'absolute';
-  nav.style.top = '72px';
-  nav.style.right = '0';
-  nav.style.left = '0';
-  nav.style.background = '#fff';
-  nav.style.padding = '1rem 2rem';
-  nav.style.borderBottom = '1px solid #e2e8f0';
-  nav.style.zIndex = '999';
-});
-window.addEventListener('scroll', function() {
-  const nb = document.getElementById('navbar');
-  if(window.scrollY > 50) nb.style.boxShadow = '0 4px 24px rgba(0,0,0,.08)';
-  else nb.style.boxShadow = 'none';
-});
+document.getElementById('hamburger').addEventListener('click',function(){const n=document.querySelector('.nav-links');n.style.display=n.style.display==='flex'?'none':'flex';n.style.flexDirection='column';n.style.position='absolute';n.style.top='72px';n.style.right='0';n.style.left='0';n.style.background='#fff';n.style.padding='1rem 2rem';n.style.borderBottom='1px solid #e2e8f0';n.style.zIndex='999'});
+window.addEventListener('scroll',function(){const nb=document.getElementById('navbar');if(window.scrollY>50)nb.style.boxShadow='0 4px 24px rgba(0,0,0,.08)';else nb.style.boxShadow='none'});
+function toggleLoginDrop(e){e.stopPropagation();document.getElementById('loginDrop').classList.toggle('open')}
+document.addEventListener('click',()=>document.getElementById('loginDrop')?.classList.remove('open'));
 </script>
 <script src="/i18n.js"></script>
 </body>
 </html>
-
-
-
-
-
-
