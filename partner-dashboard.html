@@ -887,6 +887,9 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div class="q-weight"><label data-i18n="db.lbl-weight">الوزن:</label><input type="number" id="qw_commit" value="5" min="1" max="30" oninput="updateWeightTotal()"><label data-i18n="db.lbl-pt">نقطة</label></div>
       </div>
 
+      <!-- المعايير المخصصة المضافة للقائمة الأساسية -->
+      <div id="custom_criteria_inline"></div>
+
       <!-- Custom criteria -->
       <div style="border-top:1px solid #1e293b;margin-top:.75rem;padding-top:.75rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
@@ -2138,28 +2141,27 @@ function renderCustomCriteria() {
   if (bottomBtn) bottomBtn.style.display = (customCriteria.length && editing.length === 0) ? 'flex' : 'none';
   if (!customCriteria.length) { container.innerHTML = ''; return; }
 
-  let html = '';
-
-  // ── قائمة المعايير المضافة ──
-  if (confirmed.length) {
-    html += `<div style="margin-bottom:1rem">
-      <div style="font-size:.72rem;color:#4a9d6f;font-weight:700;margin-bottom:.4rem">✓ المعايير المضافة للنموذج (${confirmed.length})</div>`;
-    confirmed.forEach((c) => {
+  // ── المعايير المؤكدة تنضاف للقائمة الأساسية ──
+  const inlineContainer = document.getElementById('custom_criteria_inline');
+  if (inlineContainer) {
+    inlineContainer.innerHTML = confirmed.map((c) => {
       const ci = customCriteria.indexOf(c);
-      html += `<div style="display:flex;align-items:center;justify-content:space-between;background:#0a1628;border:1px solid rgba(74,157,111,.3);border-radius:8px;padding:.5rem .85rem;margin-bottom:.35rem">
-        <div style="display:flex;align-items:center;gap:.5rem">
-          <span style="color:#4a9d6f;font-size:.85rem">✓</span>
-          <span style="color:#e2e8f0;font-size:.82rem;font-weight:600">${c.label || '—'}</span>
+      return `<div class="q-card" style="border-color:rgba(74,157,111,.3)">
+        <button class="q-toggle on" onclick="editCriterion(${ci})" title="تعديل" style="background:#4a9d6f"></button>
+        <div class="q-label" style="flex:1">✦ ${c.label}</div>
+        <div class="q-weight">
+          <label>الوزن:</label>
+          <input type="number" value="${c.weight}" min="0" max="100"
+            oninput="customCriteria[${ci}].weight=parseInt(this.value)||0;updateWeightTotal()"
+            style="width:48px">
+          <label>نقطة</label>
         </div>
-        <div style="display:flex;align-items:center;gap:.5rem">
-          <span style="color:#38bdf8;font-size:.75rem;font-weight:700">${c.weight} نقطة</span>
-          <button onclick="editCriterion(${ci})" style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:5px;padding:.2rem .5rem;font-family:'Cairo',sans-serif;font-size:.7rem;cursor:pointer">تعديل</button>
-          <button onclick="removeCustomCriterion(${ci})" style="background:none;border:none;color:#f87171;cursor:pointer;font-size:.8rem">🗑️</button>
-        </div>
+        <button onclick="removeCustomCriterion(${ci})" style="background:none;border:none;color:#f87171;cursor:pointer;font-size:.85rem;padding:0 .25rem">🗑️</button>
       </div>`;
-    });
-    html += `</div>`;
+    }).join('');
   }
+
+  let html = '';
 
   // ── المعايير قيد التحرير ──
   editing.forEach((c) => {
