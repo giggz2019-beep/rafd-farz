@@ -1960,7 +1960,7 @@ function updateWeightTotal() {
   CRITERIA_IDS.forEach(id => {
     if (qStates[id] !== false) total += parseInt(document.getElementById('qw_'+id)?.value || 0);
   });
-  customCriteria.forEach(c => { total += c.weight || 0; });
+  // المعايير المخصصة لها نقاطها المستقلة — لا تُضاف للـ 100
   const display = document.getElementById('weight_total_display');
   const warning = document.getElementById('weight_warning');
   const sticky = document.getElementById('sticky_weight');
@@ -2086,9 +2086,24 @@ function renderCustomDocs() {
 }
 
 function addCustomCriterion() {
-  customCriteria.push({ label: '', weight: 0, options: [{text:'',score:1},{text:'',score:0}] });
+  customCriteria.push({ label: '', weight: 0, options: [{text:'',score:1},{text:'',score:0}], confirmed: false });
   renderCustomCriteria();
   updateWeightTotal();
+}
+
+function confirmCriterion(ci) {
+  if (!customCriteria[ci].label.trim()) {
+    alert('اكتب نص السؤال أولاً');
+    return;
+  }
+  customCriteria[ci].confirmed = true;
+  renderCustomCriteria();
+  updateWeightTotal();
+}
+
+function editCriterion(ci) {
+  customCriteria[ci].confirmed = false;
+  renderCustomCriteria();
 }
 
 function removeCustomCriterion(idx) {
