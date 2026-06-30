@@ -841,14 +841,14 @@ window.addEventListener('scroll', function() {
     <button class="kh-close" onclick="toggleKhalid()">✕</button>
   </div>
   <div class="kh-msgs" id="khalidMsgs">
-    <div class="kh-msg bot">هلا! أنا خالد من فريق خدمة عملاء RAFD 👋<br>كيف أقدر أساعدك اليوم؟</div>
+    <div class="kh-msg bot" data-i18n="chat.welcome">هلا! أنا خالد من فريق خدمة عملاء RAFD 👋 كيف أقدر أساعدك اليوم؟</div>
   </div>
     <div class="kh-quick" id="khalidQuick">
-    <button class="kh-q" onclick="khSend('كيف اشترك')"><span data-i18n="chat.q1">كيف اشترك؟</span></button>
-    <button class="kh-q" onclick="khSend('طريقة عملكم')"><span data-i18n="chat.q2">طريقة عملكم</span></button>
-    <button class="kh-q" onclick="khSend('الباقات')"><span data-i18n="chat.q3">الباقات والأسعار</span></button>
-    <button class="kh-q" onclick="khSend('كيف اسجل حساب')"><span data-i18n="chat.q4">كيف أسجل؟</span></button>
-    <button class="kh-q" onclick="khSend('تواصل معنا')"><span data-i18n="chat.q6">تواصل معنا</span></button>
+    <button class="kh-q" onclick="khSend(getT('chat.q1'))"><span data-i18n="chat.q1">كيف اشترك؟</span></button>
+    <button class="kh-q" onclick="khSend(getT('chat.q2'))"><span data-i18n="chat.q2">طريقة عملكم</span></button>
+    <button class="kh-q" onclick="khSend(getT('chat.q3'))"><span data-i18n="chat.q3">الباقات والأسعار</span></button>
+    <button class="kh-q" onclick="khSend(getT('chat.q4'))"><span data-i18n="chat.q4">كيف أسجل؟</span></button>
+    <button class="kh-q" onclick="khSend(getT('chat.q6'))"><span data-i18n="chat.q6">تواصل معنا</span></button>
   </div>
   <div class="kh-input-row">
     <input class="kh-input" id="khalidInput" placeholder="اكتب سؤالك..." data-i18n-placeholder="chat.placeholder" onkeydown="if(event.key==='Enter')khSend()">
