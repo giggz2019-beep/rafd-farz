@@ -374,9 +374,9 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="card" style="padding:0;overflow:hidden">
       <div class="tbl-wrap">
         <table>
-          <thead><tr><th>#</th><th data-i18n="db.th-name">اسم المتقدم</th><th data-i18n="db.th-id">رقم الهوية</th><th data-i18n="db.th-purpose">الغرض</th><th data-i18n="db.th-score">الدرجة</th><th data-i18n="db.th-date">التاريخ</th><th data-i18n="db.th-result">النتيجة</th><th data-i18n="db.th-actions">إجراءات</th></tr></thead>
+          <thead><tr><th>#</th><th data-i18n="db.th-name">اسم المتقدم</th><th data-i18n="db.th-id">رقم الهوية</th><th data-i18n="db.th-purpose">الغرض</th><th data-i18n="db.th-score">الدرجة</th><th data-i18n="db.th-date">التاريخ</th><th data-i18n="db.th-result">النتيجة</th><th data-i18n="db.th-contact">تواصل</th><th data-i18n="db.th-actions">إجراءات</th></tr></thead>
           <tbody id="all_requests_table">
-            <tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span></td></tr>
+            <tr><td colspan="9" style="text-align:center;color:#475569;padding:2rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -1354,7 +1354,7 @@ function renderAllRequests(list) {
   const reqs = list || allApplications;
   const tbody = document.getElementById('all_requests_table');
   if (!reqs.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem">${getT('db.no-requests')}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:#475569;padding:2rem">${getT('db.no-requests')}</td></tr>`;
     return;
   }
   tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal('${r.id}')" style="cursor:pointer">
@@ -1365,6 +1365,11 @@ function renderAllRequests(list) {
     <td><span style="font-weight:800;color:${r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score || '—'}</span></td>
     <td style="color:#64748b;font-size:.78rem">${fmtDate(r.created_at)}</td>
     <td>${resultBadge(r.result, r.score)}</td>
+    <td onclick="event.stopPropagation()" style="white-space:nowrap;text-align:center">
+      ${r.phone ? `<a href="tel:${r.phone}" onclick="event.stopPropagation()" style="color:#38bdf8;text-decoration:none;font-size:1rem;margin-left:.3rem" title="${r.phone}">📞</a>` : ''}
+      ${r.email ? `<a href="mailto:${r.email}" onclick="event.stopPropagation()" style="color:#38bdf8;text-decoration:none;font-size:1rem" title="${r.email}">📧</a>` : ''}
+      ${!r.phone && !r.email ? '<span style="color:#475569">—</span>' : ''}
+    </td>
     <td onclick="event.stopPropagation()"><button class="btn-sm danger" onclick="deleteRequest('${r.id}')">${getT('db.btn-delete')}</button></td>
   </tr>`).join('');
 }
@@ -1442,11 +1447,21 @@ function openReqModal(id) {
   if (!r) return;
   const scoreColor = r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444';
   const isPending = r.result === 'pending';
+  const isApproved = r.result === 'approved';
+  const isRejected = r.result === 'rejected';
+
+  const emailLink = r.email
+    ? `<a href="mailto:${r.email}" style="color:#38bdf8;text-decoration:none;font-weight:600">${r.email} 📧</a>`
+    : '—';
+  const phoneLink = r.phone
+    ? `<a href="tel:${r.phone}" style="color:#38bdf8;text-decoration:none;font-weight:600;direction:ltr;display:inline-block">${r.phone} 📞</a>`
+    : '—';
+
   document.getElementById('reqModalBody').innerHTML = `
     <div style="display:grid;gap:.75rem">
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-name')}</span><span style="color:#e2e8f0;font-weight:700">${r.name}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-email')}</span><span style="color:#e2e8f0">${r.email || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-phone')}</span><span style="color:#e2e8f0">${r.phone || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#64748b">${getT('db.modal-email')}</span><span>${emailLink}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#64748b">${getT('db.modal-phone')}</span><span>${phoneLink}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-company')}</span><span style="color:#e2e8f0">${r.company || r.sector || '—'}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-ref')}</span><span style="color:#94a3b8;font-size:.78rem;font-family:monospace">${r.ref_num || '—'}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-score')}</span><span style="color:${scoreColor};font-weight:900;font-size:1.1rem">${r.score != null ? r.score + '/100' : '—'}</span></div>
@@ -1455,6 +1470,7 @@ function openReqModal(id) {
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-date')}</span><span style="color:#e2e8f0">${fmtDate(r.created_at)}</span></div>
       ${r.challenges ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">${getT('db.modal-challenges')}</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.challenges}</div></div>` : ''}
       ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">${getT('db.modal-notes')}</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.notes}</div></div>` : ''}
+
       ${isPending ? `
       <div style="border-top:1px solid #334155;padding-top:.85rem;display:flex;gap:.6rem">
         <button onclick="finalAccept('${r.id}')" id="btn_final_accept"
@@ -1465,6 +1481,21 @@ function openReqModal(id) {
           style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.75rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
           ${getT('db.btn-final-reject')}
         </button>
+      </div>` : ''}
+
+      ${(isApproved || isRejected) ? `
+      <div style="border-top:1px solid #334155;padding-top:.85rem">
+        <div style="font-size:.75rem;color:#64748b;margin-bottom:.6rem;text-align:center">مراجعة النتيجة — بإمكان الجهة تعديلها</div>
+        <div style="display:flex;gap:.6rem">
+          ${isRejected ? `<button onclick="finalAccept('${r.id}')" id="btn_final_accept"
+            style="flex:1;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
+            ✓ تغيير إلى مقبول
+          </button>` : ''}
+          ${isApproved ? `<button onclick="finalReject('${r.id}')"
+            style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
+            ✕ تغيير إلى مرفوض
+          </button>` : ''}
+        </div>
       </div>` : ''}
     </div>`;
   document.getElementById('reqModal').classList.add('open');
