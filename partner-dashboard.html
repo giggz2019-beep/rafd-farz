@@ -1756,7 +1756,13 @@ function copyPartnerLink() {
 }
 
 function openPartnerLink() {
-  window.open(getPartnerLinkUrl(), '_blank');
+  const a = document.createElement('a');
+  a.href = getPartnerLinkUrl();
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function copyEmbed() {
