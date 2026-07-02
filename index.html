@@ -990,7 +990,7 @@ async function khSend(txt) {
   let apiOk = false;
   try {
     const res = await fetch('/api/chat-khalid', {
-      method: 'POST', signal: AbortSignal.timeout(8000),
+      method: 'POST', signal: AbortSignal.timeout(25000),
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: msg, history: khHistory.slice(-6) })
     });

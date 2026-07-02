@@ -9,39 +9,55 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 node server.js
 # or
 npm run dev
-
-# Test Netlify functions locally (requires Netlify CLI: npm i -g netlify-cli)
-netlify dev
 ```
 
 There is no build step — the site is pure static HTML/CSS/JS. `npm run build` is a no-op.
 
-`node server.js` serves static files and a stub `/api/demo/analyze` endpoint but does **not** proxy Netlify functions. Use `netlify dev` to test `send-otp` or `chat-khalid` locally (requires `RESEND_API_KEY` and `ANTHROPIC_API_KEY` in a `.env` file at the repo root).
+`node server.js` serves static files and a stub `POST /api/demo/analyze` endpoint but does **not** proxy the serverless functions in `api/`. To test `send-otp` or `chat-khalid` locally, you need a Vercel dev setup with `RESEND_API_KEY` and `ANTHROPIC_API_KEY` in a `.env` file at the repo root.
+
+**Git push is always blocked in auto-mode** — the user must run `git push origin main` manually in the terminal after every commit.
 
 ## Architecture
 
-**RAFD Digital** is an AI-powered applicant screening platform targeting the Saudi market. It is a static multi-page site deployed on Netlify, with two serverless backend functions.
+**RAFD Digital** is an AI-powered applicant screening platform targeting the Saudi market. It is a static multi-page site deployed on **Vercel**, with serverless backend functions.
 
 ### Frontend (static files at repo root)
 
-- All pages are standalone `.html` files — no framework, no bundler.
+All pages are standalone `.html` files — no framework, no bundler.
+
 - **`style.css`** — shared stylesheet for all pages.
-- **`i18n.js`** — the entire translation engine. It exports a `T` object with `ar` and `en` sub-objects, each containing every UI string keyed by dot-notation (e.g. `'nav.features'`). HTML elements use `data-i18n="key"` attributes that the engine resolves at runtime. Direction (`rtl`/`ltr`) is also toggled here. Language defaults to English; user choice is persisted in `localStorage`.
+- **`i18n.js`** — the entire translation engine. Exports a `T` object with `ar` and `en` sub-objects, each containing every UI string keyed by dot-notation (e.g. `'nav.features'`). HTML elements use `data-i18n="key"` attributes resolved at runtime. Direction (`rtl`/`ltr`) is toggled here. Language defaults to Arabic; user choice persists in `localStorage`.
 
-### Netlify Functions (`netlify/functions/`)
+### Vercel Functions (`api/`)
 
-No `netlify.toml` is present — Netlify auto-discovers functions from the `netlify/functions/` directory.
+Active serverless functions (Vercel format: `module.exports = async (req, res) => {}`):
 
 | File | Purpose | Env var required |
 |---|---|---|
-| `send-otp.js` | Sends OTP verification emails via [Resend](https://resend.com) | `RESEND_API_KEY` |
-| `chat-khalid.js` | Powers the "Khalid" AI chatbot using Claude Haiku | `ANTHROPIC_API_KEY` |
+| `api/chat-khalid.js` | Powers the "Khalid" AI chatbot using Claude Haiku | `ANTHROPIC_API_KEY` |
+| `api/send-otp.js` | Sends OTP verification emails via [Resend](https://resend.com) | `RESEND_API_KEY` |
 
-The chatbot function calls the Anthropic Messages API directly (`claude-haiku-4-5-20251001`). It keeps a 6-message rolling history per request. When the model includes `[ESCALATE]` in its output, the function strips the token and signals the frontend to display escalation UI.
+**Critical**: If `ANTHROPIC_API_KEY` is not set in Vercel environment variables, `chat-khalid.js` immediately returns `escalate: true`, which causes the frontend to show WhatsApp/email contact links instead of a chat response. This is the most common cause of Khalid appearing "broken."
+
+The `chat-khalid.js` function keeps a 6-message rolling history per request. When the model includes `[ESCALATE]` in its output, the function strips the token and signals the frontend to display escalation UI (WhatsApp + email links). The system prompt is the `SYSTEM_PROMPT` constant at the top of the file — this is what controls Khalid's personality and knowledge.
+
+The `send-otp.js` email template uses inline CSS only — **no external CSS links** (Google Fonts links in email HTML cause delivery failures).
+
+### Legacy Netlify Functions (`netlify/functions/`)
+
+These files exist but are **not deployed** — they are an older version from before the Vercel migration. Do not edit these; edit `api/` instead.
+
+### Vercel configuration (`vercel.json`)
+
+```json
+{ "buildCommand": "", "outputDirectory": ".", "installCommand": "npm install --production", "framework": null }
+```
+
+Vercel dashboard settings must match: Framework = Other, Build Command = empty, Output Directory = `.`.
 
 ### Local dev server (`server.js`)
 
-A minimal Express server that serves all static files and provides a stub `POST /api/demo/analyze` endpoint (returns `{success:true}` after 500 ms). This is only used for local development — on Netlify, static files are served by the CDN and functions run as lambdas.
+A minimal Express server that serves all static files and provides a stub `POST /api/demo/analyze` endpoint (returns `{success:true}` after 500 ms). Only used for local development.
 
 ### Page groups
 
@@ -55,8 +71,8 @@ A minimal Express server that serves all static files and provides a stub `POST 
 ### i18n conventions
 
 - All new UI strings must be added to **both** `T.ar` and `T.en` in `i18n.js`.
-- Keys follow a page-prefix dot-notation: `nav.*`, `hero.*`, `pg.*` (pricing page), `db.*` (dashboard), `rp.*` (register-partner), `apply.*`, `da.*` (demo-apply), `pl.*` (partner-login), `adm.*` (admin).
-- Arabic is the primary language; English strings should match semantics exactly.
+- Keys follow page-prefix dot-notation: `nav.*`, `hero.*`, `pg.*` (pricing), `db.*` (dashboard), `rp.*` (register-partner), `apply.*`, `da.*` (demo-apply), `pl.*` (partner-login), `adm.*` (admin), `chat.*` (Khalid chatbot).
+- Arabic is the primary language; English strings must match semantics exactly.
 - Use `data-i18n-placeholder="key"` (not `data-i18n`) to translate `placeholder` attributes on inputs.
-- For programmatic access to a translated string (e.g., in JS logic), use `getT('key')` — it reads from `localStorage` to pick the active language and falls back to Arabic.
+- For programmatic access to a translated string in JS logic, use `getT('key')` — reads from `localStorage` and falls back to Arabic.
 - Pages can listen to the `rafd-lang-changed` CustomEvent on `document` (detail: `{ lang }`) to react to language switches without polling.
