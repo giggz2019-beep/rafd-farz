@@ -292,6 +292,15 @@ input[type=number]{-moz-appearance:textfield}
   .form-card,.welcome-card{padding:1.5rem}
   .cert-score-row{gap:.5rem}.cert-score-item{padding:.6rem .75rem}.cert-name{font-size:1.3rem}
 }
+/* ===== Document AI Reading ===== */
+.doc-ai-result{margin-top:.45rem}
+.dar-loading{font-size:.74rem;color:#3b82f6;padding:.45rem .75rem;background:rgba(59,130,246,.06);border-radius:8px;border:1px solid rgba(59,130,246,.15);display:flex;align-items:center;gap:.4rem}
+.dar-warn{font-size:.72rem;color:#92400e;padding:.4rem .75rem;background:rgba(245,158,11,.06);border-radius:8px;border:1px solid rgba(245,158,11,.15)}
+.dar-ok{font-size:.73rem;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:.65rem .9rem}
+.dar-ok-hdr{color:#059669;font-weight:700;margin-bottom:.4rem;font-size:.75rem}
+.dar-row{display:flex;gap:.5rem;margin-bottom:.2rem;align-items:flex-start;flex-wrap:wrap}
+.dar-k{color:#64748b;flex-shrink:0;font-weight:600;min-width:75px;font-size:.72rem}
+.dar-v{color:#0f172a;font-weight:700;font-size:.73rem}
 </style>
 </head>
 <body>
@@ -816,6 +825,7 @@ let curStep = 0;
 let appRefNum = '';
 let nafathVerified = false;
 let _nfahOtp = '';
+let _docAIResults = {};
 
 // ===== INIT =====
 async function init() {
@@ -1024,6 +1034,7 @@ function renderDocsUpload() {
             <div class="uz-hint">PDF, Word, أو صورة — الحد الأقصى 5MB</div>
             <div class="uz-file" id="uz_name_${d.id}"></div>
           </div>
+          <div class="doc-ai-result" id="dar_${d.id}"></div>
         </div>
       `).join('')}
     </div>`;
@@ -1041,6 +1052,99 @@ function handleFileSelect(input, docId) {
   const nameEl = document.getElementById('uz_name_'+docId);
   if (zone) zone.classList.add('has-file');
   if (nameEl) nameEl.textContent = '✅ ' + file.name;
+  readDocumentWithAI(file, docId);
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function readDocumentWithAI(file, docId) {
+  const resultEl = document.getElementById('dar_' + docId);
+  if (!resultEl) return;
+
+  const isImage = file.type.startsWith('image/');
+  const isPdf = file.type === 'application/pdf';
+  if (!isImage && !isPdf) return; // Word files — skip silently
+
+  // Max 3MB for AI reading (base64 overhead keeps payload under Vercel limit)
+  if (file.size > 3 * 1024 * 1024) {
+    resultEl.innerHTML = '<div class="dar-warn">⚠️ الملف كبير — تم حفظه دون قراءة ذكية</div>';
+    return;
+  }
+
+  // docType mapping: cdoc_0 → 'other', preset ids map 1:1
+  const docType = docId.startsWith('cdoc_') ? 'other' : docId;
+
+  const icons = { id:'🪪', cv:'📄', reg:'🏢', cert:'🎓', other:'📎' };
+  resultEl.innerHTML = `<div class="dar-loading">${icons[docType]||'🤖'} جارٍ القراءة الذكية للوثيقة...</div>`;
+
+  try {
+    const base64 = await fileToBase64(file);
+    const res = await fetch('/api/read-document', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ base64, mediaType: file.type, docType }),
+    });
+    const result = await res.json();
+
+    if (!result.ok) {
+      resultEl.innerHTML = '<div class="dar-warn">⚠️ تعذّرت القراءة التلقائية — المستند محفوظ بنجاح</div>';
+      return;
+    }
+
+    _docAIResults[docId] = result.data;
+    renderDocResult(resultEl, docType, result.data);
+  } catch {
+    resultEl.innerHTML = '<div class="dar-warn">⚠️ خطأ في الاتصال — المستند محفوظ</div>';
+  }
+}
+
+function renderDocResult(el, docType, data) {
+  const rows = [];
+  if (docType === 'id') {
+    if (data.name)        rows.push(['الاسم', data.name]);
+    if (data.id_number)   rows.push(['رقم الهوية', data.id_number]);
+    if (data.dob)         rows.push(['تاريخ الميلاد', data.dob]);
+    if (data.nationality) rows.push(['الجنسية', data.nationality]);
+    if (data.gender)      rows.push(['الجنس', data.gender === 'male' ? 'ذكر' : 'أنثى']);
+  } else if (docType === 'cv') {
+    if (data.name)             rows.push(['الاسم', data.name]);
+    const eduMap = { phd:'دكتوراه', master:'ماجستير', bachelor:'بكالوريوس', diploma:'دبلوم' };
+    if (data.highest_education) rows.push(['المؤهل', eduMap[data.highest_education] || data.highest_education]);
+    if (data.field)             rows.push(['التخصص', data.field]);
+    if (data.years_experience != null) rows.push(['سنوات الخبرة', data.years_experience + ' سنوات']);
+    if (data.last_position)    rows.push(['آخر وظيفة', data.last_position]);
+    if (data.skills?.length)   rows.push(['المهارات', data.skills.slice(0,4).join('، ')]);
+  } else if (docType === 'reg') {
+    if (data.company_name)  rows.push(['اسم الشركة', data.company_name]);
+    if (data.reg_number)    rows.push(['رقم السجل', data.reg_number]);
+    if (data.activity)      rows.push(['النشاط', data.activity]);
+    if (data.founded_date)  rows.push(['تاريخ التأسيس', data.founded_date]);
+    if (data.owner)         rows.push(['المالك', data.owner]);
+  } else if (docType === 'cert') {
+    if (data.type)      rows.push(['نوع الشهادة', data.type]);
+    if (data.issuer)    rows.push(['الجهة المانحة', data.issuer]);
+    if (data.recipient) rows.push(['الحاصل عليها', data.recipient]);
+    if (data.date)      rows.push(['التاريخ', data.date]);
+  } else if (data.summary) {
+    rows.push(['الملخص', data.summary]);
+  }
+
+  if (!rows.length) {
+    el.innerHTML = '<div class="dar-warn">⚠️ المستند محفوظ — تعذّر استخراج البيانات منه</div>';
+    return;
+  }
+
+  el.innerHTML = `<div class="dar-ok">
+    <div class="dar-ok-hdr">✅ تمت القراءة الذكية للوثيقة</div>
+    ${rows.map(([k,v]) => `<div class="dar-row"><span class="dar-k">${k}:</span><span class="dar-v">${v}</span></div>`).join('')}
+  </div>`;
 }
 
 function renderCustomQuestions() {
@@ -1707,6 +1811,13 @@ async function submitApp() {
         challenges: data.challenges,
         notes: JSON.stringify({ dob: data.dob, gender: data.gender, nationality: data.nationality, city: data.city }),
       };
+      // Merge AI-extracted data into docs
+      if (Object.keys(_docAIResults).length) {
+        Object.keys(_docAIResults).forEach(docId => {
+          if (uploadedDocs[docId]) uploadedDocs[docId].ai_data = _docAIResults[docId];
+          else uploadedDocs[docId] = { ai_data: _docAIResults[docId] };
+        });
+      }
       if (Object.keys(uploadedDocs).length) row.docs = uploadedDocs;
 
       const { error } = await _sb.from('applications').insert([row]);
