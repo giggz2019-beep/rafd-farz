@@ -1,6 +1,7 @@
 // All authenticated partner data operations
 // Every request must include a valid { token }
 const crypto = require('crypto');
+const { hash: hashPassword } = require('./_lib/password');
 
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
@@ -99,8 +100,7 @@ module.exports = async (req, res) => {
     if (action === 'update_password') {
       const { newPassword } = body;
       if (!newPassword) return res.status(400).json({ error: 'missing_fields' });
-      const encoded = Buffer.from(newPassword).toString('base64');
-      await sb('PATCH', `/partners?email=eq.${encodeURIComponent(email)}`, { password: encoded }, key);
+      await sb('PATCH', `/partners?email=eq.${encodeURIComponent(email)}`, { password: hashPassword(newPassword) }, key);
       return res.status(200).json({ ok: true });
     }
 

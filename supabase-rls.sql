@@ -78,3 +78,34 @@ CREATE POLICY "app_delete_own" ON applications
 --   SUPABASE_SERVICE_KEY = [من Supabase > Settings > API > service_role key]
 --   ADMIN_PASSWORD       = [كلمة سر الأدمن]
 -- ============================================================
+
+
+-- ============================================================
+-- إضافة لاحقة (تفعيل الدفع عبر N-Genius) — شغّل هذا القسم في Supabase SQL Editor
+-- ============================================================
+
+-- ===== 4. عمود مرجع الدفع (idempotency) =====
+-- يخزّن مرجع طلب N-Genius على صف الشريك، لمنع إنشاء حساب مكرر لو تكرر
+-- استدعاء register_after_payment (مثلاً لو المستخدم عمل refresh لصفحة النتيجة).
+ALTER TABLE partners ADD COLUMN IF NOT EXISTS payment_ref text;
+CREATE UNIQUE INDEX IF NOT EXISTS partners_payment_ref_idx
+  ON partners (payment_ref) WHERE payment_ref IS NOT NULL;
+
+
+-- ===== 5. تضييق صلاحيات anon على partners =====
+-- شغّل هذا القسم فقط بعد نشر الكود الجديد والتأكد إنه شغّال تمام —
+-- تسجيل الدخول (api/partner-auth.js)، لوحة التحكم (api/partner-data.js)،
+-- والتسجيل/إكمال الدفع كلها تمر الآن عبر endpoints بمفتاح SUPABASE_SERVICE_KEY
+-- (يتجاوز RLS تلقائياً)، فما عاد فيه أي سبب مشروع يحتاج فيه المتصفح
+-- (anon key) وصول مباشر لجدول partners.
+--
+-- partner_login_lookup كانت USING (true) — أي شخص يقدر يقرأ الجدول كامل
+-- عبر REST API مباشرة. partner_insert_public كانت WITH CHECK (true) — أي
+-- شخص يقدر يضيف صف جديد مباشرة بدون المرور بأي تحقق (OTP أو غيره).
+DROP POLICY IF EXISTS "partner_login_lookup" ON partners;
+DROP POLICY IF EXISTS "partner_insert_public" ON partners;
+
+-- ملاحظة: partner_select_own و partner_update_own (تعتمدان على auth.jwt())
+-- ما تحتاج تعديل — النظام أصلاً ما يستخدم Supabase Auth الحقيقي (تسجيل
+-- الدخول مبني على HMAC token مخصص في partner-auth.js)، فهاتين السياستين
+-- غير فعّالتين أصلاً على أي وصول anon حالي أو مستقبلي.

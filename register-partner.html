@@ -93,6 +93,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .pkg-name{font-size:.85rem;font-weight:800;color:#fff;margin-bottom:.25rem}
 .pkg-price{font-size:1.1rem;font-weight:900;color:#38bdf8}
 .pkg-period{font-size:.7rem;color:#64748b}
+.pkg-trial-badge{font-size:.66rem;color:#4a9d6f;font-weight:700;margin-top:.3rem}
 .pkg-features{list-style:none;margin-top:.75rem;text-align:right}
 .pkg-features li{font-size:.72rem;color:#94a3b8;padding:.2rem 0;display:flex;align-items:center;gap:.4rem}
 .pkg-features li::before{content:'✓';color:#4a9d6f;font-weight:900;font-size:.65rem;flex-shrink:0}
@@ -386,37 +387,38 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       </div>
     </div>
     <div class="pkg-grid">
-      <div class="pkg-card" id="pkg_trial" onclick="selectPkg('trial')">
+      <div class="pkg-card" id="pkg_basic49" onclick="selectPkg('basic49')">
         <div class="pkg-icon">🎯</div>
-        <div class="pkg-name" data-i18n="pg.trial-name">تجريبية</div>
-        <div class="pkg-price" data-i18n="trial.price">مجاناً</div>
-        <div class="pkg-period" data-i18n="rp.trial-period">لمدة 7 أيام</div>
+        <div class="pkg-name" data-i18n="rp.pkg-basic49">الأساسية</div>
+        <div class="pkg-price" data-i18n="rp.basic49-price">99 ر.س</div>
+        <div class="pkg-period" data-i18n="rp.per-month">/شهرياً</div>
         <ul class="pkg-features">
-          <li data-i18n="rp.trial-f1">حتى 50 طلب/شهر</li>
-          <li data-i18n="rp.trial-f2">تقارير أساسية</li>
-          <li data-i18n="rp.trial-f3">دعم بالبريد</li>
+          <li data-i18n="rp.basic49-f1">حتى 50 طلب شهرياً</li>
+          <li data-i18n="rp.basic49-f2">تقييم ذكي بالذكاء الاصطناعي</li>
+          <li data-i18n="rp.basic49-f3">لوحة تحكم أساسية</li>
         </ul>
       </div>
       <div class="pkg-card selected" id="pkg_basic" onclick="selectPkg('basic')">
         <div class="pkg-icon">🚀</div>
-        <div class="pkg-name" data-i18n="rp.pkg-basic">أساسية</div>
+        <div class="pkg-name" data-i18n="rp.pkg-basic">بلس</div>
         <div class="pkg-price" data-i18n="rp.basic-price">249 ر.س</div>
         <div class="pkg-period" data-i18n="rp.per-month">/شهرياً</div>
+        <div class="pkg-trial-badge" data-i18n="rp.basic-trial-badge">✓ 7 أيام مجاناً عند التسجيل</div>
         <ul class="pkg-features">
           <li data-i18n="rp.basic-f1">حتى 500 طلب/شهر</li>
           <li data-i18n="rp.basic-f2">تقارير متقدمة</li>
           <li data-i18n="rp.basic-f3">دعم أولوية</li>
         </ul>
       </div>
-      <div class="pkg-card" id="pkg_pro" onclick="selectPkg('pro')">
+      <div class="pkg-card" id="pkg_advanced" onclick="selectPkg('advanced')">
         <div class="pkg-icon">💎</div>
-        <div class="pkg-name" data-i18n="rp.pkg-adv">متقدمة</div>
-        <div class="pkg-price" data-i18n="rp.pro-price">499 ر.س</div>
+        <div class="pkg-name" data-i18n="rp.pkg-adv">المتقدمة</div>
+        <div class="pkg-price" data-i18n="rp.adv-price">499 ر.س</div>
         <div class="pkg-period" data-i18n="rp.per-month">/شهرياً</div>
         <ul class="pkg-features">
-          <li data-i18n="rp.pro-f1">طلبات غير محدودة</li>
-          <li data-i18n="rp.pro-f2">API كامل</li>
-          <li data-i18n="rp.pro-f3">مدير حساب مخصص</li>
+          <li data-i18n="rp.adv-f1">طلبات غير محدودة</li>
+          <li data-i18n="rp.adv-f2">API كامل</li>
+          <li data-i18n="rp.adv-f3">مدير حساب مخصص</li>
         </ul>
       </div>
     </div>
@@ -560,7 +562,7 @@ let pendingPartner = null;
 
 function selectPkg(pkg) {
   selectedPkg = pkg;
-  ['trial','basic','pro'].forEach(p => {
+  ['basic49','basic','advanced'].forEach(p => {
     document.getElementById('pkg_' + p).classList.toggle('selected', p === pkg);
   });
 }
@@ -687,6 +689,11 @@ document.addEventListener('click', function(e) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+  // الباقة عبر رابط الأسعار (?plan=basic49|basic|advanced)
+  const planParam = new URLSearchParams(window.location.search).get('plan');
+  if (planParam && ['basic49','basic','advanced'].includes(planParam)) {
+    selectPkg(planParam);
+  }
   // تهيئة القوائم المخصصة
   cselInit('nat',      NAT_LIST,     '',     false);
   cselInit('country',  COUNTRY_LIST, 'sa',   false);
@@ -900,14 +907,10 @@ async function submitForm() {
   btn.disabled = true;
   btnText.textContent = 'جاري التحقق...';
 
-  // التحقق إذا الإيميل مسجّل مسبقاً
+  // التحقق إذا الإيميل مسجّل مسبقاً (عبر السيرفر — بدون وصول مباشر لقاعدة البيانات)
   try {
-    const { data: existing } = await _sb
-      .from('partners')
-      .select('email')
-      .eq('email', email)
-      .maybeSingle();
-    if (existing) {
+    const { data: checkData } = await partnerAuthApi({ action: 'check_email', email });
+    if (checkData?.exists) {
       setErr('f_email','هذا البريد مسجّل مسبقاً — سجّل دخولك');
       document.getElementById('f_email').scrollIntoView({behavior:'smooth', block:'center'});
       btn.disabled = false;
@@ -920,7 +923,7 @@ async function submitForm() {
 
   const now = new Date();
   const refNum = 'RAFD-' + now.getFullYear() + '-' + String(Math.floor(Math.random()*90000)+10000);
-  const priceMap = {trial:0, basic:499, pro:999};
+  const priceMap = {basic49: 99, basic: 249, advanced: 499};
 
   pendingPartner = {
     refNum,
@@ -935,8 +938,7 @@ async function submitForm() {
     lname:    document.getElementById('f_lname').value.trim(),
     title:    document.getElementById('f_title').value.trim(),
     phone: (_cselVal['phone_cc'] || '+966') + phone, email,
-    password: btoa(pass),
-    password_plain: pass,
+    password: pass,
     plan:     selectedPkg,
     price:    priceMap[selectedPkg],
     purpose:  document.getElementById('f_purpose').value,
@@ -1029,41 +1031,74 @@ async function verifyOTP() {
   clearInterval(timerInterval);
   verifyBtn.textContent = 'جاري الحفظ...';
 
+  const partnerData = {
+    org_name: pendingPartner.org,
+    email: pendingPartner.email,
+    phone: pendingPartner.phone,
+    org_type: pendingPartner.orgtype,
+    cr_num: pendingPartner.crnum,
+    city: pendingPartner.city,
+    fname: pendingPartner.fname,
+    lname: pendingPartner.lname,
+    title: pendingPartner.title,
+    website: pendingPartner.website,
+    purpose: pendingPartner.purpose,
+    volume: pendingPartner.volume,
+    notes: pendingPartner.notes,
+    ref_num: pendingPartner.refNum,
+  };
+
+  // بلس تُفعَّل فوراً بدون دفع (تجربة 7 أيام) — الباقي يمر عبر بوابة الدفع أولاً
+  if (pendingPartner.plan === 'basic') {
+    try {
+      const { status: regStatus, data: regData } = await partnerAuthApi({
+        action: 'register', partnerData, password: pendingPartner.password,
+      });
+      if (regStatus !== 200 || !regData.partner) throw new Error(regData?.error || 'Registration failed');
+
+      const p = regData.partner;
+      localStorage.setItem('rafd_partner_session', JSON.stringify({ token: regData.token, id: p.id, email: p.email, org: p.org_name }));
+
+      document.getElementById('refNum').textContent = pendingPartner.refNum;
+      document.getElementById('otpSection').style.display = 'none';
+      document.getElementById('successSection').style.display = 'block';
+      window.scrollTo({top: 0, behavior: 'smooth'});
+
+    } catch(err) {
+      console.error('Register error:', err);
+      alert('حدث خطأ أثناء حفظ البيانات: ' + err.message);
+      verifyBtn.disabled = false;
+      verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
+    }
+    return;
+  }
+
+  // الأساسية / المتقدمة — تحويل لبوابة الدفع، الحساب يُنشأ فقط بعد تأكيد الدفع
   try {
-    const { status: regStatus, data: regData } = await partnerAuthApi({ action: 'register', partnerData: {
-      org_name: pendingPartner.org,
-      email: pendingPartner.email,
-      phone: pendingPartner.phone,
-      org_type: pendingPartner.orgtype,
-      cr_num: pendingPartner.crnum,
-      city: pendingPartner.city,
-      password: pendingPartner.password,
-      status: 'approved',
-      fname: pendingPartner.fname,
-      lname: pendingPartner.lname,
-      title: pendingPartner.title,
-      website: pendingPartner.website,
-      plan: pendingPartner.plan,
-      purpose: pendingPartner.purpose,
-      volume: pendingPartner.volume,
-      notes: pendingPartner.notes,
-      ref_num: pendingPartner.refNum,
-    }});
+    sessionStorage.setItem('rafd_pending_partner', JSON.stringify({
+      partnerData, password: pendingPartner.password, plan: pendingPartner.plan,
+    }));
 
-    if (regStatus !== 200 || !regData.partner) throw new Error(regData?.error || 'Registration failed');
+    const res = await fetch('/api/create-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan: pendingPartner.plan,
+        email: pendingPartner.email,
+        name: pendingPartner.fname,
+        phone: pendingPartner.phone,
+        org: pendingPartner.org,
+      }),
+    });
+    const payData = await res.json();
+    if (!res.ok || !payData.paymentUrl) throw new Error(payData?.error || 'تعذّر بدء عملية الدفع');
 
-    const p = regData.partner;
-    const sessionData = { token: regData.token, id: p.id, email: p.email, org: p.org_name };
-    localStorage.setItem('rafd_partner_session', JSON.stringify(sessionData));
-
-    document.getElementById('refNum').textContent = pendingPartner.refNum;
-    document.getElementById('otpSection').style.display = 'none';
-    document.getElementById('successSection').style.display = 'block';
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    window.location.href = payData.paymentUrl;
 
   } catch(err) {
-    console.error('Register error:', err);
-    alert('حدث خطأ أثناء حفظ البيانات: ' + err.message);
+    console.error('Create payment error:', err);
+    sessionStorage.removeItem('rafd_pending_partner');
+    alert('حدث خطأ أثناء بدء عملية الدفع: ' + err.message);
     verifyBtn.disabled = false;
     verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
   }
