@@ -813,12 +813,15 @@ input[type=number]{-moz-appearance:textfield}
 
 </div><!-- end mainContent -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const _sb = window.supabase.createClient(
-  'https://ycnnawohrbbluawxzttt.supabase.co',
-  'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f'
-);
+async function applyApi(data) {
+  const r = await fetch('/api/apply-form', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return { status: r.status, data: await r.json() };
+}
 
 let partnerData = null;
 let curStep = 0;
@@ -847,29 +850,14 @@ async function init() {
   }
 
   try {
-    // Primary query — includes form_config if SQL has been run
-    let { data, error } = await _sb
-      .from('partners')
-      .select('id, org_name, org_type, city, plan, ref_num, status, form_config')
-      .eq('ref_num', partnerRef)
-      .maybeSingle();
+    const { status: gfStatus, data: gfData } = await applyApi({ action: 'get_form', ref: partnerRef });
 
-    // If form_config column doesn't exist (SQL not run yet), retry without it
-    if (error && (error.code === 'PGRST204' || error.code === '42703' || error.message?.includes('form_config'))) {
-      const r2 = await _sb
-        .from('partners')
-        .select('id, org_name, org_type, city, plan, ref_num, status')
-        .eq('ref_num', partnerRef)
-        .maybeSingle();
-      data = r2.data;
-      error = r2.error;
-      if (data) data.form_config = null;
-    }
-
-    if (error || !data) {
+    if (gfStatus !== 200 || !gfData.partner) {
       showError(getT('apply.err-not-found'));
       return;
     }
+
+    const data = gfData.partner;
 
     if (data.status === 'rejected') {
       showError(getT('apply.err-disabled'));
@@ -1865,11 +1853,17 @@ async function submitApp() {
         if (!input?.files?.[0]) continue;
         const file = input.files[0];
         const filePath = `${partnerData.ref_num}/${appRefNum}/${docId}_${file.name}`;
-        const { error: upErr } = await _sb.storage.from('applicant-docs').upload(filePath, file, { upsert: true });
-        if (!upErr) {
-          const { data: { publicUrl } } = _sb.storage.from('applicant-docs').getPublicUrl(filePath);
-          uploadedDocs[docId] = { name: file.name, url: publicUrl };
-        }
+        try {
+          const { status: urlStatus, data: urlData } = await applyApi({ action: 'get_upload_url', filePath });
+          if (urlStatus === 200 && urlData.signedURL) {
+            await fetch(urlData.storageUrl + urlData.signedURL, {
+              method: 'PUT', body: file,
+              headers: { 'Content-Type': file.type || 'application/octet-stream' },
+            });
+            const publicUrl = `${urlData.storageUrl}/storage/v1/object/public/applicant-docs/${filePath}`;
+            uploadedDocs[docId] = { name: file.name, url: publicUrl };
+          }
+        } catch(upErr) { console.warn('Upload error:', upErr); }
       }
 
       const row = {
@@ -1897,17 +1891,9 @@ async function submitApp() {
       }
       if (Object.keys(uploadedDocs).length) row.docs = uploadedDocs;
 
-      const { error } = await _sb.from('applications').insert([row]);
-      if (error) {
-        console.error('Save error:', error);
-        // Show non-blocking warning after result is displayed
-        setTimeout(() => {
-          const warn = document.createElement('div');
-          warn.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;background:#fef3c7;border:1px solid #f59e0b;border-radius:12px;padding:.9rem 1.2rem;font-size:.82rem;color:#92400e;max-width:320px;z-index:999;direction:rtl;box-shadow:0 4px 16px rgba(0,0,0,.12)';
-          warn.innerHTML = '⚠️ لم يتم حفظ طلبك في قاعدة البيانات. تأكد من تشغيل SQL في Supabase ثم أعد التقديم.';
-          document.body.appendChild(warn);
-          setTimeout(() => warn.remove(), 8000);
-        }, 3000);
+      const { status: subStatus } = await applyApi({ action: 'submit', application: row });
+      if (subStatus !== 200) {
+        console.error('Save error:', subStatus);
       }
     })();
   }

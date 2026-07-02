@@ -543,12 +543,16 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   <a href="/partner-login.html" class="btn-login-now" data-i18n="rp.go-login">الذهاب لصفحة الدخول ←</a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ===== Supabase Config =====
-const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ===== API Helper =====
+async function partnerAuthApi(data) {
+  const r = await fetch('/api/partner-auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return { status: r.status, data: await r.json() };
+}
 
 let selectedPkg = 'basic';
 let timerInterval = null;
@@ -1026,68 +1030,42 @@ async function verifyOTP() {
   verifyBtn.textContent = 'جاري الحفظ...';
 
   try {
-    const { data, error } = await _sb.from('partners').insert([
-      {
-        org_name: pendingPartner.org,
-        email: pendingPartner.email,
-        phone: pendingPartner.phone,
-        org_type: pendingPartner.orgtype,
-        cr_num: pendingPartner.crnum,
-        city: pendingPartner.city,
-        password: pendingPartner.password,
-        status: 'approved',
-        fname: pendingPartner.fname,
-        lname: pendingPartner.lname,
-        title: pendingPartner.title,
-        website: pendingPartner.website,
-        plan: pendingPartner.plan,
-        purpose: pendingPartner.purpose,
-        volume: pendingPartner.volume,
-        notes: pendingPartner.notes,
-        ref_num: pendingPartner.refNum,
-      }
-    ]).select().single();
+    const { status: regStatus, data: regData } = await partnerAuthApi({ action: 'register', partnerData: {
+      org_name: pendingPartner.org,
+      email: pendingPartner.email,
+      phone: pendingPartner.phone,
+      org_type: pendingPartner.orgtype,
+      cr_num: pendingPartner.crnum,
+      city: pendingPartner.city,
+      password: pendingPartner.password,
+      status: 'approved',
+      fname: pendingPartner.fname,
+      lname: pendingPartner.lname,
+      title: pendingPartner.title,
+      website: pendingPartner.website,
+      plan: pendingPartner.plan,
+      purpose: pendingPartner.purpose,
+      volume: pendingPartner.volume,
+      notes: pendingPartner.notes,
+      ref_num: pendingPartner.refNum,
+    }});
 
-    if (error) throw error;
+    if (regStatus !== 200 || !regData.partner) throw new Error(regData?.error || 'Registration failed');
 
-    // Save session locally
-    const sessionData = { id: data.id, email: data.email, org: data.org_name };
+    const p = regData.partner;
+    const sessionData = { token: regData.token, id: p.id, email: p.email, org: p.org_name };
     localStorage.setItem('rafd_partner_session', JSON.stringify(sessionData));
 
-    // Show success
     document.getElementById('refNum').textContent = pendingPartner.refNum;
     document.getElementById('otpSection').style.display = 'none';
     document.getElementById('successSection').style.display = 'block';
     window.scrollTo({top: 0, behavior: 'smooth'});
 
   } catch(err) {
-    console.error('Supabase insert error:', err);
-    // Fallback: if column doesn't exist, try minimal insert
-    try {
-      const { data, error } = await _sb.from('partners').insert([
-        {
-          org_name: pendingPartner.org,
-          email: pendingPartner.email,
-          phone: pendingPartner.phone,
-          org_type: pendingPartner.orgtype,
-          city: pendingPartner.city,
-          password: pendingPartner.password,
-          status: 'approved',
-          ref_num: pendingPartner.refNum,
-        }
-      ]).select().single();
-      if (error) throw error;
-      const sessionData = { id: data.id, email: data.email, org: data.org_name };
-      localStorage.setItem('rafd_partner_session', JSON.stringify(sessionData));
-      document.getElementById('refNum').textContent = pendingPartner.refNum;
-      document.getElementById('otpSection').style.display = 'none';
-      document.getElementById('successSection').style.display = 'block';
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    } catch(err2) {
-      alert('حدث خطأ أثناء حفظ البيانات: ' + err2.message);
-      verifyBtn.disabled = false;
-      verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
-    }
+    console.error('Register error:', err);
+    alert('حدث خطأ أثناء حفظ البيانات: ' + err.message);
+    verifyBtn.disabled = false;
+    verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
   }
 }
 
@@ -1106,14 +1084,15 @@ async function resendOTP() {
   btn.textContent = 'جاري الإرسال...';
 
   try {
-    const { error } = await _sb.auth.signInWithOtp({
-      email: email,
-      options: { shouldCreateUser: true }
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    sessionStorage.setItem('rafd_otp', JSON.stringify({ otp, email, expiry: Date.now() + 10 * 60 * 1000 }));
+    await fetch('/api/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp, fname: pendingPartner?.fname }),
     });
-    if (error) throw error;
   } catch(e) {
-    console.error('Supabase resend OTP error:', e);
-    alert('حدث خطأ أثناء إعادة إرسال الرمز: ' + (e.message || ''));
+    console.error('Resend OTP error:', e);
   }
 
   btn.textContent = 'إعادة الإرسال';

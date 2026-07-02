@@ -1146,12 +1146,17 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ===== Supabase Config =====
-const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ===== API Helper =====
+async function pdApi(data) {
+  const sess = JSON.parse(localStorage.getItem('rafd_partner_session') || '{}');
+  const r = await fetch('/api/partner-data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: sess.token, ...data }),
+  });
+  return { status: r.status, data: await r.json() };
+}
 
 // ===== AUTH CHECK =====
 // Check admin session bypass
@@ -1189,69 +1194,49 @@ async function loadPartnerData() {
     const adminPreview = JSON.parse(localStorage.getItem('rafd_admin_preview') || 'null');
     if (adminPreview && adminPreview.ref && adminPreview.expires > Date.now()) {
       localStorage.removeItem('rafd_admin_preview');
-      const { data: pData, error: pErr } = await _sb.from('partners').select('*').eq('ref_num', adminPreview.ref).maybeSingle();
-      if (!pErr && pData) {
-        partner = normalizePartner(pData);
+      if (adminPreview.partnerData) {
+        partner = normalizePartner(adminPreview.partnerData);
+        allApplications = adminPreview.applications || [];
         if (adminPreview.unlockAll) partner.plan = 'pro';
         partner._adminPreview = true;
         partner._unlockAll = adminPreview.unlockAll;
-        await loadApplications();
         initUI();
         showAdminPreviewBanner(adminPreview.unlockAll);
         return;
       }
     }
 
-    // تحقق من جلسة Supabase Auth — وحاول تجديدها إن كانت منتهية
-    let authSession;
-    try {
-      const { data: sd } = await _sb.auth.getSession();
-      authSession = sd.session;
-      // إذا لا توجد جلسة، حاول التجديد قبل الاستسلام
-      if (!authSession) {
-        const { data: rd } = await _sb.auth.refreshSession();
-        authSession = rd?.session;
-      }
-    } catch(_) {}
-    const email = authSession?.user?.email || session?.email;
-
-    if (!email) { window.location.href = '/partner-login.html'; return; }
-
-    // ابحث دائماً بالإيميل لأنه فريد وموثوق
-    let { data, error } = await _sb
-      .from('partners')
-      .select('*')
-      .eq('email', email)
-      .maybeSingle();
-
-    // إذا فشل الاستعلام، انتظر ثانية واحدة وأعد المحاولة
-    if (error || !data) {
-      await new Promise(r => setTimeout(r, 1000));
-      const retry = await _sb.from('partners').select('*').eq('email', email).maybeSingle();
-      if (!retry.error && retry.data) { data = retry.data; error = null; }
+    // التحقق من الجلسة — يجب أن يكون هناك توكن صالح
+    if (!session?.email || !session?.token) {
+      window.location.href = '/partner-login.html';
+      return;
     }
 
-    if (error || !data) { window.location.href = '/partner-login.html'; return; }
+    // تحميل بيانات الشريك عبر الـ API
+    const { status, data } = await pdApi({ action: 'load' });
+    if (status === 401 || data?.error === 'invalid_session') {
+      localStorage.removeItem('rafd_partner_session');
+      window.location.href = '/partner-login.html';
+      return;
+    }
+    if (status !== 200 || !data?.partner) {
+      window.location.href = '/partner-login.html';
+      return;
+    }
 
-    partner = normalizePartner(data);
+    partner = normalizePartner(data.partner);
 
     // لو الحساب ما عنده ref_num، نولّد رقم جديد ونحفظه
     if (!partner.refNum) {
       const now = new Date();
       const generated = 'RAFD-' + now.getFullYear() + '-' + String(Math.floor(Math.random()*90000)+10000);
-      await _sb.from('partners').update({ ref_num: generated }).eq('id', partner.id);
+      await pdApi({ action: 'update_ref', ref_num: generated });
       partner.refNum = generated;
     }
 
-    session = { id: partner.id, email: partner.email, org: partner.org };
+    // حافظ على التوكن في الجلسة
+    session = { token: session.token, id: partner.id, email: partner.email, org: partner.org };
     localStorage.setItem('rafd_partner_session', JSON.stringify(session));
-
-    // جدّد التوكن تلقائياً عند العودة للتاب بعد فترة خمول
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        _sb.auth.getSession().catch(() => {});
-      }
-    });
 
     await loadApplications();
     initUI();
@@ -1368,13 +1353,10 @@ function initUI() {
 let allApplications = [];
 
 async function loadApplications() {
-  if (!partner.refNum) return [];
-  const { data, error } = await _sb
-    .from('applications')
-    .select('*')
-    .eq('partner_ref', partner.refNum)
-    .order('created_at', { ascending: false });
-  allApplications = (!error && data) ? data : [];
+  if (!partner) return [];
+  if (partner._adminPreview) return allApplications;
+  const { status, data } = await pdApi({ action: 'load_apps' });
+  allApplications = (status === 200 && data.applications) ? data.applications : [];
   return allApplications;
 }
 
@@ -1467,9 +1449,7 @@ async function submitRequest() {
   const result = score !== null ? (score >= minScore ? 'approved' : 'rejected') : 'pending';
   const refNum = 'MAN-' + Date.now().toString().slice(-8);
 
-  const { error } = await _sb.from('applications').insert([{
-    partner_id: partner.id,
-    partner_ref: partner.refNum,
+  const { status: addStatus, data: addData } = await pdApi({ action: 'add_app', app: {
     name,
     national_id: document.getElementById('nf_id').value.trim(),
     email: document.getElementById('nf_email').value.trim(),
@@ -1480,9 +1460,9 @@ async function submitRequest() {
     ref_num: refNum,
     notes: document.getElementById('nf_notes').value.trim(),
     source: 'manual',
-  }]);
+  }});
 
-  if (error) { toast(getT('db.toast-save-error') + ': ' + error.message, 'error'); return; }
+  if (addStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (addData?.error || ''), 'error'); return; }
 
   clearRequestForm();
   await loadApplications();
@@ -1501,8 +1481,8 @@ function clearRequestForm() {
 
 async function deleteRequest(id) {
   if (!window.confirm(getT('db.toast-delete-confirm'))) return;
-  const { error } = await _sb.from('applications').delete().eq('id', id);
-  if (error) { toast(getT('db.toast-delete-error'), 'error'); return; }
+  const { status: delStatus } = await pdApi({ action: 'delete_app', appId: id });
+  if (delStatus !== 200) { toast(getT('db.toast-delete-error'), 'error'); return; }
   await loadApplications();
   renderStats();
   renderRecentRequests();
@@ -1573,8 +1553,8 @@ function closeModal() { document.getElementById('reqModal').classList.remove('op
 async function finalAccept(id) {
   const btn = document.getElementById('btn_final_accept');
   if (btn) { btn.disabled = true; btn.textContent = getT('db.pending-confirm'); }
-  const { error } = await _sb.from('applications').update({ result: 'approved' }).eq('id', id);
-  if (error) { toast(getT('db.toast-save-error') + ': ' + error.message, 'error'); if (btn) { btn.disabled = false; btn.textContent = getT('db.btn-confirm-accept'); } return; }
+  const { status: accStatus, data: accData } = await pdApi({ action: 'update_app', appId: id, status: 'approved' });
+  if (accStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (accData?.error || ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = getT('db.btn-confirm-accept'); } return; }
   const app = allApplications.find(x => x.id === id);
   if (app) app.result = 'approved';
   closeModal();
@@ -1586,8 +1566,8 @@ async function finalAccept(id) {
 
 async function finalReject(id) {
   if (!confirm(getT('db.confirm-reject-final'))) return;
-  const { error } = await _sb.from('applications').update({ result: 'rejected' }).eq('id', id);
-  if (error) { toast(getT('db.toast-save-error') + ': ' + error.message, 'error'); return; }
+  const { status: rejStatus, data: rejData } = await pdApi({ action: 'update_app', appId: id, status: 'rejected' });
+  if (rejStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (rejData?.error || ''), 'error'); return; }
   const app = allApplications.find(x => x.id === id);
   if (app) app.result = 'rejected';
   closeModal();
@@ -1630,32 +1610,24 @@ async function changePassword() {
   const p2 = document.getElementById('set_newpass2').value;
   if (p1.length < 8) { toast(getT('db.toast-pass-short'), 'warn'); return; }
   if (p1 !== p2) { toast(getT('db.toast-pass-mismatch'), 'error'); return; }
-  partner.password = btoa(p1);
-  await updatePartnerInStorage();
-  // تحديث كلمة المرور في Supabase Auth أيضاً
-  try { await _sb.auth.updateUser({ password: p1 }); } catch(e) { console.warn('Auth pass update:', e); }
+  const { status: cpStatus } = await pdApi({ action: 'update_password', newPassword: p1 });
+  if (cpStatus !== 200) { toast('خطأ في تحديث كلمة المرور', 'error'); return; }
   document.getElementById('set_newpass').value = '';
   document.getElementById('set_newpass2').value = '';
   toast(getT('db.toast-pass-updated'));
 }
 
 async function updatePartnerInStorage() {
-  // Update in Supabase
   try {
-    const { error } = await _sb
-      .from('partners')
-      .update({
-        org_name: partner.org,
-        city: partner.city,
-        website: partner.website,
-        fname: partner.fname,
-        lname: partner.lname,
-        title: partner.title,
-        phone: partner.phone,
-        password: partner.password,
-      })
-      .eq('id', partner.id);
-    if (error) console.error('Supabase update error:', error);
+    await pdApi({ action: 'update_profile', profile: {
+      org_name: partner.org,
+      city: partner.city,
+      website: partner.website,
+      fname: partner.fname,
+      lname: partner.lname,
+      title: partner.title,
+      phone: partner.phone,
+    }});
   } catch(e) {
     console.error('Update partner error:', e);
   }
@@ -1754,8 +1726,7 @@ function requestApiAccess() {
   window.location.href = 'mailto:info@rafd-digital.com?subject=' + subject + '&body=' + body;
 }
 
-async function logout() {
-  await _sb.auth.signOut();
+function logout() {
   localStorage.removeItem('rafd_partner_session');
   window.location.href = '/partner-login.html';
 }
@@ -2251,16 +2222,12 @@ async function saveDocCriteria(docId) {
   if (!fc.required_docs[docId]) fc.required_docs[docId] = { active: true, required: false };
   fc.required_docs[docId].read_criteria = criteria;
 
-  const { data: updData, error } = await _sb.from('partners')
-    .update({ form_config: fc })
-    .eq('id', partner.id)
-    .select('id');
+  const { status: dcStatus } = await pdApi({ action: 'update_config', form_config: fc });
 
   if (btn) { btn.textContent = '💾 حفظ المعايير'; btn.disabled = false; }
 
-  if (error) { toast('خطأ في الحفظ: ' + error.message, 'error'); return; }
-  if (!updData || updData.length === 0) {
-    toast('لم يُحفظ — حدّث الصفحة ثم حاول مرة أخرى', 'error');
+  if (dcStatus !== 200) {
+    toast('خطأ في الحفظ — حاول مرة أخرى', 'error');
     return;
   }
 
@@ -2283,7 +2250,7 @@ async function confirmCriterion(ci) {
   renderCustomCriteria();
   updateWeightTotal();
   const fc = { ...(partner.formConfig || {}), custom_criteria: customCriteria };
-  await _sb.from('partners').update({ form_config: fc }).eq('id', partner.id);
+  await pdApi({ action: 'update_config', form_config: fc });
   partner.formConfig = fc;
   toast('✓ تمت إضافة المعيار للنموذج', 'success');
 }
@@ -2421,7 +2388,7 @@ async function confirmSaveForm() {
 
 async function persistSavedForms() {
   const fc = { ...(partner.formConfig || {}), saved_forms: savedForms };
-  await _sb.from('partners').update({ form_config: fc }).eq('id', partner.id);
+  await pdApi({ action: 'update_config', form_config: fc });
   partner.formConfig = fc;
 }
 
@@ -2753,24 +2720,16 @@ async function saveFormConfig() {
   const saveBtns = document.querySelectorAll('[onclick="saveFormConfig()"]');
   saveBtns.forEach(b => { b.disabled = true; b.textContent = '⏳ جارٍ الحفظ...'; });
 
-  const { data: sfData, error } = await _sb.from('partners')
-    .update({ form_config: fc })
-    .eq('id', partner.id)
-    .select('id');
+  const { status: sfStatus, data: sfData } = await pdApi({ action: 'update_config', form_config: fc });
 
   saveBtns.forEach(b => { b.disabled = false; b.textContent = '💾 حفظ وتفعيل النموذج'; });
 
-  if (error) {
-    if (error.message?.includes('form_config') || error.code === '42703' || error.code === 'PGRST204') {
-      toast('⚠️ يجب تشغيل SQL في Supabase أولاً — راجع التعليمات', 'error');
-      document.getElementById('sql_reminder')?.style.setProperty('display','block');
+  if (sfStatus !== 200) {
+    if (sfStatus === 401) {
+      toast('لم يُحفظ — الجلسة منتهية، سجّل الدخول مرة أخرى', 'error');
     } else {
-      toast('خطأ أثناء الحفظ: ' + error.message, 'error');
+      toast('خطأ أثناء الحفظ: ' + (sfData?.error || ''), 'error');
     }
-    return;
-  }
-  if (!sfData || sfData.length === 0) {
-    toast('لم يُحفظ — الجلسة منتهية، حدّث الصفحة ثم حاول مرة أخرى', 'error');
     return;
   }
 

@@ -257,11 +257,16 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 </div>
 
 <script src="/i18n.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// API helper
+async function partnerAuthApi(data) {
+  const r = await fetch('/api/partner-auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return { status: r.status, data: await r.json() };
+}
 
 // ===== LOGIN OTP =====
 let _loginOtp = '';
@@ -348,6 +353,7 @@ async function verifyLoginOtp() {
 
   const p = _loginPartner;
   localStorage.setItem('rafd_partner_session', JSON.stringify({
+    token: p._token,
     id: p.id, email: p.email, org: p.org_name,
     fname: p.fname, lname: p.lname, orgtype: p.org_type,
     plan: p.plan, ref_num: p.ref_num, title: p.title
@@ -396,20 +402,19 @@ async function confirmNafathLogin() {
   errEl.style.display = 'none';
   btn.disabled = true; btn.textContent = '⏳ جارٍ التحقق...';
 
-  const { data: p, error } = await _sb.from('partners').select('*')
-    .eq('national_id', _nafathLoginData.nid)
-    .maybeSingle();
+  const { status: nfStatus, data: nfRes } = await partnerAuthApi({ action: 'nafath_lookup', nid: _nafathLoginData.nid });
 
   btn.disabled = false; btn.textContent = '✓ تم التأكيد في تطبيق نفاذ — دخول';
 
-  if (error || !p) {
+  if (nfStatus !== 200 || !nfRes.partner) {
     errEl.textContent = 'لم يُعثر على حساب بهذا الرقم. تأكد من رقم هويتك أو سجّل الدخول بالبريد وكلمة المرور.';
     errEl.style.display = 'block'; return;
   }
 
+  const p = nfRes.partner;
   _nafathLoginData = null;
   closeNafathModal();
-  localStorage.setItem('rafd_partner_session', JSON.stringify({ id: p.id, email: p.email, org: p.org_name, fname: p.fname, lname: p.lname, orgtype: p.org_type, plan: p.plan, ref_num: p.ref_num, title: p.title }));
+  localStorage.setItem('rafd_partner_session', JSON.stringify({ token: nfRes.token, id: p.id, email: p.email, org: p.org_name, fname: p.fname, lname: p.lname, orgtype: p.org_type, plan: p.plan, ref_num: p.ref_num, title: p.title }));
   window.location.href = '/partner-dashboard.html';
 }
 
@@ -439,13 +444,13 @@ async function findEmailByPhone() {
   }
   const btn = document.getElementById('fe_search_btn');
   btn.textContent = 'جارٍ البحث...'; btn.disabled = true;
-  const { data: list } = await _sb.from('partners').select('email,org_name').ilike('org_name', `%${orgname}%`).limit(1);
+  const { status: feStatus, data: feRes } = await partnerAuthApi({ action: 'search_org', orgName: orgname });
   btn.textContent = 'بحث'; btn.disabled = false;
-  if (!list?.length) {
+  if (feStatus !== 200 || !feRes.results?.length) {
     errEl.textContent = 'لم يُعثر على حساب. تأكد من اسم الجهة أو تواصل مع الدعم.';
     errEl.style.display = 'block'; return;
   }
-  _foundEmail = list[0].email;
+  _foundEmail = feRes.results[0].email;
   const [u, d] = _foundEmail.split('@');
   const masked = u.slice(0,2) + '***@' + d;
   document.getElementById('fe_email_show').textContent = masked;
@@ -481,13 +486,13 @@ async function findUsername() {
   }
   const btn = document.getElementById('fu_search_btn');
   btn.textContent = 'جارٍ البحث...'; btn.disabled = true;
-  const { data: list } = await _sb.from('partners').select('ref_num,org_name,email').ilike('org_name', `%${orgname}%`).limit(1);
+  const { status: fuStatus, data: fuRes } = await partnerAuthApi({ action: 'search_org', orgName: orgname });
   btn.textContent = 'بحث'; btn.disabled = false;
-  if (!list?.length || !list[0].ref_num) {
+  if (fuStatus !== 200 || !fuRes.results?.length || !fuRes.results[0].ref_num) {
     errEl.textContent = 'لم يُعثر على حساب. تأكد من اسم الجهة.';
     errEl.style.display = 'block'; return;
   }
-  _foundUsername = list[0].ref_num;
+  _foundUsername = fuRes.results[0].ref_num;
   document.getElementById('fu_username_show').textContent = _foundUsername;
   document.getElementById('fu_result').style.display = 'block';
 }
@@ -521,14 +526,14 @@ async function sendResetOtp() {
   btn.disabled = true; btn.textContent = '⏳ جارٍ الإرسال...';
 
   // Look up partner
-  const { data: p } = await _sb.from('partners').select('id,email,org_name').eq('email', email).maybeSingle();
-  if (!p) {
+  const { status: fpStatus, data: fpRes } = await partnerAuthApi({ action: 'lookup_email', email });
+  if (fpStatus !== 200 || !fpRes.partner) {
     errEl.textContent = 'البريد الإلكتروني غير مسجّل في النظام.';
     errEl.style.display = 'block';
     btn.disabled = false; btn.textContent = 'إرسال رمز التحقق';
     return;
   }
-  _fpPartner = p;
+  _fpPartner = fpRes.partner;
 
   // Generate OTP
   _fpOtp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -570,12 +575,11 @@ async function doReset() {
   btn.disabled = true; btn.textContent = '⏳ جارٍ التحديث...';
 
   // Update password
-  const encoded = btoa(newpass);
-  const { error } = await _sb.from('partners').update({ password: encoded }).eq('id', _fpPartner.id);
+  const { status: rpStatus } = await partnerAuthApi({ action: 'reset_password', partnerId: _fpPartner.id, newPassword: newpass });
 
   btn.disabled = false; btn.textContent = 'تغيير كلمة المرور';
 
-  if (error) { errEl.textContent = 'خطأ: ' + error.message; errEl.style.display = 'block'; return; }
+  if (rpStatus !== 200) { errEl.textContent = 'خطأ في تحديث كلمة المرور. حاول مرة أخرى.'; errEl.style.display = 'block'; return; }
 
   sessionStorage.removeItem('rafd_reset_otp');
   hideForgot();
@@ -637,57 +641,20 @@ async function doLogin() {
   btn.textContent = 'جاري التحقق...';
 
   try {
-    let partner = null;
+    const { status: loginStatus, data: loginRes } = await partnerAuthApi({ action: 'login', email, password: pass });
 
-    // هل المُدخَل ref_num (اسم المستخدم) أم بريد؟
-    const isRefNum = email.startsWith('RAFD-') || email.startsWith('rafd-');
-
-    if (!isRefNum) {
-      // المحاولة الأولى: تسجيل دخول عبر Supabase Auth (للحسابات الجديدة)
-      const { data: authData, error: authError } = await _sb.auth.signInWithPassword({ email, password: pass });
-      if (!authError && authData.user) {
-        const { data: p } = await _sb.from('partners').select('*').eq('email', email).maybeSingle();
-        partner = p;
-      }
-    }
-
-    // المحاولة الثانية: فحص يدوي (بريد أو ref_num)
-    if (!partner) {
-      const query = isRefNum
-        ? _sb.from('partners').select('*').eq('ref_num', email.toUpperCase()).maybeSingle()
-        : _sb.from('partners').select('*').eq('email', email).maybeSingle();
-      const { data: p, error: pErr } = await query;
-      if (pErr) throw pErr;
-
-      if (!p) {
-        errEl.textContent = isRefNum
-          ? 'اسم المستخدم غير موجود. تحقق من الرقم أو استخدم بريدك الإلكتروني.'
-          : 'البريد الإلكتروني غير مسجّل. هل تريد التسجيل كشريك جديد؟';
-        errEl.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
-        return;
-      }
-
-      // تحقق من كلمة المرور المخزنة بصيغة btoa
-      const stored = p.password || '';
-      let match = false;
-      try { match = atob(stored) === pass; } catch(e) { match = stored === pass; }
-
-      if (!match) {
-        errEl.textContent = 'كلمة المرور غير صحيحة.';
-        errEl.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
-        return;
-      }
-      partner = p;
-    }
-
-    if (!partner) {
-      errEl.textContent = 'البريد الإلكتروني غير مسجّل.';
+    if (loginStatus !== 200 || !loginRes.partner) {
+      const isRefNum = /^(RAFD|MAN)-/i.test(email.trim());
+      errEl.textContent = isRefNum
+        ? 'اسم المستخدم أو كلمة المرور غير صحيحة.'
+        : 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
       errEl.style.display = 'block';
       btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
       return;
     }
+
+    const partner = loginRes.partner;
+    const loginToken = loginRes.token;
 
     if (partner.status === 'rejected') {
       errEl.textContent = 'عذراً، طلب تسجيلك تم رفضه. تواصل مع الدعم للمزيد.';
@@ -697,7 +664,7 @@ async function doLogin() {
     }
 
     // تحقق بالبريد الإلكتروني قبل الدخول
-    _loginPartner = partner;
+    _loginPartner = { ...partner, _token: loginToken };
     _loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
     sessionStorage.setItem('rafd_login_otp', JSON.stringify({ otp: _loginOtp, email: partner.email, expiry: Date.now() + 5 * 60 * 1000 }));
 
