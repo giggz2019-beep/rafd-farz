@@ -387,17 +387,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       </div>
     </div>
     <div class="pkg-grid">
-      <div class="pkg-card" id="pkg_basic49" onclick="selectPkg('basic49')">
-        <div class="pkg-icon">🎯</div>
-        <div class="pkg-name" data-i18n="rp.pkg-basic49">الأساسية</div>
-        <div class="pkg-price" data-i18n="rp.basic49-price">99 ر.س</div>
-        <div class="pkg-period" data-i18n="rp.per-month">/شهرياً</div>
-        <ul class="pkg-features">
-          <li data-i18n="rp.basic49-f1">حتى 50 طلب شهرياً</li>
-          <li data-i18n="rp.basic49-f2">تقييم ذكي بالذكاء الاصطناعي</li>
-          <li data-i18n="rp.basic49-f3">لوحة تحكم أساسية</li>
-        </ul>
-      </div>
+      <!-- pkg_basic49 hidden until N-Genius payment gateway is configured -->
       <div class="pkg-card selected" id="pkg_basic" onclick="selectPkg('basic')">
         <div class="pkg-icon">🚀</div>
         <div class="pkg-name" data-i18n="rp.pkg-basic">بلس</div>
@@ -410,17 +400,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
           <li data-i18n="rp.basic-f3">دعم أولوية</li>
         </ul>
       </div>
-      <div class="pkg-card" id="pkg_advanced" onclick="selectPkg('advanced')">
-        <div class="pkg-icon">💎</div>
-        <div class="pkg-name" data-i18n="rp.pkg-adv">المتقدمة</div>
-        <div class="pkg-price" data-i18n="rp.adv-price">499 ر.س</div>
-        <div class="pkg-period" data-i18n="rp.per-month">/شهرياً</div>
-        <ul class="pkg-features">
-          <li data-i18n="rp.adv-f1">طلبات غير محدودة</li>
-          <li data-i18n="rp.adv-f2">API كامل</li>
-          <li data-i18n="rp.adv-f3">مدير حساب مخصص</li>
-        </ul>
-      </div>
+      <!-- pkg_advanced hidden until N-Genius payment gateway is configured -->
     </div>
   </div>
 
@@ -561,8 +541,9 @@ let timerInterval = null;
 let pendingPartner = null;
 
 function selectPkg(pkg) {
+  if (!['basic'].includes(pkg)) pkg = 'basic';
   selectedPkg = pkg;
-  ['basic49','basic','advanced'].forEach(p => {
+  ['basic'].forEach(p => {
     document.getElementById('pkg_' + p).classList.toggle('selected', p === pkg);
   });
 }
