@@ -1202,18 +1202,34 @@ async function loadPartnerData() {
       }
     }
 
-    // تحقق من جلسة Supabase Auth أولاً
-    const { data: { session: authSession } } = await _sb.auth.getSession();
+    // تحقق من جلسة Supabase Auth — وحاول تجديدها إن كانت منتهية
+    let authSession;
+    try {
+      const { data: sd } = await _sb.auth.getSession();
+      authSession = sd.session;
+      // إذا لا توجد جلسة، حاول التجديد قبل الاستسلام
+      if (!authSession) {
+        const { data: rd } = await _sb.auth.refreshSession();
+        authSession = rd?.session;
+      }
+    } catch(_) {}
     const email = authSession?.user?.email || session?.email;
 
     if (!email) { window.location.href = '/partner-login.html'; return; }
 
     // ابحث دائماً بالإيميل لأنه فريد وموثوق
-    const { data, error } = await _sb
+    let { data, error } = await _sb
       .from('partners')
       .select('*')
       .eq('email', email)
       .maybeSingle();
+
+    // إذا فشل الاستعلام، انتظر ثانية واحدة وأعد المحاولة
+    if (error || !data) {
+      await new Promise(r => setTimeout(r, 1000));
+      const retry = await _sb.from('partners').select('*').eq('email', email).maybeSingle();
+      if (!retry.error && retry.data) { data = retry.data; error = null; }
+    }
 
     if (error || !data) { window.location.href = '/partner-login.html'; return; }
 
@@ -1229,6 +1245,14 @@ async function loadPartnerData() {
 
     session = { id: partner.id, email: partner.email, org: partner.org };
     localStorage.setItem('rafd_partner_session', JSON.stringify(session));
+
+    // جدّد التوكن تلقائياً عند العودة للتاب بعد فترة خمول
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        _sb.auth.getSession().catch(() => {});
+      }
+    });
+
     await loadApplications();
     initUI();
   } catch(e) {
@@ -2227,11 +2251,18 @@ async function saveDocCriteria(docId) {
   if (!fc.required_docs[docId]) fc.required_docs[docId] = { active: true, required: false };
   fc.required_docs[docId].read_criteria = criteria;
 
-  const { error } = await _sb.from('partners').update({ form_config: fc }).eq('id', partner.id);
+  const { data: updData, error } = await _sb.from('partners')
+    .update({ form_config: fc })
+    .eq('id', partner.id)
+    .select('id');
 
   if (btn) { btn.textContent = '💾 حفظ المعايير'; btn.disabled = false; }
 
   if (error) { toast('خطأ في الحفظ: ' + error.message, 'error'); return; }
+  if (!updData || updData.length === 0) {
+    toast('لم يُحفظ — حدّث الصفحة ثم حاول مرة أخرى', 'error');
+    return;
+  }
 
   partner.formConfig = fc;
   docReadCriteria[docId] = criteria;
@@ -2722,7 +2753,10 @@ async function saveFormConfig() {
   const saveBtns = document.querySelectorAll('[onclick="saveFormConfig()"]');
   saveBtns.forEach(b => { b.disabled = true; b.textContent = '⏳ جارٍ الحفظ...'; });
 
-  const { error } = await _sb.from('partners').update({ form_config: fc }).eq('id', partner.id);
+  const { data: sfData, error } = await _sb.from('partners')
+    .update({ form_config: fc })
+    .eq('id', partner.id)
+    .select('id');
 
   saveBtns.forEach(b => { b.disabled = false; b.textContent = '💾 حفظ وتفعيل النموذج'; });
 
@@ -2733,6 +2767,10 @@ async function saveFormConfig() {
     } else {
       toast('خطأ أثناء الحفظ: ' + error.message, 'error');
     }
+    return;
+  }
+  if (!sfData || sfData.length === 0) {
+    toast('لم يُحفظ — الجلسة منتهية، حدّث الصفحة ثم حاول مرة أخرى', 'error');
     return;
   }
 

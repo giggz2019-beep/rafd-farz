@@ -1742,6 +1742,7 @@ function collect() {
 
   // Document AI criteria scoring
   const docsCfg = partnerData?.form_config?.required_docs || {};
+  let docWeightTotal = 0;
   Object.keys(_docAIResults).forEach(docId => {
     const criteria = docsCfg[docId]?.read_criteria || [];
     const results = _docAIResults[docId]?.criteria_results || [];
@@ -1749,6 +1750,7 @@ function collect() {
       const c = criteria.find(x => x.prompt === r.prompt);
       if (!c) return;
       const w = c.weight || 0;
+      docWeightTotal += w;
       if (r.passed) {
         score += w;
         bd.push({ l: r.prompt, s: w, m: w, p: true });
@@ -1758,6 +1760,11 @@ function collect() {
     });
   });
 
+  // تطبيع الدرجة لتكون دائماً من 100
+  // معايير المستندات تأخذ نسبتها من ال100 وليس فوقها
+  if (docWeightTotal > 0) {
+    score = Math.round(score * 100 / (100 + docWeightTotal));
+  }
   score = Math.min(100, score);
   const minScore = partnerData?.form_config?.min_score ?? 55;
   const passedMin = score >= minScore;
