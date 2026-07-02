@@ -587,7 +587,7 @@ async function doLogin() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'ping', password: p })
     });
-    if (res.status === 401) {
+    if (!res.ok) {
       document.getElementById('loginErr').style.display = 'block';
       document.getElementById('adminPass').value = '';
       return;
