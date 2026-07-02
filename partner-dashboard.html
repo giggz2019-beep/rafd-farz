@@ -1179,7 +1179,7 @@ async function loadPartnerData() {
     if (adminBypass) {
       const adminSessValid = JSON.parse(localStorage.getItem('rafd_admin_session') || 'null');
       if (adminSessValid && adminSessValid.loggedIn && adminSessValid.expires > Date.now()) {
-        partner = { org: 'RAFD Admin', plan: 'pro', _adminBypass: true };
+        partner = { org: 'RAFD Admin', plan: 'advanced', _adminBypass: true };
         initUI();
         showAdminPreviewBanner(true);
         return;
@@ -1197,7 +1197,7 @@ async function loadPartnerData() {
       if (adminPreview.partnerData) {
         partner = normalizePartner(adminPreview.partnerData);
         allApplications = adminPreview.applications || [];
-        if (adminPreview.unlockAll) partner.plan = 'pro';
+        if (adminPreview.unlockAll) partner.plan = 'advanced';
         partner._adminPreview = true;
         partner._unlockAll = adminPreview.unlockAll;
         initUI();
@@ -1310,7 +1310,7 @@ function getOrgTypeLabel(orgtype) {
 function initUI() {
   document.getElementById('sb_orgname').textContent = partner.org;
   document.getElementById('sb_orgtype').textContent = getOrgTypeLabel(partner.orgtype);
-  const planLabels = {trial: getT('db.plan-trial-short'), basic: getT('db.plan-basic-short'), pro: getT('db.plan-adv-short')};
+  const planLabels = {trial: getT('db.plan-trial-short'), basic49: getT('db.plan-basic49-short'), basic: getT('db.plan-basic-short'), advanced: getT('db.plan-adv-short')};
   document.getElementById('sb_plan').textContent = planLabels[partner.plan] || partner.plan;
   document.getElementById('sb_av').textContent = (partner.fname || '?')[0];
   document.getElementById('sb_uname').textContent = partner.fname + ' ' + partner.lname;
@@ -1336,7 +1336,7 @@ function initUI() {
 
   // Re-render dynamic JS sections whenever language toggles
   document.addEventListener('rafd-lang-changed', () => {
-    const planLbls = {trial: getT('db.plan-trial-short'), basic: getT('db.plan-basic-short'), pro: getT('db.plan-adv-short')};
+    const planLbls = {trial: getT('db.plan-trial-short'), basic49: getT('db.plan-basic49-short'), basic: getT('db.plan-basic-short'), advanced: getT('db.plan-adv-short')};
     document.getElementById('sb_plan').textContent = planLbls[partner.plan] || partner.plan;
     document.getElementById('sb_orgtype').textContent = getOrgTypeLabel(partner.orgtype);
     document.getElementById('welcome_sub').textContent = getT('db.dashboard-lbl') + ' — ' + partner.org;
@@ -1376,7 +1376,7 @@ function renderStats() {
   document.getElementById('stat_pending_req').textContent = pending;
   document.getElementById('stat_approved_pct').textContent = reqs.length ? Math.round(approved/reqs.length*100) + `% ${getT('db.opt-approved')}` : '—';
   document.getElementById('stat_rejected_pct').textContent = reqs.length ? Math.round(rejected/reqs.length*100) + `% ${getT('db.opt-rejected')}` : '—';
-  const limits = {trial:50, basic:500, pro:999999};
+  const limits = {trial:50, basic49:50, basic:500, advanced:999999};
   const limit = limits[partner.plan] || 50;
   const pct = Math.min(100, Math.round(reqs.length / limit * 100));
   document.getElementById('usage_text').textContent = reqs.length + ' / ' + (limit === 999999 ? getT('db.unlimited') : limit);
@@ -1637,15 +1637,15 @@ async function updatePartnerInStorage() {
 function renderSubscription() {
   const planNames = {
     trial: getT('db.plan-trial'),
+    basic49: getT('db.plan-basic49'),
     basic: getT('db.plan-basic'),
-    plus: getT('db.plan-plus'),
-    pro: getT('db.plan-adv')
+    advanced: getT('db.plan-adv')
   };
   const prices = {
     trial: getT('db.plan-trial-price'),
+    basic49: getT('db.plan-basic49-price-full'),
     basic: getT('db.plan-basic-price-full'),
-    plus: getT('db.plan-plus-price-full'),
-    pro: getT('db.plan-adv-price-full')
+    advanced: getT('db.plan-adv-price-full')
   };
   document.getElementById('current_plan_info').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
@@ -1654,7 +1654,7 @@ function renderSubscription() {
         <div style="color:#38bdf8;font-size:1rem;font-weight:700;margin-top:.25rem">${prices[partner.plan] || ''}</div>
         <div style="color:#64748b;font-size:.78rem;margin-top:.25rem">${getT('db.sub-date')}: ${partner.date}</div>
       </div>
-      <span class="badge ${partner.plan === 'trial' ? 'b-trial' : partner.plan === 'pro' ? 'b-pro' : 'b-basic'}">${planNames[partner.plan]}</span>
+      <span class="badge ${partner.plan === 'trial' ? 'b-trial' : partner.plan === 'advanced' ? 'b-pro' : 'b-basic'}">${planNames[partner.plan] || partner.plan}</span>
     </div>`;
   // Mark current plan
   ['basic49','basic','advanced'].forEach(p => {
@@ -1743,7 +1743,7 @@ function showPage(pageId, navEl) {
 }
 
 function requestApiAccess() {
-  if (partner.plan !== 'pro') {
+  if (partner.plan !== 'advanced') {
     toast(getT('db.toast-api-pro'), 'warn');
     return;
   }
@@ -1786,7 +1786,7 @@ function renderLinkPage() {
   const embedEl = document.getElementById('embed_section_content');
   if (!embedEl) return;
 
-  if (partner.plan === 'pro') {
+  if (partner.plan === 'advanced') {
     const code = `<iframe\n  src="${url}"\n  width="100%"\n  height="820px"\n  frameborder="0"\n  style="border:none;border-radius:16px;overflow:hidden"\n  title="نموذج التقديم">\n</iframe>`;
     embedEl.innerHTML = `
       <p style="color:#94a3b8;font-size:.83rem;line-height:1.8;margin-bottom:1rem">${getT('db.embed-desc')}</p>
@@ -2020,7 +2020,7 @@ function selectAcceptMode(mode) {
 }
 
 function selectResultVis(mode) {
-  const isAdv = partner?.plan === 'pro';
+  const isAdv = partner?.plan === 'advanced';
   // paid option blocked for non-adv plans
   if (mode === 'paid' && !isAdv) {
     toast(getT('db.rv-adv-only'), 'warn');
@@ -2040,7 +2040,7 @@ function selectResultVis(mode) {
 }
 
 function initResultVisBadge() {
-  const isAdv = partner?.plan === 'pro';
+  const isAdv = partner?.plan === 'advanced';
   const badge = document.getElementById('rv_paid_plan_badge');
   if (badge) badge.style.display = isAdv ? 'none' : 'inline-block';
 }
