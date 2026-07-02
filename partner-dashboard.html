@@ -955,33 +955,65 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem" data-i18n="db.docs-desc">فعّل المستندات التي تريد من المتقدمين رفعها مع طلبهم</div>
 
       <div style="display:flex;flex-direction:column;gap:.6rem" id="docs_preset_container">
-        <div class="q-card" id="doc_cv">
-          <button class="q-toggle on" id="dt_cv" onclick="toggleDoc('cv')"></button>
-          <div class="q-label" style="flex:1" data-i18n="db.doc-cv">📄 السيرة الذاتية / ملف CV</div>
-          <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-            <input type="checkbox" id="dr_cv" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
-          </label>
+        <div class="q-card" id="doc_cv" style="flex-direction:column;align-items:stretch">
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <button class="q-toggle on" id="dt_cv" onclick="toggleDoc('cv')"></button>
+            <div class="q-label" style="flex:1" data-i18n="db.doc-cv">📄 السيرة الذاتية / ملف CV</div>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
+              <input type="checkbox" id="dr_cv" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
+            </label>
+            <button onclick="toggleDocCriteria('cv')" id="dcbtn_cv" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif">⚡ معايير</button>
+          </div>
+          <div id="dcp_cv" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
+            <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — السيرة الذاتية</div>
+            <div id="dcr_cv"></div>
+            <button onclick="addDocCriterion('cv')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.28rem .7rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem">+ إضافة معيار قراءة</button>
+          </div>
         </div>
-        <div class="q-card" id="doc_reg">
-          <button class="q-toggle on" id="dt_reg" onclick="toggleDoc('reg')"></button>
-          <div class="q-label" style="flex:1" data-i18n="db.doc-reg">🏢 سجل تجاري / وثيقة تأسيس</div>
-          <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-            <input type="checkbox" id="dr_reg" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
-          </label>
+        <div class="q-card" id="doc_reg" style="flex-direction:column;align-items:stretch">
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <button class="q-toggle on" id="dt_reg" onclick="toggleDoc('reg')"></button>
+            <div class="q-label" style="flex:1" data-i18n="db.doc-reg">🏢 سجل تجاري / وثيقة تأسيس</div>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
+              <input type="checkbox" id="dr_reg" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
+            </label>
+            <button onclick="toggleDocCriteria('reg')" id="dcbtn_reg" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif">⚡ معايير</button>
+          </div>
+          <div id="dcp_reg" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
+            <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — السجل التجاري</div>
+            <div id="dcr_reg"></div>
+            <button onclick="addDocCriterion('reg')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.28rem .7rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem">+ إضافة معيار قراءة</button>
+          </div>
         </div>
-        <div class="q-card" id="doc_cert">
-          <button class="q-toggle" id="dt_cert" onclick="toggleDoc('cert')"></button>
-          <div class="q-label" style="flex:1" data-i18n="db.doc-cert">🎓 شهادات خبرة ومؤهلات</div>
-          <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-            <input type="checkbox" id="dr_cert" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
-          </label>
+        <div class="q-card" id="doc_cert" style="flex-direction:column;align-items:stretch">
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <button class="q-toggle" id="dt_cert" onclick="toggleDoc('cert')"></button>
+            <div class="q-label" style="flex:1" data-i18n="db.doc-cert">🎓 شهادات خبرة ومؤهلات</div>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
+              <input type="checkbox" id="dr_cert" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
+            </label>
+            <button onclick="toggleDocCriteria('cert')" id="dcbtn_cert" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif">⚡ معايير</button>
+          </div>
+          <div id="dcp_cert" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
+            <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — الشهادات</div>
+            <div id="dcr_cert"></div>
+            <button onclick="addDocCriterion('cert')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.28rem .7rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem">+ إضافة معيار قراءة</button>
+          </div>
         </div>
-        <div class="q-card" id="doc_id">
-          <button class="q-toggle" id="dt_id" onclick="toggleDoc('id')"></button>
-          <div class="q-label" style="flex:1" data-i18n="db.doc-id">🪪 صورة هوية وطنية</div>
-          <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-            <input type="checkbox" id="dr_id" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
-          </label>
+        <div class="q-card" id="doc_id" style="flex-direction:column;align-items:stretch">
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <button class="q-toggle" id="dt_id" onclick="toggleDoc('id')"></button>
+            <div class="q-label" style="flex:1" data-i18n="db.doc-id">🪪 صورة هوية وطنية</div>
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
+              <input type="checkbox" id="dr_id" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
+            </label>
+            <button onclick="toggleDocCriteria('id')" id="dcbtn_id" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif">⚡ معايير</button>
+          </div>
+          <div id="dcp_id" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
+            <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — الهوية</div>
+            <div id="dcr_id"></div>
+            <button onclick="addDocCriterion('id')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.28rem .7rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem">+ إضافة معيار قراءة</button>
+          </div>
         </div>
       </div>
 
@@ -1776,6 +1808,7 @@ const qStates = {};
 const docStates = { cv: true, reg: true, cert: false, id: false };
 let customCriteria = [];
 let customDocs = [];
+let docReadCriteria = { cv: [], reg: [], cert: [], id: [] };
 
 // ===== تخصيص الدرجات لكل معيار =====
 const CRITERIA_OPTIONS = {
@@ -2121,6 +2154,48 @@ function renderCustomDocs() {
         <input type="checkbox" ${d.required?'checked':''} onchange="customDocs[${i}].required=this.checked" style="accent-color:#10b981"> إلزامي
       </label>
       <button onclick="removeCustomDoc(${i})" style="background:none;border:none;color:#475569;cursor:pointer;font-size:.9rem">🗑️</button>
+    </div>
+  `).join('');
+}
+
+// ===== Document Read Criteria =====
+function toggleDocCriteria(docId) {
+  const panel = document.getElementById('dcp_' + docId);
+  if (!panel) return;
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) renderDocCriteriaList(docId);
+}
+
+function addDocCriterion(docId) {
+  docReadCriteria[docId] = docReadCriteria[docId] || [];
+  docReadCriteria[docId].push({ prompt: '', weight: 10 });
+  renderDocCriteriaList(docId);
+}
+
+function removeDocCriterion(docId, idx) {
+  docReadCriteria[docId].splice(idx, 1);
+  renderDocCriteriaList(docId);
+}
+
+function renderDocCriteriaList(docId) {
+  const container = document.getElementById('dcr_' + docId);
+  if (!container) return;
+  const list = docReadCriteria[docId] || [];
+  if (!list.length) { container.innerHTML = '<div style="font-size:.72rem;color:#475569;padding:.3rem 0">لا توجد معايير بعد — اضغط "+ إضافة معيار قراءة"</div>'; return; }
+  container.innerHTML = list.map((c, i) => `
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem;flex-wrap:wrap">
+      <input type="text" value="${c.prompt.replace(/"/g,'&quot;')}" placeholder="مثال: هل مؤهل المتقدم بكالوريوس أو أعلى؟"
+        oninput="docReadCriteria['${docId}'][${i}].prompt=this.value"
+        style="flex:1;min-width:160px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.42rem .75rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.78rem;outline:none">
+      <div style="display:flex;align-items:center;gap:.3rem;flex-shrink:0">
+        <span style="font-size:.68rem;color:#64748b">الوزن:</span>
+        <input type="number" value="${c.weight}" min="0" max="50"
+          oninput="docReadCriteria['${docId}'][${i}].weight=parseInt(this.value)||0"
+          style="width:44px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .35rem;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:700;text-align:center;outline:none">
+        <span style="font-size:.68rem;color:#64748b">نقطة</span>
+      </div>
+      <button onclick="removeDocCriterion('${docId}',${i})" style="background:none;border:none;color:#475569;cursor:pointer;font-size:.85rem;padding:0">🗑️</button>
     </div>
   `).join('');
 }
@@ -2516,11 +2591,16 @@ function loadFormConfigUI() {
     });
     customDocs = fc.custom_docs || [];
     renderCustomDocs();
+    // Load doc read criteria
+    DOC_IDS.forEach(id => {
+      docReadCriteria[id] = fc.required_docs?.[id]?.read_criteria || [];
+    });
   } else {
     customCriteria = [];
     renderCustomCriteria();
     customDocs = [];
     renderCustomDocs();
+    DOC_IDS.forEach(id => { docReadCriteria[id] = []; });
   }
 
   updateWeightTotal();
@@ -2557,12 +2637,13 @@ async function saveFormConfig() {
     }
   }
 
-  // Collect docs config
+  // Collect docs config (including read criteria)
   const required_docs = {};
   DOC_IDS.forEach(id => {
     required_docs[id] = {
       active: docStates[id] !== false,
       required: document.getElementById('dr_'+id)?.checked ?? false,
+      read_criteria: (docReadCriteria[id] || []).filter(c => c.prompt.trim()),
     };
   });
 

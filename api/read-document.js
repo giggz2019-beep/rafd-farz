@@ -40,7 +40,26 @@ module.exports = async (req, res) => {
     return res.status(200).json({ ok: false, error: 'unsupported_type' });
   }
 
-  const prompt = PROMPTS[docType] || DEFAULT_PROMPT;
+  const { readCriteria } = req.body || {};
+  const hasCriteria = Array.isArray(readCriteria) && readCriteria.length > 0;
+
+  // Build combined prompt: standard extraction + custom criteria evaluation
+  let prompt = PROMPTS[docType] || DEFAULT_PROMPT;
+
+  if (hasCriteria) {
+    const criteriaLines = readCriteria
+      .map((c, i) => `${i + 1}. "${c.prompt}"`)
+      .join('\n');
+
+    prompt = `${PROMPTS[docType] || DEFAULT_PROMPT}
+
+بالإضافة إلى ذلك، قيّم المعايير التالية بناءً على محتوى الوثيقة وأضفها في مفتاح "criteria_results" كمصفوفة:
+${criteriaLines}
+
+لكل معيار أجب بـ: { "prompt": "نص المعيار", "passed": true/false, "reason": "سبب قصير جداً" }
+
+المخرج النهائي: JSON واحد يضم الحقول الأساسية + "criteria_results".`;
+  }
 
   try {
     const contentBlock = isImage
@@ -54,12 +73,14 @@ module.exports = async (req, res) => {
     };
     if (isPdf) headers['anthropic-beta'] = 'pdfs-2024-09-25';
 
+    const maxTokens = hasCriteria ? 900 : 600;
+
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers,
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 600,
+        max_tokens: maxTokens,
         messages: [
           { role: 'user', content: [contentBlock, { type: 'text', text: prompt }] },
         ],

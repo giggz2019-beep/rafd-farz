@@ -1086,10 +1086,12 @@ async function readDocumentWithAI(file, docId) {
 
   try {
     const base64 = await fileToBase64(file);
+    const readCriteria = (partnerData?.form_config?.required_docs?.[docId]?.read_criteria || [])
+      .filter(c => c.prompt?.trim());
     const res = await fetch('/api/read-document', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ base64, mediaType: file.type, docType }),
+      body: JSON.stringify({ base64, mediaType: file.type, docType, readCriteria }),
     });
     const result = await res.json();
 
@@ -1136,14 +1138,26 @@ function renderDocResult(el, docType, data) {
     rows.push(['الملخص', data.summary]);
   }
 
-  if (!rows.length) {
+  if (!rows.length && !data.criteria_results?.length) {
     el.innerHTML = '<div class="dar-warn">⚠️ المستند محفوظ — تعذّر استخراج البيانات منه</div>';
     return;
+  }
+
+  // Render criteria results
+  let criteriaHtml = '';
+  if (data.criteria_results?.length) {
+    criteriaHtml = '<div style="border-top:1px solid rgba(139,92,246,.15);margin-top:.5rem;padding-top:.5rem">' +
+      '<div style="font-size:.68rem;color:#a78bfa;font-weight:700;margin-bottom:.35rem">📋 تقييم المعايير المخصصة</div>' +
+      data.criteria_results.map(r => {
+        const icon = r.passed ? '✅' : '❌';
+        return `<div class="dar-row" style="align-items:flex-start;gap:.4rem"><span style="flex-shrink:0">${icon}</span><span class="dar-v" style="font-weight:500;font-size:.71rem">${r.prompt}</span></div>`;
+      }).join('') + '</div>';
   }
 
   el.innerHTML = `<div class="dar-ok">
     <div class="dar-ok-hdr">✅ تمت القراءة الذكية للوثيقة</div>
     ${rows.map(([k,v]) => `<div class="dar-row"><span class="dar-k">${k}:</span><span class="dar-v">${v}</span></div>`).join('')}
+    ${criteriaHtml}
   </div>`;
 }
 
@@ -1691,6 +1705,24 @@ function collect() {
     const s = checked ? parseInt(checked.value) || 0 : 0;
     score += s;
     bd.push({l: c.label, s, m: c.weight, p: s >= c.weight * 0.5});
+  });
+
+  // Document AI criteria scoring
+  const docsCfg = partnerData?.form_config?.required_docs || {};
+  Object.keys(_docAIResults).forEach(docId => {
+    const criteria = docsCfg[docId]?.read_criteria || [];
+    const results = _docAIResults[docId]?.criteria_results || [];
+    results.forEach(r => {
+      const c = criteria.find(x => x.prompt === r.prompt);
+      if (!c) return;
+      const w = c.weight || 0;
+      if (r.passed) {
+        score += w;
+        bd.push({ l: r.prompt, s: w, m: w, p: true });
+      } else {
+        bd.push({ l: r.prompt, s: 0, m: w, p: false });
+      }
+    });
   });
 
   score = Math.min(100, score);
