@@ -470,12 +470,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <p data-i18n="rp.terms-p2">٢. تتعهد الجهة بالحفاظ على سرية بيانات المتقدمين وعدم مشاركتها مع أطراف ثالثة.</p>
       <p data-i18n="rp.terms-p3">٣. تحتفظ RAFD Digital بحق مراجعة الطلبات والموافقة عليها أو رفضها دون إبداء الأسباب.</p>
       <p data-i18n="rp.terms-p4">٤. يُحق لـ RAFD Digital إيقاف الحساب في حال مخالفة الشروط.</p>
-      <p data-i18n="rp.terms-p5">٥. تسري الاشتراكات الشهرية ولا يُسترد المبلغ المدفوع بعد بدء الفترة.</p>
+      <p data-i18n="rp.terms-p5">٥. تسري الاشتراكات الشهرية وفق سياسة الاسترداد الموضحة في <a href="/terms.html#art6" target="_blank">الشروط والأحكام</a> (المادة 6) — كقاعدة عامة غير قابلة للاسترداد، مع استثناءات محددة.</p>
       <p data-i18n="rp.terms-p6">٦. تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.</p>
     </div>
     <label class="check-row" style="margin-bottom:.4rem">
       <input type="checkbox" id="chk_terms">
-      <span data-i18n="rp.chk-terms">أوافق على <a href="#">شروط وأحكام</a> الشراكة مع RAFD Digital</span>
+      <span data-i18n="rp.chk-terms">أوافق على <a href="/terms.html" target="_blank">شروط وأحكام</a> الشراكة مع RAFD Digital</span>
     </label>
     <div class="ferr" id="terms_err" style="margin-bottom:.6rem;padding-right:.1rem" data-i18n="rp.err-terms">⚠ يرجى الموافقة على الشروط والأحكام</div>
     <label class="check-row">
@@ -513,7 +513,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   <button class="btn-verify" id="verifyBtn" onclick="verifyOTP()" data-i18n="rp.verify-btn">تحقق وفعّل الحساب ✓</button>
   
   <div class="resend-row">
-    <span class="otp-timer" id="otpTimerText"><span data-i18n="rp.resend-after">إعادة الإرسال بعد</span> <span id="otpTimer">10:00</span></span>
+    <span class="otp-timer" id="otpTimerText"><span data-i18n="rp.resend-after">إعادة الإرسال بعد</span> <span id="otpTimer">3:00</span></span>
     <button class="btn-resend" id="resendBtn" onclick="resendOTP()" disabled data-i18n="rp.resend-btn">إعادة الإرسال</button>
   </div>
 </div>
@@ -949,7 +949,7 @@ async function submitForm() {
   // توليد رمز OTP محلياً
   const otp = String(Math.floor(100000 + Math.random() * 900000));
   sessionStorage.setItem('rafd_otp', JSON.stringify({
-    otp, email, expiry: Date.now() + 10 * 60 * 1000
+    otp, email, expiry: Date.now() + 3 * 60 * 1000
   }));
 
   try {
@@ -968,7 +968,7 @@ async function submitForm() {
     document.getElementById('otpSection').style.display = 'block';
     document.getElementById('otpEmailDisplay').textContent = email;
     window.scrollTo({top:0, behavior:'smooth'});
-    startTimer(600);
+    startTimer(180);
     setTimeout(() => document.getElementById('otp0').focus(), 300);
 
   } catch (err) {
@@ -998,7 +998,7 @@ async function verifyOTP() {
   try { stored = JSON.parse(sessionStorage.getItem('rafd_otp') || '{}'); } catch(e) {}
 
   if (!stored.otp || stored.email !== pendingPartner.email) {
-    showOTPError('انتهت صلاحية الرمز — اضغط "إعادة الإرسال"');
+    showOTPError('لم يتم العثور على رمز صالح — اضغط "إعادة الإرسال" لطلب رمز جديد');
     verifyBtn.disabled = false;
     verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
     return;
@@ -1006,7 +1006,7 @@ async function verifyOTP() {
 
   if (Date.now() > stored.expiry) {
     sessionStorage.removeItem('rafd_otp');
-    showOTPError('انتهت صلاحية الرمز — اضغط "إعادة الإرسال"');
+    showOTPError('انتهت صلاحية الرمز (٣ دقائق) — اضغط "إعادة الإرسال"');
     verifyBtn.disabled = false;
     verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
     return;
@@ -1120,7 +1120,7 @@ async function resendOTP() {
 
   try {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    sessionStorage.setItem('rafd_otp', JSON.stringify({ otp, email, expiry: Date.now() + 10 * 60 * 1000 }));
+    sessionStorage.setItem('rafd_otp', JSON.stringify({ otp, email, expiry: Date.now() + 3 * 60 * 1000 }));
     await fetch('/api/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1131,7 +1131,7 @@ async function resendOTP() {
   }
 
   btn.textContent = 'إعادة الإرسال';
-  startTimer(600);
+  startTimer(180);
   // Clear digits
   for (let i = 0; i < 6; i++) {
     document.getElementById('otp'+i).value = '';

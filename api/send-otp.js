@@ -23,6 +23,7 @@ module.exports = async (req, res) => {
         from: 'RAFD Digital <noreply@rafd-digital.com>',
         to: [email],
         subject: `${otp} - رمز التفعيل في RAFD Digital`,
+        text: `مرحباً ${fname || ''}،\n\nرمز التفعيل الخاص بك في RAFD Digital هو: ${otp}\n\nصالح لمدة 3 دقائق فقط. لا تشاركه مع أي أحد.\n\nإذا لم تطلب هذا الرمز، تجاهل هذا البريد.\n\nRAFD Digital — support@rafd-digital.com`,
         html: `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
@@ -61,7 +62,7 @@ module.exports = async (req, res) => {
         <div style="font-size:.7rem;color:#8fa3b1;margin-bottom:12px;letter-spacing:2px;text-transform:uppercase;font-family:'Cairo',sans-serif">رمز التحقق الخاص بك</div>
         <div style="font-size:3.2rem;font-weight:900;letter-spacing:16px;color:#0d2233;font-family:'Courier New',monospace;text-shadow:0 2px 4px rgba(13,34,51,.1)">${otp}</div>
         <div style="margin-top:14px;display:inline-block;background:#fff3cd;border:1px solid #f0c040;border-radius:20px;padding:5px 16px">
-          <span style="font-size:.75rem;color:#856404;font-family:'Cairo',sans-serif">⏱ صالح لمدة <strong>10 دقائق</strong> فقط</span>
+          <span style="font-size:.75rem;color:#856404;font-family:'Cairo',sans-serif">⏱ صالح لمدة <strong>3 دقائق</strong> فقط</span>
         </div>
       </td></tr>
     </table>
