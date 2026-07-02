@@ -2,7 +2,7 @@
 const crypto = require('crypto');
 const { hash: hashPassword, verify: verifyPassword } = require('./_lib/password');
 const { getOrder, classifyOrder } = require('./_lib/ngenius');
-const { PAID_PLAN_PRICES, FREE_PLAN, FREE_PLAN_PRICE } = require('./_lib/plans');
+const { PAID_PLAN_PRICES } = require('./_lib/plans');
 
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
@@ -130,23 +130,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ exists: !!rows?.length });
     }
 
-    // ─── REGISTER (free/بلس plan — no payment) ───────────────────────────────
-    if (body.action === 'register') {
-      const { partnerData, password } = body;
-      if (!partnerData || !password) return res.status(400).json({ error: 'missing_fields' });
-
-      const row = buildPartnerRow(partnerData);
-      row.password = hashPassword(password);
-      row.status = 'approved';
-      row.plan = FREE_PLAN;
-      row.price = FREE_PLAN_PRICE;
-
-      const result = await sbWrite('POST', '/partners', row, key);
-      const p = Array.isArray(result) ? result[0] : result;
-      return res.status(200).json({ ok: true, partner: p, token: p ? makeToken(p.email) : null });
-    }
-
-    // ─── REGISTER AFTER PAYMENT (basic49 / advanced) ─────────────────────────
+    // ─── REGISTER AFTER PAYMENT (all plans require payment) ──────────────────
     if (body.action === 'register_after_payment') {
       const { orderRef, plan, partnerData, password } = body;
       if (!orderRef || !plan || !partnerData || !password) return res.status(400).json({ error: 'missing_fields' });

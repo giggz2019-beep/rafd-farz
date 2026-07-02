@@ -8,10 +8,8 @@
 // free (7-day trial) through the register_free action instead of payment.
 const PAID_PLAN_PRICES = {
   basic49: 99,
+  basic: 249,
   advanced: 499,
 };
 
-const FREE_PLAN = 'basic';
-const FREE_PLAN_PRICE = 249;
-
-module.exports = { PAID_PLAN_PRICES, FREE_PLAN, FREE_PLAN_PRICE };
+module.exports = { PAID_PLAN_PRICES };

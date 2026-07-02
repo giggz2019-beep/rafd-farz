@@ -1048,32 +1048,7 @@ async function verifyOTP() {
     ref_num: pendingPartner.refNum,
   };
 
-  // بلس تُفعَّل فوراً بدون دفع (تجربة 7 أيام) — الباقي يمر عبر بوابة الدفع أولاً
-  if (pendingPartner.plan === 'basic') {
-    try {
-      const { status: regStatus, data: regData } = await partnerAuthApi({
-        action: 'register', partnerData, password: pendingPartner.password,
-      });
-      if (regStatus !== 200 || !regData.partner) throw new Error(regData?.error || 'Registration failed');
-
-      const p = regData.partner;
-      localStorage.setItem('rafd_partner_session', JSON.stringify({ token: regData.token, id: p.id, email: p.email, org: p.org_name }));
-
-      document.getElementById('refNum').textContent = pendingPartner.refNum;
-      document.getElementById('otpSection').style.display = 'none';
-      document.getElementById('successSection').style.display = 'block';
-      window.scrollTo({top: 0, behavior: 'smooth'});
-
-    } catch(err) {
-      console.error('Register error:', err);
-      alert('حدث خطأ أثناء حفظ البيانات: ' + err.message);
-      verifyBtn.disabled = false;
-      verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
-    }
-    return;
-  }
-
-  // الأساسية / المتقدمة — تحويل لبوابة الدفع، الحساب يُنشأ فقط بعد تأكيد الدفع
+  // كل الخطط تمر عبر بوابة الدفع — الحساب يُنشأ فقط بعد تأكيد الدفع
   try {
     sessionStorage.setItem('rafd_pending_partner', JSON.stringify({
       partnerData, password: pendingPartner.password, plan: pendingPartner.plan,
