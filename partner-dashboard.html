@@ -967,7 +967,10 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <div id="dcp_cv" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
             <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — السيرة الذاتية</div>
             <div id="dcr_cv"></div>
-            <button onclick="addDocCriterion('cv')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.28rem .7rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem">+ إضافة معيار قراءة</button>
+            <div style="display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap">
+              <button onclick="addDocCriterion('cv')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
+              <button onclick="saveDocCriteria('cv')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
+            </div>
           </div>
         </div>
         <div class="q-card" id="doc_reg" style="flex-direction:column;align-items:stretch">
@@ -982,7 +985,10 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <div id="dcp_reg" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
             <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — السجل التجاري</div>
             <div id="dcr_reg"></div>
-            <button onclick="addDocCriterion('reg')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.28rem .7rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem">+ إضافة معيار قراءة</button>
+            <div style="display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap">
+              <button onclick="addDocCriterion('reg')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
+              <button onclick="saveDocCriteria('reg')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
+            </div>
           </div>
         </div>
         <div class="q-card" id="doc_cert" style="flex-direction:column;align-items:stretch">
@@ -997,7 +1003,10 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <div id="dcp_cert" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
             <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — الشهادات</div>
             <div id="dcr_cert"></div>
-            <button onclick="addDocCriterion('cert')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.28rem .7rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem">+ إضافة معيار قراءة</button>
+            <div style="display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap">
+              <button onclick="addDocCriterion('cert')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
+              <button onclick="saveDocCriteria('cert')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
+            </div>
           </div>
         </div>
         <div class="q-card" id="doc_id" style="flex-direction:column;align-items:stretch">
@@ -1012,7 +1021,10 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <div id="dcp_id" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
             <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — الهوية</div>
             <div id="dcr_id"></div>
-            <button onclick="addDocCriterion('id')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.28rem .7rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem">+ إضافة معيار قراءة</button>
+            <div style="display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap">
+              <button onclick="addDocCriterion('id')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
+              <button onclick="saveDocCriteria('id')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
+            </div>
           </div>
         </div>
       </div>
@@ -2182,7 +2194,10 @@ function renderDocCriteriaList(docId) {
   const container = document.getElementById('dcr_' + docId);
   if (!container) return;
   const list = docReadCriteria[docId] || [];
-  if (!list.length) { container.innerHTML = '<div style="font-size:.72rem;color:#475569;padding:.3rem 0">لا توجد معايير بعد — اضغط "+ إضافة معيار قراءة"</div>'; return; }
+  if (!list.length) {
+    container.innerHTML = '<div style="font-size:.72rem;color:#475569;padding:.3rem 0">لا توجد معايير — اضغط <strong style="color:#a78bfa">+ إضافة معيار</strong> لإضافة سؤال يقيّمه الذكاء الاصطناعي</div>';
+    return;
+  }
   container.innerHTML = list.map((c, i) => `
     <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem;flex-wrap:wrap">
       <input type="text" value="${c.prompt.replace(/"/g,'&quot;')}" placeholder="مثال: هل مؤهل المتقدم بكالوريوس أو أعلى؟"
@@ -2198,6 +2213,29 @@ function renderDocCriteriaList(docId) {
       <button onclick="removeDocCriterion('${docId}',${i})" style="background:none;border:none;color:#475569;cursor:pointer;font-size:.85rem;padding:0">🗑️</button>
     </div>
   `).join('');
+}
+
+async function saveDocCriteria(docId) {
+  const criteria = (docReadCriteria[docId] || []).filter(c => c.prompt.trim());
+  if (!criteria.length) { toast('اكتب معياراً واحداً على الأقل أولاً', 'warn'); return; }
+
+  const btn = document.querySelector(`#dcp_${docId} button[onclick="saveDocCriteria('${docId}')"]`);
+  if (btn) { btn.textContent = '⏳ جارٍ الحفظ...'; btn.disabled = true; }
+
+  const fc = JSON.parse(JSON.stringify(partner.formConfig || {}));
+  if (!fc.required_docs) fc.required_docs = {};
+  if (!fc.required_docs[docId]) fc.required_docs[docId] = { active: true, required: false };
+  fc.required_docs[docId].read_criteria = criteria;
+
+  const { error } = await _sb.from('partners').update({ form_config: fc }).eq('id', partner.id);
+
+  if (btn) { btn.textContent = '💾 حفظ المعايير'; btn.disabled = false; }
+
+  if (error) { toast('خطأ في الحفظ: ' + error.message, 'error'); return; }
+
+  partner.formConfig = fc;
+  docReadCriteria[docId] = criteria;
+  toast(`✓ تم حفظ ${criteria.length} معيار لهذا المستند`, 'success');
 }
 
 function addCustomCriterion() {
