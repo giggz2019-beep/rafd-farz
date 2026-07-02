@@ -826,6 +826,15 @@ let appRefNum = '';
 let nafathVerified = false;
 let _nfahOtp = '';
 let _docAIResults = {};
+let _docTypeErrors = {}; // docId → true if wrong document type uploaded
+
+const _DOC_LABELS = {
+  national_id: 'هوية وطنية أو إقامة',
+  cv: 'سيرة ذاتية',
+  commercial_registration: 'سجل تجاري',
+  certificate: 'شهادة أو وثيقة خبرة',
+  other: 'وثيقة غير معروفة',
+};
 
 // ===== INIT =====
 async function init() {
@@ -1100,6 +1109,30 @@ async function readDocumentWithAI(file, docId) {
       return;
     }
 
+    // Type mismatch — reject the file
+    if (result.typeMismatch) {
+      const expectedLabels = { id:'هوية وطنية أو إقامة', cv:'سيرة ذاتية', reg:'سجل تجاري', cert:'شهادة أو وثيقة خبرة' };
+      const detectedLabel = _DOC_LABELS[result.detectedType] || 'وثيقة غير معروفة';
+      const expectedLabel = expectedLabels[docId] || 'الوثيقة المطلوبة';
+
+      _docTypeErrors[docId] = true;
+      const zone = document.getElementById('uz_' + docId);
+      const nameEl = document.getElementById('uz_name_' + docId);
+      const fileInput = document.getElementById('uf_' + docId);
+      if (zone) zone.classList.remove('has-file');
+      if (nameEl) nameEl.textContent = '';
+      if (fileInput) fileInput.value = '';
+
+      resultEl.innerHTML = `<div style="background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.35);border-radius:10px;padding:.7rem .9rem;font-size:.78rem">
+        <div style="color:#ef4444;font-weight:800;margin-bottom:.3rem">❌ الملف المرفوع غير صحيح</div>
+        <div style="color:#fca5a5">المطلوب: <strong>${expectedLabel}</strong></div>
+        <div style="color:#fca5a5">تم رفع: <strong>${detectedLabel}</strong></div>
+        <div style="color:#94a3b8;margin-top:.35rem;font-size:.72rem">يرجى رفع الوثيقة الصحيحة</div>
+      </div>`;
+      return;
+    }
+
+    _docTypeErrors[docId] = false;
     _docAIResults[docId] = result.data;
     renderDocResult(resultEl, docType, result.data);
   } catch {
@@ -1785,6 +1818,11 @@ async function submitApp() {
     if (d?.active && d?.required) {
       const inp = document.getElementById('uf_'+id);
       if (!inp?.files?.[0]) { alert(`يرجى رفع: ${presetLabels[id]}`); return; }
+      if (_docTypeErrors[id] === true) {
+        alert(`الملف المرفوع لـ "${presetLabels[id]}" غير صحيح — يرجى رفع الوثيقة الصحيحة أولاً`);
+        document.getElementById('dar_' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
     }
   }
   const cDocs = fc?.custom_docs || [];
