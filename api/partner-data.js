@@ -2,6 +2,8 @@
 // Every request must include a valid { token }
 const crypto = require('crypto');
 const { hash: hashPassword } = require('./_lib/password');
+const { getOrder, classifyOrder } = require('./_lib/ngenius');
+const { PAID_PLAN_PRICES } = require('./_lib/plans');
 
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
@@ -146,6 +148,29 @@ module.exports = async (req, res) => {
       app.partner_ref = rows[0].ref_num;
       await sb('POST', '/applications', app, key);
       return res.status(200).json({ ok: true });
+    }
+
+    // UPGRADE PLAN (existing partner pays for a higher plan)
+    if (action === 'upgrade_plan') {
+      const { orderRef, plan } = body;
+      if (!orderRef || !plan) return res.status(400).json({ error: 'missing_fields' });
+      const expectedPrice = PAID_PLAN_PRICES[plan];
+      if (!expectedPrice) return res.status(400).json({ error: 'invalid_plan' });
+
+      // idempotency — already upgraded with this order ref
+      const existing = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=*&limit=1`, undefined, key);
+      if (!existing?.length) return res.status(404).json({ error: 'not_found' });
+      if (existing[0].payment_ref === orderRef) return res.status(200).json({ ok: true, partner: existing[0] });
+
+      const order = await getOrder(orderRef);
+      const { status, amount } = classifyOrder(order);
+      if (status !== 'SUCCESS') return res.status(402).json({ error: 'payment_not_confirmed', status });
+      if (amount !== expectedPrice) return res.status(400).json({ error: 'amount_mismatch' });
+
+      const rows = await sb('PATCH', `/partners?email=eq.${encodeURIComponent(email)}`,
+        { plan, price: expectedPrice, payment_ref: orderRef, status: 'approved' }, key);
+      const updated = Array.isArray(rows) ? rows[0] : existing[0];
+      return res.status(200).json({ ok: true, partner: updated });
     }
 
     return res.status(400).json({ error: 'unknown_action' });
