@@ -80,7 +80,7 @@ Stores both subscribers (from `signup.html`) and registered partners (from `regi
 | `org_type` | text | Type of organization |
 | `city` | text | City |
 | `email` | text | Unique login email |
-| `password` | text | `btoa()`-encoded password (not bcrypt — demo only) |
+| `password` | text | Legacy — `btoa()`-encoded. New accounts use Supabase Auth; this field is no longer written by any page. |
 | `phone` | text | |
 | `title` | text | Job title |
 | `website` | text | |
@@ -96,12 +96,14 @@ Stores both subscribers (from `signup.html`) and registered partners (from `regi
 ## Authentication Flow
 
 ### Subscribers (`login.html` / `signup.html`)
-- **Signup**: Validates fields → checks for duplicate email in `partners` table → inserts new row with `status: 'approved'`, `plan: 'trial'` → saves session to `localStorage` as `rafd_session`
-- **Login**: Queries `partners` table by email → compares `atob(stored_password)` with entered password → saves `rafd_session` to `localStorage` → redirects to `/dashboard.html`
+- **Signup**: Validates fields → checks for duplicate email in `partners` table → calls `supabase.auth.signUp()` → inserts row into `partners` (no password field) with `status: 'approved'`, `plan: 'trial'` → saves session to `localStorage` as `rafd_session`
+- **Login**: Calls `supabase.auth.signInWithPassword()` first; falls back to btoa comparison for legacy accounts and silently migrates them via `signUp()` → fetches partner record (only `id,email,org_name,status`) → checks status → saves `rafd_session` → redirects to `/dashboard.html`
+- **Session guard** (`dashboard.html`): Instant localStorage check + async `supabase.auth.getSession()` — redirects to `/login.html` if either is missing
 
 ### Partners (`partner-login.html` / `register-partner.html`)
-- **Registration**: Full form with OTP email verification via `supabase.auth.signInWithOtp()` → on OTP success, inserts into `partners` table with `status: 'pending'` → saves `rafd_partner_session` to `localStorage`
-- **Login**: Same DB query pattern as subscriber login → saves `rafd_partner_session` → redirects to `/partner-dashboard.html`
+- **Registration**: Full form with OTP email verification via `supabase.auth.signInWithOtp()` → on OTP success, inserts into `partners` table with `status: 'pending'` (no password field) → saves `rafd_partner_session` to `localStorage`
+- **Login**: Same pattern as subscriber login — `signInWithPassword()` first, btoa fallback for legacy accounts → saves `rafd_partner_session` → redirects to `/partner-dashboard.html`
+- **Session guard** (`partner-dashboard.html`): Instant localStorage check + async `supabase.auth.getSession()` — redirects to `/partner-login.html` if either is missing
 
 ### Session Storage Keys
 | Key | Used by |
@@ -118,7 +120,7 @@ Stores both subscribers (from `signup.html`) and registered partners (from `regi
 - **RTL first.** All pages use `dir="rtl"` and Arabic text. Keep this in all new pages.
 - **Arabic UI.** All user-facing strings must be in Arabic.
 - **Supabase SDK via CDN.** Load with `<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>` — one `<script>` tag only, no duplicate closing tags.
-- **Password encoding.** Passwords are stored as `btoa(password)` (Base64). This is for demo purposes only — not secure for production.
+- **Password encoding.** Legacy accounts have `btoa(password)` in the `password` column. New accounts use Supabase Auth — the `password` column is no longer written.
 - **Netlify `_redirects`.** Every new `.html` page should get a clean-URL redirect entry in `_redirects`.
 
 ---
@@ -154,7 +156,7 @@ Update the `SUPABASE_URL` and `SUPABASE_KEY` variables in every HTML file that u
 
 ## Known Issues / TODO
 
-- Passwords are stored as `btoa()` (Base64) — replace with a proper hashing solution before production
-- `dashboard.html` has no session guard — any unauthenticated user can visit it directly
-- `admin.html` has no authentication guard
+- `admin.html` has no authentication guard — admin access relies on a hardcoded password check in JS only
 - The `khalid` AI chatbot on `index.html` uses a local keyword-matching system, not a real LLM
+- Legacy `password` column in `partners` table still holds btoa-encoded values for old accounts; can be cleared once all users have logged in and been auto-migrated to Supabase Auth
+- RLS on `partners` currently allows anon INSERT (signup flow) — consider moving signup to a Supabase Edge Function to remove all anon write access
