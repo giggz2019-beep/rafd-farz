@@ -2,7 +2,7 @@
 
 ## What This Is
 
-RAFD Digital is a static Arabic-language marketing and onboarding website for an AI-powered applicant-screening SaaS platform. It is hosted on **Netlify** (static hosting, no server-side rendering at runtime). The `server.js` file exists only for local development via `node server.js`.
+RAFD Digital is a static Arabic-language marketing and onboarding website for an AI-powered applicant-screening SaaS platform. It is hosted on a **VPS/server** running `node server.js` (Express). The `server.js` handles static file serving, clean URLs, and security headers.
 
 ---
 
@@ -13,7 +13,7 @@ RAFD Digital is a static Arabic-language marketing and onboarding website for an
 | HTML/CSS | Vanilla HTML5, inline styles (per-page), one shared `css/style.css` for the landing page |
 | JavaScript | Vanilla JS (no framework), Supabase JS SDK v2 loaded via CDN |
 | Backend / DB | [Supabase](https://supabase.com) — PostgreSQL database + Auth |
-| Hosting | Netlify (static) |
+| Hosting | VPS/Server — Node.js + Express (`server.js`) |
 | Font | Cairo (Google Fonts) |
 | Language / Direction | Arabic (`lang="ar" dir="rtl"`) |
 
@@ -121,7 +121,7 @@ Stores both subscribers (from `signup.html`) and registered partners (from `regi
 - **Arabic UI.** All user-facing strings must be in Arabic.
 - **Supabase SDK via CDN.** Load with `<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>` — one `<script>` tag only, no duplicate closing tags.
 - **Password encoding.** Legacy accounts have `btoa(password)` in the `password` column. New accounts use Supabase Auth — the `password` column is no longer written.
-- **Netlify `_redirects`.** Every new `.html` page should get a clean-URL redirect entry in `_redirects`.
+- **Clean URLs.** The Express wildcard handler in `server.js` automatically serves `/pagename.html` when `/pagename` is requested — no need to add entries to `_redirects` (that file is Netlify-only and unused).
 
 ---
 
@@ -140,8 +140,7 @@ Then open `http://localhost:3000`.
 
 ### Add a new page
 1. Create `pagename.html` in the root
-2. Add a redirect to `_redirects`: `/pagename   /pagename.html   200`
-3. Link to `/pagename` (not `/pagename.html`) from other pages
+2. Link to `/pagename` (not `/pagename.html`) — Express handles the clean URL automatically
 
 ### Add a new Supabase table
 1. Create the table in the Supabase dashboard
