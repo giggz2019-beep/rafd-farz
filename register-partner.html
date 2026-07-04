@@ -615,7 +615,7 @@ async function submitForm() {
   try {
     const { error } = await supabase.auth.signInWithOtp({
       email: email,
-      options: { shouldCreateUser: true }
+      options: { shouldCreateUser: false }
     });
     if (error) throw error;
 
@@ -754,7 +754,7 @@ async function resendOTP() {
   try {
     const { error } = await supabase.auth.signInWithOtp({
       email: email,
-      options: { shouldCreateUser: true }
+      options: { shouldCreateUser: false }
     });
     if (error) throw error;
   } catch(e) {

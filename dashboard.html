@@ -201,7 +201,7 @@ body{font-family:'Almarai',sans-serif;background:#f1f5f9;color:#1e293b;direction
         <div class="sb-user-name">مسرعة الأعمال</div>
         <div class="sb-user-role">مدير النظام</div>
       </div>
-      <a href="/" class="sb-logout">خروج</a>
+      <a href="#" onclick="logout()" class="sb-logout">خروج</a>
     </div>
   </div>
 </aside>
@@ -508,6 +508,16 @@ body{font-family:'Almarai',sans-serif;background:#f1f5f9;color:#1e293b;direction
 </main>
 
 <script>
+(function() {
+  const s = localStorage.getItem('rafd_session');
+  if (!s) { window.location.href = '/login.html'; }
+})();
+
+function logout() {
+  localStorage.removeItem('rafd_session');
+  window.location.href = '/';
+}
+
 const pageTitles = {
   overview: 'نظرة عامة',
   applications: 'الطلبات',

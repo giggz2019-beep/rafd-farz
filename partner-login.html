@@ -98,26 +98,23 @@ async function doLogin() {
 
     if (error) throw error;
 
-    if (!partner) {
-      errEl.textContent = 'البريد الإلكتروني غير مسجّل. هل تريد التسجيل كشريك جديد؟';
+    const storedPass = partner ? (partner.password || '') : '';
+    let passwordMatch = false;
+    if (partner) {
+      try { passwordMatch = (atob(storedPass) === pass); }
+      catch(e) { passwordMatch = (storedPass === pass); }
+    }
+
+    if (!partner || !passwordMatch) {
+      errEl.textContent = 'بيانات تسجيل الدخول غير صحيحة. يرجى التحقق من البريد الإلكتروني وكلمة المرور.';
       errEl.style.display = 'block';
       btn.disabled = false;
       btn.textContent = 'دخول للوحة التحكم';
       return;
     }
 
-    // Check password (stored as btoa encoded)
-    const storedPass = partner.password || '';
-    let passwordMatch = false;
-    try {
-      passwordMatch = (atob(storedPass) === pass);
-    } catch(e) {
-      // If not base64, compare directly
-      passwordMatch = (storedPass === pass);
-    }
-
-    if (!passwordMatch) {
-      errEl.textContent = 'كلمة المرور غير صحيحة.';
+    if (partner.status === 'pending') {
+      errEl.textContent = 'طلبك لا يزال قيد المراجعة. سيتم التواصل معك عند الموافقة.';
       errEl.style.display = 'block';
       btn.disabled = false;
       btn.textContent = 'دخول للوحة التحكم';

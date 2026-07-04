@@ -91,18 +91,20 @@ async function doLogin() {
 
     if (error) throw error;
 
-    if (!partner) {
-      errEl.textContent = 'البريد الإلكتروني غير مسجّل. يرجى إنشاء حساب جديد.';
+    let passwordMatch = false;
+    if (partner) {
+      try { passwordMatch = (atob(partner.password || '') === pass); }
+      catch(e) { passwordMatch = (partner.password === pass); }
+    }
+
+    if (!partner || !passwordMatch) {
+      errEl.textContent = 'بيانات تسجيل الدخول غير صحيحة. يرجى التحقق من البريد الإلكتروني وكلمة المرور.';
       errEl.style.display = 'block';
       return;
     }
 
-    let passwordMatch = false;
-    try { passwordMatch = (atob(partner.password || '') === pass); }
-    catch(e) { passwordMatch = (partner.password === pass); }
-
-    if (!passwordMatch) {
-      errEl.textContent = 'كلمة المرور غير صحيحة.';
+    if (partner.status === 'pending') {
+      errEl.textContent = 'حسابك لا يزال قيد المراجعة. سيتم التواصل معك عند الموافقة.';
       errEl.style.display = 'block';
       return;
     }

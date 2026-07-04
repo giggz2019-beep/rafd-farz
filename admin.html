@@ -558,7 +558,52 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ===== SUPABASE =====
+const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let supabasePartners = [];
+
+async function loadPartnersFromSupabase() {
+  try {
+    const { data, error } = await supabase.from('partners').select('*').order('id', {ascending: false});
+    if (!error && data) {
+      supabasePartners = data.map(p => ({
+        id: p.id,
+        org: p.org_name,
+        orgtype: p.org_type,
+        city: p.city,
+        website: p.website,
+        fname: p.fname,
+        lname: p.lname,
+        title: p.title,
+        email: p.email,
+        phone: p.phone,
+        plan: p.plan,
+        status: p.status,
+        date: p.dateISO || '',
+        price: p.plan === 'pro' ? 999 : p.plan === 'basic' ? 499 : 0,
+        purpose: p.purpose,
+        notes: p.notes,
+      }));
+      renderPartnersTable(supabasePartners);
+    }
+  } catch(e) { console.error('loadPartnersFromSupabase:', e); }
+}
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function sanitizeCsvField(v) {
+  const s = String(v == null ? '' : v);
+  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
+}
+
 // ===== AUTH =====
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'rafd2025';
@@ -570,6 +615,7 @@ function doLogin() {
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminWrap').classList.add('active');
     renderAll();
+    loadPartnersFromSupabase();
   } else {
     document.getElementById('loginErr').style.display = 'block';
     document.getElementById('adminPass').value = '';
@@ -861,14 +907,22 @@ function renderPartnersTable(list) {
                         p.status === 'rejected' ? '<span class="badge badge-expired">✕ مرفوض</span>' :
                         '<span class="badge badge-pending">⏳ قيد المراجعة</span>';
     const reqCount = getPartnerRequestCount(p.id);
+    const org = escapeHtml(p.org || '—');
+    const city = escapeHtml(p.city || '');
+    const orgtype = escapeHtml(p.orgtype || '—');
+    const fullName = escapeHtml((p.fname||'') + ' ' + (p.lname||''));
+    const title = escapeHtml(p.title || '');
+    const email = escapeHtml(p.email || '—');
+    const date = escapeHtml(p.date || '—');
+    const initial = escapeHtml((p.org||'?')[0]);
     return `<tr onclick="openPartnerDetail(${p.id})" style="cursor:pointer">
       <td style="color:#475569">${i+1}</td>
-      <td><div class="client-info"><div class="client-av">${(p.org||'?')[0]}</div><div><div class="client-name">${p.org||'—'}</div><div class="client-org">${p.city||''}</div></div></div></td>
-      <td><span class="badge badge-pending" style="font-size:.7rem">${p.orgtype||'—'}</span></td>
-      <td><div class="client-name">${(p.fname||'')+ ' '+(p.lname||'')}</div><div class="client-org">${p.title||''}</div></td>
-      <td style="color:#64748b;font-size:.78rem">${p.email||'—'}</td>
-      <td><span class="badge ${planBadge[p.plan]||'badge-basic'}">${planLabels[p.plan]||p.plan}</span></td>
-      <td style="color:#64748b;font-size:.78rem">${p.date||'—'}</td>
+      <td><div class="client-info"><div class="client-av">${initial}</div><div><div class="client-name">${org}</div><div class="client-org">${city}</div></div></div></td>
+      <td><span class="badge badge-pending" style="font-size:.7rem">${orgtype}</span></td>
+      <td><div class="client-name">${fullName}</div><div class="client-org">${title}</div></td>
+      <td style="color:#64748b;font-size:.78rem">${email}</td>
+      <td><span class="badge ${planBadge[p.plan]||'badge-basic'}">${planLabels[p.plan]||escapeHtml(p.plan)}</span></td>
+      <td style="color:#64748b;font-size:.78rem">${date}</td>
       <td style="text-align:center;font-weight:700;color:#e2e8f0">${reqCount}</td>
       <td>${statusBadge}</td>
       <td onclick="event.stopPropagation()"><div class="actions-cell">
@@ -937,29 +991,30 @@ function openPartnerDetail(id) {
   const approved = reqs.filter(r => r.result === 'approved').length;
   const rejected = reqs.filter(r => r.result === 'rejected').length;
   const planLabels = {trial:'تجريبية', basic:'أساسية', pro:'متقدمة'};
+  const safeWebsite = p.website ? escapeHtml(p.website) : '';
   document.getElementById('detailBody').innerHTML = `
     <div class="detail-section">
       <div class="detail-section-title">معلومات الجهة</div>
-      <div class="detail-row"><span class="detail-key">اسم الجهة</span><span class="detail-val">${p.org}</span></div>
-      <div class="detail-row"><span class="detail-key">نوع الجهة</span><span class="detail-val">${p.orgtype}</span></div>
-      <div class="detail-row"><span class="detail-key">المدينة</span><span class="detail-val">${p.city||'—'}</span></div>
-      <div class="detail-row"><span class="detail-key">الموقع</span><span class="detail-val">${p.website ? '<a href="'+p.website+'" target="_blank" style="color:#38bdf8">'+p.website+'</a>' : '—'}</span></div>
+      <div class="detail-row"><span class="detail-key">اسم الجهة</span><span class="detail-val">${escapeHtml(p.org)}</span></div>
+      <div class="detail-row"><span class="detail-key">نوع الجهة</span><span class="detail-val">${escapeHtml(p.orgtype)}</span></div>
+      <div class="detail-row"><span class="detail-key">المدينة</span><span class="detail-val">${escapeHtml(p.city||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">الموقع</span><span class="detail-val">${safeWebsite ? '<a href="'+safeWebsite+'" target="_blank" rel="noopener noreferrer" style="color:#38bdf8">'+safeWebsite+'</a>' : '—'}</span></div>
     </div>
     <div class="detail-section">
       <div class="detail-section-title">المسؤول</div>
-      <div class="detail-row"><span class="detail-key">الاسم</span><span class="detail-val">${p.fname} ${p.lname}</span></div>
-      <div class="detail-row"><span class="detail-key">المسمى</span><span class="detail-val">${p.title||'—'}</span></div>
-      <div class="detail-row"><span class="detail-key">البريد</span><span class="detail-val">${p.email}</span></div>
-      <div class="detail-row"><span class="detail-key">الجوال</span><span class="detail-val">${p.phone||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">الاسم</span><span class="detail-val">${escapeHtml(p.fname)} ${escapeHtml(p.lname)}</span></div>
+      <div class="detail-row"><span class="detail-key">المسمى</span><span class="detail-val">${escapeHtml(p.title||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">البريد</span><span class="detail-val">${escapeHtml(p.email)}</span></div>
+      <div class="detail-row"><span class="detail-key">الجوال</span><span class="detail-val">${escapeHtml(p.phone||'—')}</span></div>
     </div>
     <div class="detail-section">
       <div class="detail-section-title">الاشتراك والإحصائيات</div>
-      <div class="detail-row"><span class="detail-key">الباقة</span><span class="detail-val">${planLabels[p.plan]||p.plan}</span></div>
+      <div class="detail-row"><span class="detail-key">الباقة</span><span class="detail-val">${escapeHtml(planLabels[p.plan]||p.plan)}</span></div>
       <div class="detail-row"><span class="detail-key">السعر</span><span class="detail-val">${p.price > 0 ? p.price.toLocaleString()+' ريال/شهر' : 'مجاني'}</span></div>
-      <div class="detail-row"><span class="detail-key">تاريخ التسجيل</span><span class="detail-val">${p.date}</span></div>
+      <div class="detail-row"><span class="detail-key">تاريخ التسجيل</span><span class="detail-val">${escapeHtml(p.date)}</span></div>
       <div class="detail-row"><span class="detail-key">إجمالي الطلبات</span><span class="detail-val">${reqs.length}</span></div>
       <div class="detail-row"><span class="detail-key">مقبول / مرفوض</span><span class="detail-val">${approved} / ${rejected}</span></div>
-      <div class="detail-row"><span class="detail-key">الغرض</span><span class="detail-val">${p.purpose||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">الغرض</span><span class="detail-val">${escapeHtml(p.purpose||'—')}</span></div>
     </div>
     <div style="display:flex;gap:.75rem;margin-top:1rem">
       ${p.status !== 'approved' ? `<button class="btn-save" style="flex:1" onclick="approvePartner(${p.id});closeDetail()">✓ قبول الطلب</button>` : '<button class="btn-save" style="flex:1;opacity:.5" disabled>✓ مقبول</button>'}
@@ -1033,8 +1088,16 @@ function renderReports() {
 
 function exportCSV() {
   const headers = ['الاسم','الجهة','البريد','الباقة','السعر','الحالة','تاريخ الاشتراك'];
-  const rows = clients.map(c => [c.fname+' '+c.lname, c.org, c.email, c.plan, c.price, c.status, c.startDate]);
-  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const rows = clients.map(c => [
+    sanitizeCsvField(c.fname+' '+c.lname),
+    sanitizeCsvField(c.org),
+    sanitizeCsvField(c.email),
+    sanitizeCsvField(c.plan),
+    sanitizeCsvField(c.price),
+    sanitizeCsvField(c.status),
+    sanitizeCsvField(c.startDate)
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
   const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = 'rafd-clients-'+new Date().toISOString().split('T')[0]+'.csv';

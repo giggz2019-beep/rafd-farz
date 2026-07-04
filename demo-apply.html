@@ -575,13 +575,20 @@ function submit() {
   runTerminal(data);
 }
 
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 function runTerminal(data) {
   const body = document.getElementById('termBody');
   const prog = document.getElementById('tProg');
+  const safeName = escapeHtml(data.name);
+  const safeSector = escapeHtml(data.sectorName);
   const lines = [
-    {t:`جارٍ البحث في قاعدة البيانات عن <span class="hi">${data.name}</span>...`,d:500},
+    {t:`جارٍ البحث في قاعدة البيانات عن <span class="hi">${safeName}</span>...`,d:500},
     {t:'التحقق من هوية المتقدم عبر <span class="hi">نفاذ</span> <span class="bl">(سدايا)</span>... ✓',d:1100},
-    {t:`تحليل قطاع <span class="hi">${data.sectorName}</span> ومعايير السوق...`,d:1800},
+    {t:`تحليل قطاع <span class="hi">${safeSector}</span> ومعايير السوق...`,d:1800},
     {t:'استدعاء نموذج التقييم <span class="hi">Rafd-AI v2.4</span>...',d:2500},
     {t:'تحليل المؤهلات الأكاديمية والخبرة العملية...',d:3200},
     {t:'تقييم مرحلة المشروع وجاهزيته للسوق...',d:3900},
@@ -623,11 +630,14 @@ function showResult(data) {
   const today = new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
   const hero = document.getElementById('rHero');
 
+  const safeName = escapeHtml(data.name);
+  const safeSector = escapeHtml(data.sectorName);
+
   if(data.accepted) {
     hero.innerHTML = `
     <div class="result-hero accepted">
       <div class="rh-trophy">🏆</div>
-      <div class="rh-title">تهانينا ${data.name}!</div>
+      <div class="rh-title">تهانينا ${safeName}!</div>
       <div class="rh-sub">تم قبول طلبك بنجاح</div>
       <div class="score-box">
         <div class="sb-label">درجتك النهائية</div>
@@ -646,9 +656,9 @@ function showResult(data) {
       <div class="cert-divider"></div>
       <div class="cert-body">
         <div class="cert-label">بطاقة قبول رسمية</div>
-        <div class="cert-name">${data.name}</div>
+        <div class="cert-name">${safeName}</div>
         <div class="cert-detail">تم قبول طلبك في برنامج <strong>دعم الشركات الناشئة</strong></div>
-        <div class="cert-detail">قطاع: <strong>${data.sectorName}</strong></div>
+        <div class="cert-detail">قطاع: <strong>${safeSector}</strong></div>
         <div class="cert-score-row">
           <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">الدرجة</div></div>
           <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">التقدير</div></div>
@@ -667,7 +677,7 @@ function showResult(data) {
     hero.innerHTML = `
     <div class="result-hero rejected">
       <div class="rh-trophy">📋</div>
-      <div class="rh-title">شكراً لتقديمك، ${data.name}</div>
+      <div class="rh-title">شكراً لتقديمك، ${safeName}</div>
       <div class="rh-sub">للأسف لم يستوفِ طلبك معايير القبول في هذه الدورة</div>
       <div class="score-box">
         <div class="sb-label">درجتك النهائية</div>
@@ -686,7 +696,7 @@ function showResult(data) {
       <div class="cert-divider"></div>
       <div class="cert-body">
         <div class="cert-label">إشعار رسمي</div>
-        <div class="cert-name">${data.name}</div>
+        <div class="cert-name">${safeName}</div>
         <div class="cert-detail">بعد مراجعة طلبك في برنامج <strong>دعم الشركات الناشئة</strong></div>
         <div class="cert-detail cert-sorry">
           نعتذر بصدق عن عدم استيفاء طلبك للمعايير المطلوبة في هذه الدورة.

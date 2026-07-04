@@ -524,12 +524,17 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ===== Supabase Config =====
 const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 // ===== AUTH CHECK =====
 const session = JSON.parse(localStorage.getItem('rafd_partner_session') || 'null');
@@ -657,9 +662,9 @@ function renderRecentRequests() {
   }
   tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal(${r.id})" style="cursor:pointer">
     <td style="color:#475569">${i+1}</td>
-    <td style="font-weight:700;color:#e2e8f0">${r.name}</td>
-    <td style="color:#64748b">${r.purpose}</td>
-    <td style="color:#64748b;font-size:.78rem">${r.date}</td>
+    <td style="font-weight:700;color:#e2e8f0">${escapeHtml(r.name)}</td>
+    <td style="color:#64748b">${escapeHtml(r.purpose)}</td>
+    <td style="color:#64748b;font-size:.78rem">${escapeHtml(r.date)}</td>
     <td>${resultBadge(r.result, r.score)}</td>
   </tr>`).join('');
 }
@@ -673,11 +678,11 @@ function renderAllRequests(list) {
   }
   tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal(${r.id})" style="cursor:pointer">
     <td style="color:#475569">${i+1}</td>
-    <td style="font-weight:700;color:#e2e8f0">${r.name}</td>
-    <td style="color:#64748b;font-size:.78rem">${r.nationalId || '—'}</td>
-    <td style="color:#64748b">${r.purpose}</td>
+    <td style="font-weight:700;color:#e2e8f0">${escapeHtml(r.name)}</td>
+    <td style="color:#64748b;font-size:.78rem">${escapeHtml(r.nationalId || '—')}</td>
+    <td style="color:#64748b">${escapeHtml(r.purpose)}</td>
     <td><span style="font-weight:800;color:${r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score || '—'}</span></td>
-    <td style="color:#64748b;font-size:.78rem">${r.date}</td>
+    <td style="color:#64748b;font-size:.78rem">${escapeHtml(r.date)}</td>
     <td>${resultBadge(r.result, r.score)}</td>
     <td onclick="event.stopPropagation()"><button class="btn-sm danger" onclick="deleteRequest(${r.id})">حذف</button></td>
   </tr>`).join('');
@@ -757,15 +762,15 @@ function openReqModal(id) {
   const scoreColor = r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444';
   document.getElementById('reqModalBody').innerHTML = `
     <div style="display:grid;gap:.75rem">
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الاسم</span><span style="color:#e2e8f0;font-weight:700">${r.name}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">رقم الهوية</span><span style="color:#e2e8f0">${r.nationalId || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">البريد</span><span style="color:#e2e8f0">${r.email || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الجوال</span><span style="color:#e2e8f0">${r.phone || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الغرض</span><span style="color:#e2e8f0">${r.purpose}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الاسم</span><span style="color:#e2e8f0;font-weight:700">${escapeHtml(r.name)}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">رقم الهوية</span><span style="color:#e2e8f0">${escapeHtml(r.nationalId || '—')}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">البريد</span><span style="color:#e2e8f0">${escapeHtml(r.email || '—')}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الجوال</span><span style="color:#e2e8f0">${escapeHtml(r.phone || '—')}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الغرض</span><span style="color:#e2e8f0">${escapeHtml(r.purpose)}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الدرجة</span><span style="color:${scoreColor};font-weight:900;font-size:1.1rem">${r.score !== null ? r.score + '/100' : '—'}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">النتيجة</span>${resultBadge(r.result, r.score)}</div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التاريخ</span><span style="color:#e2e8f0">${r.date}</span></div>
-      ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">ملاحظات</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.notes}</div></div>` : ''}
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التاريخ</span><span style="color:#e2e8f0">${escapeHtml(r.date)}</span></div>
+      ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">ملاحظات</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${escapeHtml(r.notes)}</div></div>` : ''}
     </div>`;
   document.getElementById('reqModal').classList.add('open');
 }
@@ -914,6 +919,7 @@ function requestApiAccess() {
 
 function logout() {
   localStorage.removeItem('rafd_partner_session');
+  localStorage.removeItem('rafd_partner_requests');
   window.location.href = '/partner-login.html';
 }
 
