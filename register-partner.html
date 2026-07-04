@@ -681,7 +681,6 @@ async function verifyOTP() {
         phone: pendingPartner.phone,
         org_type: pendingPartner.orgtype,
         city: pendingPartner.city,
-        password: pendingPartner.password,
         status: 'pending',
         fname: pendingPartner.fname,
         lname: pendingPartner.lname,
@@ -718,7 +717,6 @@ async function verifyOTP() {
           phone: pendingPartner.phone,
           org_type: pendingPartner.orgtype,
           city: pendingPartner.city,
-          password: pendingPartner.password,
           status: 'pending',
         }
       ]).select().single();

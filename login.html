@@ -83,42 +83,59 @@ async function doLogin() {
   btn.textContent = 'جاري التحقق...';
 
   try {
-    const { data: partner, error } = await supabase
-      .from('partners')
-      .select('*')
-      .eq('email', email)
-      .maybeSingle();
+    // 1. Try Supabase Auth (new accounts)
+    let authOk = false;
+    const { error: authErr } = await supabase.auth.signInWithPassword({ email, password: pass });
 
-    if (error) throw error;
-
-    let passwordMatch = false;
-    if (partner) {
-      try { passwordMatch = (atob(partner.password || '') === pass); }
-      catch(e) { passwordMatch = (partner.password === pass); }
+    if (!authErr) {
+      authOk = true;
+    } else {
+      // 2. Fallback: check old btoa accounts and migrate silently
+      const { data: old } = await supabase.from('partners').select('password').eq('email', email).maybeSingle();
+      if (old) {
+        let btaoMatch = false;
+        try { btaoMatch = (atob(old.password || '') === pass); } catch(e) {}
+        if (btaoMatch) {
+          // Migrate: create Auth account then sign in
+          await supabase.auth.signUp({ email, password: pass });
+          const { error: retryErr } = await supabase.auth.signInWithPassword({ email, password: pass });
+          if (!retryErr) authOk = true;
+        }
+      }
     }
 
-    if (!partner || !passwordMatch) {
+    if (!authOk) {
       errEl.textContent = 'بيانات تسجيل الدخول غير صحيحة. يرجى التحقق من البريد الإلكتروني وكلمة المرور.';
       errEl.style.display = 'block';
       return;
     }
 
+    // 3. Fetch partner record for status check
+    const { data: partner } = await supabase.from('partners').select('id,email,org_name,status').eq('email', email).maybeSingle();
+
+    if (!partner) {
+      await supabase.auth.signOut();
+      errEl.textContent = 'هذا البريد غير مسجّل في النظام.';
+      errEl.style.display = 'block';
+      return;
+    }
+
     if (partner.status === 'pending') {
+      await supabase.auth.signOut();
       errEl.textContent = 'حسابك لا يزال قيد المراجعة. سيتم التواصل معك عند الموافقة.';
       errEl.style.display = 'block';
       return;
     }
 
     if (partner.status === 'rejected') {
+      await supabase.auth.signOut();
       errEl.textContent = 'عذراً، حسابك تم رفضه. تواصل مع الدعم للمزيد.';
       errEl.style.display = 'block';
       return;
     }
 
     localStorage.setItem('rafd_session', JSON.stringify({
-      id: partner.id,
-      email: partner.email,
-      org: partner.org_name
+      id: partner.id, email: partner.email, org: partner.org_name
     }));
     window.location.href = '/dashboard.html';
 

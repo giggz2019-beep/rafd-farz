@@ -89,59 +89,66 @@ async function doLogin() {
   btn.textContent = 'جاري التحقق...';
 
   try {
-    // Query Supabase for partner with this email
-    const { data: partner, error } = await supabase
-      .from('partners')
-      .select('*')
-      .eq('email', email)
-      .maybeSingle();
+    // 1. Try Supabase Auth (new accounts)
+    let authOk = false;
+    const { error: authErr } = await supabase.auth.signInWithPassword({ email, password: pass });
 
-    if (error) throw error;
-
-    const storedPass = partner ? (partner.password || '') : '';
-    let passwordMatch = false;
-    if (partner) {
-      try { passwordMatch = (atob(storedPass) === pass); }
-      catch(e) { passwordMatch = (storedPass === pass); }
+    if (!authErr) {
+      authOk = true;
+    } else {
+      // 2. Fallback: check old btoa accounts and migrate silently
+      const { data: old } = await supabase.from('partners').select('password').eq('email', email).maybeSingle();
+      if (old) {
+        let btaoMatch = false;
+        try { btaoMatch = (atob(old.password || '') === pass); } catch(e) {}
+        if (btaoMatch) {
+          await supabase.auth.signUp({ email, password: pass });
+          const { error: retryErr } = await supabase.auth.signInWithPassword({ email, password: pass });
+          if (!retryErr) authOk = true;
+        }
+      }
     }
 
-    if (!partner || !passwordMatch) {
+    if (!authOk) {
       errEl.textContent = 'بيانات تسجيل الدخول غير صحيحة. يرجى التحقق من البريد الإلكتروني وكلمة المرور.';
       errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'دخول للوحة التحكم';
+      return;
+    }
+
+    // 3. Fetch partner record for status check
+    const { data: partner } = await supabase.from('partners').select('id,email,org_name,status').eq('email', email).maybeSingle();
+
+    if (!partner) {
+      await supabase.auth.signOut();
+      errEl.textContent = 'هذا البريد غير مسجّل في النظام.';
+      errEl.style.display = 'block';
       return;
     }
 
     if (partner.status === 'pending') {
+      await supabase.auth.signOut();
       errEl.textContent = 'طلبك لا يزال قيد المراجعة. سيتم التواصل معك عند الموافقة.';
       errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'دخول للوحة التحكم';
       return;
     }
 
     if (partner.status === 'rejected') {
+      await supabase.auth.signOut();
       errEl.textContent = 'عذراً، طلب تسجيلك تم رفضه. تواصل مع الدعم للمزيد.';
       errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'دخول للوحة التحكم';
       return;
     }
 
-    // Save session and redirect
-    const sessionData = {
-      id: partner.id,
-      email: partner.email,
-      org: partner.org_name
-    };
-    localStorage.setItem('rafd_partner_session', JSON.stringify(sessionData));
+    localStorage.setItem('rafd_partner_session', JSON.stringify({
+      id: partner.id, email: partner.email, org: partner.org_name
+    }));
     window.location.href = '/partner-dashboard.html';
 
   } catch(err) {
     console.error('Login error:', err);
     errEl.textContent = 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.';
     errEl.style.display = 'block';
+  } finally {
     btn.disabled = false;
     btn.textContent = 'دخول للوحة التحكم';
   }

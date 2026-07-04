@@ -117,7 +117,7 @@ async function doSignup() {
   btn.textContent = 'جاري إنشاء الحساب...';
 
   try {
-    // Check if email already registered
+    // Check if email already registered in partners table
     const { data: existing } = await supabase
       .from('partners')
       .select('email')
@@ -129,6 +129,10 @@ async function doSignup() {
       return;
     }
 
+    // Create Supabase Auth account
+    const { error: authErr } = await supabase.auth.signUp({ email, password: pass });
+    if (authErr && authErr.message !== 'User already registered') throw authErr;
+
     const refNum = 'RAFD-' + new Date().getFullYear() + '-' + (Math.floor(Math.random() * 90000) + 10000);
 
     const { data, error } = await supabase
@@ -139,7 +143,6 @@ async function doSignup() {
         org_name: orgname,
         org_type: orgtype,
         email,
-        password: btoa(pass),
         status: 'approved',
         plan: 'trial',
         ref_num: refNum,

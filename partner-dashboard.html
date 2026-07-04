@@ -539,6 +539,13 @@ function escapeHtml(s) {
 // ===== AUTH CHECK =====
 const session = JSON.parse(localStorage.getItem('rafd_partner_session') || 'null');
 if (!session) { window.location.href = '/partner-login.html'; }
+supabase.auth.getSession().then(({ data: { session: authSess } }) => {
+  if (!authSess) {
+    localStorage.removeItem('rafd_partner_session');
+    localStorage.removeItem('rafd_partner_requests');
+    window.location.href = '/partner-login.html';
+  }
+});
 
 // Partner data (loaded from Supabase)
 let partner = null;

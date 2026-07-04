@@ -507,10 +507,22 @@ body{font-family:'Almarai',sans-serif;background:#f1f5f9;color:#1e293b;direction
   </div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Fast redirect if no local session; also verify Auth session async
 (function() {
   const s = localStorage.getItem('rafd_session');
-  if (!s) { window.location.href = '/login.html'; }
+  if (!s) { window.location.href = '/login.html'; return; }
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!session) {
+      localStorage.removeItem('rafd_session');
+      window.location.href = '/login.html';
+    }
+  });
 })();
 
 function logout() {
