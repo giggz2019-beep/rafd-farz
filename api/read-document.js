@@ -16,13 +16,6 @@ const TYPE_DETECT = `
 "other" — أي وثيقة أخرى لا تنتمي للأنواع أعلاه`;
 
 const PROMPTS = {
-  id: `انظر إلى هذه الوثيقة.
-${TYPE_DETECT}
-
-إذا كانت هوية وطنية أو إقامة: استخرج المعلومات التالية. وإلا اترك الحقول null.
-أجب بـ JSON فقط بدون أي نص إضافي:
-{"detected_type":"...","name":null,"id_number":null,"dob":null,"gender":null,"nationality":null}`,
-
   cv: `انظر إلى هذه الوثيقة.
 ${TYPE_DETECT}
 
@@ -56,10 +49,22 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
 
+  const { base64, mediaType, docType, readCriteria } = req.body || {};
+
+  // الهوية الوطنية: التحقق عبر نفاذ (SDAIA) — لا يُرسَل للذكاء الاصطناعي
+  if (docType === 'id') {
+    return res.status(200).json({
+      ok: true,
+      nafathPending: true,
+      data: { detected_type: 'national_id' },
+      detectedType: 'national_id',
+      typeMismatch: false,
+    });
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(200).json({ ok: false, error: 'API key missing' });
 
-  const { base64, mediaType, docType, readCriteria } = req.body || {};
   if (!base64 || !mediaType) {
     return res.status(400).json({ ok: false, error: 'Missing base64 or mediaType' });
   }
@@ -133,6 +138,6 @@ ${criteriaLines}
     return res.status(200).json({ ok: true, data, detectedType, typeMismatch });
   } catch (err) {
     console.error('read-document error:', err.message);
-    return res.status(200).json({ ok: false, error: err.message });
+    return res.status(200).json({ ok: false, error: 'internal_error' });
   }
 };
