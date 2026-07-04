@@ -160,14 +160,14 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
       <span class="login-badge">🔒 وصول مقيّد — المدير فقط</span>
     </div>
     <div class="form-group">
-      <label>اسم المستخدم</label>
-      <input type="text" id="adminUser" placeholder="admin" autocomplete="off">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="adminEmail" placeholder="admin@rafd.digital" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <div class="form-group">
       <label>كلمة المرور</label>
       <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <button class="btn-login" onclick="doLogin()">دخول للوحة التحكم</button>
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">دخول للوحة التحكم</button>
     <p class="login-hint" id="loginErr" style="color:#ef4444;display:none">بيانات خاطئة. حاول مجدداً.</p>
   </div>
 </div>
@@ -210,9 +210,10 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
       <div class="admin-profile">
         <div class="admin-av">م</div>
         <div>
-          <div class="admin-name">المدير العام</div>
+          <div class="admin-name" id="adminNameDisplay">المدير العام</div>
           <div class="admin-role">RAFD Digital</div>
         </div>
+        <span onclick="doLogout()" style="margin-right:auto;color:#64748b;cursor:pointer;font-size:.8rem;transition:color .2s" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#64748b'">خروج</span>
       </div>
     </div>
   </aside>
@@ -605,22 +606,61 @@ function sanitizeCsvField(v) {
 }
 
 // ===== AUTH =====
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'rafd2025';
+const ADMIN_EMAILS = ['giggz.2019@gmail.com'];
 
-function doLogin() {
-  const u = document.getElementById('adminUser').value.trim();
-  const p = document.getElementById('adminPass').value.trim();
-  if(u === ADMIN_USER && p === ADMIN_PASS) {
-    document.getElementById('adminLogin').style.display = 'none';
-    document.getElementById('adminWrap').classList.add('active');
-    renderAll();
-    loadPartnersFromSupabase();
-  } else {
-    document.getElementById('loginErr').style.display = 'block';
+function showAdminPanel(email) {
+  document.getElementById('adminLogin').style.display = 'none';
+  document.getElementById('adminWrap').classList.add('active');
+  const el = document.getElementById('adminNameDisplay');
+  if (el) el.textContent = email;
+  renderAll();
+  loadPartnersFromSupabase();
+}
+
+async function doLogin() {
+  const email = document.getElementById('adminEmail').value.trim();
+  const pass  = document.getElementById('adminPass').value;
+  const errEl = document.getElementById('loginErr');
+  const btn   = document.getElementById('loginBtn');
+
+  errEl.style.display = 'none';
+  if (!email || !pass) { errEl.textContent = 'يرجى إدخال البريد وكلمة المرور.'; errEl.style.display = 'block'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'جاري التحقق...';
+
+  try {
+    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    if (error) throw error;
+
+    if (!ADMIN_EMAILS.includes(email.toLowerCase())) {
+      await supabase.auth.signOut();
+      throw new Error('غير مصرح');
+    }
+
+    showAdminPanel(email);
+  } catch(e) {
+    errEl.textContent = 'بيانات خاطئة أو غير مصرح لك بالدخول.';
+    errEl.style.display = 'block';
     document.getElementById('adminPass').value = '';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'دخول للوحة التحكم';
   }
 }
+
+async function doLogout() {
+  await supabase.auth.signOut();
+  document.getElementById('adminWrap').classList.remove('active');
+  document.getElementById('adminLogin').style.display = 'flex';
+}
+
+// Auto-restore session on page load
+supabase.auth.getSession().then(({ data: { session } }) => {
+  if (session && ADMIN_EMAILS.includes(session.user.email.toLowerCase())) {
+    showAdminPanel(session.user.email);
+  }
+});
 
 // ===== DATA =====
 let clients = JSON.parse(localStorage.getItem('rafd_clients') || '[]');
