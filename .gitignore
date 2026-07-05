@@ -1,7 +1,42 @@
-node_modules/
+# ===== RAFD Website .gitignore =====
+
+# Environment variables
 .env
 .env.local
-.env.production
+.env.*.local
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Logs
 *.log
+logs/
+
+# OS files
 .DS_Store
 Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
+dist/
+build/
+.next/
+
+# Temporary files
+tmp/
+temp/
+.cache/
+
+# Sensitive data
+*.pem
+*.key
+*.crt
+*.pfx
