@@ -8,7 +8,9 @@ const { PAID_PLAN_PRICES } = require('./_lib/plans');
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
 function secret() {
-  return process.env.PARTNER_SECRET || process.env.SUPABASE_SERVICE_KEY || 'rafd-fallback';
+  const s = process.env.PARTNER_SECRET || process.env.SUPABASE_SERVICE_KEY;
+  if (!s) throw new Error('PARTNER_SECRET not configured');
+  return s;
 }
 
 function validateToken(token) {
@@ -23,7 +25,10 @@ function validateToken(token) {
     // 30-day expiry
     if (Date.now() - parseInt(ts) > 30 * 24 * 60 * 60 * 1000) return null;
     const expected = crypto.createHmac('sha256', secret()).update(`${email}|${ts}`).digest('hex');
-    if (sig !== expected) return null;
+    const sigBuf = Buffer.from(sig, 'hex');
+    const expBuf = Buffer.from(expected, 'hex');
+    if (sigBuf.length !== expBuf.length) return null;
+    if (!crypto.timingSafeEqual(sigBuf, expBuf)) return null;
     return email;
   } catch { return null; }
 }
@@ -122,18 +127,26 @@ module.exports = async (req, res) => {
       return res.status(200).json({ applications: apps || [] });
     }
 
-    // UPDATE APPLICATION STATUS
+    // UPDATE APPLICATION STATUS — with ownership check
     if (action === 'update_app') {
       const { appId, status } = body;
       if (!appId) return res.status(400).json({ error: 'missing_fields' });
+      const pRows = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=id&limit=1`, undefined, key);
+      if (!pRows?.length) return res.status(404).json({ error: 'not_found' });
+      const appRows = await sb('GET', `/applications?id=eq.${appId}&partner_id=eq.${pRows[0].id}&select=id&limit=1`, undefined, key);
+      if (!appRows?.length) return res.status(403).json({ error: 'forbidden' });
       await sb('PATCH', `/applications?id=eq.${appId}`, { result: status }, key);
       return res.status(200).json({ ok: true });
     }
 
-    // DELETE APPLICATION
+    // DELETE APPLICATION — with ownership check
     if (action === 'delete_app') {
       const { appId } = body;
       if (!appId) return res.status(400).json({ error: 'missing_fields' });
+      const pRows = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=id&limit=1`, undefined, key);
+      if (!pRows?.length) return res.status(404).json({ error: 'not_found' });
+      const appRows = await sb('GET', `/applications?id=eq.${appId}&partner_id=eq.${pRows[0].id}&select=id&limit=1`, undefined, key);
+      if (!appRows?.length) return res.status(403).json({ error: 'forbidden' });
       await sb('DELETE', `/applications?id=eq.${appId}`, undefined, key);
       return res.status(200).json({ ok: true });
     }
@@ -150,14 +163,13 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true });
     }
 
-    // UPGRADE PLAN (existing partner pays for a higher plan)
+    // UPGRADE PLAN
     if (action === 'upgrade_plan') {
       const { orderRef, plan } = body;
       if (!orderRef || !plan) return res.status(400).json({ error: 'missing_fields' });
       const expectedPrice = PAID_PLAN_PRICES[plan];
       if (!expectedPrice) return res.status(400).json({ error: 'invalid_plan' });
 
-      // idempotency — already upgraded with this order ref
       const existing = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=*&limit=1`, undefined, key);
       if (!existing?.length) return res.status(404).json({ error: 'not_found' });
       if (existing[0].payment_ref === orderRef) return res.status(200).json({ ok: true, partner: existing[0] });
@@ -177,6 +189,6 @@ module.exports = async (req, res) => {
 
   } catch (err) {
     console.error('partner-data error:', err.message);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'internal_error' });
   }
 };
