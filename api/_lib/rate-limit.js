@@ -1,41 +1,66 @@
 'use strict';
+const crypto = require('crypto');
 
-const _store = new Map();
+// In-memory rate limit store
+// For production with multiple instances, use Redis
+const _rateLimitStore = new Map();
 
-// Purge expired entries every 5 minutes (keeps memory bounded in long-lived Express processes)
-const _gc = setInterval(() => {
+// Clean expired entries every minute
+setInterval(() => {
   const now = Date.now();
-  for (const [k, v] of _store) {
-    if (now > v.resetAt) _store.delete(k);
+  for (const [key, data] of _rateLimitStore.entries()) {
+    if (data.resetTime <= now) {
+      _rateLimitStore.delete(key);
+    }
   }
-}, 5 * 60 * 1000);
-if (_gc.unref) _gc.unref();
+}, 60 * 1000);
 
 /**
- * rateLimit(key, maxRequests, windowMs)
- * Returns { limited: true, retryAfter: <seconds> } or { limited: false }
+ * Rate limit check
+ * @param {string} key - Unique identifier (e.g., "otp_send:192.168.1.1")
+ * @param {number} maxRequests - Max requests allowed
+ * @param {number} windowMs - Time window in milliseconds
+ * @returns {{limited: boolean, remaining: number, resetTime: number}}
  */
 function rateLimit(key, maxRequests, windowMs) {
   const now = Date.now();
-  let e = _store.get(key);
-  if (!e || now > e.resetAt) {
-    e = { count: 0, resetAt: now + windowMs };
-    _store.set(key, e);
+  let data = _rateLimitStore.get(key);
+
+  // Initialize or reset if window expired
+  if (!data || data.resetTime <= now) {
+    data = {
+      count: 0,
+      resetTime: now + windowMs,
+    };
+    _rateLimitStore.set(key, data);
   }
-  e.count += 1;
-  if (e.count > maxRequests) {
-    return { limited: true, retryAfter: Math.ceil((e.resetAt - now) / 1000) };
+
+  const limited = data.count >= maxRequests;
+  const remaining = Math.max(0, maxRequests - data.count - 1);
+
+  if (!limited) {
+    data.count++;
   }
-  return { limited: false };
+
+  return {
+    limited,
+    remaining,
+    resetTime: data.resetTime,
+  };
 }
 
 /**
- * getIp(req) — handles X-Forwarded-For from reverse proxies
+ * Extract client IP from request
+ * Handles proxies (Vercel, Cloudflare, etc.)
  */
 function getIp(req) {
-  const fwd = req.headers['x-forwarded-for'];
-  if (fwd) return fwd.split(',')[0].trim();
-  return req.socket?.remoteAddress || req.connection?.remoteAddress || 'unknown';
+  return (
+    req.headers['cf-connecting-ip'] || // Cloudflare
+    req.headers['x-forwarded-for']?.split(',')[0] || // Proxy
+    req.headers['x-real-ip'] || // Nginx
+    req.socket?.remoteAddress || // Direct connection
+    '127.0.0.1'
+  );
 }
 
 module.exports = { rateLimit, getIp };
