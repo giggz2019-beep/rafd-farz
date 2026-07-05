@@ -1,7 +1,9 @@
 const { getOrder, classifyOrder } = require('./_lib/ngenius');
 
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const _ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+  res.setHeader('Access-Control-Allow-Origin', _ORIGIN);
+  if (_ORIGIN !== '*') res.setHeader('Vary', 'Origin');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const ref = (req.query.ref || '').toString().trim();
