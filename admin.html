@@ -570,28 +570,27 @@ let supabasePartners = [];
 
 async function loadPartnersFromSupabase() {
   try {
-    const { data, error } = await supabase.from('partners').select('*').order('id', {ascending: false});
-    if (!error && data) {
-      supabasePartners = data.map(p => ({
-        id: p.id,
-        org: p.org_name,
-        orgtype: p.org_type,
-        city: p.city,
-        website: p.website,
-        fname: p.fname,
-        lname: p.lname,
-        title: p.title,
-        email: p.email,
-        phone: p.phone,
-        plan: p.plan,
-        status: p.status,
-        date: p.dateISO || '',
-        price: p.plan === 'pro' ? 999 : p.plan === 'basic' ? 499 : 0,
-        purpose: p.purpose,
-        notes: p.notes,
-      }));
-      renderPartnersTable(supabasePartners);
-    }
+    const { ok, data } = await adminApi({ action: 'load' });
+    if (!ok || !Array.isArray(data.partners)) return;
+    supabasePartners = data.partners.map(p => ({
+      id: p.id,
+      org: p.org_name,
+      orgtype: p.org_type,
+      city: p.city,
+      website: p.website,
+      fname: p.fname,
+      lname: p.lname,
+      title: p.title,
+      email: p.email,
+      phone: p.phone,
+      plan: p.plan,
+      status: p.status,
+      date: p.created_at ? p.created_at.split('T')[0] : '',
+      price: p.plan === 'pro' ? 999 : p.plan === 'basic' ? 499 : 0,
+      purpose: p.purpose,
+      notes: p.notes,
+    }));
+    renderPartnersTable(supabasePartners);
   } catch(e) { console.error('loadPartnersFromSupabase:', e); }
 }
 
@@ -606,7 +605,16 @@ function sanitizeCsvField(v) {
 }
 
 // ===== AUTH =====
-const ADMIN_EMAILS = ['giggz.2019@gmail.com'];
+let _adminToken = null;
+
+async function adminApi(body) {
+  const r = await fetch('/api/admin-data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ supabase_token: _adminToken, ...body }),
+  });
+  return { ok: r.ok, status: r.status, data: await r.json() };
+}
 
 function showAdminPanel(email) {
   document.getElementById('adminLogin').style.display = 'none';
@@ -630,10 +638,14 @@ async function doLogin() {
   btn.textContent = 'جاري التحقق...';
 
   try {
-    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password: pass });
     if (error) throw error;
 
-    if (!ADMIN_EMAILS.includes(email.toLowerCase())) {
+    // Verify admin access server-side — ADMIN_EMAILS checked in api/admin-data
+    _adminToken = authData.session.access_token;
+    const { ok } = await adminApi({ action: 'ping' });
+    if (!ok) {
+      _adminToken = null;
       await supabase.auth.signOut();
       throw new Error('غير مصرح');
     }
@@ -650,15 +662,22 @@ async function doLogin() {
 }
 
 async function doLogout() {
+  _adminToken = null;
   await supabase.auth.signOut();
   document.getElementById('adminWrap').classList.remove('active');
   document.getElementById('adminLogin').style.display = 'flex';
 }
 
 // Auto-restore session on page load
-supabase.auth.getSession().then(({ data: { session } }) => {
-  if (session && ADMIN_EMAILS.includes(session.user.email.toLowerCase())) {
-    showAdminPanel(session.user.email);
+supabase.auth.getSession().then(async ({ data: { session } }) => {
+  if (session) {
+    _adminToken = session.access_token;
+    const { ok } = await adminApi({ action: 'ping' });
+    if (ok) {
+      showAdminPanel(session.user.email);
+    } else {
+      _adminToken = null;
+    }
   }
 });
 
@@ -992,10 +1011,10 @@ async function approvePartner(id) {
   const p = supabasePartners.find(x => x.id === id);
   if(p) {
     try {
-      const { error } = await supabase.from('partners').update({ status: 'approved' }).eq('id', id);
-      if(error) throw error;
+      const { ok } = await adminApi({ action: 'update_status', data: { id, status: 'approved' } });
+      if(!ok) throw new Error('فشل الطلب');
       p.status = 'approved';
-      renderPartnersTable();
+      renderPartnersTable(supabasePartners);
       alert('✅ تم قبول الشريك: ' + p.org + '\nيمكنه الآن الدخول للوحة التحكم.');
     } catch(e) { alert('خطأ: ' + e.message); }
   }
@@ -1006,10 +1025,10 @@ async function rejectPartner(id) {
   if(p) {
     if(!confirm('هل تريد رفض طلب: ' + p.org + '؟')) return;
     try {
-      const { error } = await supabase.from('partners').update({ status: 'rejected' }).eq('id', id);
-      if(error) throw error;
+      const { ok } = await adminApi({ action: 'update_status', data: { id, status: 'rejected' } });
+      if(!ok) throw new Error('فشل الطلب');
       p.status = 'rejected';
-      renderPartnersTable();
+      renderPartnersTable(supabasePartners);
     } catch(e) { alert('خطأ: ' + e.message); }
   }
 }
@@ -1017,10 +1036,10 @@ async function rejectPartner(id) {
 async function deletePartner(id) {
   if(!confirm('هل تريد حذف هذا الشريك نهائياً؟')) return;
   try {
-    const { error } = await supabase.from('partners').delete().eq('id', id);
-    if(error) throw error;
+    const { ok } = await adminApi({ action: 'delete_partner', data: { id } });
+    if(!ok) throw new Error('فشل الطلب');
     supabasePartners = supabasePartners.filter(x => x.id !== id);
-    renderPartnersTable();
+    renderPartnersTable(supabasePartners);
   } catch(e) { alert('خطأ: ' + e.message); }
 }
 
