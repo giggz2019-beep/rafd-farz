@@ -20,14 +20,14 @@ function makeToken(email) {
   return Buffer.from(`${email}|${ts}|${sig}`).toString('base64url');
 }
 
-// Reset token: HMAC(otp|email|ts) — valid 10 minutes, no DB storage needed
-function makeResetToken(email, otp) {
+// OTP challenge token — HMAC(otp|email|ts), valid for given maxMs
+function makeOtpToken(email, otp) {
   const ts = Date.now().toString();
   const sig = crypto.createHmac('sha256', secret()).update(`${otp}|${email}|${ts}`).digest('hex');
   return Buffer.from(`${email}|${ts}|${sig}`).toString('base64url');
 }
 
-function verifyResetToken(token, otp) {
+function verifyOtpToken(token, otp, maxMs) {
   try {
     const decoded = Buffer.from(token, 'base64url').toString();
     const lastBar = decoded.lastIndexOf('|');
@@ -36,7 +36,7 @@ function verifyResetToken(token, otp) {
     const email = decoded.slice(0, firstBar);
     const ts = decoded.slice(firstBar + 1, lastBar);
     const sig = decoded.slice(lastBar + 1);
-    if (Date.now() - parseInt(ts) > 10 * 60 * 1000) return null;
+    if (Date.now() - parseInt(ts) > maxMs) return null;
     const expected = crypto.createHmac('sha256', secret()).update(`${otp}|${email}|${ts}`).digest('hex');
     const sigBuf = Buffer.from(sig, 'hex');
     const expBuf = Buffer.from(expected, 'hex');
@@ -87,7 +87,7 @@ module.exports = async (req, res) => {
   const body = req.body || {};
 
   try {
-    // ─── LOGIN ───────────────────────────────────────────────────────────────
+    // ─── LOGIN — validate credentials, send OTP server-side ──────────────────
     if (body.action === 'login') {
       const { email, password } = body;
       if (!email || !password) return res.status(400).json({ error: 'missing_fields' });
@@ -109,7 +109,58 @@ module.exports = async (req, res) => {
         sbWrite('PATCH', `/partners?id=eq.${p.id}`, { password: hashPassword(password) }, key).catch(() => {});
       }
 
+      if (p.status === 'rejected') {
+        return res.status(200).json({ rejected: true });
+      }
+
+      // Generate and send login OTP server-side — never returned to browser
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const challengeToken = makeOtpToken(p.email, otp);
+
+      if (process.env.RESEND_API_KEY) {
+        await sendLoginOtpEmail(p.email, otp, p.fname || p.org_name).catch(() => {});
+      }
+
+      return res.status(200).json({ ok: true, challengeToken, partnerEmail: p.email });
+    }
+
+    // ─── VERIFY LOGIN OTP — returns real session token after OTP confirmed ────
+    if (body.action === 'verify_login_otp') {
+      const { challengeToken, otp } = body;
+      if (!challengeToken || !otp) return res.status(400).json({ error: 'missing_fields' });
+
+      const email = verifyOtpToken(challengeToken, otp, 5 * 60 * 1000);
+      if (!email) return res.status(401).json({ error: 'invalid_or_expired_otp' });
+
+      const rows = await sbGet(
+        `/partners?email=eq.${encodeURIComponent(email)}&select=*&limit=1`, key
+      );
+      if (!rows?.length) return res.status(404).json({ error: 'not_found' });
+
+      const p = rows[0];
       return res.status(200).json({ token: makeToken(p.email), partner: p });
+    }
+
+    // ─── RESEND LOGIN OTP ─────────────────────────────────────────────────────
+    if (body.action === 'resend_login_otp') {
+      const { email } = body;
+      if (!email) return res.status(400).json({ error: 'missing_fields' });
+      const emailNorm = email.trim().toLowerCase();
+
+      const rows = await sbGet(
+        `/partners?email=eq.${encodeURIComponent(emailNorm)}&select=id,email,fname,org_name&limit=1`, key
+      );
+      if (!rows?.length) return res.status(200).json({ ok: true }); // silent — no enumeration
+
+      const p = rows[0];
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const challengeToken = makeOtpToken(p.email, otp);
+
+      if (process.env.RESEND_API_KEY) {
+        await sendLoginOtpEmail(p.email, otp, p.fname || p.org_name).catch(() => {});
+      }
+
+      return res.status(200).json({ ok: true, challengeToken });
     }
 
     // ─── SEARCH ORG ──────────────────────────────────────────────────────────
@@ -199,7 +250,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true, partner, token: partner ? makeToken(partner.email) : null, emailSent });
     }
 
-    // ─── SEND RESET OTP (server-side generation — OTP never leaves the server) ─
+    // ─── SEND RESET OTP (server-side — OTP never leaves server) ─────────────
     if (body.action === 'send_reset_otp') {
       const { email } = body;
       if (!email) return res.status(400).json({ error: 'missing_fields' });
@@ -213,7 +264,7 @@ module.exports = async (req, res) => {
 
       const p = rows[0];
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      const resetToken = makeResetToken(emailNorm, otp);
+      const resetToken = makeOtpToken(emailNorm, otp);
 
       if (process.env.RESEND_API_KEY) {
         await sendResetEmail(emailNorm, otp, p.fname || p.org_name).catch(() => {});
@@ -227,7 +278,7 @@ module.exports = async (req, res) => {
       const { resetToken, otp, newPassword } = body;
       if (!resetToken || !otp || !newPassword) return res.status(400).json({ error: 'missing_fields' });
 
-      const email = verifyResetToken(resetToken, otp);
+      const email = verifyOtpToken(resetToken, otp, 10 * 60 * 1000);
       if (!email) return res.status(401).json({ error: 'invalid_or_expired_token' });
 
       if (newPassword.length < 8) return res.status(400).json({ error: 'password_too_short' });
@@ -244,6 +295,52 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: 'internal_error' });
   }
 };
+
+async function sendLoginOtpEmail(email, otp, name) {
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#eef2f7;font-family:'Cairo','Segoe UI',Arial,sans-serif;direction:rtl">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#eef2f7;padding:40px 16px">
+<tr><td align="center">
+<table width="100%" style="max-width:580px" cellpadding="0" cellspacing="0">
+  <tr><td style="background:linear-gradient(135deg,#0d2233 0%,#1a3a4a 50%,#1e5c42 100%);border-radius:20px 20px 0 0;padding:32px 36px;text-align:center">
+    <img src="https://rafd-digital.com/rafd-logo.png" alt="RAFD Digital" width="70" height="70"
+      style="border-radius:14px;background:#fff;padding:6px;box-shadow:0 4px 20px rgba(0,0,0,.3);display:block;margin:0 auto 12px">
+    <div style="font-size:1.4rem;font-weight:900;color:#fff;font-family:'Cairo',sans-serif">رمز تسجيل الدخول 🔐</div>
+  </td></tr>
+  <tr><td style="height:4px;background:linear-gradient(90deg,#1a3a4a,#4a9d6f,#38bdf8)"></td></tr>
+  <tr><td style="background:#fff;padding:36px 32px;text-align:center">
+    <p style="color:#0d2233;font-size:1rem;font-weight:700;margin:0 0 8px;font-family:'Cairo',sans-serif">مرحباً ${name || ''}،</p>
+    <p style="color:#5a6a7e;font-size:.9rem;margin:0 0 24px;line-height:1.8;font-family:'Cairo',sans-serif">
+      تلقّينا طلب دخول لحسابك في RAFD Digital.<br>
+      استخدم الرمز أدناه — صالح لمدة <strong>5 دقائق</strong> فقط.
+    </p>
+    <div style="font-size:3rem;font-weight:900;letter-spacing:.4em;color:#0d2233;background:#f0f7ff;border:2px solid #c8dfe8;border-radius:16px;padding:1.25rem 2rem;display:inline-block;direction:ltr;margin-bottom:20px;font-family:monospace">${otp}</div>
+    <div style="background:#fff8f0;border-right:4px solid #f59e0b;border-radius:0 10px 10px 0;padding:12px 16px;text-align:right;margin-bottom:0">
+      <p style="margin:0;color:#7c4a03;font-size:.82rem;font-family:'Cairo',sans-serif">لا تشارك هذا الرمز مع أي أحد. إذا لم تحاول تسجيل الدخول، تجاهل هذه الرسالة.</p>
+    </div>
+  </td></tr>
+  <tr><td style="background:linear-gradient(135deg,#0d2233,#1a3a4a);border-radius:0 0 20px 20px;padding:20px 32px;text-align:center">
+    <p style="margin:0;color:rgba(255,255,255,.5);font-size:.76rem;font-family:'Cairo',sans-serif">© 2026 RAFD Digital</p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`;
+
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: 'RAFD Digital <noreply@rafd-digital.com>',
+      to: [email],
+      subject: `${otp} — رمز تسجيل الدخول في RAFD Digital`,
+      html,
+    }),
+  });
+  if (!r.ok) throw new Error(`login OTP email failed: ${r.status}`);
+}
 
 async function sendResetEmail(email, otp, name) {
   const html = `<!DOCTYPE html>
@@ -312,9 +409,6 @@ async function sendActivationEmail(partner) {
     </table>
     <p style="text-align:center;margin:0 0 8px">
       <a href="https://rafd-digital.com/partner-login.html" style="display:inline-block;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;text-decoration:none;font-weight:700;padding:14px 36px;border-radius:12px;font-family:'Cairo',sans-serif">تسجيل الدخول ←</a>
-    </p>
-    <p style="color:#94a3b8;font-size:.8rem;line-height:1.7;margin:24px 0 0;text-align:center;font-family:'Cairo',sans-serif">
-      سجّل الدخول بكلمة المرور التي اخترتها أثناء التسجيل.
     </p>
   </td></tr>
   <tr><td style="background:linear-gradient(135deg,#0d2233,#1a3a4a);border-radius:0 0 20px 20px;padding:24px 36px;text-align:center">
