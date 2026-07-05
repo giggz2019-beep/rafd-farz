@@ -133,7 +133,6 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 <!-- Nafath Login Modal -->
 <div id="nafathModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1001;align-items:center;justify-content:center;padding:1rem">
   <div style="background:#0f1a10;border:1.5px solid rgba(10,95,63,.4);border-radius:20px;padding:2rem;width:100%;max-width:400px;text-align:center">
-    <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:1.5rem">
       <div style="width:48px;height:48px;background:linear-gradient(135deg,#0a5f3f,#0d7a52);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#fff">نفاذ</div>
       <div style="text-align:right">
@@ -142,8 +141,6 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
         <div style="font-size:.68rem;background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:.15rem .5rem;margin-top:.3rem;display:inline-block">🧪 محاكاة تجريبية</div>
       </div>
     </div>
-
-    <!-- Step 1: National ID only -->
     <div id="nf_step1">
       <div style="font-size:.8rem;color:#94a3b8;margin-bottom:1.1rem;text-align:right" data-i18n="pl.nf-instructions">أدخل رقم هويتك الوطنية ثم أكّد الرقم العشوائي في تطبيق نفاذ</div>
       <input type="text" id="nf_id" placeholder="رقم الهوية الوطنية (10 أرقام)" maxlength="10" inputmode="numeric"
@@ -155,8 +152,6 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
         style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.nf-send-btn">طلب التحقق عبر نفاذ</span></button>
       <button onclick="closeNafathModal()" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
     </div>
-
-    <!-- Step 2: Nafath App confirmation -->
     <div id="nf_step2" style="display:none">
       <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.85rem"><span data-i18n="pl.nf-step2-hint">افتح تطبيق <strong style="color:#4ade80">نفاذ</strong> على جوالك وستجد إشعاراً فيه هذا الرقم — اضغط تأكيد</span></div>
       <div style="font-size:.73rem;color:#64748b;margin-bottom:.45rem;letter-spacing:.02em" data-i18n="pl.nf-random-lbl">الرقم العشوائي</div>
@@ -175,7 +170,6 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 <!-- Forgot Password Modal -->
 <div id="forgotModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem">
   <div style="background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:400px">
-    <!-- Step A: Enter email -->
     <div id="fp_step_email">
       <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem" data-i18n="pl.fp-title">🔑 نسيت كلمة المرور؟</div>
       <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fp-sub">أدخل بريدك الإلكتروني المسجّل وسنرسل لك رمز التحقق</div>
@@ -190,8 +184,6 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
         style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem"><span data-i18n="pl.btn-send-otp">إرسال رمز التحقق</span></button>
       <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
     </div>
-
-    <!-- Step B: Enter OTP + new password -->
     <div id="fp_step_reset" style="display:none">
       <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem" data-i18n="pl.fp-otp-title">📨 أدخل رمز التحقق</div>
       <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fp-otp-sub">تم إرسال رمز مكوّن من 6 أرقام إلى بريدك</div>
@@ -262,7 +254,6 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 
 <script src="/i18n.js"></script>
 <script>
-// API helper
 async function partnerAuthApi(data) {
   const r = await fetch('/api/partner-auth', {
     method: 'POST',
@@ -347,7 +338,9 @@ async function verifyLoginOtp() {
     const { status: vs, data: vd } = await partnerAuthApi({ action: 'verify_login_otp', challengeToken: _loginChallenge, otp: entered });
 
     if (vs !== 200 || !vd.token) {
-      errEl.textContent = vd?.error === 'invalid_or_expired_otp'
+      errEl.textContent = vs === 429
+        ? 'تجاوزت عدد المحاولات. انتظر دقائق ثم أعد المحاولة.'
+        : vd?.error === 'invalid_or_expired_otp'
         ? 'رمز التحقق غير صحيح أو انتهت صلاحيته (5 دقائق). اضغط إعادة الإرسال.'
         : 'حدث خطأ. حاول مرة أخرى.';
       errEl.style.display = 'block';
@@ -388,15 +381,12 @@ function initNafathLogin() {
   const nid = document.getElementById('nf_id').value.trim();
   const errEl = document.getElementById('nf_err1');
   errEl.style.display = 'none';
-
   if (!/^\d{10}$/.test(nid)) {
     errEl.textContent = 'رقم الهوية يجب أن يكون 10 أرقام';
     errEl.style.display = 'block'; return;
   }
-
   const randNum = Math.floor(10 + Math.random() * 90).toString();
   _nafathLoginData = { nid, randNum };
-
   document.getElementById('nf_random_num').textContent = randNum;
   document.getElementById('nf_step1').style.display = 'none';
   document.getElementById('nf_step2').style.display = 'block';
@@ -408,24 +398,17 @@ async function confirmNafathLogin() {
   const btn = document.getElementById('nf_verify_btn');
   errEl.style.display = 'none';
   btn.disabled = true; btn.textContent = '⏳ جارٍ التحقق...';
-
   const { status: nfStatus, data: nfRes } = await partnerAuthApi({ action: 'nafath_lookup', nid: _nafathLoginData.nid });
-
   btn.disabled = false; btn.textContent = '✓ تم التأكيد في تطبيق نفاذ — دخول';
-
-  // الربط مع نفاذ / سدايا قيد التطوير — محاكاة تجريبية فقط
   if (nfRes.simulation) {
     errEl.textContent = 'هذه محاكاة تجريبية. الربط الفعلي مع نفاذ (سدايا) قيد التطوير. يرجى تسجيل الدخول بالبريد الإلكتروني وكلمة المرور.';
     errEl.style.display = 'block';
-    _nafathLoginData = null;
-    return;
+    _nafathLoginData = null; return;
   }
-
   if (nfStatus !== 200 || !nfRes.partner) {
     errEl.textContent = 'لم يُعثر على حساب بهذا الرقم. تأكد من رقم هويتك أو سجّل الدخول بالبريد وكلمة المرور.';
     errEl.style.display = 'block'; return;
   }
-
   const p = nfRes.partner;
   _nafathLoginData = null;
   closeNafathModal();
@@ -444,18 +427,13 @@ function showForgotEmail() {
   document.getElementById('fe_orgname').value = '';
   _foundEmail = '';
 }
-function hideForgotEmail() {
-  document.getElementById('forgotEmailModal').style.display = 'none';
-}
+function hideForgotEmail() { document.getElementById('forgotEmailModal').style.display = 'none'; }
 async function findEmailByPhone() {
   const orgname = document.getElementById('fe_orgname').value.trim();
   const errEl = document.getElementById('fe_err');
   errEl.style.display = 'none';
   document.getElementById('fe_result').style.display = 'none';
-  if (!orgname) {
-    errEl.textContent = 'أدخل اسم الجهة للبحث';
-    errEl.style.display = 'block'; return;
-  }
+  if (!orgname) { errEl.textContent = 'أدخل اسم الجهة للبحث'; errEl.style.display = 'block'; return; }
   const btn = document.getElementById('fe_search_btn');
   btn.textContent = 'جارٍ البحث...'; btn.disabled = true;
   const { status: feStatus, data: feRes } = await partnerAuthApi({ action: 'search_org', orgName: orgname });
@@ -466,8 +444,7 @@ async function findEmailByPhone() {
   }
   _foundEmail = feRes.results[0].email;
   const [u, d] = _foundEmail.split('@');
-  const masked = u.slice(0,2) + '***@' + d;
-  document.getElementById('fe_email_show').textContent = masked;
+  document.getElementById('fe_email_show').textContent = u.slice(0,2) + '***@' + d;
   document.getElementById('fe_result').style.display = 'block';
 }
 function useFoundEmail() {
@@ -477,7 +454,6 @@ function useFoundEmail() {
   document.getElementById('loginPass').focus();
 }
 
-// ===== FORGOT USERNAME =====
 let _foundUsername = '';
 function showForgotUsername() {
   document.getElementById('forgotUsernameModal').style.display = 'flex';
@@ -486,18 +462,13 @@ function showForgotUsername() {
   document.getElementById('fu_orgname').value = '';
   _foundUsername = '';
 }
-function hideForgotUsername() {
-  document.getElementById('forgotUsernameModal').style.display = 'none';
-}
+function hideForgotUsername() { document.getElementById('forgotUsernameModal').style.display = 'none'; }
 async function findUsername() {
   const orgname = document.getElementById('fu_orgname').value.trim();
   const errEl = document.getElementById('fu_err');
   errEl.style.display = 'none';
   document.getElementById('fu_result').style.display = 'none';
-  if (!orgname) {
-    errEl.textContent = 'أدخل اسم الجهة للبحث';
-    errEl.style.display = 'block'; return;
-  }
+  if (!orgname) { errEl.textContent = 'أدخل اسم الجهة للبحث'; errEl.style.display = 'block'; return; }
   const btn = document.getElementById('fu_search_btn');
   btn.textContent = 'جارٍ البحث...'; btn.disabled = true;
   const { status: fuStatus, data: fuRes } = await partnerAuthApi({ action: 'search_org', orgName: orgname });
@@ -525,7 +496,6 @@ function showForgot() {
   document.getElementById('fp_err').style.display = 'none';
   _fpResetToken = null;
 }
-
 function hideForgot() {
   document.getElementById('forgotModal').style.display = 'none';
   _fpResetToken = null;
@@ -536,23 +506,19 @@ async function sendResetOtp() {
   const errEl = document.getElementById('fp_err');
   const btn = document.getElementById('fp_send_btn');
   errEl.style.display = 'none';
-
   if (!email) { errEl.textContent = 'يرجى إدخال البريد الإلكتروني'; errEl.style.display = 'block'; return; }
-
   btn.disabled = true; btn.textContent = '⏳ جارٍ الإرسال...';
-
   const { status: fpStatus, data: fpRes } = await partnerAuthApi({ action: 'send_reset_otp', email });
-
   btn.disabled = false; btn.textContent = 'إرسال رمز التحقق';
-
+  if (fpStatus === 429) {
+    errEl.textContent = 'تجاوزت عدد المحاولات. انتظر بضع دقائق ثم حاول مجدداً.';
+    errEl.style.display = 'block'; return;
+  }
   if (fpStatus !== 200) {
     errEl.textContent = 'حدث خطأ. حاول مرة أخرى.';
-    errEl.style.display = 'block';
-    return;
+    errEl.style.display = 'block'; return;
   }
-
   if (fpRes.resetToken) _fpResetToken = fpRes.resetToken;
-
   document.getElementById('fp_step_email').style.display = 'none';
   document.getElementById('fp_step_reset').style.display = 'block';
 }
@@ -563,29 +529,20 @@ async function doReset() {
   const errEl = document.getElementById('fp_reset_err');
   const btn = document.getElementById('fp_reset_btn');
   errEl.style.display = 'none';
-
   if (!otp || otp.length !== 6) { errEl.textContent = 'يرجى إدخال رمز التحقق المكوّن من 6 أرقام'; errEl.style.display = 'block'; return; }
   if (!newpass || newpass.length < 8) { errEl.textContent = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'; errEl.style.display = 'block'; return; }
-
   if (!_fpResetToken) { errEl.textContent = 'انتهت جلسة إعادة التعيين. أعد المحاولة من البداية.'; errEl.style.display = 'block'; return; }
-
   btn.disabled = true; btn.textContent = '⏳ جارٍ التحديث...';
-
   const { status: rpStatus, data: rpRes } = await partnerAuthApi({ action: 'reset_password', resetToken: _fpResetToken, otp, newPassword: newpass });
-
   btn.disabled = false; btn.textContent = 'تغيير كلمة المرور';
-
   if (rpStatus !== 200) {
     const msg = rpRes?.error === 'invalid_or_expired_token'
       ? 'رمز التحقق غير صحيح أو انتهت صلاحيته (10 دقائق). أعد الإرسال.'
       : rpRes?.error === 'password_too_short'
       ? 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.'
       : 'خطأ في تحديث كلمة المرور. حاول مرة أخرى.';
-    errEl.textContent = msg;
-    errEl.style.display = 'block';
-    return;
+    errEl.textContent = msg; errEl.style.display = 'block'; return;
   }
-
   hideForgot();
   const pendingEl = document.getElementById('pendingMsg');
   pendingEl.textContent = '✅ تم تغيير كلمة المرور. يمكنك الدخول الآن.';
@@ -595,7 +552,6 @@ async function doReset() {
   pendingEl.style.color = '#34d399';
 }
 
-// OTP digit keyboard wiring
 document.addEventListener('DOMContentLoaded', function() {
   for (let i = 0; i < 6; i++) {
     const el = document.getElementById('lotp' + i);
@@ -635,15 +591,20 @@ async function doLogin() {
 
   if (!email || !pass) {
     errEl.textContent = 'يرجى إدخال البريد أو اسم المستخدم وكلمة المرور.';
-    errEl.style.display = 'block';
-    return;
+    errEl.style.display = 'block'; return;
   }
 
-  btn.disabled = true;
-  btn.textContent = 'جاري التحقق...';
+  btn.disabled = true; btn.textContent = 'جاري التحقق...';
 
   try {
     const { status: loginStatus, data: loginRes } = await partnerAuthApi({ action: 'login', email, password: pass });
+
+    if (loginStatus === 429) {
+      errEl.textContent = 'تجاوزت عدد المحاولات المسموحة. انتظر بضع دقائق ثم حاول مجدداً.';
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
+      return;
+    }
 
     if (loginStatus !== 200 || !loginRes.ok) {
       if (loginRes.rejected) {
@@ -668,8 +629,7 @@ async function doLogin() {
     console.error('Login error:', err);
     errEl.textContent = 'حدث خطأ. يرجى المحاولة مرة أخرى.';
     errEl.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'دخول للوحة التحكم';
+    btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
   }
 }
 </script>
