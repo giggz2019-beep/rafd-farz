@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -89,6 +89,9 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="or-div" data-i18n="pl.or">أو</div>
     <button class="btn-nafath" onclick="openNafathLogin()"><div class="nafath-icon">نفاذ</div><span data-i18n="pl.nafath-login">تسجيل الدخول عبر نفاذ</span>
     </button>
+    <div style="text-align:center;margin-top:.45rem">
+      <span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;color:#f59e0b;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:.2rem .7rem">🧪 محاكاة تجريبية</span>
+    </div>
     <div id="nafathLinkedBadge" class="nafath-link-badge">
       <span data-i18n="pl.nafath-linked">✅ تم ربط حسابك بنفاذ — هويتك موثّقة</span>
     </div>
@@ -136,6 +139,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <div style="text-align:right">
         <div style="font-size:1rem;font-weight:900;color:#fff" data-i18n="pl.nf-title">تسجيل الدخول بنفاذ</div>
         <div style="font-size:.72rem;color:#4ade80" data-i18n="pl.nf-sub">المنصة الوطنية الموحّدة للهوية الرقمية</div>
+        <div style="font-size:.68rem;background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:.15rem .5rem;margin-top:.3rem;display:inline-block">🧪 محاكاة تجريبية</div>
       </div>
     </div>
 
@@ -361,8 +365,8 @@ async function verifyLoginOtp() {
   window.location.href = '/partner-dashboard.html';
 }
 
-// ===== NAFATH LOGIN =====
-let _nafathOtp = '';
+// ===== NAFATH LOGIN (محاكاة تجريبية) =====
+let _nafathLoginData = null;
 
 function openNafathLogin() {
   document.getElementById('nafathModal').style.display = 'flex';
@@ -374,8 +378,6 @@ function closeNafathModal() {
   document.getElementById('nafathModal').style.display = 'none';
 }
 
-let _nafathLoginData = null;
-
 function initNafathLogin() {
   const nid = document.getElementById('nf_id').value.trim();
   const errEl = document.getElementById('nf_err1');
@@ -386,7 +388,6 @@ function initNafathLogin() {
     errEl.style.display = 'block'; return;
   }
 
-  // رقم عشوائي مكوّن من رقمين — مطابق لآلية نفاذ الفعلية
   const randNum = Math.floor(10 + Math.random() * 90).toString();
   _nafathLoginData = { nid, randNum };
 
@@ -406,6 +407,14 @@ async function confirmNafathLogin() {
 
   btn.disabled = false; btn.textContent = '✓ تم التأكيد في تطبيق نفاذ — دخول';
 
+  // الربط مع نفاذ / سدايا قيد التطوير — محاكاة تجريبية فقط
+  if (nfRes.simulation) {
+    errEl.textContent = 'هذه محاكاة تجريبية. الربط الفعلي مع نفاذ (سدايا) قيد التطوير. يرجى تسجيل الدخول بالبريد الإلكتروني وكلمة المرور.';
+    errEl.style.display = 'block';
+    _nafathLoginData = null;
+    return;
+  }
+
   if (nfStatus !== 200 || !nfRes.partner) {
     errEl.textContent = 'لم يُعثر على حساب بهذا الرقم. تأكد من رقم هويتك أو سجّل الدخول بالبريد وكلمة المرور.';
     errEl.style.display = 'block'; return;
@@ -419,8 +428,7 @@ async function confirmNafathLogin() {
 }
 
 // ===== FORGOT PASSWORD =====
-let _fpOtp = '';
-let _fpPartner = null;
+let _fpResetToken = null;
 
 let _foundEmail = '';
 function showForgotEmail() {
@@ -509,10 +517,14 @@ function showForgot() {
   document.getElementById('fp_step_reset').style.display = 'none';
   document.getElementById('fp_email').value = document.getElementById('loginEmail').value || '';
   document.getElementById('fp_err').style.display = 'none';
+  _fpResetToken = null;
+  sessionStorage.removeItem('rafd_reset_token');
 }
 
 function hideForgot() {
   document.getElementById('forgotModal').style.display = 'none';
+  _fpResetToken = null;
+  sessionStorage.removeItem('rafd_reset_token');
 }
 
 async function sendResetOtp() {
@@ -525,31 +537,22 @@ async function sendResetOtp() {
 
   btn.disabled = true; btn.textContent = '⏳ جارٍ الإرسال...';
 
-  // Look up partner
-  const { status: fpStatus, data: fpRes } = await partnerAuthApi({ action: 'lookup_email', email });
-  if (fpStatus !== 200 || !fpRes.partner) {
-    errEl.textContent = 'البريد الإلكتروني غير مسجّل في النظام.';
-    errEl.style.display = 'block';
-    btn.disabled = false; btn.textContent = 'إرسال رمز التحقق';
-    return;
-  }
-  _fpPartner = fpRes.partner;
-
-  // Generate OTP
-  _fpOtp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiry = Date.now() + 10 * 60 * 1000;
-  sessionStorage.setItem('rafd_reset_otp', JSON.stringify({ otp: _fpOtp, expiry, email }));
-
-  // Send OTP email
-  try {
-    await fetch('/api/send-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, otp: _fpOtp, fname: p.org_name }),
-    });
-  } catch(e) { console.error('OTP send error:', e); }
+  const { status: fpStatus, data: fpRes } = await partnerAuthApi({ action: 'send_reset_otp', email });
 
   btn.disabled = false; btn.textContent = 'إرسال رمز التحقق';
+
+  if (fpStatus !== 200) {
+    errEl.textContent = 'حدث خطأ. حاول مرة أخرى.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Store server-issued reset token (contains the OTP hash — never reveals the OTP)
+  if (fpRes.resetToken) {
+    _fpResetToken = fpRes.resetToken;
+    sessionStorage.setItem('rafd_reset_token', fpRes.resetToken);
+  }
+
   document.getElementById('fp_step_email').style.display = 'none';
   document.getElementById('fp_step_reset').style.display = 'block';
 }
@@ -562,29 +565,29 @@ async function doReset() {
   errEl.style.display = 'none';
 
   if (!otp || otp.length !== 6) { errEl.textContent = 'يرجى إدخال رمز التحقق المكوّن من 6 أرقام'; errEl.style.display = 'block'; return; }
-  if (!newpass || newpass.length < 6) { errEl.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; errEl.style.display = 'block'; return; }
+  if (!newpass || newpass.length < 8) { errEl.textContent = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'; errEl.style.display = 'block'; return; }
 
-  // Verify OTP
-  const stored = JSON.parse(sessionStorage.getItem('rafd_reset_otp') || 'null');
-  if (!stored || stored.otp !== otp || Date.now() > stored.expiry) {
-    errEl.textContent = 'رمز التحقق غير صحيح أو انتهت صلاحيته. أعد الإرسال.';
+  const resetToken = _fpResetToken || sessionStorage.getItem('rafd_reset_token');
+  if (!resetToken) { errEl.textContent = 'انتهت جلسة إعادة التعيين. أعد المحاولة من البداية.'; errEl.style.display = 'block'; return; }
+
+  btn.disabled = true; btn.textContent = '⏳ جارٍ التحديث...';
+
+  const { status: rpStatus, data: rpRes } = await partnerAuthApi({ action: 'reset_password', resetToken, otp, newPassword: newpass });
+
+  btn.disabled = false; btn.textContent = 'تغيير كلمة المرور';
+
+  if (rpStatus !== 200) {
+    const msg = rpRes?.error === 'invalid_or_expired_token'
+      ? 'رمز التحقق غير صحيح أو انتهت صلاحيته (10 دقائق). أعد الإرسال.'
+      : rpRes?.error === 'password_too_short'
+      ? 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.'
+      : 'خطأ في تحديث كلمة المرور. حاول مرة أخرى.';
+    errEl.textContent = msg;
     errEl.style.display = 'block';
     return;
   }
 
-  btn.disabled = true; btn.textContent = '⏳ جارٍ التحديث...';
-
-  // Update password
-  const { status: rpStatus } = await partnerAuthApi({ action: 'reset_password', partnerId: _fpPartner.id, newPassword: newpass });
-
-  btn.disabled = false; btn.textContent = 'تغيير كلمة المرور';
-
-  if (rpStatus !== 200) { errEl.textContent = 'خطأ في تحديث كلمة المرور. حاول مرة أخرى.'; errEl.style.display = 'block'; return; }
-
-  sessionStorage.removeItem('rafd_reset_otp');
   hideForgot();
-  document.getElementById('loginEmail').value = _fpPartner.email;
-  document.getElementById('loginPass').value = '';
   const pendingEl = document.getElementById('pendingMsg');
   pendingEl.textContent = '✅ تم تغيير كلمة المرور. يمكنك الدخول الآن.';
   pendingEl.style.display = 'block';
@@ -691,6 +694,3 @@ async function doLogin() {
 </script>
 </body>
 </html>
-
-
-
