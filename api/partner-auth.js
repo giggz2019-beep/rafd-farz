@@ -6,19 +6,44 @@ const { PAID_PLAN_PRICES } = require('./_lib/plans');
 
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
-// Fields a client is allowed to set when creating a partner row. status,
-// plan, price, and payment_ref are always decided server-side below —
-// never trust these from the request body.
 const REGISTER_FIELDS = ['org_name', 'email', 'phone', 'org_type', 'cr_num', 'city', 'fname', 'lname', 'title', 'website', 'purpose', 'volume', 'notes', 'ref_num'];
 
 function secret() {
-  return process.env.PARTNER_SECRET || process.env.SUPABASE_SERVICE_KEY || 'rafd-fallback';
+  const s = process.env.PARTNER_SECRET || process.env.SUPABASE_SERVICE_KEY;
+  if (!s) throw new Error('PARTNER_SECRET not configured');
+  return s;
 }
 
 function makeToken(email) {
   const ts = Date.now().toString();
   const sig = crypto.createHmac('sha256', secret()).update(`${email}|${ts}`).digest('hex');
   return Buffer.from(`${email}|${ts}|${sig}`).toString('base64url');
+}
+
+// Reset token: HMAC(otp|email|ts) — valid 10 minutes, no DB storage needed
+function makeResetToken(email, otp) {
+  const ts = Date.now().toString();
+  const sig = crypto.createHmac('sha256', secret()).update(`${otp}|${email}|${ts}`).digest('hex');
+  return Buffer.from(`${email}|${ts}|${sig}`).toString('base64url');
+}
+
+function verifyResetToken(token, otp) {
+  try {
+    const decoded = Buffer.from(token, 'base64url').toString();
+    const lastBar = decoded.lastIndexOf('|');
+    const firstBar = decoded.indexOf('|');
+    if (firstBar === -1 || lastBar === -1 || firstBar === lastBar) return null;
+    const email = decoded.slice(0, firstBar);
+    const ts = decoded.slice(firstBar + 1, lastBar);
+    const sig = decoded.slice(lastBar + 1);
+    if (Date.now() - parseInt(ts) > 10 * 60 * 1000) return null;
+    const expected = crypto.createHmac('sha256', secret()).update(`${otp}|${email}|${ts}`).digest('hex');
+    const sigBuf = Buffer.from(sig, 'hex');
+    const expBuf = Buffer.from(expected, 'hex');
+    if (sigBuf.length !== expBuf.length) return null;
+    if (!crypto.timingSafeEqual(sigBuf, expBuf)) return null;
+    return email;
+  } catch { return null; }
 }
 
 async function sbGet(path, key) {
@@ -97,16 +122,9 @@ module.exports = async (req, res) => {
       return res.status(200).json({ results: rows || [] });
     }
 
-    // ─── NAFATH LOOKUP ───────────────────────────────────────────────────────
+    // ─── NAFATH LOOKUP (محاكاة تجريبية — الربط مع سدايا قيد التطوير) ─────────
     if (body.action === 'nafath_lookup') {
-      const { nid } = body;
-      if (!nid) return res.status(400).json({ error: 'missing_fields' });
-      const rows = await sbGet(
-        `/partners?national_id=eq.${encodeURIComponent(nid)}&select=*&limit=1`, key
-      );
-      if (!rows?.length) return res.status(404).json({ error: 'not_found' });
-      const p = rows[0];
-      return res.status(200).json({ token: makeToken(p.email), partner: p });
+      return res.status(200).json({ simulation: true, message: 'nafath_pending_sdaia' });
     }
 
     // ─── LOOKUP BY EMAIL ─────────────────────────────────────────────────────
@@ -120,7 +138,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ partner: rows[0] });
     }
 
-    // ─── CHECK EMAIL (duplicate-signup check, server-side) ──────────────────
+    // ─── CHECK EMAIL ─────────────────────────────────────────────────────────
     if (body.action === 'check_email') {
       const { email } = body;
       if (!email) return res.status(400).json({ error: 'missing_fields' });
@@ -130,7 +148,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ exists: !!rows?.length });
     }
 
-    // ─── REGISTER AFTER PAYMENT (all plans require payment) ──────────────────
+    // ─── REGISTER AFTER PAYMENT ──────────────────────────────────────────────
     if (body.action === 'register_after_payment') {
       const { orderRef, plan, partnerData, password } = body;
       if (!orderRef || !plan || !partnerData || !password) return res.status(400).json({ error: 'missing_fields' });
@@ -138,7 +156,6 @@ module.exports = async (req, res) => {
       const expectedPrice = PAID_PLAN_PRICES[plan];
       if (!expectedPrice) return res.status(400).json({ error: 'invalid_plan' });
 
-      // Idempotency — a retried/refreshed payment-result page must not create a second account.
       const existing = await sbGet(
         `/partners?payment_ref=eq.${encodeURIComponent(orderRef)}&select=*&limit=1`, key
       );
@@ -182,11 +199,41 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true, partner, token: partner ? makeToken(partner.email) : null, emailSent });
     }
 
-    // ─── RESET PASSWORD ──────────────────────────────────────────────────────
+    // ─── SEND RESET OTP (server-side generation — OTP never leaves the server) ─
+    if (body.action === 'send_reset_otp') {
+      const { email } = body;
+      if (!email) return res.status(400).json({ error: 'missing_fields' });
+      const emailNorm = email.trim().toLowerCase();
+
+      const rows = await sbGet(
+        `/partners?email=eq.${encodeURIComponent(emailNorm)}&select=id,email,fname,org_name&limit=1`, key
+      );
+      // Always return ok to prevent email enumeration
+      if (!rows?.length) return res.status(200).json({ ok: true });
+
+      const p = rows[0];
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const resetToken = makeResetToken(emailNorm, otp);
+
+      if (process.env.RESEND_API_KEY) {
+        await sendResetEmail(emailNorm, otp, p.fname || p.org_name).catch(() => {});
+      }
+
+      return res.status(200).json({ ok: true, resetToken });
+    }
+
+    // ─── RESET PASSWORD (requires server-issued resetToken + entered OTP) ────
     if (body.action === 'reset_password') {
-      const { partnerId, newPassword } = body;
-      if (!partnerId || !newPassword) return res.status(400).json({ error: 'missing_fields' });
-      await sbWrite('PATCH', `/partners?id=eq.${partnerId}`, { password: hashPassword(newPassword) }, key);
+      const { resetToken, otp, newPassword } = body;
+      if (!resetToken || !otp || !newPassword) return res.status(400).json({ error: 'missing_fields' });
+
+      const email = verifyResetToken(resetToken, otp);
+      if (!email) return res.status(401).json({ error: 'invalid_or_expired_token' });
+
+      if (newPassword.length < 8) return res.status(400).json({ error: 'password_too_short' });
+
+      await sbWrite('PATCH', `/partners?email=eq.${encodeURIComponent(email)}`,
+        { password: hashPassword(newPassword) }, key);
       return res.status(200).json({ ok: true });
     }
 
@@ -194,9 +241,49 @@ module.exports = async (req, res) => {
 
   } catch (err) {
     console.error('partner-auth error:', err.message);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'internal_error' });
   }
 };
+
+async function sendResetEmail(email, otp, name) {
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#eef2f7;font-family:'Cairo','Segoe UI',Arial,sans-serif;direction:rtl">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#eef2f7;padding:40px 16px">
+<tr><td align="center">
+<table width="100%" style="max-width:540px" cellpadding="0" cellspacing="0">
+  <tr><td style="background:linear-gradient(135deg,#0d2233,#1a3a4a);border-radius:20px 20px 0 0;padding:28px 32px;text-align:center">
+    <div style="font-size:1.4rem;font-weight:900;color:#fff;font-family:'Cairo',sans-serif">إعادة تعيين كلمة المرور 🔑</div>
+  </td></tr>
+  <tr><td style="background:#fff;padding:36px 32px;text-align:center">
+    <p style="color:#0d2233;font-size:1rem;font-weight:700;margin:0 0 8px;font-family:'Cairo',sans-serif">مرحباً ${name || ''}،</p>
+    <p style="color:#5a6a7e;font-size:.9rem;margin:0 0 24px;line-height:1.8;font-family:'Cairo',sans-serif">
+      استخدم الرمز أدناه لإعادة تعيين كلمة المرور. صالح لمدة <strong>10 دقائق</strong> فقط.
+    </p>
+    <div style="font-size:2.4rem;font-weight:900;letter-spacing:.4em;color:#1a3a4a;background:#f0f7ff;border:2px solid #c8dfe8;border-radius:16px;padding:1rem 2rem;display:inline-block;direction:ltr;margin-bottom:24px;font-family:monospace">${otp}</div>
+    <p style="color:#94a3b8;font-size:.8rem;margin:0;font-family:'Cairo',sans-serif">إذا لم تطلب إعادة التعيين، تجاهل هذه الرسالة.</p>
+  </td></tr>
+  <tr><td style="background:linear-gradient(135deg,#0d2233,#1a3a4a);border-radius:0 0 20px 20px;padding:20px 32px;text-align:center">
+    <p style="margin:0;color:rgba(255,255,255,.5);font-size:.76rem;font-family:'Cairo',sans-serif">© 2026 RAFD Digital</p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`;
+
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: 'RAFD Digital <noreply@rafd-digital.com>',
+      to: [email],
+      subject: 'رمز إعادة تعيين كلمة المرور — RAFD Digital',
+      html,
+    }),
+  });
+  if (!r.ok) throw new Error(`reset email failed: ${r.status}`);
+}
 
 async function sendActivationEmail(partner) {
   const html = `<!DOCTYPE html>
