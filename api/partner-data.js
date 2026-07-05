@@ -7,6 +7,14 @@ const { PAID_PLAN_PRICES } = require('./_lib/plans');
 
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
+const ALLOWED_ADD_APP_FIELDS = [
+  'full_name', 'fname', 'lname', 'email', 'phone',
+  'gender', 'birth_date', 'nationality', 'city',
+  'education', 'major', 'gpa', 'experience', 'experience_years',
+  'position', 'skills', 'notes', 'national_id_num',
+  'cv_url', 'id_doc_url', 'edu_doc_url', 'exp_doc_url', 'cert_doc_url', 'other_doc_url',
+];
+
 function secret() {
   const s = process.env.PARTNER_SECRET || process.env.SUPABASE_SERVICE_KEY;
   if (!s) throw new Error('PARTNER_SECRET not configured');
@@ -151,15 +159,20 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true });
     }
 
-    // ADD MANUAL APPLICATION
+    // ADD MANUAL APPLICATION — field allowlist prevents mass assignment
     if (action === 'add_app') {
       const { app } = body;
       if (!app) return res.status(400).json({ error: 'missing_fields' });
       const rows = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=id,ref_num&limit=1`, undefined, key);
       if (!rows?.length) return res.status(404).json({ error: 'not_found' });
-      app.partner_id = rows[0].id;
-      app.partner_ref = rows[0].ref_num;
-      await sb('POST', '/applications', app, key);
+      const row = {};
+      for (const k of ALLOWED_ADD_APP_FIELDS) {
+        if (app[k] !== undefined) row[k] = app[k];
+      }
+      row.partner_id = rows[0].id;
+      row.partner_ref = rows[0].ref_num;
+      row.result = null;
+      await sb('POST', '/applications', row, key);
       return res.status(200).json({ ok: true });
     }
 

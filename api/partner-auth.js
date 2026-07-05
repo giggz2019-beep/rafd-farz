@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const { hash: hashPassword, verify: verifyPassword } = require('./_lib/password');
 const { getOrder, classifyOrder } = require('./_lib/ngenius');
 const { PAID_PLAN_PRICES } = require('./_lib/plans');
+const { rateLimit, getIp } = require('./_lib/rate-limit');
 
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
@@ -85,12 +86,16 @@ module.exports = async (req, res) => {
   if (!key) return res.status(503).json({ error: 'not_configured' });
 
   const body = req.body || {};
+  const ip = getIp(req);
 
   try {
     // ─── LOGIN — validate credentials, send OTP server-side ──────────────────
     if (body.action === 'login') {
       const { email, password } = body;
       if (!email || !password) return res.status(400).json({ error: 'missing_fields' });
+
+      const { limited } = rateLimit(`login:${ip}`, 10, 15 * 60 * 1000);
+      if (limited) return res.status(429).json({ error: 'too_many_attempts' });
 
       const isRef = /^(RAFD|MAN)-/i.test(email.trim());
       const field = isRef ? 'ref_num' : 'email';
@@ -129,6 +134,9 @@ module.exports = async (req, res) => {
       const { challengeToken, otp } = body;
       if (!challengeToken || !otp) return res.status(400).json({ error: 'missing_fields' });
 
+      const { limited } = rateLimit(`otp:${ip}`, 10, 5 * 60 * 1000);
+      if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
       const email = verifyOtpToken(challengeToken, otp, 5 * 60 * 1000);
       if (!email) return res.status(401).json({ error: 'invalid_or_expired_otp' });
 
@@ -145,6 +153,10 @@ module.exports = async (req, res) => {
     if (body.action === 'resend_login_otp') {
       const { email } = body;
       if (!email) return res.status(400).json({ error: 'missing_fields' });
+
+      const { limited } = rateLimit(`resend:${ip}`, 5, 5 * 60 * 1000);
+      if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
       const emailNorm = email.trim().toLowerCase();
 
       const rows = await sbGet(
@@ -254,6 +266,10 @@ module.exports = async (req, res) => {
     if (body.action === 'send_reset_otp') {
       const { email } = body;
       if (!email) return res.status(400).json({ error: 'missing_fields' });
+
+      const { limited } = rateLimit(`reset:${ip}`, 3, 15 * 60 * 1000);
+      if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
       const emailNorm = email.trim().toLowerCase();
 
       const rows = await sbGet(
