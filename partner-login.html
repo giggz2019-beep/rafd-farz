@@ -273,8 +273,8 @@ async function partnerAuthApi(data) {
 }
 
 // ===== LOGIN OTP =====
-let _loginOtp = '';
-let _loginPartner = null;
+let _loginChallenge = null;
+let _loginPartnerEmail = null;
 let _loginTimerInterval = null;
 
 function _startLoginTimer(secs) {
@@ -315,21 +315,17 @@ function backToLoginForm() {
   clearInterval(_loginTimerInterval);
   document.getElementById('loginForm').style.display = 'block';
   document.getElementById('otpScreen').style.display = 'none';
-  _loginPartner = null;
-  _loginOtp = '';
+  _loginChallenge = null;
+  _loginPartnerEmail = null;
 }
 
 async function resendLoginOtp() {
-  if (!_loginPartner) return;
-  _loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
-  sessionStorage.setItem('rafd_login_otp', JSON.stringify({ otp: _loginOtp, email: _loginPartner.email, expiry: Date.now() + 5 * 60 * 1000 }));
+  if (!_loginPartnerEmail) return;
+  document.getElementById('lotpResendBtn').disabled = true;
   try {
-    await fetch('/api/send-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: _loginPartner.email, otp: _loginOtp, fname: _loginPartner.fname || _loginPartner.org_name }),
-    });
-  } catch(e) { console.error(e); }
+    const { data: rd } = await partnerAuthApi({ action: 'resend_login_otp', email: _loginPartnerEmail });
+    if (rd.challengeToken) _loginChallenge = rd.challengeToken;
+  } catch(e) { console.error('resend OTP:', e); }
   for (let i = 0; i < 6; i++) { const d = document.getElementById('lotp' + i); d.value = ''; d.classList.remove('filled'); }
   document.getElementById('lotpErr').style.display = 'none';
   _startLoginTimer(300);
@@ -343,26 +339,36 @@ async function verifyLoginOtp() {
   errEl.style.display = 'none';
 
   if (entered.length < 6) { errEl.textContent = 'يرجى إدخال الرمز كاملاً (6 أرقام)'; errEl.style.display = 'block'; return; }
+  if (!_loginChallenge) { errEl.textContent = 'انتهت جلسة التحقق. ارجع وأعد الدخول.'; errEl.style.display = 'block'; return; }
 
-  const stored = JSON.parse(sessionStorage.getItem('rafd_login_otp') || 'null');
-  if (!stored || stored.otp !== entered || Date.now() > stored.expiry) {
-    errEl.textContent = 'رمز التحقق غير صحيح أو انتهت صلاحيته';
+  btn.disabled = true; btn.textContent = '⏳ جارٍ التحقق...';
+
+  try {
+    const { status: vs, data: vd } = await partnerAuthApi({ action: 'verify_login_otp', challengeToken: _loginChallenge, otp: entered });
+
+    if (vs !== 200 || !vd.token) {
+      errEl.textContent = vd?.error === 'invalid_or_expired_otp'
+        ? 'رمز التحقق غير صحيح أو انتهت صلاحيته (5 دقائق). اضغط إعادة الإرسال.'
+        : 'حدث خطأ. حاول مرة أخرى.';
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = '✓ تحقق وادخل للوحة التحكم';
+      return;
+    }
+
+    clearInterval(_loginTimerInterval);
+    const p = vd.partner;
+    localStorage.setItem('rafd_partner_session', JSON.stringify({
+      token: vd.token,
+      id: p.id, email: p.email, org: p.org_name,
+      fname: p.fname, lname: p.lname, orgtype: p.org_type,
+      plan: p.plan, ref_num: p.ref_num, title: p.title
+    }));
+    window.location.href = '/partner-dashboard.html';
+  } catch(err) {
+    errEl.textContent = 'حدث خطأ. حاول مرة أخرى.';
     errEl.style.display = 'block';
-    return;
+    btn.disabled = false; btn.textContent = '✓ تحقق وادخل للوحة التحكم';
   }
-
-  clearInterval(_loginTimerInterval);
-  sessionStorage.removeItem('rafd_login_otp');
-  btn.disabled = true; btn.textContent = '⏳ جاري الدخول...';
-
-  const p = _loginPartner;
-  localStorage.setItem('rafd_partner_session', JSON.stringify({
-    token: p._token,
-    id: p.id, email: p.email, org: p.org_name,
-    fname: p.fname, lname: p.lname, orgtype: p.org_type,
-    plan: p.plan, ref_num: p.ref_num, title: p.title
-  }));
-  window.location.href = '/partner-dashboard.html';
 }
 
 // ===== NAFATH LOGIN (محاكاة تجريبية) =====
@@ -518,13 +524,11 @@ function showForgot() {
   document.getElementById('fp_email').value = document.getElementById('loginEmail').value || '';
   document.getElementById('fp_err').style.display = 'none';
   _fpResetToken = null;
-  sessionStorage.removeItem('rafd_reset_token');
 }
 
 function hideForgot() {
   document.getElementById('forgotModal').style.display = 'none';
   _fpResetToken = null;
-  sessionStorage.removeItem('rafd_reset_token');
 }
 
 async function sendResetOtp() {
@@ -547,11 +551,7 @@ async function sendResetOtp() {
     return;
   }
 
-  // Store server-issued reset token (contains the OTP hash — never reveals the OTP)
-  if (fpRes.resetToken) {
-    _fpResetToken = fpRes.resetToken;
-    sessionStorage.setItem('rafd_reset_token', fpRes.resetToken);
-  }
+  if (fpRes.resetToken) _fpResetToken = fpRes.resetToken;
 
   document.getElementById('fp_step_email').style.display = 'none';
   document.getElementById('fp_step_reset').style.display = 'block';
@@ -567,12 +567,11 @@ async function doReset() {
   if (!otp || otp.length !== 6) { errEl.textContent = 'يرجى إدخال رمز التحقق المكوّن من 6 أرقام'; errEl.style.display = 'block'; return; }
   if (!newpass || newpass.length < 8) { errEl.textContent = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'; errEl.style.display = 'block'; return; }
 
-  const resetToken = _fpResetToken || sessionStorage.getItem('rafd_reset_token');
-  if (!resetToken) { errEl.textContent = 'انتهت جلسة إعادة التعيين. أعد المحاولة من البداية.'; errEl.style.display = 'block'; return; }
+  if (!_fpResetToken) { errEl.textContent = 'انتهت جلسة إعادة التعيين. أعد المحاولة من البداية.'; errEl.style.display = 'block'; return; }
 
   btn.disabled = true; btn.textContent = '⏳ جارٍ التحديث...';
 
-  const { status: rpStatus, data: rpRes } = await partnerAuthApi({ action: 'reset_password', resetToken, otp, newPassword: newpass });
+  const { status: rpStatus, data: rpRes } = await partnerAuthApi({ action: 'reset_password', resetToken: _fpResetToken, otp, newPassword: newpass });
 
   btn.disabled = false; btn.textContent = 'تغيير كلمة المرور';
 
@@ -646,46 +645,28 @@ async function doLogin() {
   try {
     const { status: loginStatus, data: loginRes } = await partnerAuthApi({ action: 'login', email, password: pass });
 
-    if (loginStatus !== 200 || !loginRes.partner) {
-      const isRefNum = /^(RAFD|MAN)-/i.test(email.trim());
-      errEl.textContent = isRefNum
-        ? 'اسم المستخدم أو كلمة المرور غير صحيحة.'
-        : 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+    if (loginStatus !== 200 || !loginRes.ok) {
+      if (loginRes.rejected) {
+        errEl.textContent = 'عذراً، طلب تسجيلك تم رفضه. تواصل مع الدعم للمزيد.';
+      } else {
+        const isRefNum = /^(RAFD|MAN)-/i.test(email.trim());
+        errEl.textContent = isRefNum
+          ? 'اسم المستخدم أو كلمة المرور غير صحيحة.'
+          : 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+      }
       errEl.style.display = 'block';
       btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
       return;
     }
 
-    const partner = loginRes.partner;
-    const loginToken = loginRes.token;
-
-    if (partner.status === 'rejected') {
-      errEl.textContent = 'عذراً، طلب تسجيلك تم رفضه. تواصل مع الدعم للمزيد.';
-      errEl.style.display = 'block';
-      btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
-      return;
-    }
-
-    // تحقق بالبريد الإلكتروني قبل الدخول
-    _loginPartner = { ...partner, _token: loginToken };
-    _loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    sessionStorage.setItem('rafd_login_otp', JSON.stringify({ otp: _loginOtp, email: partner.email, expiry: Date.now() + 5 * 60 * 1000 }));
-
-    btn.textContent = '⏳ جارٍ إرسال الرمز...';
-    try {
-      await fetch('/api/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: partner.email, otp: _loginOtp, fname: partner.fname || partner.org_name }),
-      });
-    } catch(e) { console.error('OTP send:', e); }
-
+    _loginChallenge = loginRes.challengeToken;
+    _loginPartnerEmail = loginRes.partnerEmail;
     btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
-    _showOtpScreen(partner.email);
+    _showOtpScreen(loginRes.partnerEmail);
 
   } catch(err) {
     console.error('Login error:', err);
-    errEl.textContent = 'حدث خطأ: ' + (err.message || 'يرجى المحاولة مرة أخرى.');
+    errEl.textContent = 'حدث خطأ. يرجى المحاولة مرة أخرى.';
     errEl.style.display = 'block';
     btn.disabled = false;
     btn.textContent = 'دخول للوحة التحكم';
