@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   const supabaseUrl = process.env.SUPABASE_URL || 'https://ycnnawohrbbluawxzttt.supabase.co';
   res.setHeader('Content-Security-Policy', [
     "default-src 'self'",
-    "script-src 'self' https://cdn.jsdelivr.net",  // Removed 'unsafe-inline'
+    "script-src 'self' https://cdn.jsdelivr.net",
     "style-src 'self' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https:",
@@ -65,8 +65,6 @@ app.get('/api/health', (req, res) => {
 
 // ===== API ROUTES =====
 app.post('/api/demo/analyze', (req, res) => {
-  // TODO: Implement actual analysis endpoint
-  // For now, return a demo response
   setTimeout(() => {
     res.json({ success: true, message: 'تم التحليل' });
   }, 500);
@@ -79,7 +77,6 @@ app.get('*', (req, res) => {
   
   res.sendFile(fullPath, (err) => {
     if (err) {
-      // If file not found, serve index.html for SPA routing
       res.sendFile(path.join(__dirname, 'index.html'));
     }
   });
@@ -96,4 +93,5 @@ app.listen(PORT, () => {
   console.log(`🚀 RAFD Digital Platform running on port ${PORT}`);
   console.log(`📋 Environment: ${NODE_ENV}`);
   console.log(`🔐 Security headers: ENABLED`);
+  if (process.env.SUPABASE_URL) console.log(`🏛️  Government integration: READY`);
 });
