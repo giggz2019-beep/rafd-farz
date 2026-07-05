@@ -10,8 +10,21 @@ module.exports = async (req, res) => {
     const { email, otp, fname } = req.body || {};
 
     if (!email || !otp) {
-      return res.status(400).json({ error: 'Missing email or otp' });
+      return res.status(400).json({ error: 'missing_fields' });
     }
+
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'invalid_email' });
+    }
+
+    // OTP must be exactly 6 digits — prevents HTML/script injection via otp field
+    if (!/^\d{6}$/.test(otp)) {
+      return res.status(400).json({ error: 'invalid_otp_format' });
+    }
+
+    // Sanitize fname — strip HTML tags, limit length
+    const safeName = String(fname || '').replace(/<[^>]*>/g, '').slice(0, 80);
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -23,7 +36,7 @@ module.exports = async (req, res) => {
         from: 'RAFD Digital <noreply@rafd-digital.com>',
         to: [email],
         subject: `${otp} - رمز التفعيل في RAFD Digital`,
-        text: `مرحباً ${fname || ''}،\n\nرمز التفعيل الخاص بك في RAFD Digital هو: ${otp}\n\nصالح لمدة 3 دقائق فقط. لا تشاركه مع أي أحد.\n\nإذا لم تطلب هذا الرمز، تجاهل هذا البريد.\n\nRAFD Digital — support@rafd-digital.com`,
+        text: `مرحباً ${safeName}،\n\nرمز التفعيل الخاص بك في RAFD Digital هو: ${otp}\n\nصالح لمدة 3 دقائق فقط. لا تشاركه مع أي أحد.\n\nإذا لم تطلب هذا الرمز، تجاهل هذا البريد.\n\nRAFD Digital — support@rafd-digital.com`,
         html: `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
@@ -50,7 +63,7 @@ module.exports = async (req, res) => {
   <!-- BODY -->
   <tr><td style="background:#ffffff;padding:40px 36px">
 
-    <p style="color:#0d2233;font-size:1.05rem;margin:0 0 8px;font-weight:700;font-family:'Cairo',sans-serif">مرحباً ${fname || ''}،</p>
+    <p style="color:#0d2233;font-size:1.05rem;margin:0 0 8px;font-weight:700;font-family:'Cairo',sans-serif">مرحباً ${safeName}،</p>
     <p style="color:#5a6a7e;font-size:.9rem;margin:0 0 30px;line-height:1.85;font-family:'Cairo',sans-serif">
       تلقّينا طلب تحقق من هويتك على منصة <strong style="color:#1a3a4a">RAFD Digital</strong>.<br>
       استخدم الرمز أدناه لإتمام التسجيل:
@@ -100,11 +113,11 @@ module.exports = async (req, res) => {
       })
     });
 
-    const data = await response.json();
-    if (!response.ok) return res.status(500).json({ error: data });
+    if (!response.ok) return res.status(500).json({ error: 'email_send_failed' });
     return res.status(200).json({ success: true });
 
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error('send-otp error:', err.message);
+    return res.status(500).json({ error: 'internal_error' });
   }
 };
