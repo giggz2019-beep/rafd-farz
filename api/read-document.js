@@ -44,7 +44,9 @@ ${TYPE_DETECT}
 {"detected_type":"other","summary":"ملخص مختصر باللغة العربية"}`;
 
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const _ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+  res.setHeader('Access-Control-Allow-Origin', _ORIGIN);
+  if (_ORIGIN !== '*') res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
