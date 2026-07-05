@@ -1,6 +1,19 @@
 // Public endpoints for the apply page — no auth required
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
+// Fields the applicant can submit — result, partner_id, status are always server-side
+const ALLOWED_APP_FIELDS = [
+  'full_name', 'fname', 'lname', 'email', 'phone',
+  'gender', 'birth_date', 'nationality', 'city',
+  'education', 'major', 'gpa',
+  'experience', 'experience_years',
+  'position', 'skills', 'notes',
+  'national_id_num',
+  'cv_url', 'id_doc_url', 'edu_doc_url', 'exp_doc_url', 'cert_doc_url', 'other_doc_url',
+  'nafath_verified', 'nafath_pending',
+  'ai_result', 'doc_results', 'read_id_result',
+];
+
 async function sb(method, path, body, key) {
   const r = await fetch(`${SB_URL}/rest/v1${path}`, {
     method,
@@ -47,8 +60,7 @@ module.exports = async (req, res) => {
         headers: { apikey: key, Authorization: `Bearer ${key}` },
       });
       if (!r.ok) {
-        const t = await r.text();
-        throw new Error(`Storage sign ${r.status}: ${t}`);
+        throw new Error(`Storage sign ${r.status}`);
       }
       const { signedURL } = await r.json();
       return res.status(200).json({ signedURL, storageUrl: SB_URL });
@@ -58,7 +70,30 @@ module.exports = async (req, res) => {
     if (body.action === 'submit') {
       const { application } = body;
       if (!application) return res.status(400).json({ error: 'missing_application' });
-      await sb('POST', '/applications', application, key);
+
+      // Derive partner_id server-side — never trust partner_id from client
+      const partnerRef = application.partner_ref;
+      if (!partnerRef) return res.status(400).json({ error: 'missing_partner_ref' });
+
+      const partners = await sb('GET',
+        `/partners?ref_num=eq.${encodeURIComponent(String(partnerRef).toUpperCase())}&select=id,ref_num,status&limit=1`,
+        undefined, key
+      );
+      if (!partners?.length) return res.status(404).json({ error: 'partner_not_found' });
+      if (partners[0].status !== 'approved') return res.status(403).json({ error: 'partner_not_active' });
+
+      // Apply field allowlist — strip any field not explicitly permitted
+      const row = {};
+      for (const field of ALLOWED_APP_FIELDS) {
+        if (application[field] !== undefined) row[field] = application[field];
+      }
+
+      // Server-side authoritative fields — cannot be overridden by client
+      row.partner_id = partners[0].id;
+      row.partner_ref = partners[0].ref_num;
+      row.result = null;
+
+      await sb('POST', '/applications', row, key);
       return res.status(200).json({ ok: true });
     }
 
@@ -66,6 +101,6 @@ module.exports = async (req, res) => {
 
   } catch (err) {
     console.error('apply-form error:', err.message);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'internal_error' });
   }
 };
