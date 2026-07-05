@@ -6,9 +6,12 @@ const VALID_STATUSES = ['approved', 'rejected', 'pending'];
 const VALID_PLANS = ['trial', 'basic', 'pro'];
 
 const { rateLimit, getIp } = require('./_lib/rate-limit');
+const { auditLog } = require('./_lib/audit-log');
 
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const _ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+  res.setHeader('Access-Control-Allow-Origin', _ORIGIN);
+  if (_ORIGIN !== '*') res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
@@ -27,7 +30,7 @@ module.exports = async (req, res) => {
 
   const body = req.body || {};
 
-  // Authenticate: Supabase token (preferred) or legacy ADMIN_PASSWORD
+  // Authenticate: Supabase token only
   let authenticated = false;
 
   if (body.supabase_token) {
@@ -45,10 +48,6 @@ module.exports = async (req, res) => {
         }
       }
     } catch (_) {}
-  } else if (body.password && process.env.ADMIN_PASSWORD) {
-    if (body.password === process.env.ADMIN_PASSWORD) {
-      authenticated = true;
-    }
   }
 
   if (!authenticated) {
@@ -70,7 +69,10 @@ module.exports = async (req, res) => {
   }
 
   try {
-    if (action === 'ping') return res.status(200).json({ ok: true });
+    if (action === 'ping') {
+      auditLog({ event: 'admin_login', ip });
+      return res.status(200).json({ ok: true });
+    }
 
     if (action === 'load') {
       const [pRes, aRes] = await Promise.all([
@@ -91,6 +93,7 @@ module.exports = async (req, res) => {
         method: 'PATCH', headers: sbHeaders,
         body: JSON.stringify({ plan: data.plan }),
       });
+      auditLog({ event: 'admin_update_plan', id: data.id, plan: data.plan, ip });
       return res.status(200).json({ success: true });
     }
 
@@ -101,12 +104,14 @@ module.exports = async (req, res) => {
         method: 'PATCH', headers: sbHeaders,
         body: JSON.stringify({ status: data.status }),
       });
+      auditLog({ event: 'admin_update_status', id: data.id, status: data.status, ip });
       return res.status(200).json({ success: true });
     }
 
     if (action === 'delete_partner') {
       if (!validId(data.id)) return res.status(400).json({ error: 'invalid_id' });
       await fetch(`${base}/partners?id=eq.${data.id}`, { method: 'DELETE', headers: sbHeaders });
+      auditLog({ event: 'admin_delete_partner', id: data.id, ip });
       return res.status(200).json({ success: true });
     }
 
