@@ -623,6 +623,7 @@ function showAdminPanel(email) {
   if (el) el.textContent = email;
   renderAll();
   loadPartnersFromSupabase();
+  startIdleWatch();
 }
 
 async function doLogin() {
@@ -662,6 +663,7 @@ async function doLogin() {
 }
 
 async function doLogout() {
+  stopIdleWatch();
   _adminToken = null;
   await supabase.auth.signOut();
   document.getElementById('adminWrap').classList.remove('active');
@@ -1161,6 +1163,38 @@ function exportCSV() {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = 'rafd-clients-'+new Date().toISOString().split('T')[0]+'.csv';
   a.click();
+}
+
+// ===== SESSION TIMEOUT (30 min inactivity) =====
+let _idleTimer = null;
+const IDLE_LIMIT_MS = 30 * 60 * 1000;
+const WARN_BEFORE_MS = 5 * 60 * 1000;
+
+function resetIdleTimer() {
+  clearTimeout(_idleTimer);
+  _idleTimer = setTimeout(() => {
+    // warn at 25 min
+    const stay = confirm('ستنتهي جلستك خلال 5 دقائق. هل تريد الاستمرار؟');
+    if (stay) {
+      resetIdleTimer();
+    } else {
+      doLogout();
+    }
+  }, IDLE_LIMIT_MS - WARN_BEFORE_MS);
+}
+
+function startIdleWatch() {
+  ['mousemove','keydown','click','touchstart','scroll'].forEach(evt =>
+    document.addEventListener(evt, resetIdleTimer, { passive: true })
+  );
+  resetIdleTimer();
+}
+
+function stopIdleWatch() {
+  clearTimeout(_idleTimer);
+  ['mousemove','keydown','click','touchstart','scroll'].forEach(evt =>
+    document.removeEventListener(evt, resetIdleTimer)
+  );
 }
 
 // ===== NAVIGATION =====
