@@ -1,30 +1,78 @@
+'use strict';
+const crypto = require('crypto');
+const { rateLimit, getIp } = require('./_lib/rate-limit');
+
+function secret() {
+  const s = process.env.PARTNER_SECRET || process.env.SUPABASE_SERVICE_KEY;
+  if (!s) throw new Error('OTP_SECRET not configured');
+  return s;
+}
+
+function makeOtpToken(email, otp) {
+  const ts = Date.now().toString();
+  const sig = crypto.createHmac('sha256', secret()).update(`${otp}|${email}|${ts}`).digest('hex');
+  return Buffer.from(`${email}|${ts}|${sig}`).toString('base64url');
+}
+
+function verifyOtpToken(token, otp, maxMs) {
+  try {
+    const decoded = Buffer.from(token, 'base64url').toString();
+    const lastBar = decoded.lastIndexOf('|');
+    const firstBar = decoded.indexOf('|');
+    if (firstBar === -1 || lastBar === -1 || firstBar === lastBar) return null;
+    const email = decoded.slice(0, firstBar);
+    const ts = decoded.slice(firstBar + 1, lastBar);
+    const sig = decoded.slice(lastBar + 1);
+    if (Date.now() - parseInt(ts) > maxMs) return null;
+    const expected = crypto.createHmac('sha256', secret()).update(`${otp}|${email}|${ts}`).digest('hex');
+    const sigBuf = Buffer.from(sig, 'hex');
+    const expBuf = Buffer.from(expected, 'hex');
+    if (sigBuf.length !== expBuf.length) return null;
+    if (!crypto.timingSafeEqual(sigBuf, expBuf)) return null;
+    return email;
+  } catch { return null; }
+}
+
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const _ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+  res.setHeader('Access-Control-Allow-Origin', _ORIGIN);
+  if (_ORIGIN !== '*') res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
+  const ip = getIp(req);
+  const body = req.body || {};
+
+  // ─── VERIFY OTP ──────────────────────────────────────────────────────
+  if (body.action === 'verify_otp') {
+    const { challengeToken, otp } = body;
+    if (!challengeToken || !otp) return res.status(400).json({ error: 'missing_fields' });
+    if (!/^\d{6}$/.test(otp)) return res.status(400).json({ error: 'invalid_otp_format' });
+
+    const { limited } = rateLimit(`otp_verify:${ip}`, 5, 10 * 60 * 1000);
+    if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
+    const email = verifyOtpToken(challengeToken, otp, 10 * 60 * 1000);
+    if (!email) return res.status(401).json({ error: 'invalid_or_expired_otp' });
+
+    return res.status(200).json({ ok: true, email });
+  }
+
+  // ─── SEND OTP ────────────────────────────────────────────────────────
   try {
-    const { email, otp, fname } = req.body || {};
+    const { email, fname } = body;
+    if (!email) return res.status(400).json({ error: 'missing_fields' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'invalid_email' });
 
-    if (!email || !otp) {
-      return res.status(400).json({ error: 'missing_fields' });
-    }
+    const { limited } = rateLimit(`otp_send:${ip}`, 3, 10 * 60 * 1000);
+    if (limited) return res.status(429).json({ error: 'too_many_attempts' });
 
-    // Validate email format
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ error: 'invalid_email' });
-    }
-
-    // OTP must be exactly 6 digits — prevents HTML/script injection via otp field
-    if (!/^\d{6}$/.test(otp)) {
-      return res.status(400).json({ error: 'invalid_otp_format' });
-    }
-
-    // Sanitize fname — strip HTML tags, limit length
     const safeName = String(fname || '').replace(/<[^>]*>/g, '').slice(0, 80);
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const challengeToken = makeOtpToken(email, otp);
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -36,7 +84,7 @@ module.exports = async (req, res) => {
         from: 'RAFD Digital <noreply@rafd-digital.com>',
         to: [email],
         subject: `${otp} - رمز التفعيل في RAFD Digital`,
-        text: `مرحباً ${safeName}،\n\nرمز التفعيل الخاص بك في RAFD Digital هو: ${otp}\n\nصالح لمدة 3 دقائق فقط. لا تشاركه مع أي أحد.\n\nإذا لم تطلب هذا الرمز، تجاهل هذا البريد.\n\nRAFD Digital — support@rafd-digital.com`,
+        text: `مرحباً ${safeName}،\n\nرمز التفعيل الخاص بك في RAFD Digital هو: ${otp}\n\nصالح لمدة 10 دقائق فقط. لا تشاركه مع أي أحد.\n\nإذا لم تطلب هذا الرمز، تجاهل هذا البريد.\n\nRAFD Digital — support@rafd-digital.com`,
         html: `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
@@ -75,7 +123,7 @@ module.exports = async (req, res) => {
         <div style="font-size:.7rem;color:#8fa3b1;margin-bottom:12px;letter-spacing:2px;text-transform:uppercase;font-family:'Cairo',sans-serif">رمز التحقق الخاص بك</div>
         <div style="font-size:3.2rem;font-weight:900;letter-spacing:16px;color:#0d2233;font-family:'Courier New',monospace;text-shadow:0 2px 4px rgba(13,34,51,.1)">${otp}</div>
         <div style="margin-top:14px;display:inline-block;background:#fff3cd;border:1px solid #f0c040;border-radius:20px;padding:5px 16px">
-          <span style="font-size:.75rem;color:#856404;font-family:'Cairo',sans-serif">⏱ صالح لمدة <strong>3 دقائق</strong> فقط</span>
+          <span style="font-size:.75rem;color:#856404;font-family:'Cairo',sans-serif">⏱ صالح لمدة <strong>10 دقائق</strong> فقط</span>
         </div>
       </td></tr>
     </table>
@@ -114,7 +162,7 @@ module.exports = async (req, res) => {
     });
 
     if (!response.ok) return res.status(500).json({ error: 'email_send_failed' });
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ success: true, challengeToken });
 
   } catch (err) {
     console.error('send-otp error:', err.message);

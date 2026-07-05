@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -498,7 +498,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   <div class="otp-title" data-i18n="rp.otp-title">تحقق من بريدك</div>
   <div class="otp-desc" data-i18n="rp.otp-desc">أرسلنا رمز تفعيل مكوّن من 6 أرقام إلى</div>
   <div class="otp-email-display" id="otpEmailDisplay">—</div>
-  
+
   <div class="otp-input-wrap" id="otpInputWrap">
     <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp0">
     <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp1">
@@ -507,11 +507,11 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp4">
     <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp5">
   </div>
-  
+
   <div class="otp-error" id="otpError" data-i18n="rp.otp-err">رمز التفعيل غير صحيح، يرجى المحاولة مجدداً</div>
-  
+
   <button class="btn-verify" id="verifyBtn" onclick="verifyOTP()" data-i18n="rp.verify-btn">تحقق وفعّل الحساب ✓</button>
-  
+
   <div class="resend-row">
     <span class="otp-timer" id="otpTimerText"><span data-i18n="rp.resend-after">إعادة الإرسال بعد</span> <span id="otpTimer">3:00</span></span>
     <button class="btn-resend" id="resendBtn" onclick="resendOTP()" disabled data-i18n="rp.resend-btn">إعادة الإرسال</button>
@@ -946,23 +946,22 @@ async function submitForm() {
     notes:    document.getElementById('f_notes').value.trim(),
   };
 
-  // توليد رمز OTP محلياً
-  const otp = String(Math.floor(100000 + Math.random() * 900000));
-  sessionStorage.setItem('rafd_otp', JSON.stringify({
-    otp, email, expiry: Date.now() + 3 * 60 * 1000
-  }));
-
   try {
     const res = await fetch('/api/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, otp, fname: pendingPartner.fname })
+      body: JSON.stringify({ email, fname: pendingPartner.fname })
     });
 
     if (!res.ok) {
+      if (res.status === 429) throw new Error('لقد تجاوزت الحد المسموح به — يرجى الانتظار قليلاً ثم المحاولة مجدداً');
       const errData = await res.json().catch(() => ({}));
       throw new Error(errData?.error?.message || errData?.error || 'تعذّر إرسال الرمز');
     }
+
+    const sendData = await res.json();
+    if (!sendData.challengeToken) throw new Error('تعذّر إرسال الرمز');
+    sessionStorage.setItem('rafd_challenge', sendData.challengeToken);
 
     document.getElementById('formSection').style.display = 'none';
     document.getElementById('otpSection').style.display = 'block';
@@ -993,41 +992,43 @@ async function verifyOTP() {
   verifyBtn.disabled = true;
   verifyBtn.textContent = 'جاري التحقق...';
 
-  // التحقق من الرمز عبر sessionStorage
-  let stored = {};
-  try { stored = JSON.parse(sessionStorage.getItem('rafd_otp') || '{}'); } catch(e) {}
-
-  if (!stored.otp || stored.email !== pendingPartner.email) {
-    showOTPError('لم يتم العثور على رمز صالح — اضغط "إعادة الإرسال" لطلب رمز جديد');
+  const challengeToken = sessionStorage.getItem('rafd_challenge');
+  if (!challengeToken) {
+    showOTPError('لم يتم العثور على جلسة صالحة — اضغط "إعادة الإرسال" لطلب رمز جديد');
     verifyBtn.disabled = false;
     verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
     return;
   }
-
-  if (Date.now() > stored.expiry) {
-    sessionStorage.removeItem('rafd_otp');
-    showOTPError('انتهت صلاحية الرمز (٣ دقائق) — اضغط "إعادة الإرسال"');
-    verifyBtn.disabled = false;
-    verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
-    return;
-  }
-
-  if (entered !== stored.otp) {
-    verifyBtn.disabled = false;
-    verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
-    showOTPError('رمز التفعيل غير صحيح، يرجى المحاولة مجدداً');
-    const wrap = document.getElementById('otpInputWrap');
-    wrap.style.animation = 'none';
-    wrap.offsetHeight;
-    for (let i = 0; i < 6; i++) {
-      document.getElementById('otp'+i).style.borderColor = '#ef4444';
-      setTimeout(() => document.getElementById('otp'+i).style.borderColor = '', 1500);
+  try {
+    const verifyRes = await fetch('/api/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verify_otp', challengeToken, otp: entered }),
+    });
+    if (!verifyRes.ok) {
+      verifyBtn.disabled = false;
+      verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
+      if (verifyRes.status === 429) {
+        showOTPError('لقد تجاوزت الحد المسموح به — يرجى الانتظار ثم المحاولة مجدداً');
+      } else {
+        showOTPError('رمز التفعيل غير صحيح أو منتهي الصلاحية — يرجى المحاولة مجدداً أو اضغط "إعادة الإرسال"');
+        const wrap = document.getElementById('otpInputWrap');
+        wrap.style.animation = 'none'; wrap.offsetHeight;
+        for (let i = 0; i < 6; i++) {
+          document.getElementById('otp'+i).style.borderColor = '#ef4444';
+          setTimeout(() => document.getElementById('otp'+i).style.borderColor = '', 1500);
+        }
+      }
+      return;
     }
+  } catch(e) {
+    verifyBtn.disabled = false;
+    verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
+    showOTPError('حدث خطأ في الاتصال — تحقق من اتصالك بالإنترنت');
     return;
   }
-
   // الرمز صحيح
-  sessionStorage.removeItem('rafd_otp');
+  sessionStorage.removeItem('rafd_challenge');
   clearInterval(timerInterval);
   verifyBtn.textContent = 'جاري الحفظ...';
 
@@ -1094,13 +1095,15 @@ async function resendOTP() {
   btn.textContent = 'جاري الإرسال...';
 
   try {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    sessionStorage.setItem('rafd_otp', JSON.stringify({ otp, email, expiry: Date.now() + 3 * 60 * 1000 }));
-    await fetch('/api/send-otp', {
+    const resendRes = await fetch('/api/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, otp, fname: pendingPartner?.fname }),
+      body: JSON.stringify({ email, fname: pendingPartner?.fname }),
     });
+    const resendData = await resendRes.json().catch(() => ({}));
+    if (resendData.challengeToken) {
+      sessionStorage.setItem('rafd_challenge', resendData.challengeToken);
+    }
   } catch(e) {
     console.error('Resend OTP error:', e);
   }
@@ -1118,8 +1121,3 @@ async function resendOTP() {
 </script>
 <script src="/i18n.js"></script></body>
 </html>
-
-
-
-
-
