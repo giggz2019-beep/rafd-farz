@@ -1,4 +1,8 @@
 {
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "installCommand": "npm install --production",
+  "framework": null,
   "cleanUrls": true,
   "headers": [
     {
