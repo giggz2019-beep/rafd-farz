@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>الشروط والأحكام — RAFD Digital</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
 .page-hero{background:linear-gradient(135deg,#0f2030 0%,#1a3a4a 50%,#0f2030 100%);padding:100px 0 60px;text-align:center;position:relative;overflow:hidden}
@@ -881,8 +878,8 @@
   </div>
 </footer>
 
+<script src="/nav.js"></script>
 <script>
-document.getElementById('hamburger').addEventListener('click',function(){const n=document.querySelector('.nav-links');n.style.display=n.style.display==='flex'?'none':'flex';n.style.flexDirection='column';n.style.position='absolute';n.style.top='72px';n.style.right='0';n.style.left='0';n.style.background='#fff';n.style.padding='1rem 2rem';n.style.borderBottom='1px solid #e2e8f0';n.style.zIndex='999'});
 window.addEventListener('scroll',function(){const nb=document.getElementById('navbar');if(window.scrollY>50)nb.style.boxShadow='0 4px 24px rgba(0,0,0,.08)';else nb.style.boxShadow='none'});
 function toggleLoginDrop(e){e.stopPropagation();document.getElementById('loginDrop').classList.toggle('open')}
 document.addEventListener('click',()=>document.getElementById('loginDrop')?.classList.remove('open'));

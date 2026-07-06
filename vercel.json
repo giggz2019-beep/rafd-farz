@@ -29,8 +29,12 @@
           "value": "max-age=31536000; includeSubDomains; preload"
         },
         {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "same-origin"
+        },
+        {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.resend.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://api.resend.com https://ycnnawohrbbluawxzttt.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         }
       ]
     }

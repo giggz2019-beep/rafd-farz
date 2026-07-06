@@ -73,8 +73,36 @@ CREATE POLICY "app_delete_own" ON applications
 -- ما في SQL مباشر للـ storage هنا، افعلها من الـ UI
 
 
--- ============================================================
--- بعد تطبيق هذا الملف، أضف في Netlify Environment Variables:
+-- ===== 6. جدول gov_sessions (جلسات الجهات الحكومية) =====
+-- شغّل هذا القسم في Supabase SQL Editor لإنشاء جدول تخزين tokens الحكومية
+--
+-- ملاحظة أمنية: يُخزَّن hash الـ token فقط (SHA-256)، وليس الـ token الخام
+-- يُرسَل الـ token الخام للجهة الحكومية مرة واحدة فقط عند إنشاء الجلسة
+
+CREATE TABLE IF NOT EXISTS gov_sessions (
+  id           bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  token_hash   text    NOT NULL UNIQUE,      -- SHA-256 of the raw session token
+  gov_id       text    NOT NULL,
+  agency       text    NOT NULL,
+  ip           text,
+  expires_at   timestamptz NOT NULL,
+  created_at   timestamptz NOT NULL DEFAULT now()
+);
+
+-- Index for fast token lookups
+CREATE INDEX IF NOT EXISTS gov_sessions_token_hash_idx ON gov_sessions (token_hash);
+
+-- Auto-delete expired sessions (cleanup)
+CREATE INDEX IF NOT EXISTS gov_sessions_expires_at_idx ON gov_sessions (expires_at);
+
+-- Enable RLS
+ALTER TABLE gov_sessions ENABLE ROW LEVEL SECURITY;
+
+-- Only the service_role key (server-side) can read/write — no browser access
+-- No SELECT policy = anon/authenticated users cannot read
+-- No INSERT policy = anon/authenticated users cannot insert
+-- All access goes through api/gov-auth.js which uses SUPABASE_SERVICE_KEY (bypasses RLS)
+
 --   SUPABASE_SERVICE_KEY = [من Supabase > Settings > API > service_role key]
 --   ADMIN_PASSWORD       = [كلمة سر الأدمن]
 -- ============================================================
