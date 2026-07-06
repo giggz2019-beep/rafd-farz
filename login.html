@@ -46,11 +46,11 @@ h1{font-size:1.5rem;font-weight:800;color:#0f172a;text-align:center;margin-botto
 
   <div class="field">
     <label>البريد الإلكتروني</label>
-    <input type="email" id="loginEmail" placeholder="example@company.com">
+    <input type="email" id="loginEmail" placeholder="example@company.com" autocomplete="email" aria-label="البريد الإلكتروني">
   </div>
   <div class="field">
     <label>كلمة المرور</label>
-    <input type="password" id="loginPass" placeholder="••••••••">
+    <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" aria-label="كلمة المرور">
     <div class="forgot"><a href="#">نسيت كلمة المرور؟</a></div>
   </div>
   <button class="btn-login" id="loginBtn">تسجيل الدخول</button>
@@ -59,7 +59,7 @@ h1{font-size:1.5rem;font-weight:800;color:#0f172a;text-align:center;margin-botto
   <div class="back-link"><a href="/">← العودة للرئيسية</a></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
 <script src="/js/login.js"></script>
 </body>
 </html>

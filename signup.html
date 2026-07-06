@@ -74,11 +74,11 @@ h1{font-size:1.4rem;font-weight:800;color:#0f172a;text-align:center;margin-botto
     </div>
     <div class="field">
       <label>البريد الإلكتروني</label>
-      <input type="email" id="email" placeholder="name@company.com">
+      <input type="email" id="email" placeholder="name@company.com" autocomplete="email" aria-label="البريد الإلكتروني">
     </div>
     <div class="field">
       <label>كلمة المرور</label>
-      <input type="password" id="pass" placeholder="8 أحرف على الأقل">
+      <input type="password" id="pass" placeholder="8 أحرف على الأقل" autocomplete="new-password" aria-label="كلمة المرور">
     </div>
     <button class="btn-signup" id="signupBtn">إنشاء الحساب والبدء</button>
     <p class="terms">بإنشاء حساب، أنت توافق على <a href="/terms.html">شروط الخدمة</a> و<a href="/privacy.html">سياسة الخصوصية</a></p>
@@ -87,7 +87,7 @@ h1{font-size:1.4rem;font-weight:800;color:#0f172a;text-align:center;margin-botto
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
 <script src="/js/signup.js"></script>
 </body>
 </html>
