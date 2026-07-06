@@ -15,7 +15,7 @@
 <nav class="navbar" id="navbar">
   <div class="container nav-inner">
     <a href="/" class="brand">
-      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo">
       <div class="brand-fallback" style="display:none;align-items:center;gap:.5rem">
         <div class="brand-icon">R</div>
         <div class="brand-text">
@@ -32,7 +32,7 @@
       <li><a href="/register-partner.html" style="color:#4a9d6f;font-weight:700" data-i18n="nav-partner">🤝 انضم كشريك</a></li>
     </ul>
     <div class="nav-actions">
-      <button class="lang-toggle" id="langToggleDesktop" onclick="toggleLang()" aria-label="تغيير اللغة">EN</button>
+      <button class="lang-toggle" id="langToggleDesktop" aria-label="تغيير اللغة">EN</button>
       <a href="/partner-login.html" class="btn-ghost" style="border-color:#4a9d6f;color:#4a9d6f" data-i18n="btn-partner-login">دخول الشركاء</a>
       <a href="/login.html" class="btn-ghost" data-i18n="btn-login">دخول</a>
       <a href="/register-partner.html" class="btn-primary-sm" style="background:#4a9d6f" data-i18n="nav-partner">انضم كشريك</a>
@@ -44,10 +44,10 @@
 <!-- ===== MOBILE MENU ===== -->
 <div class="mobile-menu" id="mobileMenu">
   <ul>
-    <li><a href="#features" onclick="closeMobileMenu()" data-i18n="nav-features">المميزات</a></li>
+    <li><a href="#features" data-i18n="nav-features">المميزات</a></li>
     <li><a href="/how-it-works.html" data-i18n="nav-how">كيف نعمل</a></li>
     <li><a href="/about.html" data-i18n="nav-about">من نحن</a></li>
-    <li><a href="#pricing" onclick="closeMobileMenu()" data-i18n="nav-pricing">الأسعار</a></li>
+    <li><a href="#pricing" data-i18n="nav-pricing">الأسعار</a></li>
     <li><a href="/register-partner.html" style="color:#4a9d6f;font-weight:700" data-i18n="nav-partner">🤝 انضم كشريك</a></li>
   </ul>
   <div class="mobile-menu-actions">
@@ -55,7 +55,7 @@
     <a href="/login.html" class="m-login" data-i18n="btn-login">دخول</a>
   </div>
   <div class="mobile-lang-row">
-    <button class="lang-toggle-mobile" id="langToggleMobile" onclick="toggleLang()" aria-label="تغيير اللغة">
+    <button class="lang-toggle-mobile" id="langToggleMobile" aria-label="تغيير اللغة">
       <span id="langIconMobile">🌐</span> <span id="langLabelMobile">English</span>
     </button>
   </div>
@@ -419,7 +419,7 @@
     <div class="footer-grid">
       <div>
         <div class="brand footer-brand">
-          <img src="/images/rafd-logo.png" alt="RAFD" style="height:44px;background:#fff;border-radius:8px;padding:4px 8px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <img src="/images/rafd-logo.png" alt="RAFD" style="height:44px;background:#fff;border-radius:8px;padding:4px 8px" class="footer-logo-img">
           <div style="display:none;align-items:center;gap:.5rem">
             <div style="width:40px;height:40px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.1rem">R</div>
             <div class="brand-text">
@@ -646,7 +646,7 @@ window.addEventListener('scroll', function() {
 .kh-send{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem}
 </style>
 
-<button class="kh-btn" onclick="toggleKhalid()" title="تحدث مع خالد">
+<button class="kh-btn" id="khalidToggleBtn" title="تحدث مع خالد">
   <div class="kh-dot"></div>
   <img src="/images/khalid.png" alt="خالد" class="kh-avatar">
   <span class="kh-label">خالد — مساعدك الذكي</span>
@@ -659,86 +659,25 @@ window.addEventListener('scroll', function() {
       <div class="kh-head-name">خالد</div>
       <div class="kh-head-status">متاح الآن · مساعد RAFD الذكي</div>
     </div>
-    <button class="kh-close" onclick="toggleKhalid()">✕</button>
+    <button class="kh-close">✕</button>
   </div>
   <div class="kh-msgs" id="khalidMsgs">
     <div class="kh-msg bot">مرحباً! أنا خالد، مساعدك الذكي في منصة RAFD 👋<br>كيف أقدر أساعدك اليوم؟</div>
   </div>
     <div class="kh-quick" id="khalidQuick">
-    <button class="kh-q" onclick="khSend('كيف اشترك')">كيف اشترك؟</button>
-    <button class="kh-q" onclick="khSend('طريقة عملكم')">طريقة عملكم</button>
-    <button class="kh-q" onclick="khSend('الباقات')">الباقات والأسعار</button>
-    <button class="kh-q" onclick="khSend('كيف اسجل حساب')">كيف أسجل؟</button>
-    <button class="kh-q" onclick="khSend('كيف ادخل')">كيف أدخل؟</button>
-    <button class="kh-q" onclick="khSend('تواصل معنا')">تواصل معنا</button>
+    <button class="kh-q" data-msg="كيف اشترك">كيف اشترك؟</button>
+    <button class="kh-q" data-msg="طريقة عملكم">طريقة عملكم</button>
+    <button class="kh-q" data-msg="الباقات">الباقات والأسعار</button>
+    <button class="kh-q" data-msg="كيف اسجل حساب">كيف أسجل؟</button>
+    <button class="kh-q" data-msg="كيف ادخل">كيف أدخل؟</button>
+    <button class="kh-q" data-msg="تواصل معنا">تواصل معنا</button>
   </div>
   <div class="kh-input-row">
-    <input class="kh-input" id="khalidInput" placeholder="اكتب سؤالك..." onkeydown="if(event.key==='Enter')khSend()">
-    <button class="kh-send" onclick="khSend()">➤</button>
+    <input class="kh-input" id="khalidInput" placeholder="اكتب سؤالك...">
+    <button class="kh-send">➤</button>
   </div>
 </div>
 
-<script>
-const khReplies = {
-  'ما هي المنصة': 'RAFD هي منصة ذكاء اصطناعي متكاملة تُمكّن الجهات (بنوك، جامعات، شركات، حاضنات) من أتمتة قرارات القبول والرفض بناءً على معاييرها الخاصة — سواء كانت توظيفاً أو تمويلاً أو قبولاً جامعياً. النتيجة فورية وبدون تحيّز بشري. 🤖',
-  'كيف اشترك': 'الاشتراك سهل جداً! 👇<br>1️⃣ اضغط على <a href="/signup.html" style="color:#10b981">"ابدأ مجاناً"</a><br>2️⃣ أدخل بيانات جهتك (الاسم، البريد، كلمة المرور)<br>3️⃣ اختر باقتك (تبدأ بـ 7 أيام تجريبية مجانية)<br>4️⃣ حدّد معاييرك وابدأ فوراً! ✅',
-  'طريق الاشتراك': 'الاشتراك سهل جداً! 👇<br>1️⃣ اضغط على <a href="/signup.html" style="color:#10b981">"ابدأ مجاناً"</a><br>2️⃣ أدخل بيانات جهتك (الاسم، البريد، كلمة المرور)<br>3️⃣ اختر باقتك (تبدأ بـ 7 أيام تجريبية مجانية)<br>4️⃣ حدّد معاييرك وابدأ فوراً! ✅',
-  'كيف أبدأ': 'الاشتراك سهل جداً! 👇<br>1️⃣ اضغط على <a href="/signup.html" style="color:#10b981">"ابدأ مجاناً"</a><br>2️⃣ أدخل بيانات جهتك (الاسم، البريد، كلمة المرور)<br>3️⃣ اختر باقتك (تبدأ بـ 7 أيام تجريبية مجانية)<br>4️⃣ حدّد معاييرك وابدأ فوراً! ✅',
-  'طريقة عملكم': 'طريقة عمل RAFD في 4 خطوات بسيطة 🔄<br><br>1️⃣ <b>حدّد معاييرك:</b> تُدخل جهتك معايير القبول والرفض عبر لوحة التحكم (بدون برمجة)<br>2️⃣ <b>استقبل الطلبات:</b> تُشارك رابط النموذج مع المتقدمين ليُقدّموا طلباتهم<br>3️⃣ <b>التحليل الذكي:</b> يحلّل الذكاء الاصطناعي كل طلب وفق معاييرك فورياً<br>4️⃣ <b>القرار الفوري:</b> يصدر القرار مع تقرير مفصّل ويُرسَل للمتقدم تلقائياً ✅<br><br><a href="/how-it-works.html" style="color:#10b981">اقرأ المزيد ←</a>',
-  'طريقة العمل': 'طريقة عمل RAFD في 4 خطوات بسيطة 🔄<br><br>1️⃣ <b>حدّد معاييرك:</b> تُدخل جهتك معايير القبول والرفض عبر لوحة التحكم (بدون برمجة)<br>2️⃣ <b>استقبل الطلبات:</b> تُشارك رابط النموذج مع المتقدمين ليُقدّموا طلباتهم<br>3️⃣ <b>التحليل الذكي:</b> يحلّل الذكاء الاصطناعي كل طلب وفق معاييرك فورياً<br>4️⃣ <b>القرار الفوري:</b> يصدر القرار مع تقرير مفصّل ويُرسَل للمتقدم تلقائياً ✅<br><br><a href="/how-it-works.html" style="color:#10b981">اقرأ المزيد ←</a>',
-  'التقييم': 'نظام التقييم في RAFD يعمل هكذا 🧠<br><br>• تُحدّد الجهة معاييرها ووزن كل معيار<br>• يُحلّل الذكاء الاصطناعي طلب المتقدم وفق هذه المعايير<br>• يُعطي كل معيار درجة من 100<br>• يحسب الدرجة الإجمالية ويقارنها بنسبة الاجتياز التي حددتها الجهة<br>• إذا تجاوز النسبة → مقبول ✅ | إذا لم يتجاوزها → مرفوض ❌<br>• الجهة تستلم فقط المتقدمين المجتازين للفحص',
-  'الباقات': 'لدينا 3 باقات 📦<br><br>🟢 <b>التجريبية — مجانية 7 أيام</b><br>وصول محدود للميزات، مثالية للتجربة<br><br>🔵 <b>الأساسية — 499 ريال/شهر</b><br>حتى 500 طلب شهرياً، تقارير أساسية، دعم فني<br><br>🟣 <b>المتقدمة — 999 ريال/شهر</b><br>طلبات غير محدودة، تحليلات متقدمة، API، مدير حساب مخصص<br><br><a href="/#pricing" style="color:#10b981">مقارنة الباقات ←</a>',
-  'سعر': 'لدينا 3 باقات 📦<br><br>🟢 <b>التجريبية — مجانية 7 أيام</b><br>وصول محدود للميزات<br><br>🔵 <b>الأساسية — 499 ريال/شهر</b><br>حتى 500 طلب شهرياً<br><br>🟣 <b>المتقدمة — 999 ريال/شهر</b><br>طلبات غير محدودة + API<br><br><a href="/#pricing" style="color:#10b981">تفاصيل الباقات ←</a>',
-  'الأسعار': 'لدينا 3 باقات 📦<br><br>🟢 <b>التجريبية — مجانية 7 أيام</b><br>وصول محدود للميزات<br><br>🔵 <b>الأساسية — 499 ريال/شهر</b><br>حتى 500 طلب شهرياً<br><br>🟣 <b>المتقدمة — 999 ريال/شهر</b><br>طلبات غير محدودة + API<br><br><a href="/#pricing" style="color:#10b981">تفاصيل الباقات ←</a>',
-  'كيف اسجل': 'لتسجيل حساب جديد 📝<br><br>1️⃣ اضغط <a href="/signup.html" style="color:#10b981">هنا للتسجيل</a><br>2️⃣ أدخل: اسمك الأول، اسم العائلة، اسم الجهة، نوع الجهة، البريد الإلكتروني، كلمة المرور<br>3️⃣ اضغط "إنشاء الحساب"<br>4️⃣ ستصلك رسالة تأكيد على بريدك ✅<br><br>التسجيل مجاني ويستغرق أقل من دقيقة!',
-  'كيف ادخل': 'لتسجيل الدخول لحسابك 🔐<br><br>1️⃣ اضغط <a href="/login.html" style="color:#10b981">هنا للدخول</a><br>2️⃣ أدخل بريدك الإلكتروني وكلمة المرور<br>3️⃣ اضغط "تسجيل الدخول"<br><br>إذا نسيت كلمة المرور، اضغط "نسيت كلمة المرور" في صفحة الدخول.',
-  'تسجيل': 'لتسجيل حساب جديد 📝<br><br>1️⃣ اضغط <a href="/signup.html" style="color:#10b981">هنا للتسجيل</a><br>2️⃣ أدخل بيانات جهتك<br>3️⃣ اضغط "إنشاء الحساب"<br><br>التسجيل مجاني ويستغرق أقل من دقيقة!',
-  'تواصل معنا': 'يمكنك التواصل معنا عبر البريد الإلكتروني 📧<br><a href="mailto:info@rafd-digital.com" style="color:#10b981">info@rafd-digital.com</a><br><br>سيرد فريقنا خلال 24 ساعة في أيام العمل.',
-  'توفير': 'نعم! تُوفّر منصة RAFD ما يصل إلى 80% من تكاليف الفرز اليدوي للطلبات — بدون أخطاء بشرية وبسرعة فورية. 💰',
-  'default': 'شكراً لسؤالك! 😊 للمزيد من التفاصيل، تواصل معنا على <a href="mailto:info@rafd-digital.com" style="color:#10b981">info@rafd-digital.com</a> وسيسعدنا مساعدتك. أو يمكنك <a href="/demo-apply.html" style="color:#10b981">تجربة النظام مجاناً ←</a>'
-};
-function toggleKhalid() {
-  document.getElementById('khalidPanel').classList.toggle('open');
-}
-function khSend(txt) {
-  const inp = document.getElementById('khalidInput');
-  const msg = txt || inp.value.trim();
-  if(!msg) return;
-  const msgs = document.getElementById('khalidMsgs');
-  document.getElementById('khalidQuick').style.display = 'none';
-  const um = document.createElement('div');
-  um.className = 'kh-msg user';
-  um.textContent = msg;
-  msgs.appendChild(um);
-  inp.value = '';
-  msgs.scrollTop = msgs.scrollHeight;
-  const typing = document.createElement('div');
-  typing.className = 'kh-msg bot kh-typing';
-  typing.innerHTML = '<span></span><span></span><span></span>';
-  msgs.appendChild(typing);
-  msgs.scrollTop = msgs.scrollHeight;
-  setTimeout(() => {
-    msgs.removeChild(typing);
-    const m = msg.toLowerCase();
-    let key = 'default';
-    if(m.includes('اشترك') || m.includes('اشتراك') || m.includes('طريق') && m.includes('اشتراك')) key = 'كيف اشترك';
-    else if(m.includes('كيف') && (m.includes('نبدأ') || m.includes('ابدأ') || m.includes('بداية'))) key = 'كيف أبدأ';
-    else if((m.includes('طريقة') || m.includes('كيف')) && (m.includes('عمل') || m.includes('تعملون') || m.includes('تشتغل'))) key = 'طريقة عملكم';
-    else if(m.includes('تقييم') || m.includes('تقييم') || m.includes('تقويم') || m.includes('فحص') || m.includes('تقييمكم')) key = 'التقييم';
-    else if(m.includes('باقات') || m.includes('باقة') || m.includes('خطط') || m.includes('خطة')) key = 'الباقات';
-    else if(m.includes('سعر') || m.includes('تكلفة') || m.includes('كم يكلف') || m.includes('كم سعر')) key = 'سعر';
-    else if(m.includes('سجل') || m.includes('تسجيل') || (m.includes('كيف') && m.includes('حساب'))) key = 'كيف اسجل';
-    else if(m.includes('دخل') || m.includes('دخول') || m.includes('لوجين') || m.includes('لوك') || (m.includes('كيف') && m.includes('ادخل'))) key = 'كيف ادخل';
-    else if(m.includes('تواصل') || m.includes('اتصال') || m.includes('بريد') || m.includes('ايميل') || m.includes('واتساب')) key = 'تواصل معنا';
-    else if(m.includes('توفير') || m.includes('توفر') || m.includes('80') || m.includes('توفير تكاليف')) key = 'توفير';
-    else if(m.includes('منصة') || m.includes('رافد') || m.includes('rafd') || m.includes('من انتم') || m.includes('من انتمو')) key = 'ما هي المنصة';
-    const bm = document.createElement('div');
-    bm.className = 'kh-msg bot';
-    bm.innerHTML = khReplies[key];
-    msgs.appendChild(bm);
-    msgs.scrollTop = msgs.scrollHeight;
-  }, 1200);
-}
-</script>
+<script src="/js/index.js"></script>
 </body>
 </html>

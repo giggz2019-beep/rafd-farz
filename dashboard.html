@@ -170,27 +170,27 @@ body{font-family:'Almarai',sans-serif;background:#f1f5f9;color:#1e293b;direction
   </div>
   <nav class="sb-nav">
     <div class="sb-section">الرئيسية</div>
-    <div class="sb-item active" onclick="showPage('overview',this)">
+    <div class="sb-item active" data-page="overview">
       <span class="sb-icon">📊</span> نظرة عامة
     </div>
-    <div class="sb-item" onclick="showPage('applications',this)">
+    <div class="sb-item" data-page="applications">
       <span class="sb-icon">📋</span> الطلبات
       <span class="sb-badge">12</span>
     </div>
     <div class="sb-section">الإعدادات</div>
-    <div class="sb-item" onclick="showPage('criteria',this)">
+    <div class="sb-item" data-page="criteria">
       <span class="sb-icon">⚙️</span> معايير التقييم
     </div>
-    <div class="sb-item" onclick="showPage('reports',this)">
+    <div class="sb-item" data-page="reports">
       <span class="sb-icon">📈</span> التقارير
     </div>
-    <div class="sb-item" onclick="showPage('identity',this)">
+    <div class="sb-item" data-page="identity">
       <span class="sb-icon">🔐</span> التحقق من الهوية
     </div>
-    <div class="sb-item" onclick="showPage('billing',this)">
+    <div class="sb-item" data-page="billing">
       <span class="sb-icon">💳</span> الاشتراك
     </div>
-    <div class="sb-item" onclick="showPage('settings',this)">
+    <div class="sb-item" data-page="settings">
       <span class="sb-icon">🔧</span> الإعدادات
     </div>
   </nav>
@@ -201,7 +201,7 @@ body{font-family:'Almarai',sans-serif;background:#f1f5f9;color:#1e293b;direction
         <div class="sb-user-name">مسرعة الأعمال</div>
         <div class="sb-user-role">مدير النظام</div>
       </div>
-      <a href="#" onclick="logout()" class="sb-logout">خروج</a>
+      <a href="#" id="logoutLink" class="sb-logout">خروج</a>
     </div>
   </div>
 </aside>
@@ -211,7 +211,7 @@ body{font-family:'Almarai',sans-serif;background:#f1f5f9;color:#1e293b;direction
   <div class="topbar">
     <div class="topbar-title" id="pageTitle">نظرة عامة</div>
     <div class="topbar-actions">
-      <button class="btn-new" onclick="showPage('applications',null)">+ طلب جديد</button>
+      <button class="btn-new" data-goto-applications>+ طلب جديد</button>
       <div class="notif-btn">🔔<div class="notif-dot"></div></div>
     </div>
   </div>
@@ -259,7 +259,7 @@ body{font-family:'Almarai',sans-serif;background:#f1f5f9;color:#1e293b;direction
         <div class="card">
           <div class="card-header">
             <span class="card-title">آخر الطلبات</span>
-            <a href="#" class="card-link" onclick="showPage('applications',null)">عرض الكل</a>
+            <a href="#" class="card-link" data-goto-applications>عرض الكل</a>
           </div>
           <table class="apps-table">
             <thead>
@@ -508,45 +508,6 @@ body{font-family:'Almarai',sans-serif;background:#f1f5f9;color:#1e293b;direction
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// Fast redirect if no local session; also verify Auth session async
-(function() {
-  const s = localStorage.getItem('rafd_session');
-  if (!s) { window.location.href = '/login.html'; return; }
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    if (!session) {
-      localStorage.removeItem('rafd_session');
-      window.location.href = '/login.html';
-    }
-  });
-})();
-
-function logout() {
-  localStorage.removeItem('rafd_session');
-  window.location.href = '/';
-}
-
-const pageTitles = {
-  overview: 'نظرة عامة',
-  applications: 'الطلبات',
-  criteria: 'معايير التقييم',
-  reports: 'التقارير',
-  identity: 'التحقق من الهوية',
-  billing: 'الاشتراك',
-  settings: 'الإعدادات'
-};
-
-function showPage(name, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  if(el) el.classList.add('active');
-  document.getElementById('pageTitle').textContent = pageTitles[name] || name;
-}
-</script>
+<script src="/js/dashboard.js"></script>
 </body>
 </html>

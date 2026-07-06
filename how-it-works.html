@@ -104,7 +104,7 @@
 <nav class="navbar" id="navbar">
   <div class="container nav-inner">
     <a href="/" class="brand">
-      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo">
       <div class="brand-fallback" style="display:none;align-items:center;gap:.5rem">
         <div class="brand-icon">R</div>
         <div class="brand-text">
@@ -375,23 +375,23 @@
     </div>
     <div class="faq-list">
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">هل يمكنني تغيير معايير التقييم بعد البدء؟</div>
+        <div class="faq-q">هل يمكنني تغيير معايير التقييم بعد البدء؟</div>
         <div class="faq-a">نعم، يمكنك تعديل المعايير والأوزان في أي وقت من لوحة التحكم. التغييرات تُطبَّق على الطلبات الجديدة فقط.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">كيف يتعامل النظام مع الطلبات الناقصة؟</div>
+        <div class="faq-q">كيف يتعامل النظام مع الطلبات الناقصة؟</div>
         <div class="faq-a">يُنبّه النظام المتقدم فوراً لإكمال البيانات الناقصة قبل إرسال الطلب. إذا كانت هناك بيانات إلزامية مفقودة، لا يُقبل الطلب.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">هل يمكن للجهة مراجعة القرارات يدوياً؟</div>
+        <div class="faq-q">هل يمكن للجهة مراجعة القرارات يدوياً؟</div>
         <div class="faq-a">نعم، يمكن للجهة تفعيل خيار "المراجعة البشرية" للطلبات التي تقع في نطاق الحدود (مثلاً بين 75-85%). الطلبات الواضحة تُعالَج تلقائياً.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">ما أنواع الملفات المدعومة للرفع؟</div>
+        <div class="faq-q">ما أنواع الملفات المدعومة للرفع؟</div>
         <div class="faq-a">يدعم النظام PDF، Word، وصور JPG/PNG. يمكن رفع السيرة الذاتية، الشهادات، والمستندات الداعمة.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">كيف تُحدد الجهة نسبة الاجتياز؟</div>
+        <div class="faq-q">كيف تُحدد الجهة نسبة الاجتياز؟</div>
         <div class="faq-a">من لوحة التحكم، تُحدد الجهة النسبة المطلوبة للقبول (مثلاً 80%). يمكن تغييرها في أي وقت وتُطبَّق على الطلبات القادمة.</div>
       </div>
     </div>
@@ -415,7 +415,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
+        <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block">
         <p class="footer-desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
       </div>
       <div class="footer-col">
@@ -446,29 +446,7 @@
   </div>
 </footer>
 
-<script>
-document.getElementById('hamburger').addEventListener('click', function() {
-  const nav = document.querySelector('.nav-links');
-  nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
-  nav.style.flexDirection = 'column';
-  nav.style.position = 'absolute';
-  nav.style.top = '72px';
-  nav.style.right = '0';
-  nav.style.left = '0';
-  nav.style.background = '#fff';
-  nav.style.padding = '1rem 2rem';
-  nav.style.borderBottom = '1px solid #e2e8f0';
-  nav.style.zIndex = '999';
-});
-window.addEventListener('scroll', function() {
-  const nb = document.getElementById('navbar');
-  if(window.scrollY > 50) nb.style.boxShadow = '0 4px 24px rgba(0,0,0,.08)';
-  else nb.style.boxShadow = 'none';
-});
-function toggleFaq(el) {
-  const item = el.parentElement;
-  item.classList.toggle('open');
-}
-</script>
+<script src="/js/navbar.js"></script>
+<script src="/js/how-it-works.js"></script>
 </body>
 </html>

@@ -123,7 +123,7 @@
 <nav class="navbar" id="navbar">
   <div class="container nav-inner">
     <a href="/" class="brand">
-      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo">
       <div class="brand-fallback" style="display:none;align-items:center;gap:.5rem">
         <div class="brand-icon">R</div>
         <div class="brand-text">
@@ -156,7 +156,7 @@
     <p>ابدأ مجاناً وطوّر باقتك عند الحاجة — بدون عقود طويلة أو رسوم خفية</p>
     <div class="billing-toggle">
       <span class="toggle-label">شهري</span>
-      <div class="toggle-wrap" id="billingToggle" onclick="toggleBilling()">
+      <div class="toggle-wrap" id="billingToggle">
         <div class="toggle-knob"></div>
       </div>
       <span class="toggle-label">سنوي</span>
@@ -543,7 +543,7 @@
     <div class="faq-grid">
 
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q">
           هل يمكنني الترقية أو التخفيض بين الباقات؟
           <span class="faq-arrow">▼</span>
         </div>
@@ -551,7 +551,7 @@
       </div>
 
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q">
           هل هناك عقود طويلة الأمد؟
           <span class="faq-arrow">▼</span>
         </div>
@@ -559,7 +559,7 @@
       </div>
 
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q">
           ماذا يحدث إذا تجاوزت حد الطلبات؟
           <span class="faq-arrow">▼</span>
         </div>
@@ -567,7 +567,7 @@
       </div>
 
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q">
           هل البيانات محفوظة عند الإلغاء؟
           <span class="faq-arrow">▼</span>
         </div>
@@ -575,7 +575,7 @@
       </div>
 
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q">
           هل تدعمون الفوترة بالفاتورة الرسمية؟
           <span class="faq-arrow">▼</span>
         </div>
@@ -583,7 +583,7 @@
       </div>
 
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q">
           هل يمكن تخصيص الباقة لاحتياجات خاصة؟
           <span class="faq-arrow">▼</span>
         </div>
@@ -611,7 +611,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
+        <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block">
         <p class="footer-desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
       </div>
       <div class="footer-col">
@@ -647,40 +647,7 @@
   </div>
 </footer>
 
-<script>
-// Billing Toggle
-let isAnnual = false;
-function toggleBilling() {
-  isAnnual = !isAnnual;
-  const toggle = document.getElementById('billingToggle');
-  toggle.classList.toggle('active', isAnnual);
-
-  document.getElementById('basicPrice').textContent = isAnnual ? '399' : '499';
-  document.getElementById('basicPeriod').textContent = isAnnual ? 'شهرياً (عند الدفع سنوياً)' : 'شهرياً';
-  document.getElementById('basicAnnual').classList.toggle('show', isAnnual);
-
-  document.getElementById('advPrice').textContent = isAnnual ? '799' : '999';
-  document.getElementById('advPeriod').textContent = isAnnual ? 'شهرياً (عند الدفع سنوياً)' : 'شهرياً';
-  document.getElementById('advAnnual').classList.toggle('show', isAnnual);
-}
-
-// FAQ Toggle
-function toggleFaq(el) {
-  const item = el.parentElement;
-  const isOpen = item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-  if (!isOpen) item.classList.add('open');
-}
-
-// Navbar scroll
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
-});
-
-// Hamburger
-document.getElementById('hamburger').addEventListener('click', () => {
-  document.querySelector('.nav-links').classList.toggle('open');
-});
-</script>
+<script src="/js/navbar.js"></script>
+<script src="/js/pricing.js"></script>
 </body>
 </html>

@@ -148,13 +148,13 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   </div>
   <nav class="sb-nav">
     <div class="nav-sec">الرئيسية</div>
-    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-icon">📊</span> نظرة عامة</div>
-    <div class="nav-item" onclick="showPage('requests',this)"><span class="nav-icon">📋</span> الطلبات</div>
+    <div class="nav-item active" data-page="overview"><span class="nav-icon">📊</span> نظرة عامة</div>
+    <div class="nav-item" data-page="requests"><span class="nav-icon">📋</span> الطلبات</div>
     <div class="nav-sec">الإدارة</div>
-    <div class="nav-item" onclick="showPage('new-request',this)"><span class="nav-icon">➕</span> طلب جديد</div>
-    <div class="nav-item" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span> الإعدادات</div>
-    <div class="nav-item" onclick="showPage('subscription',this)"><span class="nav-icon">💳</span> الاشتراك</div>
-    <div class="nav-item" onclick="showPage('support',this)"><span class="nav-icon">💬</span> الدعم والتواصل</div>
+    <div class="nav-item" data-page="new-request"><span class="nav-icon">➕</span> طلب جديد</div>
+    <div class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span> الإعدادات</div>
+    <div class="nav-item" data-page="subscription"><span class="nav-icon">💳</span> الاشتراك</div>
+    <div class="nav-item" data-page="support"><span class="nav-icon">💬</span> الدعم والتواصل</div>
   </nav>
   <div class="sb-footer">
     <div class="sb-user">
@@ -162,7 +162,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
       <div>
         <div class="sb-uname" id="sb_uname">—</div>
         <div class="sb-urole" id="sb_urole">—</div>
-        <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
+        <button class="btn-logout">تسجيل الخروج</button>
       </div>
     </div>
   </div>
@@ -178,7 +178,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <div class="page-title">مرحباً، <span id="welcome_name">—</span> 👋</div>
         <div class="page-sub" id="welcome_sub">لوحة التحكم الخاصة بجهتك</div>
       </div>
-      <button class="btn-primary" onclick="showPage('new-request',document.querySelector('.nav-item:nth-child(5)'))">➕ طلب جديد</button>
+      <button class="btn-primary" id="overviewNewReqBtn">➕ طلب جديد</button>
     </div>
 
     <div id="status_alert"></div>
@@ -217,7 +217,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <table>
           <thead><tr><th>#</th><th>اسم المتقدم</th><th>الغرض</th><th>التاريخ</th><th>النتيجة</th></tr></thead>
           <tbody id="recent_requests_table">
-            <tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">لا توجد طلبات بعد — <button onclick="showPage('new-request',null)" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:'Almarai',sans-serif;font-size:.83rem">أضف أول طلب</button></td></tr>
+            <tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">لا توجد طلبات بعد — <button style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:'Almarai',sans-serif;font-size:.83rem" id="emptyStateNewReqBtn">أضف أول طلب</button></td></tr>
           </tbody>
         </table>
       </div>
@@ -242,12 +242,12 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <div class="page-title">الطلبات</div>
         <div class="page-sub">جميع الطلبات المقدّمة عبر منصتك</div>
       </div>
-      <button class="btn-primary" onclick="showPage('new-request',null)">➕ طلب جديد</button>
+      <button class="btn-primary" id="requestsNewReqBtn">➕ طلب جديد</button>
     </div>
     <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.25rem">
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
-        <input type="text" id="req_search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'Almarai',sans-serif;font-size:.85rem;outline:none" oninput="filterRequests()">
-        <select id="req_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'Almarai',sans-serif;font-size:.82rem;outline:none" onchange="filterRequests()">
+        <input type="text" id="req_search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'Almarai',sans-serif;font-size:.85rem;outline:none">
+        <select id="req_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'Almarai',sans-serif;font-size:.82rem;outline:none">
           <option value="">كل الحالات</option>
           <option value="approved">مقبول</option>
           <option value="rejected">مرفوض</option>
@@ -320,8 +320,8 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <textarea id="nf_notes" placeholder="أي ملاحظات إضافية على هذا الطلب..."></textarea>
       </div>
       <div style="display:flex;gap:.75rem;margin-top.5rem">
-        <button class="btn-primary" onclick="submitRequest()">✓ حفظ وتحليل الطلب</button>
-        <button class="btn-ghost" onclick="clearRequestForm()">مسح</button>
+        <button class="btn-primary" id="submitRequestBtn">✓ حفظ وتحليل الطلب</button>
+        <button class="btn-ghost" id="clearRequestBtn">مسح</button>
       </div>
     </div>
   </div>
@@ -383,7 +383,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <label>البريد الإلكتروني (لا يمكن تغييره)</label>
         <input type="email" id="set_email" readonly style="opacity:.6">
       </div>
-      <button class="btn-primary" onclick="saveSettings()">💾 حفظ التغييرات</button>
+      <button class="btn-primary" id="saveSettingsBtn">💾 حفظ التغييرات</button>
     </div>
     <div class="card">
       <div class="card-title">🔒 تغيير كلمة المرور</div>
@@ -397,7 +397,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
           <input type="password" id="set_newpass2" placeholder="أعد كتابتها">
         </div>
       </div>
-      <button class="btn-primary" onclick="changePassword()">تحديث كلمة المرور</button>
+      <button class="btn-primary" id="changePasswordBtn">تحديث كلمة المرور</button>
     </div>
     <div class="card">
       <div class="card-title">🔌 الوصول للـ API</div>
@@ -405,7 +405,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
       <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:1rem;margin-bottom:1.25rem;font-size:.82rem;color:#fbbf24;line-height:1.7">
         ⚠️ يُمنح الوصول للـ API بعد مراجعة الطلب والتحقق من هوية الجهة. لن يُشارَك أي توثيق تقني قبل الموافقة الرسمية.
       </div>
-      <button class="btn-primary" onclick="requestApiAccess()" style="background:linear-gradient(135deg,#4a9d6f,#2d7a54)">📩 طلب الوصول للـ API</button>
+      <button class="btn-primary" id="requestApiBtn" style="background:linear-gradient(135deg,#4a9d6f,#2d7a54)">📩 طلب الوصول للـ API</button>
     </div>
   </div>
 
@@ -432,7 +432,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
             <li>حتى 50 طلب</li>
             <li>تقارير أساسية</li>
           </ul>
-          <button class="btn-upgrade" id="btn_trial" onclick="requestUpgrade('trial')">الباقة الحالية</button>
+          <button class="btn-upgrade" id="btn_trial">الباقة الحالية</button>
         </div>
         <div class="plan-card" id="plan_basic">
           <div class="plan-name">⚡ الأساسية</div>
@@ -443,7 +443,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
             <li>تقارير تفصيلية</li>
             <li>تخصيص المعايير</li>
           </ul>
-          <button class="btn-upgrade" id="btn_basic" onclick="requestUpgrade('basic')">الترقية لهذه الباقة</button>
+          <button class="btn-upgrade" id="btn_basic">الترقية لهذه الباقة</button>
         </div>
         <div class="plan-card" id="plan_pro">
           <div class="plan-name">🚀 المتقدمة</div>
@@ -454,7 +454,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
             <li>تكامل API</li>
             <li>مدير حساب مخصص</li>
           </ul>
-          <button class="btn-upgrade" id="btn_pro" onclick="requestUpgrade('pro')">الترقية لهذه الباقة</button>
+          <button class="btn-upgrade" id="btn_pro">الترقية لهذه الباقة</button>
         </div>
       </div>
     </div>
@@ -484,7 +484,7 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
         <label>نص الرسالة</label>
         <textarea id="sup_msg" placeholder="اكتب رسالتك هنا..." style="min-height:120px"></textarea>
       </div>
-      <button class="btn-primary" onclick="sendSupport()">إرسال الرسالة</button>
+      <button class="btn-primary" id="sendSupportBtn">إرسال الرسالة</button>
     </div>
     <div class="card">
       <div class="card-title">📞 معلومات التواصل المباشر</div>
@@ -515,424 +515,16 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
   <div class="modal">
     <div class="modal-hdr">
       <div class="modal-title">تفاصيل الطلب</div>
-      <button class="btn-close" onclick="closeModal()">✕</button>
+      <button class="btn-close">✕</button>
     </div>
     <div class="modal-body" id="reqModalBody"></div>
     <div class="modal-footer">
-      <button class="btn-ghost" onclick="closeModal()">إغلاق</button>
+      <button class="btn-ghost">إغلاق</button>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// ===== Supabase Config =====
-const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-function escapeHtml(s) {
-  if (s == null) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-// ===== AUTH CHECK =====
-const session = JSON.parse(localStorage.getItem('rafd_partner_session') || 'null');
-if (!session) { window.location.href = '/partner-login.html'; }
-supabase.auth.getSession().then(({ data: { session: authSess } }) => {
-  if (!authSess) {
-    localStorage.removeItem('rafd_partner_session');
-    localStorage.removeItem('rafd_partner_requests');
-    window.location.href = '/partner-login.html';
-  }
-});
-
-// Partner data (loaded from Supabase)
-let partner = null;
-
-async function loadPartnerData() {
-  try {
-    const { data, error } = await supabase
-      .from('partners')
-      .select('*')
-      .eq('id', session.id)
-      .single();
-    if (error || !data) {
-      // Try by email as fallback
-      const { data: d2, error: e2 } = await supabase
-        .from('partners')
-        .select('*')
-        .eq('email', session.email)
-        .single();
-      if (e2 || !d2) { window.location.href = '/partner-login.html'; return; }
-      partner = normalizePartner(d2);
-    } else {
-      partner = normalizePartner(data);
-    }
-    initUI();
-  } catch(e) {
-    console.error('Load partner error:', e);
-    window.location.href = '/partner-login.html';
-  }
-}
-
-function normalizePartner(p) {
-  // Normalize Supabase columns to match UI expectations
-  return {
-    id: p.id,
-    org: p.org_name || p.org || '',
-    orgtype: p.org_type || p.orgtype || '',
-    city: p.city || '',
-    website: p.website || '',
-    fname: p.fname || '',
-    lname: p.lname || '',
-    title: p.title || '',
-    phone: p.phone || '',
-    email: p.email || '',
-    password: p.password || '',
-    plan: p.plan || 'trial',
-    status: p.status || 'pending',
-    purpose: p.purpose || '',
-    volume: p.volume || '',
-    notes: p.notes || '',
-    date: p.created_at ? new Date(p.created_at).toLocaleDateString('ar-SA') : '',
-    refNum: p.ref_num || '',
-    totalRequests: p.total_requests || 0,
-    approvedRequests: p.approved_requests || 0,
-    rejectedRequests: p.rejected_requests || 0,
-    _raw: p,
-  };
-}
-
-// ===== INIT UI =====
-function initUI() {
-  document.getElementById('sb_orgname').textContent = partner.org;
-  document.getElementById('sb_orgtype').textContent = partner.orgtype;
-  const planLabels = {trial:'تجريبية', basic:'أساسية', pro:'متقدمة'};
-  document.getElementById('sb_plan').textContent = planLabels[partner.plan] || partner.plan;
-  document.getElementById('sb_av').textContent = (partner.fname || '?')[0];
-  document.getElementById('sb_uname').textContent = partner.fname + ' ' + partner.lname;
-  document.getElementById('sb_urole').textContent = partner.title;
-  document.getElementById('welcome_name').textContent = partner.fname;
-  document.getElementById('welcome_sub').textContent = 'لوحة التحكم — ' + partner.org;
-
-  // Status alert
-  if (partner.status === 'approved') {
-    document.getElementById('status_alert').innerHTML = `<div class="alert alert-success">✅ حسابك نشط ومفعّل. يمكنك البدء في إضافة الطلبات.</div>`;
-  }
-
-  renderStats();
-  renderRecentRequests();
-  renderSettings();
-  renderSubscription();
-}
-
-// ===== REQUESTS (localStorage for partner requests - no separate table needed) =====
-function getMyRequests() {
-  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
-  return all.filter(r => r.partnerId === partner.id);
-}
-
-function saveRequest(req) {
-  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
-  all.unshift(req);
-  localStorage.setItem('rafd_partner_requests', JSON.stringify(all));
-}
-
-function renderStats() {
-  const reqs = getMyRequests();
-  const approved = reqs.filter(r => r.result === 'approved').length;
-  const rejected = reqs.filter(r => r.result === 'rejected').length;
-  const pending = reqs.filter(r => r.result === 'pending').length;
-  document.getElementById('stat_total').textContent = reqs.length;
-  document.getElementById('stat_approved').textContent = approved;
-  document.getElementById('stat_rejected').textContent = rejected;
-  document.getElementById('stat_pending_req').textContent = pending;
-  document.getElementById('stat_approved_pct').textContent = reqs.length ? Math.round(approved/reqs.length*100) + '% قبول' : '—';
-  document.getElementById('stat_rejected_pct').textContent = reqs.length ? Math.round(rejected/reqs.length*100) + '% رفض' : '—';
-
-  // Usage bar
-  const limits = {trial:50, basic:500, pro:999999};
-  const limit = limits[partner.plan] || 50;
-  const pct = Math.min(100, Math.round(reqs.length / limit * 100));
-  document.getElementById('usage_text').textContent = reqs.length + ' / ' + (limit === 999999 ? 'غير محدود' : limit);
-  document.getElementById('usage_bar').style.width = pct + '%';
-  document.getElementById('usage_note').textContent = limit === 999999 ? 'باقة متقدمة — طلبات غير محدودة' : `${limit - reqs.length} طلب متبقٍ هذا الشهر`;
-}
-
-function renderRecentRequests() {
-  const reqs = getMyRequests().slice(0, 5);
-  const tbody = document.getElementById('recent_requests_table');
-  if (!reqs.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">لا توجد طلبات بعد</td></tr>';
-    return;
-  }
-  tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal(${r.id})" style="cursor:pointer">
-    <td style="color:#475569">${i+1}</td>
-    <td style="font-weight:700;color:#e2e8f0">${escapeHtml(r.name)}</td>
-    <td style="color:#64748b">${escapeHtml(r.purpose)}</td>
-    <td style="color:#64748b;font-size:.78rem">${escapeHtml(r.date)}</td>
-    <td>${resultBadge(r.result, r.score)}</td>
-  </tr>`).join('');
-}
-
-function renderAllRequests(list) {
-  const reqs = list || getMyRequests();
-  const tbody = document.getElementById('all_requests_table');
-  if (!reqs.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#475569;padding:2rem">لا توجد طلبات</td></tr>';
-    return;
-  }
-  tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal(${r.id})" style="cursor:pointer">
-    <td style="color:#475569">${i+1}</td>
-    <td style="font-weight:700;color:#e2e8f0">${escapeHtml(r.name)}</td>
-    <td style="color:#64748b;font-size:.78rem">${escapeHtml(r.nationalId || '—')}</td>
-    <td style="color:#64748b">${escapeHtml(r.purpose)}</td>
-    <td><span style="font-weight:800;color:${r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score || '—'}</span></td>
-    <td style="color:#64748b;font-size:.78rem">${escapeHtml(r.date)}</td>
-    <td>${resultBadge(r.result, r.score)}</td>
-    <td onclick="event.stopPropagation()"><button class="btn-sm danger" onclick="deleteRequest(${r.id})">حذف</button></td>
-  </tr>`).join('');
-}
-
-function filterRequests() {
-  const q = document.getElementById('req_search').value.toLowerCase();
-  const status = document.getElementById('req_filter_status').value;
-  let reqs = getMyRequests();
-  if (q) reqs = reqs.filter(r => r.name.toLowerCase().includes(q) || (r.nationalId||'').includes(q));
-  if (status) reqs = reqs.filter(r => r.result === status);
-  renderAllRequests(reqs);
-}
-
-function resultBadge(result, score) {
-  if (result === 'approved') return '<span class="badge b-active">✓ مقبول</span>';
-  if (result === 'rejected') return '<span class="badge b-rejected">✕ مرفوض</span>';
-  return '<span class="badge b-pending">⏳ قيد المراجعة</span>';
-}
-
-function submitRequest() {
-  const name = document.getElementById('nf_name').value.trim();
-  const purpose = document.getElementById('nf_purpose').value;
-  if (!name || !purpose) { alert('يرجى إدخال الاسم وغرض الطلب'); return; }
-  const score = parseInt(document.getElementById('nf_score').value) || null;
-  const result = score !== null ? (score >= 70 ? 'approved' : 'rejected') : 'pending';
-
-  const req = {
-    id: Date.now(),
-    partnerId: partner.id,
-    name,
-    nationalId: document.getElementById('nf_id').value.trim(),
-    email: document.getElementById('nf_email').value.trim(),
-    phone: document.getElementById('nf_phone').value.trim(),
-    purpose,
-    score,
-    notes: document.getElementById('nf_notes').value.trim(),
-    result,
-    date: new Date().toLocaleDateString('ar-SA'),
-    dateISO: new Date().toISOString(),
-  };
-  saveRequest(req);
-
-  // Update partner stats
-  partner.totalRequests = (partner.totalRequests || 0) + 1;
-  if (result === 'approved') partner.approvedRequests = (partner.approvedRequests || 0) + 1;
-  if (result === 'rejected') partner.rejectedRequests = (partner.rejectedRequests || 0) + 1;
-  updatePartnerInStorage();
-
-  clearRequestForm();
-  renderStats();
-  renderRecentRequests();
-  showPage('requests', null);
-  renderAllRequests();
-  alert('✅ تم حفظ الطلب بنجاح!\nالنتيجة: ' + (result === 'approved' ? 'مقبول' : result === 'rejected' ? 'مرفوض' : 'قيد المراجعة'));
-}
-
-function clearRequestForm() {
-  ['nf_name','nf_id','nf_email','nf_phone','nf_score','nf_notes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('nf_purpose').value = '';
-}
-
-function deleteRequest(id) {
-  if (!confirm('هل تريد حذف هذا الطلب؟')) return;
-  let all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
-  all = all.filter(r => r.id !== id);
-  localStorage.setItem('rafd_partner_requests', JSON.stringify(all));
-  renderStats();
-  renderRecentRequests();
-  renderAllRequests();
-}
-
-function openReqModal(id) {
-  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
-  const r = all.find(x => x.id === id);
-  if (!r) return;
-  const scoreColor = r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444';
-  document.getElementById('reqModalBody').innerHTML = `
-    <div style="display:grid;gap:.75rem">
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الاسم</span><span style="color:#e2e8f0;font-weight:700">${escapeHtml(r.name)}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">رقم الهوية</span><span style="color:#e2e8f0">${escapeHtml(r.nationalId || '—')}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">البريد</span><span style="color:#e2e8f0">${escapeHtml(r.email || '—')}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الجوال</span><span style="color:#e2e8f0">${escapeHtml(r.phone || '—')}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الغرض</span><span style="color:#e2e8f0">${escapeHtml(r.purpose)}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">الدرجة</span><span style="color:${scoreColor};font-weight:900;font-size:1.1rem">${r.score !== null ? r.score + '/100' : '—'}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">النتيجة</span>${resultBadge(r.result, r.score)}</div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b">التاريخ</span><span style="color:#e2e8f0">${escapeHtml(r.date)}</span></div>
-      ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">ملاحظات</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${escapeHtml(r.notes)}</div></div>` : ''}
-    </div>`;
-  document.getElementById('reqModal').classList.add('open');
-}
-function closeModal() { document.getElementById('reqModal').classList.remove('open'); }
-
-// ===== SETTINGS =====
-function renderSettings() {
-  document.getElementById('set_orgname').value = partner.org || '';
-  document.getElementById('set_orgtype').value = partner.orgtype || '';
-  document.getElementById('set_city').value = partner.city || '';
-  document.getElementById('set_website').value = partner.website || '';
-  document.getElementById('set_fname').value = partner.fname || '';
-  document.getElementById('set_lname').value = partner.lname || '';
-  document.getElementById('set_title').value = partner.title || '';
-  document.getElementById('set_phone').value = partner.phone || '';
-  document.getElementById('set_email').value = partner.email || '';
-}
-
-async function saveSettings() {
-  partner.org = document.getElementById('set_orgname').value.trim();
-  partner.city = document.getElementById('set_city').value.trim();
-  partner.website = document.getElementById('set_website').value.trim();
-  partner.fname = document.getElementById('set_fname').value.trim();
-  partner.lname = document.getElementById('set_lname').value.trim();
-  partner.title = document.getElementById('set_title').value.trim();
-  partner.phone = document.getElementById('set_phone').value.trim();
-  await updatePartnerInStorage();
-  initUI();
-  alert('✅ تم حفظ التغييرات بنجاح!');
-}
-
-async function changePassword() {
-  const p1 = document.getElementById('set_newpass').value;
-  const p2 = document.getElementById('set_newpass2').value;
-  if (p1.length < 8) { alert('كلمة المرور يجب أن تكون 8 أحرف على الأقل'); return; }
-  if (p1 !== p2) { alert('كلمتا المرور غير متطابقتين'); return; }
-  partner.password = btoa(p1);
-  await updatePartnerInStorage();
-  document.getElementById('set_newpass').value = '';
-  document.getElementById('set_newpass2').value = '';
-  alert('✅ تم تحديث كلمة المرور بنجاح!');
-}
-
-async function updatePartnerInStorage() {
-  // Update in Supabase
-  try {
-    const { error } = await supabase
-      .from('partners')
-      .update({
-        org_name: partner.org,
-        city: partner.city,
-        website: partner.website,
-        fname: partner.fname,
-        lname: partner.lname,
-        title: partner.title,
-        phone: partner.phone,
-        password: partner.password,
-      })
-      .eq('id', partner.id);
-    if (error) console.error('Supabase update error:', error);
-  } catch(e) {
-    console.error('Update partner error:', e);
-  }
-}
-
-// ===== SUBSCRIPTION =====
-function renderSubscription() {
-  const planNames = {trial:'التجريبية 🎯', basic:'الأساسية ⚡', pro:'المتقدمة 🚀'};
-  const prices = {trial:'مجاناً', basic:'499 ريال/شهر', pro:'999 ريال/شهر'};
-  document.getElementById('current_plan_info').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
-      <div>
-        <div style="font-size:1.2rem;font-weight:900;color:#fff">${planNames[partner.plan] || partner.plan}</div>
-        <div style="color:#38bdf8;font-size:1rem;font-weight:700;margin-top:.25rem">${prices[partner.plan] || ''}</div>
-        <div style="color:#64748b;font-size:.78rem;margin-top:.25rem">تاريخ الاشتراك: ${partner.date}</div>
-      </div>
-      <span class="badge ${partner.plan === 'trial' ? 'b-trial' : partner.plan === 'basic' ? 'b-basic' : 'b-pro'}">${planNames[partner.plan]}</span>
-    </div>`;
-  // Mark current plan
-  ['trial','basic','pro'].forEach(p => {
-    const card = document.getElementById('plan_' + p);
-    const btn = document.getElementById('btn_' + p);
-    if (p === partner.plan) {
-      card.classList.add('current');
-      btn.textContent = '✓ باقتك الحالية';
-      btn.disabled = true;
-    } else {
-      card.classList.remove('current');
-      btn.disabled = false;
-      btn.textContent = 'طلب الترقية';
-    }
-  });
-}
-
-function requestUpgrade(plan) {
-  const planNames = {trial:'التجريبية', basic:'الأساسية', pro:'المتقدمة'};
-  if (confirm(`هل تريد طلب الترقية إلى الباقة ${planNames[plan]}؟\nسيتم إشعار فريق RAFD بطلبك.`)) {
-    // Save upgrade request to support messages
-    const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
-    msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject: 'طلب ترقية باقة', msg: `طلب ترقية من ${partner.plan} إلى ${plan}`, date: new Date().toLocaleDateString('ar-SA')});
-    localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
-    alert('✅ تم إرسال طلب الترقية! سيتواصل معك فريقنا خلال 24 ساعة.');
-  }
-}
-
-// ===== SUPPORT =====
-function sendSupport() {
-  const msg = document.getElementById('sup_msg').value.trim();
-  const subject = document.getElementById('sup_subject').value;
-  if (!msg) { alert('يرجى كتابة نص الرسالة'); return; }
-  const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
-  msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject, msg, date: new Date().toLocaleDateString('ar-SA')});
-  localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
-  document.getElementById('sup_msg').value = '';
-  alert('✅ تم إرسال رسالتك! سيرد عليك فريقنا خلال 24 ساعة عمل.');
-}
-
-// ===== NAVIGATION =====
-function showPage(pageId, navEl) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const page = document.getElementById('page-' + pageId);
-  if (page) page.classList.add('active');
-  if (navEl) navEl.classList.add('active');
-  // Refresh data on page open
-  if (pageId === 'requests') renderAllRequests();
-  if (pageId === 'overview') { renderStats(); renderRecentRequests(); }
-  if (pageId === 'subscription') renderSubscription();
-  if (pageId === 'settings') renderSettings();
-}
-
-function requestApiAccess() {
-  const org = localStorage.getItem('rafd_partner_org') ? JSON.parse(localStorage.getItem('rafd_partner_org')) : {};
-  const name = (org.fname || '') + ' ' + (org.lname || '');
-  const orgName = org.orgName || 'غير محدد';
-  const email = org.email || 'غير محدد';
-  const plan = org.plan || 'trial';
-  if (plan !== 'pro') {
-    alert('⚠️ طلب الوصول للـ API متاح فقط لباقة المتقدمة (999 ر.س). يرجى الترقية أولاً.');
-    return;
-  }
-  const subject = encodeURIComponent('طلب وصول للـ API — ' + orgName);
-  const body = encodeURIComponent('السلام عليكم،\n\nأرغب في طلب الوصول لواجهة برمجة RAFD API.\n\nاسم الجهة: ' + orgName + '\nالمسؤول: ' + name.trim() + '\nالبريد: ' + email + '\nالباقة: المتقدمة\n\nشكراً.');
-  window.location.href = 'mailto:info@rafd-digital.com?subject=' + subject + '&body=' + body;
-}
-
-function logout() {
-  localStorage.removeItem('rafd_partner_session');
-  localStorage.removeItem('rafd_partner_requests');
-  window.location.href = '/partner-login.html';
-}
-
-// ===== START =====
-// Load partner data from Supabase then init UI
-loadPartnerData();
-</script>
+<script src="/js/partner-dashboard.js"></script>
 </body>
 </html>

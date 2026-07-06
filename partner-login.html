@@ -38,7 +38,7 @@ body{font-family:'Almarai',sans-serif;background:linear-gradient(135deg,#0f172a,
 
 <div class="card">
   <div class="logo-wrap">
-    <div class="logo-icon"><img src="/images/rafd-logo.png" alt="RAFD" style="width:90px;height:auto;object-fit:contain;background:transparent" onerror="this.parentElement.style.background='linear-gradient(135deg,#1a3a4a,#4a9d6f)';this.outerHTML='<span style=&quot;font-size:1.5rem;font-weight:900;color:#fff&quot;>R</span>'"></div>
+    <div class="logo-icon"><img src="/images/rafd-logo.png" alt="RAFD" style="width:90px;height:auto;object-fit:contain;background:transparent"></div>
     <div class="logo-title">RAFD Digital</div>
     <div class="logo-sub">بوابة الشركاء</div>
     <div class="badge">🤝 منطقة الشركاء</div>
@@ -49,13 +49,13 @@ body{font-family:'Almarai',sans-serif;background:linear-gradient(135deg,#0f172a,
 
   <div class="fld">
     <label>البريد الإلكتروني</label>
-    <input type="email" id="loginEmail" placeholder="name@company.com" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="email" id="loginEmail" placeholder="name@company.com">
   </div>
   <div class="fld">
     <label>كلمة المرور</label>
-    <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="password" id="loginPass" placeholder="••••••••">
   </div>
-  <button class="btn-login" id="loginBtn" onclick="doLogin()">دخول للوحة التحكم</button>
+  <button class="btn-login" id="loginBtn">دخول للوحة التحكم</button>
 
   <div class="links">
     <a href="/register-partner.html" class="reg-link">تسجيل جهة جديدة ←</a>
@@ -64,95 +64,6 @@ body{font-family:'Almarai',sans-serif;background:linear-gradient(135deg,#0f172a,
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-async function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass = document.getElementById('loginPass').value;
-  const errEl = document.getElementById('errMsg');
-  const pendingEl = document.getElementById('pendingMsg');
-  const btn = document.getElementById('loginBtn');
-
-  errEl.style.display = 'none';
-  pendingEl.style.display = 'none';
-
-  if (!email || !pass) {
-    errEl.textContent = 'يرجى إدخال البريد الإلكتروني وكلمة المرور.';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'جاري التحقق...';
-
-  try {
-    // 1. Try Supabase Auth (new accounts)
-    let authOk = false;
-    const { error: authErr } = await supabase.auth.signInWithPassword({ email, password: pass });
-
-    if (!authErr) {
-      authOk = true;
-    } else {
-      // 2. Fallback: check old btoa accounts and migrate silently
-      const { data: old } = await supabase.from('partners').select('password').eq('email', email).maybeSingle();
-      if (old) {
-        let btaoMatch = false;
-        try { btaoMatch = (atob(old.password || '') === pass); } catch(e) {}
-        if (btaoMatch) {
-          await supabase.auth.signUp({ email, password: pass });
-          const { error: retryErr } = await supabase.auth.signInWithPassword({ email, password: pass });
-          if (!retryErr) authOk = true;
-        }
-      }
-    }
-
-    if (!authOk) {
-      errEl.textContent = 'بيانات تسجيل الدخول غير صحيحة. يرجى التحقق من البريد الإلكتروني وكلمة المرور.';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    // 3. Fetch partner record for status check
-    const { data: partner } = await supabase.from('partners').select('id,email,org_name,status').eq('email', email).maybeSingle();
-
-    if (!partner) {
-      await supabase.auth.signOut();
-      errEl.textContent = 'هذا البريد غير مسجّل في النظام.';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    if (partner.status === 'pending') {
-      await supabase.auth.signOut();
-      errEl.textContent = 'طلبك لا يزال قيد المراجعة. سيتم التواصل معك عند الموافقة.';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    if (partner.status === 'rejected') {
-      await supabase.auth.signOut();
-      errEl.textContent = 'عذراً، طلب تسجيلك تم رفضه. تواصل مع الدعم للمزيد.';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    localStorage.setItem('rafd_partner_session', JSON.stringify({
-      id: partner.id, email: partner.email, org: partner.org_name
-    }));
-    window.location.href = '/partner-dashboard.html';
-
-  } catch(err) {
-    console.error('Login error:', err);
-    errEl.textContent = 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.';
-    errEl.style.display = 'block';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'دخول للوحة التحكم';
-  }
-}
-</script>
+<script src="/js/partner-login.js"></script>
 </body>
 </html>

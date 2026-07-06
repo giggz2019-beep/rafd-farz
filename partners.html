@@ -134,7 +134,7 @@ body{font-family:'Almarai',sans-serif;background:#050e1a;color:#e2e8f0;direction
 <!-- NAVBAR -->
 <nav class="navbar">
   <div class="nav-logo">
-    <img src="/images/rafd-logo.png" alt="RAFD" style="height:40px;background:#fff;border-radius:8px;padding:4px 8px" onerror="this.style.display='none'">
+    <img src="/images/rafd-logo.png" alt="RAFD" style="height:40px;background:#fff;border-radius:8px;padding:4px 8px">
     <span class="nav-logo-text">RAFD Digital</span>
   </div>
   <div class="nav-links">
@@ -193,25 +193,25 @@ body{font-family:'Almarai',sans-serif;background:#050e1a;color:#e2e8f0;direction
     <h2 class="section-title" style="text-align:center">اختر نوع الشراكة المناسب</h2>
     <p class="section-sub" style="text-align:center;margin:0 auto">نوفر أربعة أنواع من الشراكات الاستراتيجية لتلبية احتياجات مختلف الجهات</p>
     <div class="types-grid" id="partnership-types">
-      <div class="type-card" onclick="selectType('تقنية')">
+      <div class="type-card" data-type="تقنية">
         <div class="type-icon">⚙️</div>
         <div class="type-name">الشراكة التقنية</div>
         <div class="type-desc">دمج تقنيات الذكاء الاصطناعي الخاصة بك مع منصة RAFD لتطوير حلول مشتركة متطورة.</div>
         <span class="type-tag">API Integration</span>
       </div>
-      <div class="type-card" onclick="selectType('تسويقية')">
+      <div class="type-card" data-type="تسويقية">
         <div class="type-icon">📣</div>
         <div class="type-name">الشراكة التسويقية</div>
         <div class="type-desc">توسيع نطاق الوصول من خلال قنوات التوزيع والتسويق المشترك لخدمات RAFD.</div>
         <span class="type-tag">Co-Marketing</span>
       </div>
-      <div class="type-card" onclick="selectType('استراتيجية')">
+      <div class="type-card" data-type="استراتيجية">
         <div class="type-icon">🎯</div>
         <div class="type-name">الشراكة الاستراتيجية</div>
         <div class="type-desc">تحالف استراتيجي طويل الأمد لتطوير السوق وبناء حلول متكاملة للقطاعات الكبرى.</div>
         <span class="type-tag">Strategic Alliance</span>
       </div>
-      <div class="type-card" onclick="selectType('دمج خدمات')">
+      <div class="type-card" data-type="دمج خدمات">
         <div class="type-icon">🔗</div>
         <div class="type-name">دمج الخدمات</div>
         <div class="type-desc">تضمين خدمات RAFD ضمن منصتك أو تطبيقك الحالي بشكل سلس وشفاف.</div>
@@ -324,19 +324,19 @@ body{font-family:'Almarai',sans-serif;background:#050e1a;color:#e2e8f0;direction
       <div style="margin-bottom:1.25rem">
         <label class="field-label">نوع الشراكة المطلوبة <span>*</span></label>
         <div class="type-selector" id="typeSelector">
-          <div class="type-opt" onclick="selectFormType(this,'تقنية')">
+          <div class="type-opt" data-type="تقنية">
             <div class="type-opt-icon">⚙️</div>
             <div class="type-opt-label">تقنية</div>
           </div>
-          <div class="type-opt" onclick="selectFormType(this,'تسويقية')">
+          <div class="type-opt" data-type="تسويقية">
             <div class="type-opt-icon">📣</div>
             <div class="type-opt-label">تسويقية</div>
           </div>
-          <div class="type-opt" onclick="selectFormType(this,'استراتيجية')">
+          <div class="type-opt" data-type="استراتيجية">
             <div class="type-opt-icon">🎯</div>
             <div class="type-opt-label">استراتيجية</div>
           </div>
-          <div class="type-opt" onclick="selectFormType(this,'دمج خدمات')">
+          <div class="type-opt" data-type="دمج خدمات">
             <div class="type-opt-icon">🔗</div>
             <div class="type-opt-label">دمج خدمات</div>
           </div>
@@ -434,7 +434,7 @@ body{font-family:'Almarai',sans-serif;background:#050e1a;color:#e2e8f0;direction
         <label for="agreeTerms">أوافق على <a href="/terms.html" target="_blank">شروط وأحكام</a> برنامج الشراكة وأؤكد أن المعلومات المقدمة صحيحة ودقيقة</label>
       </div>
 
-      <button class="btn-submit" id="submitBtn" onclick="submitPartnerForm()">
+      <button class="btn-submit" id="submitBtn">
         إرسال طلب الشراكة الرسمي ←
       </button>
     </div>
@@ -451,7 +451,7 @@ body{font-family:'Almarai',sans-serif;background:#050e1a;color:#e2e8f0;direction
         <div class="success-ref" id="successRef">رقم الطلب: #RAFD-0000</div>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
           <a href="/" class="btn-primary">العودة للرئيسية</a>
-          <a href="#apply-form" class="btn-outline" onclick="resetForm()">تقديم طلب آخر</a>
+          <a href="#apply-form" class="btn-outline" id="resetFormLink">تقديم طلب آخر</a>
         </div>
       </div>
     </div>
@@ -475,7 +475,7 @@ body{font-family:'Almarai',sans-serif;background:#050e1a;color:#e2e8f0;direction
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-logo">
-      <img src="/images/rafd-logo.png" alt="RAFD" style="height:40px;background:#fff;border-radius:8px;padding:4px 8px" onerror="this.style.display='none'">
+      <img src="/images/rafd-logo.png" alt="RAFD" style="height:40px;background:#fff;border-radius:8px;padding:4px 8px">
       <span class="footer-logo-text">RAFD Digital</span>
     </div>
     <div class="footer-links">
@@ -490,92 +490,6 @@ body{font-family:'Almarai',sans-serif;background:#050e1a;color:#e2e8f0;direction
   <div class="footer-copy">© 2025 RAFD Digital. جميع الحقوق محفوظة.</div>
 </footer>
 
-<script>
-// ===== TYPE SELECTION =====
-function selectFormType(el, type) {
-  document.querySelectorAll('.type-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('selectedType').value = type;
-}
-
-function selectType(type) {
-  document.getElementById('apply-form').scrollIntoView({behavior:'smooth'});
-  setTimeout(() => {
-    document.querySelectorAll('.type-opt').forEach(o => {
-      if(o.querySelector('.type-opt-label').textContent === type) {
-        o.classList.add('selected');
-        document.getElementById('selectedType').value = type;
-      }
-    });
-  }, 600);
-}
-
-// ===== FORM SUBMIT =====
-function submitPartnerForm() {
-  const type = document.getElementById('selectedType').value;
-  const org = document.getElementById('p_org').value.trim();
-  const orgtype = document.getElementById('p_orgtype').value;
-  const name = document.getElementById('p_name').value.trim();
-  const title = document.getElementById('p_title').value.trim();
-  const email = document.getElementById('p_email').value.trim();
-  const phone = document.getElementById('p_phone').value.trim();
-  const desc = document.getElementById('p_desc').value.trim();
-  const agree = document.getElementById('agreeTerms').checked;
-
-  if(!type) { alert('يرجى اختيار نوع الشراكة'); return; }
-  if(!org) { alert('يرجى إدخال اسم الجهة'); return; }
-  if(!name) { alert('يرجى إدخال الاسم الكامل'); return; }
-  if(!email || !email.includes('@')) { alert('يرجى إدخال بريد إلكتروني صحيح'); return; }
-  if(!phone) { alert('يرجى إدخال رقم الجوال'); return; }
-  if(!desc) { alert('يرجى وصف الشراكة المقترحة'); return; }
-  if(!agree) { alert('يرجى الموافقة على الشروط والأحكام'); return; }
-
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.textContent = 'جاري الإرسال...';
-
-  setTimeout(() => {
-    // Save to localStorage
-    const partners = JSON.parse(localStorage.getItem('rafd_partners') || '[]');
-    const refNum = 'RAFD-' + String(Date.now()).slice(-6);
-    const newPartner = {
-      id: Date.now(),
-      ref: refNum,
-      type,
-      org,
-      orgtype,
-      website: document.getElementById('p_website').value.trim(),
-      name,
-      title,
-      email,
-      phone,
-      desc,
-      capabilities: document.getElementById('p_capabilities').value.trim(),
-      timeline: document.getElementById('p_timeline').value,
-      status: 'pending',
-      date: new Date().toISOString().split('T')[0]
-    };
-    partners.unshift(newPartner);
-    localStorage.setItem('rafd_partners', JSON.stringify(partners));
-
-    // Show success
-    document.getElementById('formWrapper').style.display = 'none';
-    document.getElementById('successWrapper').style.display = 'block';
-    document.getElementById('successRef').textContent = 'رقم الطلب: #' + refNum;
-    document.getElementById('apply-form').scrollIntoView({behavior:'smooth'});
-  }, 1500);
-}
-
-function resetForm() {
-  document.getElementById('formWrapper').style.display = 'block';
-  document.getElementById('successWrapper').style.display = 'none';
-  document.getElementById('submitBtn').disabled = false;
-  document.getElementById('submitBtn').textContent = 'إرسال طلب الشراكة الرسمي ←';
-  document.querySelectorAll('.field-input').forEach(i => i.value = '');
-  document.getElementById('agreeTerms').checked = false;
-  document.querySelectorAll('.type-opt').forEach(o => o.classList.remove('selected'));
-  document.getElementById('selectedType').value = '';
-}
-</script>
+<script src="/js/partners.js"></script>
 </body>
 </html>

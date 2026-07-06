@@ -69,7 +69,7 @@
 <nav class="navbar" id="navbar">
   <div class="container nav-inner">
     <a href="/" class="brand">
-      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img src="/images/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo">
       <div class="brand-fallback" style="display:none;align-items:center;gap:.5rem">
         <div class="brand-icon">R</div>
         <div class="brand-text">
@@ -245,7 +245,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
+        <img src="/images/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block">
         <p class="footer-desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
       </div>
       <div class="footer-col">
@@ -276,25 +276,6 @@
   </div>
 </footer>
 
-<script>
-document.getElementById('hamburger').addEventListener('click', function() {
-  const nav = document.querySelector('.nav-links');
-  nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
-  nav.style.flexDirection = 'column';
-  nav.style.position = 'absolute';
-  nav.style.top = '72px';
-  nav.style.right = '0';
-  nav.style.left = '0';
-  nav.style.background = '#fff';
-  nav.style.padding = '1rem 2rem';
-  nav.style.borderBottom = '1px solid #e2e8f0';
-  nav.style.zIndex = '999';
-});
-window.addEventListener('scroll', function() {
-  const nb = document.getElementById('navbar');
-  if(window.scrollY > 50) nb.style.boxShadow = '0 4px 24px rgba(0,0,0,.08)';
-  else nb.style.boxShadow = 'none';
-});
-</script>
+<script src="/js/navbar.js"></script>
 </body>
 </html>

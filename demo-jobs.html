@@ -327,7 +327,7 @@ footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: 
   <div class="hero-tag">🤖 مدعوم بالذكاء الاصطناعي</div>
   <h1>التوظيف الذكي بدون تحيّز</h1>
   <p>قدّم سيرتك الذاتية، تحقق من هويتك عبر نفاذ، ودع الذكاء الاصطناعي يقيّم مؤهلاتك خلال دقائق — فقط المتأهلون يصلون لمسؤول التوظيف</p>
-  <button class="hero-cta" onclick="openModal()">
+  <button class="hero-cta">
     <span>🚀</span> جرّب الآن مجاناً
   </button>
   <div class="hero-stats">
@@ -386,7 +386,7 @@ footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: 
           <span><strong>مفضّل:</strong> شهادات مهنية معتمدة في مجال التطوير</span>
         </li>
       </ul>
-      <button class="apply-btn" onclick="openModal()">
+      <button class="apply-btn">
         <span>📄</span> قدّم الآن — التقييم الفوري بالذكاء الاصطناعي
       </button>
     </div>
@@ -461,7 +461,7 @@ footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: 
 </footer>
 
 <!-- ===== APPLICATION MODAL ===== -->
-<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+<div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="mainModal">
 
     <!-- MODAL HEADER -->
@@ -470,7 +470,7 @@ footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: 
         <h3>📋 نموذج التقديم الذكي</h3>
         <p id="modalSubtitle">الخطوة 1 من 3 — التحقق من الهوية</p>
       </div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close">✕</button>
       <div style="position:absolute; left:0; right:0; bottom:0;">
         <div class="progress-bar" style="margin:0; border-radius:0;">
           <div class="progress-fill" id="progressFill" style="width:33%"></div>
@@ -509,7 +509,7 @@ footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: 
           <div class="nafath-desc">
             سيتم توجيهك لتطبيق نفاذ للمصادقة. بعد الموافقة، ستُستورد بياناتك الرسمية تلقائياً (الاسم، رقم الهوية، تاريخ الميلاد، المؤهل الأكاديمي).
           </div>
-          <button class="nafath-btn" onclick="simulateNafath()">
+          <button class="nafath-btn">
             <span>🔐</span> محاكاة تسجيل الدخول عبر نفاذ (تجريبي)
           </button>
         </div>
@@ -606,8 +606,8 @@ footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: 
         <div class="step-title">رفع السيرة الذاتية</div>
         <div class="step-subtitle">سيقوم الذكاء الاصطناعي بتحليل سيرتك الذاتية وإصدار تقييم فوري</div>
 
-        <div class="file-upload-area" id="uploadArea" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-          <input type="file" id="cvFile" accept=".pdf,.doc,.docx" onchange="handleFileSelect(event)">
+        <div class="file-upload-area" id="uploadArea">
+          <input type="file" id="cvFile" accept=".pdf,.doc,.docx">
           <div class="file-upload-icon">☁️</div>
           <div class="file-upload-text">
             <strong>اضغط لرفع ملف</strong> أو اسحب وأفلت هنا
@@ -621,7 +621,7 @@ footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: 
             <div class="file-selected-name" id="fileName">—</div>
             <div class="file-selected-size" id="fileSize">—</div>
           </div>
-          <button class="file-remove" onclick="removeFile()" title="حذف الملف">✕</button>
+          <button class="file-remove" title="حذف الملف">✕</button>
         </div>
 
         <div style="margin-top:20px; background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px 16px; font-size:0.82rem; color:#78350f; line-height:1.7;">
@@ -692,7 +692,7 @@ footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: 
 
       <div class="result-actions">
         <a href="/signup.html" class="btn-primary-result">📩 اطلب النظام لجهتك</a>
-        <button class="btn-outline-result" onclick="resetDemo()">🔄 جرّب مرة أخرى</button>
+        <button class="btn-outline-result">🔄 جرّب مرة أخرى</button>
       </div>
     </div>
 
@@ -700,319 +700,15 @@ footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: 
     <div class="modal-footer" id="modalFooter">
       <div class="modal-footer-info" id="footerInfo">الخطوة 1 من 3</div>
       <div class="modal-footer-btns">
-        <button class="btn-back" id="btnBack" onclick="prevStep()" style="display:none">← السابق</button>
-        <button class="btn-next" id="btnNext" onclick="nextStep()">التالي ←</button>
-        <button class="btn-submit" id="btnSubmit" onclick="submitApplication()" style="display:none">إرسال الطلب ✓</button>
+        <button class="btn-back" id="btnBack" style="display:none">← السابق</button>
+        <button class="btn-next" id="btnNext">التالي ←</button>
+        <button class="btn-submit" id="btnSubmit" style="display:none">إرسال الطلب ✓</button>
       </div>
     </div>
 
   </div>
 </div>
 
-<script>
-// ===== STATE =====
-let currentStep = 1;
-let nafathVerified = false;
-let fileAttached = false;
-let terminalInterval = null;
-
-// ===== MODAL =====
-function openModal() {
-  document.getElementById('modalOverlay').classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('active');
-  document.body.style.overflow = '';
-}
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
-
-// ===== NAFATH SIMULATION =====
-function simulateNafath() {
-  const btn = document.querySelector('.nafath-btn');
-  btn.innerHTML = '⏳ جارٍ التحقق...';
-  btn.disabled = true;
-  btn.style.opacity = '0.7';
-
-  setTimeout(() => {
-    document.getElementById('nafathBox').style.display = 'none';
-    document.getElementById('nafathVerified').classList.add('show');
-    nafathVerified = true;
-    // Auto-advance hint
-    document.getElementById('btnNext').style.background = '#16a34a';
-    document.getElementById('btnNext').innerHTML = 'التالي ← ✓';
-  }, 2200);
-}
-
-// ===== FILE HANDLING =====
-function handleFileSelect(e) {
-  const file = e.target.files[0];
-  if (file) setFile(file);
-}
-function handleDragOver(e) {
-  e.preventDefault();
-  document.getElementById('uploadArea').classList.add('dragover');
-}
-function handleDragLeave(e) {
-  document.getElementById('uploadArea').classList.remove('dragover');
-}
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('uploadArea').classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) setFile(file);
-}
-function setFile(file) {
-  const sizeKB = (file.size / 1024).toFixed(0);
-  const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-  document.getElementById('fileName').textContent = file.name;
-  document.getElementById('fileSize').textContent = file.size > 1024*1024 ? sizeMB + ' MB' : sizeKB + ' KB';
-  document.getElementById('fileSelected').classList.add('show');
-  fileAttached = true;
-  document.getElementById('btnSubmit').style.background = 'linear-gradient(135deg, #16a34a, #15803d)';
-}
-function removeFile() {
-  document.getElementById('cvFile').value = '';
-  document.getElementById('fileSelected').classList.remove('show');
-  fileAttached = false;
-}
-
-// ===== STEP NAVIGATION =====
-function nextStep() {
-  if (currentStep === 1 && !nafathVerified) {
-    alert('يرجى التحقق من هويتك عبر نفاذ أولاً');
-    return;
-  }
-  if (currentStep === 2) {
-    const email = document.getElementById('f_email').value;
-    const phone = document.getElementById('f_phone').value;
-    const title = document.getElementById('f_title').value;
-    const motivation = document.getElementById('f_motivation').value;
-    if (!email || !phone || !title || !motivation) {
-      alert('يرجى تعبئة جميع الحقول الإلزامية');
-      return;
-    }
-  }
-  if (currentStep < 3) {
-    currentStep++;
-    updateStepUI();
-  }
-}
-function prevStep() {
-  if (currentStep > 1) {
-    currentStep--;
-    updateStepUI();
-  }
-}
-function updateStepUI() {
-  // Hide all steps
-  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-  document.getElementById('step' + currentStep).classList.add('active');
-
-  // Update progress
-  const pct = (currentStep / 3) * 100;
-  document.getElementById('progressFill').style.width = pct + '%';
-
-  // Update dots
-  for (let i = 1; i <= 3; i++) {
-    const dot = document.getElementById('dot' + i);
-    dot.classList.remove('active', 'done');
-    if (i < currentStep) dot.classList.add('done'), dot.innerHTML = '✓';
-    else if (i === currentStep) dot.classList.add('active'), dot.innerHTML = i;
-    else dot.innerHTML = i;
-  }
-
-  // Update subtitle
-  const subtitles = ['الخطوة 1 من 3 — التحقق من الهوية', 'الخطوة 2 من 3 — المعلومات الشخصية', 'الخطوة 3 من 3 — رفع السيرة الذاتية'];
-  document.getElementById('modalSubtitle').textContent = subtitles[currentStep - 1];
-  document.getElementById('footerInfo').textContent = 'الخطوة ' + currentStep + ' من 3';
-
-  // Update buttons
-  document.getElementById('btnBack').style.display = currentStep > 1 ? 'flex' : 'none';
-  document.getElementById('btnNext').style.display = currentStep < 3 ? 'flex' : 'none';
-  document.getElementById('btnSubmit').style.display = currentStep === 3 ? 'flex' : 'none';
-  document.getElementById('btnNext').style.background = '';
-  document.getElementById('btnNext').innerHTML = 'التالي ←';
-}
-
-// ===== SUBMIT & AI ANALYSIS =====
-function submitApplication() {
-  // Show AI processing
-  document.getElementById('formBody').style.display = 'none';
-  document.getElementById('modalFooter').style.display = 'none';
-  document.getElementById('aiProcessing').classList.add('active');
-  document.querySelector('.modal-header').style.background = 'linear-gradient(135deg, #0d1117, #1f2937)';
-  document.getElementById('modalSubtitle').textContent = 'جارٍ التحليل بالذكاء الاصطناعي...';
-
-  runTerminal();
-}
-
-function runTerminal() {
-  const lines = [
-    { text: '$ بدء جلسة تحليل جديدة — Session ID: RFD-2026-' + Math.floor(Math.random()*90000+10000), type: 'info', delay: 400 },
-    { text: '✓ التحقق من هوية المتقدم عبر نفاذ (سدايا)... ✓ موثّق', type: 'done', delay: 900 },
-    { text: '✓ استيراد بيانات نفاذ: محمد عبدالله الغامدي | 1098765432', type: 'done', delay: 1400 },
-    { text: '$ جارٍ قراءة ملف السيرة الذاتية PDF...', type: 'info', delay: 2000 },
-    { text: '✓ تم استخراج النص: 847 كلمة | 3 صفحات', type: 'done', delay: 2600 },
-    { text: '$ تحليل المؤهلات الأكاديمية...', type: 'info', delay: 3100 },
-    { text: '✓ المؤهل: بكالوريوس هندسة البرمجيات — جامعة الملك عبدالله', type: 'done', delay: 3700 },
-    { text: '$ تحليل سنوات الخبرة...', type: 'info', delay: 4200 },
-    { text: '✓ الخبرة المستخرجة: 4.5 سنة في تطوير البرمجيات', type: 'done', delay: 4800 },
-    { text: '$ فحص المهارات التقنية...', type: 'info', delay: 5300 },
-    { text: '✓ React ✓ Node.js ✓ TypeScript ✓ PostgreSQL ✓ Docker', type: 'done', delay: 5900 },
-    { text: '⚠ AWS / Cloud: غير مذكور صراحةً في السيرة الذاتية', type: 'warn', delay: 6400 },
-    { text: '$ تحليل الإنجازات والمشاريع...', type: 'info', delay: 6900 },
-    { text: '✓ 3 مشاريع موثّقة | إنجاز بارز: تطوير منصة AI بـ 2000+ مستخدم', type: 'done', delay: 7500 },
-    { text: '$ فحص الشهادات المهنية...', type: 'info', delay: 8000 },
-    { text: '✓ AWS Certified Developer — Associate (2024)', type: 'done', delay: 8600 },
-    { text: '$ مقارنة المؤهلات بمعايير الجهة...', type: 'info', delay: 9100 },
-    { text: '$ حساب الدرجة النهائية...', type: 'info', delay: 9700 },
-    { text: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', type: 'bold', delay: 10200 },
-    { text: '✓ التحليل مكتمل — الدرجة النهائية: 84/100 | تقدير B+', type: 'done', delay: 10700 },
-    { text: '✓ القرار: مجتاز — يتجاوز نسبة الاجتياز (80%)', type: 'done', delay: 11200 },
-  ];
-
-  let i = 0;
-  const body = document.getElementById('terminalBody');
-  body.innerHTML = '';
-
-  function addLine() {
-    if (i >= lines.length) {
-      setTimeout(showResult, 800);
-      return;
-    }
-    const line = lines[i];
-    const div = document.createElement('div');
-    div.className = 'terminal-line ' + line.type;
-    div.textContent = line.text;
-    body.appendChild(div);
-    body.scrollTop = body.scrollHeight;
-    i++;
-    setTimeout(addLine, lines[i] ? (lines[i].delay - line.delay) : 800);
-  }
-
-  setTimeout(addLine, lines[0].delay);
-}
-
-function showResult() {
-  document.getElementById('aiProcessing').classList.remove('active');
-  document.getElementById('resultSection').classList.add('active');
-  document.querySelector('.modal-header').style.background = '';
-
-  const score = 84;
-  const threshold = 80;
-  const passed = score >= threshold;
-
-  // Update header
-  document.getElementById('modalSubtitle').textContent = passed ? '✓ تهانينا! اجتزت معايير القبول' : 'نتيجة التقييم';
-
-  // Result card
-  const card = document.getElementById('resultCard');
-  card.className = 'result-card ' + (passed ? 'pass' : 'fail');
-  document.getElementById('resultIcon').textContent = passed ? '🎉' : '📋';
-  document.getElementById('resultTitle').textContent = passed ? 'مبروك! اجتزت الفحص الأولي' : 'لم تستوفِ معايير القبول';
-  document.getElementById('resultSubtitle').textContent = passed
-    ? 'طلبك سيُحوَّل لمسؤول التوظيف خلال 24 ساعة للمراجعة النهائية'
-    : 'درجتك لم تصل لنسبة الاجتياز المحددة من الجهة. يمكنك إعادة التقديم في الدورة القادمة.';
-
-  // Score ring animation
-  document.getElementById('scoreNum').textContent = score;
-  const ring = document.getElementById('ringFill');
-  ring.className = passed ? 'ring-fill-pass' : 'ring-fill-fail';
-  const circumference = 264;
-  const offset = circumference - (score / 100) * circumference;
-  setTimeout(() => { ring.style.strokeDashoffset = offset; }, 200);
-
-  // Score items
-  const items = [
-    { label: 'المؤهل الأكاديمي', score: 20, max: 20, note: 'بكالوريوس هندسة البرمجيات ✓' },
-    { label: 'سنوات الخبرة', score: 18, max: 20, note: '4.5 سنة — يستوفي الحد الأدنى ✓' },
-    { label: 'المهارات التقنية', score: 22, max: 25, note: 'React, Node.js, TypeScript ✓ | AWS جزئي ⚠' },
-    { label: 'الشهادات المهنية', score: 12, max: 15, note: 'AWS Developer Associate ✓' },
-    { label: 'الإنجازات والمشاريع', score: 12, max: 20, note: '3 مشاريع موثّقة' },
-  ];
-
-  let html = '';
-  items.forEach(item => {
-    const pct = Math.round((item.score / item.max) * 100);
-    const cls = pct >= 80 ? 'pass' : pct >= 50 ? 'warn' : 'fail';
-    html += `
-      <div class="score-item">
-        <div class="score-item-icon ${cls}">${cls === 'pass' ? '✓' : cls === 'warn' ? '⚠' : '✕'}</div>
-        <div style="flex:1;">
-          <div class="score-item-label">${item.label}</div>
-          <div style="font-size:0.72rem; color:var(--gray-400); margin-top:2px;">${item.note}</div>
-        </div>
-        <div class="score-item-bar"><div class="score-item-fill fill-${cls}" style="width:${pct}%"></div></div>
-        <div class="score-item-pct pct-${cls}">${item.score}/${item.max}</div>
-      </div>`;
-  });
-  document.getElementById('scoreItems').innerHTML = html;
-
-  // Threshold note
-  document.getElementById('thresholdNote').innerHTML = `
-    <strong>💡 ملاحظة تجريبية:</strong> في هذا المثال، نسبة الاجتياز المحددة من الجهة هي <strong>${threshold}%</strong>.
-    درجتك <strong>${score}/100</strong> ${passed ? 'تتجاوز' : 'لا تصل إلى'} هذه النسبة.
-    في النظام الحقيقي، كل جهة تُحدد نسبة الاجتياز الخاصة بها — سواء كانت 70% أو 85% أو 90%.
-    فقط المتأهلون يُحوَّلون لمسؤول التوظيف.`;
-}
-
-function resetDemo() {
-  currentStep = 1;
-  nafathVerified = false;
-  fileAttached = false;
-
-  // Reset UI
-  document.getElementById('formBody').style.display = '';
-  document.getElementById('modalFooter').style.display = '';
-  document.getElementById('aiProcessing').classList.remove('active');
-  document.getElementById('resultSection').classList.remove('active');
-  document.querySelector('.modal-header').style.background = '';
-
-  // Reset nafath
-  document.getElementById('nafathBox').style.display = '';
-  document.getElementById('nafathVerified').classList.remove('show');
-  const nafathBtn = document.querySelector('.nafath-btn');
-  nafathBtn.innerHTML = '<span>🔐</span> تسجيل الدخول عبر نفاذ';
-  nafathBtn.disabled = false;
-  nafathBtn.style.opacity = '';
-
-  // Reset file
-  removeFile();
-
-  // Reset steps
-  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-  document.getElementById('step1').classList.add('active');
-  updateStepUI();
-  document.getElementById('btnBack').style.display = 'none';
-  document.getElementById('btnNext').style.display = 'flex';
-  document.getElementById('btnSubmit').style.display = 'none';
-  document.getElementById('progressFill').style.width = '33%';
-  for (let i = 1; i <= 3; i++) {
-    const dot = document.getElementById('dot' + i);
-    dot.classList.remove('active', 'done');
-    dot.innerHTML = i;
-    if (i === 1) dot.classList.add('active');
-  }
-  document.getElementById('modalSubtitle').textContent = 'الخطوة 1 من 3 — التحقق من الهوية';
-}
-
-// Radio/checkbox highlight
-document.querySelectorAll('.radio-option input, .check-option input').forEach(input => {
-  input.addEventListener('change', function() {
-    if (this.type === 'radio') {
-      const name = this.name;
-      document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.closest('.radio-option')?.classList.remove('selected'));
-    }
-    const parent = this.closest('.radio-option, .check-option');
-    if (parent) {
-      if (this.type === 'checkbox') parent.classList.toggle('selected', this.checked);
-      else parent.classList.add('selected');
-    }
-  });
-});
-</script>
+<script src="/js/demo-jobs.js"></script>
 </body>
 </html>

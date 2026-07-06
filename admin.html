@@ -152,7 +152,7 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
 <div class="admin-login" id="adminLogin">
   <div class="login-card">
     <div class="login-logo">
-      <img src="/images/rafd-logo.png" alt="RAFD" onerror="this.style.display='none'">
+      <img src="/images/rafd-logo.png" alt="RAFD">
       <h2>لوحة تحكم المدير</h2>
       <p>RAFD Digital Platform</p>
     </div>
@@ -161,13 +161,13 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
     </div>
     <div class="form-group">
       <label>البريد الإلكتروني</label>
-      <input type="email" id="adminEmail" placeholder="admin@rafd.digital" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="email" id="adminEmail" placeholder="admin@rafd.digital" autocomplete="email">
     </div>
     <div class="form-group">
       <label>كلمة المرور</label>
-      <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="password" id="adminPass" placeholder="••••••••">
     </div>
-    <button class="btn-login" id="loginBtn" onclick="doLogin()">دخول للوحة التحكم</button>
+    <button class="btn-login" id="loginBtn">دخول للوحة التحكم</button>
     <p class="login-hint" id="loginErr" style="color:#ef4444;display:none">بيانات خاطئة. حاول مجدداً.</p>
   </div>
 </div>
@@ -178,7 +178,7 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <img src="/images/rafd-logo.png" alt="RAFD" onerror="this.style.display='none'">
+      <img src="/images/rafd-logo.png" alt="RAFD">
       <div>
         <div class="sidebar-logo-text">RAFD Admin</div>
         <div class="sidebar-logo-sub">لوحة التحكم</div>
@@ -186,23 +186,23 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section">الرئيسية</div>
-      <div class="nav-item active" onclick="showPage('clients')">
+      <div class="nav-item active" data-page="clients">
         <span class="nav-icon">👥</span> العملاء والاشتراكات
       </div>
-      <div class="nav-item" onclick="showPage('revenue')">
+      <div class="nav-item" data-page="revenue">
         <span class="nav-icon">💰</span> الإيرادات
       </div>
       <div class="nav-section">الإدارة</div>
-      <div class="nav-item" onclick="showPage('partners')">
+      <div class="nav-item" data-page="partners">
         <span class="nav-icon">🤝</span> طلبات الشراكة
       </div>
-      <div class="nav-item" onclick="showPage('trials')">
+      <div class="nav-item" data-page="trials">
         <span class="nav-icon">⏳</span> التجارب المجانية
       </div>
-      <div class="nav-item" onclick="showPage('reports')">
+      <div class="nav-item" data-page="reports">
         <span class="nav-icon">📊</span> التقارير المتقدمة
       </div>
-      <div class="nav-item" onclick="window.open('/','_blank')">
+      <div class="nav-item" id="navMainSite">
         <span class="nav-icon">🌐</span> الموقع الرئيسي
       </div>
     </nav>
@@ -213,7 +213,7 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
           <div class="admin-name" id="adminNameDisplay">المدير العام</div>
           <div class="admin-role">RAFD Digital</div>
         </div>
-        <span onclick="doLogout()" style="margin-right:auto;color:#64748b;cursor:pointer;font-size:.8rem;transition:color .2s" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#64748b'">خروج</span>
+        <span id="adminLogoutSpan" style="margin-right:auto;color:#64748b;cursor:pointer;font-size:.8rem;transition:color .2s">خروج</span>
       </div>
     </div>
   </aside>
@@ -228,7 +228,7 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
           <div class="page-title">العملاء والاشتراكات</div>
           <div class="page-sub">إدارة جميع أصحاب الأعمال المشتركين في المنصة</div>
         </div>
-        <button class="btn-add" onclick="openAddModal()">＋ إضافة عميل</button>
+        <button class="btn-add" id="adminAddBtn">＋ إضافة عميل</button>
       </div>
 
       <!-- STATS -->
@@ -261,14 +261,14 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
 
       <!-- FILTERS -->
       <div class="filters-bar">
-        <input class="search-box" type="text" placeholder="🔍  ابحث بالاسم أو الجهة أو البريد..." oninput="filterClients(this.value)">
-        <select class="filter-select" onchange="filterByPlan(this.value)">
+        <input class="search-box" type="text" id="clientSearch" placeholder="🔍  ابحث بالاسم أو الجهة أو البريد...">
+        <select class="filter-select" id="planFilter">
           <option value="">جميع الباقات</option>
           <option value="trial">التجريبية</option>
           <option value="basic">الأساسية</option>
           <option value="pro">المتقدمة</option>
         </select>
-        <select class="filter-select" onchange="filterByStatus(this.value)">
+        <select class="filter-select" id="statusFilter">
           <option value="">جميع الحالات</option>
           <option value="active">نشط</option>
           <option value="expired">منتهي</option>
@@ -363,8 +363,8 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
 
       <!-- Filter -->
       <div class="filters-bar" style="margin-bottom:1rem">
-        <input class="search-box" type="text" id="partner_search" placeholder="🔍 بحث بالاسم أو البريد..." oninput="filterPartners()">
-        <select class="filter-select" id="partner_filter" onchange="filterPartners()">
+        <input class="search-box" type="text" id="partner_search" placeholder="🔍 بحث بالاسم أو البريد...">
+        <select class="filter-select" id="partner_filter">
           <option value="">كل الحالات</option>
           <option value="pending">قيد المراجعة</option>
           <option value="approved">مقبول</option>
@@ -437,7 +437,7 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
           <div class="page-title">التقارير المتقدمة</div>
           <div class="page-sub">مؤشرات الأداء وتحليل البيانات</div>
         </div>
-        <button class="btn-add" onclick="exportCSV()">&#8595; تصدير CSV</button>
+        <button class="btn-add" id="exportCsvBtn">&#8595; تصدير CSV</button>
       </div>
       <!-- KPI CARDS -->
       <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
@@ -504,22 +504,22 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
 </div>
 
 <!-- DETAIL PANEL -->
-<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+<div class="detail-overlay" id="detailOverlay">
   <div class="detail-panel">
     <div class="detail-header">
       <span class="detail-title" id="detailName">تفاصيل العميل</span>
-      <button class="btn-close" onclick="closeDetail()">✕</button>
+      <button class="btn-close" id="detailCloseBtn">✕</button>
     </div>
     <div class="detail-body" id="detailBody"></div>
   </div>
 </div>
 
 <!-- ADD CLIENT MODAL -->
-<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
+<div class="modal-overlay" id="addModal">
   <div class="modal-card">
     <div class="modal-header">
       <span class="modal-title">إضافة عميل جديد</span>
-      <button class="btn-close" onclick="closeAddModal()">✕</button>
+      <button class="btn-close" id="addModalCloseBtn">✕</button>
     </div>
     <div class="modal-body">
       <div class="form-row">
@@ -553,661 +553,13 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
       <div class="form-group-m"><label>ملاحظات</label><input type="text" id="f_notes" placeholder="أي ملاحظات إضافية..."></div>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeAddModal()">إلغاء</button>
-      <button class="btn-save" onclick="saveClient()">حفظ العميل</button>
+      <button class="btn-cancel" id="addModalCancelBtn">إلغاء</button>
+      <button class="btn-save" id="addModalSaveBtn">حفظ العميل</button>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// ===== SUPABASE =====
-const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_RgOring3FCEiBMGYPcPmZg_s_85Yc_f';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let supabasePartners = [];
-
-async function loadPartnersFromSupabase() {
-  try {
-    const { ok, data } = await adminApi({ action: 'load' });
-    if (!ok || !Array.isArray(data.partners)) return;
-    supabasePartners = data.partners.map(p => ({
-      id: p.id,
-      org: p.org_name,
-      orgtype: p.org_type,
-      city: p.city,
-      website: p.website,
-      fname: p.fname,
-      lname: p.lname,
-      title: p.title,
-      email: p.email,
-      phone: p.phone,
-      plan: p.plan,
-      status: p.status,
-      date: p.created_at ? p.created_at.split('T')[0] : '',
-      price: p.plan === 'pro' ? 999 : p.plan === 'basic' ? 499 : 0,
-      purpose: p.purpose,
-      notes: p.notes,
-    }));
-    renderPartnersTable(supabasePartners);
-  } catch(e) { console.error('loadPartnersFromSupabase:', e); }
-}
-
-function escapeHtml(s) {
-  if (s == null) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-function sanitizeCsvField(v) {
-  const s = String(v == null ? '' : v);
-  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
-}
-
-// ===== AUTH =====
-let _adminToken = null;
-
-async function adminApi(body) {
-  const r = await fetch('/api/admin-data', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ supabase_token: _adminToken, ...body }),
-  });
-  return { ok: r.ok, status: r.status, data: await r.json() };
-}
-
-function showAdminPanel(email) {
-  document.getElementById('adminLogin').style.display = 'none';
-  document.getElementById('adminWrap').classList.add('active');
-  const el = document.getElementById('adminNameDisplay');
-  if (el) el.textContent = email;
-  renderAll();
-  loadPartnersFromSupabase();
-  startIdleWatch();
-}
-
-async function doLogin() {
-  const email = document.getElementById('adminEmail').value.trim();
-  const pass  = document.getElementById('adminPass').value;
-  const errEl = document.getElementById('loginErr');
-  const btn   = document.getElementById('loginBtn');
-
-  errEl.style.display = 'none';
-  if (!email || !pass) { errEl.textContent = 'يرجى إدخال البريد وكلمة المرور.'; errEl.style.display = 'block'; return; }
-
-  btn.disabled = true;
-  btn.textContent = 'جاري التحقق...';
-
-  try {
-    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-    if (error) throw error;
-
-    // Verify admin access server-side — ADMIN_EMAILS checked in api/admin-data
-    _adminToken = authData.session.access_token;
-    const { ok } = await adminApi({ action: 'ping' });
-    if (!ok) {
-      _adminToken = null;
-      await supabase.auth.signOut();
-      throw new Error('غير مصرح');
-    }
-
-    showAdminPanel(email);
-  } catch(e) {
-    errEl.textContent = 'بيانات خاطئة أو غير مصرح لك بالدخول.';
-    errEl.style.display = 'block';
-    document.getElementById('adminPass').value = '';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'دخول للوحة التحكم';
-  }
-}
-
-async function doLogout() {
-  stopIdleWatch();
-  _adminToken = null;
-  await supabase.auth.signOut();
-  document.getElementById('adminWrap').classList.remove('active');
-  document.getElementById('adminLogin').style.display = 'flex';
-}
-
-// Auto-restore session on page load
-supabase.auth.getSession().then(async ({ data: { session } }) => {
-  if (session) {
-    _adminToken = session.access_token;
-    const { ok } = await adminApi({ action: 'ping' });
-    if (ok) {
-      showAdminPanel(session.user.email);
-    } else {
-      _adminToken = null;
-    }
-  }
-});
-
-// ===== DATA =====
-let clients = JSON.parse(localStorage.getItem('rafd_clients') || '[]');
-
-// Demo data if empty
-if(clients.length === 0) {
-  clients = [
-    {id:1,fname:'أحمد',lname:'الزهراني',org:'شركة الأفق للتقنية',type:'شركة',email:'ahmed@ufuq.sa',phone:'0501234567',plan:'pro',status:'active',startDate:'2025-01-15',price:999,notes:'عميل مميز'},
-    {id:2,fname:'سارة',lname:'القحطاني',org:'جامعة الملك عبدالله',type:'جامعة',email:'sara@kau.edu.sa',phone:'0509876543',plan:'basic',status:'active',startDate:'2025-02-01',price:499,notes:''},
-    {id:3,fname:'محمد',lname:'العتيبي',org:'بنك الرياض',type:'بنك',email:'m.otaibi@riyadhbank.com',phone:'0551112233',plan:'pro',status:'active',startDate:'2025-01-20',price:999,notes:'يحتاج API مخصص'},
-    {id:4,fname:'نورة',lname:'الشمري',org:'حاضنة وادي مكة',type:'حاضنة أعمال',email:'noura@wadi.sa',phone:'0562223344',plan:'basic',status:'active',startDate:'2025-03-10',price:499,notes:''},
-    {id:5,fname:'خالد',lname:'البقمي',org:'مسرعة بادر',type:'مسرعة أعمال',email:'k.baqami@badir.sa',phone:'0573334455',plan:'trial',status:'active',startDate:'2025-06-10',price:0,notes:'في فترة التجربة'},
-    {id:6,fname:'فاطمة',lname:'الدوسري',org:'شركة مدى للاستشارات',type:'شركة',email:'fatima@mada.sa',phone:'0584445566',plan:'basic',status:'expired',startDate:'2025-01-05',price:499,notes:'انتهى الاشتراك'},
-    {id:7,fname:'عبدالله',lname:'الحربي',org:'جهة حكومية — وزارة الموارد',type:'جهة حكومية',email:'a.harbi@hrsd.gov.sa',phone:'0595556677',plan:'pro',status:'active',startDate:'2025-02-20',price:999,notes:'عقد سنوي'},
-    {id:8,fname:'ريم',lname:'الغامدي',org:'شركة نمو للتقنية',type:'شركة',email:'reem@numuw.sa',phone:'0506667788',plan:'trial',status:'pending',startDate:'2025-06-15',price:0,notes:'بانتظار التفعيل'},
-  ];
-  saveClients();
-}
-
-function saveClients() {
-  localStorage.setItem('rafd_clients', JSON.stringify(clients));
-}
-
-let filteredClients = [...clients];
-let planFilter = '';
-let statusFilter = '';
-let searchQuery = '';
-
-// ===== RENDER =====
-function renderAll() {
-  renderStats();
-  renderTable();
-  renderRevenue();
-  renderTrials();
-}
-
-function renderStats() {
-  const active = clients.filter(c => c.status === 'active').length;
-  const trials = clients.filter(c => c.plan === 'trial').length;
-  const pro = clients.filter(c => c.plan === 'pro').length;
-  const revenue = clients.filter(c => c.status === 'active').reduce((s,c) => s + c.price, 0);
-  document.getElementById('statTotal').textContent = clients.length;
-  document.getElementById('statActive').textContent = active + ' نشط';
-  document.getElementById('statRevenue').textContent = revenue.toLocaleString();
-  document.getElementById('statTrials').textContent = trials;
-  document.getElementById('statPro').textContent = pro;
-}
-
-function renderTable() {
-  applyFilters();
-  const tbody = document.getElementById('clientsTable');
-  document.getElementById('tableCount').textContent = filteredClients.length + ' عميل';
-  if(filteredClients.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#475569;padding:2rem">لا توجد نتائج</td></tr>';
-    return;
-  }
-  tbody.innerHTML = filteredClients.map((c,i) => {
-    const planBadge = c.plan === 'trial' ? '<span class="badge badge-trial">⏳ تجريبية</span>' :
-                      c.plan === 'basic' ? '<span class="badge badge-basic">🔵 أساسية</span>' :
-                      '<span class="badge badge-pro">🟣 متقدمة</span>';
-    const statusBadge = c.status === 'active' ? '<span class="badge badge-active">✓ نشط</span>' :
-                        c.status === 'expired' ? '<span class="badge badge-expired">✕ منتهي</span>' :
-                        '<span class="badge badge-pending">⏸ معلّق</span>';
-    const endDate = calcEndDate(c.startDate, c.plan);
-    return `<tr onclick="openDetail(${c.id})">
-      <td style="color:#475569">${i+1}</td>
-      <td><div class="client-info">
-        <div class="client-av">${c.fname[0]}</div>
-        <div><div class="client-name">${c.fname} ${c.lname}</div><div class="client-org">${c.org}</div></div>
-      </div></td>
-      <td style="color:#64748b;font-size:.78rem">${c.email}</td>
-      <td>${planBadge}</td>
-      <td style="color:#64748b">${formatDate(c.startDate)}</td>
-      <td style="color:#64748b">${endDate}</td>
-      <td style="font-weight:700;color:${c.price>0?'#10b981':'#64748b'}">${c.price > 0 ? c.price.toLocaleString() + ' ر' : 'مجاني'}</td>
-      <td>${statusBadge}</td>
-      <td onclick="event.stopPropagation()"><div class="actions-cell">
-        <button class="btn-sm" onclick="openDetail(${c.id})">عرض</button>
-        <button class="btn-sm" onclick="editClient(${c.id})">تعديل</button>
-        <button class="btn-sm danger" onclick="deleteClient(${c.id})">حذف</button>
-      </div></td>
-    </tr>`;
-  }).join('');
-}
-
-function calcEndDate(start, plan) {
-  const d = new Date(start);
-  if(plan === 'trial') d.setDate(d.getDate() + 7);
-  else d.setMonth(d.getMonth() + 1);
-  return formatDate(d.toISOString().split('T')[0]);
-}
-
-function formatDate(dateStr) {
-  if(!dateStr) return '—';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('ar-SA', {year:'numeric',month:'short',day:'numeric'});
-}
-
-function applyFilters() {
-  filteredClients = clients.filter(c => {
-    const matchSearch = !searchQuery ||
-      (c.fname + ' ' + c.lname).includes(searchQuery) ||
-      c.org.includes(searchQuery) ||
-      c.email.includes(searchQuery);
-    const matchPlan = !planFilter || c.plan === planFilter;
-    const matchStatus = !statusFilter || c.status === statusFilter;
-    return matchSearch && matchPlan && matchStatus;
-  });
-}
-
-function filterClients(q) { searchQuery = q; renderTable(); }
-function filterByPlan(p) { planFilter = p; renderTable(); }
-function filterByStatus(s) { statusFilter = s; renderTable(); }
-
-// ===== DETAIL =====
-function openDetail(id) {
-  const c = clients.find(x => x.id === id);
-  if(!c) return;
-  document.getElementById('detailName').textContent = c.fname + ' ' + c.lname;
-  const planLabel = c.plan === 'trial' ? 'التجريبية (7 أيام)' : c.plan === 'basic' ? 'الأساسية' : 'المتقدمة';
-  const statusLabel = c.status === 'active' ? '✅ نشط' : c.status === 'expired' ? '❌ منتهي' : '⏸ معلّق';
-  document.getElementById('detailBody').innerHTML = `
-    <div class="detail-section">
-      <div class="detail-section-title">المعلومات الشخصية</div>
-      <div class="detail-row"><span class="detail-key">الاسم الكامل</span><span class="detail-val">${c.fname} ${c.lname}</span></div>
-      <div class="detail-row"><span class="detail-key">البريد الإلكتروني</span><span class="detail-val">${c.email}</span></div>
-      <div class="detail-row"><span class="detail-key">رقم الجوال</span><span class="detail-val">${c.phone || '—'}</span></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">معلومات الجهة</div>
-      <div class="detail-row"><span class="detail-key">اسم الجهة</span><span class="detail-val">${c.org}</span></div>
-      <div class="detail-row"><span class="detail-key">نوع الجهة</span><span class="detail-val">${c.type}</span></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">تفاصيل الاشتراك</div>
-      <div class="detail-row"><span class="detail-key">الباقة</span><span class="detail-val">${planLabel}</span></div>
-      <div class="detail-row"><span class="detail-key">السعر الشهري</span><span class="detail-val">${c.price > 0 ? c.price.toLocaleString() + ' ريال' : 'مجاني'}</span></div>
-      <div class="detail-row"><span class="detail-key">تاريخ الاشتراك</span><span class="detail-val">${formatDate(c.startDate)}</span></div>
-      <div class="detail-row"><span class="detail-key">تاريخ الانتهاء</span><span class="detail-val">${calcEndDate(c.startDate, c.plan)}</span></div>
-      <div class="detail-row"><span class="detail-key">الحالة</span><span class="detail-val">${statusLabel}</span></div>
-    </div>
-    ${c.notes ? `<div class="detail-section"><div class="detail-section-title">ملاحظات</div><p style="color:#94a3b8;font-size:.85rem;line-height:1.6">${c.notes}</p></div>` : ''}
-    <div style="display:flex;gap:.75rem;margin-top:1rem">
-      <button class="btn-save" style="flex:1" onclick="upgradeClient(${c.id})">ترقية الباقة</button>
-      <button class="btn-cancel" style="flex:1" onclick="toggleStatus(${c.id})">تغيير الحالة</button>
-    </div>
-  `;
-  document.getElementById('detailOverlay').classList.add('open');
-}
-
-function closeDetail() { document.getElementById('detailOverlay').classList.remove('open'); }
-
-function upgradeClient(id) {
-  const c = clients.find(x => x.id === id);
-  if(!c) return;
-  const plans = ['trial','basic','pro'];
-  const idx = plans.indexOf(c.plan);
-  if(idx < 2) {
-    c.plan = plans[idx+1];
-    c.price = c.plan === 'basic' ? 499 : 999;
-    saveClients(); renderAll(); closeDetail();
-    alert('تم ترقية الباقة بنجاح!');
-  } else { alert('العميل على أعلى باقة متاحة.'); }
-}
-
-function toggleStatus(id) {
-  const c = clients.find(x => x.id === id);
-  if(!c) return;
-  const statuses = ['active','expired','pending'];
-  const idx = statuses.indexOf(c.status);
-  c.status = statuses[(idx+1) % 3];
-  saveClients(); renderAll(); closeDetail();
-}
-
-function deleteClient(id) {
-  if(!confirm('هل أنت متأكد من حذف هذا العميل؟')) return;
-  clients = clients.filter(x => x.id !== id);
-  saveClients(); renderAll();
-}
-
-// ===== ADD CLIENT =====
-function openAddModal() {
-  document.getElementById('f_date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('addModal').classList.add('open');
-}
-function closeAddModal() { document.getElementById('addModal').classList.remove('open'); }
-
-function saveClient() {
-  const fname = document.getElementById('f_fname').value.trim();
-  const lname = document.getElementById('f_lname').value.trim();
-  const org = document.getElementById('f_org').value.trim();
-  const email = document.getElementById('f_email').value.trim();
-  if(!fname || !org || !email) { alert('يرجى ملء الحقول المطلوبة (الاسم، الجهة، البريد)'); return; }
-  const plan = document.getElementById('f_plan').value;
-  const price = plan === 'trial' ? 0 : plan === 'basic' ? 499 : 999;
-  const newClient = {
-    id: Date.now(),
-    fname, lname,
-    org,
-    type: document.getElementById('f_type').value,
-    email,
-    phone: document.getElementById('f_phone').value.trim(),
-    plan, status: 'active',
-    startDate: document.getElementById('f_date').value,
-    price,
-    notes: document.getElementById('f_notes').value.trim()
-  };
-  clients.unshift(newClient);
-  saveClients(); renderAll(); closeAddModal();
-  // clear form
-  ['f_fname','f_lname','f_org','f_email','f_phone','f_notes'].forEach(id => document.getElementById(id).value = '');
-}
-
-// ===== REVENUE PAGE =====
-function renderRevenue() {
-  const activeClients = clients.filter(c => c.status === 'active');
-  const monthly = activeClients.reduce((s,c) => s + c.price, 0);
-  const basicRev = activeClients.filter(c => c.plan === 'basic').reduce((s,c) => s + c.price, 0);
-  const proRev = activeClients.filter(c => c.plan === 'pro').reduce((s,c) => s + c.price, 0);
-  document.getElementById('revMonthly').textContent = monthly.toLocaleString();
-  document.getElementById('revAnnual').textContent = (monthly * 12).toLocaleString();
-  document.getElementById('revBasic').textContent = basicRev.toLocaleString();
-  document.getElementById('revPro').textContent = proRev.toLocaleString();
-  const chart = document.getElementById('revenueChart');
-  const total = basicRev + proRev || 1;
-  chart.innerHTML = `
-    <div style="margin-bottom:1rem">
-      <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="color:#60a5fa;font-size:.85rem">🔵 الأساسية</span><span style="color:#e2e8f0;font-weight:700">${basicRev.toLocaleString()} ريال</span></div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${(basicRev/total*100).toFixed(0)}%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div>
-    </div>
-    <div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="color:#a78bfa;font-size:.85rem">🟣 المتقدمة</span><span style="color:#e2e8f0;font-weight:700">${proRev.toLocaleString()} ريال</span></div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${(proRev/total*100).toFixed(0)}%"></div></div>
-    </div>
-  `;
-}
-
-// ===== TRIALS PAGE =====
-function renderTrials() {
-  const trialClients = clients.filter(c => c.plan === 'trial');
-  const tbody = document.getElementById('trialsTable');
-  if(!tbody) return;
-  if(trialClients.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#475569;padding:2rem">لا توجد تجارب مجانية حالياً</td></tr>';
-    return;
-  }
-  tbody.innerHTML = trialClients.map(c => {
-    const start = new Date(c.startDate);
-    const now = new Date();
-    const daysUsed = Math.floor((now - start) / 86400000);
-    const daysLeft = Math.max(0, 7 - daysUsed);
-    const pct = Math.min(100, (daysUsed/7*100)).toFixed(0);
-    return `<tr>
-      <td><div class="client-info"><div class="client-av">${c.fname[0]}</div><div><div class="client-name">${c.fname} ${c.lname}</div><div class="client-org">${c.org}</div></div></div></td>
-      <td style="color:#64748b">${formatDate(c.startDate)}</td>
-      <td><span class="badge ${daysLeft <= 2 ? 'badge-expired' : 'badge-trial'}">${daysLeft} يوم</span></td>
-      <td style="min-width:120px"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div><div style="color:#64748b;font-size:.72rem;margin-top:.25rem">${pct}% مستخدم</div></td>
-      <td><button class="btn-sm" onclick="upgradeClient(${c.id})">ترقية</button></td>
-    </tr>`;
-  }).join('');
-}
-
-// ===== PARTNERS TABLE =====
-function renderPartnersTable(list) {
-  const partners = list || JSON.parse(localStorage.getItem('rafd_partners') || '[]');
-  const tbody = document.getElementById('partnersTable');
-  const countEl = document.getElementById('partnersCount');
-  // Stats
-  const all = JSON.parse(localStorage.getItem('rafd_partners') || '[]');
-  if(document.getElementById('ps_total')) document.getElementById('ps_total').textContent = all.length;
-  if(document.getElementById('ps_pending')) document.getElementById('ps_pending').textContent = all.filter(p=>p.status==='pending').length;
-  if(document.getElementById('ps_approved')) document.getElementById('ps_approved').textContent = all.filter(p=>p.status==='approved').length;
-  if(document.getElementById('ps_rejected')) document.getElementById('ps_rejected').textContent = all.filter(p=>p.status==='rejected').length;
-  if(countEl) countEl.textContent = partners.length;
-  if(!tbody) return;
-  if(partners.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#475569;padding:2rem">لا يوجد شركاء مسجّلون بعد — <a href="/register-partner.html" target="_blank" style="color:#38bdf8">افتح رابط التسجيل</a></td></tr>';
-    return;
-  }
-  const planLabels = {trial:'تجريبية', basic:'أساسية', pro:'متقدمة'};
-  const planBadge = {trial:'badge-trial', basic:'badge-basic', pro:'badge-pro'};
-  tbody.innerHTML = partners.map((p,i) => {
-    const statusBadge = p.status === 'approved' ? '<span class="badge badge-active">✓ مقبول</span>' :
-                        p.status === 'rejected' ? '<span class="badge badge-expired">✕ مرفوض</span>' :
-                        '<span class="badge badge-pending">⏳ قيد المراجعة</span>';
-    const reqCount = getPartnerRequestCount(p.id);
-    const org = escapeHtml(p.org || '—');
-    const city = escapeHtml(p.city || '');
-    const orgtype = escapeHtml(p.orgtype || '—');
-    const fullName = escapeHtml((p.fname||'') + ' ' + (p.lname||''));
-    const title = escapeHtml(p.title || '');
-    const email = escapeHtml(p.email || '—');
-    const date = escapeHtml(p.date || '—');
-    const initial = escapeHtml((p.org||'?')[0]);
-    return `<tr onclick="openPartnerDetail(${p.id})" style="cursor:pointer">
-      <td style="color:#475569">${i+1}</td>
-      <td><div class="client-info"><div class="client-av">${initial}</div><div><div class="client-name">${org}</div><div class="client-org">${city}</div></div></div></td>
-      <td><span class="badge badge-pending" style="font-size:.7rem">${orgtype}</span></td>
-      <td><div class="client-name">${fullName}</div><div class="client-org">${title}</div></td>
-      <td style="color:#64748b;font-size:.78rem">${email}</td>
-      <td><span class="badge ${planBadge[p.plan]||'badge-basic'}">${planLabels[p.plan]||escapeHtml(p.plan)}</span></td>
-      <td style="color:#64748b;font-size:.78rem">${date}</td>
-      <td style="text-align:center;font-weight:700;color:#e2e8f0">${reqCount}</td>
-      <td>${statusBadge}</td>
-      <td onclick="event.stopPropagation()"><div class="actions-cell">
-        ${p.status !== 'approved' ? `<button class="btn-sm" onclick="approvePartner(${p.id})">قبول</button>` : ''}
-        ${p.status !== 'rejected' ? `<button class="btn-sm danger" onclick="rejectPartner(${p.id})">رفض</button>` : ''}
-        <button class="btn-sm" onclick="deletePartner(${p.id})">حذف</button>
-      </div></td>
-    </tr>`;
-  }).join('');
-}
-
-function getPartnerRequestCount(partnerId) {
-  const all = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]');
-  return all.filter(r => r.partnerId === partnerId).length;
-}
-
-function filterPartners() {
-  const q = (document.getElementById('partner_search').value || '').toLowerCase();
-  const status = document.getElementById('partner_filter').value;
-  let partners = JSON.parse(localStorage.getItem('rafd_partners') || '[]');
-  if(q) partners = partners.filter(p => (p.org||'').toLowerCase().includes(q) || (p.email||'').toLowerCase().includes(q) || (p.fname||'').toLowerCase().includes(q));
-  if(status) partners = partners.filter(p => p.status === status);
-  renderPartnersTable(partners);
-}
-
-async function approvePartner(id) {
-  const p = supabasePartners.find(x => x.id === id);
-  if(p) {
-    try {
-      const { ok } = await adminApi({ action: 'update_status', data: { id, status: 'approved' } });
-      if(!ok) throw new Error('فشل الطلب');
-      p.status = 'approved';
-      renderPartnersTable(supabasePartners);
-      alert('✅ تم قبول الشريك: ' + p.org + '\nيمكنه الآن الدخول للوحة التحكم.');
-    } catch(e) { alert('خطأ: ' + e.message); }
-  }
-}
-
-async function rejectPartner(id) {
-  const p = supabasePartners.find(x => x.id === id);
-  if(p) {
-    if(!confirm('هل تريد رفض طلب: ' + p.org + '؟')) return;
-    try {
-      const { ok } = await adminApi({ action: 'update_status', data: { id, status: 'rejected' } });
-      if(!ok) throw new Error('فشل الطلب');
-      p.status = 'rejected';
-      renderPartnersTable(supabasePartners);
-    } catch(e) { alert('خطأ: ' + e.message); }
-  }
-}
-
-async function deletePartner(id) {
-  if(!confirm('هل تريد حذف هذا الشريك نهائياً؟')) return;
-  try {
-    const { ok } = await adminApi({ action: 'delete_partner', data: { id } });
-    if(!ok) throw new Error('فشل الطلب');
-    supabasePartners = supabasePartners.filter(x => x.id !== id);
-    renderPartnersTable(supabasePartners);
-  } catch(e) { alert('خطأ: ' + e.message); }
-}
-
-function openPartnerDetail(id) {
-  const p = supabasePartners.find(x => x.id === id);
-  if(!p) return;
-  const reqs = JSON.parse(localStorage.getItem('rafd_partner_requests') || '[]').filter(r => r.partnerId === id);
-  const approved = reqs.filter(r => r.result === 'approved').length;
-  const rejected = reqs.filter(r => r.result === 'rejected').length;
-  const planLabels = {trial:'تجريبية', basic:'أساسية', pro:'متقدمة'};
-  const safeWebsite = p.website ? escapeHtml(p.website) : '';
-  document.getElementById('detailBody').innerHTML = `
-    <div class="detail-section">
-      <div class="detail-section-title">معلومات الجهة</div>
-      <div class="detail-row"><span class="detail-key">اسم الجهة</span><span class="detail-val">${escapeHtml(p.org)}</span></div>
-      <div class="detail-row"><span class="detail-key">نوع الجهة</span><span class="detail-val">${escapeHtml(p.orgtype)}</span></div>
-      <div class="detail-row"><span class="detail-key">المدينة</span><span class="detail-val">${escapeHtml(p.city||'—')}</span></div>
-      <div class="detail-row"><span class="detail-key">الموقع</span><span class="detail-val">${safeWebsite ? '<a href="'+safeWebsite+'" target="_blank" rel="noopener noreferrer" style="color:#38bdf8">'+safeWebsite+'</a>' : '—'}</span></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">المسؤول</div>
-      <div class="detail-row"><span class="detail-key">الاسم</span><span class="detail-val">${escapeHtml(p.fname)} ${escapeHtml(p.lname)}</span></div>
-      <div class="detail-row"><span class="detail-key">المسمى</span><span class="detail-val">${escapeHtml(p.title||'—')}</span></div>
-      <div class="detail-row"><span class="detail-key">البريد</span><span class="detail-val">${escapeHtml(p.email)}</span></div>
-      <div class="detail-row"><span class="detail-key">الجوال</span><span class="detail-val">${escapeHtml(p.phone||'—')}</span></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">الاشتراك والإحصائيات</div>
-      <div class="detail-row"><span class="detail-key">الباقة</span><span class="detail-val">${escapeHtml(planLabels[p.plan]||p.plan)}</span></div>
-      <div class="detail-row"><span class="detail-key">السعر</span><span class="detail-val">${p.price > 0 ? p.price.toLocaleString()+' ريال/شهر' : 'مجاني'}</span></div>
-      <div class="detail-row"><span class="detail-key">تاريخ التسجيل</span><span class="detail-val">${escapeHtml(p.date)}</span></div>
-      <div class="detail-row"><span class="detail-key">إجمالي الطلبات</span><span class="detail-val">${reqs.length}</span></div>
-      <div class="detail-row"><span class="detail-key">مقبول / مرفوض</span><span class="detail-val">${approved} / ${rejected}</span></div>
-      <div class="detail-row"><span class="detail-key">الغرض</span><span class="detail-val">${escapeHtml(p.purpose||'—')}</span></div>
-    </div>
-    <div style="display:flex;gap:.75rem;margin-top:1rem">
-      ${p.status !== 'approved' ? `<button class="btn-save" style="flex:1" onclick="approvePartner(${p.id});closeDetail()">✓ قبول الطلب</button>` : '<button class="btn-save" style="flex:1;opacity:.5" disabled>✓ مقبول</button>'}
-      ${p.status !== 'rejected' ? `<button class="btn-cancel" style="flex:1" onclick="rejectPartner(${p.id});closeDetail()">✕ رفض الطلب</button>` : ''}
-    </div>
-  `;
-  document.getElementById('detailOverlay').classList.add('open');
-}
-
-// ===== REPORTS =====
-function renderReports() {
-  const active = clients.filter(c => c.status === 'active');
-  const paid = active.filter(c => c.price > 0);
-  const totalRev = active.reduce((s,c) => s + c.price, 0);
-  const trials = clients.filter(c => c.plan === 'trial').length;
-  const total = clients.length;
-  const conversion = total > 0 ? ((paid.length / total) * 100).toFixed(0) : 0;
-  const arpu = paid.length > 0 ? Math.round(totalRev / paid.length) : 0;
-  const expired = clients.filter(c => c.status === 'expired').length;
-  const churn = total > 0 ? ((expired / total) * 100).toFixed(0) : 0;
-  const partners = JSON.parse(localStorage.getItem('rafd_partners') || '[]');
-  const approvedPartners = partners.filter(p => p.status === 'approved');
-  const partnerRev = approvedPartners.reduce((s,p) => s + (p.price || 0), 0);
-  if(document.getElementById('kpi_total_rev')) document.getElementById('kpi_total_rev').textContent = totalRev.toLocaleString();
-  if(document.getElementById('kpi_conversion')) document.getElementById('kpi_conversion').textContent = conversion + '%';
-  if(document.getElementById('kpi_arpu')) document.getElementById('kpi_arpu').textContent = arpu.toLocaleString();
-  if(document.getElementById('kpi_partner_rev')) document.getElementById('kpi_partner_rev').textContent = partnerRev.toLocaleString();
-  if(document.getElementById('kpi_churn')) document.getElementById('kpi_churn').textContent = churn + '%';
-  // Chart Plans
-  const planChart = document.getElementById('chartPlans');
-  if(planChart) {
-    const trialC = clients.filter(c=>c.plan==='trial').length;
-    const basicC = clients.filter(c=>c.plan==='basic').length;
-    const proC = clients.filter(c=>c.plan==='pro').length;
-    const max = Math.max(trialC, basicC, proC, 1);
-    planChart.innerHTML = [
-      {label:'⏳ تجريبية', count:trialC, color:'#f59e0b'},
-      {label:'🔵 أساسية', count:basicC, color:'#60a5fa'},
-      {label:'🟣 متقدمة', count:proC, color:'#a78bfa'}
-    ].map(b => `<div style="margin-bottom:.85rem">
-      <div style="display:flex;justify-content:space-between;margin-bottom:.3rem"><span style="color:${b.color};font-size:.83rem">${b.label}</span><span style="color:#e2e8f0;font-weight:700">${b.count}</span></div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${(b.count/max*100).toFixed(0)}%;background:${b.color}"></div></div>
-    </div>`).join('');
-  }
-  // Chart Types
-  const typeChart = document.getElementById('chartTypes');
-  if(typeChart) {
-    const typeCounts = {};
-    clients.forEach(c => { typeCounts[c.type] = (typeCounts[c.type]||0)+1; });
-    const maxT = Math.max(...Object.values(typeCounts), 1);
-    typeChart.innerHTML = Object.entries(typeCounts).map(([t,n]) => `<div style="margin-bottom:.85rem">
-      <div style="display:flex;justify-content:space-between;margin-bottom:.3rem"><span style="color:#94a3b8;font-size:.83rem">${t}</span><span style="color:#e2e8f0;font-weight:700">${n}</span></div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${(n/maxT*100).toFixed(0)}%"></div></div>
-    </div>`).join('');
-  }
-  // Report Table
-  const tbody = document.getElementById('reportTable');
-  if(tbody) {
-    document.getElementById('reportCount').textContent = clients.length;
-    const planLabel = {trial:'تجريبية', basic:'أساسية', pro:'متقدمة'};
-    tbody.innerHTML = clients.map(c => `<tr>
-      <td>${c.fname} ${c.lname}</td>
-      <td style="color:#64748b">${c.org}</td>
-      <td>${planLabel[c.plan]||c.plan}</td>
-      <td style="color:${c.price>0?'#10b981':'#64748b'}">${c.price>0?c.price.toLocaleString()+' ر':'مجاني'}</td>
-      <td><span class="badge ${c.status==='active'?'badge-active':c.status==='expired'?'badge-expired':'badge-pending'}">${c.status==='active'?'نشط':c.status==='expired'?'منتهي':'معلّق'}</span></td>
-      <td style="color:#64748b">${formatDate(c.startDate)}</td>
-    </tr>`).join('');
-  }
-}
-
-function exportCSV() {
-  const headers = ['الاسم','الجهة','البريد','الباقة','السعر','الحالة','تاريخ الاشتراك'];
-  const rows = clients.map(c => [
-    sanitizeCsvField(c.fname+' '+c.lname),
-    sanitizeCsvField(c.org),
-    sanitizeCsvField(c.email),
-    sanitizeCsvField(c.plan),
-    sanitizeCsvField(c.price),
-    sanitizeCsvField(c.status),
-    sanitizeCsvField(c.startDate)
-  ]);
-  const csv = [headers, ...rows].map(r => r.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'rafd-clients-'+new Date().toISOString().split('T')[0]+'.csv';
-  a.click();
-}
-
-// ===== SESSION TIMEOUT (30 min inactivity) =====
-let _idleTimer = null;
-const IDLE_LIMIT_MS = 30 * 60 * 1000;
-const WARN_BEFORE_MS = 5 * 60 * 1000;
-
-function resetIdleTimer() {
-  clearTimeout(_idleTimer);
-  _idleTimer = setTimeout(() => {
-    // warn at 25 min
-    const stay = confirm('ستنتهي جلستك خلال 5 دقائق. هل تريد الاستمرار؟');
-    if (stay) {
-      resetIdleTimer();
-    } else {
-      doLogout();
-    }
-  }, IDLE_LIMIT_MS - WARN_BEFORE_MS);
-}
-
-function startIdleWatch() {
-  ['mousemove','keydown','click','touchstart','scroll'].forEach(evt =>
-    document.addEventListener(evt, resetIdleTimer, { passive: true })
-  );
-  resetIdleTimer();
-}
-
-function stopIdleWatch() {
-  clearTimeout(_idleTimer);
-  ['mousemove','keydown','click','touchstart','scroll'].forEach(evt =>
-    document.removeEventListener(evt, resetIdleTimer)
-  );
-}
-
-// ===== NAVIGATION =====
-function showPage(page) {
-  ['clients','revenue','partners','trials','reports'].forEach(p => {
-    const el = document.getElementById('page-' + p);
-    if(el) el.style.display = p === page ? 'block' : 'none';
-  });
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  if(page === 'partners') renderPartnersTable();
-  if(page === 'reports') renderReports();
-}
-</script>
+<script src="/js/admin.js"></script>
 </body>
 </html>
