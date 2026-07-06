@@ -71,6 +71,19 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 /* روابط الدخول في القائمة على الجوال فقط */
 .nav-links .mobile-nav-login,
 .nav-links .mobile-nav-sep { display: none; }
+.nav-links.mobile-open {
+  display: flex !important;
+  flex-direction: column;
+  position: absolute;
+  top: 72px;
+  right: 0;
+  left: 0;
+  background: #fff;
+  padding: 1rem 1.5rem 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  z-index: 999;
+}
 .nav-links.mobile-open .mobile-nav-login { display: list-item; }
 .nav-links.mobile-open .mobile-nav-sep { display: list-item; border-top: 1px solid #e2e8f0; margin: .4rem 0; list-style: none; }
 .nav-links .mobile-nav-login a { display: block; padding: .7rem 0; color: var(--primary); font-size: .9rem; font-weight: 600; text-decoration: none; }
