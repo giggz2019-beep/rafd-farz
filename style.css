@@ -1,6 +1,5 @@
 /* ===== RAFD SMART PLATFORM — MOBILE-FIRST CSS ===== */
 /* Colors: #1a3a4a (dark blue) + #4a9d6f (green) */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Light.otf') format('opentype'); font-weight: 300; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
@@ -26,7 +25,7 @@ input, textarea, select, [contenteditable] { -webkit-user-select: text; user-sel
   --shadow-lg: 0 20px 60px rgba(0,0,0,.12);
   --font-heading: 'ThmanyahSans', sans-serif;
   --font-body: 'ThmanyahSans', sans-serif;
-  --font-en: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', sans-serif;
+  --font-en: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
