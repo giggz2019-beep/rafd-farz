@@ -19,8 +19,8 @@
 **File:** `api/_lib/rate-limit.js`
 
 ### 3. Security Headers (CSP, HSTS, X-Frame-Options)
-- ✅ Content-Security-Policy with strict defaults
-- ✅ Removed `'unsafe-inline'` from script-src
+- ✅ Content-Security-Policy with static-site-compatible defaults
+- ✅ Inline script/style support enabled temporarily because the current pages rely on inline `<style>`, inline `<script>`, and `onclick` handlers
 - ✅ HSTS with 1-year max-age
 - ✅ Frame-ancestors set to 'none'
 - ✅ Referrer-Policy: strict-origin-when-cross-origin
@@ -112,7 +112,7 @@ node server.js
 - [ ] Resend API key is valid
 - [ ] Vercel environment variables are set
 - [ ] HTTPS enforced on domain
-- [ ] CSP headers are strict (no `'unsafe-inline'`)
+- [ ] Replace inline page CSS/JS with external assets, then remove `'unsafe-inline'` from CSP
 - [ ] Rate limiting active
 - [ ] Audit logging enabled
 
@@ -124,7 +124,7 @@ node server.js
 4. **Review audit logs** — Check for suspicious activity
 5. **Keep dependencies updated** — Run `npm audit` regularly
 6. **Use HTTPS everywhere** — Enforce TLS/SSL
-7. **Test CSP** — Verify headers with browser DevTools
+7. **Test CSP** — Verify headers with browser DevTools and keep CSP aligned with the current frontend architecture
 8. **CORS restrictions** — Only allow trusted origins
 
 ## 📞 Support
@@ -134,4 +134,4 @@ For security issues, email: **security@rafd-digital.com**
 ---
 
 **Last Updated:** 2026-07-05  
-**Status:** ✅ Production Ready
+**Status:** ✅ Production Ready (with temporary CSP compatibility allowance for current static pages)
