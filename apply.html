@@ -1,0 +1,2088 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="/rafd-logo.png" type="image/png">
+  <link rel="shortcut icon" href="/rafd-logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">تقديم الطلب — RAFD Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;direction:rtl;min-height:100vh;-webkit-user-select:none;user-select:none}
+input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text}
+.hdr{background:#fff;border-bottom:1px solid #e2e8f0;padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.04)}
+.hdr-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+.hdr-icon{width:36px;height:36px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1rem;flex-shrink:0}
+.hdr-name{font-size:1rem;font-weight:800;color:#0f172a}
+.hdr-sub{font-size:.72rem;color:#64748b;font-weight:500}
+.hdr-powered{font-size:.72rem;color:#94a3b8}
+.prog-wrap{background:#fff;border-bottom:1px solid #e2e8f0;padding:1.1rem 2rem;display:none}
+.prog-steps{display:flex;align-items:flex-start;justify-content:center;gap:0;max-width:560px;margin:0 auto}
+.ps-col{display:flex;flex-direction:column;align-items:center;flex:1}
+.ps-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;transition:all .3s}
+.ps-circle.done{background:#10b981;color:#fff}
+.ps-circle.active{background:#1a3a4a;color:#fff;box-shadow:0 0 0 4px rgba(26,58,74,.12)}
+.ps-circle.idle{background:#e2e8f0;color:#94a3b8}
+.ps-label{font-size:.68rem;color:#94a3b8;margin-top:.3rem;text-align:center;white-space:nowrap}
+.ps-label.active{color:#1a3a4a;font-weight:700}
+.ps-line{flex:1;height:2px;background:#e2e8f0;margin:0 .2rem;margin-bottom:1.1rem;transition:background .3s}
+.ps-line.done{background:#10b981}
+.prog-bar{height:3px;background:#e2e8f0;border-radius:3px;max-width:560px;margin:.8rem auto 0;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#1a3a4a,#4a9d6f);border-radius:3px;transition:width .5s ease}
+.wrap{max-width:660px;margin:2rem auto;padding:0 1.5rem}
+/* ===== PARTNER LANDING PAGE ===== */
+.partner-page{background:#050d1f;min-height:calc(100vh - 64px);padding:0 0 3rem}
+
+/* Hero */
+.partner-hero-section{
+  background:linear-gradient(135deg,#050d1f 0%,#0a1a3e 40%,#07132b 100%);
+  padding:4rem 1.5rem 4.5rem;position:relative;overflow:hidden;
+}
+.partner-hero-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 80% at 25% 50%,rgba(37,99,235,.14) 0%,transparent 65%);
+  pointer-events:none;
+}
+.partner-hero-section::after{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:28px 28px;pointer-events:none;
+}
+.hero-inner{max-width:1060px;margin:0 auto;display:flex;align-items:center;gap:3.5rem;position:relative;z-index:1}
+.hero-content{flex:1;text-align:right}
+.hero-mockup{flex:0 0 430px;filter:drop-shadow(0 28px 56px rgba(0,0,0,.55))}
+
+/* Content */
+.ph-rafd-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:.3rem .85rem;font-size:.72rem;color:#7aa3cc;margin-bottom:1.5rem}
+.ph-org-avatar{width:70px;height:70px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:1rem;box-shadow:0 4px 24px rgba(0,0,0,.25);border:1.5px solid rgba(255,255,255,.14)}
+.ph-org-name{font-size:2.1rem;font-weight:900;color:#fff;margin-bottom:.3rem;line-height:1.2}
+.ph-org-type{font-size:.82rem;color:#3b7dd8;margin-bottom:.55rem;font-weight:600}
+.ph-divider{width:42px;height:2.5px;background:linear-gradient(90deg,#2563eb,transparent);border-radius:2px;margin:.75rem 0}
+.ph-program-name{font-size:1rem;font-weight:700;color:#60a5fa;margin-bottom:.5rem}
+.ph-program-desc{font-size:.88rem;color:#8bacc7;line-height:1.85;max-width:400px;margin:0 0 1.6rem}
+.hero-features{display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:1.85rem}
+.hero-feat{display:flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:.28rem .7rem;font-size:.74rem;color:#94a3b8;font-weight:600}
+.ph-stats{display:none}
+.btn-start{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border:none;padding:.95rem 2.2rem;border-radius:13px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;gap:.5rem;box-shadow:0 8px 28px rgba(37,99,235,.38)}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(37,99,235,.52)}
+.ph-note{font-size:.71rem;color:#3d5a7a;margin-top:.9rem;line-height:1.6}
+
+/* Browser Mockup */
+.browser-mock{background:#111827;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.09)}
+.mock-chrome{background:#0d1424;padding:.55rem .8rem;display:flex;align-items:center;gap:.55rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.mock-dots{display:flex;gap:.32rem}
+.mock-dot{width:9px;height:9px;border-radius:50%}
+.mock-url{flex:1;background:rgba(255,255,255,.05);border-radius:5px;padding:.22rem .65rem;font-size:.62rem;color:#3d5a7a;font-family:monospace;text-align:left;direction:ltr}
+.mock-body{padding:1rem 1.1rem}
+.mock-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;padding-bottom:.7rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.mock-org-name{font-size:.76rem;font-weight:700;color:#e2e8f0}
+.mock-status-ok{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.28);border-radius:20px;padding:.18rem .6rem;font-size:.65rem;font-weight:700}
+.mock-score-section{display:flex;align-items:center;gap:.9rem;margin-bottom:.9rem}
+.mock-gauge-wrap{position:relative;flex-shrink:0}
+.mock-gauge-svg{display:block}
+.mock-score-details{flex:1}
+.mock-score-label{font-size:.62rem;color:#4a7aaa;margin-bottom:.2rem}
+.mock-score-big{font-size:1.3rem;font-weight:900;color:#10b981;line-height:1}
+.mock-score-sub{font-size:.6rem;color:#4a7aaa;margin-top:.15rem}
+.mock-verdict{display:inline-flex;align-items:center;gap:.3rem;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);border-radius:8px;padding:.3rem .7rem;font-size:.7rem;font-weight:800;color:#10b981;margin-bottom:.85rem}
+.mock-criteria-title{font-size:.6rem;font-weight:700;color:#4a7aaa;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
+.mock-crit{display:flex;align-items:center;gap:.5rem;margin-bottom:.42rem}
+.mock-crit-lbl{font-size:.62rem;color:#64748b;width:55px;flex-shrink:0;text-align:right}
+.mock-crit-track{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.mock-crit-fill{height:100%;border-radius:2px}
+.mock-crit-pct{font-size:.6rem;color:#64748b;width:24px;text-align:left;flex-shrink:0}
+
+/* Steps section */
+.partner-steps-section{max-width:660px;margin:0 auto;padding:2.5rem 1.5rem}
+.steps-title{font-size:.78rem;font-weight:700;color:#3d5a7a;text-align:center;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.2rem}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.step-card{background:#0c1a35;border:1px solid rgba(37,99,235,.2);border-radius:14px;padding:1.1rem .85rem;text-align:center}
+.step-num{width:32px;height:32px;background:rgba(37,99,235,.15);border:1.5px solid rgba(37,99,235,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#60a5fa;margin:0 auto .6rem}
+.step-title{font-size:.78rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem}
+.step-desc{font-size:.7rem;color:#4a7aaa;line-height:1.5}
+
+/* Partner footer */
+.partner-footer{text-align:center;padding:1.5rem;border-top:1px solid #0c1a35}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero-inner{flex-direction:column;gap:2rem}
+  .hero-mockup{flex:none;width:100%;max-width:400px;margin:0 auto}
+  .hero-content{text-align:center}
+  .ph-divider{margin:.75rem auto}
+  .ph-program-desc{margin:0 auto 1.6rem}
+  .hero-features{justify-content:center}
+  .ph-org-avatar{margin:0 auto 1rem}
+}
+.partner-footer span{font-size:.75rem;color:#334155}
+.partner-footer strong{color:#475569}
+.form-card{background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(0,0,0,.06);border:1px solid #e2e8f0;display:none}
+.form-card.show{display:block}
+.fc-title{font-size:1.25rem;font-weight:800;color:#0f172a;margin-bottom:.3rem}
+.fc-sub{font-size:.85rem;color:#64748b;margin-bottom:1.75rem}
+.fld{margin-bottom:1.2rem}
+.fld label{display:block;font-size:.85rem;font-weight:600;color:#374151;margin-bottom:.45rem}
+.fld label .req{color:#ef4444;margin-right:.2rem}
+.fld input,.fld select,.fld textarea{width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.88rem;color:#1e293b;transition:border-color .2s;background:#fff}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:#1a3a4a;box-shadow:0 0 0 3px rgba(26,58,74,.07)}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+.dob-row{display:grid;grid-template-columns:1fr 1.5fr 1.3fr;gap:.5rem}
+.dob-row select{padding:.75rem .6rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.86rem;color:#1e293b;background:#fff;width:100%;outline:none;transition:border-color .2s}
+.dob-row select:focus{border-color:#1a3a4a;box-shadow:0 0 0 3px rgba(26,58,74,.07)}
+.dob-row.err select{border-color:#ef4444!important}
+.fld textarea{resize:vertical;min-height:90px}
+.fld .hint{font-size:.72rem;color:#94a3b8;margin-top:.3rem}
+.sec-lbl{font-size:.75rem;font-weight:800;color:#1a3a4a;background:#f0f9ff;border-right:3px solid #1a3a4a;padding:.35rem .75rem;border-radius:0 6px 6px 0;margin-bottom:.85rem;letter-spacing:.02em}
+.upload-zone{border:2px dashed #cbd5e1;border-radius:10px;padding:1rem 1.1rem;cursor:pointer;transition:.2s;background:#fafbfc;text-align:center;position:relative}
+.upload-zone:hover,.upload-zone.has-file{border-color:#1a3a4a;background:#f0f9ff}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-zone .uz-icon{font-size:1.5rem;margin-bottom:.3rem}
+.upload-zone .uz-label{font-size:.78rem;color:#64748b;font-weight:600}
+.upload-zone .uz-hint{font-size:.68rem;color:#94a3b8;margin-top:.2rem}
+.upload-zone .uz-file{font-size:.75rem;color:#10b981;font-weight:700;display:none}
+.upload-zone.has-file .uz-file{display:block}
+.upload-zone.has-file .uz-hint{display:none}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.radio-opts,.check-opts{display:flex;flex-direction:column;gap:.5rem}
+.ropt,.copt{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;border:1.5px solid #e2e8f0;border-radius:10px;cursor:pointer;transition:all .2s;user-select:none}
+.ropt:hover,.copt:hover{border-color:#1a3a4a;background:#f8fafc}
+.ropt.sel{border-color:#10b981;background:#f0fdf4}
+.copt.sel{border-color:#1a3a4a;background:#f0f9ff}
+.ropt input,.copt input{width:16px;height:16px;accent-color:#10b981;flex-shrink:0}
+.ropt span,.copt span{font-size:.85rem;color:#374151}
+.range-row{display:flex;align-items:center;gap:.9rem}
+.range-row input[type=range]{flex:1;accent-color:#1a3a4a;height:4px}
+.range-val{font-size:.9rem;font-weight:700;color:#1a3a4a;min-width:70px;text-align:center}
+.upload-zone{border:2px dashed #cbd5e1;border-radius:12px;padding:1.75rem;text-align:center;cursor:pointer;transition:all .2s}
+.upload-zone:hover{border-color:#1a3a4a;background:#f8fafc}
+.upload-zone p{font-size:.85rem;color:#64748b;margin-top:.4rem}
+.fnav{display:flex;justify-content:space-between;align-items:center;margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid #f1f5f9}
+.fld.err>input,.fld.err>select,.fld.err>textarea,.fld.err>.phone-wrap input{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.09)!important}
+.radio-opts.err .ropt{border-color:#ef4444!important}
+.fld input.valid,.fld select.valid,.fld textarea.valid,.fld .phone-wrap input.valid{border-color:#10b981!important;box-shadow:0 0 0 3px rgba(16,185,129,.09)!important}
+/* ===== Custom Searchable Select ===== */
+.csel{position:relative;direction:ltr}
+.csel-btn{width:100%;padding:.72rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;display:flex;align-items:center;gap:.55rem;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.88rem;color:#1e293b;transition:border-color .2s}
+.csel-btn:focus{outline:none;border-color:#1a3a4a;box-shadow:0 0 0 3px rgba(26,58,74,.07)}
+.csel-btn.sel-valid{border-color:#10b981!important;box-shadow:0 0 0 3px rgba(16,185,129,.09)!important}
+.csel-btn.sel-err{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.09)!important}
+.csel-flag{font-size:1.15rem;flex-shrink:0;line-height:1}
+.csel-lbl{flex:1;text-align:right;color:#9ca3af;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.csel-lbl.has-val{color:#1e293b}
+.csel-arr{color:#9ca3af;font-size:.65rem;flex-shrink:0;transition:transform .2s;margin-right:auto}
+.csel.open .csel-arr{transform:rotate(180deg)}
+.csel-panel{position:absolute;top:calc(100% + 4px);right:0;left:0;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.13);overflow:hidden;display:none}
+.csel-q{width:100%;padding:.65rem 1rem;border:none;border-bottom:1px solid #f1f5f9;outline:none;font-family:'Cairo',sans-serif;font-size:.85rem;direction:rtl;box-sizing:border-box;background:#f8fafc}
+.csel-q:focus{background:#fff}
+.csel-opts{max-height:220px;overflow-y:auto}
+.csel-opt{padding:.52rem 1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;font-size:.84rem;color:#1e293b;direction:rtl;transition:background .1s}
+.csel-opt:hover,.csel-opt.kbfocus{background:#f1f5f9}
+.csel-opt.is-active{background:rgba(16,185,129,.08);color:#059669;font-weight:700}
+.csel-opt-flag{font-size:1.05rem;flex-shrink:0}
+/* CC compact */
+.cc-csel-wrap{display:flex;gap:0;direction:ltr}
+.cc-csel{flex-shrink:0}
+.cc-csel .csel-btn{border-radius:10px 0 0 10px;border-left:none;padding:.55rem .65rem;gap:.3rem;min-width:85px;direction:ltr;justify-content:center}
+.cc-csel .csel-panel{right:auto;left:0;min-width:240px}
+.cc-inp{border-radius:0 10px 10px 0!important;flex:1}
+.step-err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);color:#dc2626;border-radius:10px;padding:.65rem 1rem;font-size:.82rem;margin-bottom:.75rem;text-align:right;display:none}
+.btn-prev{background:#f1f5f9;color:#64748b;border:none;padding:.7rem 1.4rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-prev:hover{background:#e2e8f0}
+.btn-next{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.75rem 1.75rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.btn-next:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,58,74,.22)}
+.btn-submit{background:linear-gradient(135deg,#059669,#10b981)}
+.step-ctr{font-size:.78rem;color:#94a3b8}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-bg.show{opacity:1;pointer-events:all}
+.modal-box{background:#fff;border-radius:20px;padding:2rem;max-width:420px;width:100%;transform:scale(.9);transition:transform .3s}
+.modal-bg.show .modal-box{transform:scale(1)}
+.modal-hdr{background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:14px;padding:1.1rem;margin-bottom:1.4rem;text-align:center;color:#fff;font-size:1rem;font-weight:700}
+.modal-body{font-size:.875rem;color:#1f2937;line-height:1.9;margin-bottom:1.6rem;text-align:center}
+.btn-modal{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;padding:.9rem 2rem;border-radius:12px;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;transition:all .2s}
+.btn-modal:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,.28)}
+.ai-page{display:none;max-width:660px;margin:2rem auto;padding:0 1.5rem}
+.ai-page.show{display:block}
+.ai-intro{text-align:center;margin-bottom:1.75rem}
+.ai-intro h2{font-size:1.4rem;font-weight:900;color:#0f172a;margin-bottom:.4rem}
+.ai-intro p{color:#64748b;font-size:.875rem}
+.terminal{background:#0d1117;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.t-hdr{background:#161b22;padding:.7rem 1rem;display:flex;align-items:center;gap:.45rem}
+.td{width:12px;height:12px;border-radius:50%}
+.td.r{background:#ff5f57}.td.y{background:#ffbd2e}.td.g{background:#28ca41}
+.t-title{color:#8b949e;font-size:.75rem;margin-right:auto;font-family:monospace}
+.t-body{padding:1.4rem;min-height:300px}
+.t-progress-bar{background:#1c2128;border-radius:6px;height:5px;margin-bottom:1.25rem;overflow:hidden}
+.t-progress-fill{height:100%;background:linear-gradient(90deg,#10b981,#4a9d6f);border-radius:6px;width:0;transition:width .5s ease}
+.tl{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.85rem;opacity:0;transform:translateY(6px);transition:all .35s}
+.tl.show{opacity:1;transform:translateY(0)}
+.tl-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;margin-top:2px}
+.tl-icon.ok{background:#10b981;color:#fff}
+.tl-icon.fail{background:#ef4444;color:#fff}
+.tl-text{font-family:'Courier New',monospace;font-size:.8rem;color:#e6edf3;line-height:1.6}
+.tl-text .hi{color:#10b981;font-weight:700}
+.tl-text .wa{color:#f59e0b}
+.tl-text .bl{color:#60a5fa}
+.result-page{display:none;max-width:660px;margin:2rem auto;padding:0 1.5rem}
+.result-page.show{display:block}
+.result-merged{border-radius:20px;overflow:hidden;margin-bottom:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.14)}
+.result-hero{padding:1.75rem 2rem 1.5rem;text-align:center;color:#fff;position:relative;overflow:hidden}
+.result-hero.accepted{background:linear-gradient(135deg,#064e3b,#065f46)}
+.result-hero.rejected{background:linear-gradient(135deg,#7f1d1d,#991b1b)}
+.result-hero.pending{background:linear-gradient(135deg,#78350f,#92400e)}
+.result-hero::before{content:'';position:absolute;top:-40%;right:-10%;width:180px;height:180px;background:rgba(255,255,255,.06);border-radius:50%}
+.rh-trophy{font-size:2.5rem;margin-bottom:.5rem;position:relative}
+.rh-title{font-size:1.5rem;font-weight:900;margin-bottom:.35rem;position:relative}
+.rh-sub{font-size:.88rem;opacity:.85;position:relative}
+.result-gauge-body{background:#fff;padding:1.25rem 1rem .9rem;text-align:center}
+.score-box{background:rgba(255,255,255,.12);border-radius:14px;padding:1.25rem 2rem;display:inline-block;position:relative}
+.sb-label{font-size:.75rem;opacity:.7;margin-bottom:.25rem}
+.sb-score{font-size:2.75rem;font-weight:900;line-height:1}
+.sb-grade{font-size:1rem;font-weight:700;opacity:.85;margin-top:.2rem}
+.reasons-card{background:#fff;border-radius:16px;padding:1.5rem;margin-bottom:1.1rem;border:1px solid #e2e8f0}
+.reasons-card h4{font-size:.95rem;font-weight:700;color:#0f172a;margin-bottom:1rem}
+.reason-item{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.7rem;padding:.7rem .9rem;border-radius:10px}
+.reason-item.pos{background:#f0fdf4;border:1px solid #bbf7d0}
+.reason-item.neg{background:#fef2f2;border:1px solid #fecaca}
+.ri-icon{font-size:.95rem;flex-shrink:0;margin-top:2px}
+.ri-text{font-size:.83rem;color:#374151;line-height:1.6}
+.ri-badge{font-size:.72rem;font-weight:700;padding:.12rem .45rem;border-radius:6px;display:inline-block;margin-left:.35rem}
+.reason-item.pos .ri-badge{background:#dcfce7;color:#166534}
+.reason-item.neg .ri-badge{background:#fee2e2;color:#991b1b}
+.cert-card{border-radius:20px;padding:0;margin-bottom:1.25rem;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.06)}
+.accepted-cert{background:linear-gradient(160deg,#f0fdf4 0%,#dcfce7 100%);border-color:#86efac}
+.rejected-cert{background:linear-gradient(160deg,#fef2f2 0%,#fee2e2 100%);border-color:#fca5a5}
+.pending-cert{background:linear-gradient(160deg,#fffbeb 0%,#fef3c7 100%);border-color:#fcd34d}
+.cert-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.cert-brand{font-size:1.1rem;font-weight:900;color:#0f172a;letter-spacing:.5px}
+.cert-badge-accepted{background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-size:.8rem;font-weight:700;padding:.35rem .9rem;border-radius:20px;display:flex;align-items:center;gap:.3rem}
+.cert-badge-rejected{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;font-size:.8rem;font-weight:700;padding:.35rem .9rem;border-radius:20px;display:flex;align-items:center;gap:.3rem}
+.cert-badge-pending{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;font-size:.8rem;font-weight:700;padding:.35rem .9rem;border-radius:20px;display:flex;align-items:center;gap:.3rem}
+.cert-divider{height:1px;background:rgba(0,0,0,.07);margin:0 1.5rem}
+.cert-body{padding:1.5rem}
+.cert-label{font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem}
+.cert-name{font-size:1.6rem;font-weight:900;color:#0f172a;margin-bottom:.6rem}
+.cert-detail{font-size:.85rem;color:#475569;margin-bottom:.3rem;line-height:1.6}
+.cert-sorry{color:#991b1b!important;font-style:italic;margin-top:.5rem}
+.cert-score-row{display:flex;gap:1rem;margin-top:1.25rem;justify-content:center}
+.cert-score-item{text-align:center;background:rgba(255,255,255,.7);border-radius:12px;padding:.75rem 1.25rem;flex:1;border:1px solid rgba(0,0,0,.06)}
+.csi-val{font-size:1.1rem;font-weight:900;color:#0f172a;margin-bottom:.2rem}
+.csi-lbl{font-size:.7rem;color:#64748b;font-weight:600}
+.cert-footer{padding:1rem 1.5rem;display:flex;flex-direction:column;gap:.3rem;background:rgba(0,0,0,.03);border-top:1px solid rgba(0,0,0,.06)}
+.cert-ref{font-size:.78rem;color:#475569;font-weight:600}
+.cert-date{font-size:.75rem;color:#64748b}
+.cert-powered{font-size:.72rem;color:#94a3b8;margin-top:.1rem}
+.gauge-card{background:#fff;border-radius:20px;padding:1.5rem 1rem 1rem;margin-bottom:1.1rem;box-shadow:0 4px 20px rgba(0,0,0,.09);border:1px solid #e2e8f0;text-align:center}
+.gauge-verdict{font-size:1rem;font-weight:800;margin-top:.6rem;padding:.4rem 1.4rem;border-radius:20px;display:inline-block;letter-spacing:.3px}
+.gv-ok{background:#dcfce7;color:#059669}.gv-fail{background:#fee2e2;color:#dc2626}.gv-pending{background:#fef3c7;color:#b45309}
+.result-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
+.btn-cta-p{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.9rem 1.75rem;border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
+.btn-cta-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,58,74,.28)}
+.confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:300;overflow:hidden}
+.cp{position:absolute;top:-20px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+/* Loading / Error screens */
+.loading-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+.spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#1a3a4a;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-card{background:#fff;border:1px solid #fecaca;border-radius:20px;padding:2.5rem;max-width:420px;margin:2rem auto;text-align:center}
+@media(max-width:580px){
+  .frow{grid-template-columns:1fr}
+  .wc-features{grid-template-columns:1fr 1fr}
+  .wrap,.ai-page,.result-page{padding:0 1rem}
+  .form-card,.welcome-card{padding:1.5rem}
+  .cert-score-row{gap:.5rem}.cert-score-item{padding:.6rem .75rem}.cert-name{font-size:1.3rem}
+}
+/* ===== Document AI Reading ===== */
+.doc-ai-result{margin-top:.45rem}
+.dar-loading{font-size:.74rem;color:#3b82f6;padding:.45rem .75rem;background:rgba(59,130,246,.06);border-radius:8px;border:1px solid rgba(59,130,246,.15);display:flex;align-items:center;gap:.4rem}
+.dar-warn{font-size:.72rem;color:#92400e;padding:.4rem .75rem;background:rgba(245,158,11,.06);border-radius:8px;border:1px solid rgba(245,158,11,.15)}
+.dar-ok{font-size:.73rem;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:.65rem .9rem}
+.dar-ok-hdr{color:#059669;font-weight:700;margin-bottom:.4rem;font-size:.75rem}
+.dar-row{display:flex;gap:.5rem;margin-bottom:.2rem;align-items:flex-start;flex-wrap:wrap}
+.dar-k{color:#64748b;flex-shrink:0;font-weight:600;min-width:75px;font-size:.72rem}
+.dar-v{color:#0f172a;font-weight:700;font-size:.73rem}
+</style>
+</head>
+<body>
+
+<div class="confetti-wrap" id="confetti"></div>
+
+<!-- Loading -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="spinner"></div>
+  <p style="color:#64748b;font-size:.9rem" data-i18n="apply.loading">جارٍ تحميل نموذج التقديم...</p>
+</div>
+
+<!-- Error -->
+<div id="errorScreen" style="display:none">
+  <div class="error-card">
+    <div style="font-size:2.5rem;margin-bottom:1rem">⚠️</div>
+    <div style="font-size:1.2rem;font-weight:800;color:#0f172a;margin-bottom:.5rem" data-i18n="apply.bad-link">رابط التقديم غير صحيح</div>
+    <div style="font-size:.88rem;color:#64748b;line-height:1.8" id="errorMsg" data-i18n="apply.bad-link-sub">تحقق من الرابط أو تواصل مع الجهة التي أرسلته لك.</div>
+    <a href="/" style="display:inline-block;margin-top:1.5rem;color:#1a3a4a;font-weight:700;font-size:.88rem"><span data-i18n="apply.back-home">← العودة للرئيسية</span></a>
+  </div>
+</div>
+
+<!-- Main content -->
+<div id="mainContent" style="display:none">
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <div class="modal-hdr" data-i18n="apply.modal-hdr">🛡️ قبل البدء — ملاحظة مهمة</div>
+    <div class="modal-body" data-i18n="apply.modal-body">هذا التقييم يعتمد على إجاباتك الفعلية. يرجى الإجابة بصدق لأن النتيجة تعكس مدى استيفائك لمعايير <strong>الجهة</strong>.<br><br>بعد إرسال الطلب سيتم تحليل البيانات ومراجعتها وفق معايير الجهة، وستظهر النتيجة خلال دقيقتين.</div>
+    <button class="btn-modal" onclick="startApp()"><span data-i18n="apply.start-btn">ابدأ التقديم الآن ←</span></button>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="hdr">
+  <div id="hdrPartnerBadge" style="display:flex;align-items:center;gap:.4rem;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:20px;padding:.25rem .75rem;font-size:.75rem;color:#7dd3fc">
+    <img src="/rafd-logo.png" alt="RAFD" style="height:20px;width:auto;vertical-align:middle;margin-left:.3rem">
+    <span id="hdrOrgName" data-i18n="apply.hdr-org-default">جهة شريكة</span>
+  </div>
+  <a href="/" class="hdr-logo">
+    <img src="/rafd-logo.png" alt="RAFD Digital" style="height:58px;width:auto;border-radius:10px;background:#fff;padding:4px;box-shadow:0 1px 4px rgba(0,0,0,.12)">
+    <div>
+      <div class="hdr-name">RAFD Digital</div>
+      <div class="hdr-sub" data-i18n="apply.hdr-sub">منصة التقييم الذكي</div>
+    </div>
+  </a>
+  <button id="langToggleBtn" class="lang-toggle" style="background:none;border:1.5px solid #e2e8f0;border-radius:8px;padding:.3rem .7rem;font-size:.78rem;font-weight:700;color:#1e293b;cursor:pointer;white-space:nowrap" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
+</header>
+
+<!-- Progress -->
+<div class="prog-wrap" id="progWrap">
+  <div class="prog-steps">
+    <div class="ps-col"><div class="ps-circle active" id="sc1">1</div><div class="ps-label active" id="sl1" data-i18n="da.step1">المعلومات الشخصية</div></div>
+    <div class="ps-line" id="ln1"></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc2">2</div><div class="ps-label" id="sl2" data-i18n="da.step2">المؤهلات</div></div>
+    <div class="ps-line" id="ln2"></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc3">3</div><div class="ps-label" id="sl3" data-i18n="da.step3">معلومات إضافية</div></div>
+    <div class="ps-line" id="ln3"></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc4">4</div><div class="ps-label" id="sl4" data-i18n="da.step4">المستندات</div></div>
+    <div class="ps-line" id="ln4"></div>
+    <div class="ps-col"><div class="ps-circle idle" id="sc5">5</div><div class="ps-label" id="sl5" data-i18n="apply.result">النتيجة</div></div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:20%"></div></div>
+</div>
+
+<!-- Welcome / Partner Landing Page -->
+<div id="welcomeWrap" class="partner-page">
+
+  <!-- Hero -->
+  <div class="partner-hero-section">
+    <div class="hero-inner">
+
+      <!-- Content (RTL: right side) -->
+      <div class="hero-content">
+        <div class="ph-rafd-badge">
+          <img src="/rafd-logo.png" alt="RAFD" style="height:19px;width:auto;vertical-align:middle;margin-left:.35rem;background:#fff;border-radius:4px;padding:2px">
+          <span data-i18n="apply.rafd-badge">RAFD Digital — منصة التقييم الذكي</span>
+        </div>
+        <div class="ph-org-avatar" id="ph_avatar">🏢</div>
+        <h1 class="ph-org-name" id="welcomePartnerName">—</h1>
+        <div class="ph-org-type" id="ph_org_type" data-i18n="apply.org-type-default">جهة شريكة معتمدة</div>
+        <div class="ph-divider"></div>
+        <div class="ph-program-name" id="ph_program_name" data-i18n="apply.prog-default">برنامج التقديم</div>
+        <p class="ph-program-desc" id="welcomeDesc" data-i18n="apply.prog-desc-default">قدّم طلبك الآن واحصل على نتيجة التقديم خلال دقيقتين.</p>
+        <div class="hero-features">
+          <div class="hero-feat">⚡ <span data-i18n="apply.feat-instant">نتيجة فورية</span></div>
+          <div class="hero-feat">🎯 <span data-i18n="apply.feat-accurate">تقييم دقيق</span></div>
+          <div class="hero-feat">🔒 <span data-i18n="apply.feat-secure">آمن وموثوق</span></div>
+          <div class="hero-feat">⏱ <span data-i18n="apply.feat-time">أقل من دقيقتين</span></div>
+        </div>
+        <button class="btn-start" onclick="showModal()"><span data-i18n="apply.start-btn">ابدأ التقديم الآن ←</span></button>
+        <p class="ph-note" data-i18n="apply.ph-note">⚠️ تأكد من صحة بياناتك — القرار يصدر فور الإرسال ولا يمكن تعديله</p>
+      </div>
+
+      <!-- Browser Mockup (left side) -->
+      <div class="hero-mockup">
+        <div class="browser-mock">
+          <!-- Chrome bar -->
+          <div class="mock-chrome">
+            <div class="mock-dots">
+              <div class="mock-dot" style="background:#ff5f57"></div>
+              <div class="mock-dot" style="background:#febc2e"></div>
+              <div class="mock-dot" style="background:#28c840"></div>
+            </div>
+            <div class="mock-url">rafd-digital.com/apply</div>
+          </div>
+          <!-- Dashboard body -->
+          <div class="mock-body">
+            <!-- Top bar -->
+            <div class="mock-topbar">
+              <div class="mock-status-ok" data-i18n="apply.mock-status">✓ تقييم مكتمل</div>
+              <div class="mock-org-name" id="mockOrgName">RAFD Digital</div>
+            </div>
+            <!-- Score gauge -->
+            <div class="mock-score-section">
+              <div class="mock-gauge-wrap">
+                <svg class="mock-gauge-svg" width="72" height="72" viewBox="0 0 72 72">
+                  <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
+                  <circle cx="36" cy="36" r="28" fill="none" stroke="#10b981" stroke-width="7"
+                    stroke-dasharray="148 176" stroke-dashoffset="44" stroke-linecap="round" transform="rotate(-90 36 36)"/>
+                  <text x="36" y="41" text-anchor="middle" fill="#10b981" font-size="14" font-weight="900" font-family="Cairo,sans-serif">82</text>
+                </svg>
+              </div>
+              <div class="mock-score-details">
+                <div class="mock-score-label" data-i18n="apply.mock-score-lbl">درجة التقييم</div>
+                <div class="mock-score-big">82 / 100</div>
+                <div class="mock-score-sub" data-i18n="apply.mock-score-sub">من 100 نقطة</div>
+              </div>
+            </div>
+            <!-- Verdict -->
+            <div class="mock-verdict">✅ <span data-i18n="apply.mock-verdict">مقبول — يستوفي معايير القبول</span></div>
+            <!-- Criteria bars -->
+            <div class="mock-criteria-title" data-i18n="apply.mock-criteria">تفاصيل المعايير</div>
+            <div class="mock-crit">
+              <div class="mock-crit-lbl" data-i18n="apply.mock-c1">التعليم</div>
+              <div class="mock-crit-track"><div class="mock-crit-fill" style="width:90%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
+              <div class="mock-crit-pct">90%</div>
+            </div>
+            <div class="mock-crit">
+              <div class="mock-crit-lbl" data-i18n="apply.mock-c2">الخبرة</div>
+              <div class="mock-crit-track"><div class="mock-crit-fill" style="width:75%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div>
+              <div class="mock-crit-pct">75%</div>
+            </div>
+            <div class="mock-crit">
+              <div class="mock-crit-lbl" data-i18n="apply.mock-c3">المشروع</div>
+              <div class="mock-crit-track"><div class="mock-crit-fill" style="width:80%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)"></div></div>
+              <div class="mock-crit-pct">80%</div>
+            </div>
+            <div class="mock-crit">
+              <div class="mock-crit-lbl" data-i18n="apply.mock-c4">الالتزام</div>
+              <div class="mock-crit-track"><div class="mock-crit-fill" style="width:68%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div>
+              <div class="mock-crit-pct">68%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="partner-steps-section">
+    <div class="steps-title" data-i18n="apply.steps-title">كيف يعمل النظام</div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-title" data-i18n="apply.step1-title">أملأ النموذج</div>
+        <div class="step-desc" data-i18n="apply.step1-desc">أدخل بياناتك الشخصية ومعلومات مشروعك</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-title" data-i18n="apply.step2-title">مراجعة الطلب</div>
+        <div class="step-desc" data-i18n="apply.step2-desc">تُراجَع بياناتك وفق معايير الجهة الشريكة</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-title" data-i18n="apply.step3-title">القرار الفوري</div>
+        <div class="step-desc" data-i18n="apply.step3-desc">تحصل على درجتك ونتيجتك خلال ثوانٍ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="partner-footer">
+    <span data-i18n="apply.footer-powered">مدعوم بـ <strong>RAFD Digital</strong> — منصة التقييم الذكي للجهات</span>
+  </div>
+</div>
+
+<!-- Step 1 -->
+<div class="wrap form-card" id="s1">
+  <div class="fc-title" data-i18n="apply.s1-title">المعلومات الشخصية</div>
+  <div class="fc-sub" data-i18n="apply.s1-sub">الخطوة 1 من 5 — بياناتك الشخصية (يجب أن تطابق هويتك الرسمية)</div>
+
+  <div class="sec-lbl" data-i18n="apply.sec-id">🪪 الهوية والبيانات الرسمية</div>
+  <div class="frow">
+    <div class="fld"><label data-i18n="apply.lbl-name">الاسم الكامل <span class="req">*</span></label><input type="text" id="f_name" placeholder="الاسم الرباعي كما في الهوية" oninput="if(this.value.trim().split(/\s+/).filter(Boolean).length>=2)this.classList.add('valid');else this.classList.remove('valid')"></div>
+    <div class="fld"><label data-i18n="apply.lbl-nid">رقم الهوية الوطنية / الإقامة <span class="req">*</span></label><input type="text" id="f_national_id" placeholder="10 أرقام" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" oninput="if(/^[12]\d{9}$/.test(this.value))this.classList.add('valid');else this.classList.remove('valid')"></div>
+  </div>
+  <div class="frow">
+    <div class="fld">
+      <label data-i18n="apply.lbl-dob">تاريخ الميلاد <span class="req">*</span></label>
+      <input type="hidden" id="f_dob">
+      <div class="dob-row" id="f_dob_row">
+        <select id="f_dob_d" onchange="syncDob()"><option value=""><span data-i18n="apply.dob-day">اليوم</span></option></select>
+        <select id="f_dob_m" onchange="syncDob()"><option value="" data-i18n="apply.dob-month">الشهر</option></select>
+        <select id="f_dob_y" onchange="syncDob()"><option value="" data-i18n="apply.dob-year">السنة</option></select>
+      </div>
+    </div>
+    <div class="fld"><label data-i18n="apply.lbl-gender">الجنس <span class="req">*</span></label>
+      <select id="f_gender" onchange="markValid(this)"><option value="" data-i18n="apply.opt-choose">اختر...</option><option value="male" data-i18n="apply.gender-male">ذكر</option><option value="female" data-i18n="apply.gender-female">أنثى</option></select>
+    </div>
+  </div>
+  <div class="frow">
+    <div class="fld"><label data-i18n="apply.lbl-nat">الجنسية <span class="req">*</span></label>
+      <div class="csel" id="csel_nat">
+        <button type="button" class="csel-btn" onclick="cselToggle('nat')" id="csel_nat_btn">
+          <span class="csel-flag" id="csel_nat_flag">🌍</span>
+          <span class="csel-lbl" id="csel_nat_lbl" data-i18n="apply.sel-nat">اختر الجنسية...</span>
+          <span class="csel-arr">▾</span>
+        </button>
+        <div class="csel-panel" id="csel_nat_panel">
+          <input class="csel-q" id="csel_nat_q" type="text" placeholder="🔍 ابحث عن الجنسية..." oninput="_cselFilter('nat')">
+          <div class="csel-opts" id="csel_nat_opts"></div>
+        </div>
+        <input type="hidden" id="f_nat">
+      </div>
+    </div>
+    <div class="fld"><label data-i18n="apply.lbl-country">دولة الإقامة <span class="req">*</span></label>
+      <div class="csel" id="csel_country">
+        <button type="button" class="csel-btn" onclick="cselToggle('country')" id="csel_country_btn">
+          <span class="csel-flag" id="csel_country_flag">🌍</span>
+          <span class="csel-lbl" id="csel_country_lbl" data-i18n="apply.sel-country">اختر الدولة...</span>
+          <span class="csel-arr">▾</span>
+        </button>
+        <div class="csel-panel" id="csel_country_panel">
+          <input class="csel-q" id="csel_country_q" type="text" placeholder="🔍 ابحث عن الدولة..." oninput="_cselFilter('country')">
+          <div class="csel-opts" id="csel_country_opts"></div>
+        </div>
+        <input type="hidden" id="f_country">
+      </div>
+    </div>
+  </div>
+  <div class="frow">
+    <div class="fld"><label data-i18n="apply.lbl-city">المدينة <span class="req">*</span></label>
+      <select id="f_city" onchange="markValid(this)">
+        <option value="" data-i18n="apply.sel-city">اختر المدينة...</option>
+        <option value="riyadh">الرياض</option><option value="jeddah">جدة</option><option value="makkah">مكة المكرمة</option>
+        <option value="madinah">المدينة المنورة</option><option value="dammam">الدمام</option><option value="khobar">الخبر</option>
+        <option value="dhahran">الظهران</option><option value="taif">الطائف</option><option value="abha">أبها</option>
+        <option value="tabuk">تبوك</option><option value="hail">حائل</option><option value="jizan">جيزان</option>
+        <option value="najran">نجران</option><option value="qassim">القصيم</option><option value="other" data-i18n="apply.city-other">مدينة أخرى</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="sec-lbl" style="margin-top:1.1rem" data-i18n="apply.sec-contact">📱 بيانات التواصل</div>
+  <div class="frow">
+    <div class="fld"><label data-i18n="apply.lbl-phone">رقم الجوال <span class="req">*</span></label>
+      <div class="cc-csel-wrap">
+        <div class="csel cc-csel" id="csel_phone_cc">
+          <button type="button" class="csel-btn" onclick="cselToggle('phone_cc')">
+            <span class="csel-flag" id="csel_phone_cc_flag">🇸🇦</span>
+            <span class="csel-lbl has-val" id="csel_phone_cc_lbl">+966</span>
+            <span class="csel-arr">▾</span>
+          </button>
+          <div class="csel-panel" id="csel_phone_cc_panel">
+            <input class="csel-q" id="csel_phone_cc_q" type="text" placeholder="🔍 ابحث عن الدولة..." oninput="_cselFilter('phone_cc')">
+            <div class="csel-opts" id="csel_phone_cc_opts"></div>
+          </div>
+          <input type="hidden" id="f_phone_cc" value="+966">
+        </div>
+        <input type="tel" id="f_phone" placeholder="5XXXXXXXX" maxlength="9" inputmode="numeric" class="cc-inp" style="border-radius:0 10px 10px 0!important" oninput="if(/^\d{7,}$/.test(this.value))this.classList.add('valid');else this.classList.remove('valid')">
+      </div>
+    </div>
+    <div class="fld"><label data-i18n="apply.lbl-email">البريد الإلكتروني <span class="req">*</span></label><input type="email" id="f_email" placeholder="example@domain.com" oninput="if(this.value.includes('@')&&this.value.split('@')[1]?.includes('.'))this.classList.add('valid');else this.classList.remove('valid')"></div>
+  </div>
+
+  <div class="sec-lbl" id="lbl_entity_section" style="margin-top:1.1rem" data-i18n="apply.sec-project">🏢 معلومات المشروع / الشركة</div>
+  <div class="fld"><label id="lbl_company">اسم الشركة / المشروع <span class="req">*</span></label><input type="text" id="f_company" placeholder="اسم شركتك أو مشروعك"></div>
+  <div class="frow">
+    <div class="fld"><label id="lbl_sector" data-i18n="apply.lbl-sector">القطاع <span class="req">*</span></label>
+      <select id="f_sector" onchange="markValid(this)"><option value="" data-i18n="apply.opt-choose">اختر...</option>
+        <option value="fintech" data-i18n="apply.sec-fintech">التقنية المالية</option>
+        <option value="health" data-i18n="apply.sec-health">الصحة والرعاية</option>
+        <option value="edu" data-i18n="apply.sec-edu">التعليم والتدريب</option>
+        <option value="ecom" data-i18n="apply.sec-ecom">التجارة الإلكترونية</option>
+        <option value="ai" data-i18n="apply.sec-ai">الذكاء الاصطناعي</option>
+        <option value="logistics" data-i18n="apply.sec-logistics">اللوجستيات</option>
+        <option value="agri" data-i18n="apply.sec-agri">الزراعة والغذاء</option>
+        <option value="energy" data-i18n="apply.sec-energy">الطاقة والبيئة</option>
+        <option value="other">أخرى</option>
+      </select>
+    </div>
+    <div class="fld" id="year_fld"><label id="lbl_year" data-i18n="apply.lbl-year">سنة التأسيس</label>
+      <select id="f_year"><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021" data-i18n="apply.year-before">2021 أو قبل</option></select>
+    </div>
+  </div>
+  <div class="fld"><label id="lbl_desc">وصف مختصر <span class="req">*</span></label><textarea id="f_desc" placeholder="اشرح مشروعك..."></textarea></div>
+
+  <div style="background:#fef9ec;border:1px solid #fde68a;border-radius:10px;padding:.75rem 1rem;font-size:.75rem;color:#92400e;margin-top:.5rem">
+    <span data-i18n="apply.data-warn">⚠️ تأكد من صحة بياناتك — المعلومات الشخصية يجب أن تطابق هويتك الرسمية وتُستخدم لتحقق الجهة</span>
+  </div>
+
+  <div class="fnav"><span class="step-ctr">1 / 5</span><button class="btn-next" onclick="go(2)" data-i18n="da.next">التالي ←</button></div>
+</div>
+
+<!-- Nafath Verification Step (shown only if partner requires it) -->
+<div class="wrap form-card" id="s_nafath">
+  <div style="text-align:center;margin-bottom:1.5rem">
+    <div style="width:64px;height:64px;background:linear-gradient(135deg,#0a5f3f,#0d7a52);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;color:#fff;margin:0 auto .75rem">نفاذ</div>
+    <div class="fc-title" style="margin:0" data-i18n="apply.nafath-title">التحقق عبر نفاذ</div>
+    <div class="fc-sub" style="margin:.25rem 0 0" data-i18n="apply.nafath-sub">المنصة الوطنية الموحّدة للهوية الرقمية</div>
+  </div>
+
+  <div id="nafath_required_badge" style="display:none;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:.6rem 1rem;font-size:.78rem;color:#f87171;margin-bottom:1rem;text-align:center">
+    <span data-i18n="apply.nafath-req">⚠️ التحقق عبر نفاذ <strong>إلزامي</strong> لهذا البرنامج — لا يمكن إكمال الطلب بدونه</span>
+  </div>
+  <div id="nafath_optional_badge" style="display:none;background:rgba(10,95,63,.08);border:1px solid rgba(10,95,63,.2);border-radius:10px;padding:.6rem 1rem;font-size:.78rem;color:#4ade80;margin-bottom:1rem;text-align:center">
+    <span data-i18n="apply.nafath-opt">✨ التحقق اختياري — يمنحك <strong>+5 نقاط</strong> إضافية على درجتك</span>
+  </div>
+
+  <!-- Not yet verified -->
+  <div id="nafath_form">
+    <div style="font-size:.82rem;color:#64748b;margin-bottom:1.1rem"><span data-i18n="apply.nafath-id-hint">رقم هويتك الوطنية</span> (<span id="nfah_id_preview" style="font-family:monospace;color:#1a3a4a;direction:ltr;display:inline-block">—</span>)</div>
+    <div class="fld">
+      <label data-i18n="apply.lbl-nid2">رقم الهوية الوطنية <span class="req">*</span></label>
+      <input type="text" id="nfah_id" placeholder="10 أرقام" maxlength="10" inputmode="numeric" style="font-family:monospace;letter-spacing:.08em;direction:ltr;text-align:center">
+    </div>
+    <button onclick="sendNafathApplicantOtp()" id="nfah_send_btn"
+      style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.6rem">
+      <span style="font-size:.7rem;background:rgba(255,255,255,.2);border-radius:4px;padding:.15rem .4rem;font-weight:900">نفاذ</span>
+      <span data-i18n="apply.nafath-btn">طلب التحقق عبر نفاذ</span></button>
+  </div>
+
+  <!-- Nafath App confirmation (replaces OTP entry) -->
+  <div id="nafath_otp_form" style="display:none;text-align:center">
+    <div style="font-size:.82rem;color:#64748b;margin-bottom:.5rem" data-i18n="apply.nafath-open-app">افتح تطبيق نفاذ وأكّد الطلب</div>
+    <div style="font-size:.72rem;color:#64748b;margin-bottom:.4rem" data-i18n="apply.nafath-random-num">الرقم العشوائي الذي سيظهر في التطبيق:</div>
+    <div id="nfah_sent_to" style="font-size:2.2rem;font-weight:900;letter-spacing:.25em;color:#059669;font-family:monospace;background:rgba(5,150,105,.06);border:2px solid rgba(5,150,105,.25);border-radius:14px;padding:1rem;margin-bottom:.75rem;direction:ltr">——</div>
+    <div style="font-size:.72rem;color:#4ade80;margin-bottom:1rem" data-i18n="apply.nafath-confirm-hint">📱 تحقق من إشعار تطبيق نفاذ وأكّد الرقم أعلاه</div>
+    <button onclick="verifyNafathApplicantOtp()" id="nfah_verify_btn"
+      style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
+      <span data-i18n="apply.nafath-confirmed">✓ تم التأكيد في تطبيق نفاذ</span></button>
+    <button onclick="document.getElementById('nafath_form').style.display='block';document.getElementById('nafath_otp_form').style.display='none'"
+      style="width:100%;background:none;border:1px solid #e2e8f0;color:#64748b;border-radius:10px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.8rem;cursor:pointer">
+      <span data-i18n="apply.back-btn2">← رجوع</span></button>
+  </div>
+
+  <!-- Verified -->
+  <div id="nafath_verified" style="display:none;text-align:center;padding:1.5rem 0">
+    <div style="font-size:2.5rem;margin-bottom:.5rem">✅</div>
+    <div style="font-size:1.1rem;font-weight:800;color:#059669" data-i18n="apply.nafath-success">تم التحقق من هويتك بنجاح</div>
+    <div style="font-size:.78rem;color:#64748b;margin-top:.35rem" data-i18n="apply.nafath-verified">هويتك موثّقة عبر منصة نفاذ الوطنية</div>
+  </div>
+
+  <div class="fnav">
+    <button class="btn-prev" onclick="go(1)" data-i18n="da.back-btn">← السابق</button>
+    <span class="step-ctr" id="nafath_step_ctr">1.5 / 5</span>
+    <button id="nafath_next_btn" class="btn-next" onclick="go(2)" style="opacity:.4;pointer-events:none"><span data-i18n="da.next">التالي ←</span></button>
+    <button id="nafath_skip_btn" class="btn-next" style="background:#64748b" onclick="skipNafath()"><span data-i18n="apply.skip">تخطي ←</span></button>
+  </div>
+</div>
+
+<!-- Step 2 -->
+<div class="wrap form-card" id="s2">
+  <div class="fc-title" data-i18n="da.s2-title">المؤهلات والخبرة</div>
+  <div class="fc-sub" data-i18n="apply.s2-sub">الخطوة 2 من 5 — خلفيتك الأكاديمية والمهنية</div>
+  <div class="fld"><label data-i18n="apply.lbl-edu">أعلى مؤهل أكاديمي <span class="req">*</span></label>
+    <div class="radio-opts" id="f_edu">
+      <label class="ropt" onclick="selR(this,'f_edu','phd')"><input type="radio" name="edu" value="phd"><span data-i18n="apply.edu-phd">دكتوراه</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','master')"><input type="radio" name="edu" value="master"><span data-i18n="apply.edu-master">ماجستير</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','bachelor')"><input type="radio" name="edu" value="bachelor"><span data-i18n="apply.edu-bachelor">بكالوريوس</span></label>
+      <label class="ropt" onclick="selR(this,'f_edu','diploma')"><input type="radio" name="edu" value="diploma"><span data-i18n="apply.edu-diploma">دبلوم أو أقل</span></label>
+    </div>
+  </div>
+  <!-- GPA field — shown only if partner enables it -->
+  <div class="frow" id="gpa_field_container" style="display:none">
+    <div class="fld">
+      <label data-i18n="apply.lbl-gpa">المعدل التراكمي (GPA) <span class="req">*</span> <span id="gpa_scale_hint" style="font-size:.72rem;color:#94a3b8;font-weight:400">من 5</span></label>
+      <input type="number" id="f_gpa" min="0" step="0.01" placeholder="مثال: 4.25" style="font-family:monospace">
+      <div class="hint" data-i18n="apply.gpa-hint">أدخل معدلك التراكمي كما هو مذكور في وثائقك الرسمية</div>
+    </div>
+  </div>
+  <div class="frow">
+    <div class="fld"><label data-i18n="apply.lbl-exp">سنوات الخبرة في المجال</label>
+      <div class="range-row">
+        <input type="range" min="0" max="20" value="3" id="f_exp" oninput="document.getElementById('expV').textContent=this.value+' سنوات';this.dataset.v=this.value" data-v="3">
+        <span class="range-val" id="expV" data-i18n="apply.exp-default">3 سنوات</span>
+      </div>
+    </div>
+    <div class="fld"><label data-i18n="apply.lbl-team">عدد أعضاء الفريق <span class="req">*</span></label>
+      <select id="f_team"><option value="" data-i18n="apply.opt-choose">اختر...</option><option value="1" data-i18n="apply.team-solo">مؤسس منفرد</option><option value="2" data-i18n="apply.team-2">2 أعضاء</option><option value="3-5" data-i18n="apply.team-35">3-5 أعضاء</option><option value="6+" data-i18n="apply.team-6">أكثر من 5</option></select>
+    </div>
+  </div>
+  <div class="fld"><label data-i18n="apply.lbl-prev">هل سبق لك تأسيس شركة؟ <span class="req">*</span></label>
+    <div class="radio-opts" id="f_prev">
+      <label class="ropt" onclick="selR(this,'f_prev','yes_exit')"><input type="radio" name="prev" value="yes_exit"><span data-i18n="apply.prev-exit">نعم، وحققت خروجاً ناجحاً (Exit)</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','yes_active')"><input type="radio" name="prev" value="yes_active"><span data-i18n="apply.prev-active">نعم، ولا تزال نشطة</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','yes_closed')"><input type="radio" name="prev" value="yes_closed"><span data-i18n="apply.prev-closed">نعم، لكنها أُغلقت</span></label>
+      <label class="ropt" onclick="selR(this,'f_prev','no')"><input type="radio" name="prev" value="no"><span data-i18n="apply.prev-no">لا، هذا مشروعي الأول</span></label>
+    </div>
+  </div>
+  <div class="fld"><label data-i18n="apply.lbl-skills">المهارات الرئيسية (اختر كل ما ينطبق)</label>
+    <div class="check-opts" id="f_skills">
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="tech"><span data-i18n="apply.skill-tech">تطوير تقني / برمجة</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="biz"><span data-i18n="apply.skill-biz">إدارة أعمال وتطوير</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mkt"><span data-i18n="apply.skill-mkt">تسويق ومبيعات</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="fin"><span data-i18n="apply.skill-fin">مالية ومحاسبة</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="des"><span data-i18n="apply.skill-des">تصميم وتجربة مستخدم</span></label>
+    </div>
+  </div>
+  <div class="fnav"><button class="btn-prev" onclick="go(1)" data-i18n="da.back-btn">← السابق</button><span class="step-ctr">2 / 5</span><button class="btn-next" onclick="go(3)" data-i18n="da.next">التالي ←</button></div>
+</div>
+
+<!-- Step 3 -->
+<div class="wrap form-card" id="s3">
+  <div class="fc-title" data-i18n="apply.s3-title">معلومات إضافية</div>
+  <div class="fc-sub" data-i18n="apply.s3-sub">الخطوة 3 من 5 — معلومات المشروع والأسئلة الإضافية</div>
+  <div class="fld"><label data-i18n="apply.lbl-stage">مرحلة المشروع الحالية <span class="req">*</span></label>
+    <div class="radio-opts" id="f_stage">
+      <label class="ropt" onclick="selR(this,'f_stage','idea')"><input type="radio" name="stage" value="idea"><span data-i18n="apply.stage-idea">فكرة (Idea Stage)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','mvp')"><input type="radio" name="stage" value="mvp"><span data-i18n="apply.stage-mvp">نموذج أولي (MVP)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','revenue')"><input type="radio" name="stage" value="revenue"><span data-i18n="apply.stage-rev">مرحلة الإيرادات (Revenue)</span></label>
+      <label class="ropt" onclick="selR(this,'f_stage','growth')"><input type="radio" name="stage" value="growth"><span data-i18n="apply.stage-growth">مرحلة النمو (Growth)</span></label>
+    </div>
+  </div>
+  <div class="frow">
+    <div class="fld"><label data-i18n="apply.lbl-raised">التمويل المُحصَّل حتى الآن</label>
+      <select id="f_raised"><option value="0" data-i18n="apply.raised-0">لم أحصل على تمويل</option><option value="seed" data-i18n="apply.raised-seed">أقل من 500 ألف ريال</option><option value="pre-a" data-i18n="apply.raised-prea">500 ألف — 2 مليون</option><option value="series-a" data-i18n="apply.raised-seriesa">أكثر من 2 مليون</option></select>
+    </div>
+    <div class="fld"><label data-i18n="apply.lbl-seeking">التمويل المطلوب <span class="req">*</span></label>
+      <select id="f_seeking"><option value="" data-i18n="apply.opt-choose">اختر...</option><option value="100k" data-i18n="apply.seek-100k">أقل من 100 ألف</option><option value="500k" data-i18n="apply.seek-500k">100 — 500 ألف</option><option value="1m" data-i18n="apply.seek-1m">500 ألف — مليون</option><option value="2m+" data-i18n="apply.seek-2m">أكثر من مليون</option></select>
+    </div>
+  </div>
+  <div class="fld"><label data-i18n="apply.lbl-cust">هل لديك عملاء أو مستخدمون حاليون؟ <span class="req">*</span></label>
+    <div class="radio-opts" id="f_cust">
+      <label class="ropt" onclick="selR(this,'f_cust','paying')"><input type="radio" name="cust" value="paying"><span data-i18n="apply.cust-paying">نعم، عملاء يدفعون</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','free')"><input type="radio" name="cust" value="free"><span data-i18n="apply.cust-free">نعم، مستخدمون مجانيون</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','pilot')"><input type="radio" name="cust" value="pilot"><span data-i18n="apply.cust-pilot">في مرحلة التجريب (Pilot)</span></label>
+      <label class="ropt" onclick="selR(this,'f_cust','none')"><input type="radio" name="cust" value="none"><span data-i18n="apply.cust-none">لا يوجد بعد</span></label>
+    </div>
+  </div>
+  <div class="fld"><label data-i18n="apply.lbl-reasons">لماذا تريد الانضمام؟ (اختر كل ما ينطبق)</label>
+    <div class="check-opts" id="f_reasons">
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="funding"><span data-i18n="apply.reason-fund">الحصول على تمويل</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="mentor"><span data-i18n="apply.reason-mentor">الإرشاد والتوجيه</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="network"><span data-i18n="apply.reason-network">بناء الشبكة والعلاقات</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="market"><span data-i18n="apply.reason-market">الوصول للسوق</span></label>
+      <label class="copt" onclick="togC(this)"><input type="checkbox" value="training"><span data-i18n="apply.reason-train">التدريب وبناء القدرات</span></label>
+    </div>
+  </div>
+  <div class="fld"><label data-i18n="apply.lbl-challenges">ما هي أكبر تحدياتك الحالية؟ <span class="req">*</span></label>
+    <textarea id="f_challenges" placeholder="اشرح التحديات التي تواجهها في مشروعك..." data-i18n-placeholder="apply.ph-challenges"></textarea>
+  </div>
+  <div class="fld"><label data-i18n="apply.lbl-commit">هل أنت مستعد للالتزام بمتطلبات البرنامج؟ <span class="req">*</span></label>
+    <div class="radio-opts" id="f_commit">
+      <label class="ropt" onclick="selR(this,'f_commit','yes')"><input type="radio" name="commit" value="yes"><span data-i18n="apply.commit-yes">نعم، ملتزم بالكامل</span></label>
+      <label class="ropt" onclick="selR(this,'f_commit','maybe')"><input type="radio" name="commit" value="maybe"><span data-i18n="apply.commit-maybe">ربما، أحتاج لمعرفة التفاصيل</span></label>
+      <label class="ropt" onclick="selR(this,'f_commit','no')"><input type="radio" name="commit" value="no"><span data-i18n="apply.commit-no">لا، لدي قيود على الوقت</span></label>
+    </div>
+  </div>
+  <!-- Custom criteria added by partner -->
+  <div id="custom_q_container"></div>
+  <div class="fnav"><button class="btn-prev" onclick="go(2)" data-i18n="da.back-btn">← السابق</button><span class="step-ctr">3 / 5</span><button class="btn-next" onclick="go(4)" data-i18n="da.next">التالي ←</button></div>
+</div>
+
+<!-- Step 4: Documents -->
+<div class="wrap form-card" id="s4">
+  <div class="fc-title" data-i18n="da.s4-title">المستندات المطلوبة</div>
+  <div class="fc-sub" data-i18n="apply.s4-sub">الخطوة 4 من 5 — رفع المستندات اللازمة لاستكمال طلبك</div>
+  <!-- File uploads required by partner -->
+  <div id="docs_upload_container"></div>
+  <div id="no_docs_msg" style="display:none;text-align:center;padding:2rem;color:#64748b;font-size:.9rem" data-i18n="apply.no-docs">لا توجد مستندات مطلوبة — يمكنك المتابعة للإرسال</div>
+  <div class="fnav">
+    <button class="btn-prev" onclick="go(3)" data-i18n="da.back-btn">← السابق</button>
+    <span class="step-ctr">4 / 5</span>
+    <button class="btn-next btn-submit" onclick="submitApp()" data-i18n="apply.submit">إرسال الطلب ✓</button>
+  </div>
+</div>
+
+<!-- AI Terminal -->
+<div class="ai-page" id="aiPage">
+  <div class="ai-intro">
+    <h2 data-i18n="apply.ai-title">⏳ جارٍ مراجعة طلبك</h2>
+    <p data-i18n-split="apply.ai-wait"><span data-i18n="apply.ai-wait-pre">تُعالَج بياناتك وفق معايير</span> <span id="termPartnerName">الجهة</span><span data-i18n="apply.ai-wait-suf"> — يُرجى الانتظار</span></p>
+  </div>
+  <div class="terminal">
+    <div class="t-hdr">
+      <div class="td r"></div><div class="td y"></div><div class="td g"></div>
+      <span class="t-title">&lt;&gt; RAFD Assessment System v2.4</span>
+    </div>
+    <div class="t-body" id="termBody">
+      <div class="t-progress-bar"><div class="t-progress-fill" id="tProg"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Result -->
+<div class="result-page" id="resultPage">
+  <div id="rHero"></div>
+  <div id="rGauge"></div>
+  <div class="reasons-card">
+    <h4 data-i18n="apply.eval-details">📊 تفاصيل التقييم</h4>
+    <div id="rReasons"></div>
+  </div>
+  <div class="result-actions">
+    <a href="/" class="btn-cta-p" data-i18n="apply.learn">تعرّف على RAFD Digital ←</a>
+  </div>
+</div>
+
+</div><!-- end mainContent -->
+
+<script>
+async function applyApi(data) {
+  const r = await fetch('/api/apply-form', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return { status: r.status, data: await r.json() };
+}
+
+let partnerData = null;
+let curStep = 0;
+let appRefNum = '';
+let nafathVerified = false;
+let _nfahOtp = '';
+let _docAIResults = {};
+let _docTypeErrors = {}; // docId → true if wrong document type uploaded
+
+const _DOC_LABELS = {
+  national_id: 'هوية وطنية أو إقامة',
+  cv: 'سيرة ذاتية',
+  commercial_registration: 'سجل تجاري',
+  certificate: 'شهادة أو وثيقة خبرة',
+  other: 'وثيقة غير معروفة',
+};
+
+// ===== INIT =====
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const partnerRef = params.get('partner');
+
+  if (!partnerRef) {
+    showError(getT('apply.err-no-partner'));
+    return;
+  }
+
+  try {
+    const { status: gfStatus, data: gfData } = await applyApi({ action: 'get_form', ref: partnerRef });
+
+    if (gfStatus !== 200 || !gfData.partner) {
+      showError(getT('apply.err-not-found'));
+      return;
+    }
+
+    const data = gfData.partner;
+
+    if (data.status === 'rejected') {
+      showError(getT('apply.err-disabled'));
+      return;
+    }
+
+    partnerData = data;
+
+    // Load specific saved template if ?form=SLUG is in the URL
+    const formSlug = params.get('form');
+    if (formSlug && data.form_config?.saved_forms?.length) {
+      const tpl = data.form_config.saved_forms.find(f => f.slug === formSlug || f.id === formSlug);
+      if (tpl?.config) {
+        data.form_config = { ...tpl.config, _tpl_name: tpl.name };
+        partnerData = data;
+      }
+    }
+
+    const fc = data.form_config;
+
+    if (fc && fc.is_active === false) {
+      showError(getT('apply.err-paused'));
+      return;
+    }
+
+    const programName = fc?.program_name || data.org_name;
+    const programDesc = fc?.program_desc || getT('apply.default-desc');
+    const ORG_ICONS = {
+      'جامعة أو مؤسسة تعليمية': '🎓',
+      'بنك أو مؤسسة مالية':     '🏦',
+      'مسرعة أو حاضنة أعمال':   '🚀',
+      'جهة حكومية':              '🏛️',
+      'شركة خاصة':               '🏢',
+      'منظمة غير ربحية':         '🌱',
+      'أخرى':                    '🔷',
+    };
+    const orgIcon = ORG_ICONS[data.org_type] || '🏢';
+
+    const _set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+    _set('pageTitle', `التقديم لـ ${data.org_name} — RAFD Digital`);
+    _set('hdrOrgName', data.org_name);
+    _set('hdrOrgType', data.org_type || 'جهة شريكة');
+    _set('welcomePartnerName', data.org_name);
+    _set('ph_org_type', (data.org_type || 'جهة شريكة') + (data.city ? ' · ' + data.city : ''));
+    _set('ph_program_name', programName);
+    _set('ph_avatar', orgIcon);
+    _set('modalPartnerName', programName);
+    _set('termPartnerName', data.org_name);
+    _set('welcomeDesc', programDesc);
+    _set('mockOrgName', data.org_name);
+
+    // Show template badge if a specific saved form was loaded via ?form=
+    if (fc?._tpl_name) {
+      const badge = document.createElement('div');
+      badge.style.cssText = 'position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3);color:#38bdf8;padding:.3rem .9rem;border-radius:20px;font-size:.72rem;font-weight:700;z-index:999;pointer-events:none;font-family:"Cairo",sans-serif';
+      badge.textContent = '📋 ' + fc._tpl_name;
+      document.body.appendChild(badge);
+    }
+
+    // Show pending banner if not yet approved
+    if (data.status === 'pending') {
+      const banner = document.createElement('div');
+      banner.id = 'pending_banner';
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#92400e;color:#fef3c7;text-align:center;padding:.5rem 1rem;font-size:.75rem;font-weight:700;z-index:999';
+      banner.textContent = '⏳ ' + getT('apply.pending-banner');
+      document.body.prepend(banner);
+    }
+
+    applyAppTypeLabels();
+    renderCustomQuestions();
+    renderDocsUpload();
+
+    // Re-apply dynamic labels when language changes
+    document.addEventListener('rafd-lang-changed', () => {
+      applyAppTypeLabels();
+      const pb = document.getElementById('pending_banner');
+      if (pb) pb.textContent = '⏳ ' + getT('apply.pending-banner');
+    });
+
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  } catch(e) {
+    showError(getT('apply.err-load'));
+  }
+}
+
+// ===== APP TYPE LABEL MAPPING =====
+function getAppTypeLabels(appType) {
+  const types = {
+    project: { section:'🚀 '+getT('apply.at-project-sec'), company:getT('apply.at-project-co'), companyPH:getT('apply.at-project-coph'), sector:getT('apply.at-project-sector'), year:getT('apply.at-project-year'), yearShow:true, desc:getT('apply.at-project-desc'), descPH:getT('apply.at-project-desph') },
+    job:     { section:'💼 '+getT('apply.at-job-sec'),     company:getT('apply.at-job-co'),     companyPH:getT('apply.at-job-coph'),     sector:getT('apply.at-job-sector'),     year:getT('apply.at-job-year'),     yearShow:true, desc:getT('apply.at-job-desc'),     descPH:getT('apply.at-job-desph') },
+    funding: { section:'💰 '+getT('apply.at-fund-sec'),    company:getT('apply.at-fund-co'),    companyPH:getT('apply.at-fund-coph'),    sector:getT('apply.at-fund-sector'),    year:getT('apply.at-fund-year'),    yearShow:true, desc:getT('apply.at-fund-desc'),    descPH:getT('apply.at-fund-desph') },
+    academic:{ section:'🎓 '+getT('apply.at-acad-sec'),   company:getT('apply.at-acad-co'),    companyPH:getT('apply.at-acad-coph'),    sector:getT('apply.at-acad-sector'),    year:getT('apply.at-acad-year'),    yearShow:true, desc:getT('apply.at-acad-desc'),    descPH:getT('apply.at-acad-desph') },
+    member:  { section:'🤝 '+getT('apply.at-mem-sec'),    company:getT('apply.at-mem-co'),     companyPH:getT('apply.at-mem-coph'),     sector:getT('apply.at-mem-sector'),     year:getT('apply.at-mem-year'),     yearShow:true, desc:getT('apply.at-mem-desc'),     descPH:getT('apply.at-mem-desph') },
+    gov:     { section:'🏛️ '+getT('apply.at-gov-sec'),    company:getT('apply.at-gov-co'),     companyPH:getT('apply.at-gov-coph'),     sector:getT('apply.at-gov-sector'),     year:getT('apply.at-gov-year'),     yearShow:true, desc:getT('apply.at-gov-desc'),     descPH:getT('apply.at-gov-desph') },
+    npo:     { section:'🌱 '+getT('apply.at-npo-sec'),    company:getT('apply.at-npo-co'),     companyPH:getT('apply.at-npo-coph'),     sector:getT('apply.at-npo-sector'),     year:getT('apply.at-npo-year'),     yearShow:true, desc:getT('apply.at-npo-desc'),     descPH:getT('apply.at-npo-desph') },
+    general: { section:'📋 '+getT('apply.at-gen-sec'),    company:getT('apply.at-gen-co'),     companyPH:getT('apply.at-gen-coph'),     sector:getT('apply.at-gen-sector'),     year:getT('apply.at-gen-year'),     yearShow:true, desc:getT('apply.at-gen-desc'),     descPH:getT('apply.at-gen-desph') },
+  };
+  return types[appType] || types.project;
+}
+
+function applyAppTypeLabels() {
+  const appType = partnerData?.form_config?.app_type || 'project';
+  const L = getAppTypeLabels(appType);
+
+  const secEl = document.getElementById('lbl_entity_section');
+  const coEl = document.getElementById('lbl_company');
+  const coInp = document.getElementById('f_company');
+  const secEl2 = document.getElementById('lbl_sector');
+  const yearLbl = document.getElementById('lbl_year');
+  const descLbl = document.getElementById('lbl_desc');
+  const descTa = document.getElementById('f_desc');
+
+  if (secEl) secEl.textContent = L.section;
+  if (coEl) coEl.innerHTML = L.company + ' <span class="req">*</span>';
+  if (coInp) coInp.placeholder = L.companyPH;
+  if (secEl2) secEl2.innerHTML = L.sector + ' <span class="req">*</span>';
+  if (yearLbl) yearLbl.textContent = L.year;
+  if (descLbl) descLbl.innerHTML = L.desc + ' <span class="req">*</span>';
+  if (descTa) descTa.placeholder = L.descPH;
+  const yearFld = document.getElementById('year_fld');
+  if (yearFld) yearFld.style.display = L.yearShow !== false ? '' : 'none';
+
+  // GPA field
+  const gpa = partnerData?.form_config?.edu_gpa;
+  if (gpa?.enabled) {
+    const cont = document.getElementById('gpa_field_container');
+    const hint = document.getElementById('gpa_scale_hint');
+    const inp = document.getElementById('f_gpa');
+    if (cont) cont.style.display = '';
+    if (hint) hint.textContent = gpa.scale === 100 ? getT('apply.gpa-pct-hint') : getT('apply.gpa-from-hint') + ' ' + gpa.scale;
+    if (inp) { inp.max = gpa.scale; inp.placeholder = gpa.scale === 100 ? 'مثال: 87.5' : gpa.scale === 4 ? 'مثال: 3.70' : 'مثال: 4.25'; }
+  }
+}
+
+function renderDocsUpload() {
+  const container = document.getElementById('docs_upload_container');
+  if (!container) return;
+  const fc = partnerData?.form_config;
+  if (!fc) return;
+
+  const presetLabels = { cv: 'السيرة الذاتية / CV', reg: 'سجل تجاري / وثيقة تأسيس', cert: 'شهادات الخبرة والمؤهلات', id: 'صورة هوية وطنية' };
+  const docs = [];
+
+  // Preset docs
+  ['cv','reg','cert','id'].forEach(id => {
+    const d = fc.required_docs?.[id];
+    if (d?.active) docs.push({ id, label: presetLabels[id], required: d.required ?? false });
+  });
+
+  // Custom docs
+  (fc.custom_docs || []).forEach((d, i) => {
+    if (d.label) docs.push({ id: 'cdoc_'+i, label: d.label, required: d.required ?? false });
+  });
+
+  const noDocsMsg = document.getElementById('no_docs_msg');
+  if (!docs.length) { if (noDocsMsg) noDocsMsg.style.display = 'block'; return; }
+  if (noDocsMsg) noDocsMsg.style.display = 'none';
+
+  container.innerHTML = `
+    <div style="border-top:1px solid #e5e7eb;padding-top:1.1rem;margin-top:.5rem">
+      <div style="font-size:.78rem;font-weight:700;color:#64748b;margin-bottom:.9rem">📎 ${getT('apply.docs-required-lbl')}</div>
+      ${docs.map(d => `
+        <div class="fld">
+          <label>${d.label}${d.required ? ' <span class="req">*</span>' : ' <span style="font-size:.7rem;color:#94a3b8">(اختياري)</span>'}</label>
+          <div class="upload-zone" id="uz_${d.id}" onclick="document.getElementById('uf_${d.id}').click()">
+            <input type="file" id="uf_${d.id}" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              onchange="handleFileSelect(this,'${d.id}')" onclick="event.stopPropagation()">
+            <div class="uz-icon">📁</div>
+            <div class="uz-label">اضغط لاختيار الملف</div>
+            <div class="uz-hint">PDF, Word, أو صورة — الحد الأقصى 5MB</div>
+            <div class="uz-file" id="uz_name_${d.id}"></div>
+          </div>
+          <div class="doc-ai-result" id="dar_${d.id}"></div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function handleFileSelect(input, docId) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    alert('حجم الملف يتجاوز 5MB. يرجى اختيار ملف أصغر.');
+    input.value = '';
+    return;
+  }
+  const zone = document.getElementById('uz_'+docId);
+  const nameEl = document.getElementById('uz_name_'+docId);
+  if (zone) zone.classList.add('has-file');
+  if (nameEl) nameEl.textContent = '✅ ' + file.name;
+  readDocumentWithAI(file, docId);
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function readDocumentWithAI(file, docId) {
+  const resultEl = document.getElementById('dar_' + docId);
+  if (!resultEl) return;
+
+  const isImage = file.type.startsWith('image/');
+  const isPdf = file.type === 'application/pdf';
+  if (!isImage && !isPdf) return; // Word files — skip silently
+
+  // Max 3MB for AI reading (base64 overhead keeps payload under Vercel limit)
+  if (file.size > 3 * 1024 * 1024) {
+    resultEl.innerHTML = '<div class="dar-warn">⚠️ الملف كبير — تم حفظه دون قراءة ذكية</div>';
+    return;
+  }
+
+  // docType mapping: cdoc_0 → 'other', preset ids map 1:1
+  const docType = docId.startsWith('cdoc_') ? 'other' : docId;
+
+  const icons = { id:'🪪', cv:'📄', reg:'🏢', cert:'🎓', other:'📎' };
+  resultEl.innerHTML = `<div class="dar-loading">${icons[docType]||'🤖'} جارٍ القراءة الذكية للوثيقة...</div>`;
+
+  try {
+    const base64 = await fileToBase64(file);
+    const readCriteria = (partnerData?.form_config?.required_docs?.[docId]?.read_criteria || [])
+      .filter(c => c.prompt?.trim());
+    const res = await fetch('/api/read-document', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ base64, mediaType: file.type, docType, readCriteria }),
+    });
+    const result = await res.json();
+
+    if (!result.ok) {
+      resultEl.innerHTML = '<div class="dar-warn">⚠️ تعذّرت القراءة التلقائية — المستند محفوظ بنجاح</div>';
+      return;
+    }
+
+    // Type mismatch — reject the file
+    if (result.typeMismatch) {
+      const expectedLabels = { id:'هوية وطنية أو إقامة', cv:'سيرة ذاتية', reg:'سجل تجاري', cert:'شهادة أو وثيقة خبرة' };
+      const detectedLabel = _DOC_LABELS[result.detectedType] || 'وثيقة غير معروفة';
+      const expectedLabel = expectedLabels[docId] || 'الوثيقة المطلوبة';
+
+      _docTypeErrors[docId] = true;
+      const zone = document.getElementById('uz_' + docId);
+      const nameEl = document.getElementById('uz_name_' + docId);
+      const fileInput = document.getElementById('uf_' + docId);
+      if (zone) zone.classList.remove('has-file');
+      if (nameEl) nameEl.textContent = '';
+      if (fileInput) fileInput.value = '';
+
+      resultEl.innerHTML = `<div style="background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.35);border-radius:10px;padding:.7rem .9rem;font-size:.78rem">
+        <div style="color:#ef4444;font-weight:800;margin-bottom:.3rem">❌ الملف المرفوع غير صحيح</div>
+        <div style="color:#fca5a5">المطلوب: <strong>${expectedLabel}</strong></div>
+        <div style="color:#fca5a5">تم رفع: <strong>${detectedLabel}</strong></div>
+        <div style="color:#94a3b8;margin-top:.35rem;font-size:.72rem">يرجى رفع الوثيقة الصحيحة</div>
+      </div>`;
+      return;
+    }
+
+    _docTypeErrors[docId] = false;
+    _docAIResults[docId] = result.data;
+    renderDocResult(resultEl, docType, result.data);
+  } catch {
+    resultEl.innerHTML = '<div class="dar-warn">⚠️ خطأ في الاتصال — المستند محفوظ</div>';
+  }
+}
+
+function renderDocResult(el, docType, data) {
+  const rows = [];
+  if (docType === 'id') {
+    if (data.name)        rows.push(['الاسم', data.name]);
+    if (data.id_number)   rows.push(['رقم الهوية', data.id_number]);
+    if (data.dob)         rows.push(['تاريخ الميلاد', data.dob]);
+    if (data.nationality) rows.push(['الجنسية', data.nationality]);
+    if (data.gender)      rows.push(['الجنس', data.gender === 'male' ? 'ذكر' : 'أنثى']);
+  } else if (docType === 'cv') {
+    if (data.name)             rows.push(['الاسم', data.name]);
+    const eduMap = { phd:'دكتوراه', master:'ماجستير', bachelor:'بكالوريوس', diploma:'دبلوم' };
+    if (data.highest_education) rows.push(['المؤهل', eduMap[data.highest_education] || data.highest_education]);
+    if (data.field)             rows.push(['التخصص', data.field]);
+    if (data.years_experience != null) rows.push(['سنوات الخبرة', data.years_experience + ' سنوات']);
+    if (data.last_position)    rows.push(['آخر وظيفة', data.last_position]);
+    if (data.skills?.length)   rows.push(['المهارات', data.skills.slice(0,4).join('، ')]);
+  } else if (docType === 'reg') {
+    if (data.company_name)  rows.push(['اسم الشركة', data.company_name]);
+    if (data.reg_number)    rows.push(['رقم السجل', data.reg_number]);
+    if (data.activity)      rows.push(['النشاط', data.activity]);
+    if (data.founded_date)  rows.push(['تاريخ التأسيس', data.founded_date]);
+    if (data.owner)         rows.push(['المالك', data.owner]);
+  } else if (docType === 'cert') {
+    if (data.type)      rows.push(['نوع الشهادة', data.type]);
+    if (data.issuer)    rows.push(['الجهة المانحة', data.issuer]);
+    if (data.recipient) rows.push(['الحاصل عليها', data.recipient]);
+    if (data.date)      rows.push(['التاريخ', data.date]);
+  } else if (data.summary) {
+    rows.push(['الملخص', data.summary]);
+  }
+
+  if (!rows.length && !data.criteria_results?.length) {
+    el.innerHTML = '<div class="dar-warn">⚠️ المستند محفوظ — تعذّر استخراج البيانات منه</div>';
+    return;
+  }
+
+  // Render criteria results
+  let criteriaHtml = '';
+  if (data.criteria_results?.length) {
+    criteriaHtml = '<div style="border-top:1px solid rgba(139,92,246,.15);margin-top:.5rem;padding-top:.5rem">' +
+      '<div style="font-size:.68rem;color:#a78bfa;font-weight:700;margin-bottom:.35rem">📋 تقييم المعايير المخصصة</div>' +
+      data.criteria_results.map(r => {
+        const icon = r.passed ? '✅' : '❌';
+        return `<div class="dar-row" style="align-items:flex-start;gap:.4rem"><span style="flex-shrink:0">${icon}</span><span class="dar-v" style="font-weight:500;font-size:.71rem">${r.prompt}</span></div>`;
+      }).join('') + '</div>';
+  }
+
+  el.innerHTML = `<div class="dar-ok">
+    <div class="dar-ok-hdr">✅ تمت القراءة الذكية للوثيقة</div>
+    ${rows.map(([k,v]) => `<div class="dar-row"><span class="dar-k">${k}:</span><span class="dar-v">${v}</span></div>`).join('')}
+    ${criteriaHtml}
+  </div>`;
+}
+
+function renderCustomQuestions() {
+  const container = document.getElementById('custom_q_container');
+  if (!container) return;
+  const custom = partnerData?.form_config?.custom_criteria;
+  if (!custom?.length) return;
+
+  const validQ = custom.filter(c => c.label && c.options?.length >= 2);
+  if (!validQ.length) return;
+
+  container.innerHTML = `<div style="border-top:1px solid #e5e7eb;padding-top:1.1rem;margin-top:.5rem">
+    <div style="font-size:.78rem;font-weight:700;color:#64748b;margin-bottom:.9rem">أسئلة إضافية خاصة بالجهة</div>
+    ${validQ.map((c, i) => `
+    <div class="fld">
+      <label>${c.label} <span class="req">*</span></label>
+      <div class="radio-opts" id="fcq_${i}">
+        ${c.options.map((opt, oi) => `
+          <label class="ropt" onclick="selR(this,'fcq_${i}','${opt.score}')">
+            <input type="radio" name="fcq_${i}" value="${opt.score}">
+            <span>${opt.text}</span>
+          </label>
+        `).join('')}
+      </div>
+    </div>
+  `).join('')}
+  </div>`;
+}
+
+function showError(msg) {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('errorMsg').textContent = msg;
+  document.getElementById('errorScreen').style.display = 'block';
+}
+
+function showModal() { document.getElementById('modal').classList.add('show'); }
+function startApp() {
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('welcomeWrap').style.display = 'none';
+  document.getElementById('progWrap').style.display = 'block';
+  document.body.style.background = '#f8fafc';
+  go(1);
+}
+
+// ===== DATE OF BIRTH SELECTS =====
+function initDobSelects() {
+  const dD = document.getElementById('f_dob_d');
+  const dM = document.getElementById('f_dob_m');
+  const dY = document.getElementById('f_dob_y');
+  if (!dD) return;
+  for (let d = 1; d <= 31; d++) dD.add(new Option(d, String(d).padStart(2,'0')));
+  ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']
+    .forEach((m,i) => dM.add(new Option(m, String(i+1).padStart(2,'0'))));
+  const curY = new Date().getFullYear();
+  for (let y = curY - 15; y >= 1940; y--) dY.add(new Option(y, y));
+}
+function syncDob() {
+  const d = document.getElementById('f_dob_d').value;
+  const m = document.getElementById('f_dob_m').value;
+  const y = document.getElementById('f_dob_y').value;
+  document.getElementById('f_dob').value = (d && m && y) ? `${y}-${m}-${d}` : '';
+  document.getElementById('f_dob_row')?.classList.remove('err');
+}
+initDobSelects();
+
+// ===== STEP VALIDATION =====
+function _stepErrShow(stepId, msg) {
+  const s = document.getElementById(stepId);
+  if (!s) return;
+  let d = s.querySelector('.step-err');
+  if (!d) {
+    d = document.createElement('div');
+    d.className = 'step-err';
+    const fnav = s.querySelector('.fnav');
+    fnav ? fnav.before(d) : s.appendChild(d);
+  }
+  d.textContent = '⚠ ' + msg;
+  d.style.display = 'block';
+  d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function _stepErrClear(stepId) {
+  const s = document.getElementById(stepId);
+  s?.querySelector('.step-err')?.style && (s.querySelector('.step-err').style.display = 'none');
+  s?.querySelectorAll('.fld.err').forEach(f => f.classList.remove('err'));
+  s?.querySelectorAll('.radio-opts.err').forEach(r => r.classList.remove('err'));
+  s?.querySelectorAll('.dob-row.err').forEach(r => r.classList.remove('err'));
+}
+function _fieldFail(fieldId, msg, stepId) {
+  const el = document.getElementById(fieldId);
+  el?.closest('.fld')?.classList.add('err');
+  _stepErrShow(stepId, msg);
+  el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => el?.focus(), 400);
+  return false;
+}
+function _radioFail(groupId, msg, stepId) {
+  document.getElementById(groupId)?.classList.add('err');
+  document.getElementById(groupId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  _stepErrShow(stepId, msg);
+  return false;
+}
+
+// ===== بيانات الجنسيات والدول ورموز الاتصال =====
+const NAT_LIST = [
+  {v:'sa',n:'🇸🇦 سعودي'},{v:'ae',n:'🇦🇪 إماراتي'},{v:'bh',n:'🇧🇭 بحريني'},{v:'kw',n:'🇰🇼 كويتي'},{v:'om',n:'🇴🇲 عُماني'},{v:'qa',n:'🇶🇦 قطري'},
+  {v:'ye',n:'🇾🇪 يمني'},{v:'jo',n:'🇯🇴 أردني'},{v:'eg',n:'🇪🇬 مصري'},{v:'sy',n:'🇸🇾 سوري'},{v:'lb',n:'🇱🇧 لبناني'},{v:'iq',n:'🇮🇶 عراقي'},
+  {v:'ps',n:'🇵🇸 فلسطيني'},{v:'tn',n:'🇹🇳 تونسي'},{v:'ly',n:'🇱🇾 ليبي'},{v:'dz',n:'🇩🇿 جزائري'},{v:'ma',n:'🇲🇦 مغربي'},{v:'sd',n:'🇸🇩 سوداني'},
+  {v:'mr',n:'🇲🇷 موريتاني'},{v:'so',n:'🇸🇴 صومالي'},{v:'dj',n:'🇩🇯 جيبوتي'},{v:'km',n:'🇰🇲 قمري'},{v:'pk',n:'🇵🇰 باكستاني'},{v:'af',n:'🇦🇫 أفغاني'},
+  {v:'in',n:'🇮🇳 هندي'},{v:'bd',n:'🇧🇩 بنغلاديشي'},{v:'lk',n:'🇱🇰 سريلانكي'},{v:'np',n:'🇳🇵 نيبالي'},{v:'id',n:'🇮🇩 إندونيسي'},{v:'ph',n:'🇵🇭 فلبيني'},
+  {v:'tr',n:'🇹🇷 تركي'},{v:'ir',n:'🇮🇷 إيراني'},{v:'et',n:'🇪🇹 إثيوبي'},{v:'ke',n:'🇰🇪 كيني'},{v:'ng',n:'🇳🇬 نيجيري'},{v:'gh',n:'🇬🇭 غاني'},
+  {v:'tz',n:'🇹🇿 تنزاني'},{v:'ug',n:'🇺🇬 أوغندي'},{v:'er',n:'🇪🇷 إريتري'},{v:'us',n:'🇺🇸 أمريكي'},{v:'gb',n:'🇬🇧 بريطاني'},{v:'ca',n:'🇨🇦 كندي'},
+  {v:'au',n:'🇦🇺 أسترالي'},{v:'fr',n:'🇫🇷 فرنسي'},{v:'de',n:'🇩🇪 ألماني'},{v:'es',n:'🇪🇸 إسباني'},{v:'it',n:'🇮🇹 إيطالي'},{v:'nl',n:'🇳🇱 هولندي'},
+  {v:'be',n:'🇧🇪 بلجيكي'},{v:'ch',n:'🇨🇭 سويسري'},{v:'se',n:'🇸🇪 سويدي'},{v:'no',n:'🇳🇴 نرويجي'},{v:'dk',n:'🇩🇰 دنماركي'},{v:'fi',n:'🇫🇮 فنلندي'},
+  {v:'pl',n:'🇵🇱 بولندي'},{v:'ro',n:'🇷🇴 روماني'},{v:'ru',n:'🇷🇺 روسي'},{v:'cn',n:'🇨🇳 صيني'},{v:'jp',n:'🇯🇵 ياباني'},{v:'kr',n:'🇰🇷 كوري'},
+  {v:'my',n:'🇲🇾 ماليزي'},{v:'th',n:'🇹🇭 تايلاندي'},{v:'vn',n:'🇻🇳 فيتنامي'},{v:'mx',n:'🇲🇽 مكسيكي'},{v:'br',n:'🇧🇷 برازيلي'},{v:'ar',n:'🇦🇷 أرجنتيني'},
+  {v:'other',n:'🌍 جنسية أخرى'}
+];
+
+const COUNTRY_LIST = [
+  {v:'sa',n:'🇸🇦 المملكة العربية السعودية'},{v:'ae',n:'🇦🇪 الإمارات العربية المتحدة'},{v:'bh',n:'🇧🇭 البحرين'},{v:'kw',n:'🇰🇼 الكويت'},
+  {v:'om',n:'🇴🇲 عُمان'},{v:'qa',n:'🇶🇦 قطر'},{v:'ye',n:'🇾🇪 اليمن'},{v:'jo',n:'🇯🇴 الأردن'},{v:'eg',n:'🇪🇬 مصر'},{v:'sy',n:'🇸🇾 سوريا'},
+  {v:'lb',n:'🇱🇧 لبنان'},{v:'iq',n:'🇮🇶 العراق'},{v:'ps',n:'🇵🇸 فلسطين'},{v:'tn',n:'🇹🇳 تونس'},{v:'ly',n:'🇱🇾 ليبيا'},{v:'dz',n:'🇩🇿 الجزائر'},
+  {v:'ma',n:'🇲🇦 المغرب'},{v:'sd',n:'🇸🇩 السودان'},{v:'mr',n:'🇲🇷 موريتانيا'},{v:'so',n:'🇸🇴 الصومال'},{v:'dj',n:'🇩🇯 جيبوتي'},{v:'km',n:'🇰🇲 جزر القمر'},
+  {v:'pk',n:'🇵🇰 باكستان'},{v:'af',n:'🇦🇫 أفغانستان'},{v:'in',n:'🇮🇳 الهند'},{v:'bd',n:'🇧🇩 بنغلاديش'},{v:'lk',n:'🇱🇰 سريلانكا'},{v:'np',n:'🇳🇵 نيبال'},
+  {v:'id',n:'🇮🇩 إندونيسيا'},{v:'ph',n:'🇵🇭 الفلبين'},{v:'my',n:'🇲🇾 ماليزيا'},{v:'th',n:'🇹🇭 تايلاند'},{v:'vn',n:'🇻🇳 فيتنام'},{v:'sg',n:'🇸🇬 سنغافورة'},
+  {v:'tr',n:'🇹🇷 تركيا'},{v:'ir',n:'🇮🇷 إيران'},{v:'et',n:'🇪🇹 إثيوبيا'},{v:'ke',n:'🇰🇪 كينيا'},{v:'ng',n:'🇳🇬 نيجيريا'},{v:'gh',n:'🇬🇭 غانا'},
+  {v:'tz',n:'🇹🇿 تنزانيا'},{v:'ug',n:'🇺🇬 أوغندا'},{v:'er',n:'🇪🇷 إريتريا'},{v:'rw',n:'🇷🇼 رواندا'},{v:'tz',n:'🇹🇿 تنزانيا'},{v:'zm',n:'🇿🇲 زامبيا'},
+  {v:'us',n:'🇺🇸 الولايات المتحدة'},{v:'gb',n:'🇬🇧 المملكة المتحدة'},{v:'ca',n:'🇨🇦 كندا'},{v:'au',n:'🇦🇺 أستراليا'},{v:'nz',n:'🇳🇿 نيوزيلندا'},
+  {v:'fr',n:'🇫🇷 فرنسا'},{v:'de',n:'🇩🇪 ألمانيا'},{v:'es',n:'🇪🇸 إسبانيا'},{v:'it',n:'🇮🇹 إيطاليا'},{v:'nl',n:'🇳🇱 هولندا'},{v:'be',n:'🇧🇪 بلجيكا'},
+  {v:'ch',n:'🇨🇭 سويسرا'},{v:'se',n:'🇸🇪 السويد'},{v:'no',n:'🇳🇴 النرويج'},{v:'dk',n:'🇩🇰 الدنمارك'},{v:'fi',n:'🇫🇮 فنلندا'},{v:'pl',n:'🇵🇱 بولندا'},
+  {v:'ro',n:'🇷🇴 رومانيا'},{v:'hu',n:'🇭🇺 المجر'},{v:'cz',n:'🇨🇿 التشيك'},{v:'pt',n:'🇵🇹 البرتغال'},{v:'gr',n:'🇬🇷 اليونان'},{v:'at',n:'🇦🇹 النمسا'},
+  {v:'ru',n:'🇷🇺 روسيا'},{v:'ua',n:'🇺🇦 أوكرانيا'},{v:'cn',n:'🇨🇳 الصين'},{v:'jp',n:'🇯🇵 اليابان'},{v:'kr',n:'🇰🇷 كوريا الجنوبية'},
+  {v:'mx',n:'🇲🇽 المكسيك'},{v:'br',n:'🇧🇷 البرازيل'},{v:'ar',n:'🇦🇷 الأرجنتين'},{v:'co',n:'🇨🇴 كولومبيا'},{v:'cl',n:'🇨🇱 تشيلي'},
+  {v:'other',n:'🌍 دولة أخرى'}
+];
+
+const CC_LIST = [
+  {v:'+966',n:'🇸🇦 +966'},{v:'+971',n:'🇦🇪 +971'},{v:'+973',n:'🇧🇭 +973'},{v:'+965',n:'🇰🇼 +965'},{v:'+968',n:'🇴🇲 +968'},{v:'+974',n:'🇶🇦 +974'},
+  {v:'+967',n:'🇾🇪 +967'},{v:'+962',n:'🇯🇴 +962'},{v:'+20',n:'🇪🇬 +20'},{v:'+963',n:'🇸🇾 +963'},{v:'+961',n:'🇱🇧 +961'},{v:'+964',n:'🇮🇶 +964'},
+  {v:'+970',n:'🇵🇸 +970'},{v:'+216',n:'🇹🇳 +216'},{v:'+218',n:'🇱🇾 +218'},{v:'+213',n:'🇩🇿 +213'},{v:'+212',n:'🇲🇦 +212'},{v:'+249',n:'🇸🇩 +249'},
+  {v:'+222',n:'🇲🇷 +222'},{v:'+252',n:'🇸🇴 +252'},{v:'+92',n:'🇵🇰 +92'},{v:'+93',n:'🇦🇫 +93'},{v:'+91',n:'🇮🇳 +91'},{v:'+880',n:'🇧🇩 +880'},
+  {v:'+94',n:'🇱🇰 +94'},{v:'+977',n:'🇳🇵 +977'},{v:'+62',n:'🇮🇩 +62'},{v:'+63',n:'🇵🇭 +63'},{v:'+60',n:'🇲🇾 +60'},{v:'+66',n:'🇹🇭 +66'},
+  {v:'+84',n:'🇻🇳 +84'},{v:'+65',n:'🇸🇬 +65'},{v:'+90',n:'🇹🇷 +90'},{v:'+98',n:'🇮🇷 +98'},{v:'+251',n:'🇪🇹 +251'},{v:'+254',n:'🇰🇪 +254'},
+  {v:'+234',n:'🇳🇬 +234'},{v:'+233',n:'🇬🇭 +233'},{v:'+255',n:'🇹🇿 +255'},{v:'+256',n:'🇺🇬 +256'},{v:'+291',n:'🇪🇷 +291'},
+  {v:'+1',n:'🇺🇸 +1'},{v:'+44',n:'🇬🇧 +44'},{v:'+1',n:'🇨🇦 +1'},{v:'+61',n:'🇦🇺 +61'},{v:'+64',n:'🇳🇿 +64'},
+  {v:'+33',n:'🇫🇷 +33'},{v:'+49',n:'🇩🇪 +49'},{v:'+34',n:'🇪🇸 +34'},{v:'+39',n:'🇮🇹 +39'},{v:'+31',n:'🇳🇱 +31'},{v:'+32',n:'🇧🇪 +32'},
+  {v:'+41',n:'🇨🇭 +41'},{v:'+46',n:'🇸🇪 +46'},{v:'+47',n:'🇳🇴 +47'},{v:'+45',n:'🇩🇰 +45'},{v:'+358',n:'🇫🇮 +358'},
+  {v:'+7',n:'🇷🇺 +7'},{v:'+86',n:'🇨🇳 +86'},{v:'+81',n:'🇯🇵 +81'},{v:'+82',n:'🇰🇷 +82'},
+  {v:'+52',n:'🇲🇽 +52'},{v:'+55',n:'🇧🇷 +55'},{v:'+54',n:'🇦🇷 +54'}
+];
+
+// ===== Custom Searchable Select Engine =====
+const _cselData = {};
+const _cselVal = {};
+
+function cselInit(id, arr, defaultVal, isCC) {
+  _cselData[id] = arr;
+  _cselRenderOpts(id, arr);
+  if (defaultVal) _cselPick(id, defaultVal, arr.find(x=>x.v===defaultVal)?.n || defaultVal, isCC);
+}
+
+function cselToggle(id) {
+  const wrap = document.getElementById('csel_'+id);
+  const isOpen = wrap?.classList.contains('open');
+  // Close all open dropdowns
+  Object.keys(_cselData).forEach(k => {
+    const w = document.getElementById('csel_'+k);
+    if (w) { w.classList.remove('open'); const p = document.getElementById('csel_'+k+'_panel'); if(p) p.style.display='none'; }
+  });
+  if (!isOpen && wrap) {
+    wrap.classList.add('open');
+    const panel = document.getElementById('csel_'+id+'_panel');
+    if (panel) panel.style.display = 'block';
+    const q = document.getElementById('csel_'+id+'_q');
+    if (q) { q.value = ''; q.focus(); _cselRenderOpts(id, _cselData[id]); }
+  }
+}
+
+function _cselRenderOpts(id, arr) {
+  const el = document.getElementById('csel_'+id+'_opts');
+  if (!el) return;
+  const cur = _cselVal[id];
+  el.innerHTML = arr.map(x => {
+    const parts = x.n.split(' ');
+    const flag = parts[0];
+    const name = parts.slice(1).join(' ');
+    const isCC = id==='phone_cc';
+    const safeN = x.n.replace(/'/g,"\\'");
+    return `<div class="csel-opt${x.v===cur?' is-active':''}" onclick="_cselPick('${id}','${x.v.replace(/'/g,"\\'")}','${safeN}',${isCC})">
+      <span class="csel-opt-flag">${flag}</span><span>${name}</span></div>`;
+  }).join('');
+}
+
+function _cselPick(id, val, label, isCC) {
+  _cselVal[id] = val;
+  // update hidden input
+  const hidden = document.getElementById(id==='phone_cc'?'f_phone_cc':'f_'+id);
+  if (hidden) hidden.value = val;
+  // update button display
+  const flagEl = document.getElementById('csel_'+id+'_flag');
+  const lblEl = document.getElementById('csel_'+id+'_lbl');
+  const btn = document.getElementById('csel_'+id+'_btn') || document.querySelector('#csel_'+id+' .csel-btn');
+  const parts = (label||'').split(' ');
+  const flag = parts[0] || '🌍';
+  const rest = parts.slice(1).join(' ');
+  if (flagEl) flagEl.textContent = flag;
+  if (lblEl) {
+    lblEl.textContent = isCC ? val : (rest || flag);
+    lblEl.classList.add('has-val');
+  }
+  if (btn) btn.classList.add('sel-valid');
+  // close panel
+  const w = document.getElementById('csel_'+id);
+  if (w) w.classList.remove('open');
+  const panel = document.getElementById('csel_'+id+'_panel');
+  if (panel) panel.style.display = 'none';
+  _cselRenderOpts(id, _cselData[id]);
+}
+
+function _cselFilter(id) {
+  const q = (document.getElementById('csel_'+id+'_q')?.value||'').trim();
+  const arr = _cselData[id] || [];
+  _cselRenderOpts(id, q ? arr.filter(x => x.n.includes(q) || x.v.includes(q)) : arr);
+}
+
+// Close on outside click
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.csel')) {
+    Object.keys(_cselData).forEach(id => {
+      const w = document.getElementById('csel_'+id);
+      if (w) { w.classList.remove('open'); const p=document.getElementById('csel_'+id+'_panel'); if(p) p.style.display='none'; }
+    });
+  }
+});
+
+// Keyboard: Arrow / Enter / Escape inside dropdown
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { Object.keys(_cselData).forEach(id=>{ const w=document.getElementById('csel_'+id); if(w){w.classList.remove('open');const p=document.getElementById('csel_'+id+'_panel');if(p)p.style.display='none';} }); return; }
+  const openId = Object.keys(_cselData).find(id => document.getElementById('csel_'+id)?.classList.contains('open'));
+  if (!openId) return;
+  const opts = [...document.querySelectorAll('#csel_'+openId+'_opts .csel-opt')];
+  let fi = opts.findIndex(o => o.classList.contains('kbfocus'));
+  if (e.key==='ArrowDown'){e.preventDefault();fi=Math.min(fi+1,opts.length-1);}
+  else if(e.key==='ArrowUp'){e.preventDefault();fi=Math.max(fi-1,0);}
+  else if(e.key==='Enter'&&fi>=0){e.preventDefault();opts[fi].click();return;}
+  else return;
+  opts.forEach(o=>o.classList.remove('kbfocus'));
+  if(opts[fi]){opts[fi].classList.add('kbfocus');opts[fi].scrollIntoView({block:'nearest'});}
+});
+
+// Auto-select text on focus
+document.addEventListener('focusin', e => {
+  if (e.target.matches('input[type=text],input[type=tel],input[type=email],input[type=number]'))
+    setTimeout(() => e.target.select(), 0);
+});
+
+function initSelectLists() {
+  cselInit('nat', NAT_LIST, '', false);
+  cselInit('country', COUNTRY_LIST, '', false);
+  cselInit('phone_cc', CC_LIST, '+966', true);
+}
+
+document.addEventListener('DOMContentLoaded', initSelectLists);
+
+function validateStep1() {
+  _stepErrClear('s1');
+  const v = id => (document.getElementById(id)?.value || '').trim();
+
+  if (!v('f_name')) return _fieldFail('f_name', 'يرجى إدخال الاسم الكامل', 's1');
+  if (v('f_name').split(/\s+/).filter(Boolean).length < 2) return _fieldFail('f_name', 'يرجى إدخال الاسم الثنائي على الأقل كما في الهوية', 's1');
+
+  const nid = v('f_national_id');
+  if (!/^[12]\d{9}$/.test(nid)) return _fieldFail('f_national_id', 'رقم الهوية يجب أن يبدأ بـ 1 (سعودي) أو 2 (مقيم) ومكوّن من 10 أرقام فقط', 's1');
+
+  const dob = v('f_dob');
+  const dobRow = document.getElementById('f_dob_row');
+  if (!dob || !document.getElementById('f_dob_d').value || !document.getElementById('f_dob_m').value || !document.getElementById('f_dob_y').value) {
+    dobRow?.classList.add('err');
+    dobRow?.scrollIntoView({ behavior:'smooth', block:'center' });
+    return _stepErrShow('s1', '⚠ يرجى اختيار يوم الشهر والسنة لتاريخ الميلاد'), false;
+  }
+  const ageYrs = (Date.now() - new Date(dob)) / (365.25 * 86400000);
+  if (ageYrs < 15) { dobRow?.classList.add('err'); return _stepErrShow('s1', '⚠ يجب أن يكون عمرك 15 سنة على الأقل للتقديم'), false; }
+  if (ageYrs > 85) { dobRow?.classList.add('err'); return _stepErrShow('s1', '⚠ تاريخ الميلاد المدخل يبدو غير صحيح — يرجى التحقق'), false; }
+
+  if (!v('f_gender')) return _fieldFail('f_gender', 'يرجى اختيار الجنس', 's1');
+  if (!v('f_nat')) {
+    document.querySelector('#csel_nat .csel-btn')?.classList.add('sel-err');
+    document.querySelector('#csel_nat')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return _stepErrShow('s1', '⚠ يرجى اختيار الجنسية'), false;
+  }
+  if (!v('f_country')) {
+    document.querySelector('#csel_country .csel-btn')?.classList.add('sel-err');
+    document.querySelector('#csel_country')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return _stepErrShow('s1', '⚠ يرجى اختيار دولة الإقامة'), false;
+  }
+  if (!v('f_city')) return _fieldFail('f_city', 'يرجى اختيار المدينة', 's1');
+
+  const phone = v('f_phone');
+  if (!/^\d{7,10}$/.test(phone)) return _fieldFail('f_phone', 'رقم الجوال غير صحيح', 's1');
+
+  const email = v('f_email');
+  if (!email || !email.includes('@') || !email.split('@')[1]?.includes('.')) return _fieldFail('f_email', 'يرجى إدخال بريد إلكتروني صحيح (مثال: name@domain.com)', 's1');
+
+  if (!v('f_company')) return _fieldFail('f_company', `يرجى إدخال ${(document.getElementById('lbl_company')?.textContent || 'اسم الجهة').replace('*','').trim()}`, 's1');
+  if (!v('f_sector')) return _fieldFail('f_sector', 'يرجى اختيار القطاع', 's1');
+
+  const desc = v('f_desc');
+  if (!desc) return _fieldFail('f_desc', 'يرجى إدخال وصف مختصر', 's1');
+  if (desc.length < 20) return _fieldFail('f_desc', `الوصف قصير جداً (${desc.length} حرف) — يرجى كتابة 20 حرف على الأقل`, 's1');
+
+  return true;
+}
+
+function validateStep2() {
+  _stepErrClear('s2');
+  if (!document.getElementById('f_edu')?.querySelector('.ropt.sel')) return _radioFail('f_edu', 'يرجى اختيار أعلى مؤهل أكاديمي', 's2');
+  const gpaConf = partnerData?.form_config?.edu_gpa;
+  if (gpaConf?.enabled) {
+    const gpa = parseFloat(document.getElementById('f_gpa')?.value);
+    const max = gpaConf.scale || 5;
+    if (isNaN(gpa) || gpa <= 0) return _fieldFail('f_gpa', 'يرجى إدخال المعدل التراكمي (GPA)', 's2');
+    if (gpa > max) return _fieldFail('f_gpa', `المعدل لا يمكن أن يتجاوز ${max}`, 's2');
+  }
+  if (!document.getElementById('f_team')?.value) return _fieldFail('f_team', 'يرجى اختيار عدد أعضاء الفريق', 's2');
+  if (!document.getElementById('f_prev')?.querySelector('.ropt.sel')) return _radioFail('f_prev', 'يرجى الإجابة عن التجربة السابقة في تأسيس شركة', 's2');
+  return true;
+}
+
+function validateStep3() {
+  _stepErrClear('s3');
+  if (!document.getElementById('f_stage')?.querySelector('.ropt.sel')) return _radioFail('f_stage', 'يرجى اختيار مرحلة المشروع الحالية', 's3');
+  if (!document.getElementById('f_cust')?.querySelector('.ropt.sel')) return _radioFail('f_cust', 'يرجى الإجابة عن وضع العملاء الحاليين', 's3');
+  if (!document.getElementById('f_seeking')?.value) return _fieldFail('f_seeking', 'يرجى اختيار التمويل المطلوب', 's3');
+  return true;
+}
+
+function skipNafath() {
+  // Bypass nafath check when it's optional and user chooses to skip
+  document.getElementById('s_nafath')?.classList.remove('show');
+  [1,2,3,4].forEach(i => document.getElementById('s'+i)?.classList.remove('show'));
+  document.getElementById('s2')?.classList.add('show');
+  curStep = 2;
+  updateProg(2);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function go(n) {
+  // Validate before moving forward (not backward)
+  if (n > curStep) {
+    if (curStep === 1 && !validateStep1()) return;
+    if (curStep === 2 && !validateStep2()) return;
+    if (curStep === 3 && !validateStep3()) return;
+  }
+
+  const nf = partnerData?.form_config?.nafath;
+
+  // Going from step 1 to step 2: show nafath verification if enabled
+  if (n === 2 && nf?.enabled) {
+    if (!nafathVerified) {
+      // Pre-fill nafath fields from step 1
+      const nfahId = document.getElementById('nfah_id');
+      const nfahPh = document.getElementById('nfah_phone');
+      const preview = document.getElementById('nfah_id_preview');
+      const nid = document.getElementById('f_national_id')?.value.trim() || '';
+      const ph = document.getElementById('f_phone')?.value.trim() || '';
+      if (nfahId && !nfahId.value) nfahId.value = nid;
+      if (nfahPh && !nfahPh.value) nfahPh.value = ph;
+      if (preview && nid) preview.textContent = nid.slice(0,3) + '****' + nid.slice(-2);
+      showNafathStep(nf.mode || 'required');
+      return;
+    }
+  }
+
+  // Hide all steps
+  [1,2,3,4].forEach(i => { const el = document.getElementById('s'+i); if(el) el.classList.remove('show'); });
+  const nafathEl = document.getElementById('s_nafath');
+  if (nafathEl) nafathEl.classList.remove('show');
+
+  // Show target step
+  const target = document.getElementById('s'+n);
+  if (target) target.classList.add('show');
+  curStep = n;
+  updateProg(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showNafathStep(mode) {
+  [1,2,3,4].forEach(i => { const el = document.getElementById('s'+i); if(el) el.classList.remove('show'); });
+  const el = document.getElementById('s_nafath');
+  if (el) el.classList.add('show');
+
+  document.getElementById('nafath_required_badge').style.display = mode === 'required' ? 'block' : 'none';
+  document.getElementById('nafath_optional_badge').style.display = mode === 'optional' ? 'block' : 'none';
+  document.getElementById('nafath_skip_btn').style.display = mode === 'optional' ? 'inline-block' : 'none';
+
+  curStep = 1.5;
+  updateProg(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function sendNafathApplicantOtp() {
+  const nid = document.getElementById('nfah_id').value.trim();
+  if (!/^\d{10}$/.test(nid)) { alert('رقم الهوية يجب أن يكون 10 أرقام'); return; }
+
+  // Generate 6-digit random number (simulates Nafath app notification)
+  const randNum = Math.floor(100000 + Math.random() * 900000).toString();
+  sessionStorage.setItem('rafd_nfah_apply', JSON.stringify({ rand: randNum, nid }));
+
+  document.getElementById('nfah_sent_to').textContent = randNum;
+  document.getElementById('nafath_form').style.display = 'none';
+  document.getElementById('nafath_otp_form').style.display = 'block';
+}
+
+function verifyNafathApplicantOtp() {
+  nafathVerified = true;
+  sessionStorage.removeItem('rafd_nfah_apply');
+
+  document.getElementById('nafath_otp_form').style.display = 'none';
+  document.getElementById('nafath_form').style.display = 'none';
+  document.getElementById('nafath_verified').style.display = 'block';
+
+  const nextBtn = document.getElementById('nafath_next_btn');
+  nextBtn.style.opacity = '1';
+  nextBtn.style.pointerEvents = 'auto';
+  document.getElementById('nafath_skip_btn').style.display = 'none';
+}
+
+function updateProg(n) {
+  document.getElementById('progFill').style.width = (n * 20) + '%';
+  [1,2,3,4,5].forEach(i => {
+    const sc = document.getElementById('sc'+i);
+    const sl = document.getElementById('sl'+i);
+    const ln = document.getElementById('ln'+i);
+    if (!sc) return;
+    if (i < n) { sc.className='ps-circle done'; sc.textContent='✓'; sl.className='ps-label'; if(ln) ln.className='ps-line done'; }
+    else if (i===n) { sc.className='ps-circle active'; sc.textContent= i===5 ? '🏆' : i; sl.className='ps-label active'; }
+    else { sc.className='ps-circle idle'; sc.textContent=i; sl.className='ps-label'; }
+  });
+}
+
+function selR(el, gid, val) {
+  document.getElementById(gid).querySelectorAll('.ropt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function togC(el) { el.classList.toggle('sel'); }
+
+function collect() {
+  const name = document.getElementById('f_name').value.trim() || 'المتقدم';
+  const sector = document.getElementById('f_sector').value;
+  const exp = parseInt(document.getElementById('f_exp').dataset.v || 3);
+  const team = document.getElementById('f_team').value;
+  const edu = document.querySelector('input[name="edu"]:checked')?.value;
+  const prev = document.querySelector('input[name="prev"]:checked')?.value;
+  const stage = document.querySelector('input[name="stage"]:checked')?.value;
+  const cust = document.querySelector('input[name="cust"]:checked')?.value;
+  const commit = document.querySelector('input[name="commit"]:checked')?.value;
+
+  // Use partner's custom weights if configured
+  const cr = partnerData?.form_config?.criteria;
+  const OS = partnerData?.form_config?.option_scores || {}; // درجات مخصصة
+  const W = {
+    edu:   cr?.edu?.active !== false   ? (cr?.edu?.weight   ?? 15) : 0,
+    exp:   cr?.exp?.active !== false   ? (cr?.exp?.weight   ?? 20) : 0,
+    prev:  cr?.prev?.active !== false  ? (cr?.prev?.weight  ?? 15) : 0,
+    stage: cr?.stage?.active !== false ? (cr?.stage?.weight ?? 20) : 0,
+    cust:  cr?.cust?.active !== false  ? (cr?.cust?.weight  ?? 15) : 0,
+    team:  cr?.team?.active !== false  ? (cr?.team?.weight  ?? 10) : 0,
+    commit:cr?.commit?.active !== false? (cr?.commit?.weight?? 5)  : 0,
+  };
+
+  // دالة مساعدة: استخدم الدرجة المخصصة أو اسقط على الافتراضي
+  function sc(id, key, defaultRatio) {
+    if (OS[id]?.[key] !== undefined) return OS[id][key];
+    return Math.round(defaultRatio * W[id]);
+  }
+
+  // تحويل سنوات الخبرة إلى مفتاح
+  function expToKey(y) {
+    if (y >= 10) return '10+';
+    if (y >= 7)  return '7-10';
+    if (y >= 5)  return '5-7';
+    if (y >= 3)  return '3-5';
+    if (y >= 1)  return '1-3';
+    return '<1';
+  }
+
+  let score = 0; const bd = [];
+  const gpaConf = partnerData?.form_config?.edu_gpa;
+  let eduSC = 0;
+  if (W.edu) {
+    const baseScore = sc('edu', edu, {phd:1,master:.8,bachelor:.6,diploma:.33}[edu] ?? 0.47);
+    if (gpaConf?.enabled) {
+      const gpaVal = parseFloat(document.getElementById('f_gpa')?.value) || 0;
+      const gpaMax = gpaConf.scale || 5;
+      const bands = partnerData?.form_config?.gpa_bands;
+      let gpaScore;
+      if (bands?.length && gpaMax === 100) {
+        // استخدم النطاقات المخصصة
+        const pct = Math.min(100, gpaVal);
+        const band = bands.find(b => pct >= b.min && pct <= b.max);
+        gpaScore = band ? (band.score ?? 0) : 0;
+        eduSC = Math.round(baseScore * 0.6 + gpaScore * 0.4);
+      } else {
+        const gpaRatio = Math.min(1, gpaVal / gpaMax);
+        eduSC = Math.round(baseScore * 0.6 + gpaRatio * W.edu * 0.4);
+      }
+    } else {
+      eduSC = baseScore;
+    }
+    score += eduSC;
+    bd.push({l:'المؤهل الأكاديمي', s:eduSC, m:W.edu, p:eduSC>=W.edu*0.5});
+  }
+
+  const expKey = expToKey(exp);
+  const expSC = W.exp ? sc('exp', expKey, Math.min(1, exp/10)) : 0;
+  if(W.exp){ score += expSC; bd.push({l:`سنوات الخبرة (${exp} سنوات)`,s:expSC,m:W.exp,p:expSC>=W.exp*0.5}); }
+
+  const prevSC = W.prev ? sc('prev', prev, {yes_exit:1,yes_active:.8,yes_closed:.53,no:.27}[prev]??0.27) : 0;
+  if(W.prev){ score += prevSC; bd.push({l:'الخبرة السابقة',s:prevSC,m:W.prev,p:prevSC>=W.prev*0.53}); }
+
+  const stageSC = W.stage ? sc('stage', stage, {growth:1,revenue:.85,mvp:.6,idea:.3}[stage]??0.3) : 0;
+  if(W.stage){ score += stageSC; bd.push({l:'مرحلة المشروع',s:stageSC,m:W.stage,p:stageSC>=W.stage*0.6}); }
+
+  const custSC = W.cust ? sc('cust', cust, {paying:1,free:.67,pilot:.47,none:.13}[cust]??0.13) : 0;
+  if(W.cust){ score += custSC; bd.push({l:'العملاء الحاليون',s:custSC,m:W.cust,p:custSC>=W.cust*0.47}); }
+
+  const teamSC = W.team ? sc('team', team, {'6+':1,'3-5':.8,'2':.6,'1':.4}[team]??0.4) : 0;
+  if(W.team){ score += teamSC; bd.push({l:'حجم الفريق',s:teamSC,m:W.team,p:teamSC>=W.team*0.6}); }
+
+  const commitSC = W.commit ? sc('commit', commit, {yes:1,maybe:.4,no:0}[commit]??0) : 0;
+  if(W.commit){ score += commitSC; bd.push({l:'الالتزام بالمتطلبات',s:commitSC,m:W.commit,p:commitSC>=W.commit*0.6}); }
+
+  // Nafath bonus
+  if (nafathVerified && partnerData?.form_config?.nafath?.mode === 'optional') {
+    score += 5;
+    bd.push({l:'التحقق عبر نفاذ', s:5, m:5, p:true});
+  }
+
+  // Custom criteria scoring
+  const customList = partnerData?.form_config?.custom_criteria?.filter(c => c.label && c.options?.length >= 2) || [];
+  customList.forEach((c, i) => {
+    const checked = document.querySelector(`input[name="fcq_${i}"]:checked`);
+    const s = checked ? parseInt(checked.value) || 0 : 0;
+    score += s;
+    bd.push({l: c.label, s, m: c.weight, p: s >= c.weight * 0.5});
+  });
+
+  // Document AI criteria scoring
+  const docsCfg = partnerData?.form_config?.required_docs || {};
+  let docWeightTotal = 0;
+  Object.keys(_docAIResults).forEach(docId => {
+    const criteria = docsCfg[docId]?.read_criteria || [];
+    const results = _docAIResults[docId]?.criteria_results || [];
+    results.forEach(r => {
+      const c = criteria.find(x => x.prompt === r.prompt);
+      if (!c) return;
+      const w = c.weight || 0;
+      docWeightTotal += w;
+      if (r.passed) {
+        score += w;
+        bd.push({ l: r.prompt, s: w, m: w, p: true });
+      } else {
+        bd.push({ l: r.prompt, s: 0, m: w, p: false });
+      }
+    });
+  });
+
+  // تطبيع الدرجة لتكون دائماً من 100
+  // معايير المستندات تأخذ نسبتها من ال100 وليس فوقها
+  if (docWeightTotal > 0) {
+    score = Math.round(score * 100 / (100 + docWeightTotal));
+  }
+  score = Math.min(100, score);
+  const minScore = partnerData?.form_config?.min_score ?? 55;
+  const passedMin = score >= minScore;
+  const acceptanceMode = partnerData?.form_config?.acceptance_mode || 'instant';
+  // في وضع المفاضلة: المتقدم الذي تجاوز الحد لا يُعطى قبولاً نهائياً — فقط "قيد المراجعة"
+  const accepted = acceptanceMode === 'instant' ? passedMin : false;
+  const pending  = acceptanceMode === 'competitive' && passedMin;
+  const grade = score>=85?'A+':score>=75?'A':score>=65?'B+':score>=55?'B':score>=45?'C':'D';
+  const sectorNames = {fintech:'التقنية المالية',health:'الصحة',edu:'التعليم',ecom:'التجارة الإلكترونية',ai:'الذكاء الاصطناعي',logistics:'اللوجستيات',agri:'الزراعة',energy:'الطاقة',other:'أخرى'};
+  const sectorName = sectorNames[sector] || 'التقنية';
+
+  return {name, score, grade, accepted, pending, bd, sectorName,
+    email: document.getElementById('f_email').value.trim(),
+    phone: (document.getElementById('f_phone_cc')?.value || '+966') + document.getElementById('f_phone').value.trim(),
+    company: document.getElementById('f_company').value.trim(),
+    challenges: document.getElementById('f_challenges').value.trim(),
+    national_id: document.getElementById('f_national_id').value.trim(),
+    dob: document.getElementById('f_dob').value,
+    gender: document.getElementById('f_gender').value,
+    nationality: document.getElementById('f_nat').value,
+    country: document.getElementById('f_country')?.value || '',
+    city: document.getElementById('f_city').value,
+  };
+}
+
+async function submitApp() {
+  const req = ['f_name','f_national_id','f_dob','f_phone','f_email','f_company','f_challenges'];
+  let ok = true;
+  req.forEach(id => { const el = document.getElementById(id); if(el && !el.value.trim()){el.style.borderColor='#ef4444';ok=false;}else if(el){el.style.borderColor='';} });
+  // Validate selects
+  ['f_gender','f_nat','f_city','f_sector'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el && !el.value){ el.style.outline='2px solid #ef4444'; ok=false; } else if(el){ el.style.outline=''; }
+  });
+  // Validate national ID format (10 digits)
+  const nid = document.getElementById('f_national_id');
+  if (nid && nid.value && !/^\d{10}$/.test(nid.value.trim())) {
+    nid.style.borderColor='#ef4444'; ok=false;
+    alert('رقم الهوية يجب أن يكون 10 أرقام'); return;
+  }
+  if(!ok){ alert('يرجى إكمال جميع الحقول المطلوبة'); return; }
+
+  // Validate custom criteria answers
+  const customList = partnerData?.form_config?.custom_criteria?.filter(c => c.label && c.options?.length >= 2) || [];
+  for (let i = 0; i < customList.length; i++) {
+    if (!document.querySelector(`input[name="fcq_${i}"]:checked`)) {
+      alert(`يرجى الإجابة على: ${customList[i].label}`);
+      return;
+    }
+  }
+
+  // Validate required file uploads
+  const fc = partnerData?.form_config;
+  const presetLabels = { cv: 'السيرة الذاتية', reg: 'السجل التجاري', cert: 'شهادات الخبرة', id: 'صورة الهوية' };
+  const presetIds = ['cv','reg','cert','id'];
+  for (const id of presetIds) {
+    const d = fc?.required_docs?.[id];
+    if (d?.active && d?.required) {
+      const inp = document.getElementById('uf_'+id);
+      if (!inp?.files?.[0]) { alert(`يرجى رفع: ${presetLabels[id]}`); return; }
+      if (_docTypeErrors[id] === true) {
+        alert(`الملف المرفوع لـ "${presetLabels[id]}" غير صحيح — يرجى رفع الوثيقة الصحيحة أولاً`);
+        document.getElementById('dar_' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+    }
+  }
+  const cDocs = fc?.custom_docs || [];
+  for (let i = 0; i < cDocs.length; i++) {
+    if (cDocs[i].label && cDocs[i].required) {
+      const inp = document.getElementById('uf_cdoc_'+i);
+      if (!inp?.files?.[0]) { alert(`يرجى رفع: ${cDocs[i].label}`); return; }
+    }
+  }
+
+  [1,2,3,4].forEach(i => document.getElementById('s'+i).classList.remove('show'));
+  document.getElementById('progWrap').style.display = 'none';
+  document.getElementById('aiPage').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  const data = collect();
+  appRefNum = 'APP-' + Date.now().toString().slice(-8);
+
+  // Upload files + save application in background
+  if (partnerData) {
+    (async () => {
+      // Upload files to Supabase Storage
+      const uploadedDocs = {};
+      const fc = partnerData.form_config;
+      const presetIds = ['cv','reg','cert','id'];
+      const allDocIds = [
+        ...presetIds.filter(id => fc?.required_docs?.[id]?.active),
+        ...(fc?.custom_docs || []).map((_, i) => 'cdoc_'+i),
+      ];
+
+      for (const docId of allDocIds) {
+        const input = document.getElementById('uf_'+docId);
+        if (!input?.files?.[0]) continue;
+        const file = input.files[0];
+        const filePath = `${partnerData.ref_num}/${appRefNum}/${docId}_${file.name}`;
+        try {
+          const { status: urlStatus, data: urlData } = await applyApi({ action: 'get_upload_url', filePath });
+          if (urlStatus === 200 && urlData.signedURL) {
+            await fetch(urlData.storageUrl + urlData.signedURL, {
+              method: 'PUT', body: file,
+              headers: { 'Content-Type': file.type || 'application/octet-stream' },
+            });
+            const publicUrl = `${urlData.storageUrl}/storage/v1/object/public/applicant-docs/${filePath}`;
+            uploadedDocs[docId] = { name: file.name, url: publicUrl };
+          }
+        } catch(upErr) { console.warn('Upload error:', upErr); }
+      }
+
+      const row = {
+        partner_id: partnerData.id,
+        partner_ref: partnerData.ref_num,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        national_id: data.national_id,
+        company: data.company,
+        sector: data.sectorName,
+        score: data.score,
+        grade: data.grade,
+        result: data.accepted ? 'approved' : data.pending ? 'pending' : 'rejected',
+        ref_num: appRefNum,
+        challenges: data.challenges,
+        notes: JSON.stringify({ dob: data.dob, gender: data.gender, nationality: data.nationality, city: data.city }),
+      };
+      // Merge AI-extracted data into docs
+      if (Object.keys(_docAIResults).length) {
+        Object.keys(_docAIResults).forEach(docId => {
+          if (uploadedDocs[docId]) uploadedDocs[docId].ai_data = _docAIResults[docId];
+          else uploadedDocs[docId] = { ai_data: _docAIResults[docId] };
+        });
+      }
+      if (Object.keys(uploadedDocs).length) row.docs = uploadedDocs;
+
+      const { status: subStatus } = await applyApi({ action: 'submit', application: row });
+      if (subStatus !== 200) {
+        console.error('Save error:', subStatus);
+      }
+    })();
+  }
+
+  runTerminal(data);
+}
+
+function runTerminal(data) {
+  const body = document.getElementById('termBody');
+  const prog = document.getElementById('tProg');
+  const orgName = partnerData?.org_name || 'الجهة';
+  const lines = [
+    {t:`${getT('apply.ai-t1').replace('{org}',orgName)}`,d:500},
+    {t:`${getT('apply.ai-t2').replace('{name}',data.name)}`,d:1100},
+    {t:`${getT('apply.ai-t3').replace('{sector}',data.sectorName)}`,d:1800},
+    {t:getT('apply.ai-t4'),d:2500},
+    {t:getT('apply.ai-t5'),d:3200},
+    {t:getT('apply.ai-t6'),d:3900},
+    {t:getT('apply.ai-t7'),d:4600},
+    {t:getT('apply.ai-t8'),d:5300},
+    {t:getT('apply.ai-t9'),d:6000},
+    {t:`${getT('apply.ai-t10').replace('{org}',orgName)}`,d:6700},
+    {t:getT('apply.ai-t11'),d:7400},
+    {t:`<span class="hi">✓ ${getT('apply.ai-done')} ${data.score}/100 — ${data.accepted?getT('apply.res-verdict-ok')+' ✓':data.pending?getT('apply.res-verdict-prelim')+' ⏳':getT('apply.res-verdict-rej')+' ✗'}</span>`,d:8100},
+  ];
+  lines.forEach((line,i) => {
+    setTimeout(() => {
+      const el = document.createElement('div'); el.className = 'tl';
+      const isLastFail = (!data.accepted && !data.pending && i===lines.length-1);
+      const ic = document.createElement('div'); ic.className = 'tl-icon ' + (isLastFail?'fail':'ok');
+      ic.textContent = isLastFail ? '✗' : '✓';
+      const tx = document.createElement('div'); tx.className = 'tl-text'; tx.innerHTML = line.t;
+      el.appendChild(ic); el.appendChild(tx); body.appendChild(el);
+      setTimeout(() => el.classList.add('show'), 50);
+      prog.style.width = ((i+1)/lines.length*100)+'%';
+    }, line.d);
+  });
+  setTimeout(() => {
+    document.getElementById('aiPage').classList.remove('show');
+    showResult(data);
+  }, 9000);
+}
+
+function buildGaugeSVG(score, grade, accepted) {
+  const cx = 150, cy = 145, r = 105;
+  const toRad = d => d * Math.PI / 180;
+  const pt = (s, rd) => {
+    const a = toRad(180 - s * 1.8);
+    return [(cx + rd * Math.cos(a)).toFixed(1), (cy - rd * Math.sin(a)).toFixed(1)];
+  };
+  const arcPath = (f, t, col) => {
+    const [x1,y1] = pt(f,r), [x2,y2] = pt(t,r);
+    const la = (t-f)*1.8 > 180 ? 1 : 0;
+    return `<path d="M${x1} ${y1} A${r} ${r} 0 ${la} 0 ${x2} ${y2}" fill="none" stroke="${col}" stroke-width="22" stroke-linecap="round"/>`;
+  };
+  const [nx, ny] = pt(score, 88);
+  const gc = accepted ? '#059669' : '#dc2626';
+  const finalRot = (score / 100 * 180) - 90;
+  return `<svg viewBox="0 0 300 220" width="100%" style="max-width:270px;display:block;margin:0 auto">
+    <path d="M45 145 A105 105 0 0 0 255 145" fill="none" stroke="#f0f4f8" stroke-width="22"/>
+    ${arcPath(0, 50, '#ef4444')}
+    ${arcPath(50, 70, '#f59e0b')}
+    ${arcPath(70, 100, '#10b981')}
+    <g transform="translate(${cx},${cy})">
+      <line x1="0" y1="-10" x2="0" y2="-88" stroke="#1e293b" stroke-width="4" stroke-linecap="round">
+        <animateTransform attributeName="transform" type="rotate" from="-90" to="${finalRot.toFixed(1)}" dur="1.2s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.22 1 0.36 1"/>
+      </line>
+      <circle r="12" fill="#1e293b"/>
+      <circle r="6.5" fill="#f8fafc"/>
+    </g>
+    <text x="38" y="168" text-anchor="middle" font-size="9" fill="#ef4444" font-family="Arial,sans-serif">${getT('apply.gauge-rej')}</text>
+    <text x="150" y="23" text-anchor="middle" font-size="9" fill="#d97706" font-family="Arial,sans-serif">${getT('apply.gauge-avg')}</text>
+    <text x="262" y="168" text-anchor="middle" font-size="9" fill="#059669" font-family="Arial,sans-serif">${getT('apply.gauge-acc')}</text>
+    <text x="${cx}" y="190" text-anchor="middle" font-size="40" font-weight="900" fill="${gc}" font-family="Arial,sans-serif">${grade}</text>
+    <text x="${cx}" y="212" text-anchor="middle" font-size="13" fill="#6b7280" font-family="Arial,sans-serif">${score} / 100</text>
+  </svg>`;
+}
+
+function showResult(data) {
+  const rp = document.getElementById('resultPage');
+  rp.classList.add('show');
+  document.getElementById('progWrap').style.display = 'block';
+  updateProg(5);
+  window.scrollTo({top:0,behavior:'smooth'});
+  const _lang = localStorage.getItem('rafd_lang') || 'ar';
+  const today = new Date().toLocaleDateString(_lang === 'ar' ? 'ar-SA' : 'en-US', {year:'numeric',month:'long',day:'numeric'});
+  const orgName = partnerData?.org_name || 'RAFD Digital';
+  const hero = document.getElementById('rHero');
+
+  document.getElementById('rGauge').innerHTML = '';
+  const isOk = data.accepted;
+  const isPending = data.pending; // تجاوز الحد لكن في وضع مفاضلة
+
+  // ألوان وأيقونات حسب الحالة
+  const heroClass  = isOk ? 'accepted' : isPending ? 'pending' : 'rejected';
+  const trophy     = isOk ? '🏆' : isPending ? '🎖️' : '📋';
+  const titleTxt   = isOk ? getT('apply.res-congrats').replace('{name}', data.name)
+                   : isPending ? getT('apply.res-prelim').replace('{name}', data.name)
+                   : getT('apply.res-thanks').replace('{name}', data.name);
+  const subTxt     = isOk      ? getT('apply.res-sub-ok').replace('{org}', orgName)
+                   : isPending ? getT('apply.res-sub-prelim').replace('{org}', orgName)
+                   : getT('apply.res-sub-rej').replace('{org}', orgName);
+  const verdictClass = isOk ? 'gv-ok' : isPending ? 'gv-pending' : 'gv-fail';
+  const verdictTxt   = isOk ? `✔ ${getT('apply.res-verdict-ok')}` : isPending ? `⏳ ${getT('apply.res-verdict-prelim')}` : `✕ ${getT('apply.res-verdict-rej')}`;
+  const badgeClass   = isOk ? 'cert-badge-accepted' : isPending ? 'cert-badge-pending' : 'cert-badge-rejected';
+  const badgeTxt     = isOk ? `✔ ${getT('apply.res-verdict-ok')}` : isPending ? `⏳ ${getT('apply.res-verdict-prelim')}` : `✕ ${getT('apply.res-verdict-rej')}`;
+  const certClass    = isOk ? 'accepted-cert' : isPending ? 'pending-cert' : 'rejected-cert';
+  const labelTxt     = isOk ? getT('apply.cert-lbl-ok') : isPending ? getT('apply.cert-lbl-prelim') : getT('apply.cert-lbl-rej');
+  const bodyDetail   = isOk
+    ? `<div class="cert-detail">${getT('apply.cert-detail-ok').replace('{org}', orgName)}</div>
+       <div class="cert-detail">${getT('apply.cert-company')}: <strong>${data.company}</strong> | ${getT('apply.cert-sector')}: <strong>${data.sectorName}</strong></div>`
+    : isPending
+    ? (() => {
+        const customMsg = partnerData?.form_config?.pending_msg;
+        return `<div class="cert-detail">${customMsg || getT('apply.cert-detail-prelim').replace('{org}', orgName)}</div>`;
+      })()
+    : `<div class="cert-detail cert-sorry">${getT('apply.cert-detail-rej')}</div>`;
+  const statusTxt = isOk ? `✔ ${getT('apply.res-verdict-ok')}` : isPending ? `⏳ ${getT('apply.res-review')}` : `✕ ${getT('apply.res-verdict-rej')}`;
+
+  hero.innerHTML = `
+  <div class="result-merged">
+    <div class="result-hero ${heroClass}">
+      <div class="rh-trophy">${trophy}</div>
+      <div class="rh-title">${titleTxt}</div>
+      <div class="rh-sub">${subTxt}</div>
+    </div>
+    <div class="result-gauge-body">
+      ${buildGaugeSVG(data.score, data.grade, isOk)}
+      <div class="gauge-verdict ${verdictClass}">${verdictTxt}</div>
+    </div>
+  </div>
+  <div class="cert-card ${certClass}">
+    <div class="cert-header">
+      <div style="font-size:.85rem;font-weight:700;color:#1a3a4a">🏢 ${orgName}</div>
+      <div class="${badgeClass}">${badgeTxt}</div>
+    </div>
+    <div class="cert-divider"></div>
+    <div class="cert-body">
+      <div class="cert-label">${labelTxt}</div>
+      <div class="cert-name">${data.name}</div>
+      ${bodyDetail}
+      <div class="cert-score-row">
+        <div class="cert-score-item"><div class="csi-val">${data.score}/100</div><div class="csi-lbl">${getT('apply.lbl-score')}</div></div>
+        <div class="cert-score-item"><div class="csi-val">${data.grade}</div><div class="csi-lbl">${getT('apply.lbl-grade')}</div></div>
+        <div class="cert-score-item"><div class="csi-val">${statusTxt}</div><div class="csi-lbl">${getT('apply.lbl-status')}</div></div>
+      </div>
+    </div>
+    <div class="cert-divider"></div>
+    <div class="cert-footer">
+      <div class="cert-ref">${getT('apply.lbl-ref-num')}: <strong>${appRefNum}</strong></div>
+      <div class="cert-date">${getT('apply.lbl-sub-date')}: ${today}</div>
+      <div class="cert-powered">RAFD Digital ⚡</div>
+    </div>
+  </div>`;
+  if (isOk) launchConfetti();
+  else if (isPending) launchConfetti(12); // كونفيتي خفيف للقبول المبدئي
+
+  const rl = document.getElementById('rReasons');
+  data.bd.forEach(item => {
+    const pct = Math.round(item.s/item.m*100);
+    rl.innerHTML += `<div class="reason-item ${item.p?'pos':'neg'}">
+      <div class="ri-icon">${item.p?'✅':'⚠️'}</div>
+      <div class="ri-text"><span class="ri-badge">${item.s}/${item.m}</span><strong>${item.l}</strong> — ${item.p?getT('apply.criteria-pass'):getT('apply.criteria-fail')} (${pct}%)</div>
+    </div>`;
+  });
+}
+
+function launchConfetti(count=90) {
+  const c = document.getElementById('confetti');
+  const cols = ['#10b981','#1a3a4a','#f59e0b','#ef4444','#8b5cf6','#3b82f6'];
+  for(let i=0;i<count;i++) {
+    const p = document.createElement('div'); p.className = 'cp';
+    p.style.cssText = `left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*1.5}s;`;
+    c.appendChild(p);
+  }
+  setTimeout(() => c.innerHTML='', 6000);
+}
+
+init();
+</script>
+<script src="/i18n.js" defer></script></body>
+</html>
+
+
+
+
+
+
+
+
