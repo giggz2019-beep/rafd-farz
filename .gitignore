@@ -40,3 +40,4 @@ temp/
 *.key
 *.crt
 *.pfx
+.claude/worktrees/
