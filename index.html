@@ -71,6 +71,7 @@
   </div>
   <div class="container hero-inner">
     <div class="hero-content">
+      <span class="hero-badge"><span class="badge-dot"></span><span data-i18n="hero.badge">محرك تقييم بالذكاء الاصطناعي</span></span>
       <h1 class="hero-title" data-i18n="hero.title">مرحباً بكم في<br><span class="gradient-text">مستقبل التقييم</span><br>الذكي</h1>
       <p class="hero-desc">
         <span data-i18n="hero.desc">RAFD — منصة الذكاء الاصطناعي للتقييم الفوري. تُمكّن الشركات والبنوك والجامعات والحاضنات من أتمتة قرارات القبول والرفض بناءً على معاييرها الخاصة — بدون تحيّز.</span></p>
@@ -104,151 +105,58 @@
       </div>
     </div>
     <div class="hero-visual">
-      <div class="browser-frame">
-        <div class="browser-bar">
-          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-          <span class="browser-url">rafd-digital.com/dashboard</span>
-        </div>
-        <div class="dashboard-mockup">
-            <div class="mockup-body">
-              <div class="mockup-sidebar">
-                <div class="ms-logo"><img src="/rafd-logo.png" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px"></div>
-                <div class="ms-item active">📊</div>
-                <div class="ms-item">📋</div>
-                <div class="ms-item">⚙️</div>
-                <div class="ms-item">📈</div>
-              </div>
-              <div class="mockup-content">
-                <!-- Slide 1: Requests List -->
-                <div class="mock-slide mock-slide-1">
-                  <div class="mc-header">
-                    <span class="mc-title" data-i18n="demo.mc-title">الطلبات الواردة</span>
-                    <span class="mc-badge" data-i18n="demo.mc-badge">12 جديد</span>
-                  </div>
-                  <div class="mc-cards">
-                    <div class="mc-card accepted">
-                      <span class="mc-name">أحمد محمد</span>
-                      <span class="mc-score">92%</span>
-                      <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
-                    </div>
-                    <div class="mc-card rejected">
-                      <span class="mc-name">سارة علي</span>
-                      <span class="mc-score">41%</span>
-                      <span class="mc-status red" data-i18n="demo.rejected">مرفوض ✗</span>
-                    </div>
-                    <div class="mc-card accepted">
-                      <span class="mc-name">خالد عبدالله</span>
-                      <span class="mc-score">78%</span>
-                      <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
-                    </div>
-                    <div class="mc-card processing">
-                      <span class="mc-name">نورة السالم</span>
-                      <span class="mc-score">--</span>
-                      <span class="mc-status yellow" data-i18n="demo.pending">جارٍ... ⟳</span>
-                    </div>
-                    <div class="mc-card accepted">
-                      <span class="mc-name">عبدالله سعد</span>
-                      <span class="mc-score">71%</span>
-                      <span class="mc-status green" data-i18n="demo.accepted">مقبول ✓</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Slide 3: AI Evaluation Report -->
-                <div class="mock-slide mock-slide-3">
-                  <div class="mc-header">
-                    <span class="mc-title" data-i18n="demo.ai-title">تقرير التقييم الذكي</span>
-                    <span class="mc-badge" style="background:#16A870;animation:pulse 2s infinite" data-i18n="demo.ai-badge">🤖 مكتمل</span>
-                  </div>
-                  <div class="ms3-candidate">
-                    <div class="ms3-info">
-                      <span class="ms3-name">محمد الزهراني</span>
-                      <span class="ms3-status green" data-i18n="demo.accepted">مقبول ✓</span>
-                    </div>
-                    <div class="ms3-score-row">
-                      <div class="ms3-bar-track"><div class="ms3-bar-fill" style="width:87%"></div></div>
-                      <span class="ms3-score-num">87<small>/100</small></span>
-                    </div>
-                  </div>
-                  <div class="ms3-criteria">
-                    <div class="ms3-cr-row">
-                      <span class="ms3-cr-lbl" data-i18n="demo.cr-edu">التعليم</span>
-                      <div class="ms2-bar-track"><div class="ms2-bar-fill" style="width:90%;background:#16A870"></div></div>
-                      <span class="ms2-pct">90%</span>
-                    </div>
-                    <div class="ms3-cr-row">
-                      <span class="ms3-cr-lbl" data-i18n="demo.cr-exp">الخبرة</span>
-                      <div class="ms2-bar-track"><div class="ms2-bar-fill" style="width:82%;background:#a78bfa"></div></div>
-                      <span class="ms2-pct">82%</span>
-                    </div>
-                    <div class="ms3-cr-row">
-                      <span class="ms3-cr-lbl" data-i18n="demo.cr-proj">المشاريع</span>
-                      <div class="ms2-bar-track"><div class="ms2-bar-fill" style="width:88%;background:#fb923c"></div></div>
-                      <span class="ms2-pct">88%</span>
-                    </div>
-                    <div class="ms3-cr-row">
-                      <span class="ms3-cr-lbl" data-i18n="demo.cr-comm">الالتزام</span>
-                      <div class="ms2-bar-track"><div class="ms2-bar-fill" style="width:85%;background:#16A870"></div></div>
-                      <span class="ms2-pct">85%</span>
-                    </div>
-                  </div>
-                  <div class="ms3-ai-rec">
-                    <span class="ms3-ai-icon">💡</span>
-                    <span data-i18n="demo.ai-rec">مرشح متميز — يُنصح بالقبول الفوري</span>
-                  </div>
-                </div>
-                <!-- Slide 2: Statistics -->
-                <div class="mock-slide mock-slide-2">
-                  <div class="mc-header">
-                    <span class="mc-title" data-i18n="demo.stats-title">إحصائيات التقديم</span>
-                    <span class="mc-badge" style="background:#6366f1" data-i18n="demo.stats-badge">هذا الشهر</span>
-                  </div>
-                  <!-- KPI cards -->
-                  <div class="ms2-kpis">
-                    <div class="ms2-kpi ms2-kpi-blue">
-                      <div class="ms2-kpi-num">247</div>
-                      <div class="ms2-kpi-lbl" data-i18n="demo.s-total-s">إجمالي</div>
-                    </div>
-                    <div class="ms2-kpi ms2-kpi-green">
-                      <div class="ms2-kpi-num">158</div>
-                      <div class="ms2-kpi-lbl" data-i18n="demo.s-acc-s">مقبول</div>
-                    </div>
-                    <div class="ms2-kpi ms2-kpi-red">
-                      <div class="ms2-kpi-num">67</div>
-                      <div class="ms2-kpi-lbl" data-i18n="demo.s-rej-s">مرفوض</div>
-                    </div>
-                    <div class="ms2-kpi ms2-kpi-amber">
-                      <div class="ms2-kpi-num">22</div>
-                      <div class="ms2-kpi-lbl" data-i18n="demo.s-pend-s">جارٍ</div>
-                    </div>
-                  </div>
-                  <!-- Donut + sectors -->
-                  <div class="ms2-body">
-                    <div class="ms2-donut-wrap">
-                      <div class="ms2-donut"></div>
-                      <div class="ms2-donut-legend">
-                        <div class="ms2-legend-item"><span class="ms2-dot" style="background:#16A870"></span><span data-i18n="demo.s-acc-s">مقبول</span> 64%</div>
-                        <div class="ms2-legend-item"><span class="ms2-dot" style="background:#ef4444"></span><span data-i18n="demo.s-rej-s">مرفوض</span> 27%</div>
-                        <div class="ms2-legend-item"><span class="ms2-dot" style="background:#f59e0b"></span><span data-i18n="demo.s-pend-s">جارٍ</span> 9%</div>
-                      </div>
-                    </div>
-                    <!-- Sector bars -->
-                    <div class="ms2-sectors">
-                      <div class="ms2-sec-title" data-i18n="demo.s-by-sector">حسب القطاع</div>
-                      <div class="ms2-sec-row"><span class="ms2-sec-lbl" data-i18n="demo.s-tech">التقنية</span><div class="ms2-sec-track"><div class="ms2-sec-fill" style="width:72%;background:#16A870"></div></div><span class="ms2-sec-pct">72</span></div>
-                      <div class="ms2-sec-row"><span class="ms2-sec-lbl" data-i18n="demo.s-health">الصحة</span><div class="ms2-sec-track"><div class="ms2-sec-fill" style="width:55%;background:#a78bfa"></div></div><span class="ms2-sec-pct">55</span></div>
-                      <div class="ms2-sec-row"><span class="ms2-sec-lbl" data-i18n="demo.s-edu">التعليم</span><div class="ms2-sec-track"><div class="ms2-sec-fill" style="width:48%;background:#fb923c"></div></div><span class="ms2-sec-pct">48</span></div>
-                      <div class="ms2-sec-row"><span class="ms2-sec-lbl" data-i18n="demo.s-fin">المالية</span><div class="ms2-sec-track"><div class="ms2-sec-fill" style="width:38%;background:#16A870"></div></div><span class="ms2-sec-pct">38</span></div>
-                    </div>
-                  </div>
-                  <!-- Avg score footer -->
-                  <div class="ms2-footer">
-                    <div class="ms2-footer-item"><span class="ms2-f-lbl" data-i18n="demo.s-avg">متوسط الدرجة</span><span class="ms2-f-val" style="color:#16A870">73.4</span></div>
-                    <div class="ms2-footer-item"><span class="ms2-f-lbl" data-i18n="demo.s-time">وقت المعالجة</span><span class="ms2-f-val" style="color:#a78bfa">1.2<small>ث</small></span></div>
-                    <div class="ms2-footer-item"><span class="ms2-f-lbl" data-i18n="demo.s-saving">توفير الوقت</span><span class="ms2-f-val" style="color:#16A870">82%</span></div>
-                  </div>
-                </div>
+      <div class="score-stack">
+        <div class="score-layer layer-2"></div>
+        <div class="score-layer layer-1"></div>
+        <div class="score-card">
+          <div class="sc-top">
+            <div class="sc-avatar">م</div>
+            <div class="sc-person">
+              <span class="sc-name">محمد الزهراني</span>
+              <span class="sc-role"><span data-i18n="demo.sc-role">مطوّر واجهات</span> · <span data-i18n="demo.sc-id">طلب #4821</span></span>
+            </div>
+          </div>
+          <div class="sc-verdict">
+            <div class="sc-verdict-text">
+              <span class="sc-verdict-badge">✓ <span data-i18n="demo.sc-verdict">مرشح مقبول</span></span>
+              <p class="sc-verdict-sub" data-i18n="demo.sc-verdict-sub">تجاوز الحد الأدنى للمعايير — يُنصح بالترشيح للمقابلة</p>
+            </div>
+            <div class="sc-ring" style="--p:88">
+              <div class="sc-ring-inner">
+                <span class="sc-ring-num">88</span>
+                <span class="sc-ring-max" data-i18n="demo.sc-of100">من 100</span>
               </div>
             </div>
+          </div>
+          <div class="sc-breakdown">
+            <div class="sc-bd-title">
+              <span data-i18n="demo.sc-bd-title">تفصيل الدرجة</span>
+              <span class="sc-bd-note" data-i18n="demo.sc-bd-note">نقاط موزونة — لا تُنسب مستقلة</span>
+            </div>
+            <div class="sc-bd-row">
+              <span class="sc-bd-lbl" data-i18n="demo.sc-c1">الخبرة والمهارة</span>
+              <div class="sc-bd-track"><div class="sc-bd-fill" style="width:93%"></div></div>
+              <span class="sc-bd-val">28<small>/30</small></span>
+            </div>
+            <div class="sc-bd-row">
+              <span class="sc-bd-lbl" data-i18n="demo.sc-c2">التأهيل الأكاديمي</span>
+              <div class="sc-bd-track"><div class="sc-bd-fill" style="width:88%"></div></div>
+              <span class="sc-bd-val">22<small>/25</small></span>
+            </div>
+            <div class="sc-bd-row">
+              <span class="sc-bd-lbl" data-i18n="demo.sc-c3">الملاءمة للمعايير</span>
+              <div class="sc-bd-track"><div class="sc-bd-fill gold" style="width:80%"></div></div>
+              <span class="sc-bd-val">24<small>/30</small></span>
+            </div>
+            <div class="sc-bd-row">
+              <span class="sc-bd-lbl" data-i18n="demo.sc-c4">اكتمال المستندات</span>
+              <div class="sc-bd-track"><div class="sc-bd-fill" style="width:93%"></div></div>
+              <span class="sc-bd-val">14<small>/15</small></span>
+            </div>
+          </div>
+          <div class="sc-total">
+            <span data-i18n="demo.sc-total">المجموع الكلي</span>
+            <span class="sc-total-val">88<small>/100</small></span>
           </div>
         </div>
       </div>
