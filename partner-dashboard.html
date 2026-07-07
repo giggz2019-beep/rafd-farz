@@ -503,6 +503,14 @@ select option{background:#1e293b;color:#e2e8f0}
     </div>
     <div class="card">
       <div class="card-title" data-i18n="db.admin-data">👤 بيانات المسؤول</div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+        <div class="sb-av" id="set_avatar_preview" style="width:64px;height:64px;font-size:1.4rem">—</div>
+        <div>
+          <button type="button" class="btn-sm" onclick="document.getElementById('set_avatar_file').click()"><span data-i18n="db.btn-change-photo">📷 تغيير الصورة</span></button>
+          <input type="file" id="set_avatar_file" accept="image/*" style="display:none" onchange="uploadAvatar(this.files[0])">
+          <div id="set_avatar_status" style="font-size:.7rem;color:#64748b;margin-top:.35rem"></div>
+        </div>
+      </div>
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-fname">الاسم الأول</label>
@@ -570,6 +578,11 @@ select option{background:#1e293b;color:#e2e8f0}
         ⚠️ يُمنح الوصول للـ API بعد مراجعة الطلب والتحقق من هوية الجهة. لن يُشارَك أي توثيق تقني قبل الموافقة الرسمية.
       </div>
       <button class="btn-primary" onclick="requestApiAccess()" style="background:linear-gradient(135deg,#0B5D3B,#063321)"><span data-i18n="db.btn-api">📩 طلب الوصول للـ API</span></button>
+    </div>
+    <div class="card" style="border-color:rgba(239,68,68,.3)">
+      <div class="card-title" style="color:#f87171" data-i18n="db.danger-title">⚠️ المنطقة الخطرة</div>
+      <p style="font-size:.85rem;color:#94a3b8;line-height:1.8;margin-bottom:1.25rem" data-i18n="db.danger-desc">حذف حسابك سيؤدي لإزالة جميع بياناتك وطلباتك المُقدَّمة نهائياً، ولا يمكن التراجع عن هذا الإجراء.</p>
+      <button class="btn-primary" onclick="openDeleteAccountModal()" style="background:none;border:1.5px solid #ef4444;color:#f87171"><span data-i18n="db.btn-delete-account">🗑️ حذف الحساب نهائياً</span></button>
     </div>
   </div>
 
@@ -1138,6 +1151,28 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 </main>
 
 <!-- REQUEST DETAIL MODAL -->
+<!-- DELETE ACCOUNT MODAL -->
+<div class="modal-overlay" id="deleteAccountModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-hdr">
+      <div class="modal-title" style="color:#f87171" data-i18n="db.danger-title">⚠️ المنطقة الخطرة</div>
+      <button class="btn-close" onclick="closeDeleteAccountModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:#94a3b8;line-height:1.8;margin-bottom:1rem" data-i18n="db.danger-confirm-desc">هذا الإجراء نهائي ولا يمكن التراجع عنه. سيتم حذف حسابك وجميع طلباتك المُقدَّمة بشكل كامل. أدخل كلمة المرور لتأكيد الحذف.</p>
+      <div class="fld-m">
+        <label data-i18n="db.lbl-confirm-pass">كلمة المرور</label>
+        <input type="password" id="del_account_pass" data-i18n-placeholder="db.ph-current-pass" placeholder="كلمة المرور الحالية">
+      </div>
+      <div id="del_account_err" style="display:none;font-size:.78rem;color:#f87171;margin-top:.5rem"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeDeleteAccountModal()"><span data-i18n="db.btn-cancel">إلغاء</span></button>
+      <button class="btn-primary" id="btn_confirm_delete" onclick="confirmDeleteAccount()" style="background:linear-gradient(135deg,#ef4444,#991b1b)"><span data-i18n="db.btn-confirm-delete">حذف الحساب نهائياً</span></button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="reqModal">
   <div class="modal">
     <div class="modal-hdr">
@@ -1337,7 +1372,7 @@ function initUI() {
   document.getElementById('sb_orgtype').textContent = getOrgTypeLabel(partner.orgtype);
   const planLabels = {trial: getT('db.plan-trial-short'), basic49: getT('db.plan-basic49-short'), basic: getT('db.plan-basic-short'), advanced: getT('db.plan-adv-short')};
   document.getElementById('sb_plan').textContent = planLabels[partner.plan] || partner.plan;
-  document.getElementById('sb_av').textContent = (partner.fname || '?')[0];
+  renderAvatar(document.getElementById('sb_av'), partner.avatar_url, (partner.fname || '?')[0]);
   document.getElementById('sb_uname').textContent = partner.fname + ' ' + partner.lname;
   document.getElementById('sb_urole').textContent = partner.title;
   document.getElementById('welcome_name').textContent = partner.fname;
@@ -1627,9 +1662,41 @@ async function finalReject(id) {
 }
 
 // ===== SETTINGS =====
+function renderAvatar(el, url, fallbackLetter) {
+  if (url) {
+    el.innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+  } else {
+    el.textContent = fallbackLetter || '?';
+  }
+}
+
+async function uploadAvatar(file) {
+  if (!file) return;
+  const status = document.getElementById('set_avatar_status');
+  status.textContent = getT('db.avatar-uploading');
+  const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+  const { status: urlStatus, data: urlData } = await pdApi({ action: 'get_avatar_upload_url', fileExt: ext });
+  if (urlStatus !== 200 || !urlData.signedURL) { status.textContent = getT('db.avatar-upload-error'); return; }
+  try {
+    await fetch(urlData.storageUrl + urlData.signedURL, {
+      method: 'PUT', body: file,
+      headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    });
+    const { status: saveStatus } = await pdApi({ action: 'update_profile', profile: { avatar_url: urlData.publicUrl } });
+    if (saveStatus !== 200) throw new Error('save_failed');
+    partner.avatar_url = urlData.publicUrl;
+    renderAvatar(document.getElementById('set_avatar_preview'), urlData.publicUrl);
+    renderAvatar(document.getElementById('sb_av'), urlData.publicUrl);
+    status.textContent = getT('db.avatar-upload-ok');
+  } catch (e) {
+    status.textContent = getT('db.avatar-upload-error');
+  }
+}
+
 function renderSettings() {
   const savedTheme = localStorage.getItem('rafd_dash_theme') || 'light';
   setDashTheme(savedTheme);
+  renderAvatar(document.getElementById('set_avatar_preview'), partner.avatar_url, (partner.fname || '?')[0]);
   document.getElementById('set_orgname').value = partner.org || '';
   document.getElementById('set_orgtype').value = partner.orgtype || '';
   document.getElementById('set_city').value = partner.city || '';
@@ -1664,6 +1731,34 @@ async function changePassword() {
   document.getElementById('set_newpass').value = '';
   document.getElementById('set_newpass2').value = '';
   toast(getT('db.toast-pass-updated'));
+}
+
+function openDeleteAccountModal() {
+  document.getElementById('del_account_pass').value = '';
+  document.getElementById('del_account_err').style.display = 'none';
+  document.getElementById('deleteAccountModal').classList.add('open');
+}
+function closeDeleteAccountModal() { document.getElementById('deleteAccountModal').classList.remove('open'); }
+
+async function confirmDeleteAccount() {
+  const pass = document.getElementById('del_account_pass').value;
+  const errBox = document.getElementById('del_account_err');
+  errBox.style.display = 'none';
+  if (!pass) { errBox.textContent = getT('db.toast-pass-required'); errBox.style.display = 'block'; return; }
+  const btn = document.getElementById('btn_confirm_delete');
+  btn.disabled = true;
+  const prevText = btn.textContent;
+  btn.textContent = getT('db.pending-confirm');
+  const { status, data } = await pdApi({ action: 'delete_account', password: pass });
+  if (status !== 200) {
+    btn.disabled = false;
+    btn.textContent = prevText;
+    errBox.textContent = data?.error === 'wrong_password' ? getT('db.toast-wrong-pass') : getT('db.toast-save-error');
+    errBox.style.display = 'block';
+    return;
+  }
+  localStorage.removeItem('rafd_partner_session');
+  window.location.href = '/partner-login.html';
 }
 
 async function updatePartnerInStorage() {
