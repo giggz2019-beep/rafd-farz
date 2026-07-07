@@ -8,10 +8,13 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>دخول الشركاء — RAFD Digital</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Light.otf') format('opentype'); font-weight: 300; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Medium.otf') format('opentype'); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Bold.otf') format('opentype'); font-weight: 700 900; font-display: swap; }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;direction:rtl;padding:2rem 1rem;-webkit-user-select:none;user-select:none}
+body{font-family:'ThmanyahSans', sans-serif;background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;direction:rtl;padding:2rem 1rem;-webkit-user-select:none;user-select:none}
 input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text}
 .top-link{position:fixed;top:1.25rem;right:1.5rem}
 .top-link a{color:#64748b;font-size:.82rem;text-decoration:none;display:flex;align-items:center;gap:.3rem}
@@ -21,24 +24,24 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .logo-icon{width:90px;height:90px;margin:0 auto .75rem;display:flex;align-items:center;justify-content:center;background:#ffffff;border-radius:18px;padding:10px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
 .logo-title{font-size:1.3rem;font-weight:900;color:#fff}
 .logo-sub{font-size:.8rem;color:#64748b;margin-top:.2rem}
-.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.25);border-radius:20px;padding:.3rem .85rem;font-size:.75rem;font-weight:700;margin-top:.75rem}
+.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(22,168,112,.1);color:#16A870;border:1px solid rgba(22,168,112,.25);border-radius:20px;padding:.3rem .85rem;font-size:.75rem;font-weight:700;margin-top:.75rem}
 .fld{margin-bottom:1.1rem}
 .fld label{display:block;font-size:.82rem;font-weight:700;color:#94a3b8;margin-bottom:.4rem}
-.fld input{width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;transition:all .2s}
+.fld input{width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;transition:all .2s}
 .fld input::placeholder{color:#475569}
-.fld input:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.08)}
-.btn-login{width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;margin-top:.25rem}
-.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,58,74,.4)}
+.fld input:focus{border-color:#16A870;box-shadow:0 0 0 3px rgba(22,168,112,.08)}
+.btn-login{width:100%;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'ThmanyahSans', sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;margin-top:.25rem}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(10,22,40,.4)}
 .btn-login:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#f87171;border-radius:10px;padding:.7rem 1rem;font-size:.82rem;margin-bottom:1rem;display:none}
 .pending-msg{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fbbf24;border-radius:10px;padding:.7rem 1rem;font-size:.82rem;margin-bottom:1rem;display:none}
 .links{display:flex;justify-content:space-between;align-items:center;margin-top:1.25rem;font-size:.8rem}
 .links a{color:#64748b;text-decoration:none}
 .links a:hover{color:#94a3b8}
-.links .reg-link{color:#38bdf8;font-weight:700}
+.links .reg-link{color:#16A870;font-weight:700}
 .or-div{display:flex;align-items:center;gap:.75rem;margin:1.1rem 0;color:#334155;font-size:.75rem}
 .or-div::before,.or-div::after{content:'';flex:1;height:1px;background:#334155}
-.btn-nafath{width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem 1rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.65rem}
+.btn-nafath{width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem 1rem;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.65rem}
 .btn-nafath:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(10,95,63,.35)}
 .nafath-icon{width:28px;height:28px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#0a5f3f;letter-spacing:-.02em;flex-shrink:0}
 .nafath-link-badge{display:none;align-items:center;gap:.5rem;background:rgba(10,95,63,.15);border:1px solid rgba(10,95,63,.3);border-radius:10px;padding:.6rem .9rem;font-size:.78rem;color:#34d399;margin-top:.75rem}
@@ -47,24 +50,24 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .otp-icon{font-size:2.8rem;margin-bottom:.5rem}
 .otp-title{font-size:1.15rem;font-weight:900;color:#fff;margin-bottom:.3rem}
 .otp-desc{font-size:.8rem;color:#64748b;margin-bottom:.3rem}
-.otp-email-display{font-size:.85rem;font-weight:700;color:#38bdf8;margin-bottom:1.25rem;direction:ltr}
+.otp-email-display{font-size:.85rem;font-weight:700;color:#16A870;margin-bottom:1.25rem;direction:ltr}
 .otp-input-wrap{display:flex;gap:.5rem;justify-content:center;margin-bottom:1rem;direction:ltr}
-.otp-digit{width:44px;height:52px;text-align:center;font-size:1.35rem;font-weight:900;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;color:#38bdf8;font-family:'Cairo',monospace;outline:none;transition:.2s}
-.otp-digit:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.1)}
-.otp-digit.filled{border-color:#4a9d6f;background:rgba(74,157,111,.08)}
+.otp-digit{width:44px;height:52px;text-align:center;font-size:1.35rem;font-weight:900;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;color:#16A870;font-family:'ThmanyahSans', monospace;outline:none;transition:.2s}
+.otp-digit:focus{border-color:#16A870;box-shadow:0 0 0 3px rgba(22,168,112,.1)}
+.otp-digit.filled{border-color:#0B5D3B;background:rgba(11,93,59,.08)}
 .otp-error{color:#f87171;font-size:.78rem;margin-bottom:.75rem;display:none}
-.btn-verify{width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:.75rem;transition:.2s}
+.btn-verify{width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'ThmanyahSans', sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:.75rem;transition:.2s}
 .btn-verify:disabled{opacity:.5;cursor:not-allowed}
 .resend-row{display:flex;align-items:center;justify-content:center;gap:.75rem;font-size:.78rem;color:#64748b}
-.btn-resend{background:none;border:none;color:#38bdf8;font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer}
+.btn-resend{background:none;border:none;color:#16A870;font-family:'ThmanyahSans', sans-serif;font-size:.78rem;font-weight:700;cursor:pointer}
 .btn-resend:disabled{color:#475569;cursor:not-allowed}
-.btn-back-login{background:none;border:none;color:#64748b;font-family:'Cairo',sans-serif;font-size:.8rem;cursor:pointer;margin-top:.5rem;text-decoration:underline dotted}
+.btn-back-login{background:none;border:none;color:#64748b;font-family:'ThmanyahSans', sans-serif;font-size:.8rem;cursor:pointer;margin-top:.5rem;text-decoration:underline dotted}
 </style>
 </head>
 <body>
 <div class="top-link" style="display:flex;align-items:center;gap:1rem">
   <a href="/"><span data-i18n="pl.back-home">← الرئيسية</span></a>
-  <button id="langToggleBtn" onclick="toggleLang()" style="background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);color:#38bdf8;border-radius:20px;padding:.25rem .85rem;font-family:'Cairo',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer">🌐 EN</button>
+  <button id="langToggleBtn" onclick="toggleLang()" style="background:rgba(22,168,112,.12);border:1px solid rgba(22,168,112,.25);color:#16A870;border-radius:20px;padding:.25rem .85rem;font-family:'ThmanyahSans', sans-serif;font-size:.75rem;font-weight:700;cursor:pointer">🌐 EN</button>
 </div>
 
 <div class="card">
@@ -150,11 +153,11 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <input type="text" id="nf_id" placeholder="رقم الهوية الوطنية (10 أرقام)" maxlength="10" inputmode="numeric"
         oninput="this.value=this.value.replace(/\D/g,'')"
         onkeydown="if(event.key==='Enter')initNafathLogin()"
-        style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;letter-spacing:.15em;direction:ltr;margin-bottom:.75rem">
+        style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;letter-spacing:.15em;direction:ltr;margin-bottom:.75rem">
       <div id="nf_err1" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
       <button onclick="initNafathLogin()" id="nf_send_btn"
-        style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.nf-send-btn">طلب التحقق عبر نفاذ</span></button>
-      <button onclick="closeNafathModal()" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
+        style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.nf-send-btn">طلب التحقق عبر نفاذ</span></button>
+      <button onclick="closeNafathModal()" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'ThmanyahSans', sans-serif;font-size:.82rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
     </div>
     <div id="nf_step2" style="display:none">
       <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.85rem"><span data-i18n="pl.nf-step2-hint">افتح تطبيق <strong style="color:#4ade80">نفاذ</strong> على جوالك وستجد إشعاراً فيه هذا الرقم — اضغط تأكيد</span></div>
@@ -163,10 +166,10 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <div style="font-size:.72rem;color:#475569;margin-bottom:1.1rem" data-i18n="pl.nf-random-hint">📱 تحقق من تطبيق نفاذ واضغط الرقم المطابق</div>
       <div id="nf_err2" style="display:none;font-size:.75rem;color:#f87171;margin-bottom:.65rem;text-align:right"></div>
       <button onclick="confirmNafathLogin()" id="nf_verify_btn"
-        style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
+        style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
         <span data-i18n="pl.nf-confirm-btn">✓ تم التأكيد في تطبيق نفاذ — دخول</span>
       </button>
-      <button onclick="document.getElementById('nf_step1').style.display='block';document.getElementById('nf_step2').style.display='none'" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;cursor:pointer"><span data-i18n="pl.btn-back">← رجوع</span></button>
+      <button onclick="document.getElementById('nf_step1').style.display='block';document.getElementById('nf_step2').style.display='none'" style="width:100%;background:none;border:1px solid #1e3a24;color:#64748b;border-radius:12px;padding:.65rem;font-family:'ThmanyahSans', sans-serif;font-size:.82rem;cursor:pointer"><span data-i18n="pl.btn-back">← رجوع</span></button>
     </div>
   </div>
 </div>
@@ -180,13 +183,13 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <div class="fld">
         <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-fp-email">البريد الإلكتروني</span></label>
         <input type="email" id="fp_email" placeholder="name@company.com"
-          style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none"
+          style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none"
           onkeydown="if(event.key==='Enter')sendResetOtp()">
       </div>
       <div id="fp_err" style="display:none;font-size:.78rem;color:#f87171;margin-bottom:.75rem"></div>
       <button onclick="sendResetOtp()" id="fp_send_btn"
-        style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem"><span data-i18n="pl.btn-send-otp">إرسال رمز التحقق</span></button>
-      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
+        style="width:100%;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem"><span data-i18n="pl.btn-send-otp">إرسال رمز التحقق</span></button>
+      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'ThmanyahSans', sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
     </div>
     <div id="fp_step_reset" style="display:none">
       <div style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.4rem" data-i18n="pl.fp-otp-title">📨 أدخل رمز التحقق</div>
@@ -194,17 +197,17 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <div class="fld">
         <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-otp">رمز التحقق</span></label>
         <input type="text" id="fp_otp" placeholder="000000" maxlength="6" inputmode="numeric"
-          style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:1.3rem;color:#38bdf8;outline:none;text-align:center;letter-spacing:.3em;direction:ltr">
+          style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:1.3rem;color:#16A870;outline:none;text-align:center;letter-spacing:.3em;direction:ltr">
       </div>
       <div class="fld">
         <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-new-pass">كلمة المرور الجديدة</span></label>
         <input type="password" id="fp_newpass" placeholder="••••••••"
-          style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none">
+          style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none">
       </div>
       <div id="fp_reset_err" style="display:none;font-size:.78rem;color:#f87171;margin-bottom:.75rem"></div>
       <button onclick="doReset()" id="fp_reset_btn"
-        style="width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem"><span data-i18n="pl.btn-change-pass">تغيير كلمة المرور</span></button>
-      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
+        style="width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.75rem"><span data-i18n="pl.btn-change-pass">تغيير كلمة المرور</span></button>
+      <button onclick="hideForgot()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'ThmanyahSans', sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
     </div>
   </div>
 </div>
@@ -217,18 +220,18 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="fld">
       <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-orgname">اسم الجهة</span></label>
       <input type="text" id="fe_orgname" placeholder="مثال: جامعة الملك عبدالعزيز"
-        style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
+        style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
         onkeydown="if(event.key==='Enter')findEmailByPhone()">
     </div>
     <div id="fe_err" style="display:none;font-size:.78rem;color:#f87171;margin:.5rem 0 .75rem"></div>
     <div id="fe_result" style="display:none;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.9rem;text-align:center">
       <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem" data-i18n="pl.fe-result-lbl">البريد الإلكتروني المسجّل</div>
       <div id="fe_email_show" style="font-size:1rem;font-weight:800;color:#34d399;direction:ltr"></div>
-      <button id="fe_use_btn" onclick="useFoundEmail()" style="margin-top:.75rem;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fe-use-btn">استخدم هذا البريد للدخول ←</span></button>
+      <button id="fe_use_btn" onclick="useFoundEmail()" style="margin-top:.75rem;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'ThmanyahSans', sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fe-use-btn">استخدم هذا البريد للدخول ←</span></button>
     </div>
     <button onclick="findEmailByPhone()" id="fe_search_btn"
-      style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.btn-search">بحث</span></button>
-    <button onclick="hideForgotEmail()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
+      style="width:100%;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.btn-search">بحث</span></button>
+    <button onclick="hideForgotEmail()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'ThmanyahSans', sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
   </div>
 </div>
 
@@ -240,19 +243,19 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="fld">
       <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-orgname">اسم الجهة</span></label>
       <input type="text" id="fu_orgname" placeholder="مثال: شركة الأفق للتقنية"
-        style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Cairo',sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
+        style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
         onkeydown="if(event.key==='Enter')findUsername()">
     </div>
     <div id="fu_err" style="display:none;font-size:.78rem;color:#f87171;margin:.5rem 0 .75rem"></div>
-    <div id="fu_result" style="display:none;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.9rem;text-align:center">
+    <div id="fu_result" style="display:none;background:rgba(22,168,112,.08);border:1px solid rgba(22,168,112,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.9rem;text-align:center">
       <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem" data-i18n="pl.fu-result-lbl">اسم المستخدم الخاص بك</div>
-      <div id="fu_username_show" style="font-size:1rem;font-weight:800;color:#38bdf8;direction:ltr;letter-spacing:.05em"></div>
+      <div id="fu_username_show" style="font-size:1rem;font-weight:800;color:#16A870;direction:ltr;letter-spacing:.05em"></div>
       <div style="font-size:.72rem;color:#64748b;margin-top:.4rem" data-i18n="pl.fu-hint">استخدمه مع كلمة المرور لتسجيل الدخول</div>
-      <button id="fu_use_btn" onclick="useFoundUsername()" style="margin-top:.75rem;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fu-use-btn">استخدم اسم المستخدم للدخول ←</span></button>
+      <button id="fu_use_btn" onclick="useFoundUsername()" style="margin-top:.75rem;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'ThmanyahSans', sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fu-use-btn">استخدم اسم المستخدم للدخول ←</span></button>
     </div>
     <button onclick="findUsername()" id="fu_search_btn"
-      style="width:100%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.btn-search">بحث</span></button>
-    <button onclick="hideForgotUsername()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
+      style="width:100%;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.btn-search">بحث</span></button>
+    <button onclick="hideForgotUsername()" style="width:100%;background:none;border:1px solid #334155;color:#64748b;border-radius:12px;padding:.7rem;font-family:'ThmanyahSans', sans-serif;font-size:.85rem;cursor:pointer"><span data-i18n="pl.btn-cancel">إلغاء</span></button>
   </div>
 </div>
 

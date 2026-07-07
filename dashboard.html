@@ -8,28 +8,31 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة التحكم — Rafd Smart Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Light.otf') format('opentype'); font-weight: 300; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Medium.otf') format('opentype'); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Bold.otf') format('opentype'); font-weight: 700 900; font-display: swap; }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:rtl;display:flex;min-height:100vh}
+body{font-family:'ThmanyahSans', sans-serif;background:#f1f5f9;color:#1e293b;direction:rtl;display:flex;min-height:100vh}
 
 /* ===== SIDEBAR ===== */
-.sidebar{width:260px;background:#0f172a;min-height:100vh;display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:100;transition:transform .3s}
+.sidebar{width:260px;background:#0A1628;min-height:100vh;display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:100;transition:transform .3s}
 .sb-header{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.08)}
 .sb-brand{display:flex;align-items:center;gap:.75rem}
-.sb-logo{width:40px;height:40px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.1rem}
+.sb-logo{width:40px;height:40px;background:linear-gradient(135deg,#0A1628,#0B5D3B);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.1rem}
 .sb-name{font-size:1.1rem;font-weight:800;color:#fff}
 .sb-tagline{font-size:.7rem;color:rgba(255,255,255,.4)}
 .sb-nav{flex:1;padding:1rem 0;overflow-y:auto}
 .sb-section{padding:.5rem 1rem;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;margin-top:.5rem}
 .sb-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s;border-right:3px solid transparent;font-size:.875rem;font-weight:600}
 .sb-item:hover{background:rgba(255,255,255,.05);color:#fff}
-.sb-item.active{background:rgba(74,157,111,.15);color:#4a9d6f;border-right-color:#4a9d6f}
+.sb-item.active{background:rgba(11,93,59,.15);color:#0B5D3B;border-right-color:#0B5D3B}
 .sb-icon{font-size:1.1rem;width:24px;text-align:center}
 .sb-badge{background:#ef4444;color:#fff;font-size:.65rem;font-weight:700;padding:.1rem .4rem;border-radius:8px;margin-right:auto}
 .sb-footer{padding:1.25rem;border-top:1px solid rgba(255,255,255,.08)}
 .sb-user{display:flex;align-items:center;gap:.75rem}
-.sb-avatar{width:36px;height:36px;background:linear-gradient(135deg,#4a9d6f,#1a3a4a);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.875rem;font-weight:700}
+.sb-avatar{width:36px;height:36px;background:linear-gradient(135deg,#0B5D3B,#0A1628);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.875rem;font-weight:700}
 .sb-user-name{font-size:.85rem;font-weight:700;color:#fff}
 .sb-user-role{font-size:.7rem;color:rgba(255,255,255,.4)}
 .sb-logout{margin-right:auto;color:rgba(255,255,255,.4);cursor:pointer;font-size:.8rem;transition:color .2s}
@@ -40,7 +43,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
 .topbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .topbar-title{font-size:1.1rem;font-weight:800;color:#0f172a}
 .topbar-actions{display:flex;align-items:center;gap:1rem}
-.btn-new{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.6rem 1.25rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem}
+.btn-new{background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;padding:.6rem 1.25rem;border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem}
 .notif-btn{width:36px;height:36px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
 .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
 .content{padding:2rem;flex:1}
@@ -68,7 +71,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
 .card{background:#fff;border-radius:16px;padding:1.5rem;border:1px solid #e2e8f0}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
 .card-title{font-size:1rem;font-weight:700;color:#0f172a}
-.card-link{font-size:.8rem;color:#1a3a4a;text-decoration:none;font-weight:600}
+.card-link{font-size:.8rem;color:#0A1628;text-decoration:none;font-weight:600}
 
 /* Recent apps table */
 .apps-table{width:100%;border-collapse:collapse}
@@ -80,7 +83,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
 .score-bar{display:flex;align-items:center;gap:.5rem}
 .score-bg{flex:1;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden}
 .score-fill{height:100%;border-radius:3px}
-.score-fill.high{background:#10b981}
+.score-fill.high{background:#16A870}
 .score-fill.mid{background:#f59e0b}
 .score-fill.low{background:#ef4444}
 .score-num{font-size:.8rem;font-weight:700;color:#374151;min-width:30px}
@@ -92,7 +95,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
 
 /* Donut chart */
 .donut-wrap{display:flex;flex-direction:column;align-items:center;gap:1rem}
-.donut{width:140px;height:140px;border-radius:50%;background:conic-gradient(#10b981 0deg 230deg,#ef4444 230deg 295deg,#f59e0b 295deg 360deg);position:relative;display:flex;align-items:center;justify-content:center}
+.donut{width:140px;height:140px;border-radius:50%;background:conic-gradient(#16A870 0deg 230deg,#ef4444 230deg 295deg,#f59e0b 295deg 360deg);position:relative;display:flex;align-items:center;justify-content:center}
 .donut::before{content:'';width:90px;height:90px;background:#fff;border-radius:50%;position:absolute}
 .donut-center{position:relative;text-align:center}
 .donut-pct{font-size:1.25rem;font-weight:900;color:#0f172a}
@@ -106,13 +109,13 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
 /* ===== APPLICATIONS PAGE ===== */
 .page-toolbar{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
 .search-box{display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem 1rem;flex:1;min-width:200px}
-.search-box input{border:none;outline:none;font-family:'Cairo',sans-serif;font-size:.875rem;color:#374151;background:transparent;width:100%}
-.filter-btn{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem 1rem;font-family:'Cairo',sans-serif;font-size:.85rem;color:#374151;cursor:pointer;display:flex;align-items:center;gap:.4rem}
-.filter-btn.active{border-color:#1a3a4a;color:#1a3a4a;background:#f0f9ff}
+.search-box input{border:none;outline:none;font-family:'ThmanyahSans',sans-serif;font-size:.875rem;color:#374151;background:transparent;width:100%}
+.filter-btn{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem 1rem;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;color:#374151;cursor:pointer;display:flex;align-items:center;gap:.4rem}
+.filter-btn.active{border-color:#0A1628;color:#0A1628;background:#f0f9ff}
 .apps-list{display:flex;flex-direction:column;gap:.75rem}
 .app-row{background:#fff;border-radius:14px;padding:1.25rem;border:1px solid #e2e8f0;display:flex;align-items:center;gap:1.25rem;transition:all .2s;cursor:pointer}
-.app-row:hover{border-color:#1a3a4a;box-shadow:0 4px 16px rgba(0,0,0,.06)}
-.app-avatar{width:44px;height:44px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1rem;flex-shrink:0}
+.app-row:hover{border-color:#0A1628;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.app-avatar{width:44px;height:44px;background:linear-gradient(135deg,#0A1628,#0B5D3B);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1rem;flex-shrink:0}
 .app-info{flex:1}
 .app-info-name{font-size:.95rem;font-weight:700;color:#0f172a}
 .app-info-meta{font-size:.78rem;color:#64748b;margin-top:.2rem}
@@ -120,9 +123,9 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
 .app-score-big{font-size:1.5rem;font-weight:900;color:#0f172a}
 .app-score-label{font-size:.7rem;color:#64748b}
 .app-actions{display:flex;gap:.5rem}
-.btn-view{background:#f1f5f9;color:#374151;border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
-.btn-accept{background:#dcfce7;color:#166534;border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
-.btn-reject{background:#fee2e2;color:#991b1b;border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
+.btn-view{background:#f1f5f9;color:#374151;border:none;padding:.5rem .9rem;border-radius:8px;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
+.btn-accept{background:#dcfce7;color:#166534;border:none;padding:.5rem .9rem;border-radius:8px;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
+.btn-reject{background:#fee2e2;color:#991b1b;border:none;padding:.5rem .9rem;border-radius:8px;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
 
 /* ===== CRITERIA PAGE ===== */
 .criteria-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
@@ -134,11 +137,11 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
 .criteria-rule:last-child{border-bottom:none}
 .rule-label{color:#374151;font-weight:600}
 .rule-val{color:#64748b}
-.toggle{width:44px;height:24px;background:#10b981;border-radius:12px;position:relative;cursor:pointer}
+.toggle{width:44px;height:24px;background:#16A870;border-radius:12px;position:relative;cursor:pointer}
 .toggle::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left .2s}
 .toggle.off{background:#e2e8f0}
 .toggle.off::after{left:23px}
-.btn-add-criteria{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.75rem 1.5rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.875rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.5rem}
+.btn-add-criteria{background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;padding:.75rem 1.5rem;border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.875rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.5rem}
 
 /* ===== EMPTY STATE ===== */
 .empty-state{text-align:center;padding:4rem 2rem}
@@ -325,7 +328,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
               </div>
             </div>
             <div class="donut-legend">
-              <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div><span class="legend-label">مقبول</span><span class="legend-val">158</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#16A870"></div><span class="legend-label">مقبول</span><span class="legend-val">158</span></div>
               <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div><span class="legend-label">مرفوض</span><span class="legend-val">67</span></div>
               <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><span class="legend-label">قيد المعالجة</span><span class="legend-val">22</span></div>
             </div>
@@ -350,7 +353,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
             <div class="app-info-name">أحمد محمد الغامدي</div>
             <div class="app-info-meta">تقنية مالية · قُدِّم اليوم · التحقق: ✓ نفاذ</div>
           </div>
-          <div class="app-score-wrap"><div class="app-score-big" style="color:#10b981">92</div><div class="app-score-label">من 100</div></div>
+          <div class="app-score-wrap"><div class="app-score-big" style="color:#16A870">92</div><div class="app-score-label">من 100</div></div>
           <span class="status-badge accepted">مقبول</span>
           <div class="app-actions"><button class="btn-view">عرض</button></div>
         </div>
@@ -370,7 +373,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
             <div class="app-info-name">خالد عبدالله العتيبي</div>
             <div class="app-info-meta">ذكاء اصطناعي · قُدِّم أمس · التحقق: ✓ نفاذ</div>
           </div>
-          <div class="app-score-wrap"><div class="app-score-big" style="color:#10b981">78</div><div class="app-score-label">من 100</div></div>
+          <div class="app-score-wrap"><div class="app-score-big" style="color:#16A870">78</div><div class="app-score-label">من 100</div></div>
           <span class="status-badge accepted">مقبول</span>
           <div class="app-actions"><button class="btn-view">عرض</button></div>
         </div>
@@ -478,7 +481,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
     <div class="page" id="page-billing">
       <div class="card" style="max-width:600px">
         <div class="card-header"><span class="card-title">خطة الاشتراك الحالية</span></div>
-        <div style="padding:1rem;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);border-radius:12px;color:#fff;margin-bottom:1.5rem">
+        <div style="padding:1rem;background:linear-gradient(135deg,#0A1628,#123554);border-radius:12px;color:#fff;margin-bottom:1.5rem">
           <div style="font-size:.8rem;opacity:.7;margin-bottom:.25rem">الخطة الحالية</div>
           <div style="font-size:1.5rem;font-weight:900">الاحترافية</div>
           <div style="font-size:.85rem;opacity:.8;margin-top:.25rem">1,500 ر.س / شهر · 1,000 طلب</div>
@@ -498,13 +501,13 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:#1e293b;direction:r
         <div style="display:flex;flex-direction:column;gap:1rem">
           <div class="field-group">
             <label style="font-size:.875rem;font-weight:600;color:#374151;display:block;margin-bottom:.4rem">اسم الجهة</label>
-            <input type="text" value="مسرعة الأعمال السعودية" style="width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.9rem">
+            <input type="text" value="مسرعة الأعمال السعودية" style="width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.9rem">
           </div>
           <div class="field-group">
             <label style="font-size:.875rem;font-weight:600;color:#374151;display:block;margin-bottom:.4rem">البريد الإلكتروني</label>
-            <input type="email" value="admin@accelerator.sa" style="width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.9rem">
+            <input type="email" value="admin@accelerator.sa" style="width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.9rem">
           </div>
-          <button style="background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;padding:.85rem;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer">حفظ التغييرات</button>
+          <button style="background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;padding:.85rem;border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer">حفظ التغييرات</button>
         </div>
       </div>
     </div>
