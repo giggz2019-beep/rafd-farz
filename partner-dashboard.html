@@ -108,7 +108,9 @@ body.theme-light .save-form-inp::placeholder{color:#94a3b8}
 
 /* ===== STATS ===== */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.75rem}
-.stat-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.25rem}
+.stat-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.25rem;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.stat-card:hover{transform:translateY(-3px);border-color:rgba(201,162,75,.4)}
+.stat-card::before{content:"";position:absolute;top:0;inset-inline-end:0;width:26px;height:26px;background:linear-gradient(135deg,#C9A24B,#E9CD8A);clip-path:polygon(100% 0,0 0,100% 100%)}
 .stat-icon{font-size:1.4rem;margin-bottom:.5rem}
 .stat-label{color:#64748b;font-size:.75rem;font-weight:600;margin-bottom:.35rem}
 .stat-val{font-size:1.8rem;font-weight:900;color:#fff}
