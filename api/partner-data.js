@@ -105,12 +105,29 @@ module.exports = async (req, res) => {
 
     // UPDATE PROFILE
     if (action === 'update_profile') {
-      const allowed = ['org_name','org_type','city','website','fname','lname','title','phone'];
+      const allowed = ['org_name','org_type','city','website','fname','lname','title','phone','avatar_url'];
       const patch = {};
       const profile = body.profile || {};
       allowed.forEach(k => { if (profile[k] !== undefined) patch[k] = profile[k]; });
       await sb('PATCH', `/partners?email=eq.${encodeURIComponent(email)}`, patch, key);
       return res.status(200).json({ ok: true });
+    }
+
+    // GET SIGNED UPLOAD URL FOR PARTNER AVATAR/LOGO
+    if (action === 'get_avatar_upload_url') {
+      const rows = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=id&limit=1`, undefined, key);
+      if (!rows?.length) return res.status(404).json({ error: 'not_found' });
+      const { fileExt } = body;
+      const ext = (fileExt || 'png').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'png';
+      const filePath = `partner-logos/${rows[0].id}/avatar_${Date.now()}.${ext}`;
+      const r = await fetch(`${SB_URL}/storage/v1/object/sign/upload/applicant-docs/${filePath}`, {
+        method: 'POST',
+        headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      });
+      if (!r.ok) throw new Error(`Storage sign ${r.status}`);
+      const { signedURL } = await r.json();
+      const publicUrl = `${SB_URL}/storage/v1/object/public/applicant-docs/${filePath}`;
+      return res.status(200).json({ signedURL, storageUrl: SB_URL, publicUrl });
     }
 
     // UPDATE PASSWORD

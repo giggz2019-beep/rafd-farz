@@ -503,6 +503,14 @@ select option{background:#1e293b;color:#e2e8f0}
     </div>
     <div class="card">
       <div class="card-title" data-i18n="db.admin-data">👤 بيانات المسؤول</div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+        <div class="sb-av" id="set_avatar_preview" style="width:64px;height:64px;font-size:1.4rem">—</div>
+        <div>
+          <button type="button" class="btn-sm" onclick="document.getElementById('set_avatar_file').click()"><span data-i18n="db.btn-change-photo">📷 تغيير الصورة</span></button>
+          <input type="file" id="set_avatar_file" accept="image/*" style="display:none" onchange="uploadAvatar(this.files[0])">
+          <div id="set_avatar_status" style="font-size:.7rem;color:#64748b;margin-top:.35rem"></div>
+        </div>
+      </div>
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-fname">الاسم الأول</label>
@@ -1364,7 +1372,7 @@ function initUI() {
   document.getElementById('sb_orgtype').textContent = getOrgTypeLabel(partner.orgtype);
   const planLabels = {trial: getT('db.plan-trial-short'), basic49: getT('db.plan-basic49-short'), basic: getT('db.plan-basic-short'), advanced: getT('db.plan-adv-short')};
   document.getElementById('sb_plan').textContent = planLabels[partner.plan] || partner.plan;
-  document.getElementById('sb_av').textContent = (partner.fname || '?')[0];
+  renderAvatar(document.getElementById('sb_av'), partner.avatar_url, (partner.fname || '?')[0]);
   document.getElementById('sb_uname').textContent = partner.fname + ' ' + partner.lname;
   document.getElementById('sb_urole').textContent = partner.title;
   document.getElementById('welcome_name').textContent = partner.fname;
@@ -1654,9 +1662,41 @@ async function finalReject(id) {
 }
 
 // ===== SETTINGS =====
+function renderAvatar(el, url, fallbackLetter) {
+  if (url) {
+    el.innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+  } else {
+    el.textContent = fallbackLetter || '?';
+  }
+}
+
+async function uploadAvatar(file) {
+  if (!file) return;
+  const status = document.getElementById('set_avatar_status');
+  status.textContent = getT('db.avatar-uploading');
+  const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+  const { status: urlStatus, data: urlData } = await pdApi({ action: 'get_avatar_upload_url', fileExt: ext });
+  if (urlStatus !== 200 || !urlData.signedURL) { status.textContent = getT('db.avatar-upload-error'); return; }
+  try {
+    await fetch(urlData.storageUrl + urlData.signedURL, {
+      method: 'PUT', body: file,
+      headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    });
+    const { status: saveStatus } = await pdApi({ action: 'update_profile', profile: { avatar_url: urlData.publicUrl } });
+    if (saveStatus !== 200) throw new Error('save_failed');
+    partner.avatar_url = urlData.publicUrl;
+    renderAvatar(document.getElementById('set_avatar_preview'), urlData.publicUrl);
+    renderAvatar(document.getElementById('sb_av'), urlData.publicUrl);
+    status.textContent = getT('db.avatar-upload-ok');
+  } catch (e) {
+    status.textContent = getT('db.avatar-upload-error');
+  }
+}
+
 function renderSettings() {
   const savedTheme = localStorage.getItem('rafd_dash_theme') || 'light';
   setDashTheme(savedTheme);
+  renderAvatar(document.getElementById('set_avatar_preview'), partner.avatar_url, (partner.fname || '?')[0]);
   document.getElementById('set_orgname').value = partner.org || '';
   document.getElementById('set_orgtype').value = partner.orgtype || '';
   document.getElementById('set_city').value = partner.city || '';
