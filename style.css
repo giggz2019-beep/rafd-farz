@@ -322,7 +322,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .step-num { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; color: #fff; margin: 0 auto .75rem; box-shadow: 0 0 0 3px rgba(201,162,75,.18); }
 .step-title { font-size: 1rem; font-weight: 800; color: var(--dark); margin-bottom: .4rem; font-family: var(--font-heading); }
 .step-desc { font-size: .85rem; color: var(--muted); line-height: 1.7; }
-.how-banner-wrap { border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,.06); }
+.how-banner-wrap { max-width: 860px; margin: 0 auto; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,.06); }
 .how-banner-img { display: block; width: 100%; height: auto; border-radius: 20px; }
 
 /* ===== FEATURES ===== */
