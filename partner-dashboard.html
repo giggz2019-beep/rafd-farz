@@ -89,7 +89,8 @@ body.theme-light .save-form-inp::placeholder{color:#94a3b8}
 .nav-item{display:flex;align-items:center;gap:.65rem;padding:.65rem 1.25rem;color:#94a3b8;cursor:pointer;transition:.15s;border-right:3px solid transparent;font-size:.85rem;font-weight:500}
 .nav-item:hover{color:#e2e8f0;background:rgba(255,255,255,.04)}
 .nav-item.active{color:#16A870;background:rgba(22,168,112,.08);border-right-color:#16A870}
-.nav-icon{font-size:1rem;width:18px;text-align:center}
+.nav-icon{width:18px;height:18px;flex-shrink:0}
+.icon{width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sb-footer{padding:1rem 1.25rem;border-top:1px solid #334155}
 .sb-user{display:flex;align-items:center;gap:.65rem}
 .sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0A1628,#123554);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.85rem;flex-shrink:0}
@@ -111,7 +112,7 @@ body.theme-light .save-form-inp::placeholder{color:#94a3b8}
 .stat-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.25rem;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
 .stat-card:hover{transform:translateY(-3px);border-color:rgba(201,162,75,.4)}
 .stat-card::before{content:"";position:absolute;top:0;inset-inline-end:0;width:26px;height:26px;background:linear-gradient(135deg,#C9A24B,#E9CD8A);clip-path:polygon(100% 0,0 0,100% 100%)}
-.stat-icon{font-size:1.4rem;margin-bottom:.5rem}
+.stat-icon{width:26px;height:26px;margin-bottom:.5rem;stroke-width:1.8}
 .stat-label{color:#64748b;font-size:.75rem;font-weight:600;margin-bottom:.35rem}
 .stat-val{font-size:1.8rem;font-weight:900;color:#fff}
 .stat-note{font-size:.72rem;color:#475569;margin-top:.2rem}
@@ -270,15 +271,15 @@ select option{background:#1e293b;color:#e2e8f0}
   </div>
   <nav class="sb-nav">
     <div class="nav-sec" data-i18n="db.nav-main">الرئيسية</div>
-    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-icon">📊</span> <span data-i18n="db.overview">نظرة عامة</span></div>
-    <div class="nav-item" onclick="showPage('requests',this)"><span class="nav-icon">📋</span> <span data-i18n="db.requests">الطلبات</span></div>
-    <div class="nav-item" onclick="showPage('link',this)"><span class="nav-icon">🔗</span> <span data-i18n="db.apply-link">رابط التقديم</span></div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> <span data-i18n="db.overview">نظرة عامة</span></div>
+    <div class="nav-item" onclick="showPage('requests',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg> <span data-i18n="db.requests">الطلبات</span></div>
+    <div class="nav-item" onclick="showPage('link',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><path d="M8 12h8"/></svg> <span data-i18n="db.apply-link">رابط التقديم</span></div>
     <div class="nav-sec" data-i18n="db.nav-admin">الإدارة</div>
-    <div class="nav-item" onclick="showPage('form-setup',this)"><span class="nav-icon">🔧</span> <span data-i18n="db.form-setup">إعداد النموذج</span></div>
-    <div class="nav-item" onclick="showPage('new-request',this)"><span class="nav-icon">➕</span> <span data-i18n="db.new-req">طلب يدوي</span></div>
-    <div class="nav-item" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span> <span data-i18n="db.settings">الإعدادات</span></div>
-    <div class="nav-item" onclick="showPage('subscription',this)"><span class="nav-icon">💳</span> <span data-i18n="db.sub">الاشتراك</span></div>
-    <div class="nav-item" onclick="showPage('support',this)"><span class="nav-icon">💬</span> <span data-i18n="db.support">الدعم والتواصل</span></div>
+    <div class="nav-item" onclick="showPage('form-setup',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg> <span data-i18n="db.form-setup">إعداد النموذج</span></div>
+    <div class="nav-item" onclick="showPage('new-request',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg> <span data-i18n="db.new-req">طلب يدوي</span></div>
+    <div class="nav-item" onclick="showPage('settings',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span data-i18n="db.settings">الإعدادات</span></div>
+    <div class="nav-item" onclick="showPage('subscription',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> <span data-i18n="db.sub">الاشتراك</span></div>
+    <div class="nav-item" onclick="showPage('support',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> <span data-i18n="db.support">الدعم والتواصل</span></div>
   </nav>
   <div class="sb-footer">
     <div class="sb-user">
@@ -309,25 +310,25 @@ select option{background:#1e293b;color:#e2e8f0}
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-icon">📋</div>
+        <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#64748b"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg>
         <div class="stat-label" data-i18n="db.stat-total">إجمالي الطلبات</div>
         <div class="stat-val" id="stat_total">0</div>
         <div class="stat-note" data-i18n="db.since-start">منذ بدء الاشتراك</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">✅</div>
+        <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#16A870"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
         <div class="stat-label" data-i18n="db.stat-accepted">الطلبات المقبولة</div>
         <div class="stat-val" id="stat_approved">0</div>
         <div class="stat-note" id="stat_approved_pct">—</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">❌</div>
+        <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#ef4444"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
         <div class="stat-label" data-i18n="db.stat-rejected">الطلبات المرفوضة</div>
         <div class="stat-val" id="stat_rejected">0</div>
         <div class="stat-note" id="stat_rejected_pct">—</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">⏳</div>
+        <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#f59e0b"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         <div class="stat-label" data-i18n="db.stat-pending">قيد المراجعة</div>
         <div class="stat-val" id="stat_pending_req">0</div>
         <div class="stat-note" data-i18n="db.stat-req">طلب</div>
@@ -353,7 +354,7 @@ select option{background:#1e293b;color:#e2e8f0}
 
     <!-- Recent Requests -->
     <div class="card">
-      <div class="card-title" data-i18n="db.recent-title">📋 آخر الطلبات</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg> <span data-i18n="db.recent-title">آخر الطلبات</span></div>
       <div class="tbl-wrap">
         <table>
           <thead><tr><th>#</th><th data-i18n="db.th-name">اسم المتقدم</th><th data-i18n="db.th-purpose">الغرض</th><th data-i18n="db.th-date">التاريخ</th><th data-i18n="db.th-result">النتيجة</th></tr></thead>
@@ -366,7 +367,7 @@ select option{background:#1e293b;color:#e2e8f0}
 
     <!-- AI Analysis -->
     <div class="card">
-      <div class="card-title" data-i18n="db.analytics-title">🤖 تحليل الذكاء الاصطناعي</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg> <span data-i18n="db.analytics-title">تحليل الذكاء الاصطناعي</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:center;margin-bottom:1.5rem">
         <div id="analytics_donut" style="width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <div style="width:98px;height:98px;border-radius:50%;background:#1e293b;display:flex;flex-direction:column;align-items:center;justify-content:center">
@@ -388,7 +389,7 @@ select option{background:#1e293b;color:#e2e8f0}
 
     <!-- Usage Bar -->
     <div class="card">
-      <div class="card-title" data-i18n="db.usage-title">📊 استخدام الباقة الشهري</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> <span data-i18n="db.usage-title">استخدام الباقة الشهري</span></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
         <span style="color:#94a3b8;font-size:.82rem" data-i18n="db.usage-used">الطلبات المستخدمة</span>
         <span style="color:#e2e8f0;font-weight:700;font-size:.85rem" id="usage_text">0 / —</span>
@@ -439,7 +440,7 @@ select option{background:#1e293b;color:#e2e8f0}
       </div>
     </div>
     <div class="card">
-      <div class="card-title" data-i18n="db.applicant-data">👤 بيانات المتقدم</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-i18n="db.applicant-data">بيانات المتقدم</span></div>
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-name">الاسم الكامل <span style="color:#ef4444">*</span></label>
@@ -501,7 +502,7 @@ select option{background:#1e293b;color:#e2e8f0}
       </div>
     </div>
     <div class="card">
-      <div class="card-title" data-i18n="db.org-data">🏢 بيانات الجهة</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 22v-4h6v4M8 9h1M12 9h1M16 9h1M8 13h1M12 13h1M16 13h1"/></svg> <span data-i18n="db.org-data">بيانات الجهة</span></div>
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-org">اسم الجهة</label>
@@ -524,7 +525,7 @@ select option{background:#1e293b;color:#e2e8f0}
       </div>
     </div>
     <div class="card">
-      <div class="card-title" data-i18n="db.admin-data">👤 بيانات المسؤول</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-i18n="db.admin-data">بيانات المسؤول</span></div>
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
         <div class="sb-av" id="set_avatar_preview" style="width:64px;height:64px;font-size:1.4rem">—</div>
         <div>
@@ -564,7 +565,7 @@ select option{background:#1e293b;color:#e2e8f0}
     </div>
 
     <div class="card">
-      <div class="card-title" data-i18n="db.theme-title">🎨 مظهر اللوحة</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg> <span data-i18n="db.theme-title">مظهر اللوحة</span></div>
       <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.25rem">
         <label onclick="setDashTheme('light')" id="theme_light_lbl" style="cursor:pointer;border:1.5px solid rgba(11,93,59,.5);border-radius:10px;padding:.7rem 1rem;display:block;background:rgba(11,93,59,.07);text-align:right">
           <input type="radio" name="dash_theme" id="theme_light" value="light" checked style="accent-color:#16A870;vertical-align:middle;margin-left:.4rem">
@@ -580,7 +581,7 @@ select option{background:#1e293b;color:#e2e8f0}
     </div>
 
     <div class="card">
-      <div class="card-title" data-i18n="db.change-pass">🔒 تغيير كلمة المرور</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> <span data-i18n="db.change-pass">تغيير كلمة المرور</span></div>
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-newpass">كلمة المرور الجديدة</label>
@@ -594,7 +595,7 @@ select option{background:#1e293b;color:#e2e8f0}
       <button class="btn-primary" onclick="changePassword()"><span data-i18n="db.btn-update-pass">تحديث كلمة المرور</span></button>
     </div>
     <div class="card">
-      <div class="card-title" data-i18n="db.api-title">🔌 الوصول للـ API</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><path d="M8 12h8"/></svg> <span data-i18n="db.api-title">الوصول للـ API</span></div>
       <p style="font-size:.88rem;color:#64748b;line-height:1.8;margin-bottom:1.25rem" data-i18n="db.api-desc">تتيح لك واجهة برمجة التطبيقات (API) ربط نظام RAFD مباشرةً بأنظمتك الداخلية. هذه الخدمة متاحة فقط لباقة <strong style="color:#a78bfa">المتقدمة</strong> وتتطلب موافقة مسبقة من فريق RAFD.</p>
       <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:1rem;margin-bottom:1.25rem;font-size:.82rem;color:#fbbf24;line-height:1.7" data-i18n="db.api-warn">
         ⚠️ يُمنح الوصول للـ API بعد مراجعة الطلب والتحقق من هوية الجهة. لن يُشارَك أي توثيق تقني قبل الموافقة الرسمية.
@@ -602,7 +603,7 @@ select option{background:#1e293b;color:#e2e8f0}
       <button class="btn-primary" onclick="requestApiAccess()" style="background:linear-gradient(135deg,#0B5D3B,#063321)"><span data-i18n="db.btn-api">📩 طلب الوصول للـ API</span></button>
     </div>
     <div class="card" style="border-color:rgba(239,68,68,.3)">
-      <div class="card-title" style="color:#f87171" data-i18n="db.danger-title">⚠️ المنطقة الخطرة</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem;color:#f87171"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg> <span data-i18n="db.danger-title">المنطقة الخطرة</span></div>
       <p style="font-size:.85rem;color:#94a3b8;line-height:1.8;margin-bottom:1.25rem" data-i18n="db.danger-desc">حذف حسابك سيؤدي لإزالة جميع بياناتك وطلباتك المُقدَّمة نهائياً، ولا يمكن التراجع عن هذا الإجراء.</p>
       <button class="btn-primary" onclick="openDeleteAccountModal()" style="background:none;border:1.5px solid #ef4444;color:#f87171"><span data-i18n="db.btn-delete-account">🗑️ حذف الحساب نهائياً</span></button>
     </div>
@@ -617,11 +618,11 @@ select option{background:#1e293b;color:#e2e8f0}
       </div>
     </div>
     <div class="card" id="current_plan_card">
-      <div class="card-title" data-i18n="db.cur-plan">💳 باقتك الحالية</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> <span data-i18n="db.cur-plan">باقتك الحالية</span></div>
       <div id="current_plan_info"></div>
     </div>
     <div class="card">
-      <div class="card-title" data-i18n="db.avail-plans">📦 الباقات المتاحة</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M12 2 2 7v10l10 5 10-5V7z"/><path d="M2 7l10 5 10-5M12 22V12"/></svg> <span data-i18n="db.avail-plans">الباقات المتاحة</span></div>
       <div class="plan-grid">
         <div class="plan-card" id="plan_basic49">
           <div class="plan-name" data-i18n="db.plan-basic49">🎯 الأساسية</div>
@@ -684,7 +685,7 @@ select option{background:#1e293b;color:#e2e8f0}
     </div>
 
     <div class="card">
-      <div class="card-title" data-i18n="db.share-title">📤 كيفية المشاركة</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> <span data-i18n="db.share-title">كيفية المشاركة</span></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem">
         <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.4rem">💬</div>
@@ -706,7 +707,7 @@ select option{background:#1e293b;color:#e2e8f0}
 
     <!-- Embed section (advanced only) -->
     <div class="card">
-      <div class="card-title" data-i18n="db.embed-title">🖥️ تضمين النموذج في موقعك (Embed)</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> <span data-i18n="db.embed-title">تضمين النموذج في موقعك (Embed)</span></div>
       <div id="embed_section_content">
         <!-- filled by JS based on plan -->
       </div>
@@ -746,7 +747,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     <!-- النماذج المحفوظة -->
     <div class="card" id="saved_forms_card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem">
-        <div class="card-title" style="margin-bottom:0" data-i18n="db.saved-forms">📁 النماذج المحفوظة</div>
+        <div class="card-title" style="display:flex;align-items:center;gap:.5rem;margin-bottom:0"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> <span data-i18n="db.saved-forms">النماذج المحفوظة</span></div>
         <button onclick="saveCurrentForm()" style="background:#0f172a;color:#fff;border:1px solid #334155;border-radius:8px;padding:.45rem 1rem;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem"><span data-i18n="db.btn-save-tmpl">💾 حفظ كنموذج</span></button>
       </div>
       <div id="saved_forms_list">
@@ -755,7 +756,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     </div>
 
     <div class="card">
-      <div class="card-title" data-i18n="db.prog-info">📋 معلومات البرنامج</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg> <span data-i18n="db.prog-info">معلومات البرنامج</span></div>
       <div class="fld-m">
         <label data-i18n="db.lbl-prog-name">اسم البرنامج / المبادرة <span style="color:#ef4444">*</span></label>
         <input type="text" id="fc_program_name" placeholder="مثال: برنامج دعم الشركات الناشئة 2026">
@@ -763,14 +764,14 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div class="fld-m">
         <label data-i18n="db.lbl-app-type">نوع التقديم <span style="color:#ef4444">*</span></label>
         <select id="fc_app_type">
-          <option value="project" data-i18n="db.opt-project">🚀 مشروع / شركة ناشئة</option>
-          <option value="job" data-i18n="db.opt-job">💼 توظيف واختيار كوادر</option>
-          <option value="funding" data-i18n="db.opt-funding">💰 تمويل واستثمار</option>
-          <option value="academic" data-i18n="db.opt-academic">🎓 قبول أكاديمي / تدريب</option>
-          <option value="member" data-i18n="db.opt-member">🤝 عضوية وانتساب</option>
-          <option value="gov" data-i18n="db.opt-gov">🏛️ خدمة حكومية</option>
-          <option value="npo" data-i18n="db.opt-npo">🌱 منظمة غير ربحية / تطوعي</option>
-          <option value="general" data-i18n="db.opt-general">📋 عام (بدون تصنيف محدد)</option>
+          <option value="project" data-i18n="db.opt-project">مشروع / شركة ناشئة</option>
+          <option value="job" data-i18n="db.opt-job">توظيف واختيار كوادر</option>
+          <option value="funding" data-i18n="db.opt-funding">تمويل واستثمار</option>
+          <option value="academic" data-i18n="db.opt-academic">قبول أكاديمي / تدريب</option>
+          <option value="member" data-i18n="db.opt-member">عضوية وانتساب</option>
+          <option value="gov" data-i18n="db.opt-gov">خدمة حكومية</option>
+          <option value="npo" data-i18n="db.opt-npo">منظمة غير ربحية / تطوعي</option>
+          <option value="general" data-i18n="db.opt-general">عام (بدون تصنيف محدد)</option>
         </select>
         <div style="font-size:.7rem;color:#64748b;margin-top:.3rem" data-i18n="db.hint-form-type">يحدد صياغة أسئلة النموذج تلقائياً</div>
       </div>
@@ -787,8 +788,8 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div class="fld-m">
           <label data-i18n="db.lbl-form-status">حالة النموذج</label>
           <select id="fc_status">
-            <option value="active" data-i18n="db.opt-active">✅ نشط — يقبل التقديمات</option>
-            <option value="paused" data-i18n="db.opt-paused">⏸️ متوقف مؤقتاً</option>
+            <option value="active" data-i18n="db.opt-active">نشط — يقبل التقديمات</option>
+            <option value="paused" data-i18n="db.opt-paused">⏸متوقف مؤقتاً</option>
           </select>
         </div>
       </div>
@@ -826,7 +827,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 
     <!-- عرض النتيجة للمتقدم -->
     <div class="card" style="margin-top:1rem;background:linear-gradient(135deg,rgba(139,92,246,.08) 0%,rgba(109,40,217,.03) 100%);border:1px solid rgba(139,92,246,.22);border-right:3px solid rgba(139,92,246,.55)">
-      <div class="card-title" style="color:#a78bfa" data-i18n="db.result-vis-title">👁️ عرض النتيجة للمتقدم</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem;color:#a78bfa"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> <span data-i18n="db.result-vis-title">عرض النتيجة للمتقدم</span></div>
       <p style="color:#7c6fab;font-size:.82rem;margin-bottom:1rem;line-height:1.7" data-i18n="db.result-vis-desc">اختر كيف يرى المتقدم نتيجة تقييمه بعد الانتهاء من النموذج.</p>
       <div style="display:flex;flex-direction:column;gap:.5rem">
 
@@ -882,7 +883,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     </div>
 
     <div class="card">
-      <div class="card-title" data-i18n="db.criteria-title">⚖️ معايير التقييم والأوزان</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span data-i18n="db.criteria-title">معايير التقييم والأوزان</span></div>
       <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7" data-i18n="db.criteria-desc">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان يجب أن يساوي 100 نقطة.</p>
 
       <div class="q-card" id="qc_edu" style="flex-wrap:wrap;gap:.6rem">
@@ -975,7 +976,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 
     <!-- Nafath Verification Requirement -->
     <div class="card">
-      <div class="card-title" data-i18n="db.nafath-title">🔐 التحقق الهوياتي</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <span data-i18n="db.nafath-title">التحقق الهوياتي</span></div>
       <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem" data-i18n="db.nafath-desc">اختر هل تشترط على المتقدمين التحقق من هويتهم عبر منصة نفاذ الحكومية</div>
 
       <div style="display:flex;align-items:center;gap:1rem;background:#0a1a0f;border:1.5px solid rgba(10,95,63,.35);border-radius:14px;padding:1rem 1.2rem">
@@ -1011,7 +1012,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 
     <!-- Required Documents -->
     <div class="card">
-      <div class="card-title" data-i18n="db.docs-title">📎 المستندات المطلوبة من المتقدم</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> <span data-i18n="db.docs-title">المستندات المطلوبة من المتقدم</span></div>
       <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem" data-i18n="db.docs-desc">فعّل المستندات التي تريد من المتقدمين رفعها مع طلبهم</div>
 
       <div style="display:flex;flex-direction:column;gap:.6rem" id="docs_preset_container">
@@ -1100,7 +1101,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     </div>
 
     <div class="card">
-      <div class="card-title" data-i18n="db.link-preview">💡 معاينة الرابط بعد الحفظ</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2.05V17a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-.3c0-.85.4-1.55 1-2.05A7 7 0 0 0 12 2z"/></svg> <span data-i18n="db.link-preview">معاينة الرابط بعد الحفظ</span></div>
       <div style="background:rgba(22,168,112,.08);border:1px solid rgba(22,168,112,.2);border-radius:12px;padding:1rem;font-size:.82rem;color:#94a3b8;line-height:1.8">
         <span data-i18n="db.link-preview-text">بعد حفظ الإعدادات، سيعرض نموذج التقديم اسم برنامجك وسيقبل المتقدمين تلقائياً بناءً على الأوزان التي حددتها.</span>
         <br><strong style="color:#16A870" data-i18n="db.lbl-link">الرابط:</strong> <span id="fc_preview_link" style="font-family:monospace;direction:ltr;display:inline-block">—</span>
@@ -1131,7 +1132,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       </div>
     </div>
     <div class="card">
-      <div class="card-title" data-i18n="db.sup-send">📨 إرسال رسالة للدعم</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> <span data-i18n="db.sup-send">إرسال رسالة للدعم</span></div>
       <div class="fld-m">
         <label data-i18n="db.sup-subject">موضوع الرسالة</label>
         <select id="sup_subject">
@@ -1149,7 +1150,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <button class="btn-primary" onclick="sendSupport()"><span data-i18n="db.btn-send">إرسال الرسالة</span></button>
     </div>
     <div class="card">
-      <div class="card-title" data-i18n="db.contact-info">📞 معلومات التواصل المباشر</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> <span data-i18n="db.contact-info">معلومات التواصل المباشر</span></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
         <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.5rem">📧</div>
@@ -1177,7 +1178,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 <div class="modal-overlay" id="deleteAccountModal">
   <div class="modal" style="max-width:420px">
     <div class="modal-hdr">
-      <div class="modal-title" style="color:#f87171" data-i18n="db.danger-title">⚠️ المنطقة الخطرة</div>
+      <div class="modal-title" style="display:flex;align-items:center;gap:.5rem;color:#f87171"><svg class="icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg> <span data-i18n="db.danger-title">المنطقة الخطرة</span></div>
       <button class="btn-close" onclick="closeDeleteAccountModal()">✕</button>
     </div>
     <div class="modal-body">
