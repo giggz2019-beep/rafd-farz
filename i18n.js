@@ -631,6 +631,8 @@ const T = {
     'db.ov-link-title':'رابط تقديمك','db.ov-link-sub':'شارك هذا الرابط مع المتقدمين',
     'db.btn-copy':'نسخ الرابط','db.btn-view-link':'فتح الرابط','db.recent-title':'آخر الطلبات',
     'db.usage-title':'الاستخدام الشهري','db.usage-used':'طلبات مُستخدمة',
+    'db.analytics-title':'🤖 تحليل الذكاء الاصطناعي','db.analytics-by-day':'الطلبات حسب اليوم (آخر 7 أيام)',
+    'db.day-labels-short':'أحد,اثنين,ثلاثاء,أربعاء,خميس,جمعة,سبت',
     'db.add-first':'أضف أول طلب يدوي',
     // Requests page
     'db.requests-title':'الطلبات','db.requests-sub':'جميع الطلبات المقدمة عبر جهتك',
@@ -1524,6 +1526,8 @@ const T = {
     'db.ov-link-title':'Your Application Link','db.ov-link-sub':'Share this link with applicants',
     'db.btn-copy':'Copy Link','db.btn-view-link':'Open Link','db.recent-title':'Recent Applications',
     'db.usage-title':'Monthly Usage','db.usage-used':'Applications Used',
+    'db.analytics-title':'🤖 AI Analysis','db.analytics-by-day':'Requests by Day (last 7 days)',
+    'db.day-labels-short':'Sun,Mon,Tue,Wed,Thu,Fri,Sat',
     'db.add-first':'Add your first manual request',
     // Requests page
     'db.requests-title':'Applications','db.requests-sub':'All applications submitted through your organization',
