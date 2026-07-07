@@ -470,9 +470,19 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 /* ===== DEMO JOBS PAGE NAV ===== */
 .nav { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 1rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 8px rgba(0,0,0,.06); }
 
+/* ===== GOVERNANCE / PARTNERSHIP BADGES ===== */
+.gov-badges-row { flex-direction: column; }
+.gov-badge-card { flex-direction: column; text-align: center; }
+.gov-badge-card img { margin: 0 auto; }
+.gov-tags { justify-content: center; }
+
 /* ===== TABLET (min-width: 640px) ===== */
 @media (min-width: 640px) {
   .container { padding: 0 1.5rem; }
+  .gov-badges-row { flex-direction: row; }
+  .gov-badge-card { flex-direction: row; text-align: right; }
+  .gov-badge-card img { margin: 0; }
+  .gov-tags { justify-content: flex-start; }
   .hero-title { font-size: 2.8rem; }
   .hero-cta { flex-direction: row; max-width: 100%; }
   .hero-stats { grid-template-columns: repeat(4, 1fr); max-width: 100%; }
