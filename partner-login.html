@@ -24,12 +24,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .logo-icon{width:90px;height:90px;margin:0 auto .75rem;display:flex;align-items:center;justify-content:center;background:#ffffff;border-radius:18px;padding:10px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
 .logo-title{font-size:1.3rem;font-weight:900;color:#fff}
 .logo-sub{font-size:.8rem;color:#64748b;margin-top:.2rem}
-.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(22,168,112,.1);color:#16A870;border:1px solid rgba(56,189,248,.25);border-radius:20px;padding:.3rem .85rem;font-size:.75rem;font-weight:700;margin-top:.75rem}
+.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(22,168,112,.1);color:#16A870;border:1px solid rgba(22,168,112,.25);border-radius:20px;padding:.3rem .85rem;font-size:.75rem;font-weight:700;margin-top:.75rem}
 .fld{margin-bottom:1.1rem}
 .fld label{display:block;font-size:.82rem;font-weight:700;color:#94a3b8;margin-bottom:.4rem}
 .fld input{width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;transition:all .2s}
 .fld input::placeholder{color:#475569}
-.fld input:focus{border-color:#16A870;box-shadow:0 0 0 3px rgba(56,189,248,.08)}
+.fld input:focus{border-color:#16A870;box-shadow:0 0 0 3px rgba(22,168,112,.08)}
 .btn-login{width:100%;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'ThmanyahSans', sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;margin-top:.25rem}
 .btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(10,22,40,.4)}
 .btn-login:disabled{opacity:.5;cursor:not-allowed;transform:none}
@@ -67,7 +67,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 <body>
 <div class="top-link" style="display:flex;align-items:center;gap:1rem">
   <a href="/"><span data-i18n="pl.back-home">← الرئيسية</span></a>
-  <button id="langToggleBtn" onclick="toggleLang()" style="background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);color:#16A870;border-radius:20px;padding:.25rem .85rem;font-family:'ThmanyahSans', sans-serif;font-size:.75rem;font-weight:700;cursor:pointer">🌐 EN</button>
+  <button id="langToggleBtn" onclick="toggleLang()" style="background:rgba(22,168,112,.12);border:1px solid rgba(22,168,112,.25);color:#16A870;border-radius:20px;padding:.25rem .85rem;font-family:'ThmanyahSans', sans-serif;font-size:.75rem;font-weight:700;cursor:pointer">🌐 EN</button>
 </div>
 
 <div class="card">
@@ -247,7 +247,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
         onkeydown="if(event.key==='Enter')findUsername()">
     </div>
     <div id="fu_err" style="display:none;font-size:.78rem;color:#f87171;margin:.5rem 0 .75rem"></div>
-    <div id="fu_result" style="display:none;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.9rem;text-align:center">
+    <div id="fu_result" style="display:none;background:rgba(22,168,112,.08);border:1px solid rgba(22,168,112,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.9rem;text-align:center">
       <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem" data-i18n="pl.fu-result-lbl">اسم المستخدم الخاص بك</div>
       <div id="fu_username_show" style="font-size:1rem;font-weight:800;color:#16A870;direction:ltr;letter-spacing:.05em"></div>
       <div style="font-size:.72rem;color:#64748b;margin-top:.4rem" data-i18n="pl.fu-hint">استخدمه مع كلمة المرور لتسجيل الدخول</div>
