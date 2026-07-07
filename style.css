@@ -322,7 +322,8 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .step-num { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; color: #fff; margin: 0 auto .75rem; box-shadow: 0 0 0 3px rgba(201,162,75,.18); }
 .step-title { font-size: 1rem; font-weight: 800; color: var(--dark); margin-bottom: .4rem; font-family: var(--font-heading); }
 .step-desc { font-size: .85rem; color: var(--muted); line-height: 1.7; }
-.how-banner-img { display: block; width: 100%; height: auto; border-radius: 20px; }
+.how-steps-visual { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+.how-steps-visual img { display: block; width: 100%; height: auto; border-radius: 12px; }
 
 /* ===== FEATURES ===== */
 .features-section { padding: 3.5rem 0; background: linear-gradient(160deg, #f0fdf4 0%, #dcfce7 100%); }
@@ -521,6 +522,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
   .how-section { padding: 6rem 0; }
   .how-steps { grid-template-columns: repeat(4, 1fr); }
   .how-step { padding: 2rem 1.5rem; }
+  .how-steps-visual { grid-template-columns: repeat(4, 1fr); gap: 1rem; }
   .features-section { padding: 6rem 0; }
   .features-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
   .sectors-section { padding: 6rem 0; }
