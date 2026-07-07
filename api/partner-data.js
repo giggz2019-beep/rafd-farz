@@ -1,7 +1,7 @@
 // All authenticated partner data operations
 // Every request must include a valid { token }
 const crypto = require('crypto');
-const { hash: hashPassword } = require('./_lib/password');
+const { hash: hashPassword, verify: verifyPassword } = require('./_lib/password');
 const { getOrder, classifyOrder } = require('./_lib/ngenius');
 const { PAID_PLAN_PRICES } = require('./_lib/plans');
 
@@ -118,6 +118,20 @@ module.exports = async (req, res) => {
       const { newPassword } = body;
       if (!newPassword) return res.status(400).json({ error: 'missing_fields' });
       await sb('PATCH', `/partners?email=eq.${encodeURIComponent(email)}`, { password: hashPassword(newPassword) }, key);
+      return res.status(200).json({ ok: true });
+    }
+
+    // DELETE ACCOUNT — requires current password, removes applications then the partner row
+    if (action === 'delete_account') {
+      const { password } = body;
+      if (!password) return res.status(400).json({ error: 'missing_password' });
+      const rows = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=id,password&limit=1`, undefined, key);
+      if (!rows?.length) return res.status(404).json({ error: 'not_found' });
+      const { valid } = verifyPassword(password, rows[0].password);
+      if (!valid) return res.status(401).json({ error: 'wrong_password' });
+      const partnerId = rows[0].id;
+      await sb('DELETE', `/applications?partner_id=eq.${partnerId}`, undefined, key);
+      await sb('DELETE', `/partners?id=eq.${partnerId}`, undefined, key);
       return res.status(200).json({ ok: true });
     }
 
