@@ -328,7 +328,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .step-icon-1 { background: linear-gradient(135deg, var(--accent-light), var(--accent)); }
 .step-icon-2 { background: linear-gradient(135deg, var(--primary-light), var(--primary)); }
 .step-icon-3 { background: linear-gradient(135deg, var(--gold-light), var(--gold)); }
-.step-icon-4 { background: linear-gradient(135deg, var(--accent), var(--primary)); }
+.step-icon-4 { background: linear-gradient(135deg, var(--accent-light), var(--accent)); }
 .step-num { position: absolute; top: -6px; inset-inline-start: -6px; width: 26px; height: 26px; background: #fff; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 900; color: var(--primary); box-shadow: 0 2px 8px rgba(10,22,40,.2); }
 
 /* ===== FEATURES ===== */
