@@ -104,6 +104,8 @@ const T = {
     'sdaia.title':'حوكمة متوافقة مع توجهات سدايا',
     'sdaia.desc':'مبني على مبادئ حوكمة سعودية للذكاء الاصطناعي: الخصوصية، قابلية المراجعة، الأمان، والإشراف البشري.',
     'sdaia.tag1':'🔒 الخصوصية','sdaia.tag2':'📋 قابلية المراجعة','sdaia.tag3':'🛡️ الأمان','sdaia.tag4':'👁️ الإشراف البشري',
+    'monshaat.title':'شريك رسمي مع مزايا — منشآت',
+    'monshaat.desc':'نفخر بشراكتنا مع مزايا التابعة للهيئة العامة للمنشآت الصغيرة والمتوسطة (منشآت) لتقديم خدماتنا للشركات الناشئة والصغيرة ومتناهية الصغر.',
     // ===== REGISTER PARTNER =====
     'rp.badge':'🤝 انضم كشريك رسمي','rp.h1':'سجّل جهتك في<br><span>منصة RAFD</span>',
     'rp.hero-p':'احصل على لوحة تحكم كاملة لإدارة طلبات الفرز، ومتابعة النتائج، وتخصيص المعايير لجهتك',
@@ -977,6 +979,8 @@ const T = {
     'sdaia.title':'Governance Aligned with SDAIA Principles',
     'sdaia.desc':'Built on Saudi AI governance principles: Privacy, Auditability, Security, and Human Oversight.',
     'sdaia.tag1':'🔒 Privacy','sdaia.tag2':'📋 Auditability','sdaia.tag3':'🛡️ Security','sdaia.tag4':'👁️ Human Oversight',
+    'monshaat.title':'Official Partner with Mezaya — Monsha\'at',
+    'monshaat.desc':'We are proud to partner with Mezaya, part of the Small and Medium Enterprises General Authority (Monsha\'at), to deliver our services to startups, small, and micro enterprises.',
     // ===== REGISTER PARTNER =====
     'rp.badge':'🤝 Join as Official Partner','rp.h1':'Register Your Organization<br>on <span>RAFD Platform</span>',
     'rp.hero-p':'Get a full dashboard to manage screening requests, track results, and customize criteria for your organization',
