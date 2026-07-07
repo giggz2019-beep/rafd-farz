@@ -1888,6 +1888,7 @@ async function submitApp() {
         ref_num: appRefNum,
         challenges: data.challenges,
         notes: JSON.stringify({ dob: data.dob, gender: data.gender, nationality: data.nationality, city: data.city }),
+        criteria_breakdown: JSON.stringify(data.bd || []),
       };
       // Merge AI-extracted data into docs
       if (Object.keys(_docAIResults).length) {

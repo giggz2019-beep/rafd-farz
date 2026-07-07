@@ -108,7 +108,9 @@ body.theme-light .save-form-inp::placeholder{color:#94a3b8}
 
 /* ===== STATS ===== */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.75rem}
-.stat-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.25rem}
+.stat-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.25rem;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.stat-card:hover{transform:translateY(-3px);border-color:rgba(201,162,75,.4)}
+.stat-card::before{content:"";position:absolute;top:0;inset-inline-end:0;width:26px;height:26px;background:linear-gradient(135deg,#C9A24B,#E9CD8A);clip-path:polygon(100% 0,0 0,100% 100%)}
 .stat-icon{font-size:1.4rem;margin-bottom:.5rem}
 .stat-label{color:#64748b;font-size:.75rem;font-weight:600;margin-bottom:.35rem}
 .stat-val{font-size:1.8rem;font-weight:900;color:#fff}
@@ -126,6 +128,21 @@ body.theme-light .save-form-inp::placeholder{color:#94a3b8}
 .b-trial{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)}
 .b-basic{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.25)}
 .b-pro{background:rgba(139,92,246,.12);color:#a78bfa;border:1px solid rgba(139,92,246,.25)}
+
+/* ===== SCORE BREAKDOWN (reuses homepage score-card language) ===== */
+.sc-ring{--p:0;width:72px;height:72px;border-radius:50%;background:conic-gradient(#C9A24B calc(var(--p) * 1%), #334155 0);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sc-ring-inner{width:58px;height:58px;border-radius:50%;background:#1e293b;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.sc-ring-num{font-size:1.25rem;font-weight:900;color:#fff;line-height:1.1}
+.sc-ring-max{font-size:.55rem;color:#64748b;font-weight:600}
+.sc-bd-wrap{border-top:1px solid #334155;padding-top:.85rem}
+.sc-bd-title{display:flex;align-items:center;justify-content:space-between;font-size:.78rem;font-weight:800;color:#e2e8f0;margin-bottom:.75rem}
+.sc-bd-note{font-size:.66rem;color:#64748b;font-weight:500}
+.sc-bd-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.55rem}
+.sc-bd-lbl{font-size:.72rem;color:#94a3b8;width:110px;flex-shrink:0}
+.sc-bd-track{flex:1;height:6px;border-radius:4px;background:#334155;overflow:hidden}
+.sc-bd-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#8a97a8 0%,#C9A24B 45%,#16A870 100%)}
+.sc-bd-val{font-size:.75rem;font-weight:800;color:#e2e8f0;width:44px;text-align:end;flex-shrink:0}
+.sc-bd-val small{font-weight:600;color:#64748b}
 
 /* ===== TABLE ===== */
 .tbl-wrap{overflow-x:auto}
@@ -1256,7 +1273,7 @@ async function loadPartnerData() {
 
 function showAdminPreviewBanner(unlockAll) {
   const b = document.createElement('div');
-  b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(90deg,#7c3aed,#0A1628);color:#fff;text-align:center;padding:.55rem 1rem;font-size:.8rem;font-weight:700;font-family:'ThmanyahSans',sans-serif;display:flex;align-items:center;justify-content:center;gap:1rem';
+  b.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(90deg,#7c3aed,#0A1628);color:#fff;text-align:center;padding:.55rem 1rem;font-size:.8rem;font-weight:700;font-family:'ThmanyahSans',sans-serif;display:flex;align-items:center;justify-content:center;gap:1rem";
   b.innerHTML = `<span>🛠️ وضع معاينة المدير${unlockAll ? ' — ✨ جميع ميزات الباقة المتقدمة مفعّلة' : ''}</span><button onclick="this.parentElement.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:.2rem .6rem;cursor:pointer;font-size:.75rem">✕ إغلاق</button>`;
   document.body.prepend(b);
   // push content down
@@ -1498,6 +1515,29 @@ async function deleteRequest(id) {
   toast(getT('db.toast-deleted'));
 }
 
+function renderScoreBreakdown(r) {
+  let bd = [];
+  try { bd = JSON.parse(r.criteria_breakdown || '[]'); } catch(e) { bd = []; }
+  if (!Array.isArray(bd) || !bd.length) return '';
+  const rows = bd.map(item => {
+    const pct = item.m ? Math.min(100, Math.round(item.s / item.m * 100)) : 0;
+    return `<div class="sc-bd-row">
+      <span class="sc-bd-lbl">${item.l}</span>
+      <div class="sc-bd-track"><div class="sc-bd-fill" style="width:${pct}%"></div></div>
+      <span class="sc-bd-val">${item.s}<small>/${item.m}</small></span>
+    </div>`;
+  }).join('');
+  return `<div class="sc-bd-wrap">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+      <div class="sc-ring" style="--p:${r.score || 0}">
+        <div class="sc-ring-inner"><span class="sc-ring-num">${r.score ?? '—'}</span><span class="sc-ring-max">${getT('demo.sc-of100')}</span></div>
+      </div>
+      <div class="sc-bd-title" style="flex:1;margin-bottom:0"><span>${getT('demo.sc-bd-title')}</span><span class="sc-bd-note">${getT('demo.sc-bd-note')}</span></div>
+    </div>
+    ${rows}
+  </div>`;
+}
+
 function openReqModal(id) {
   const r = allApplications.find(x => x.id === id);
   if (!r) return;
@@ -1522,6 +1562,7 @@ function openReqModal(id) {
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-ref')}</span><span style="color:#94a3b8;font-size:.78rem;font-family:monospace">${r.ref_num || '—'}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-score')}</span><span style="color:${scoreColor};font-weight:900;font-size:1.1rem">${r.score != null ? r.score + '/100' : '—'}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-grade')}</span><span style="color:#e2e8f0">${r.grade || '—'}</span></div>
+      ${renderScoreBreakdown(r)}
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.lbl-result')}</span>${resultBadge(r.result, r.score)}</div>
       <div style="display:flex;justify-content:space-between"><span style="color:#64748b">${getT('db.modal-date')}</span><span style="color:#e2e8f0">${fmtDate(r.created_at)}</span></div>
       ${r.challenges ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">${getT('db.modal-challenges')}</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.challenges}</div></div>` : ''}
