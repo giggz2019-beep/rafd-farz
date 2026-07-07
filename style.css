@@ -325,7 +325,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .step-visual { position: relative; width: 68px; margin: 0 auto .9rem; }
 .step-icon { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 .step-icon .icon { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.step-icon-1 { background: linear-gradient(135deg, var(--accent-light), var(--accent)); }
+.step-icon-1 { background: linear-gradient(135deg, #4a9de8, #1d6fc4); }
 .step-icon-2 { background: linear-gradient(135deg, var(--primary-light), var(--primary)); }
 .step-icon-3 { background: linear-gradient(135deg, var(--gold-light), var(--gold)); }
 .step-icon-4 { background: linear-gradient(135deg, var(--accent-light), var(--accent)); }
