@@ -315,7 +315,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 
 /* ===== HOW IT WORKS ===== */
 .how-section { padding: 3.5rem 0; }
-.how-steps { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.how-steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
 .how-step { text-align: center; padding: 1.5rem 1.25rem; border-radius: 16px; border: 1px solid var(--border); transition: all .3s; position: relative; background: var(--bg); overflow: hidden; box-shadow: 0 4px 20px rgba(10,22,40,.06); }
 .how-step::before { content: ""; position: absolute; top: 0; inset-inline-end: 0; width: 30px; height: 30px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); clip-path: polygon(100% 0, 0 0, 100% 100%); }
 .how-step:active { transform: scale(.99); }
