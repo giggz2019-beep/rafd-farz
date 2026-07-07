@@ -791,6 +791,7 @@ window.addEventListener('scroll', function() {
 const WHATSAPP_NUM = '966558184381';
 const khHistory = [];
 let khMissCount = 0;
+const khSessionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('kh-' + Date.now() + '-' + Math.random().toString(36).slice(2));
 
 // ── قاعدة معرفة خالد ──
 const khKB = [
@@ -921,7 +922,7 @@ async function khSend(txt) {
     const res = await fetch('/api/chat-khalid', {
       method: 'POST', signal: AbortSignal.timeout(25000),
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg, history: khHistory.slice(-6) })
+      body: JSON.stringify({ message: msg, history: khHistory.slice(-12), sessionId: khSessionId })
     });
     const json = await res.json();
     if (json.reply && !json.reply.includes('غير متاحة')) {
