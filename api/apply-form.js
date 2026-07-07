@@ -3,15 +3,9 @@ const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
 // Fields the applicant can submit — result, partner_id, status are always server-side
 const ALLOWED_APP_FIELDS = [
-  'full_name', 'fname', 'lname', 'email', 'phone',
-  'gender', 'birth_date', 'nationality', 'city',
-  'education', 'major', 'gpa',
-  'experience', 'experience_years',
-  'position', 'skills', 'notes',
-  'national_id_num',
-  'cv_url', 'id_doc_url', 'edu_doc_url', 'exp_doc_url', 'cert_doc_url', 'other_doc_url',
-  'nafath_verified', 'nafath_pending',
-  'ai_result', 'doc_results', 'read_id_result',
+  'name', 'email', 'phone', 'national_id', 'company', 'sector',
+  'score', 'grade', 'ref_num', 'challenges', 'notes', 'docs',
+  'criteria_breakdown',
 ];
 
 async function sb(method, path, body, key) {
