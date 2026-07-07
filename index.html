@@ -105,22 +105,22 @@
       <div class="score-stack">
         <div class="score-layer layer-2"></div>
         <div class="score-layer layer-1"></div>
-        <div class="score-card">
+        <div class="score-card" id="scoreCard">
           <div class="sc-top">
-            <div class="sc-avatar">م</div>
+            <div class="sc-avatar" id="scAvatar">م</div>
             <div class="sc-person">
-              <span class="sc-name">محمد الزهراني</span>
-              <span class="sc-role"><span data-i18n="demo.sc-role">مطوّر واجهات</span> · <span data-i18n="demo.sc-id">طلب #4821</span></span>
+              <span class="sc-name" id="scName">محمد الزهراني</span>
+              <span class="sc-role"><span id="scRole" data-i18n="demo.sc-role">مطوّر واجهات</span> · <span id="scId" data-i18n="demo.sc-id">طلب #4821</span></span>
             </div>
           </div>
           <div class="sc-verdict">
             <div class="sc-verdict-text">
-              <span class="sc-verdict-badge">✓ <span data-i18n="demo.sc-verdict">مرشح مقبول</span></span>
-              <p class="sc-verdict-sub" data-i18n="demo.sc-verdict-sub">تجاوز الحد الأدنى للمعايير — يُنصح بالترشيح للمقابلة</p>
+              <span class="sc-verdict-badge" id="scVerdictBadge"><span id="scVerdictIcon">✓</span> <span id="scVerdict" data-i18n="demo.sc-verdict">مرشح مقبول</span></span>
+              <p class="sc-verdict-sub" id="scVerdictSub" data-i18n="demo.sc-verdict-sub">تجاوز الحد الأدنى للمعايير — يُنصح بالترشيح للمقابلة</p>
             </div>
-            <div class="sc-ring" style="--p:88">
+            <div class="sc-ring" id="scRing" style="--p:88">
               <div class="sc-ring-inner">
-                <span class="sc-ring-num">88</span>
+                <span class="sc-ring-num" id="scRingNum">88</span>
                 <span class="sc-ring-max" data-i18n="demo.sc-of100">من 100</span>
               </div>
             </div>
@@ -132,28 +132,28 @@
             </div>
             <div class="sc-bd-row">
               <span class="sc-bd-lbl" data-i18n="demo.sc-c1">الخبرة والمهارة</span>
-              <div class="sc-bd-track"><div class="sc-bd-fill" style="width:93%"></div></div>
-              <span class="sc-bd-val">28<small>/30</small></span>
+              <div class="sc-bd-track"><div class="sc-bd-fill" id="scBar0" style="width:93%"></div></div>
+              <span class="sc-bd-val" id="scVal0">28<small>/30</small></span>
             </div>
             <div class="sc-bd-row">
               <span class="sc-bd-lbl" data-i18n="demo.sc-c2">التأهيل الأكاديمي</span>
-              <div class="sc-bd-track"><div class="sc-bd-fill" style="width:88%"></div></div>
-              <span class="sc-bd-val">22<small>/25</small></span>
+              <div class="sc-bd-track"><div class="sc-bd-fill" id="scBar1" style="width:88%"></div></div>
+              <span class="sc-bd-val" id="scVal1">22<small>/25</small></span>
             </div>
             <div class="sc-bd-row">
               <span class="sc-bd-lbl" data-i18n="demo.sc-c3">الملاءمة للمعايير</span>
-              <div class="sc-bd-track"><div class="sc-bd-fill" style="width:80%"></div></div>
-              <span class="sc-bd-val">24<small>/30</small></span>
+              <div class="sc-bd-track"><div class="sc-bd-fill" id="scBar2" style="width:80%"></div></div>
+              <span class="sc-bd-val" id="scVal2">24<small>/30</small></span>
             </div>
             <div class="sc-bd-row">
               <span class="sc-bd-lbl" data-i18n="demo.sc-c4">اكتمال المستندات</span>
-              <div class="sc-bd-track"><div class="sc-bd-fill" style="width:93%"></div></div>
-              <span class="sc-bd-val">14<small>/15</small></span>
+              <div class="sc-bd-track"><div class="sc-bd-fill" id="scBar3" style="width:93%"></div></div>
+              <span class="sc-bd-val" id="scVal3">14<small>/15</small></span>
             </div>
           </div>
           <div class="sc-total">
             <span data-i18n="demo.sc-total">المجموع الكلي</span>
-            <span class="sc-total-val">88<small>/100</small></span>
+            <span class="sc-total-val" id="scTotalVal">88<small>/100</small></span>
           </div>
         </div>
       </div>
@@ -1128,6 +1128,61 @@ document.addEventListener('click', () => {
       requestAnimationFrame(tick);
     }
   }, 350);
+
+  // Rotate the score-card between a qualified and a rejected example
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scoreExamples = [
+    { name: 'محمد الزهراني', avatar: 'م', roleKey: 'demo.sc-role', idKey: 'demo.sc-id',
+      verdictKey: 'demo.sc-verdict', subKey: 'demo.sc-verdict-sub', icon: '✓', score: 88, fail: false,
+      bd: [[28,30],[22,25],[24,30],[14,15]] },
+    { name: 'فهد خالد', avatar: 'ف', roleKey: 'demo.sc2-role', idKey: 'demo.sc2-id',
+      verdictKey: 'demo.sc2-verdict', subKey: 'demo.sc2-verdict-sub', icon: '✕', score: 42, fail: true,
+      bd: [[12,30],[10,25],[14,30],[6,15]] },
+  ];
+  if (!reduceMotion && scoreExamples.length > 1) {
+    let exIdx = 0;
+    const card = document.getElementById('scoreCard');
+    const els = {
+      avatar: document.getElementById('scAvatar'), name: document.getElementById('scName'),
+      role: document.getElementById('scRole'), id: document.getElementById('scId'),
+      verdictBadge: document.getElementById('scVerdictBadge'), verdictIcon: document.getElementById('scVerdictIcon'),
+      verdict: document.getElementById('scVerdict'), verdictSub: document.getElementById('scVerdictSub'),
+      ring: document.getElementById('scRing'), ringNum: document.getElementById('scRingNum'),
+      total: document.getElementById('scTotalVal'),
+    };
+    function applyExample(ex) {
+      const t = (k) => (typeof getT === 'function' ? getT(k) : k);
+      card.classList.toggle('fail', ex.fail);
+      els.avatar.textContent = ex.avatar;
+      els.avatar.classList.toggle('fail', ex.fail);
+      els.name.textContent = ex.name;
+      els.role.textContent = t(ex.roleKey);
+      els.id.textContent = t(ex.idKey);
+      els.verdictIcon.textContent = ex.icon;
+      els.verdict.textContent = t(ex.verdictKey);
+      els.verdictSub.textContent = t(ex.subKey);
+      els.verdictBadge.classList.toggle('fail', ex.fail);
+      els.ring.classList.toggle('fail', ex.fail);
+      els.ring.style.setProperty('--p', ex.score);
+      els.ringNum.textContent = ex.score;
+      els.total.innerHTML = ex.score + '<small>/100</small>';
+      ex.bd.forEach((pair, i) => {
+        const [s, m] = pair;
+        const bar = document.getElementById('scBar' + i);
+        const val = document.getElementById('scVal' + i);
+        if (bar) bar.style.width = Math.round(s / m * 100) + '%';
+        if (val) val.innerHTML = s + '<small>/' + m + '</small>';
+      });
+    }
+    setInterval(() => {
+      exIdx = (exIdx + 1) % scoreExamples.length;
+      card.classList.add('sc-swap');
+      setTimeout(() => {
+        applyExample(scoreExamples[exIdx]);
+        card.classList.remove('sc-swap');
+      }, 350);
+    }, 6000);
+  }
 })();
 </script>
 </body>

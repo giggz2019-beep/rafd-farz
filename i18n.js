@@ -23,6 +23,8 @@ const T = {
     'demo.sc-of100':'من 100','demo.sc-bd-title':'تفصيل الدرجة','demo.sc-bd-note':'نقاط موزونة — لا تُنسب مستقلة',
     'demo.sc-c1':'الخبرة والمهارة','demo.sc-c2':'التأهيل الأكاديمي','demo.sc-c3':'الملاءمة للمعايير','demo.sc-c4':'اكتمال المستندات',
     'demo.sc-total':'المجموع الكلي',
+    'demo.sc2-role':'محلل بيانات','demo.sc2-id':'طلب #5104',
+    'demo.sc2-verdict':'مرشح غير مقبول','demo.sc2-verdict-sub':'لم يتجاوز الحد الأدنى للمعايير المطلوبة',
     // ===== HOW IT WORKS (index) =====
     'how.tag':'كيف يعمل النظام','how.title':'أربع خطوات لأتمتة قراراتك',
     'how.desc':'من إعداد المعايير إلى إصدار القرار — كل شيء يعمل تلقائياً بدون تدخل بشري',
@@ -905,6 +907,8 @@ const T = {
     'demo.sc-of100':'out of 100','demo.sc-bd-title':'Score Breakdown','demo.sc-bd-note':'Weighted points — not an independent average',
     'demo.sc-c1':'Experience & Skills','demo.sc-c2':'Academic Qualification','demo.sc-c3':'Criteria Fit','demo.sc-c4':'Document Completeness',
     'demo.sc-total':'Total Score',
+    'demo.sc2-role':'Data Analyst','demo.sc2-id':'Application #5104',
+    'demo.sc2-verdict':'Not Qualified','demo.sc2-verdict-sub':'Did not meet the minimum required criteria',
     // ===== HOW IT WORKS (index) =====
     'how.tag':'How It Works','how.title':'Four Steps to Automate Your Decisions',
     'how.desc':'From setting criteria to issuing decisions — everything runs automatically without human intervention',
