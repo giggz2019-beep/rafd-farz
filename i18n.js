@@ -11,11 +11,18 @@ const T = {
     'nav.home':'الرئيسية',
     'hero.trusted':'موثوق من قِبَل','sec.incubators':'الحاضنات','sec.companies':'الشركات',
     // ===== HERO =====
+    'hero.badge':'محرك تقييم بالذكاء الاصطناعي',
     'hero.title':'<span class="ht-center">مرحباً بكم</span><span class="ht-center gradient-text">في مستقبل التقييم</span><span class="ht-center">الذكي</span>',
     'hero.desc':'RAFD — منصة تُمكّن جميع الجهات الحكومية والخاصة والغير ربحية وغيرها من أتمتة قرارات القبول والرفض وترتيب الأفضليات للمتقدمين بدقة واحترافية عالية — بناءً على معاييرها الخاصة، بدون تحيّز، وفي دقائق معدودة.',
     'hero.cta1':'ابدأ تجربتك المجانية ←','hero.cta2':'جرّب النظام الآن',
     'hero.stat1':'جهة مسجّلة','hero.stat2':'دقة التصنيف',
     'hero.stat3':'فوري <small style="font-size:.6em">⚡</small>','hero.stat3-lbl':'وقت المعالجة','hero.stat4-lbl':'توفير التكاليف',
+    // ===== HERO SCORE CARD =====
+    'demo.sc-role':'مطوّر واجهات','demo.sc-id':'طلب #4821',
+    'demo.sc-verdict':'مرشح مقبول','demo.sc-verdict-sub':'تجاوز الحد الأدنى للمعايير — يُنصح بالترشيح للمقابلة',
+    'demo.sc-of100':'من 100','demo.sc-bd-title':'تفصيل الدرجة','demo.sc-bd-note':'نقاط موزونة — لا تُنسب مستقلة',
+    'demo.sc-c1':'الخبرة والمهارة','demo.sc-c2':'التأهيل الأكاديمي','demo.sc-c3':'الملاءمة للمعايير','demo.sc-c4':'اكتمال المستندات',
+    'demo.sc-total':'المجموع الكلي',
     // ===== HOW IT WORKS (index) =====
     'how.tag':'كيف يعمل النظام','how.title':'أربع خطوات لأتمتة قراراتك',
     'how.desc':'من إعداد المعايير إلى إصدار القرار — كل شيء يعمل تلقائياً بدون تدخل بشري',
@@ -886,11 +893,18 @@ const T = {
     'nav.home':'Home',
     'hero.trusted':'Trusted by','sec.incubators':'Incubators','sec.companies':'Companies',
     // ===== HERO =====
+    'hero.badge':'AI Evaluation Engine',
     'hero.title':'Welcome to the<br><span class="gradient-text">Future of Smart</span><br>Assessment',
     'hero.desc':'RAFD empowers government, private, non-profit, and all other organizations to automate applicant decisions — acceptance, rejection, or priority ranking — with precision and professionalism, based on their own criteria, without bias, in minutes.',
     'hero.cta1':'Start Free Trial →','hero.cta2':'Try the System Now',
     'hero.stat1':'Organizations','hero.stat2':'Classification Accuracy',
     'hero.stat3':'Instant ⚡','hero.stat3-lbl':'Processing Time','hero.stat4-lbl':'Cost Savings',
+    // ===== HERO SCORE CARD =====
+    'demo.sc-role':'Frontend Developer','demo.sc-id':'Application #4821',
+    'demo.sc-verdict':'Qualified Candidate','demo.sc-verdict-sub':'Exceeded the minimum criteria — recommended for interview',
+    'demo.sc-of100':'out of 100','demo.sc-bd-title':'Score Breakdown','demo.sc-bd-note':'Weighted points — not an independent average',
+    'demo.sc-c1':'Experience & Skills','demo.sc-c2':'Academic Qualification','demo.sc-c3':'Criteria Fit','demo.sc-c4':'Document Completeness',
+    'demo.sc-total':'Total Score',
     // ===== HOW IT WORKS (index) =====
     'how.tag':'How It Works','how.title':'Four Steps to Automate Your Decisions',
     'how.desc':'From setting criteria to issuing decisions — everything runs automatically without human intervention',
