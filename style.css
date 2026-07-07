@@ -298,7 +298,8 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .trusted { padding: 2rem 0; background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
 .trusted-label { text-align: center; font-size: .75rem; color: var(--muted); font-weight: 600; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: .08em; }
 .trusted-logos { display: flex; justify-content: center; gap: .75rem; flex-wrap: wrap; padding: 0 .5rem; }
-.trusted-item { font-size: .82rem; color: var(--muted); font-weight: 600; padding: .5rem 1rem; background: #fff; border: 1px solid var(--border); border-radius: 10px; white-space: nowrap; }
+.trusted-item { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--muted); font-weight: 600; padding: .5rem 1rem; background: #fff; border: 1px solid var(--border); border-radius: 10px; white-space: nowrap; }
+.trusted-item .icon { width: 16px; height: 16px; flex-shrink: 0; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ===== SCROLL REVEAL ===== */
 .reveal-init { opacity: 0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
@@ -348,7 +349,14 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .sector-card::before { content: ""; position: absolute; top: 0; inset-inline-end: 0; width: 30px; height: 30px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); clip-path: polygon(100% 0, 0 0, 100% 100%); }
 .sector-card:hover { border-color: rgba(201,162,75,.4); box-shadow: 0 10px 30px rgba(10,22,40,.1); transform: translateY(-3px); }
 .sector-card:active { transform: scale(.98); }
-.sector-icon { font-size: 2rem; margin-bottom: .6rem; }
+.sector-icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto .6rem; }
+.sector-icon .icon { width: 26px; height: 26px; stroke: #fff; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sector-icon-1 { background: linear-gradient(135deg, var(--accent-light), var(--accent)); }
+.sector-icon-2 { background: linear-gradient(135deg, var(--primary-light), var(--primary)); }
+.sector-icon-3 { background: linear-gradient(135deg, var(--gold-light), var(--gold)); }
+.sector-icon-4 { background: linear-gradient(135deg, var(--accent), var(--primary)); }
+.sector-icon-5 { background: linear-gradient(135deg, var(--primary), var(--primary-light)); }
+.sector-icon-6 { background: linear-gradient(135deg, var(--gold), var(--accent)); }
 .sector-name { font-size: .95rem; font-weight: 800; color: var(--dark); margin-bottom: .35rem; font-family: var(--font-heading); }
 .sector-desc { font-size: .78rem; color: var(--muted); line-height: 1.6; }
 
