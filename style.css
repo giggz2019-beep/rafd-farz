@@ -150,7 +150,7 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 .score-card { transition: opacity .35s ease; }
 .score-card.sc-swap { opacity: 0; }
 .sc-verdict-sub { font-size: .72rem; color: var(--muted); line-height: 1.5; max-width: 190px; }
-.sc-ring { --p: 88; width: 68px; height: 68px; border-radius: 50%; background: conic-gradient(var(--gold) calc(var(--p) * 1%), #e5e9ee 0); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sc-ring { --p: 88; width: 68px; height: 68px; border-radius: 50%; background: conic-gradient(var(--accent-light) calc(var(--p) * 1%), #e5e9ee 0); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .sc-ring-inner { width: 54px; height: 54px; border-radius: 50%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1px var(--border); }
 .sc-ring-num { font-size: 1.2rem; font-weight: 900; color: var(--primary); line-height: 1.1; }
 .sc-ring-max { font-size: .55rem; color: var(--muted); font-weight: 600; }
