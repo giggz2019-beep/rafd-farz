@@ -8,9 +8,6 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rafd — Smart Applicant Screening Platform</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -84,12 +81,12 @@
       </div>
       <div class="hero-stats">
         <div class="stat">
-          <span class="stat-num">+20</span>
+          <span class="stat-num" data-count="20" data-template="+{v}">+0</span>
           <span class="stat-label"><span data-i18n="hero.stat1">جهة مسجّلة</span></span>
         </div>
         <div class="stat-divider"></div>
         <div class="stat">
-          <span class="stat-num">99.9%</span>
+          <span class="stat-num" data-count="99.9" data-template="{v}%">0%</span>
           <span class="stat-label"><span data-i18n="hero.stat2">دقة التصنيف</span></span>
         </div>
         <div class="stat-divider"></div>
@@ -99,7 +96,7 @@
         </div>
         <div class="stat-divider"></div>
         <div class="stat">
-          <span class="stat-num">80%</span>
+          <span class="stat-num" data-count="80" data-template="{v}%">0%</span>
           <span class="stat-label"><span data-i18n="hero.stat4-lbl">توفير التكاليف</span></span>
         </div>
       </div>
@@ -1063,6 +1060,73 @@ document.addEventListener('click', () => {
 
   window.addEventListener('resize', init);
   init();
+})();
+</script>
+<script>
+(function(){
+  // Scroll-reveal: fade/slide sections and cards in as they enter the viewport
+  const revealSelectors = '.section-header, .how-step, .feature-card, .sector-card, .price-card, .cta-title, .cta-desc';
+  const revealEls = document.querySelectorAll(revealSelectors);
+  revealEls.forEach((el, i) => {
+    el.classList.add('reveal-init');
+    el.style.transitionDelay = (i % 4) * 90 + 'ms';
+  });
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('reveal-in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: .15, rootMargin: '0px 0px -60px 0px' });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  // Animated count-up for hero stats
+  const counters = document.querySelectorAll('.stat-num[data-count]');
+  counters.forEach(el => {
+    const target = parseFloat(el.dataset.count);
+    const template = el.dataset.template || '{v}';
+    const decimals = el.dataset.count.includes('.') ? el.dataset.count.split('.')[1].length : 0;
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        counterObserver.unobserve(entry.target);
+        const duration = 1400;
+        const start = performance.now();
+        function tick(now) {
+          const p = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = template.replace('{v}', (target * eased).toFixed(decimals));
+          if (p < 1) requestAnimationFrame(tick);
+          else el.textContent = template.replace('{v}', target.toFixed(decimals));
+        }
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: .5 });
+    counterObserver.observe(el);
+  });
+
+  // Animate the score-card ring + breakdown bars in on load
+  const ring = document.querySelector('.sc-ring');
+  const bars = document.querySelectorAll('.sc-bd-fill');
+  const barTargets = Array.from(bars).map(bar => bar.style.width);
+  bars.forEach(bar => bar.style.width = '0%');
+  setTimeout(() => {
+    bars.forEach((bar, i) => bar.style.width = barTargets[i]);
+    if (ring) {
+      const target = parseFloat(getComputedStyle(ring).getPropertyValue('--p')) || 88;
+      ring.style.setProperty('--p', 0);
+      const duration = 1300;
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        ring.style.setProperty('--p', (target * eased).toFixed(1));
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+  }, 350);
 })();
 </script>
 </body>

@@ -8,45 +8,49 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة تحكم الشريك — RAFD Digital</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Light.otf') format('opentype'); font-weight: 300; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Medium.otf') format('opentype'); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Bold.otf') format('opentype'); font-weight: 700 900; font-display: swap; }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Cairo',sans-serif;background:#0f172a;color:#e2e8f0;direction:rtl;min-height:100vh;-webkit-user-select:none;user-select:none}
+body{font-family:'ThmanyahSans',sans-serif;background:#0f172a;color:#e2e8f0;direction:rtl;min-height:100vh;-webkit-user-select:none;user-select:none}
 input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text}
 
 /* ===== LIGHT THEME ===== */
 body.theme-light{background:#f0f4f8;color:#1e293b}
-body.theme-light .sidebar{background:#1a3a4a;border-color:#15303f}
+body.theme-light .sidebar{background:#0A1628;border-color:#15303f}
 body.theme-light .sb-logo{border-color:rgba(255,255,255,.12)}
 body.theme-light .sb-logo-text{color:#fff}
 body.theme-light .sb-logo-sub{color:rgba(255,255,255,.5)}
 body.theme-light .nav-sec{color:rgba(255,255,255,.4)}
 body.theme-light .nav-item{color:rgba(255,255,255,.65)}
 body.theme-light .nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
-body.theme-light .nav-item.active{color:#fff;background:rgba(255,255,255,.12);border-right-color:#4ade80}
+body.theme-light .nav-item.active{color:#fff;background:rgba(255,255,255,.12);border-right-color:#16A870}
 body.theme-light .sb-footer{border-color:rgba(255,255,255,.1)}
 body.theme-light .sb-uname{color:#fff}
 body.theme-light .sb-urole{color:rgba(255,255,255,.5)}
 body.theme-light .btn-logout{color:rgba(255,255,255,.45)}
 body.theme-light .btn-logout:hover{color:#fca5a5}
-body.theme-light .sb-av{background:linear-gradient(135deg,#2d5a6e,#4a9d6f)}
+body.theme-light .sb-av{background:linear-gradient(135deg,#123554,#0B5D3B)}
 body.theme-light .main{background:#f0f4f8}
-body.theme-light .page-title{color:#1a3a4a;font-weight:900}
+body.theme-light .page-title{color:#0A1628;font-weight:900}
 body.theme-light .page-sub{color:#64748b}
 body.theme-light .card{background:#fff;border:1px solid #dde3ec;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-body.theme-light .card-title{color:#1a3a4a}
+body.theme-light .card-title{color:#0A1628}
 body.theme-light .stat-card{background:#fff;border:1px solid #dde3ec;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 body.theme-light .stat-label{color:#64748b}
-body.theme-light .stat-val{color:#1a3a4a;font-weight:900}
+body.theme-light .stat-val{color:#0A1628;font-weight:900}
 body.theme-light .stat-note{color:#94a3b8}
 body.theme-light .fld-m label{color:#334155}
 body.theme-light .fld-m input,body.theme-light .fld-m select,body.theme-light .fld-m textarea{color:#1e293b;background:#f8fafc;border-color:#dde3ec}
-body.theme-light .fld-m input:focus,body.theme-light .fld-m select:focus{border-color:#1a3a4a;background:#fff}
+body.theme-light .fld-m input:focus,body.theme-light .fld-m select:focus{border-color:#0A1628;background:#fff}
 body.theme-light .q-card{background:#f8fafc;border-color:#dde3ec}
 body.theme-light .q-label{color:#1e293b}
-body.theme-light .q-weight input{background:#fff;color:#1a3a4a;border-color:#dde3ec}
+body.theme-light .q-weight input{background:#fff;color:#0A1628;border-color:#dde3ec}
 body.theme-light .q-toggle{background:#cbd5e1}
-body.theme-light .q-toggle.on{background:#10b981}
+body.theme-light .q-toggle.on{background:#16A870}
 body.theme-light thead tr{background:#f0f4f8}
 body.theme-light th{color:#64748b}
 body.theme-light tbody tr{border-color:#f0f4f8;color:#1e293b}
@@ -57,41 +61,41 @@ body.theme-light .alert{background:#fff;border-color:#dde3ec;color:#1e293b}
 body.theme-light .alert-warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
 body.theme-light #status_alert .alert{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
 body.theme-light .plan-card{background:#fff;border-color:#dde3ec;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-body.theme-light .plan-card.current{border-color:#38bdf8;background:rgba(56,189,248,.06)}
-body.theme-light .plan-name{color:#1a3a4a}
+body.theme-light .plan-card.current{border-color:#16A870;background:rgba(22,168,112,.06)}
+body.theme-light .plan-name{color:#0A1628}
 body.theme-light .plan-price{color:#0ea5e9}
 body.theme-light .plan-features li{color:#475569}
 body.theme-light .modal{background:#fff;border-color:#dde3ec}
 body.theme-light .modal-hdr{border-color:#dde3ec}
-body.theme-light .modal-title{color:#1a3a4a}
+body.theme-light .modal-title{color:#0A1628}
 body.theme-light .modal-footer{border-color:#dde3ec}
 body.theme-light .modal-body{color:#1e293b}
 body.theme-light .save-form-inp{background:#f8fafc;border-color:#dde3ec;color:#1e293b}
-body.theme-light .save-form-inp:focus{border-color:#1a3a4a}
+body.theme-light .save-form-inp:focus{border-color:#0A1628}
 body.theme-light .save-form-inp::placeholder{color:#94a3b8}
 
 /* ===== SIDEBAR ===== */
 .sidebar{width:250px;background:#1e293b;border-left:1px solid #334155;position:fixed;top:0;right:0;bottom:0;z-index:100;display:flex;flex-direction:column;transition:.3s}
 .sb-logo{padding:1.25rem 1.25rem 1rem;border-bottom:1px solid #334155;display:flex;align-items:center;gap:.7rem}
-.sb-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#1a3a4a,#4a9d6f);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:1rem;flex-shrink:0}
+.sb-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#0A1628,#0B5D3B);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:1rem;flex-shrink:0}
 .sb-logo-text{font-size:.95rem;font-weight:800;color:#fff}
 .sb-logo-sub{font-size:.68rem;color:#64748b}
-.sb-org{padding:.9rem 1.25rem;border-bottom:1px solid #334155;background:rgba(56,189,248,.05)}
-.sb-org-name{font-size:.85rem;font-weight:700;color:#38bdf8}
+.sb-org{padding:.9rem 1.25rem;border-bottom:1px solid #334155;background:rgba(22,168,112,.05)}
+.sb-org-name{font-size:.85rem;font-weight:700;color:#16A870}
 .sb-org-type{font-size:.72rem;color:#64748b;margin-top:.1rem}
 .sb-plan{display:inline-flex;align-items:center;gap:.3rem;background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.25);border-radius:20px;padding:.2rem .65rem;font-size:.7rem;font-weight:700;margin-top:.4rem}
 .sb-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .nav-sec{padding:.4rem 1rem .2rem;color:#475569;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
 .nav-item{display:flex;align-items:center;gap:.65rem;padding:.65rem 1.25rem;color:#94a3b8;cursor:pointer;transition:.15s;border-right:3px solid transparent;font-size:.85rem;font-weight:500}
 .nav-item:hover{color:#e2e8f0;background:rgba(255,255,255,.04)}
-.nav-item.active{color:#38bdf8;background:rgba(56,189,248,.08);border-right-color:#38bdf8}
+.nav-item.active{color:#16A870;background:rgba(22,168,112,.08);border-right-color:#16A870}
 .nav-icon{font-size:1rem;width:18px;text-align:center}
 .sb-footer{padding:1rem 1.25rem;border-top:1px solid #334155}
 .sb-user{display:flex;align-items:center;gap:.65rem}
-.sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1a3a4a,#2d5a6e);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.85rem;flex-shrink:0}
+.sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0A1628,#123554);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.85rem;flex-shrink:0}
 .sb-uname{font-size:.82rem;font-weight:700;color:#e2e8f0}
 .sb-urole{font-size:.7rem;color:#64748b}
-.btn-logout{background:none;border:none;color:#64748b;font-size:.75rem;cursor:pointer;font-family:'Cairo',sans-serif;margin-top:.25rem;padding:0}
+.btn-logout{background:none;border:none;color:#64748b;font-size:.75rem;cursor:pointer;font-family:'ThmanyahSans',sans-serif;margin-top:.25rem;padding:0}
 .btn-logout:hover{color:#ef4444}
 
 /* ===== MAIN ===== */
@@ -116,7 +120,7 @@ body.theme-light .save-form-inp::placeholder{color:#94a3b8}
 
 /* ===== BADGE ===== */
 .badge{display:inline-flex;align-items:center;padding:.25rem .7rem;border-radius:20px;font-size:.72rem;font-weight:700}
-.b-active{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25)}
+.b-active{background:rgba(22,168,112,.12);color:#16A870;border:1px solid rgba(22,168,112,.25)}
 .b-rejected{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)}
 .b-pending{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)}
 .b-trial{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)}
@@ -136,47 +140,47 @@ td{padding:.85rem 1rem;font-size:.83rem;color:#cbd5e1;vertical-align:middle}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .fld-m{margin-bottom:1rem}
 .fld-m label{display:block;font-size:.8rem;font-weight:700;color:#94a3b8;margin-bottom:.35rem}
-.fld-m input,.fld-m select,.fld-m textarea{width:100%;padding:.7rem .9rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;color:#e2e8f0;outline:none;transition:.2s}
-.fld-m input:focus,.fld-m select:focus,.fld-m textarea:focus{border-color:#38bdf8}
+.fld-m input,.fld-m select,.fld-m textarea{width:100%;padding:.7rem .9rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;color:#e2e8f0;outline:none;transition:.2s}
+.fld-m input:focus,.fld-m select:focus,.fld-m textarea:focus{border-color:#16A870}
 .fld-m select option{background:#1e293b;color:#e2e8f0}
 select option{background:#1e293b;color:#e2e8f0}
 .fld-m textarea{resize:vertical;min-height:80px;line-height:1.7}
-.btn-primary{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.7rem 1.5rem;font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:.2s}
+.btn-primary{background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:10px;padding:.7rem 1.5rem;font-family:'ThmanyahSans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:.2s}
 .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-.btn-ghost{background:#334155;color:#94a3b8;border:none;border-radius:10px;padding:.7rem 1.25rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer}
-.btn-sm{background:#334155;border:none;color:#94a3b8;border-radius:7px;padding:.3rem .65rem;font-size:.75rem;cursor:pointer;transition:.15s;font-family:'Cairo',sans-serif}
+.btn-ghost{background:#334155;color:#94a3b8;border:none;border-radius:10px;padding:.7rem 1.25rem;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer}
+.btn-sm{background:#334155;border:none;color:#94a3b8;border-radius:7px;padding:.3rem .65rem;font-size:.75rem;cursor:pointer;transition:.15s;font-family:'ThmanyahSans',sans-serif}
 .btn-sm:hover{background:#475569;color:#e2e8f0}
 .btn-sm.danger:hover{background:rgba(239,68,68,.2);color:#ef4444}
 
 /* ===== PROGRESS ===== */
 .progress-bar{background:#0f172a;border-radius:20px;height:8px;overflow:hidden;margin-top:.4rem}
-.progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#38bdf8,#4a9d6f)}
+.progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#16A870,#0B5D3B)}
 
 /* ===== PLAN CARDS ===== */
 .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
 .plan-card{background:rgba(15,23,42,.5);border:2px solid rgba(255,255,255,.08);border-radius:14px;padding:1.25rem;text-align:center;transition:.2s}
-.plan-card.current{border-color:#38bdf8;background:rgba(56,189,248,.08)}
+.plan-card.current{border-color:#16A870;background:rgba(22,168,112,.08)}
 .plan-name{font-size:.95rem;font-weight:800;color:#fff;margin-bottom:.25rem}
-.plan-price{font-size:1.4rem;font-weight:900;color:#38bdf8}
+.plan-price{font-size:1.4rem;font-weight:900;color:#16A870}
 .plan-period{font-size:.72rem;color:#64748b}
 .plan-features{list-style:none;margin:.75rem 0;text-align:right}
 .plan-features li{font-size:.75rem;color:#94a3b8;padding:.2rem 0;display:flex;align-items:center;gap:.4rem}
-.plan-features li::before{content:'✓';color:#4a9d6f;font-weight:900}
-.btn-upgrade{background:linear-gradient(135deg,#1a3a4a,#2d5a6e);color:#fff;border:none;border-radius:10px;padding:.6rem 1.25rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:.75rem;width:100%}
+.plan-features li::before{content:'✓';color:#0B5D3B;font-weight:900}
+.btn-upgrade{background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:10px;padding:.6rem 1.25rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:.75rem;width:100%}
 .btn-upgrade:disabled{opacity:.4;cursor:not-allowed}
 
 /* ===== ALERT ===== */
 .alert{border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;font-size:.85rem;line-height:1.6;display:flex;align-items:flex-start;gap:.75rem}
 .alert-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fbbf24}
-.alert-info{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);color:#7dd3fc}
-.alert-success{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.alert-info{background:rgba(22,168,112,.1);border:1px solid rgba(22,168,112,.25);color:#7dd3fc}
+.alert-success{background:rgba(22,168,112,.1);border:1px solid rgba(22,168,112,.25);color:#6ee7b7}
 
 /* ===== MODAL ===== */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:none;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
 .modal{background:#1e293b;border:1px solid #334155;border-radius:20px;width:100%;max-width:500px;margin:1rem;max-height:90vh;overflow-y:auto}
-.save-form-inp{width:100%;padding:.75rem 1rem;background:#0f172a;border:1.5px solid #334155;border-radius:10px;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.9rem;outline:none;box-sizing:border-box;transition:border-color .2s}
-.save-form-inp:focus{border-color:#38bdf8}
+.save-form-inp{width:100%;padding:.75rem 1rem;background:#0f172a;border:1.5px solid #334155;border-radius:10px;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.9rem;outline:none;box-sizing:border-box;transition:border-color .2s}
+.save-form-inp:focus{border-color:#16A870}
 .save-form-inp::placeholder{color:#475569}
 .modal-hdr{padding:1.25rem 1.5rem;border-bottom:1px solid #334155;display:flex;align-items:center;justify-content:space-between}
 .modal-title{font-size:1rem;font-weight:800;color:#fff}
@@ -187,7 +191,7 @@ select option{background:#1e293b;color:#e2e8f0}
 /* ===== TOAST ===== */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);padding:.75rem 1.75rem;border-radius:14px;font-size:.88rem;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .toast.show{opacity:1}
-.toast.success{background:rgba(16,185,129,.95);color:#fff}
+.toast.success{background:rgba(22,168,112,.95);color:#fff}
 .toast.error{background:rgba(239,68,68,.95);color:#fff}
 .toast.warn{background:rgba(245,158,11,.95);color:#0f172a}
 
@@ -201,15 +205,15 @@ select option{background:#1e293b;color:#e2e8f0}
   th,td{padding:.6rem .5rem}
 }
 /* ===== LINK PAGE ===== */
-.link-hero{background:linear-gradient(135deg,#1a3a4a,#0f172a);border:1px solid #334155;border-radius:20px;padding:2rem;text-align:center;margin-bottom:1.25rem}
+.link-hero{background:linear-gradient(135deg,#0A1628,#0f172a);border:1px solid #334155;border-radius:20px;padding:2rem;text-align:center;margin-bottom:1.25rem}
 .link-icon{font-size:2.5rem;margin-bottom:.75rem}
 .link-title{font-size:1.2rem;font-weight:900;color:#fff;margin-bottom:.4rem}
 .link-sub{color:#64748b;font-size:.85rem;margin-bottom:1.5rem}
 .link-box{background:#0f172a;border:1.5px solid #334155;border-radius:12px;padding:.9rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:1rem;word-break:break-all;text-align:right}
-.link-url{color:#38bdf8;font-size:.85rem;font-family:monospace;flex:1;text-align:left;direction:ltr}
-.btn-copy{background:#334155;border:none;color:#94a3b8;border-radius:8px;padding:.5rem .9rem;font-size:.78rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif;transition:.2s}
+.link-url{color:#16A870;font-size:.85rem;font-family:monospace;flex:1;text-align:left;direction:ltr}
+.btn-copy{background:#334155;border:none;color:#94a3b8;border-radius:8px;padding:.5rem .9rem;font-size:.78rem;cursor:pointer;white-space:nowrap;font-family:'ThmanyahSans',sans-serif;transition:.2s}
 .btn-copy:hover{background:#475569;color:#e2e8f0}
-.btn-copy.copied{background:rgba(16,185,129,.2);color:#10b981}
+.btn-copy.copied{background:rgba(22,168,112,.2);color:#16A870}
 .embed-section{background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:14px;padding:1.25rem;margin-top:1.25rem}
 .embed-lock{filter:blur(3px);user-select:none;pointer-events:none}
 .embed-badge{display:inline-flex;align-items:center;gap:.35rem;background:rgba(139,92,246,.2);color:#a78bfa;border:1px solid rgba(139,92,246,.35);border-radius:20px;padding:.25rem .75rem;font-size:.72rem;font-weight:700;margin-bottom:.75rem}
@@ -217,17 +221,17 @@ select option{background:#1e293b;color:#e2e8f0}
 .q-card{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;display:flex;align-items:center;gap:1rem;transition:.2s}
 .q-card.disabled{opacity:.5}
 .q-toggle{width:48px;height:26px;background:#334155;border-radius:13px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s}
-.q-toggle.on{background:#10b981}
+.q-toggle.on{background:#16A870}
 .q-toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.25)}
 .q-toggle.on::after{transform:translateX(22px)}
 .q-label{flex:1;font-size:.875rem;font-weight:600;color:#e2e8f0}
 .q-weight{display:flex;align-items:center;gap:.5rem}
-.q-weight input{width:52px;padding:.3rem .4rem;background:#1e293b;border:1px solid #334155;border-radius:6px;color:#38bdf8;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none}
+.q-weight input{width:52px;padding:.3rem .4rem;background:#1e293b;border:1px solid #334155;border-radius:6px;color:#16A870;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none}
 .q-weight label{font-size:.72rem;color:#64748b}
 .weight-total{display:flex;align-items:center;justify-content:space-between;background:#1e293b;border-radius:10px;padding:.7rem 1rem;margin-top:.5rem}
 .weight-total span{font-size:.85rem;color:#64748b}
-.weight-total strong{font-size:1rem;color:#38bdf8;font-weight:800}
-.lang-toggle{font-family:Cairo,sans-serif}</style>
+.weight-total strong{font-size:1rem;color:#16A870;font-weight:800}
+.lang-toggle{font-family:'ThmanyahSans',sans-serif}</style>
 </head>
 <body>
 
@@ -265,7 +269,7 @@ select option{background:#1e293b;color:#e2e8f0}
       <div>
         <div class="sb-uname" id="sb_uname">—</div>
         <div class="sb-urole" id="sb_urole">—</div>
-        <button id="langToggleBtn" class="lang-toggle" style="background:none;border:1px solid #334155;border-radius:6px;padding:.25rem .6rem;color:#94a3b8;font-size:.75rem;cursor:pointer;font-family:Cairo,sans-serif;margin-bottom:.4rem;width:100%;white-space:nowrap" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button><button class="btn-logout" onclick="logout()" data-i18n="db.logout">تسجيل الخروج</button>
+        <button id="langToggleBtn" class="lang-toggle" style="background:none;border:1px solid #334155;border-radius:6px;padding:.25rem .6rem;color:#94a3b8;font-size:.75rem;cursor:pointer;font-family:'ThmanyahSans',sans-serif;margin-bottom:.4rem;width:100%;white-space:nowrap" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button><button class="btn-logout" onclick="logout()" data-i18n="db.logout">تسجيل الخروج</button>
       </div>
     </div>
   </div>
@@ -314,7 +318,7 @@ select option{background:#1e293b;color:#e2e8f0}
     </div>
 
     <!-- Apply Link Card -->
-    <div class="card" style="background:linear-gradient(135deg,rgba(26,58,74,.3),rgba(74,157,111,.15));border-color:rgba(74,157,111,.3)">
+    <div class="card" style="background:linear-gradient(135deg,rgba(26,58,74,.3),rgba(11,93,59,.15));border-color:rgba(11,93,59,.3)">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
         <div style="display:flex;align-items:center;gap:.75rem">
           <span style="font-size:1.5rem">🔗</span>
@@ -324,7 +328,7 @@ select option{background:#1e293b;color:#e2e8f0}
           </div>
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <button class="btn-sm" id="ov_copy_btn" onclick="copyPartnerLink()" style="background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.3);font-size:.8rem;padding:.4rem .9rem"><span data-i18n="db.btn-copy">📋 نسخ الرابط</span></button>
+          <button class="btn-sm" id="ov_copy_btn" onclick="copyPartnerLink()" style="background:rgba(22,168,112,.15);color:#16A870;border:1px solid rgba(22,168,112,.3);font-size:.8rem;padding:.4rem .9rem"><span data-i18n="db.btn-copy">📋 نسخ الرابط</span></button>
           <button class="btn-sm" onclick="gotoLinkPage()" style="font-size:.8rem;padding:.4rem .9rem"><span data-i18n="db.btn-view-link">عرض الرابط ←</span></button>
         </div>
       </div>
@@ -337,7 +341,7 @@ select option{background:#1e293b;color:#e2e8f0}
         <table>
           <thead><tr><th>#</th><th data-i18n="db.th-name">اسم المتقدم</th><th data-i18n="db.th-purpose">الغرض</th><th data-i18n="db.th-date">التاريخ</th><th data-i18n="db.th-result">النتيجة</th></tr></thead>
           <tbody id="recent_requests_table">
-            <tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span> — <button onclick="showPage('new-request',null)" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.83rem"><span data-i18n="db.add-first">أضف أول طلب</span></button></td></tr>
+            <tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span> — <button onclick="showPage('new-request',null)" style="background:none;border:none;color:#16A870;cursor:pointer;font-family:'ThmanyahSans',sans-serif;font-size:.83rem"><span data-i18n="db.add-first">أضف أول طلب</span></button></td></tr>
           </tbody>
         </table>
       </div>
@@ -366,8 +370,8 @@ select option{background:#1e293b;color:#e2e8f0}
     </div>
     <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.25rem">
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
-        <input type="text" id="req_search" data-i18n-placeholder="db.ph-search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.85rem;outline:none" oninput="filterRequests()">
-        <select id="req_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'Cairo',sans-serif;font-size:.82rem;outline:none" onchange="filterRequests()">
+        <input type="text" id="req_search" data-i18n-placeholder="db.ph-search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;outline:none" oninput="filterRequests()">
+        <select id="req_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;outline:none" onchange="filterRequests()">
           <option value="" data-i18n="db.all-status">كل الحالات</option>
           <option value="approved" data-i18n="db.opt-approved">مقبول</option>
           <option value="rejected" data-i18n="db.opt-rejected">مرفوض</option>
@@ -515,13 +519,13 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="card">
       <div class="card-title" data-i18n="db.theme-title">🎨 مظهر اللوحة</div>
       <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.25rem">
-        <label onclick="setDashTheme('light')" id="theme_light_lbl" style="cursor:pointer;border:1.5px solid rgba(74,157,111,.5);border-radius:10px;padding:.7rem 1rem;display:block;background:rgba(74,157,111,.07);text-align:right">
-          <input type="radio" name="dash_theme" id="theme_light" value="light" checked style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+        <label onclick="setDashTheme('light')" id="theme_light_lbl" style="cursor:pointer;border:1.5px solid rgba(11,93,59,.5);border-radius:10px;padding:.7rem 1rem;display:block;background:rgba(11,93,59,.07);text-align:right">
+          <input type="radio" name="dash_theme" id="theme_light" value="light" checked style="accent-color:#16A870;vertical-align:middle;margin-left:.4rem">
           <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle"><span data-i18n="db.theme-light">☀️ فاتح (أبيض)</span></span>
           <div style="font-size:.71rem;color:#64748b;margin-top:.25rem" data-i18n="db.theme-light-desc">الوضع الافتراضي — خلفية بيضاء مناسبة للطباعة والعرض الرسمي</div>
         </label>
         <label onclick="setDashTheme('dark')" id="theme_dark_lbl" style="cursor:pointer;border:1.5px solid #334155;border-radius:10px;padding:.7rem 1rem;display:block;text-align:right">
-          <input type="radio" name="dash_theme" id="theme_dark" value="dark" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+          <input type="radio" name="dash_theme" id="theme_dark" value="dark" style="accent-color:#16A870;vertical-align:middle;margin-left:.4rem">
           <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle"><span data-i18n="db.theme-dark">🌑 داكن (أسود)</span></span>
           <div style="font-size:.71rem;color:#64748b;margin-top:.25rem" data-i18n="db.theme-dark-desc">خلفية داكنة مريحة للعين في الأماكن المضاءة</div>
         </label>
@@ -548,7 +552,7 @@ select option{background:#1e293b;color:#e2e8f0}
       <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:1rem;margin-bottom:1.25rem;font-size:.82rem;color:#fbbf24;line-height:1.7" data-i18n="db.api-warn">
         ⚠️ يُمنح الوصول للـ API بعد مراجعة الطلب والتحقق من هوية الجهة. لن يُشارَك أي توثيق تقني قبل الموافقة الرسمية.
       </div>
-      <button class="btn-primary" onclick="requestApiAccess()" style="background:linear-gradient(135deg,#4a9d6f,#2d7a54)"><span data-i18n="db.btn-api">📩 طلب الوصول للـ API</span></button>
+      <button class="btn-primary" onclick="requestApiAccess()" style="background:linear-gradient(135deg,#0B5D3B,#063321)"><span data-i18n="db.btn-api">📩 طلب الوصول للـ API</span></button>
     </div>
   </div>
 
@@ -691,7 +695,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     <div class="card" id="saved_forms_card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem">
         <div class="card-title" style="margin-bottom:0" data-i18n="db.saved-forms">📁 النماذج المحفوظة</div>
-        <button onclick="saveCurrentForm()" style="background:#0f172a;color:#fff;border:1px solid #334155;border-radius:8px;padding:.45rem 1rem;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem"><span data-i18n="db.btn-save-tmpl">💾 حفظ كنموذج</span></button>
+        <button onclick="saveCurrentForm()" style="background:#0f172a;color:#fff;border:1px solid #334155;border-radius:8px;padding:.45rem 1rem;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.4rem"><span data-i18n="db.btn-save-tmpl">💾 حفظ كنموذج</span></button>
       </div>
       <div id="saved_forms_list">
         <div style="color:#475569;font-size:.78rem;text-align:center;padding:.75rem" data-i18n="db.no-saved-forms">لا توجد نماذج محفوظة بعد — اضبط النموذج واضغط "حفظ كنموذج"</div>
@@ -762,7 +766,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <label style="font-size:.78rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem" data-i18n="db.pending-msg-lbl">✏️ رسالة القبول المبدئي للمتقدم</label>
           <textarea id="fc_pending_msg" rows="3"
             placeholder="مثال: تم قبولك مبدئياً في برنامجنا، وسيتم التواصل معك خلال أسبوعين بالقرار النهائي."
-            style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.82rem;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box"></textarea>
+            style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box"></textarea>
           <div style="font-size:.7rem;color:#475569;margin-top:.3rem" data-i18n="db.pending-msg-hint">هذه الرسالة ستظهر للمتقدم داخل بطاقة القبول المبدئي.</div>
         </div>
       </div>
@@ -797,7 +801,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <div style="display:flex;align-items:center;justify-content:space-between">
             <span id="rv_paid_plan_badge" style="font-size:.65rem;background:linear-gradient(90deg,#7c3aed,#4f46e5);color:#fff;padding:.15rem .5rem;border-radius:20px;font-weight:700;display:none" data-i18n="db.rv-paid-badge">باقة متقدمة</span>
             <div>
-              <input type="radio" name="result_vis" id="rv_paid" value="paid" style="accent-color:#10b981;vertical-align:middle;margin-left:.4rem">
+              <input type="radio" name="result_vis" id="rv_paid" value="paid" style="accent-color:#16A870;vertical-align:middle;margin-left:.4rem">
               <span style="font-size:.83rem;font-weight:700;color:#e2e8f0;vertical-align:middle" data-i18n="db.rv-paid">💰 نتيجة فورية بمقابل</span>
             </div>
           </div>
@@ -818,7 +822,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
           <textarea id="fc_result_pay_msg" rows="3"
             placeholder="مثال: طلبك قيد المراجعة، إذا أردت تسريع عملية المراجعة لطلبك ومعرفة نتيجتك فوراً خلال دقيقتين، فيمكنك الآن الاطلاع عليها مقابل 15 ريال فقط ✨"
             data-i18n-placeholder="db.rv-msg-ph"
-            style="width:100%;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.82rem;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box"></textarea>
+            style="width:100%;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box"></textarea>
           <div style="font-size:.7rem;color:#475569;margin-top:.3rem" data-i18n="db.rv-msg-hint">هذه الرسالة ستظهر للمتقدم بعد انتهاء التقييم قبل صفحة الدفع.</div>
         </div>
 
@@ -836,26 +840,26 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <!-- GPA sub-option -->
         <div style="width:100%;padding-top:.5rem;border-top:1px solid #1e293b;margin-top:.25rem;display:flex;flex-direction:column;gap:.6rem" id="edu_gpa_section">
           <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:.78rem;color:#64748b">
-            <input type="checkbox" id="edu_gpa_enabled" style="accent-color:#10b981;width:15px;height:15px" onchange="toggleGpaOptions()">
+            <input type="checkbox" id="edu_gpa_enabled" style="accent-color:#16A870;width:15px;height:15px" onchange="toggleGpaOptions()">
             <span data-i18n="db.gpa-lbl">طلب المعدل التراكمي (GPA) من المتقدم</span>
           </label>
           <div id="gpa_config" style="display:none;background:#0f172a;border-radius:8px;padding:.65rem .85rem;display:none;gap:.85rem;flex-wrap:wrap;align-items:center">
             <div style="font-size:.72rem;color:#64748b;font-weight:600" data-i18n="db.gpa-scale">نظام التقييم:</div>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
-              <input type="radio" name="gpa_scale" id="gpa_5" value="5" checked style="accent-color:#10b981" onchange="toggleGpaBands()"> <span data-i18n="db.gpa-from5">من 5</span>
+              <input type="radio" name="gpa_scale" id="gpa_5" value="5" checked style="accent-color:#16A870" onchange="toggleGpaBands()"> <span data-i18n="db.gpa-from5">من 5</span>
             </label>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
-              <input type="radio" name="gpa_scale" id="gpa_4" value="4" style="accent-color:#10b981" onchange="toggleGpaBands()"> <span data-i18n="db.gpa-from4">من 4</span>
+              <input type="radio" name="gpa_scale" id="gpa_4" value="4" style="accent-color:#16A870" onchange="toggleGpaBands()"> <span data-i18n="db.gpa-from4">من 4</span>
             </label>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8;cursor:pointer">
-              <input type="radio" name="gpa_scale" id="gpa_100" value="100" style="accent-color:#10b981" onchange="toggleGpaBands()"> <span data-i18n="db.gpa-pct">نسبة مئوية (%)</span>
+              <input type="radio" name="gpa_scale" id="gpa_100" value="100" style="accent-color:#16A870" onchange="toggleGpaBands()"> <span data-i18n="db.gpa-pct">نسبة مئوية (%)</span>
             </label>
             <div style="font-size:.7rem;color:#475569;width:100%" data-i18n="db.gpa-hint">سيظهر حقل المعدل تلقائياً أسفل سؤال المؤهل في نموذج التقديم</div>
             <!-- نطاقات الدرجات — تظهر لجميع المقاييس -->
             <div id="gpa_bands_section" style="display:none;width:100%;border-top:1px solid #1e293b;padding-top:.6rem">
               <div style="font-size:.72rem;color:#64748b;font-weight:700;margin-bottom:.5rem"><span data-i18n="db.gpa-bands-lbl">🎯 نقاط كل نطاق:</span> <span id="gpa_bands_scale_lbl">%</span></div>
               <div id="gpa_bands_container"></div>
-              <button onclick="addGpaBand()" style="background:none;border:1px dashed #334155;color:#475569;border-radius:8px;padding:.35rem .75rem;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem;width:100%"><span data-i18n="db.gpa-add-band">+ إضافة نطاق</span></button>
+              <button onclick="addGpaBand()" style="background:none;border:1px dashed #334155;color:#475569;border-radius:8px;padding:.35rem .75rem;font-family:'ThmanyahSans',sans-serif;font-size:.72rem;cursor:pointer;margin-top:.4rem;width:100%"><span data-i18n="db.gpa-add-band">+ إضافة نطاق</span></button>
             </div>
           </div>
         </div>
@@ -898,12 +902,12 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div style="border-top:1px solid #1e293b;margin-top:.75rem;padding-top:.75rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
           <div style="font-size:.8rem;color:#64748b;font-weight:600" data-i18n="db.custom-criteria">معايير مخصصة إضافية</div>
-          <button onclick="addCustomCriterion()" style="display:flex;align-items:center;gap:.35rem;background:rgba(74,157,111,.15);border:1px solid rgba(74,157,111,.3);color:#4a9d6f;border-radius:8px;padding:.4rem .85rem;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">
+          <button onclick="addCustomCriterion()" style="display:flex;align-items:center;gap:.35rem;background:rgba(11,93,59,.15);border:1px solid rgba(11,93,59,.3);color:#0B5D3B;border-radius:8px;padding:.4rem .85rem;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">
             <span data-i18n="db.add-custom-crit">➕ إضافة معيار خاص</span>
           </button>
         </div>
         <div id="custom_criteria_container"></div>
-        <button onclick="addCustomCriterion()" id="add_crit_bottom_btn" style="display:none;width:100%;margin-top:.5rem;align-items:center;justify-content:center;gap:.35rem;background:rgba(74,157,111,.08);border:1px dashed rgba(74,157,111,.4);color:#4a9d6f;border-radius:8px;padding:.55rem;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">
+        <button onclick="addCustomCriterion()" id="add_crit_bottom_btn" style="display:none;width:100%;margin-top:.5rem;align-items:center;justify-content:center;gap:.35rem;background:rgba(11,93,59,.08);border:1px dashed rgba(11,93,59,.4);color:#0B5D3B;border-radius:8px;padding:.55rem;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">
           ➕ <span data-i18n="db.add-custom-crit">إضافة معيار خاص</span>
         </button>
       </div>
@@ -926,7 +930,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#0a5f3f,#0d7a52);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#fff;flex-shrink:0">نفاذ</div>
         <div style="flex:1">
           <div style="font-size:.85rem;font-weight:700;color:#e2e8f0" data-i18n="db.nafath-lbl">التحقق عبر نفاذ</div>
-          <div style="font-size:.73rem;color:#4ade80;margin-top:.15rem" data-i18n="db.nafath-sub">المنصة الوطنية الموحّدة للهوية الرقمية — يُرسَل رمز OTP للجوال</div>
+          <div style="font-size:.73rem;color:#16A870;margin-top:.15rem" data-i18n="db.nafath-sub">المنصة الوطنية الموحّدة للهوية الرقمية — يُرسَل رمز OTP للجوال</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:.4rem">
           <button class="q-toggle" id="nafath_toggle" onclick="toggleNafath()"></button>
@@ -964,16 +968,16 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
             <button class="q-toggle on" id="dt_cv" onclick="toggleDoc('cv')"></button>
             <div class="q-label" style="flex:1" data-i18n="db.doc-cv">📄 السيرة الذاتية / ملف CV</div>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-              <input type="checkbox" id="dr_cv" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
+              <input type="checkbox" id="dr_cv" style="accent-color:#16A870"> <span data-i18n="db.mandatory">إلزامي</span>
             </label>
-            <button onclick="toggleDocCriteria('cv')" id="dcbtn_cv" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif">⚡ معايير</button>
+            <button onclick="toggleDocCriteria('cv')" id="dcbtn_cv" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'ThmanyahSans',sans-serif">⚡ معايير</button>
           </div>
           <div id="dcp_cv" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
             <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — السيرة الذاتية</div>
             <div id="dcr_cv"></div>
             <div style="display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap">
-              <button onclick="addDocCriterion('cv')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
-              <button onclick="saveDocCriteria('cv')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
+              <button onclick="addDocCriterion('cv')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
+              <button onclick="saveDocCriteria('cv')" style="background:rgba(22,168,112,.1);border:1px solid rgba(22,168,112,.25);color:#16A870;border-radius:7px;padding:.3rem .75rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
             </div>
           </div>
         </div>
@@ -982,16 +986,16 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
             <button class="q-toggle on" id="dt_reg" onclick="toggleDoc('reg')"></button>
             <div class="q-label" style="flex:1" data-i18n="db.doc-reg">🏢 سجل تجاري / وثيقة تأسيس</div>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-              <input type="checkbox" id="dr_reg" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
+              <input type="checkbox" id="dr_reg" style="accent-color:#16A870"> <span data-i18n="db.mandatory">إلزامي</span>
             </label>
-            <button onclick="toggleDocCriteria('reg')" id="dcbtn_reg" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif">⚡ معايير</button>
+            <button onclick="toggleDocCriteria('reg')" id="dcbtn_reg" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'ThmanyahSans',sans-serif">⚡ معايير</button>
           </div>
           <div id="dcp_reg" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
             <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — السجل التجاري</div>
             <div id="dcr_reg"></div>
             <div style="display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap">
-              <button onclick="addDocCriterion('reg')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
-              <button onclick="saveDocCriteria('reg')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
+              <button onclick="addDocCriterion('reg')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
+              <button onclick="saveDocCriteria('reg')" style="background:rgba(22,168,112,.1);border:1px solid rgba(22,168,112,.25);color:#16A870;border-radius:7px;padding:.3rem .75rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
             </div>
           </div>
         </div>
@@ -1000,16 +1004,16 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
             <button class="q-toggle" id="dt_cert" onclick="toggleDoc('cert')"></button>
             <div class="q-label" style="flex:1" data-i18n="db.doc-cert">🎓 شهادات خبرة ومؤهلات</div>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-              <input type="checkbox" id="dr_cert" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
+              <input type="checkbox" id="dr_cert" style="accent-color:#16A870"> <span data-i18n="db.mandatory">إلزامي</span>
             </label>
-            <button onclick="toggleDocCriteria('cert')" id="dcbtn_cert" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif">⚡ معايير</button>
+            <button onclick="toggleDocCriteria('cert')" id="dcbtn_cert" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'ThmanyahSans',sans-serif">⚡ معايير</button>
           </div>
           <div id="dcp_cert" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
             <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — الشهادات</div>
             <div id="dcr_cert"></div>
             <div style="display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap">
-              <button onclick="addDocCriterion('cert')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
-              <button onclick="saveDocCriteria('cert')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
+              <button onclick="addDocCriterion('cert')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
+              <button onclick="saveDocCriteria('cert')" style="background:rgba(22,168,112,.1);border:1px solid rgba(22,168,112,.25);color:#16A870;border-radius:7px;padding:.3rem .75rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
             </div>
           </div>
         </div>
@@ -1018,16 +1022,16 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
             <button class="q-toggle" id="dt_id" onclick="toggleDoc('id')"></button>
             <div class="q-label" style="flex:1" data-i18n="db.doc-id">🪪 صورة هوية وطنية</div>
             <label style="display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:#64748b;cursor:pointer">
-              <input type="checkbox" id="dr_id" style="accent-color:#10b981"> <span data-i18n="db.mandatory">إلزامي</span>
+              <input type="checkbox" id="dr_id" style="accent-color:#16A870"> <span data-i18n="db.mandatory">إلزامي</span>
             </label>
-            <button onclick="toggleDocCriteria('id')" id="dcbtn_id" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'Cairo',sans-serif">⚡ معايير</button>
+            <button onclick="toggleDocCriteria('id')" id="dcbtn_id" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#a78bfa;border-radius:6px;padding:.22rem .55rem;font-size:.68rem;cursor:pointer;white-space:nowrap;font-family:'ThmanyahSans',sans-serif">⚡ معايير</button>
           </div>
           <div id="dcp_id" style="display:none;border-top:1px solid #1e293b;margin-top:.65rem;padding-top:.65rem">
             <div style="font-size:.7rem;color:#a78bfa;font-weight:700;margin-bottom:.5rem">🔍 معايير القراءة الذكية — الهوية</div>
             <div id="dcr_id"></div>
             <div style="display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap">
-              <button onclick="addDocCriterion('id')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
-              <button onclick="saveDocCriteria('id')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;border-radius:7px;padding:.3rem .75rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
+              <button onclick="addDocCriterion('id')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa;border-radius:7px;padding:.3rem .75rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer">+ إضافة معيار</button>
+              <button onclick="saveDocCriteria('id')" style="background:rgba(22,168,112,.1);border:1px solid rgba(22,168,112,.25);color:#16A870;border-radius:7px;padding:.3rem .75rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer;font-weight:700">💾 حفظ المعايير</button>
             </div>
           </div>
         </div>
@@ -1037,7 +1041,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div style="border-top:1px solid #1e293b;margin-top:.85rem;padding-top:.85rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem">
           <div style="font-size:.75rem;color:#64748b" data-i18n="db.custom-docs">مستندات مخصصة إضافية</div>
-          <button onclick="addCustomDoc()" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:#7dd3fc;border-radius:7px;padding:.3rem .7rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer"><span data-i18n="db.add-custom-doc">+ إضافة مستند</span></button>
+          <button onclick="addCustomDoc()" style="background:rgba(22,168,112,.1);border:1px solid rgba(22,168,112,.2);color:#7dd3fc;border-radius:7px;padding:.3rem .7rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer"><span data-i18n="db.add-custom-doc">+ إضافة مستند</span></button>
         </div>
         <div id="custom_docs_container"></div>
       </div>
@@ -1045,9 +1049,9 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 
     <div class="card">
       <div class="card-title" data-i18n="db.link-preview">💡 معاينة الرابط بعد الحفظ</div>
-      <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:1rem;font-size:.82rem;color:#94a3b8;line-height:1.8">
+      <div style="background:rgba(22,168,112,.08);border:1px solid rgba(22,168,112,.2);border-radius:12px;padding:1rem;font-size:.82rem;color:#94a3b8;line-height:1.8">
         <span data-i18n="db.link-preview-text">بعد حفظ الإعدادات، سيعرض نموذج التقديم اسم برنامجك وسيقبل المتقدمين تلقائياً بناءً على الأوزان التي حددتها.</span>
-        <br><strong style="color:#38bdf8" data-i18n="db.lbl-link">الرابط:</strong> <span id="fc_preview_link" style="font-family:monospace;direction:ltr;display:inline-block">—</span>
+        <br><strong style="color:#16A870" data-i18n="db.lbl-link">الرابط:</strong> <span id="fc_preview_link" style="font-family:monospace;direction:ltr;display:inline-block">—</span>
       </div>
     </div>
 
@@ -1059,7 +1063,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 
   <!-- Sticky save bar for form-setup page -->
   <div id="formStickyBar" style="display:none;position:fixed;bottom:0;right:250px;left:0;background:#1e293b;border-top:1px solid #334155;padding:.85rem 2rem;align-items:center;justify-content:space-between;gap:1rem;z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,.3)">
-    <div id="stickyWeightBadge" style="font-size:.78rem;color:#64748b"><span data-i18n="db.weight-total">مجموع الأوزان:</span> <strong id="sticky_weight" style="color:#10b981">100</strong>/100</div>
+    <div id="stickyWeightBadge" style="font-size:.78rem;color:#64748b"><span data-i18n="db.weight-total">مجموع الأوزان:</span> <strong id="sticky_weight" style="color:#16A870">100</strong>/100</div>
     <div style="display:flex;gap:.65rem">
       <button class="btn-ghost" onclick="resetFormConfig()" style="padding:.55rem 1rem;font-size:.82rem"><span data-i18n="db.btn-reset">↩️ إعادة تعيين</span></button>
       <button class="btn-primary" onclick="saveFormConfig()" style="padding:.55rem 1.25rem;font-size:.85rem"><span data-i18n="db.btn-save-form">💾 حفظ وتفعيل النموذج</span></button>
@@ -1098,12 +1102,12 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.5rem">📧</div>
           <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem" data-i18n="db.lbl-email">البريد الإلكتروني</div>
-          <div style="font-size:.88rem;color:#38bdf8;font-weight:700">partners@rafd.digital</div>
+          <div style="font-size:.88rem;color:#16A870;font-weight:700">partners@rafd.digital</div>
         </div>
         <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.5rem">💬</div>
           <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem" data-i18n="db.lbl-whatsapp">واتساب</div>
-          <div style="font-size:.88rem;color:#38bdf8;font-weight:700">+966 5X XXX XXXX</div>
+          <div style="font-size:.88rem;color:#16A870;font-weight:700">+966 5X XXX XXXX</div>
         </div>
         <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.5rem">🕐</div>
@@ -1252,7 +1256,7 @@ async function loadPartnerData() {
 
 function showAdminPreviewBanner(unlockAll) {
   const b = document.createElement('div');
-  b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(90deg,#7c3aed,#1a3a4a);color:#fff;text-align:center;padding:.55rem 1rem;font-size:.8rem;font-weight:700;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:1rem';
+  b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(90deg,#7c3aed,#0A1628);color:#fff;text-align:center;padding:.55rem 1rem;font-size:.8rem;font-weight:700;font-family:'ThmanyahSans',sans-serif;display:flex;align-items:center;justify-content:center;gap:1rem';
   b.innerHTML = `<span>🛠️ وضع معاينة المدير${unlockAll ? ' — ✨ جميع ميزات الباقة المتقدمة مفعّلة' : ''}</span><button onclick="this.parentElement.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:.2rem .6rem;cursor:pointer;font-size:.75rem">✕ إغلاق</button>`;
   document.body.prepend(b);
   // push content down
@@ -1392,7 +1396,7 @@ function renderRecentRequests() {
   const reqs = allApplications.slice(0, 5);
   const tbody = document.getElementById('recent_requests_table');
   if (!reqs.length) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">${getT('db.no-requests')} — <button onclick="showPage('link',null)" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.83rem">${getT('db.share-link-prompt')}</button></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem">${getT('db.no-requests')} — <button onclick="showPage('link',null)" style="background:none;border:none;color:#16A870;cursor:pointer;font-family:'ThmanyahSans',sans-serif;font-size:.83rem">${getT('db.share-link-prompt')}</button></td></tr>`;
     return;
   }
   tbody.innerHTML = reqs.map((r,i) => `<tr onclick="openReqModal('${r.id}')" style="cursor:pointer">
@@ -1416,12 +1420,12 @@ function renderAllRequests(list) {
     <td style="font-weight:700;color:#e2e8f0">${r.name}</td>
     <td style="color:#64748b;font-size:.78rem">${r.national_id || '—'}</td>
     <td style="color:#64748b">${r.company || r.sector || '—'}</td>
-    <td><span style="font-weight:800;color:${r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score || '—'}</span></td>
+    <td><span style="font-weight:800;color:${r.score >= 80 ? '#16A870' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score || '—'}</span></td>
     <td style="color:#64748b;font-size:.78rem">${fmtDate(r.created_at)}</td>
     <td>${resultBadge(r.result, r.score)}</td>
     <td onclick="event.stopPropagation()" style="white-space:nowrap;text-align:center">
-      ${r.phone ? `<a href="tel:${r.phone}" onclick="event.stopPropagation()" style="color:#38bdf8;text-decoration:none;font-size:1rem;margin-left:.3rem" title="${r.phone}">📞</a>` : ''}
-      ${r.email ? `<a href="mailto:${r.email}" onclick="event.stopPropagation()" style="color:#38bdf8;text-decoration:none;font-size:1rem" title="${r.email}">📧</a>` : ''}
+      ${r.phone ? `<a href="tel:${r.phone}" onclick="event.stopPropagation()" style="color:#16A870;text-decoration:none;font-size:1rem;margin-left:.3rem" title="${r.phone}">📞</a>` : ''}
+      ${r.email ? `<a href="mailto:${r.email}" onclick="event.stopPropagation()" style="color:#16A870;text-decoration:none;font-size:1rem" title="${r.email}">📧</a>` : ''}
       ${!r.phone && !r.email ? '<span style="color:#475569">—</span>' : ''}
     </td>
     <td onclick="event.stopPropagation()"><button class="btn-sm danger" onclick="deleteRequest('${r.id}')">${getT('db.btn-delete')}</button></td>
@@ -1497,16 +1501,16 @@ async function deleteRequest(id) {
 function openReqModal(id) {
   const r = allApplications.find(x => x.id === id);
   if (!r) return;
-  const scoreColor = r.score >= 80 ? '#10b981' : r.score >= 60 ? '#f59e0b' : '#ef4444';
+  const scoreColor = r.score >= 80 ? '#16A870' : r.score >= 60 ? '#f59e0b' : '#ef4444';
   const isPending = r.result === 'pending';
   const isApproved = r.result === 'approved';
   const isRejected = r.result === 'rejected';
 
   const emailLink = r.email
-    ? `<a href="mailto:${r.email}" style="color:#38bdf8;text-decoration:none;font-weight:600">${r.email} 📧</a>`
+    ? `<a href="mailto:${r.email}" style="color:#16A870;text-decoration:none;font-weight:600">${r.email} 📧</a>`
     : '—';
   const phoneLink = r.phone
-    ? `<a href="tel:${r.phone}" style="color:#38bdf8;text-decoration:none;font-weight:600;direction:ltr;display:inline-block">${r.phone} 📞</a>`
+    ? `<a href="tel:${r.phone}" style="color:#16A870;text-decoration:none;font-weight:600;direction:ltr;display:inline-block">${r.phone} 📞</a>`
     : '—';
 
   document.getElementById('reqModalBody').innerHTML = `
@@ -1526,11 +1530,11 @@ function openReqModal(id) {
       ${isPending ? `
       <div style="border-top:1px solid #334155;padding-top:.85rem;display:flex;gap:.6rem">
         <button onclick="finalAccept('${r.id}')" id="btn_final_accept"
-          style="flex:1;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:10px;padding:.75rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer">
+          style="flex:1;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.75rem;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer">
           ${getT('db.btn-confirm-accept')}
         </button>
         <button onclick="finalReject('${r.id}')"
-          style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.75rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
+          style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.75rem;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
           ${getT('db.btn-final-reject')}
         </button>
       </div>` : ''}
@@ -1540,11 +1544,11 @@ function openReqModal(id) {
         <div style="font-size:.75rem;color:#64748b;margin-bottom:.6rem;text-align:center">مراجعة النتيجة — بإمكان الجهة تعديلها</div>
         <div style="display:flex;gap:.6rem">
           ${isRejected ? `<button onclick="finalAccept('${r.id}')" id="btn_final_accept"
-            style="flex:1;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
+            style="flex:1;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
             ✓ تغيير إلى مقبول
           </button>` : ''}
           ${isApproved ? `<button onclick="finalReject('${r.id}')"
-            style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.65rem;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
+            style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.65rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
             ✕ تغيير إلى مرفوض
           </button>` : ''}
         </div>
@@ -1655,7 +1659,7 @@ function renderSubscription() {
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
       <div>
         <div style="font-size:1.2rem;font-weight:900;color:#fff">${planNames[partner.plan] || partner.plan}</div>
-        <div style="color:#38bdf8;font-size:1rem;font-weight:700;margin-top:.25rem">${prices[partner.plan] || ''}</div>
+        <div style="color:#16A870;font-size:1rem;font-weight:700;margin-top:.25rem">${prices[partner.plan] || ''}</div>
         <div style="color:#64748b;font-size:.78rem;margin-top:.25rem">${getT('db.sub-date')}: ${partner.date}</div>
       </div>
       <span class="badge ${partner.plan === 'trial' ? 'b-trial' : partner.plan === 'advanced' ? 'b-pro' : 'b-basic'}">${planNames[partner.plan] || partner.plan}</span>
@@ -1868,7 +1872,7 @@ function initScoreCustomUIs() {
     // زر التخصيص
     const wrap = document.createElement('div');
     wrap.style.cssText = 'width:100%;padding-top:.45rem;border-top:1px solid #1e293b;margin-top:.3rem';
-    wrap.innerHTML = `<button onclick="toggleScoreCustom('${id}')" id="sc_btn_${id}" style="background:none;border:none;color:#475569;font-family:\'Cairo\',sans-serif;font-size:.72rem;cursor:pointer;display:flex;align-items:center;gap:.3rem;padding:0">
+    wrap.innerHTML = `<button onclick="toggleScoreCustom('${id}')" id="sc_btn_${id}" style="background:none;border:none;color:#475569;font-family:\'ThmanyahSans\',sans-serif;font-size:.72rem;cursor:pointer;display:flex;align-items:center;gap:.3rem;padding:0">
       <span id="sc_arrow_${id}" style="transition:.2s">▶</span> ${getT('db.custom-scores-btn')}
     </button>`;
     card.appendChild(wrap);
@@ -1912,7 +1916,7 @@ function renderScoreCustomUI(id) {
       <div style="display:flex;align-items:center;gap:.4rem">
         <input type="number" value="${scores[opt.key] ?? 0}" min="0" max="40"
           oninput="if(!optionScores['${id}'])optionScores['${id}']={};optionScores['${id}']['${opt.key}']=parseInt(this.value)||0"
-          style="width:54px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#10b981;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
+          style="width:54px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#16A870;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
         <span style="font-size:.7rem;color:#475569">نقطة</span>
       </div>
     </div>
@@ -1926,8 +1930,8 @@ function setDashTheme(theme) {
   const lLbl = document.getElementById('theme_light_lbl');
   const dRad = document.getElementById('theme_dark');
   const lRad = document.getElementById('theme_light');
-  if (dLbl) { dLbl.style.borderColor = theme==='dark'?'rgba(74,157,111,.5)':'#334155'; dLbl.style.background = theme==='dark'?'rgba(74,157,111,.07)':'transparent'; }
-  if (lLbl) { lLbl.style.borderColor = theme==='light'?'rgba(74,157,111,.5)':'#334155'; lLbl.style.background = theme==='light'?'rgba(74,157,111,.07)':'transparent'; }
+  if (dLbl) { dLbl.style.borderColor = theme==='dark'?'rgba(11,93,59,.5)':'#334155'; dLbl.style.background = theme==='dark'?'rgba(11,93,59,.07)':'transparent'; }
+  if (lLbl) { lLbl.style.borderColor = theme==='light'?'rgba(11,93,59,.5)':'#334155'; lLbl.style.background = theme==='light'?'rgba(11,93,59,.07)':'transparent'; }
   if (dRad) dRad.checked = theme === 'dark';
   if (lRad) lRad.checked = theme === 'light';
   applyThemeInlineOverrides(theme);
@@ -1949,12 +1953,11 @@ function applyThemeInlineOverrides(theme) {
       body.theme-light .main [style*="color:#64748b"]{color:#64748b!important}
       body.theme-light .main [style*="color:#475569"]{color:#64748b!important}
       body.theme-light .main [style*="color:#334155"]{color:#475569!important}
-      body.theme-light .main [style*="color:#38bdf8"]{color:#0369a1!important}
       body.theme-light .main [style*="color:#7dd3fc"]{color:#0369a1!important}
       body.theme-light .main [style*="color:#a78bfa"]{color:#6d28d9!important}
       body.theme-light .main [style*="color:#c4b5fd"]{color:#6d28d9!important}
-      body.theme-light .main [style*="color:#10b981"]{color:#059669!important}
-      body.theme-light .main [style*="color:#4ade80"]{color:#059669!important}
+      body.theme-light .main [style*="color:#16A870"]{color:#0B5D3B!important}
+      body.theme-light .main [style*="color:#16A870"]{color:#0B5D3B!important}
       body.theme-light .main [style*="color:#f87171"]{color:#dc2626!important}
       body.theme-light .main [style*="color:#fca5a5"]{color:#dc2626!important}
       body.theme-light .main [style*="color:#fbbf24"]{color:#b45309!important}
@@ -1972,7 +1975,7 @@ function applyThemeInlineOverrides(theme) {
       body.theme-light .main [style*="background:rgba(0,0,0"]{background:rgba(0,0,0,.04)!important}
       body.theme-light .main [style*="background:linear-gradient(135deg,#0f172a"]{background:#fff!important}
       body.theme-light .main [style*="background:linear-gradient(135deg,#1e293b"]{background:#fff!important}
-      body.theme-light .main [style*="background:linear-gradient(135deg,#1a3a4a"]{background:linear-gradient(135deg,#1a3a4a,#2d5a6e)!important}
+      body.theme-light .main [style*="background:linear-gradient(135deg,#0A1628"]{background:linear-gradient(135deg,#0A1628,#123554)!important}
       /* ===== الحدود الداكنة ===== */
       body.theme-light .main [style*="border:1px solid #334155"]{border-color:#dde3ec!important}
       body.theme-light .main [style*="border: 1px solid #334155"]{border-color:#dde3ec!important}
@@ -1983,14 +1986,14 @@ function applyThemeInlineOverrides(theme) {
       body.theme-light .main textarea{background:#fff!important;color:#1e293b!important;border-color:#dde3ec!important}
       body.theme-light .main input:not([type=radio]):not([type=checkbox]){background:#fff!important;color:#1e293b!important}
       /* ===== Classes مباشرة ===== */
-      body.theme-light .main .card-title{color:#1a3a4a!important}
-      body.theme-light .main .page-title{color:#1a3a4a!important}
-      body.theme-light .main .stat-val{color:#1a3a4a!important}
+      body.theme-light .main .card-title{color:#0A1628!important}
+      body.theme-light .main .page-title{color:#0A1628!important}
+      body.theme-light .main .stat-val{color:#0A1628!important}
       body.theme-light .main .stat-label{color:#64748b!important}
       body.theme-light .main .q-label{color:#1e293b!important}
       body.theme-light .main .fld-m label{color:#334155!important}
       body.theme-light .main .fld-m input,body.theme-light .main .fld-m select{background:#fff!important;color:#1e293b!important;border-color:#dde3ec!important}
-      body.theme-light .main pre{background:#f1f5f9!important;color:#1a3a4a!important;border-color:#dde3ec!important}
+      body.theme-light .main pre{background:#f1f5f9!important;color:#0A1628!important;border-color:#dde3ec!important}
     `;
   } else {
     st.textContent = '';
@@ -2075,8 +2078,8 @@ function updateWeightTotal() {
   const display = document.getElementById('weight_total_display');
   const warning = document.getElementById('weight_warning');
   const sticky = document.getElementById('sticky_weight');
-  if (display) { display.textContent = total; display.style.color = total === 100 ? '#10b981' : '#ef4444'; }
-  if (sticky) { sticky.textContent = total; sticky.style.color = total === 100 ? '#10b981' : '#ef4444'; }
+  if (display) { display.textContent = total; display.style.color = total === 100 ? '#16A870' : '#ef4444'; }
+  if (sticky) { sticky.textContent = total; sticky.style.color = total === 100 ? '#16A870' : '#ef4444'; }
   if (warning) warning.style.display = total !== 100 ? 'block' : 'none';
 }
 
@@ -2127,14 +2130,14 @@ function renderGpaBands() {
     row.style.cssText = 'display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem';
     row.innerHTML = `
       <input type="number" value="${b.min}" min="0" max="${maxVal}" step="${step}" placeholder="من"
-        style="width:58px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'Cairo',sans-serif;font-size:.78rem;text-align:center;outline:none">
+        style="width:58px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;text-align:center;outline:none">
       <span style="color:#475569;font-size:.75rem">—</span>
       <input type="number" value="${b.max}" min="0" max="${maxVal}" step="${step}" placeholder="إلى"
-        style="width:58px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'Cairo',sans-serif;font-size:.78rem;text-align:center;outline:none">
+        style="width:58px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;text-align:center;outline:none">
       <span style="color:#475569;font-size:.72rem">${unit}</span>
       <span style="color:#475569;font-size:.72rem;margin-right:.2rem">→</span>
       <input type="number" value="${b.score ?? ''}" min="0" max="${w}" placeholder="نقطة"
-        style="width:54px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#10b981;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
+        style="width:54px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#16A870;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
       <span style="color:#475569;font-size:.7rem">نقطة</span>
       <button style="background:none;border:none;color:#475569;cursor:pointer;font-size:.85rem;padding:0 .2rem">✕</button>`;
     const inputs = row.querySelectorAll('input');
@@ -2157,7 +2160,7 @@ function toggleNafath() {
   const opts = document.getElementById('nafath_options');
   const on = btn.classList.toggle('on');
   lbl.textContent = on ? 'مفعّل' : 'معطّل';
-  lbl.style.color = on ? '#4ade80' : '#475569';
+  lbl.style.color = on ? '#16A870' : '#475569';
   opts.style.display = on ? 'block' : 'none';
 }
 
@@ -2187,9 +2190,9 @@ function renderCustomDocs() {
     <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem">
       <input type="text" value="${d.label}" placeholder="اسم المستند... مثال: خطة العمل"
         oninput="customDocs[${i}].label=this.value"
-        style="flex:1;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.45rem .75rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.8rem;outline:none">
+        style="flex:1;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.45rem .75rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;outline:none">
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.72rem;color:#64748b;cursor:pointer;white-space:nowrap">
-        <input type="checkbox" ${d.required?'checked':''} onchange="customDocs[${i}].required=this.checked" style="accent-color:#10b981"> إلزامي
+        <input type="checkbox" ${d.required?'checked':''} onchange="customDocs[${i}].required=this.checked" style="accent-color:#16A870"> إلزامي
       </label>
       <button onclick="removeCustomDoc(${i})" style="background:none;border:none;color:#475569;cursor:pointer;font-size:.9rem">🗑️</button>
     </div>
@@ -2228,12 +2231,12 @@ function renderDocCriteriaList(docId) {
     <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem;flex-wrap:wrap">
       <input type="text" value="${c.prompt.replace(/"/g,'&quot;')}" placeholder="مثال: هل مؤهل المتقدم بكالوريوس أو أعلى؟"
         oninput="docReadCriteria['${docId}'][${i}].prompt=this.value"
-        style="flex:1;min-width:160px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.42rem .75rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.78rem;outline:none">
+        style="flex:1;min-width:160px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.42rem .75rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;outline:none">
       <div style="display:flex;align-items:center;gap:.3rem;flex-shrink:0">
         <span style="font-size:.68rem;color:#64748b">الوزن:</span>
         <input type="number" value="${c.weight}" min="0" max="50"
           oninput="docReadCriteria['${docId}'][${i}].weight=parseInt(this.value)||0"
-          style="width:44px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .35rem;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:700;text-align:center;outline:none">
+          style="width:44px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .35rem;color:#a78bfa;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:700;text-align:center;outline:none">
         <span style="font-size:.68rem;color:#64748b">نقطة</span>
       </div>
       <button onclick="removeDocCriterion('${docId}',${i})" style="background:none;border:none;color:#475569;cursor:pointer;font-size:.85rem;padding:0">🗑️</button>
@@ -2325,8 +2328,8 @@ function renderCustomCriteria() {
   if (inlineContainer) {
     inlineContainer.innerHTML = confirmed.map((c) => {
       const ci = customCriteria.indexOf(c);
-      return `<div class="q-card" style="border-color:rgba(74,157,111,.3)">
-        <button class="q-toggle on" onclick="editCriterion(${ci})" title="تعديل" style="background:#4a9d6f"></button>
+      return `<div class="q-card" style="border-color:rgba(11,93,59,.3)">
+        <button class="q-toggle on" onclick="editCriterion(${ci})" title="تعديل" style="background:#0B5D3B"></button>
         <div class="q-label" style="flex:1">✦ ${c.label}</div>
         <div class="q-weight">
           <label>الوزن:</label>
@@ -2346,39 +2349,39 @@ function renderCustomCriteria() {
   editing.forEach((c) => {
     const ci = customCriteria.indexOf(c);
     html += `
-    <div style="background:#0f172a;border:1px solid rgba(74,157,111,.25);border-radius:12px;padding:1rem 1.1rem;margin-bottom:.75rem">
+    <div style="background:#0f172a;border:1px solid rgba(11,93,59,.25);border-radius:12px;padding:1rem 1.1rem;margin-bottom:.75rem">
       <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;flex-wrap:wrap">
-        <span style="background:rgba(74,157,111,.15);color:#4a9d6f;border-radius:6px;padding:.2rem .55rem;font-size:.7rem;font-weight:700;flex-shrink:0">معيار جديد</span>
+        <span style="background:rgba(11,93,59,.15);color:#0B5D3B;border-radius:6px;padding:.2rem .55rem;font-size:.7rem;font-weight:700;flex-shrink:0">معيار جديد</span>
         <input type="text" value="${c.label}" placeholder="اكتب نص السؤال... مثال: هل لديك براءة اختراع؟"
           oninput="customCriteria[${ci}].label=this.value"
-          style="flex:1;min-width:180px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.5rem .8rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.82rem;outline:none">
+          style="flex:1;min-width:180px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.5rem .8rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;outline:none">
         <div style="display:flex;align-items:center;gap:.35rem;flex-shrink:0">
           <span style="font-size:.72rem;color:#64748b">الوزن:</span>
           <input type="number" value="${c.weight}" min="0" max="100"
             oninput="customCriteria[${ci}].weight=parseInt(this.value)||0;updateWeightTotal()"
-            style="width:48px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.35rem .4rem;color:#38bdf8;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
+            style="width:48px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.35rem .4rem;color:#16A870;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
           <span style="font-size:.72rem;color:#64748b">نقطة</span>
         </div>
-        <button onclick="removeCustomCriterion(${ci})" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171;border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.75rem;font-family:'Cairo',sans-serif">🗑️</button>
+        <button onclick="removeCustomCriterion(${ci})" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171;border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.75rem;font-family:'ThmanyahSans',sans-serif">🗑️</button>
       </div>
       <div style="font-size:.72rem;color:#475569;margin-bottom:.5rem">خيارات الإجابة (حدد النقاط لكل خيار):</div>
       ${c.options.map((opt, oi) => `
         <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
           <input type="text" value="${opt.text}" placeholder="نص الخيار..."
             oninput="customCriteria[${ci}].options[${oi}].text=this.value"
-            style="flex:1;background:#1e293b;border:1px solid #1e293b;border-radius:6px;padding:.38rem .65rem;color:#e2e8f0;font-family:'Cairo',sans-serif;font-size:.78rem;outline:none">
+            style="flex:1;background:#1e293b;border:1px solid #1e293b;border-radius:6px;padding:.38rem .65rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;outline:none">
           <input type="number" value="${opt.score}" min="0" max="${c.weight}"
             oninput="customCriteria[${ci}].options[${oi}].score=parseInt(this.value)||0"
-            style="width:44px;background:#1e293b;border:1px solid #1e293b;border-radius:6px;padding:.38rem .3rem;color:#10b981;font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:700;text-align:center;outline:none">
+            style="width:44px;background:#1e293b;border:1px solid #1e293b;border-radius:6px;padding:.38rem .3rem;color:#16A870;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:700;text-align:center;outline:none">
           <span style="font-size:.7rem;color:#475569;white-space:nowrap">نقطة</span>
           ${c.options.length > 2 ? `<button onclick="removeCustomOption(${ci},${oi})" style="background:none;border:none;color:#334155;cursor:pointer;font-size:.9rem;padding:0 .2rem">✕</button>` : '<span style="width:20px"></span>'}
         </div>
       `).join('')}
       ${c.options.length < 4 ? `
-        <button onclick="addCustomOption(${ci})" style="background:none;border:1px dashed #334155;border-radius:6px;color:#475569;padding:.3rem .75rem;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.75rem;width:100%;margin-top:.25rem">
+        <button onclick="addCustomOption(${ci})" style="background:none;border:1px dashed #334155;border-radius:6px;color:#475569;padding:.3rem .75rem;cursor:pointer;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;width:100%;margin-top:.25rem">
           + إضافة خيار
         </button>` : ''}
-      <button onclick="confirmCriterion(${ci})" style="width:100%;margin-top:.75rem;background:rgba(74,157,111,.2);border:1px solid rgba(74,157,111,.5);color:#4a9d6f;border-radius:8px;padding:.55rem;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
+      <button onclick="confirmCriterion(${ci})" style="width:100%;margin-top:.75rem;background:rgba(11,93,59,.2);border:1px solid rgba(11,93,59,.5);color:#0B5D3B;border-radius:8px;padding:.55rem;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
         ✓ إضافة هذا المعيار للقائمة
       </button>
     </div>`;
@@ -2439,17 +2442,17 @@ function showEditingBanner(name) {
   if (!b) {
     b = document.createElement('div');
     b.id = 'editing_form_banner';
-    b.style.cssText = 'background:linear-gradient(90deg,rgba(56,189,248,.15),rgba(56,189,248,.05));border:1px solid rgba(56,189,248,.3);border-radius:10px;padding:.6rem 1rem;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem';
+    b.style.cssText = 'background:linear-gradient(90deg,rgba(22,168,112,.15),rgba(22,168,112,.05));border:1px solid rgba(22,168,112,.3);border-radius:10px;padding:.6rem 1rem;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem';
     const card = document.querySelector('.card');
     card?.parentNode?.insertBefore(b, card);
   }
   b.innerHTML = `
     <div style="display:flex;align-items:center;gap:.5rem">
-      <span style="font-size:.82rem;color:#38bdf8;font-weight:700">✏️ تعديل قالب: <span style="color:#e2e8f0">${name}</span></span>
+      <span style="font-size:.82rem;color:#16A870;font-weight:700">✏️ تعديل قالب: <span style="color:#e2e8f0">${name}</span></span>
     </div>
     <div style="display:flex;gap:.5rem">
-      <button onclick="updateSavedFormConfig()" style="background:rgba(56,189,248,.2);color:#38bdf8;border:none;border-radius:7px;padding:.3rem .85rem;font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">💾 حفظ التعديلات</button>
-      <button onclick="cancelEditSavedForm()" style="background:rgba(239,68,68,.1);color:#f87171;border:none;border-radius:7px;padding:.3rem .65rem;font-family:'Cairo',sans-serif;font-size:.78rem;cursor:pointer">✕ إلغاء</button>
+      <button onclick="updateSavedFormConfig()" style="background:rgba(22,168,112,.2);color:#16A870;border:none;border-radius:7px;padding:.3rem .85rem;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">💾 حفظ التعديلات</button>
+      <button onclick="cancelEditSavedForm()" style="background:rgba(239,68,68,.1);color:#f87171;border:none;border-radius:7px;padding:.3rem .65rem;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;cursor:pointer">✕ إلغاء</button>
     </div>`;
   b.style.display = 'flex';
 }
@@ -2515,14 +2518,14 @@ function renderSavedFormsList() {
           <div style="font-size:.67rem;color:#475569;margin-top:.1rem">${new Date(f.saved_at).toLocaleDateString('ar-SA')}</div>
         </div>
         <div style="display:flex;gap:.4rem">
-          <button onclick="loadSavedForm('${f.id}')" style="background:rgba(56,189,248,.12);color:#38bdf8;border:none;border-radius:6px;padding:.3rem .65rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">✏️ ${getT('db.edit-form')}</button>
-          <button onclick="deleteSavedForm('${f.id}')" style="background:rgba(239,68,68,.1);color:#f87171;border:none;border-radius:6px;padding:.3rem .55rem;font-family:'Cairo',sans-serif;font-size:.75rem;cursor:pointer">✕</button>
+          <button onclick="loadSavedForm('${f.id}')" style="background:rgba(22,168,112,.12);color:#16A870;border:none;border-radius:6px;padding:.3rem .65rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer">✏️ ${getT('db.edit-form')}</button>
+          <button onclick="deleteSavedForm('${f.id}')" style="background:rgba(239,68,68,.1);color:#f87171;border:none;border-radius:6px;padding:.3rem .55rem;font-family:'ThmanyahSans',sans-serif;font-size:.75rem;cursor:pointer">✕</button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:.5rem;background:#0f172a;border-radius:7px;padding:.35rem .65rem">
         <span style="font-size:.65rem;color:#475569;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:left;font-family:monospace">${previewUrl}</span>
-        <button onclick="copySavedFormLink('${f.id}')" style="background:rgba(56,189,248,.12);color:#38bdf8;border:none;border-radius:6px;padding:.28rem .65rem;font-family:'Cairo',sans-serif;font-size:.73rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">🔗 ${getT('db.copy-link')}</button>
-        <a href="${previewUrl}" target="_blank" style="background:rgba(74,157,111,.12);color:#4ade80;text-decoration:none;border-radius:6px;padding:.28rem .55rem;font-size:.73rem;font-weight:700;white-space:nowrap;flex-shrink:0">↗ ${getT('db.preview-form')}</a>
+        <button onclick="copySavedFormLink('${f.id}')" style="background:rgba(22,168,112,.12);color:#16A870;border:none;border-radius:6px;padding:.28rem .65rem;font-family:'ThmanyahSans',sans-serif;font-size:.73rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">🔗 ${getT('db.copy-link')}</button>
+        <a href="${previewUrl}" target="_blank" style="background:rgba(11,93,59,.12);color:#16A870;text-decoration:none;border-radius:6px;padding:.28rem .55rem;font-size:.73rem;font-weight:700;white-space:nowrap;flex-shrink:0">↗ ${getT('db.preview-form')}</a>
       </div>
     </div>`;
   }).join('');
@@ -2571,7 +2574,7 @@ function applyFormConfig(fc) {
   customCriteria = fc.custom_criteria || [];
   renderCustomCriteria();
   optionScores = fc.option_scores || {};
-  if (fc.option_scores) CRITERIA_IDS.forEach(id => { if (optionScores[id]) { const btn=document.getElementById('sc_btn_'+id); if(btn) btn.style.color='#10b981'; }});
+  if (fc.option_scores) CRITERIA_IDS.forEach(id => { if (optionScores[id]) { const btn=document.getElementById('sc_btn_'+id); if(btn) btn.style.color='#16A870'; }});
   updateWeightTotal();
 }
 
@@ -2627,7 +2630,7 @@ function loadFormConfigUI() {
       if (optionScores[id]) {
         // أظهر أن التخصيص مفعّل بتغيير لون الزر
         const btn = document.getElementById('sc_btn_' + id);
-        if (btn) btn.style.color = '#10b981';
+        if (btn) btn.style.color = '#16A870';
       }
     });
 
@@ -2638,7 +2641,7 @@ function loadFormConfigUI() {
       const lbl = document.getElementById('nafath_status_lbl');
       const opts = document.getElementById('nafath_options');
       if (btn) btn.classList.add('on');
-      if (lbl) { lbl.textContent = 'مفعّل'; lbl.style.color = '#4ade80'; }
+      if (lbl) { lbl.textContent = 'مفعّل'; lbl.style.color = '#16A870'; }
       if (opts) opts.style.display = 'block';
       const modeEl = document.getElementById('nafath_mode_' + (nf.mode || 'required'));
       if (modeEl) modeEl.checked = true;
