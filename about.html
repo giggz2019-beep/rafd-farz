@@ -8,54 +8,62 @@
 <title>من نحن — Rafd Digital</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
-.page-hero{background:linear-gradient(135deg,#0f2030 0%,#1a3a4a 50%,#0f2030 100%);padding:100px 0 60px;text-align:center;position:relative;overflow:hidden}
-.page-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234a9d6f' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
-.page-hero-tag{display:inline-block;background:rgba(74,157,111,.15);color:#4a9d6f;border:1px solid rgba(74,157,111,.3);padding:.4rem 1.2rem;border-radius:50px;font-size:.82rem;font-weight:600;margin-bottom:1.2rem}
-.page-hero h1{font-family:'Tajawal',sans-serif;font-size:2.4rem;font-weight:900;color:#fff;margin-bottom:1rem;line-height:1.3}
-.page-hero p{color:rgba(255,255,255,.7);font-size:1rem;max-width:560px;margin:0 auto;line-height:1.8}
-.about-section{padding:70px 0}
+:root{
+  --ab-navy:#0A1628; --ab-navy-deep:#050B14; --ab-panel:#111F35;
+  --ab-green:#0B5D3B; --ab-green-bright:#16A870;
+  --ab-gold:#C9A24B; --ab-gold-bright:#E9CD8A;
+  --ab-ink:#F3EFE4; --ab-muted:#8FA39B; --ab-line:rgba(201,162,75,.2); --ab-line-soft:rgba(201,162,75,.1);
+}
+body{background:var(--ab-navy)}
+.page-hero{background:linear-gradient(160deg,var(--ab-navy-deep) 0%,var(--ab-navy) 55%,var(--ab-navy-deep) 100%);padding:100px 0 60px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--ab-line-soft)}
+.page-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A24B' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.page-hero-tag{display:inline-block;background:rgba(201,162,75,.1);color:var(--ab-gold-bright);border:1px solid var(--ab-line);padding:.4rem 1.2rem;border-radius:50px;font-size:.82rem;font-weight:600;margin-bottom:1.2rem;position:relative}
+.page-hero h1{font-weight:900;color:#fff;margin-bottom:1rem;line-height:1.3;position:relative}
+.page-hero p{color:var(--ab-muted);font-size:1rem;max-width:560px;margin:0 auto;line-height:1.8;position:relative}
+.about-section{padding:70px 0;background:var(--ab-navy)}
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
-.about-text h2{font-family:'Tajawal',sans-serif;font-size:1.8rem;font-weight:900;color:#1e293b;margin-bottom:1rem}
-.about-text p{color:#475569;line-height:1.9;margin-bottom:1rem;font-size:.95rem}
-.about-visual{background:linear-gradient(135deg,#0f2030,#1a3a4a);border-radius:20px;padding:2.5rem;display:flex;flex-direction:column;gap:1.2rem}
-.av-stat{display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.06);border-radius:12px;padding:1rem 1.25rem;border:1px solid rgba(255,255,255,.08)}
-.av-num{font-family:'Tajawal',sans-serif;font-size:1.8rem;font-weight:900;color:#4a9d6f;min-width:70px}
-.av-label{color:rgba(255,255,255,.8);font-size:.88rem;line-height:1.5}
-.vmv-section{padding:70px 0;background:#f8fafc}
+.about-text h2{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:1rem}
+.about-text p{color:var(--ab-muted);line-height:1.9;margin-bottom:1rem;font-size:.95rem}
+.about-visual{position:relative;background:linear-gradient(160deg,var(--ab-panel),var(--ab-navy-deep));border:1px solid var(--ab-line);border-radius:20px;padding:2.5rem;display:flex;flex-direction:column;gap:1.2rem;overflow:hidden}
+.about-visual::before{content:"";position:absolute;top:0;left:0;width:44px;height:44px;background:linear-gradient(135deg,var(--ab-gold),var(--ab-gold-bright));clip-path:polygon(0 0,100% 0,0 100%)}
+.av-stat{display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border-radius:12px;padding:1rem 1.25rem;border:1px solid var(--ab-line-soft);position:relative}
+.av-num{font-size:1.8rem;font-weight:900;color:var(--ab-gold-bright);min-width:70px}
+.av-label{color:var(--ab-ink);font-size:.88rem;line-height:1.5;opacity:.85}
+.vmv-section{padding:70px 0;background:var(--ab-navy-deep)}
 .vmv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
-.vmv-card{background:#fff;border-radius:20px;padding:2rem;border:1px solid #e2e8f0;text-align:center;transition:all .3s}
-.vmv-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.08)}
-.vmv-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.2rem}
-.vmv-icon.vision{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
-.vmv-icon.mission{background:linear-gradient(135deg,#dcfce7,#bbf7d0)}
-.vmv-icon.values{background:linear-gradient(135deg,#fef3c7,#fde68a)}
-.vmv-card h3{font-family:'Tajawal',sans-serif;font-size:1.25rem;font-weight:800;color:#1e293b;margin-bottom:.75rem}
-.vmv-card p{color:#64748b;font-size:.88rem;line-height:1.8}
-.values-section{padding:70px 0}
+.vmv-card{position:relative;background:linear-gradient(160deg,var(--ab-panel),var(--ab-navy-deep));border-radius:20px;padding:2rem;border:1px solid var(--ab-line-soft);text-align:center;transition:all .3s;overflow:hidden}
+.vmv-card:hover{transform:translateY(-4px);border-color:var(--ab-line);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.vmv-card::before{content:"";position:absolute;top:0;inset-inline-end:0;width:38px;height:38px;background:linear-gradient(135deg,var(--ab-gold),var(--ab-gold-bright));clip-path:polygon(100% 0,0 0,100% 100%)}
+.vmv-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.2rem;border:1px solid var(--ab-line)}
+.vmv-icon.vision{background:rgba(56,189,248,.1)}
+.vmv-icon.mission{background:rgba(11,93,59,.18)}
+.vmv-icon.values{background:rgba(201,162,75,.14)}
+.vmv-card h3{font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:.75rem;position:relative}
+.vmv-card p{color:var(--ab-muted);font-size:.88rem;line-height:1.8;position:relative}
+.values-section{padding:70px 0;background:var(--ab-navy)}
 .values-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;margin-top:3rem}
-.value-item{display:flex;gap:1rem;align-items:flex-start;background:#fff;border-radius:16px;padding:1.5rem;border:1px solid #e2e8f0;transition:all .3s}
-.value-item:hover{border-color:#4a9d6f;box-shadow:0 4px 20px rgba(74,157,111,.1)}
-.value-icon{width:44px;height:44px;background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
-.value-text h4{font-weight:700;color:#1e293b;margin-bottom:.3rem;font-size:.95rem}
-.value-text p{color:#64748b;font-size:.83rem;line-height:1.7}
-.team-section{padding:70px 0;background:#f8fafc}
-.team-intro{max-width:600px;margin:0 auto 3rem;text-align:center;color:#64748b;line-height:1.8}
-.founder-card{background:#fff;border-radius:24px;padding:2.5rem;border:1px solid #e2e8f0;max-width:480px;margin:0 auto;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.06)}
-.founder-avatar{width:100px;height:100px;border-radius:50%;object-fit:cover;margin:0 auto 1.25rem;border:3px solid #4a9d6f;display:block}
-.founder-name{font-family:'Tajawal',sans-serif;font-size:1.4rem;font-weight:900;color:#1e293b;margin-bottom:.3rem}
-.founder-title{color:#4a9d6f;font-size:.88rem;font-weight:600;margin-bottom:1rem}
-.founder-bio{color:#64748b;font-size:.88rem;line-height:1.8}
-.cta-section{padding:70px 0;background:linear-gradient(135deg,#0f2030,#1a3a4a);text-align:center}
-.cta-section h2{font-family:'Tajawal',sans-serif;font-size:2rem;font-weight:900;color:#fff;margin-bottom:1rem}
-.cta-section p{color:rgba(255,255,255,.7);margin-bottom:2rem;font-size:.95rem}
-.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-.cta-btn-primary{background:#4a9d6f;color:#fff;padding:.85rem 2rem;border-radius:12px;text-decoration:none;font-weight:700;font-size:.9rem;transition:all .3s}
-.cta-btn-primary:hover{background:#3d8a5e;transform:translateY(-2px)}
-.cta-btn-ghost{background:rgba(255,255,255,.1);color:#fff;padding:.85rem 2rem;border-radius:12px;text-decoration:none;font-weight:700;font-size:.9rem;border:1px solid rgba(255,255,255,.2);transition:all .3s}
-.cta-btn-ghost:hover{background:rgba(255,255,255,.15)}
+.value-item{display:flex;gap:1rem;align-items:flex-start;background:var(--ab-panel);border-radius:16px;padding:1.5rem;border:1px solid var(--ab-line-soft);transition:all .3s}
+.value-item:hover{border-color:var(--ab-gold);box-shadow:0 8px 30px rgba(201,162,75,.1)}
+.value-icon{width:44px;height:44px;background:rgba(201,162,75,.12);border:1px solid var(--ab-line);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.value-text h4{font-weight:700;color:#fff;margin-bottom:.3rem;font-size:.95rem}
+.value-text p{color:var(--ab-muted);font-size:.83rem;line-height:1.7}
+.team-section{padding:70px 0;background:var(--ab-navy-deep)}
+.team-intro{max-width:600px;margin:0 auto 3rem;text-align:center;color:var(--ab-muted);line-height:1.8}
+.founder-card{background:var(--ab-panel);border-radius:24px;padding:2.5rem;border:1px solid var(--ab-line-soft);max-width:480px;margin:0 auto;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.founder-avatar{width:100px;height:100px;border-radius:50%;object-fit:cover;margin:0 auto 1.25rem;border:3px solid var(--ab-gold);display:block}
+.founder-name{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:.3rem}
+.founder-title{color:var(--ab-gold-bright);font-size:.88rem;font-weight:600;margin-bottom:1rem}
+.founder-bio{color:var(--ab-muted);font-size:.88rem;line-height:1.8}
+.cta-section{padding:70px 0;background:linear-gradient(135deg,var(--ab-green),var(--ab-navy-deep));text-align:center;position:relative;overflow:hidden}
+.cta-section h2{font-size:2rem;font-weight:900;color:#fff;margin-bottom:1rem;position:relative}
+.cta-section p{color:rgba(255,255,255,.75);margin-bottom:2rem;font-size:.95rem;position:relative}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative}
+.cta-btn-primary{background:linear-gradient(135deg,var(--ab-gold),var(--ab-gold-bright));color:#050708;padding:.85rem 2rem;border-radius:12px;text-decoration:none;font-weight:700;font-size:.9rem;transition:all .3s;box-shadow:0 10px 28px rgba(201,162,75,.3)}
+.cta-btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(201,162,75,.42)}
+.cta-btn-ghost{background:rgba(255,255,255,.06);color:#fff;padding:.85rem 2rem;border-radius:12px;text-decoration:none;font-weight:700;font-size:.9rem;border:1px solid rgba(255,255,255,.2);transition:all .3s}
+.cta-btn-ghost:hover{background:rgba(255,255,255,.12)}
 @media(max-width:768px){
   .page-hero h1{font-size:1.8rem}
   .about-grid{grid-template-columns:1fr}
@@ -257,6 +265,25 @@
     <div class="cta-btns">
       <a href="/signup.html" class="cta-btn-primary" data-i18n="about.cta-btn1">ابدأ تجربتك المجانية ←</a>
       <a href="mailto:info@rafd-digital.com" class="cta-btn-ghost" data-i18n="about.cta-btn2">✉ تواصل معنا</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SDAIA GOVERNANCE BADGE ===== -->
+<section style="background:#f8fafb;border-top:1px solid #e8edf2;border-bottom:1px solid #e8edf2;padding:2.5rem 1.5rem">
+  <div style="max-width:720px;margin:0 auto">
+    <div style="background:#fff;border:1.5px solid #d4ece4;border-right:4px solid #0d9e7e;border-radius:16px;padding:1.5rem 2rem;display:flex;align-items:center;gap:2rem;box-shadow:0 2px 16px rgba(0,0,0,.05)">
+      <img src="/sdaia-logo.png" alt="SDAIA — الهيئة السعودية للبيانات والذكاء الاصطناعي" style="width:160px;height:auto;flex-shrink:0;object-fit:contain">
+      <div style="flex:1">
+        <div style="font-size:1.05rem;font-weight:800;color:#1a4a3a;margin-bottom:.45rem" data-i18n="sdaia.title">حوكمة متوافقة مع توجهات سدايا</div>
+        <div style="font-size:.85rem;color:#4a7a6a;line-height:1.75" data-i18n="sdaia.desc">مبني على مبادئ حوكمة سعودية للذكاء الاصطناعي: الخصوصية، قابلية المراجعة، الأمان، والإشراف البشري.</div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem">
+          <span style="background:#e8f5ef;color:#0d7a5e;border:1px solid #b8ddd0;border-radius:20px;padding:.2rem .7rem;font-size:.72rem;font-weight:700" data-i18n="sdaia.tag1">🔒 الخصوصية</span>
+          <span style="background:#e8f5ef;color:#0d7a5e;border:1px solid #b8ddd0;border-radius:20px;padding:.2rem .7rem;font-size:.72rem;font-weight:700" data-i18n="sdaia.tag2">📋 قابلية المراجعة</span>
+          <span style="background:#e8f5ef;color:#0d7a5e;border:1px solid #b8ddd0;border-radius:20px;padding:.2rem .7rem;font-size:.72rem;font-weight:700" data-i18n="sdaia.tag3">🛡️ الأمان</span>
+          <span style="background:#e8f5ef;color:#0d7a5e;border:1px solid #b8ddd0;border-radius:20px;padding:.2rem .7rem;font-size:.72rem;font-weight:700" data-i18n="sdaia.tag4">👁️ الإشراف البشري</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
