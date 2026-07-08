@@ -120,16 +120,11 @@ body.theme-light .save-form-inp::placeholder{color:#94a3b8}
 .stat-trend.up{color:#16A870}
 .stat-trend.down{color:#ef4444}
 .stat-trend.flat{color:#64748b}
-.activity-empty{text-align:center;color:#64748b;padding:1rem;grid-column:1/-1}
 .activity-item{display:flex;gap:.6rem;align-items:flex-start;padding:.6rem;border-radius:10px;transition:background .15s}
 .activity-item:hover{background:rgba(255,255,255,.03)}
-.activity-item:focus-visible{outline:2px solid #C9A24B;outline-offset:2px}
 .activity-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
 .activity-name{font-size:.8rem;color:#e2e8f0;font-weight:600}
 .activity-time{font-size:.7rem;color:#64748b;margin-top:.1rem}
-body.theme-light .stat-trend.up{color:#0f8a5f}
-body.theme-light .stat-trend.down{color:#dc2626}
-body.theme-light .activity-item:hover{background:rgba(15,23,42,.04)}
 body.theme-light .activity-name{color:#1e293b}
 
 /* ===== CARDS ===== */
@@ -388,7 +383,7 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="card">
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg> <span data-i18n="db.recent-activity">النشاط الأخير</span></div>
       <div id="recent_activity_feed" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem">
-        <div class="activity-empty" data-i18n="db.no-activity">لا يوجد نشاط بعد</div>
+        <div style="text-align:center;color:#475569;padding:1rem;grid-column:1/-1" data-i18n="db.no-activity">لا يوجد نشاط بعد</div>
       </div>
     </div>
 
@@ -1472,8 +1467,7 @@ async function loadApplications() {
 
 function fmtDate(iso) {
   if (!iso) return '—';
-  const locale = document.documentElement.lang === 'en' ? 'en-US' : 'ar-SA';
-  return new Date(iso).toLocaleDateString(locale, {year:'numeric',month:'short',day:'numeric'});
+  return new Date(iso).toLocaleDateString('ar-SA', {year:'numeric',month:'short',day:'numeric'});
 }
 
 function renderStats() {
@@ -1538,16 +1532,16 @@ function renderRecentActivity() {
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(0, 4);
   if (!items.length) {
-    el.innerHTML = `<div class="activity-empty">${getT('db.no-activity')}</div>`;
+    el.innerHTML = `<div style="text-align:center;color:#475569;padding:1rem;grid-column:1/-1">${getT('db.no-activity')}</div>`;
     return;
   }
   const iconFor = r => r.result === 'approved' ? '✓' : r.result === 'rejected' ? '✕' : '⏳';
   const colorFor = r => r.result === 'approved' ? '#16A870' : r.result === 'rejected' ? '#ef4444' : '#f59e0b';
   el.innerHTML = items.map(r => `
-    <div class="activity-item" onclick="openReqModal('${r.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openReqModal('${r.id}')}" style="cursor:pointer" role="button" tabindex="0">
+    <div class="activity-item" onclick="openReqModal('${r.id}')" style="cursor:pointer">
       <span class="activity-icon" style="background:${colorFor(r)}22;color:${colorFor(r)}">${iconFor(r)}</span>
       <div>
-        <div class="activity-name">${r.name || '—'}</div>
+        <div class="activity-name">${r.name}</div>
         <div class="activity-time">${fmtDate(r.created_at)}</div>
       </div>
     </div>
@@ -3114,7 +3108,6 @@ loadPartnerData();
 </script>
 <script src="/i18n.js"></script></body>
 </html>
-
 
 
 
