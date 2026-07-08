@@ -356,6 +356,8 @@ const T = {
     'db.stat-total':'إجمالي الطلبات','db.stat-accepted':'الطلبات المقبولة',
     'db.stat-rejected':'الطلبات المرفوضة','db.stat-pending':'قيد المراجعة',
     'db.since-start':'منذ بدء الاشتراك','db.welcome-sub':'لوحة التحكم الخاصة بجهتك',
+    'db.recent-activity':'النشاط الأخير','db.no-activity':'لا يوجد نشاط بعد',
+    'db.vs-last-week':'مقارنة بالأسبوع الماضي',
     // db extended
     'db.opt-project':'مشروع / شركة ناشئة','db.opt-job':'توظيف واختيار كوادر',
     'db.opt-funding':'تمويل واستثمار','db.opt-academic':'قبول أكاديمي / تدريب',
@@ -1251,6 +1253,8 @@ const T = {
     'db.stat-total':'Total Applications','db.stat-accepted':'Accepted Applications',
     'db.stat-rejected':'Rejected Applications','db.stat-pending':'Under Review',
     'db.since-start':'Since subscription start','db.welcome-sub':'Your organization\'s dashboard',
+    'db.recent-activity':'Recent Activity','db.no-activity':'No activity yet',
+    'db.vs-last-week':'vs last week',
     // db extended
     'db.opt-project':'Project / Startup','db.opt-job':'Employment & Talent Selection',
     'db.opt-funding':'Funding & Investment','db.opt-academic':'Academic Admission / Training',
@@ -1827,6 +1831,5 @@ document.addEventListener('DOMContentLoaded', function() {
   const saved = localStorage.getItem('rafd_lang') || 'en';
   setLang(saved);
 });
-
 
 

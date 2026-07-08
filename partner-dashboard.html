@@ -116,6 +116,16 @@ body.theme-light .save-form-inp::placeholder{color:#94a3b8}
 .stat-label{color:#64748b;font-size:.75rem;font-weight:600;margin-bottom:.35rem}
 .stat-val{font-size:1.8rem;font-weight:900;color:#fff}
 .stat-note{font-size:.72rem;color:#475569;margin-top:.2rem}
+.stat-trend{font-size:.72rem;font-weight:700;margin-top:.35rem;display:flex;align-items:center;gap:.25rem}
+.stat-trend.up{color:#16A870}
+.stat-trend.down{color:#ef4444}
+.stat-trend.flat{color:#64748b}
+.activity-item{display:flex;gap:.6rem;align-items:flex-start;padding:.6rem;border-radius:10px;transition:background .15s}
+.activity-item:hover{background:rgba(255,255,255,.03)}
+.activity-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
+.activity-name{font-size:.8rem;color:#e2e8f0;font-weight:600}
+.activity-time{font-size:.7rem;color:#64748b;margin-top:.1rem}
+body.theme-light .activity-name{color:#1e293b}
 
 /* ===== CARDS ===== */
 .card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.5rem;margin-bottom:1.25rem}
@@ -314,24 +324,28 @@ select option{background:#1e293b;color:#e2e8f0}
         <div class="stat-label" data-i18n="db.stat-total">إجمالي الطلبات</div>
         <div class="stat-val" id="stat_total">0</div>
         <div class="stat-note" data-i18n="db.since-start">منذ بدء الاشتراك</div>
+        <div class="stat-trend" id="trend_total"></div>
       </div>
       <div class="stat-card">
         <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#16A870"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
         <div class="stat-label" data-i18n="db.stat-accepted">الطلبات المقبولة</div>
         <div class="stat-val" id="stat_approved">0</div>
         <div class="stat-note" id="stat_approved_pct">—</div>
+        <div class="stat-trend" id="trend_approved"></div>
       </div>
       <div class="stat-card">
         <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#ef4444"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
         <div class="stat-label" data-i18n="db.stat-rejected">الطلبات المرفوضة</div>
         <div class="stat-val" id="stat_rejected">0</div>
         <div class="stat-note" id="stat_rejected_pct">—</div>
+        <div class="stat-trend" id="trend_rejected"></div>
       </div>
       <div class="stat-card">
         <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#f59e0b"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         <div class="stat-label" data-i18n="db.stat-pending">قيد المراجعة</div>
         <div class="stat-val" id="stat_pending_req">0</div>
         <div class="stat-note" data-i18n="db.stat-req">طلب</div>
+        <div class="stat-trend" id="trend_pending"></div>
       </div>
     </div>
 
@@ -362,6 +376,14 @@ select option{background:#1e293b;color:#e2e8f0}
             <tr><td colspan="5" style="text-align:center;color:#475569;padding:1.5rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span> — <button onclick="showPage('new-request',null)" style="background:none;border:none;color:#16A870;cursor:pointer;font-family:'ThmanyahSans',sans-serif;font-size:.83rem"><span data-i18n="db.add-first">أضف أول طلب</span></button></td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg> <span data-i18n="db.recent-activity">النشاط الأخير</span></div>
+      <div id="recent_activity_feed" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem">
+        <div style="text-align:center;color:#475569;padding:1rem;grid-column:1/-1" data-i18n="db.no-activity">لا يوجد نشاط بعد</div>
       </div>
     </div>
 
@@ -1466,6 +1488,64 @@ function renderStats() {
   document.getElementById('usage_bar').style.width = pct + '%';
   document.getElementById('usage_note').textContent = limit === 999999 ? getT('db.plan-unlimited-note') : `${limit - reqs.length} ${getT('db.reqs-remaining')}`;
   renderAnalytics();
+  renderTrends();
+  renderRecentActivity();
+}
+
+// ===== Week-over-week trend deltas on stat cards =====
+function paintTrend(elId, current, previous) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!previous) { el.textContent = ''; el.className = 'stat-trend'; return; }
+  const pct = Math.round(((current - previous) / previous) * 100);
+  if (pct === 0) {
+    el.className = 'stat-trend flat';
+    el.textContent = `= 0% ${getT('db.vs-last-week')}`;
+    return;
+  }
+  el.className = 'stat-trend ' + (pct > 0 ? 'up' : 'down');
+  el.textContent = (pct > 0 ? '▲ ' : '▼ ') + Math.abs(pct) + `% ${getT('db.vs-last-week')}`;
+}
+
+function renderTrends() {
+  const now = Date.now();
+  const week = 7 * 24 * 60 * 60 * 1000;
+  const withDate = allApplications.filter(r => r.created_at);
+  const thisWeek = withDate.filter(r => now - new Date(r.created_at).getTime() < week);
+  const lastWeek = withDate.filter(r => {
+    const age = now - new Date(r.created_at).getTime();
+    return age >= week && age < week * 2;
+  });
+  const count = (list, pred) => pred ? list.filter(pred).length : list.length;
+  paintTrend('trend_total', count(thisWeek), count(lastWeek));
+  paintTrend('trend_approved', count(thisWeek, r => r.result === 'approved'), count(lastWeek, r => r.result === 'approved'));
+  paintTrend('trend_rejected', count(thisWeek, r => r.result === 'rejected'), count(lastWeek, r => r.result === 'rejected'));
+  paintTrend('trend_pending', count(thisWeek, r => !r.result || r.result === 'pending'), count(lastWeek, r => !r.result || r.result === 'pending'));
+}
+
+// ===== Recent Activity feed =====
+function renderRecentActivity() {
+  const el = document.getElementById('recent_activity_feed');
+  if (!el) return;
+  const items = [...allApplications]
+    .filter(r => r.created_at)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 4);
+  if (!items.length) {
+    el.innerHTML = `<div style="text-align:center;color:#475569;padding:1rem;grid-column:1/-1">${getT('db.no-activity')}</div>`;
+    return;
+  }
+  const iconFor = r => r.result === 'approved' ? '✓' : r.result === 'rejected' ? '✕' : '⏳';
+  const colorFor = r => r.result === 'approved' ? '#16A870' : r.result === 'rejected' ? '#ef4444' : '#f59e0b';
+  el.innerHTML = items.map(r => `
+    <div class="activity-item" onclick="openReqModal('${r.id}')" style="cursor:pointer">
+      <span class="activity-icon" style="background:${colorFor(r)}22;color:${colorFor(r)}">${iconFor(r)}</span>
+      <div>
+        <div class="activity-name">${r.name}</div>
+        <div class="activity-time">${fmtDate(r.created_at)}</div>
+      </div>
+    </div>
+  `).join('');
 }
 
 function renderAnalytics() {
@@ -3028,7 +3108,6 @@ loadPartnerData();
 </script>
 <script src="/i18n.js"></script></body>
 </html>
-
 
 
 
