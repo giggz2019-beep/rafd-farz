@@ -1804,8 +1804,7 @@ function setLang(lang) {
     const key = el.dataset.i18nPlaceholder;
     if (T[lang] && T[lang][key] !== undefined) el.placeholder = T[lang][key];
   });
-  const btn = document.getElementById('langToggleBtn');
-  if (btn) btn.textContent = isAR ? '🌐 EN' : '🌐 عربي';
+  document.querySelectorAll('.lang-toggle').forEach(btn => { btn.textContent = isAR ? '🌐 EN' : '🌐 عربي'; });
   localStorage.setItem('rafd_lang', lang);
   document.dispatchEvent(new CustomEvent('rafd-lang-changed', { detail: { lang } }));
 }

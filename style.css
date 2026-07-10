@@ -72,14 +72,17 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
 
 /* روابط الدخول في القائمة على الجوال فقط */
 .nav-links .mobile-nav-login,
-.nav-links .mobile-nav-sep { display: none; }
+.nav-links .mobile-nav-sep,
+.nav-links .mobile-nav-lang { display: none; }
 .nav-links.mobile-open .mobile-nav-login { display: list-item; }
 .nav-links.mobile-open .mobile-nav-sep { display: list-item; border-top: 1px solid #e2e8f0; margin: .4rem 0; list-style: none; }
+.nav-links.mobile-open .mobile-nav-lang { display: list-item; padding: .5rem 0; }
 .nav-links .mobile-nav-login a { display: block; padding: .7rem 0; color: var(--primary); font-size: .9rem; font-weight: 600; text-decoration: none; }
 .nav-links .mobile-nav-cta a { color: #0B5D3B; font-weight: 800; }
 @media (min-width: 1024px) {
   .nav-links .mobile-nav-login,
-  .nav-links .mobile-nav-sep { display: none !important; }
+  .nav-links .mobile-nav-sep,
+  .nav-links .mobile-nav-lang { display: none !important; }
 }
 
 /* Mobile nav menu */
