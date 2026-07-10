@@ -350,7 +350,7 @@ const T = {
     'apply.no-requests':'لا توجد طلبات بعد',
     // ===== DASHBOARD =====
     'db.sidebar-title':'لوحة تحكم الشريك','db.nav-main':'الرئيسية','db.nav-admin':'الإدارة',
-    'db.overview':'نظرة عامة','db.requests':'الطلبات','db.apply-link':'رابط التقديم',
+    'db.overview':'نظرة عامة','db.requests':'الطلبات','db.results-nav':'النتائج','db.apply-link':'رابط التقديم',
     'db.form-setup':'إعداد النموذج','db.new-req':'طلب يدوي','db.settings':'الإعدادات',
     'db.sub':'الاشتراك','db.support':'الدعم والتواصل','db.logout':'تسجيل الخروج',
     'db.stat-total':'إجمالي الطلبات','db.stat-accepted':'الطلبات المقبولة',
@@ -636,6 +636,7 @@ const T = {
     'db.add-first':'أضف أول طلب يدوي',
     // Requests page
     'db.requests-title':'الطلبات','db.requests-sub':'جميع الطلبات المقدمة عبر جهتك',
+    'db.results-title':'نتائج المتقدمين','db.results-sub':'استعرض نتيجة كل متقدم — اضغط لعرض التفاصيل الكاملة','db.btn-view-details':'عرض التفاصيل',
     'db.th-name':'الاسم','db.th-id':'رقم الهوية','db.th-purpose':'الغرض',
     'db.th-score':'النتيجة','db.th-result':'القرار','db.th-date':'التاريخ','db.th-actions':'إجراءات',
     'db.no-requests':'لا توجد طلبات بعد',
@@ -1245,7 +1246,7 @@ const T = {
     'apply.no-requests':'No applications yet',
     // ===== DASHBOARD =====
     'db.sidebar-title':'Partner Dashboard','db.nav-main':'Main','db.nav-admin':'Management',
-    'db.overview':'Overview','db.requests':'Applications','db.apply-link':'Application Link',
+    'db.overview':'Overview','db.requests':'Applications','db.results-nav':'Results','db.apply-link':'Application Link',
     'db.form-setup':'Form Setup','db.new-req':'Manual Request','db.settings':'Settings',
     'db.sub':'Subscription','db.support':'Support & Contact','db.logout':'Log Out',
     'db.stat-total':'Total Applications','db.stat-accepted':'Accepted Applications',
@@ -1531,6 +1532,7 @@ const T = {
     'db.add-first':'Add your first manual request',
     // Requests page
     'db.requests-title':'Applications','db.requests-sub':'All applications submitted through your organization',
+    'db.results-title':'Applicant Results','db.results-sub':'Browse each applicant\'s result — click to view full details','db.btn-view-details':'View Details',
     'db.th-name':'Name','db.th-id':'ID Number','db.th-purpose':'Purpose',
     'db.th-score':'Score','db.th-result':'Decision','db.th-date':'Date','db.th-actions':'Actions',
     'db.no-requests':'No applications yet',

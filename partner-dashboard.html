@@ -273,6 +273,7 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="nav-sec" data-i18n="db.nav-main">الرئيسية</div>
     <div class="nav-item active" onclick="showPage('overview',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> <span data-i18n="db.overview">نظرة عامة</span></div>
     <div class="nav-item" onclick="showPage('requests',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg> <span data-i18n="db.requests">الطلبات</span></div>
+    <div class="nav-item" onclick="showPage('results',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M9 13.5 6 22l6-3 6 3-3-8.5"/></svg> <span data-i18n="db.results-nav">النتائج</span></div>
     <div class="nav-item" onclick="showPage('link',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><path d="M8 12h8"/></svg> <span data-i18n="db.apply-link">رابط التقديم</span></div>
     <div class="nav-sec" data-i18n="db.nav-admin">الإدارة</div>
     <div class="nav-item" onclick="showPage('form-setup',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg> <span data-i18n="db.form-setup">إعداد النموذج</span></div>
@@ -428,6 +429,29 @@ select option{background:#1e293b;color:#e2e8f0}
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: RESULTS ===== -->
+  <div class="page" id="page-results">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title" data-i18n="db.results-title">نتائج المتقدمين</div>
+        <div class="page-sub" data-i18n="db.results-sub">استعرض نتيجة كل متقدم — اضغط لعرض التفاصيل الكاملة</div>
+      </div>
+    </div>
+    <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.25rem">
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+        <input type="text" id="res_search" data-i18n-placeholder="db.ph-search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;outline:none" oninput="filterResultsCards()">
+        <select id="res_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;outline:none" onchange="filterResultsCards()">
+          <option value="" data-i18n="db.all-status">كل الحالات</option>
+          <option value="approved" data-i18n="db.opt-approved">مقبول</option>
+          <option value="rejected" data-i18n="db.opt-rejected">مرفوض</option>
+          <option value="pending" data-i18n="db.opt-pending">قيد المراجعة</option>
+        </select>
+      </div>
+    </div>
+    <div id="results_grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem">
     </div>
   </div>
 
@@ -782,7 +806,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
         <div class="fld-m">
           <label data-i18n="db.lbl-min-score">الحد الأدنى للقبول (من 100)</label>
-          <input type="number" id="fc_min_score" min="1" max="100" value="55" placeholder="55">
+          <input type="number" id="fc_min_score" min="1" max="100" value="60" placeholder="60">
           <div style="font-size:.72rem;color:#64748b;margin-top:.3rem" data-i18n="db.hint-min-score">المتقدم الحاصل على هذه الدرجة فأكثر يجتاز المرحلة الأولى</div>
         </div>
         <div class="fld-m">
@@ -1428,6 +1452,7 @@ function initUI() {
     renderStats();
     renderRecentRequests();
     renderAllRequests();
+    renderResultsCards();
     renderSavedFormsList();
   });
 }
@@ -1573,12 +1598,66 @@ function resultBadge(result, score) {
   return `<span class="badge b-pending">⏳ ${getT('db.opt-pending')}</span>`;
 }
 
+// ===== RESULTS PAGE (card view) =====
+function findApplicantPhoto(r) {
+  let docs = r.docs;
+  if (typeof docs === 'string') { try { docs = JSON.parse(docs); } catch { docs = null; } }
+  if (!docs) return null;
+  const imgExt = /\.(jpe?g|png|webp|gif)(\?.*)?$/i;
+  for (const key in docs) {
+    const d = docs[key];
+    if (d && d.url && imgExt.test(d.url)) return d.url;
+  }
+  return null;
+}
+
+function resultCardColor(result) {
+  if (result === 'approved') return { border: '#16A870', bg: 'rgba(22,168,112,.08)' };
+  if (result === 'rejected') return { border: '#ef4444', bg: 'rgba(239,68,68,.08)' };
+  return { border: '#f59e0b', bg: 'rgba(245,158,11,.08)' };
+}
+
+function renderResultsCards(list) {
+  const reqs = list || allApplications;
+  const grid = document.getElementById('results_grid');
+  if (!reqs.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#475569;padding:2rem">${getT('db.no-requests')}</div>`;
+    return;
+  }
+  grid.innerHTML = reqs.map(r => {
+    const c = resultCardColor(r.result);
+    const photo = findApplicantPhoto(r);
+    const letter = (r.name || '?').trim()[0]?.toUpperCase() || '?';
+    const avatar = photo
+      ? `<img src="${photo}" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid ${c.border}">`
+      : `<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,${c.border},#0A1628);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.3rem;border:2px solid ${c.border}">${letter}</div>`;
+    return `
+    <div style="background:${c.bg};border:1.5px solid ${c.border}44;border-radius:16px;padding:1.25rem;text-align:center;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="display:flex;justify-content:center;margin-bottom:.75rem">${avatar}</div>
+      <div style="font-weight:800;color:#e2e8f0;font-size:.95rem;margin-bottom:.2rem">${r.name}</div>
+      <div style="color:#64748b;font-size:.78rem;margin-bottom:.6rem">${r.company || r.sector || '—'}</div>
+      <div style="display:flex;justify-content:center;margin-bottom:.75rem">${resultBadge(r.result, r.score)}</div>
+      <div style="font-size:.78rem;color:#94a3b8;margin-bottom:.85rem">${getT('db.modal-score')}: <span style="font-weight:800;color:${r.score >= 80 ? '#16A870' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score != null ? r.score + '/100' : '—'}</span></div>
+      <button onclick="openReqModal('${r.id}')" style="width:100%;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.6rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">${getT('db.btn-view-details')}</button>
+    </div>`;
+  }).join('');
+}
+
+function filterResultsCards() {
+  const q = document.getElementById('res_search').value.toLowerCase();
+  const status = document.getElementById('res_filter_status').value;
+  let reqs = [...allApplications];
+  if (q) reqs = reqs.filter(r => r.name.toLowerCase().includes(q) || (r.national_id||'').includes(q) || (r.email||'').includes(q));
+  if (status) reqs = reqs.filter(r => r.result === status);
+  renderResultsCards(reqs);
+}
+
 async function submitRequest() {
   const name = document.getElementById('nf_name').value.trim();
   const purpose = document.getElementById('nf_purpose').value;
   if (!name || !purpose) { toast(getT('db.toast-req-required'), 'warn'); return; }
   const score = parseInt(document.getElementById('nf_score').value) || null;
-  const minScore = partner.formConfig?.min_score || 55;
+  const minScore = partner.formConfig?.min_score || 60;
   const result = score !== null ? (score >= minScore ? 'approved' : 'rejected') : 'pending';
   const refNum = 'MAN-' + Date.now().toString().slice(-8);
 
@@ -1603,6 +1682,7 @@ async function submitRequest() {
   renderRecentRequests();
   showPage('requests', null);
   renderAllRequests();
+  renderResultsCards();
   const resultLabel = result === 'approved' ? getT('db.opt-approved') : result === 'rejected' ? getT('db.opt-rejected') : getT('db.opt-pending');
   toast(`✅ ${getT('db.toast-req-saved')} — ${getT('db.lbl-result')}: ` + resultLabel, result === 'approved' ? 'success' : result === 'rejected' ? 'error' : 'warn');
 }
@@ -1620,6 +1700,7 @@ async function deleteRequest(id) {
   renderStats();
   renderRecentRequests();
   renderAllRequests();
+  renderResultsCards();
   toast(getT('db.toast-deleted'));
 }
 
@@ -1718,6 +1799,7 @@ async function finalAccept(id) {
   renderStats();
   renderRecentRequests();
   renderAllRequests();
+  renderResultsCards();
   toast('✅ ' + (app?.name || getT('db.modal-name')) + ' — ' + getT('db.opt-approved'), 'success');
 }
 
@@ -1731,6 +1813,7 @@ async function finalReject(id) {
   renderStats();
   renderRecentRequests();
   renderAllRequests();
+  renderResultsCards();
   toast(getT('db.toast-rejected'), 'warn');
 }
 
@@ -1944,6 +2027,7 @@ function showPage(pageId, navEl) {
   if (page) page.classList.add('active');
   if (navEl) navEl.classList.add('active');
   if (pageId === 'requests') { loadApplications().then(() => renderAllRequests()); }
+  if (pageId === 'results') { loadApplications().then(() => renderResultsCards()); }
   if (pageId === 'overview') { loadApplications().then(() => { renderStats(); renderRecentRequests(); }); }
   if (pageId === 'subscription') renderSubscription();
   if (pageId === 'settings') renderSettings();
@@ -2751,7 +2835,7 @@ function buildFormConfig() {
   return {
     program_name: programName, app_type: appType,
     program_desc: document.getElementById('fc_program_desc')?.value.trim()||'',
-    min_score: parseInt(document.getElementById('fc_min_score')?.value)||55,
+    min_score: parseInt(document.getElementById('fc_min_score')?.value)||60,
     acceptance_mode: document.querySelector('input[name="accept_mode"]:checked')?.value||'instant',
     pending_msg: document.getElementById('fc_pending_msg')?.value.trim()||'',
     is_active: document.getElementById('fc_status')?.value==='active',
@@ -2807,7 +2891,7 @@ function loadFormConfigUI() {
       toggleGpaOptions();
     }
     document.getElementById('fc_program_desc').value = fc.program_desc || '';
-    document.getElementById('fc_min_score').value = fc.min_score || 55;
+    document.getElementById('fc_min_score').value = fc.min_score || 60;
     document.getElementById('fc_status').value = fc.is_active === false ? 'paused' : 'active';
     selectAcceptMode(fc.acceptance_mode || 'instant');
     if (fc.pending_msg) document.getElementById('fc_pending_msg').value = fc.pending_msg;
@@ -2941,7 +3025,7 @@ async function saveFormConfig() {
     program_name: programName,
     app_type: appType,
     program_desc: document.getElementById('fc_program_desc').value.trim(),
-    min_score: parseInt(document.getElementById('fc_min_score').value) || 55,
+    min_score: parseInt(document.getElementById('fc_min_score').value) || 60,
     acceptance_mode: document.querySelector('input[name="accept_mode"]:checked')?.value || 'instant',
     pending_msg: document.getElementById('fc_pending_msg')?.value.trim() || '',
     gpa_bands: document.getElementById('edu_gpa_enabled')?.checked ? gpaBands : undefined,
@@ -2985,7 +3069,7 @@ async function saveFormConfig() {
 function resetFormConfig() {
   document.getElementById('fc_program_name').value = '';
   document.getElementById('fc_program_desc').value = '';
-  document.getElementById('fc_min_score').value = 55;
+  document.getElementById('fc_min_score').value = 60;
   document.getElementById('fc_status').value = 'active';
   CRITERIA_IDS.forEach(id => {
     qStates[id] = true;

@@ -1761,13 +1761,13 @@ function collect() {
     score = Math.round(score * 100 / (100 + docWeightTotal));
   }
   score = Math.min(100, score);
-  const minScore = partnerData?.form_config?.min_score ?? 55;
+  const minScore = partnerData?.form_config?.min_score ?? 60;
   const passedMin = score >= minScore;
   const acceptanceMode = partnerData?.form_config?.acceptance_mode || 'instant';
   // في وضع المفاضلة: المتقدم الذي تجاوز الحد لا يُعطى قبولاً نهائياً — فقط "قيد المراجعة"
   const accepted = acceptanceMode === 'instant' ? passedMin : false;
   const pending  = acceptanceMode === 'competitive' && passedMin;
-  const grade = score>=85?'A+':score>=75?'A':score>=65?'B+':score>=55?'B':score>=45?'C':'D';
+  const grade = score>=95?'A+':score>=90?'A':score>=80?'B+':score>=70?'B':score>=60?'C':'D';
   const sectorNames = {fintech:'التقنية المالية',health:'الصحة',edu:'التعليم',ecom:'التجارة الإلكترونية',ai:'الذكاء الاصطناعي',logistics:'اللوجستيات',agri:'الزراعة',energy:'الطاقة',other:'أخرى'};
   const sectorName = sectorNames[sector] || 'التقنية';
 

@@ -568,8 +568,8 @@ function collect() {
   const commitS = {yes:5,maybe:2,no:0}[commit]||0;
   score += commitS; bd.push({l: ar?'الالتزام بمتطلبات البرنامج':'Program Commitment',s:commitS,m:5,p:commitS>=3});
 
-  const accepted = score >= 55;
-  const grade = score>=85?'A+':score>=75?'A':score>=65?'B+':score>=55?'B':score>=45?'C':'D';
+  const accepted = score >= 60;
+  const grade = score>=95?'A+':score>=90?'A':score>=80?'B+':score>=70?'B':score>=60?'C':'D';
   const sectorMap = ar
     ? {fintech:'التقنية المالية',health:'الصحة',edu:'التعليم',ecom:'التجارة الإلكترونية',ai:'الذكاء الاصطناعي',logistics:'اللوجستيات',other:'أخرى'}
     : {fintech:'FinTech',health:'Health',edu:'Education',ecom:'E-Commerce',ai:'AI',logistics:'Logistics',other:'Other'};
