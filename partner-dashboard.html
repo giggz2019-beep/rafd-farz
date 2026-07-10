@@ -1651,16 +1651,20 @@ function resultCardColor(result) {
 }
 
 const CITY_LABELS = {
-  riyadh:'الرياض', jeddah:'جدة', makkah:'مكة المكرمة', madinah:'المدينة المنورة',
-  dammam:'الدمام', khobar:'الخبر', dhahran:'الظهران', taif:'الطائف', abha:'أبها',
-  tabuk:'تبوك', hail:'حائل', jizan:'جيزان', najran:'نجران', qassim:'القصيم', other:'مدينة أخرى',
+  ar: { riyadh:'الرياض', jeddah:'جدة', makkah:'مكة المكرمة', madinah:'المدينة المنورة',
+    dammam:'الدمام', khobar:'الخبر', dhahran:'الظهران', taif:'الطائف', abha:'أبها',
+    tabuk:'تبوك', hail:'حائل', jizan:'جيزان', najran:'نجران', qassim:'القصيم', other:'مدينة أخرى' },
+  en: { riyadh:'Riyadh', jeddah:'Jeddah', makkah:'Makkah', madinah:'Madinah',
+    dammam:'Dammam', khobar:'Khobar', dhahran:'Dhahran', taif:'Taif', abha:'Abha',
+    tabuk:'Tabuk', hail:'Hail', jizan:'Jizan', najran:'Najran', qassim:'Qassim', other:'Other City' },
 };
 function applicantCity(r) {
   let notes = r.notes;
   if (typeof notes === 'string') { try { notes = JSON.parse(notes); } catch { notes = null; } }
   const code = notes?.city;
   if (!code) return null;
-  return CITY_LABELS[code] || code;
+  const lang = localStorage.getItem('rafd_lang') || 'en';
+  return CITY_LABELS[lang]?.[code] || CITY_LABELS.ar[code] || code;
 }
 
 // خريطة تقريبية لأول حرف عربي إلى ما يقابله لاتينياً — للأفاتار حين لا توجد صورة
@@ -1869,7 +1873,7 @@ async function finalAccept(id) {
   const btn = document.getElementById('btn_final_accept');
   if (btn) { btn.disabled = true; btn.textContent = getT('db.pending-confirm'); }
   const { status: accStatus, data: accData } = await pdApi({ action: 'update_app', appId: id, status: 'approved' });
-  if (accStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (accData?.error || ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = getT('db.btn-confirm-accept'); } return; }
+  if (accStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (accData?.error || ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = '✓ ' + getT('db.opt-approved'); } return; }
   const app = allApplications.find(x => x.id === id);
   if (app) app.result = 'approved';
   closeModal();
@@ -1898,7 +1902,7 @@ async function finalPending(id) {
   const btn = document.getElementById('btn_final_pending');
   if (btn) { btn.disabled = true; btn.textContent = getT('db.pending-confirm'); }
   const { status: penStatus, data: penData } = await pdApi({ action: 'update_app', appId: id, status: 'pending' });
-  if (penStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (penData?.error || ''), 'error'); if (btn) { btn.disabled = false; } return; }
+  if (penStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (penData?.error || ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = '⏳ ' + getT('db.opt-pending'); } return; }
   const app = allApplications.find(x => x.id === id);
   if (app) app.result = 'pending';
   closeModal();
