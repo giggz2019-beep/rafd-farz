@@ -451,7 +451,32 @@ select option{background:#1e293b;color:#e2e8f0}
         </select>
       </div>
     </div>
-    <div id="results_grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem">
+    <div id="results_sections">
+      <div class="results-section" id="res_sec_approved" style="margin-bottom:1.75rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#16A870;display:inline-block"></span>
+          <span style="font-weight:800;color:#e2e8f0;font-size:.95rem" data-i18n="db.opt-approved">مقبول</span>
+          <span id="res_count_approved" style="background:rgba(22,168,112,.15);color:#16A870;border-radius:20px;padding:.1rem .65rem;font-size:.75rem;font-weight:700">0</span>
+        </div>
+        <div id="results_grid_approved" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem"></div>
+      </div>
+      <div class="results-section" id="res_sec_rejected" style="margin-bottom:1.75rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block"></span>
+          <span style="font-weight:800;color:#e2e8f0;font-size:.95rem" data-i18n="db.opt-rejected">مرفوض</span>
+          <span id="res_count_rejected" style="background:rgba(239,68,68,.15);color:#ef4444;border-radius:20px;padding:.1rem .65rem;font-size:.75rem;font-weight:700">0</span>
+        </div>
+        <div id="results_grid_rejected" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem"></div>
+      </div>
+      <div class="results-section" id="res_sec_pending" style="margin-bottom:1.75rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block"></span>
+          <span style="font-weight:800;color:#e2e8f0;font-size:.95rem" data-i18n="db.opt-pending">قيد المراجعة</span>
+          <span id="res_count_pending" style="background:rgba(245,158,11,.15);color:#f59e0b;border-radius:20px;padding:.1rem .65rem;font-size:.75rem;font-weight:700">0</span>
+        </div>
+        <div id="results_grid_pending" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem"></div>
+      </div>
+      <div id="results_empty" style="display:none;text-align:center;color:#475569;padding:2rem"></div>
     </div>
   </div>
 
@@ -908,7 +933,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 
     <div class="card">
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span data-i18n="db.criteria-title">معايير التقييم والأوزان</span></div>
-      <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7" data-i18n="db.criteria-desc">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان يجب أن يساوي 100 نقطة.</p>
+      <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7" data-i18n="db.criteria-desc">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان — بما فيها أوزان معايير المستندات أدناه — يجب أن يساوي 100 نقطة.</p>
 
       <div class="q-card" id="qc_edu" style="flex-wrap:wrap;gap:.6rem">
         <button class="q-toggle on" id="qt_edu" onclick="toggleQ('edu')"></button>
@@ -1037,7 +1062,8 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     <!-- Required Documents -->
     <div class="card">
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> <span data-i18n="db.docs-title">المستندات المطلوبة من المتقدم</span></div>
-      <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem" data-i18n="db.docs-desc">فعّل المستندات التي تريد من المتقدمين رفعها مع طلبهم</div>
+      <div style="font-size:.78rem;color:#64748b;margin-bottom:.5rem" data-i18n="db.docs-desc">فعّل المستندات التي تريد من المتقدمين رفعها مع طلبهم</div>
+      <div style="font-size:.74rem;color:#a78bfa;margin-bottom:1rem;line-height:1.7" data-i18n="db.docs-weight-note">💡 أوزان معايير القراءة الذكية (⚡ معايير) لكل مستند تُحتسب ضمن نفس إجمالي الـ100 نقطة في «معايير التقييم» أعلاه — راقب المجموع في الشريط السفلي.</div>
 
       <div style="display:flex;flex-direction:column;gap:.6rem" id="docs_preset_container">
         <div class="q-card" id="doc_cv" style="flex-direction:column;align-items:stretch">
@@ -1617,30 +1643,62 @@ function resultCardColor(result) {
   return { border: '#f59e0b', bg: 'rgba(245,158,11,.08)' };
 }
 
+// خريطة تقريبية لأول حرف عربي إلى ما يقابله لاتينياً — للأفاتار حين لا توجد صورة
+const AR_TO_LATIN_INITIAL = {
+  'ا':'A','أ':'A','إ':'A','آ':'A','ب':'B','ت':'T','ث':'T','ج':'J','ح':'H','خ':'K',
+  'د':'D','ذ':'D','ر':'R','ز':'Z','س':'S','ش':'S','ص':'S','ض':'D','ط':'T','ظ':'Z',
+  'ع':'A','غ':'G','ف':'F','ق':'Q','ك':'K','ل':'L','م':'M','ن':'N','ه':'H','و':'W','ي':'Y','ى':'Y'
+};
+function avatarInitial(name) {
+  const first = (name || '?').trim()[0] || '?';
+  return (AR_TO_LATIN_INITIAL[first] || first).toUpperCase();
+}
+
+function resultCardHTML(r) {
+  const c = resultCardColor(r.result);
+  const photo = findApplicantPhoto(r);
+  const letter = avatarInitial(r.name);
+  const avatar = photo
+    ? `<img src="${photo}" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid ${c.border}">`
+    : `<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,${c.border},#0A1628);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.3rem;border:2px solid ${c.border}">${letter}</div>`;
+  return `
+  <div style="background:${c.bg};border:1.5px solid ${c.border}44;border-radius:16px;padding:1.25rem;text-align:center;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div style="display:flex;justify-content:center;margin-bottom:.75rem">${avatar}</div>
+    <div style="font-weight:800;color:#e2e8f0;font-size:.95rem;margin-bottom:.2rem">${r.name}</div>
+    <div style="color:#64748b;font-size:.78rem;margin-bottom:.6rem">${r.company || r.sector || '—'}</div>
+    <div style="display:flex;justify-content:center;margin-bottom:.75rem">${resultBadge(r.result, r.score)}</div>
+    <div style="font-size:.78rem;color:#94a3b8;margin-bottom:.85rem">${getT('db.modal-score')}: <span style="font-weight:800;color:${r.score >= 80 ? '#16A870' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score != null ? r.score + '/100' : '—'}</span></div>
+    <button onclick="openReqModal('${r.id}')" style="width:100%;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.6rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">${getT('db.btn-view-details')}</button>
+  </div>`;
+}
+
 function renderResultsCards(list) {
   const reqs = list || allApplications;
-  const grid = document.getElementById('results_grid');
+  const buckets = { approved: [], rejected: [], pending: [] };
+  reqs.forEach(r => {
+    const key = r.result === 'approved' ? 'approved' : r.result === 'rejected' ? 'rejected' : 'pending';
+    buckets[key].push(r);
+  });
+  const emptyEl = document.getElementById('results_empty');
+  ['approved','rejected','pending'].forEach(key => {
+    const sec = document.getElementById('res_sec_' + key);
+    const grid = document.getElementById('results_grid_' + key);
+    const count = document.getElementById('res_count_' + key);
+    count.textContent = buckets[key].length;
+    if (!buckets[key].length) {
+      sec.style.display = 'none';
+      grid.innerHTML = '';
+    } else {
+      sec.style.display = '';
+      grid.innerHTML = buckets[key].map(resultCardHTML).join('');
+    }
+  });
   if (!reqs.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#475569;padding:2rem">${getT('db.no-requests')}</div>`;
-    return;
+    emptyEl.style.display = 'block';
+    emptyEl.textContent = getT('db.no-requests');
+  } else {
+    emptyEl.style.display = 'none';
   }
-  grid.innerHTML = reqs.map(r => {
-    const c = resultCardColor(r.result);
-    const photo = findApplicantPhoto(r);
-    const letter = (r.name || '?').trim()[0]?.toUpperCase() || '?';
-    const avatar = photo
-      ? `<img src="${photo}" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid ${c.border}">`
-      : `<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,${c.border},#0A1628);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.3rem;border:2px solid ${c.border}">${letter}</div>`;
-    return `
-    <div style="background:${c.bg};border:1.5px solid ${c.border}44;border-radius:16px;padding:1.25rem;text-align:center;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
-      <div style="display:flex;justify-content:center;margin-bottom:.75rem">${avatar}</div>
-      <div style="font-weight:800;color:#e2e8f0;font-size:.95rem;margin-bottom:.2rem">${r.name}</div>
-      <div style="color:#64748b;font-size:.78rem;margin-bottom:.6rem">${r.company || r.sector || '—'}</div>
-      <div style="display:flex;justify-content:center;margin-bottom:.75rem">${resultBadge(r.result, r.score)}</div>
-      <div style="font-size:.78rem;color:#94a3b8;margin-bottom:.85rem">${getT('db.modal-score')}: <span style="font-weight:800;color:${r.score >= 80 ? '#16A870' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score != null ? r.score + '/100' : '—'}</span></div>
-      <button onclick="openReqModal('${r.id}')" style="width:100%;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.6rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">${getT('db.btn-view-details')}</button>
-    </div>`;
-  }).join('');
 }
 
 function filterResultsCards() {
@@ -2362,12 +2420,22 @@ function toggleQ(id) {
   updateWeightTotal();
 }
 
+function computeDocCriteriaWeight() {
+  let total = 0;
+  DOC_IDS.forEach(id => {
+    if (docStates[id] === false) return;
+    (docReadCriteria[id] || []).forEach(c => { total += c.weight || 0; });
+  });
+  return total;
+}
+
 function updateWeightTotal() {
   let total = 0;
   CRITERIA_IDS.forEach(id => {
     if (qStates[id] !== false) total += parseInt(document.getElementById('qw_'+id)?.value || 0);
   });
   customCriteria.forEach(c => { total += c.weight || 0; });
+  total += computeDocCriteriaWeight();
   const display = document.getElementById('weight_total_display');
   const warning = document.getElementById('weight_warning');
   const sticky = document.getElementById('sticky_weight');
@@ -2463,6 +2531,7 @@ function toggleDoc(id) {
   const card = document.getElementById('doc_'+id);
   if (btn) btn.classList.toggle('on', docStates[id]);
   if (card) card.style.opacity = docStates[id] ? '1' : '.45';
+  updateWeightTotal();
 }
 
 function addCustomDoc() {
@@ -2505,11 +2574,13 @@ function addDocCriterion(docId) {
   docReadCriteria[docId] = docReadCriteria[docId] || [];
   docReadCriteria[docId].push({ prompt: '', weight: 10 });
   renderDocCriteriaList(docId);
+  updateWeightTotal();
 }
 
 function removeDocCriterion(docId, idx) {
   docReadCriteria[docId].splice(idx, 1);
   renderDocCriteriaList(docId);
+  updateWeightTotal();
 }
 
 function renderDocCriteriaList(docId) {
@@ -2528,7 +2599,7 @@ function renderDocCriteriaList(docId) {
       <div style="display:flex;align-items:center;gap:.3rem;flex-shrink:0">
         <span style="font-size:.68rem;color:#64748b">الوزن:</span>
         <input type="number" value="${c.weight}" min="0" max="50"
-          oninput="docReadCriteria['${docId}'][${i}].weight=parseInt(this.value)||0"
+          oninput="docReadCriteria['${docId}'][${i}].weight=parseInt(this.value)||0;updateWeightTotal()"
           style="width:44px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .35rem;color:#a78bfa;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:700;text-align:center;outline:none">
         <span style="font-size:.68rem;color:#64748b">نقطة</span>
       </div>
@@ -2985,8 +3056,10 @@ async function saveFormConfig() {
     criteria[id] = { active, weight };
     if (active) total += weight;
   });
+  customCriteria.forEach(c => { total += c.weight || 0; });
+  total += computeDocCriteriaWeight();
 
-  if (total !== 100) { toast('⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة', 'warn'); return; }
+  if (total !== 100) { toast('⚠️ مجموع الأوزان (المعايير + المستندات) يجب أن يساوي 100 نقطة بالضبط', 'warn'); return; }
 
   // Validate custom criteria
   for (let i = 0; i < customCriteria.length; i++) {
