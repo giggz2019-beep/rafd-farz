@@ -405,7 +405,7 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="page-hdr">
       <div>
         <div class="page-title" data-i18n="db.requests-title">الطلبات</div>
-        <div class="page-sub" data-i18n="db.requests-sub">جميع الطلبات المقدّمة عبر منصتك</div>
+        <div class="page-sub" data-i18n="db.requests-sub">سجل كل الطلبات المستلمة — إدارة وحذف وتواصل مع المتقدمين</div>
       </div>
       <button class="btn-primary" onclick="showPage('new-request',null)"><span data-i18n="db.btn-new">➕ طلب جديد</span></button>
     </div>
@@ -437,7 +437,7 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="page-hdr">
       <div>
         <div class="page-title" data-i18n="db.results-title">نتائج المتقدمين</div>
-        <div class="page-sub" data-i18n="db.results-sub">استعرض نتيجة كل متقدم — اضغط لعرض التفاصيل الكاملة</div>
+        <div class="page-sub" data-i18n="db.results-sub">النتائج مصنّفة حسب الحالة — مقبول / مرفوض / قيد المراجعة</div>
       </div>
     </div>
     <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.25rem">
@@ -448,6 +448,13 @@ select option{background:#1e293b;color:#e2e8f0}
           <option value="approved" data-i18n="db.opt-approved">مقبول</option>
           <option value="rejected" data-i18n="db.opt-rejected">مرفوض</option>
           <option value="pending" data-i18n="db.opt-pending">قيد المراجعة</option>
+        </select>
+        <select id="res_sort" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;outline:none" onchange="filterResultsCards()">
+          <option value="newest" data-i18n="db.sort-newest">الأحدث</option>
+          <option value="oldest" data-i18n="db.sort-oldest">الأقدم</option>
+          <option value="best" data-i18n="db.sort-best">الأفضل (الدرجة)</option>
+          <option value="worst" data-i18n="db.sort-worst">الأسوأ (الدرجة)</option>
+          <option value="city" data-i18n="db.sort-city">المدينة</option>
         </select>
       </div>
     </div>
@@ -1643,6 +1650,19 @@ function resultCardColor(result) {
   return { border: '#f59e0b', bg: 'rgba(245,158,11,.08)' };
 }
 
+const CITY_LABELS = {
+  riyadh:'الرياض', jeddah:'جدة', makkah:'مكة المكرمة', madinah:'المدينة المنورة',
+  dammam:'الدمام', khobar:'الخبر', dhahran:'الظهران', taif:'الطائف', abha:'أبها',
+  tabuk:'تبوك', hail:'حائل', jizan:'جيزان', najran:'نجران', qassim:'القصيم', other:'مدينة أخرى',
+};
+function applicantCity(r) {
+  let notes = r.notes;
+  if (typeof notes === 'string') { try { notes = JSON.parse(notes); } catch { notes = null; } }
+  const code = notes?.city;
+  if (!code) return null;
+  return CITY_LABELS[code] || code;
+}
+
 // خريطة تقريبية لأول حرف عربي إلى ما يقابله لاتينياً — للأفاتار حين لا توجد صورة
 const AR_TO_LATIN_INITIAL = {
   'ا':'A','أ':'A','إ':'A','آ':'A','ب':'B','ت':'T','ث':'T','ج':'J','ح':'H','خ':'K',
@@ -1658,6 +1678,7 @@ function resultCardHTML(r) {
   const c = resultCardColor(r.result);
   const photo = findApplicantPhoto(r);
   const letter = avatarInitial(r.name);
+  const city = applicantCity(r);
   const avatar = photo
     ? `<img src="${photo}" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid ${c.border}">`
     : `<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,${c.border},#0A1628);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.3rem;border:2px solid ${c.border}">${letter}</div>`;
@@ -1665,7 +1686,8 @@ function resultCardHTML(r) {
   <div style="background:${c.bg};border:1.5px solid ${c.border}44;border-radius:16px;padding:1.25rem;text-align:center;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
     <div style="display:flex;justify-content:center;margin-bottom:.75rem">${avatar}</div>
     <div style="font-weight:800;color:#e2e8f0;font-size:.95rem;margin-bottom:.2rem">${r.name}</div>
-    <div style="color:#64748b;font-size:.78rem;margin-bottom:.6rem">${r.company || r.sector || '—'}</div>
+    <div style="color:#64748b;font-size:.78rem;margin-bottom:.2rem">${r.company || r.sector || '—'}</div>
+    ${city ? `<div style="color:#475569;font-size:.72rem;margin-bottom:.6rem">📍 ${city}</div>` : `<div style="margin-bottom:.6rem"></div>`}
     <div style="display:flex;justify-content:center;margin-bottom:.75rem">${resultBadge(r.result, r.score)}</div>
     <div style="font-size:.78rem;color:#94a3b8;margin-bottom:.85rem">${getT('db.modal-score')}: <span style="font-weight:800;color:${r.score >= 80 ? '#16A870' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score != null ? r.score + '/100' : '—'}</span></div>
     <button onclick="openReqModal('${r.id}')" style="width:100%;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.6rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">${getT('db.btn-view-details')}</button>
@@ -1704,9 +1726,15 @@ function renderResultsCards(list) {
 function filterResultsCards() {
   const q = document.getElementById('res_search').value.toLowerCase();
   const status = document.getElementById('res_filter_status').value;
+  const sort = document.getElementById('res_sort')?.value || 'newest';
   let reqs = [...allApplications];
   if (q) reqs = reqs.filter(r => r.name.toLowerCase().includes(q) || (r.national_id||'').includes(q) || (r.email||'').includes(q));
   if (status) reqs = reqs.filter(r => r.result === status);
+  if (sort === 'newest') reqs.sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
+  else if (sort === 'oldest') reqs.sort((a,b) => new Date(a.created_at||0) - new Date(b.created_at||0));
+  else if (sort === 'best') reqs.sort((a,b) => (b.score||0) - (a.score||0));
+  else if (sort === 'worst') reqs.sort((a,b) => (a.score||0) - (b.score||0));
+  else if (sort === 'city') reqs.sort((a,b) => (applicantCity(a)||'').localeCompare(applicantCity(b)||'', 'ar'));
   renderResultsCards(reqs);
 }
 
@@ -1815,32 +1843,23 @@ function openReqModal(id) {
       ${r.challenges ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">${getT('db.modal-challenges')}</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.challenges}</div></div>` : ''}
       ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">${getT('db.modal-notes')}</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.notes}</div></div>` : ''}
 
-      ${isPending ? `
-      <div style="border-top:1px solid #334155;padding-top:.85rem;display:flex;gap:.6rem">
-        <button onclick="finalAccept('${r.id}')" id="btn_final_accept"
-          style="flex:1;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.75rem;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer">
-          ${getT('db.btn-confirm-accept')}
-        </button>
-        <button onclick="finalReject('${r.id}')"
-          style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.75rem;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
-          ${getT('db.btn-final-reject')}
-        </button>
-      </div>` : ''}
-
-      ${(isApproved || isRejected) ? `
       <div style="border-top:1px solid #334155;padding-top:.85rem">
-        <div style="font-size:.75rem;color:#64748b;margin-bottom:.6rem;text-align:center">مراجعة النتيجة — بإمكان الجهة تعديلها</div>
-        <div style="display:flex;gap:.6rem">
-          ${isRejected ? `<button onclick="finalAccept('${r.id}')" id="btn_final_accept"
-            style="flex:1;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
-            ✓ تغيير إلى مقبول
-          </button>` : ''}
-          ${isApproved ? `<button onclick="finalReject('${r.id}')"
-            style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.65rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
-            ✕ تغيير إلى مرفوض
-          </button>` : ''}
+        <div style="font-size:.75rem;color:#64748b;margin-bottom:.6rem;text-align:center" data-i18n="db.result-switch-hint">تعديل النتيجة — للجهة صلاحية كاملة لتغيير القرار</div>
+        <div style="display:flex;gap:.5rem">
+          <button ${isApproved ? 'disabled' : ''} onclick="finalAccept('${r.id}')" id="btn_final_accept"
+            style="flex:1;background:${isApproved ? 'rgba(22,168,112,.2)' : 'linear-gradient(135deg,#0B5D3B,#16A870)'};color:${isApproved ? '#16A870' : '#fff'};border:${isApproved ? '1.5px solid #16A870' : 'none'};border-radius:10px;padding:.65rem .3rem;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:800;cursor:${isApproved ? 'default' : 'pointer'}">
+            ${isApproved ? '● ' : '✓ '}${getT('db.opt-approved')}
+          </button>
+          <button ${isPending ? 'disabled' : ''} onclick="finalPending('${r.id}')" id="btn_final_pending"
+            style="flex:1;background:${isPending ? 'rgba(245,158,11,.2)' : 'rgba(255,255,255,.05)'};color:${isPending ? '#f59e0b' : '#94a3b8'};border:1.5px solid ${isPending ? '#f59e0b' : 'rgba(255,255,255,.1)'};border-radius:10px;padding:.65rem .3rem;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:800;cursor:${isPending ? 'default' : 'pointer'}">
+            ${isPending ? '● ' : '⏳ '}${getT('db.opt-pending')}
+          </button>
+          <button ${isRejected ? 'disabled' : ''} onclick="finalReject('${r.id}')"
+            style="flex:1;background:${isRejected ? 'rgba(239,68,68,.2)' : 'rgba(239,68,68,.1)'};color:#f87171;border:1.5px solid ${isRejected ? '#ef4444' : 'rgba(239,68,68,.3)'};border-radius:10px;padding:.65rem .3rem;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:800;cursor:${isRejected ? 'default' : 'pointer'}">
+            ${isRejected ? '● ' : '✕ '}${getT('db.opt-rejected')}
+          </button>
         </div>
-      </div>` : ''}
+      </div>
     </div>`;
   document.getElementById('reqModal').classList.add('open');
 }
@@ -1873,6 +1892,21 @@ async function finalReject(id) {
   renderAllRequests();
   renderResultsCards();
   toast(getT('db.toast-rejected'), 'warn');
+}
+
+async function finalPending(id) {
+  const btn = document.getElementById('btn_final_pending');
+  if (btn) { btn.disabled = true; btn.textContent = getT('db.pending-confirm'); }
+  const { status: penStatus, data: penData } = await pdApi({ action: 'update_app', appId: id, status: 'pending' });
+  if (penStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (penData?.error || ''), 'error'); if (btn) { btn.disabled = false; } return; }
+  const app = allApplications.find(x => x.id === id);
+  if (app) app.result = 'pending';
+  closeModal();
+  renderStats();
+  renderRecentRequests();
+  renderAllRequests();
+  renderResultsCards();
+  toast('⏳ ' + (app?.name || getT('db.modal-name')) + ' — ' + getT('db.opt-pending'), 'warn');
 }
 
 // ===== SETTINGS =====
