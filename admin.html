@@ -167,7 +167,7 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
     </div>
     <div class="form-group">
       <label data-i18n="adm.lbl-pass">كلمة المرور</label>
-      <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="password" id="adminPass" data-i18n-placeholder="adm.ph-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <button class="btn-login" onclick="doLogin()"><span data-i18n="adm.btn-login">دخول للوحة التحكم</span></button>
     <p class="login-hint" id="loginErr" style="color:#ef4444;display:none" data-i18n="adm.login-err">بيانات خاطئة. حاول مجدداً.</p>
@@ -537,10 +537,10 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
     </div>
     <div class="modal-body">
       <div class="form-row">
-        <div class="form-group"><label data-i18n="adm.lbl-fname">الاسم الأول</label><input type="text" id="f_fname" placeholder="محمد"></div>
-        <div class="form-group"><label data-i18n="adm.lbl-lname">اسم العائلة</label><input type="text" id="f_lname" placeholder="الأحمدي"></div>
+        <div class="form-group"><label data-i18n="adm.lbl-fname">الاسم الأول</label><input type="text" id="f_fname" data-i18n-placeholder="adm.ph-fname" placeholder="محمد"></div>
+        <div class="form-group"><label data-i18n="adm.lbl-lname">اسم العائلة</label><input type="text" id="f_lname" data-i18n-placeholder="adm.ph-lname" placeholder="الأحمدي"></div>
       </div>
-      <div class="form-group-m"><label data-i18n="adm.lbl-org">اسم الجهة / الشركة</label><input type="text" id="f_org" placeholder="شركة الأفق للتقنية"></div>
+      <div class="form-group-m"><label data-i18n="adm.lbl-org">اسم الجهة / الشركة</label><input type="text" id="f_org" data-i18n-placeholder="adm.ph-org" placeholder="شركة الأفق للتقنية"></div>
       <div class="form-group-m"><label data-i18n="adm.lbl-org-type">نوع الجهة</label>
         <select id="f_type">
           <option value="شركة">شركة</option>
@@ -552,8 +552,8 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
           <option value="أخرى">أخرى</option>
         </select>
       </div>
-      <div class="form-group-m"><label data-i18n="adm.lbl-email">البريد الإلكتروني</label><input type="email" id="f_email" placeholder="name@company.com"></div>
-      <div class="form-group-m"><label data-i18n="adm.lbl-phone">رقم الجوال</label><input type="tel" id="f_phone" placeholder="05xxxxxxxx"></div>
+      <div class="form-group-m"><label data-i18n="adm.lbl-email">البريد الإلكتروني</label><input type="email" id="f_email" data-i18n-placeholder="adm.ph-email" placeholder="name@company.com"></div>
+      <div class="form-group-m"><label data-i18n="adm.lbl-phone">رقم الجوال</label><input type="tel" id="f_phone" data-i18n-placeholder="adm.ph-phone" placeholder="05xxxxxxxx"></div>
       <div class="form-row">
         <div class="form-group"><label data-i18n="adm.lbl-plan">الباقة</label>
           <select id="f_plan">
@@ -564,7 +564,7 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
         </div>
         <div class="form-group"><label data-i18n="adm.lbl-sub-date">تاريخ الاشتراك</label><input type="date" id="f_date"></div>
       </div>
-      <div class="form-group-m"><label data-i18n="adm.lbl-notes">ملاحظات</label><input type="text" id="f_notes" placeholder="أي ملاحظات إضافية..."></div>
+      <div class="form-group-m"><label data-i18n="adm.lbl-notes">ملاحظات</label><input type="text" id="f_notes" data-i18n-placeholder="adm.ph-notes" placeholder="أي ملاحظات إضافية..."></div>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeAddModal()"><span data-i18n="db.btn-cancel">إلغاء</span></button>

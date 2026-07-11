@@ -36,8 +36,15 @@ Active serverless functions (Vercel format: `module.exports = async (req, res) =
 |---|---|---|
 | `api/chat-khalid.js` | Powers the "Khalid" AI chatbot using Claude Haiku | `ANTHROPIC_API_KEY` |
 | `api/send-otp.js` | Sends OTP verification emails via [Resend](https://resend.com) | `RESEND_API_KEY` |
+| `api/partner-auth.js` | Partner login/register/OTP/reset flows; `login` action optionally verifies a Cloudflare Turnstile token before sending the login OTP | `SUPABASE_SERVICE_KEY`, optional `TURNSTILE_SECRET_KEY` |
 
 **Critical**: If `ANTHROPIC_API_KEY` is not set in Vercel environment variables, `chat-khalid.js` immediately returns `escalate: true`, which causes the frontend to show WhatsApp/email contact links instead of a chat response. This is the most common cause of Khalid appearing "broken."
+
+**Cloudflare Turnstile (partner login bot protection)**: `partner-login.html` embeds Cloudflare's Turnstile widget (not a hosting migration — the site stays on Vercel) as an extra layer on the `login` action. Two optional env vars, both fail open (same fallback convention as `ANTHROPIC_API_KEY` above — missing key never blocks login):
+- `TURNSTILE_SITE_KEY` — client-side, safe to expose publicly. Get it from the Cloudflare dashboard under Turnstile → Add Widget, then paste it into the `TURNSTILE_SITE_KEY` constant near the top of the `<script>` block in `partner-login.html` (currently `'YOUR_SITE_KEY_HERE'`). Until a real key is pasted in, the widget stays hidden and login works exactly as it does today.
+- `TURNSTILE_SECRET_KEY` — server-side only, set as a Vercel environment variable for `api/partner-auth.js`. Same Cloudflare Turnstile widget setup screen provides this secret alongside the site key. If unset, `partner-auth.js` logs a console warning and skips verification entirely (no-op).
+
+`vercel.json`'s `Content-Security-Policy` header already allowlists `https://challenges.cloudflare.com` in `script-src`, `connect-src`, and `frame-src` so the Turnstile widget/iframe isn't blocked once a real site key is configured.
 
 The `chat-khalid.js` function keeps a 6-message rolling history per request. When the model includes `[ESCALATE]` in its output, the function strips the token and signals the frontend to display escalation UI (WhatsApp + email links). The system prompt is the `SYSTEM_PROMPT` constant at the top of the file — this is what controls Khalid's personality and knowledge.
 

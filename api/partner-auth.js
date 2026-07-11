@@ -15,6 +15,36 @@ function secret() {
   return s;
 }
 
+// Cloudflare Turnstile server-side verification — optional, additive bot protection.
+// If TURNSTILE_SECRET_KEY is not set (no Cloudflare account connected yet), this is a
+// no-op and login proceeds exactly as before — mirrors the ANTHROPIC_API_KEY fallback
+// pattern used in api/chat-khalid.js.
+async function verifyTurnstile(token, ip) {
+  const secretKey = process.env.TURNSTILE_SECRET_KEY;
+  if (!secretKey) {
+    console.warn('TURNSTILE_SECRET_KEY not configured — skipping Turnstile verification (login unprotected)');
+    return true;
+  }
+  if (!token) return false;
+  try {
+    const params = new URLSearchParams();
+    params.append('secret', secretKey);
+    params.append('response', token);
+    if (ip) params.append('remoteip', ip);
+
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    });
+    const data = await r.json();
+    return !!data.success;
+  } catch (err) {
+    console.error('Turnstile verification error:', err.message);
+    return false;
+  }
+}
+
 function makeToken(email) {
   const ts = Date.now().toString();
   const sig = crypto.createHmac('sha256', secret()).update(`${email}|${ts}`).digest('hex');
@@ -93,8 +123,11 @@ module.exports = async (req, res) => {
   try {
     // ─── LOGIN — validate credentials, send OTP server-side ──────────────────
     if (body.action === 'login') {
-      const { email, password } = body;
+      const { email, password, turnstileToken } = body;
       if (!email || !password) return res.status(400).json({ error: 'missing_fields' });
+
+      const turnstileOk = await verifyTurnstile(turnstileToken, ip);
+      if (!turnstileOk) return res.status(400).json({ error: 'turnstile_failed' });
 
       const { limited } = rateLimit(`login:${ip}`, 10, 15 * 60 * 1000);
       if (limited) return res.status(429).json({ error: 'too_many_attempts' });

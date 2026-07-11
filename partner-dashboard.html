@@ -273,6 +273,7 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="nav-sec" data-i18n="db.nav-main">الرئيسية</div>
     <div class="nav-item active" onclick="showPage('overview',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> <span data-i18n="db.overview">نظرة عامة</span></div>
     <div class="nav-item" onclick="showPage('requests',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg> <span data-i18n="db.requests">الطلبات</span></div>
+    <div class="nav-item" onclick="showPage('results',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M9 13.5 6 22l6-3 6 3-3-8.5"/></svg> <span data-i18n="db.results-nav">النتائج</span></div>
     <div class="nav-item" onclick="showPage('link',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><path d="M8 12h8"/></svg> <span data-i18n="db.apply-link">رابط التقديم</span></div>
     <div class="nav-sec" data-i18n="db.nav-admin">الإدارة</div>
     <div class="nav-item" onclick="showPage('form-setup',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg> <span data-i18n="db.form-setup">إعداد النموذج</span></div>
@@ -404,7 +405,7 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="page-hdr">
       <div>
         <div class="page-title" data-i18n="db.requests-title">الطلبات</div>
-        <div class="page-sub" data-i18n="db.requests-sub">جميع الطلبات المقدّمة عبر منصتك</div>
+        <div class="page-sub" data-i18n="db.requests-sub">سجل كل الطلبات المستلمة — إدارة وحذف وتواصل مع المتقدمين</div>
       </div>
       <button class="btn-primary" onclick="showPage('new-request',null)"><span data-i18n="db.btn-new">➕ طلب جديد</span></button>
     </div>
@@ -431,6 +432,61 @@ select option{background:#1e293b;color:#e2e8f0}
     </div>
   </div>
 
+  <!-- ===== PAGE: RESULTS ===== -->
+  <div class="page" id="page-results">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title" data-i18n="db.results-title">نتائج المتقدمين</div>
+        <div class="page-sub" data-i18n="db.results-sub">النتائج مصنّفة حسب الحالة — مقبول / مرفوض / قيد المراجعة</div>
+      </div>
+    </div>
+    <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.25rem">
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+        <input type="text" id="res_search" data-i18n-placeholder="db.ph-search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;outline:none" oninput="filterResultsCards()">
+        <select id="res_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;outline:none" onchange="filterResultsCards()">
+          <option value="" data-i18n="db.all-status">كل الحالات</option>
+          <option value="approved" data-i18n="db.opt-approved">مقبول</option>
+          <option value="rejected" data-i18n="db.opt-rejected">مرفوض</option>
+          <option value="pending" data-i18n="db.opt-pending">قيد المراجعة</option>
+        </select>
+        <select id="res_sort" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;outline:none" onchange="filterResultsCards()">
+          <option value="newest" data-i18n="db.sort-newest">الأحدث</option>
+          <option value="oldest" data-i18n="db.sort-oldest">الأقدم</option>
+          <option value="best" data-i18n="db.sort-best">الأفضل (الدرجة)</option>
+          <option value="worst" data-i18n="db.sort-worst">الأسوأ (الدرجة)</option>
+          <option value="city" data-i18n="db.sort-city">المدينة</option>
+        </select>
+      </div>
+    </div>
+    <div id="results_sections">
+      <div class="results-section" id="res_sec_approved" style="margin-bottom:1.75rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#16A870;display:inline-block"></span>
+          <span style="font-weight:800;color:#e2e8f0;font-size:.95rem" data-i18n="db.opt-approved">مقبول</span>
+          <span id="res_count_approved" style="background:rgba(22,168,112,.15);color:#16A870;border-radius:20px;padding:.1rem .65rem;font-size:.75rem;font-weight:700">0</span>
+        </div>
+        <div id="results_grid_approved" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem"></div>
+      </div>
+      <div class="results-section" id="res_sec_rejected" style="margin-bottom:1.75rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block"></span>
+          <span style="font-weight:800;color:#e2e8f0;font-size:.95rem" data-i18n="db.opt-rejected">مرفوض</span>
+          <span id="res_count_rejected" style="background:rgba(239,68,68,.15);color:#ef4444;border-radius:20px;padding:.1rem .65rem;font-size:.75rem;font-weight:700">0</span>
+        </div>
+        <div id="results_grid_rejected" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem"></div>
+      </div>
+      <div class="results-section" id="res_sec_pending" style="margin-bottom:1.75rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block"></span>
+          <span style="font-weight:800;color:#e2e8f0;font-size:.95rem" data-i18n="db.opt-pending">قيد المراجعة</span>
+          <span id="res_count_pending" style="background:rgba(245,158,11,.15);color:#f59e0b;border-radius:20px;padding:.1rem .65rem;font-size:.75rem;font-weight:700">0</span>
+        </div>
+        <div id="results_grid_pending" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem"></div>
+      </div>
+      <div id="results_empty" style="display:none;text-align:center;color:#475569;padding:2rem"></div>
+    </div>
+  </div>
+
   <!-- ===== PAGE: NEW REQUEST ===== -->
   <div class="page" id="page-new-request">
     <div class="page-hdr">
@@ -444,23 +500,23 @@ select option{background:#1e293b;color:#e2e8f0}
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-name">الاسم الكامل <span style="color:#ef4444">*</span></label>
-          <input type="text" id="nf_name" placeholder="محمد أحمد الغامدي">
+          <input type="text" id="nf_name" data-i18n-placeholder="db.ph-nf-name" placeholder="محمد أحمد الغامدي">
         </div>
         <div class="fld-m">
           <label data-i18n="db.lbl-id">رقم الهوية / الإقامة</label>
-          <input type="text" id="nf_id" placeholder="1XXXXXXXXX">
+          <input type="text" id="nf_id" data-i18n-placeholder="db.ph-nf-id" placeholder="1XXXXXXXXX">
         </div>
       </div>
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-email">البريد الإلكتروني</label>
-          <input type="email" id="nf_email" placeholder="applicant@email.com">
+          <input type="email" id="nf_email" data-i18n-placeholder="db.ph-nf-email" placeholder="applicant@email.com">
         </div>
         <div class="fld-m">
           <label data-i18n="db.lbl-phone">رقم الجوال</label>
           <div style="display:flex">
             <select id="nf_phone_cc" style="background:#1e293b;border:1px solid #334155;border-left:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
-            <input type="tel" id="nf_phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
+            <input type="tel" id="nf_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
           </div>
         </div>
       </div>
@@ -553,7 +609,7 @@ select option{background:#1e293b;color:#e2e8f0}
           <label data-i18n="db.lbl-phone">رقم الجوال</label>
           <div style="display:flex">
             <select id="set_phone_cc" style="background:#1e293b;border:1px solid #334155;border-left:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
-            <input type="tel" id="set_phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
+            <input type="tel" id="set_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
           </div>
         </div>
       </div>
@@ -759,11 +815,11 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg> <span data-i18n="db.prog-info">معلومات البرنامج</span></div>
       <div class="fld-m">
         <label data-i18n="db.lbl-prog-name">اسم البرنامج / المبادرة <span style="color:#ef4444">*</span></label>
-        <input type="text" id="fc_program_name" placeholder="مثال: برنامج دعم الشركات الناشئة 2026">
+        <input type="text" id="fc_program_name" data-i18n-placeholder="db.ph-prog-name" placeholder="مثال: برنامج دعم الشركات الناشئة 2026">
       </div>
       <div class="fld-m">
         <label data-i18n="db.lbl-app-type">نوع التقديم <span style="color:#ef4444">*</span></label>
-        <select id="fc_app_type">
+        <select id="fc_app_type" onchange="onAppTypeChange()">
           <option value="project" data-i18n="db.opt-project">مشروع / شركة ناشئة</option>
           <option value="job" data-i18n="db.opt-job">توظيف واختيار كوادر</option>
           <option value="funding" data-i18n="db.opt-funding">تمويل واستثمار</option>
@@ -782,7 +838,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
         <div class="fld-m">
           <label data-i18n="db.lbl-min-score">الحد الأدنى للقبول (من 100)</label>
-          <input type="number" id="fc_min_score" min="1" max="100" value="55" placeholder="55">
+          <input type="number" id="fc_min_score" min="1" max="100" value="60" placeholder="60">
           <div style="font-size:.72rem;color:#64748b;margin-top:.3rem" data-i18n="db.hint-min-score">المتقدم الحاصل على هذه الدرجة فأكثر يجتاز المرحلة الأولى</div>
         </div>
         <div class="fld-m">
@@ -818,6 +874,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div id="pending_msg_section" style="display:none;margin-top:.85rem">
           <label style="font-size:.78rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem" data-i18n="db.pending-msg-lbl">✏️ رسالة القبول المبدئي للمتقدم</label>
           <textarea id="fc_pending_msg" rows="3"
+            data-i18n-placeholder="db.ph-pending-msg"
             placeholder="مثال: تم قبولك مبدئياً في برنامجنا، وسيتم التواصل معك خلال أسبوعين بالقرار النهائي."
             style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box"></textarea>
           <div style="font-size:.7rem;color:#475569;margin-top:.3rem" data-i18n="db.pending-msg-hint">هذه الرسالة ستظهر للمتقدم داخل بطاقة القبول المبدئي.</div>
@@ -884,7 +941,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
 
     <div class="card">
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span data-i18n="db.criteria-title">معايير التقييم والأوزان</span></div>
-      <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7" data-i18n="db.criteria-desc">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان يجب أن يساوي 100 نقطة.</p>
+      <p style="color:#64748b;font-size:.82rem;margin-bottom:1.25rem;line-height:1.7" data-i18n="db.criteria-desc">فعّل المعايير التي تريد قياسها وحدد وزن كل معيار. مجموع الأوزان — بما فيها أوزان معايير المستندات أدناه — يجب أن يساوي 100 نقطة.</p>
 
       <div class="q-card" id="qc_edu" style="flex-wrap:wrap;gap:.6rem">
         <button class="q-toggle on" id="qt_edu" onclick="toggleQ('edu')"></button>
@@ -1013,7 +1070,8 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     <!-- Required Documents -->
     <div class="card">
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> <span data-i18n="db.docs-title">المستندات المطلوبة من المتقدم</span></div>
-      <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem" data-i18n="db.docs-desc">فعّل المستندات التي تريد من المتقدمين رفعها مع طلبهم</div>
+      <div style="font-size:.78rem;color:#64748b;margin-bottom:.5rem" data-i18n="db.docs-desc">فعّل المستندات التي تريد من المتقدمين رفعها مع طلبهم</div>
+      <div style="font-size:.74rem;color:#a78bfa;margin-bottom:1rem;line-height:1.7" data-i18n="db.docs-weight-note">💡 أوزان معايير القراءة الذكية (⚡ معايير) لكل مستند تُحتسب ضمن نفس إجمالي الـ100 نقطة في «معايير التقييم» أعلاه — راقب المجموع في الشريط السفلي.</div>
 
       <div style="display:flex;flex-direction:column;gap:.6rem" id="docs_preset_container">
         <div class="q-card" id="doc_cv" style="flex-direction:column;align-items:stretch">
@@ -1160,7 +1218,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.5rem">💬</div>
           <div style="font-size:.82rem;color:#94a3b8;margin-bottom:.25rem" data-i18n="db.lbl-whatsapp">واتساب</div>
-          <div style="font-size:.88rem;color:#16A870;font-weight:700">+966 5X XXX XXXX</div>
+          <a href="https://wa.me/966558184381" target="_blank" style="font-size:.88rem;color:#16A870;font-weight:700;text-decoration:none">+966 55 818 4381</a>
         </div>
         <div style="background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;text-align:center">
           <div style="font-size:1.5rem;margin-bottom:.5rem">🕐</div>
@@ -1218,7 +1276,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     </div>
     <div class="modal-body">
       <label style="display:block;margin-bottom:.5rem;font-size:.85rem;color:#94a3b8" data-i18n="db.lbl-form-name">اسم النموذج</label>
-      <input class="save-form-inp" id="saveFormNameInp" type="text" placeholder="مثال: نموذج برنامج الابتعاث 2026" maxlength="60"
+      <input class="save-form-inp" id="saveFormNameInp" type="text" data-i18n-placeholder="db.ph-save-form-name" placeholder="مثال: نموذج برنامج الابتعاث 2026" maxlength="60"
         onkeydown="if(event.key==='Enter')confirmSaveForm()">
       <div id="saveFormErr" style="color:#ef4444;font-size:.78rem;margin-top:.4rem;display:none" data-i18n="db.err-form-name">يرجى كتابة اسم للنموذج</div>
     </div>
@@ -1238,7 +1296,15 @@ async function pdApi(data) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token: sess.token, ...data }),
   });
-  return { status: r.status, data: await r.json() };
+  const result = { status: r.status, data: await r.json() };
+  // Session expired mid-use (2h token lifetime) — force re-login rather than
+  // leaving the user on a dashboard silently failing every action.
+  // Skip for admin-bypass/preview sessions, which have no real partner token.
+  if (result.status === 401 && result.data?.error === 'invalid_session' && sess.token) {
+    localStorage.removeItem('rafd_partner_session');
+    window.location.href = '/partner-login.html';
+  }
+  return result;
 }
 
 // ===== AUTH CHECK =====
@@ -1428,6 +1494,7 @@ function initUI() {
     renderStats();
     renderRecentRequests();
     renderAllRequests();
+    renderResultsCards();
     renderSavedFormsList();
   });
 }
@@ -1573,12 +1640,123 @@ function resultBadge(result, score) {
   return `<span class="badge b-pending">⏳ ${getT('db.opt-pending')}</span>`;
 }
 
+// ===== RESULTS PAGE (card view) =====
+function findApplicantPhoto(r) {
+  let docs = r.docs;
+  if (typeof docs === 'string') { try { docs = JSON.parse(docs); } catch { docs = null; } }
+  if (!docs) return null;
+  const imgExt = /\.(jpe?g|png|webp|gif)(\?.*)?$/i;
+  for (const key in docs) {
+    const d = docs[key];
+    if (d && d.url && imgExt.test(d.url)) return d.url;
+  }
+  return null;
+}
+
+function resultCardColor(result) {
+  if (result === 'approved') return { border: '#16A870', bg: 'rgba(22,168,112,.08)' };
+  if (result === 'rejected') return { border: '#ef4444', bg: 'rgba(239,68,68,.08)' };
+  return { border: '#f59e0b', bg: 'rgba(245,158,11,.08)' };
+}
+
+const CITY_LABELS = {
+  ar: { riyadh:'الرياض', jeddah:'جدة', makkah:'مكة المكرمة', madinah:'المدينة المنورة',
+    dammam:'الدمام', khobar:'الخبر', dhahran:'الظهران', taif:'الطائف', abha:'أبها',
+    tabuk:'تبوك', hail:'حائل', jizan:'جيزان', najran:'نجران', qassim:'القصيم', other:'مدينة أخرى' },
+  en: { riyadh:'Riyadh', jeddah:'Jeddah', makkah:'Makkah', madinah:'Madinah',
+    dammam:'Dammam', khobar:'Khobar', dhahran:'Dhahran', taif:'Taif', abha:'Abha',
+    tabuk:'Tabuk', hail:'Hail', jizan:'Jizan', najran:'Najran', qassim:'Qassim', other:'Other City' },
+};
+function applicantCity(r) {
+  let notes = r.notes;
+  if (typeof notes === 'string') { try { notes = JSON.parse(notes); } catch { notes = null; } }
+  const code = notes?.city;
+  if (!code) return null;
+  const lang = localStorage.getItem('rafd_lang') || 'en';
+  return CITY_LABELS[lang]?.[code] || CITY_LABELS.ar[code] || code;
+}
+
+// خريطة تقريبية لأول حرف عربي إلى ما يقابله لاتينياً — للأفاتار حين لا توجد صورة
+const AR_TO_LATIN_INITIAL = {
+  'ا':'A','أ':'A','إ':'A','آ':'A','ب':'B','ت':'T','ث':'T','ج':'J','ح':'H','خ':'K',
+  'د':'D','ذ':'D','ر':'R','ز':'Z','س':'S','ش':'S','ص':'S','ض':'D','ط':'T','ظ':'Z',
+  'ع':'A','غ':'G','ف':'F','ق':'Q','ك':'K','ل':'L','م':'M','ن':'N','ه':'H','و':'W','ي':'Y','ى':'Y'
+};
+function avatarInitial(name) {
+  const first = (name || '?').trim()[0] || '?';
+  return (AR_TO_LATIN_INITIAL[first] || first).toUpperCase();
+}
+
+function resultCardHTML(r) {
+  const c = resultCardColor(r.result);
+  const photo = findApplicantPhoto(r);
+  const letter = avatarInitial(r.name);
+  const city = applicantCity(r);
+  const avatar = photo
+    ? `<img src="${photo}" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid ${c.border}">`
+    : `<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,${c.border},#0A1628);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.3rem;border:2px solid ${c.border}">${letter}</div>`;
+  return `
+  <div style="background:${c.bg};border:1.5px solid ${c.border}44;border-radius:16px;padding:1.25rem;text-align:center;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div style="display:flex;justify-content:center;margin-bottom:.75rem">${avatar}</div>
+    <div style="font-weight:800;color:#e2e8f0;font-size:.95rem;margin-bottom:.2rem">${r.name}</div>
+    <div style="color:#64748b;font-size:.78rem;margin-bottom:.2rem">${r.company || r.sector || '—'}</div>
+    ${city ? `<div style="color:#475569;font-size:.72rem;margin-bottom:.6rem">📍 ${city}</div>` : `<div style="margin-bottom:.6rem"></div>`}
+    <div style="display:flex;justify-content:center;margin-bottom:.75rem">${resultBadge(r.result, r.score)}</div>
+    <div style="font-size:.78rem;color:#94a3b8;margin-bottom:.85rem">${getT('db.modal-score')}: <span style="font-weight:800;color:${r.score >= 80 ? '#16A870' : r.score >= 60 ? '#f59e0b' : '#ef4444'}">${r.score != null ? r.score + '/100' : '—'}</span></div>
+    <button onclick="openReqModal('${r.id}')" style="width:100%;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.6rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">${getT('db.btn-view-details')}</button>
+  </div>`;
+}
+
+function renderResultsCards(list) {
+  const reqs = list || allApplications;
+  const buckets = { approved: [], rejected: [], pending: [] };
+  reqs.forEach(r => {
+    const key = r.result === 'approved' ? 'approved' : r.result === 'rejected' ? 'rejected' : 'pending';
+    buckets[key].push(r);
+  });
+  const emptyEl = document.getElementById('results_empty');
+  ['approved','rejected','pending'].forEach(key => {
+    const sec = document.getElementById('res_sec_' + key);
+    const grid = document.getElementById('results_grid_' + key);
+    const count = document.getElementById('res_count_' + key);
+    count.textContent = buckets[key].length;
+    if (!buckets[key].length) {
+      sec.style.display = 'none';
+      grid.innerHTML = '';
+    } else {
+      sec.style.display = '';
+      grid.innerHTML = buckets[key].map(resultCardHTML).join('');
+    }
+  });
+  if (!reqs.length) {
+    emptyEl.style.display = 'block';
+    emptyEl.textContent = getT('db.no-requests');
+  } else {
+    emptyEl.style.display = 'none';
+  }
+}
+
+function filterResultsCards() {
+  const q = document.getElementById('res_search').value.toLowerCase();
+  const status = document.getElementById('res_filter_status').value;
+  const sort = document.getElementById('res_sort')?.value || 'newest';
+  let reqs = [...allApplications];
+  if (q) reqs = reqs.filter(r => r.name.toLowerCase().includes(q) || (r.national_id||'').includes(q) || (r.email||'').includes(q));
+  if (status) reqs = reqs.filter(r => r.result === status);
+  if (sort === 'newest') reqs.sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
+  else if (sort === 'oldest') reqs.sort((a,b) => new Date(a.created_at||0) - new Date(b.created_at||0));
+  else if (sort === 'best') reqs.sort((a,b) => (b.score||0) - (a.score||0));
+  else if (sort === 'worst') reqs.sort((a,b) => (a.score||0) - (b.score||0));
+  else if (sort === 'city') reqs.sort((a,b) => (applicantCity(a)||'').localeCompare(applicantCity(b)||'', 'ar'));
+  renderResultsCards(reqs);
+}
+
 async function submitRequest() {
   const name = document.getElementById('nf_name').value.trim();
   const purpose = document.getElementById('nf_purpose').value;
   if (!name || !purpose) { toast(getT('db.toast-req-required'), 'warn'); return; }
   const score = parseInt(document.getElementById('nf_score').value) || null;
-  const minScore = partner.formConfig?.min_score || 55;
+  const minScore = partner.formConfig?.min_score || 60;
   const result = score !== null ? (score >= minScore ? 'approved' : 'rejected') : 'pending';
   const refNum = 'MAN-' + Date.now().toString().slice(-8);
 
@@ -1603,6 +1781,7 @@ async function submitRequest() {
   renderRecentRequests();
   showPage('requests', null);
   renderAllRequests();
+  renderResultsCards();
   const resultLabel = result === 'approved' ? getT('db.opt-approved') : result === 'rejected' ? getT('db.opt-rejected') : getT('db.opt-pending');
   toast(`✅ ${getT('db.toast-req-saved')} — ${getT('db.lbl-result')}: ` + resultLabel, result === 'approved' ? 'success' : result === 'rejected' ? 'error' : 'warn');
 }
@@ -1620,6 +1799,7 @@ async function deleteRequest(id) {
   renderStats();
   renderRecentRequests();
   renderAllRequests();
+  renderResultsCards();
   toast(getT('db.toast-deleted'));
 }
 
@@ -1676,32 +1856,23 @@ function openReqModal(id) {
       ${r.challenges ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">${getT('db.modal-challenges')}</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.challenges}</div></div>` : ''}
       ${r.notes ? `<div style="border-top:1px solid #334155;padding-top:.75rem"><div style="color:#64748b;font-size:.78rem;margin-bottom:.35rem">${getT('db.modal-notes')}</div><div style="color:#94a3b8;font-size:.83rem;line-height:1.7">${r.notes}</div></div>` : ''}
 
-      ${isPending ? `
-      <div style="border-top:1px solid #334155;padding-top:.85rem;display:flex;gap:.6rem">
-        <button onclick="finalAccept('${r.id}')" id="btn_final_accept"
-          style="flex:1;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.75rem;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer">
-          ${getT('db.btn-confirm-accept')}
-        </button>
-        <button onclick="finalReject('${r.id}')"
-          style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.75rem;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
-          ${getT('db.btn-final-reject')}
-        </button>
-      </div>` : ''}
-
-      ${(isApproved || isRejected) ? `
       <div style="border-top:1px solid #334155;padding-top:.85rem">
-        <div style="font-size:.75rem;color:#64748b;margin-bottom:.6rem;text-align:center">مراجعة النتيجة — بإمكان الجهة تعديلها</div>
-        <div style="display:flex;gap:.6rem">
-          ${isRejected ? `<button onclick="finalAccept('${r.id}')" id="btn_final_accept"
-            style="flex:1;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
-            ✓ تغيير إلى مقبول
-          </button>` : ''}
-          ${isApproved ? `<button onclick="finalReject('${r.id}')"
-            style="flex:1;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.65rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">
-            ✕ تغيير إلى مرفوض
-          </button>` : ''}
+        <div style="font-size:.75rem;color:#64748b;margin-bottom:.6rem;text-align:center" data-i18n="db.result-switch-hint">تعديل النتيجة — للجهة صلاحية كاملة لتغيير القرار</div>
+        <div style="display:flex;gap:.5rem">
+          <button ${isApproved ? 'disabled' : ''} onclick="finalAccept('${r.id}')" id="btn_final_accept"
+            style="flex:1;background:${isApproved ? 'rgba(22,168,112,.2)' : 'linear-gradient(135deg,#0B5D3B,#16A870)'};color:${isApproved ? '#16A870' : '#fff'};border:${isApproved ? '1.5px solid #16A870' : 'none'};border-radius:10px;padding:.65rem .3rem;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:800;cursor:${isApproved ? 'default' : 'pointer'}">
+            ${isApproved ? '● ' : '✓ '}${getT('db.opt-approved')}
+          </button>
+          <button ${isPending ? 'disabled' : ''} onclick="finalPending('${r.id}')" id="btn_final_pending"
+            style="flex:1;background:${isPending ? 'rgba(245,158,11,.2)' : 'rgba(255,255,255,.05)'};color:${isPending ? '#f59e0b' : '#94a3b8'};border:1.5px solid ${isPending ? '#f59e0b' : 'rgba(255,255,255,.1)'};border-radius:10px;padding:.65rem .3rem;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:800;cursor:${isPending ? 'default' : 'pointer'}">
+            ${isPending ? '● ' : '⏳ '}${getT('db.opt-pending')}
+          </button>
+          <button ${isRejected ? 'disabled' : ''} onclick="finalReject('${r.id}')"
+            style="flex:1;background:${isRejected ? 'rgba(239,68,68,.2)' : 'rgba(239,68,68,.1)'};color:#f87171;border:1.5px solid ${isRejected ? '#ef4444' : 'rgba(239,68,68,.3)'};border-radius:10px;padding:.65rem .3rem;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:800;cursor:${isRejected ? 'default' : 'pointer'}">
+            ${isRejected ? '● ' : '✕ '}${getT('db.opt-rejected')}
+          </button>
         </div>
-      </div>` : ''}
+      </div>
     </div>`;
   document.getElementById('reqModal').classList.add('open');
 }
@@ -1711,13 +1882,14 @@ async function finalAccept(id) {
   const btn = document.getElementById('btn_final_accept');
   if (btn) { btn.disabled = true; btn.textContent = getT('db.pending-confirm'); }
   const { status: accStatus, data: accData } = await pdApi({ action: 'update_app', appId: id, status: 'approved' });
-  if (accStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (accData?.error || ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = getT('db.btn-confirm-accept'); } return; }
+  if (accStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (accData?.error || ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = '✓ ' + getT('db.opt-approved'); } return; }
   const app = allApplications.find(x => x.id === id);
   if (app) app.result = 'approved';
   closeModal();
   renderStats();
   renderRecentRequests();
   renderAllRequests();
+  renderResultsCards();
   toast('✅ ' + (app?.name || getT('db.modal-name')) + ' — ' + getT('db.opt-approved'), 'success');
 }
 
@@ -1731,7 +1903,23 @@ async function finalReject(id) {
   renderStats();
   renderRecentRequests();
   renderAllRequests();
+  renderResultsCards();
   toast(getT('db.toast-rejected'), 'warn');
+}
+
+async function finalPending(id) {
+  const btn = document.getElementById('btn_final_pending');
+  if (btn) { btn.disabled = true; btn.textContent = getT('db.pending-confirm'); }
+  const { status: penStatus, data: penData } = await pdApi({ action: 'update_app', appId: id, status: 'pending' });
+  if (penStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (penData?.error || ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = '⏳ ' + getT('db.opt-pending'); } return; }
+  const app = allApplications.find(x => x.id === id);
+  if (app) app.result = 'pending';
+  closeModal();
+  renderStats();
+  renderRecentRequests();
+  renderAllRequests();
+  renderResultsCards();
+  toast('⏳ ' + (app?.name || getT('db.modal-name')) + ' — ' + getT('db.opt-pending'), 'warn');
 }
 
 // ===== SETTINGS =====
@@ -1944,6 +2132,7 @@ function showPage(pageId, navEl) {
   if (page) page.classList.add('active');
   if (navEl) navEl.classList.add('active');
   if (pageId === 'requests') { loadApplications().then(() => renderAllRequests()); }
+  if (pageId === 'results') { loadApplications().then(() => renderResultsCards()); }
   if (pageId === 'overview') { loadApplications().then(() => { renderStats(); renderRecentRequests(); }); }
   if (pageId === 'subscription') renderSubscription();
   if (pageId === 'settings') renderSettings();
@@ -2054,6 +2243,8 @@ function copyEmbed() {
 
 // ===== FORM BUILDER =====
 const CRITERIA_IDS = ['edu','exp','prev','stage','cust','team','commit'];
+// Startup-pitch-only criteria — only relevant when app_type is 'project' or 'funding'.
+const PROJECT_ONLY_CRITERIA = ['prev','stage','cust','team'];
 const DOC_IDS = ['cv','reg','cert','id'];
 const qStates = {};
 const docStates = { cv: true, reg: true, cert: false, id: false };
@@ -2278,18 +2469,66 @@ function toggleQ(id) {
   updateWeightTotal();
 }
 
+function computeDocCriteriaWeight() {
+  let total = 0;
+  DOC_IDS.forEach(id => {
+    if (docStates[id] === false) return;
+    (docReadCriteria[id] || []).forEach(c => { total += c.weight || 0; });
+  });
+  return total;
+}
+
 function updateWeightTotal() {
   let total = 0;
   CRITERIA_IDS.forEach(id => {
     if (qStates[id] !== false) total += parseInt(document.getElementById('qw_'+id)?.value || 0);
   });
   customCriteria.forEach(c => { total += c.weight || 0; });
+  total += computeDocCriteriaWeight();
   const display = document.getElementById('weight_total_display');
   const warning = document.getElementById('weight_warning');
   const sticky = document.getElementById('sticky_weight');
   if (display) { display.textContent = total; display.style.color = total === 100 ? '#16A870' : '#ef4444'; }
   if (sticky) { sticky.textContent = total; sticky.style.color = total === 100 ? '#16A870' : '#ef4444'; }
   if (warning) warning.style.display = total !== 100 ? 'block' : 'none';
+}
+
+// Called on fc_app_type change, and once when a saved form_config is loaded, so the
+// criteria list only ever shows startup-pitch questions (prev/stage/cust/team) for
+// app_type 'project' or 'funding'. For every other app_type those 4 criteria are
+// turned off (if currently on) and hidden entirely, and their freed weight is
+// redistributed onto qw_exp (experience is universally relevant) so the 100-point
+// total stays balanced without requiring the partner to manually rebalance weights.
+function onAppTypeChange() {
+  const appType = document.getElementById('fc_app_type')?.value || 'project';
+  const showProjectCriteria = appType === 'project' || appType === 'funding';
+
+  if (!showProjectCriteria) {
+    let freedWeight = 0;
+    PROJECT_ONLY_CRITERIA.forEach(id => {
+      const card = document.getElementById('qc_' + id);
+      if (qStates[id] !== false) {
+        freedWeight += parseInt(document.getElementById('qw_' + id)?.value || 0) || 0;
+        qStates[id] = false;
+        const toggle = document.getElementById('qt_' + id);
+        const weightInput = document.getElementById('qw_' + id);
+        if (toggle) toggle.classList.remove('on');
+        if (card) card.classList.add('disabled');
+        if (weightInput) weightInput.disabled = true;
+      }
+      if (card) card.style.display = 'none';
+    });
+    if (freedWeight > 0) {
+      const expInput = document.getElementById('qw_exp');
+      if (expInput) expInput.value = (parseInt(expInput.value) || 0) + freedWeight;
+    }
+  } else {
+    PROJECT_ONLY_CRITERIA.forEach(id => {
+      const card = document.getElementById('qc_' + id);
+      if (card) card.style.display = '';
+    });
+  }
+  updateWeightTotal();
 }
 
 function toggleGpaOptions() {
@@ -2338,14 +2577,14 @@ function renderGpaBands() {
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem';
     row.innerHTML = `
-      <input type="number" value="${b.min}" min="0" max="${maxVal}" step="${step}" placeholder="من"
+      <input type="number" value="${b.min}" min="0" max="${maxVal}" step="${step}" data-i18n-placeholder="db.ph-gpa-min" placeholder="من"
         style="width:58px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;text-align:center;outline:none">
       <span style="color:#475569;font-size:.75rem">—</span>
-      <input type="number" value="${b.max}" min="0" max="${maxVal}" step="${step}" placeholder="إلى"
+      <input type="number" value="${b.max}" min="0" max="${maxVal}" step="${step}" data-i18n-placeholder="db.ph-gpa-max" placeholder="إلى"
         style="width:58px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;text-align:center;outline:none">
       <span style="color:#475569;font-size:.72rem">${unit}</span>
       <span style="color:#475569;font-size:.72rem;margin-right:.2rem">→</span>
-      <input type="number" value="${b.score ?? ''}" min="0" max="${w}" placeholder="نقطة"
+      <input type="number" value="${b.score ?? ''}" min="0" max="${w}" data-i18n-placeholder="db.ph-gpa-score" placeholder="نقطة"
         style="width:54px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#16A870;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
       <span style="color:#475569;font-size:.7rem">نقطة</span>
       <button style="background:none;border:none;color:#475569;cursor:pointer;font-size:.85rem;padding:0 .2rem">✕</button>`;
@@ -2379,6 +2618,7 @@ function toggleDoc(id) {
   const card = document.getElementById('doc_'+id);
   if (btn) btn.classList.toggle('on', docStates[id]);
   if (card) card.style.opacity = docStates[id] ? '1' : '.45';
+  updateWeightTotal();
 }
 
 function addCustomDoc() {
@@ -2397,7 +2637,7 @@ function renderCustomDocs() {
   if (!customDocs.length) { container.innerHTML = ''; return; }
   container.innerHTML = customDocs.map((d, i) => `
     <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem">
-      <input type="text" value="${d.label}" placeholder="اسم المستند... مثال: خطة العمل"
+      <input type="text" value="${d.label}" data-i18n-placeholder="db.ph-custom-doc" placeholder="اسم المستند... مثال: خطة العمل"
         oninput="customDocs[${i}].label=this.value"
         style="flex:1;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.45rem .75rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;outline:none">
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.72rem;color:#64748b;cursor:pointer;white-space:nowrap">
@@ -2421,11 +2661,13 @@ function addDocCriterion(docId) {
   docReadCriteria[docId] = docReadCriteria[docId] || [];
   docReadCriteria[docId].push({ prompt: '', weight: 10 });
   renderDocCriteriaList(docId);
+  updateWeightTotal();
 }
 
 function removeDocCriterion(docId, idx) {
   docReadCriteria[docId].splice(idx, 1);
   renderDocCriteriaList(docId);
+  updateWeightTotal();
 }
 
 function renderDocCriteriaList(docId) {
@@ -2438,13 +2680,13 @@ function renderDocCriteriaList(docId) {
   }
   container.innerHTML = list.map((c, i) => `
     <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem;flex-wrap:wrap">
-      <input type="text" value="${c.prompt.replace(/"/g,'&quot;')}" placeholder="مثال: هل مؤهل المتقدم بكالوريوس أو أعلى؟"
+      <input type="text" value="${c.prompt.replace(/"/g,'&quot;')}" data-i18n-placeholder="db.ph-doc-criterion" placeholder="مثال: هل مؤهل المتقدم بكالوريوس أو أعلى؟"
         oninput="docReadCriteria['${docId}'][${i}].prompt=this.value"
         style="flex:1;min-width:160px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.42rem .75rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;outline:none">
       <div style="display:flex;align-items:center;gap:.3rem;flex-shrink:0">
         <span style="font-size:.68rem;color:#64748b">الوزن:</span>
         <input type="number" value="${c.weight}" min="0" max="50"
-          oninput="docReadCriteria['${docId}'][${i}].weight=parseInt(this.value)||0"
+          oninput="docReadCriteria['${docId}'][${i}].weight=parseInt(this.value)||0;updateWeightTotal()"
           style="width:44px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .35rem;color:#a78bfa;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;font-weight:700;text-align:center;outline:none">
         <span style="font-size:.68rem;color:#64748b">نقطة</span>
       </div>
@@ -2561,7 +2803,7 @@ function renderCustomCriteria() {
     <div style="background:#0f172a;border:1px solid rgba(11,93,59,.25);border-radius:12px;padding:1rem 1.1rem;margin-bottom:.75rem">
       <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;flex-wrap:wrap">
         <span style="background:rgba(11,93,59,.15);color:#0B5D3B;border-radius:6px;padding:.2rem .55rem;font-size:.7rem;font-weight:700;flex-shrink:0">معيار جديد</span>
-        <input type="text" value="${c.label}" placeholder="اكتب نص السؤال... مثال: هل لديك براءة اختراع؟"
+        <input type="text" value="${c.label}" data-i18n-placeholder="db.ph-custom-crit-label" placeholder="اكتب نص السؤال... مثال: هل لديك براءة اختراع؟"
           oninput="customCriteria[${ci}].label=this.value"
           style="flex:1;min-width:180px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.5rem .8rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;outline:none">
         <div style="display:flex;align-items:center;gap:.35rem;flex-shrink:0">
@@ -2576,7 +2818,7 @@ function renderCustomCriteria() {
       <div style="font-size:.72rem;color:#475569;margin-bottom:.5rem">خيارات الإجابة (حدد النقاط لكل خيار):</div>
       ${c.options.map((opt, oi) => `
         <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
-          <input type="text" value="${opt.text}" placeholder="نص الخيار..."
+          <input type="text" value="${opt.text}" data-i18n-placeholder="db.ph-crit-option" placeholder="نص الخيار..."
             oninput="customCriteria[${ci}].options[${oi}].text=this.value"
             style="flex:1;background:#1e293b;border:1px solid #1e293b;border-radius:6px;padding:.38rem .65rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;outline:none">
           <input type="number" value="${opt.score}" min="0" max="${c.weight}"
@@ -2624,6 +2866,8 @@ async function confirmSaveForm() {
   const config = buildFormConfig();
   const newForm = { id: Date.now().toString(), slug: genSlug(), name, config, saved_at: new Date().toISOString() };
   savedForms.push(newForm);
+  editingFormId = newForm.id;
+  showEditingBanner(name);
   await persistSavedForms();
   renderSavedFormsList();
   toast(getT('db.toast-form-saved') + ': ' + name, 'success');
@@ -2751,7 +2995,7 @@ function buildFormConfig() {
   return {
     program_name: programName, app_type: appType,
     program_desc: document.getElementById('fc_program_desc')?.value.trim()||'',
-    min_score: parseInt(document.getElementById('fc_min_score')?.value)||55,
+    min_score: parseInt(document.getElementById('fc_min_score')?.value)||60,
     acceptance_mode: document.querySelector('input[name="accept_mode"]:checked')?.value||'instant',
     pending_msg: document.getElementById('fc_pending_msg')?.value.trim()||'',
     is_active: document.getElementById('fc_status')?.value==='active',
@@ -2784,7 +3028,7 @@ function applyFormConfig(fc) {
   renderCustomCriteria();
   optionScores = fc.option_scores || {};
   if (fc.option_scores) CRITERIA_IDS.forEach(id => { if (optionScores[id]) { const btn=document.getElementById('sc_btn_'+id); if(btn) btn.style.color='#16A870'; }});
-  updateWeightTotal();
+  onAppTypeChange(); // hide/show project-only criteria for the loaded app_type; also calls updateWeightTotal()
 }
 
 function loadFormConfigUI() {
@@ -2807,7 +3051,7 @@ function loadFormConfigUI() {
       toggleGpaOptions();
     }
     document.getElementById('fc_program_desc').value = fc.program_desc || '';
-    document.getElementById('fc_min_score').value = fc.min_score || 55;
+    document.getElementById('fc_min_score').value = fc.min_score || 60;
     document.getElementById('fc_status').value = fc.is_active === false ? 'paused' : 'active';
     selectAcceptMode(fc.acceptance_mode || 'instant');
     if (fc.pending_msg) document.getElementById('fc_pending_msg').value = fc.pending_msg;
@@ -2882,7 +3126,7 @@ function loadFormConfigUI() {
     DOC_IDS.forEach(id => { docReadCriteria[id] = []; });
   }
 
-  updateWeightTotal();
+  onAppTypeChange(); // reflect saved app_type's project-only criteria visibility immediately; also calls updateWeightTotal()
 
   const link = getPartnerLinkUrl();
   const preview = document.getElementById('fc_preview_link');
@@ -2901,8 +3145,10 @@ async function saveFormConfig() {
     criteria[id] = { active, weight };
     if (active) total += weight;
   });
+  customCriteria.forEach(c => { total += c.weight || 0; });
+  total += computeDocCriteriaWeight();
 
-  if (total !== 100) { toast('⚠️ مجموع الأوزان يجب أن يساوي 100 نقطة', 'warn'); return; }
+  if (total !== 100) { toast('⚠️ مجموع الأوزان (المعايير + المستندات) يجب أن يساوي 100 نقطة بالضبط', 'warn'); return; }
 
   // Validate custom criteria
   for (let i = 0; i < customCriteria.length; i++) {
@@ -2941,7 +3187,7 @@ async function saveFormConfig() {
     program_name: programName,
     app_type: appType,
     program_desc: document.getElementById('fc_program_desc').value.trim(),
-    min_score: parseInt(document.getElementById('fc_min_score').value) || 55,
+    min_score: parseInt(document.getElementById('fc_min_score').value) || 60,
     acceptance_mode: document.querySelector('input[name="accept_mode"]:checked')?.value || 'instant',
     pending_msg: document.getElementById('fc_pending_msg')?.value.trim() || '',
     gpa_bands: document.getElementById('edu_gpa_enabled')?.checked ? gpaBands : undefined,
@@ -2957,6 +3203,7 @@ async function saveFormConfig() {
     result_price: parseInt(document.getElementById('fc_result_price')?.value) || 10,
     result_pay_msg: document.getElementById('fc_result_pay_msg')?.value.trim() || '',
     updated_at: new Date().toISOString(),
+    saved_forms: savedForms,
   };
 
   // Show loading state
@@ -2977,15 +3224,24 @@ async function saveFormConfig() {
   }
 
   partner.formConfig = fc;
+  // إذا كان يعدّل قالباً محفوظاً، حدّث القالب تلقائياً بنفس الحفظ — بدون خطوة يدوية ثانية
+  if (editingFormId) {
+    const idx = savedForms.findIndex(x => x.id === editingFormId);
+    if (idx !== -1) {
+      savedForms[idx] = { ...savedForms[idx], config: fc, saved_at: new Date().toISOString() };
+      await persistSavedForms();
+      renderSavedFormsList();
+    }
+  }
   // Update link preview
   document.getElementById('fc_preview_link').textContent = getPartnerLinkUrl();
-  toast('✅ تم حفظ إعدادات النموذج وتفعيله! — الرابط جاهز للمشاركة');
+  toast('✅ تم حفظ إعدادات النموذج وتفعيله! — الرابط جاهز للمشاركة' + (editingFormId ? ' — وتحديث القالب المحفوظ' : ''));
 }
 
 function resetFormConfig() {
   document.getElementById('fc_program_name').value = '';
   document.getElementById('fc_program_desc').value = '';
-  document.getElementById('fc_min_score').value = 55;
+  document.getElementById('fc_min_score').value = 60;
   document.getElementById('fc_status').value = 'active';
   CRITERIA_IDS.forEach(id => {
     qStates[id] = true;
@@ -3013,7 +3269,7 @@ function resetFormConfig() {
   });
   customDocs = [];
   renderCustomDocs();
-  updateWeightTotal();
+  onAppTypeChange(); // re-apply project-only criteria visibility for the current app_type; also calls updateWeightTotal()
 }
 
 // ===== START =====
