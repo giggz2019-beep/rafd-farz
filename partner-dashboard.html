@@ -500,23 +500,23 @@ select option{background:#1e293b;color:#e2e8f0}
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-name">الاسم الكامل <span style="color:#ef4444">*</span></label>
-          <input type="text" id="nf_name" placeholder="محمد أحمد الغامدي">
+          <input type="text" id="nf_name" data-i18n-placeholder="db.ph-nf-name" placeholder="محمد أحمد الغامدي">
         </div>
         <div class="fld-m">
           <label data-i18n="db.lbl-id">رقم الهوية / الإقامة</label>
-          <input type="text" id="nf_id" placeholder="1XXXXXXXXX">
+          <input type="text" id="nf_id" data-i18n-placeholder="db.ph-nf-id" placeholder="1XXXXXXXXX">
         </div>
       </div>
       <div class="frow">
         <div class="fld-m">
           <label data-i18n="db.lbl-email">البريد الإلكتروني</label>
-          <input type="email" id="nf_email" placeholder="applicant@email.com">
+          <input type="email" id="nf_email" data-i18n-placeholder="db.ph-nf-email" placeholder="applicant@email.com">
         </div>
         <div class="fld-m">
           <label data-i18n="db.lbl-phone">رقم الجوال</label>
           <div style="display:flex">
             <select id="nf_phone_cc" style="background:#1e293b;border:1px solid #334155;border-left:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
-            <input type="tel" id="nf_phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
+            <input type="tel" id="nf_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
           </div>
         </div>
       </div>
@@ -609,7 +609,7 @@ select option{background:#1e293b;color:#e2e8f0}
           <label data-i18n="db.lbl-phone">رقم الجوال</label>
           <div style="display:flex">
             <select id="set_phone_cc" style="background:#1e293b;border:1px solid #334155;border-left:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
-            <input type="tel" id="set_phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
+            <input type="tel" id="set_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
           </div>
         </div>
       </div>
@@ -815,11 +815,11 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg> <span data-i18n="db.prog-info">معلومات البرنامج</span></div>
       <div class="fld-m">
         <label data-i18n="db.lbl-prog-name">اسم البرنامج / المبادرة <span style="color:#ef4444">*</span></label>
-        <input type="text" id="fc_program_name" placeholder="مثال: برنامج دعم الشركات الناشئة 2026">
+        <input type="text" id="fc_program_name" data-i18n-placeholder="db.ph-prog-name" placeholder="مثال: برنامج دعم الشركات الناشئة 2026">
       </div>
       <div class="fld-m">
         <label data-i18n="db.lbl-app-type">نوع التقديم <span style="color:#ef4444">*</span></label>
-        <select id="fc_app_type">
+        <select id="fc_app_type" onchange="onAppTypeChange()">
           <option value="project" data-i18n="db.opt-project">مشروع / شركة ناشئة</option>
           <option value="job" data-i18n="db.opt-job">توظيف واختيار كوادر</option>
           <option value="funding" data-i18n="db.opt-funding">تمويل واستثمار</option>
@@ -874,6 +874,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
         <div id="pending_msg_section" style="display:none;margin-top:.85rem">
           <label style="font-size:.78rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem" data-i18n="db.pending-msg-lbl">✏️ رسالة القبول المبدئي للمتقدم</label>
           <textarea id="fc_pending_msg" rows="3"
+            data-i18n-placeholder="db.ph-pending-msg"
             placeholder="مثال: تم قبولك مبدئياً في برنامجنا، وسيتم التواصل معك خلال أسبوعين بالقرار النهائي."
             style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box"></textarea>
           <div style="font-size:.7rem;color:#475569;margin-top:.3rem" data-i18n="db.pending-msg-hint">هذه الرسالة ستظهر للمتقدم داخل بطاقة القبول المبدئي.</div>
@@ -1275,7 +1276,7 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     </div>
     <div class="modal-body">
       <label style="display:block;margin-bottom:.5rem;font-size:.85rem;color:#94a3b8" data-i18n="db.lbl-form-name">اسم النموذج</label>
-      <input class="save-form-inp" id="saveFormNameInp" type="text" placeholder="مثال: نموذج برنامج الابتعاث 2026" maxlength="60"
+      <input class="save-form-inp" id="saveFormNameInp" type="text" data-i18n-placeholder="db.ph-save-form-name" placeholder="مثال: نموذج برنامج الابتعاث 2026" maxlength="60"
         onkeydown="if(event.key==='Enter')confirmSaveForm()">
       <div id="saveFormErr" style="color:#ef4444;font-size:.78rem;margin-top:.4rem;display:none" data-i18n="db.err-form-name">يرجى كتابة اسم للنموذج</div>
     </div>
@@ -1295,7 +1296,15 @@ async function pdApi(data) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token: sess.token, ...data }),
   });
-  return { status: r.status, data: await r.json() };
+  const result = { status: r.status, data: await r.json() };
+  // Session expired mid-use (2h token lifetime) — force re-login rather than
+  // leaving the user on a dashboard silently failing every action.
+  // Skip for admin-bypass/preview sessions, which have no real partner token.
+  if (result.status === 401 && result.data?.error === 'invalid_session' && sess.token) {
+    localStorage.removeItem('rafd_partner_session');
+    window.location.href = '/partner-login.html';
+  }
+  return result;
 }
 
 // ===== AUTH CHECK =====
@@ -2234,6 +2243,8 @@ function copyEmbed() {
 
 // ===== FORM BUILDER =====
 const CRITERIA_IDS = ['edu','exp','prev','stage','cust','team','commit'];
+// Startup-pitch-only criteria — only relevant when app_type is 'project' or 'funding'.
+const PROJECT_ONLY_CRITERIA = ['prev','stage','cust','team'];
 const DOC_IDS = ['cv','reg','cert','id'];
 const qStates = {};
 const docStates = { cv: true, reg: true, cert: false, id: false };
@@ -2482,6 +2493,44 @@ function updateWeightTotal() {
   if (warning) warning.style.display = total !== 100 ? 'block' : 'none';
 }
 
+// Called on fc_app_type change, and once when a saved form_config is loaded, so the
+// criteria list only ever shows startup-pitch questions (prev/stage/cust/team) for
+// app_type 'project' or 'funding'. For every other app_type those 4 criteria are
+// turned off (if currently on) and hidden entirely, and their freed weight is
+// redistributed onto qw_exp (experience is universally relevant) so the 100-point
+// total stays balanced without requiring the partner to manually rebalance weights.
+function onAppTypeChange() {
+  const appType = document.getElementById('fc_app_type')?.value || 'project';
+  const showProjectCriteria = appType === 'project' || appType === 'funding';
+
+  if (!showProjectCriteria) {
+    let freedWeight = 0;
+    PROJECT_ONLY_CRITERIA.forEach(id => {
+      const card = document.getElementById('qc_' + id);
+      if (qStates[id] !== false) {
+        freedWeight += parseInt(document.getElementById('qw_' + id)?.value || 0) || 0;
+        qStates[id] = false;
+        const toggle = document.getElementById('qt_' + id);
+        const weightInput = document.getElementById('qw_' + id);
+        if (toggle) toggle.classList.remove('on');
+        if (card) card.classList.add('disabled');
+        if (weightInput) weightInput.disabled = true;
+      }
+      if (card) card.style.display = 'none';
+    });
+    if (freedWeight > 0) {
+      const expInput = document.getElementById('qw_exp');
+      if (expInput) expInput.value = (parseInt(expInput.value) || 0) + freedWeight;
+    }
+  } else {
+    PROJECT_ONLY_CRITERIA.forEach(id => {
+      const card = document.getElementById('qc_' + id);
+      if (card) card.style.display = '';
+    });
+  }
+  updateWeightTotal();
+}
+
 function toggleGpaOptions() {
   const enabled = document.getElementById('edu_gpa_enabled')?.checked;
   const cfg = document.getElementById('gpa_config');
@@ -2528,14 +2577,14 @@ function renderGpaBands() {
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem';
     row.innerHTML = `
-      <input type="number" value="${b.min}" min="0" max="${maxVal}" step="${step}" placeholder="من"
+      <input type="number" value="${b.min}" min="0" max="${maxVal}" step="${step}" data-i18n-placeholder="db.ph-gpa-min" placeholder="من"
         style="width:58px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;text-align:center;outline:none">
       <span style="color:#475569;font-size:.75rem">—</span>
-      <input type="number" value="${b.max}" min="0" max="${maxVal}" step="${step}" placeholder="إلى"
+      <input type="number" value="${b.max}" min="0" max="${maxVal}" step="${step}" data-i18n-placeholder="db.ph-gpa-max" placeholder="إلى"
         style="width:58px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#94a3b8;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;text-align:center;outline:none">
       <span style="color:#475569;font-size:.72rem">${unit}</span>
       <span style="color:#475569;font-size:.72rem;margin-right:.2rem">→</span>
-      <input type="number" value="${b.score ?? ''}" min="0" max="${w}" placeholder="نقطة"
+      <input type="number" value="${b.score ?? ''}" min="0" max="${w}" data-i18n-placeholder="db.ph-gpa-score" placeholder="نقطة"
         style="width:54px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:.3rem .4rem;color:#16A870;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;text-align:center;outline:none">
       <span style="color:#475569;font-size:.7rem">نقطة</span>
       <button style="background:none;border:none;color:#475569;cursor:pointer;font-size:.85rem;padding:0 .2rem">✕</button>`;
@@ -2588,7 +2637,7 @@ function renderCustomDocs() {
   if (!customDocs.length) { container.innerHTML = ''; return; }
   container.innerHTML = customDocs.map((d, i) => `
     <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem">
-      <input type="text" value="${d.label}" placeholder="اسم المستند... مثال: خطة العمل"
+      <input type="text" value="${d.label}" data-i18n-placeholder="db.ph-custom-doc" placeholder="اسم المستند... مثال: خطة العمل"
         oninput="customDocs[${i}].label=this.value"
         style="flex:1;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.45rem .75rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;outline:none">
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.72rem;color:#64748b;cursor:pointer;white-space:nowrap">
@@ -2631,7 +2680,7 @@ function renderDocCriteriaList(docId) {
   }
   container.innerHTML = list.map((c, i) => `
     <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem;flex-wrap:wrap">
-      <input type="text" value="${c.prompt.replace(/"/g,'&quot;')}" placeholder="مثال: هل مؤهل المتقدم بكالوريوس أو أعلى؟"
+      <input type="text" value="${c.prompt.replace(/"/g,'&quot;')}" data-i18n-placeholder="db.ph-doc-criterion" placeholder="مثال: هل مؤهل المتقدم بكالوريوس أو أعلى؟"
         oninput="docReadCriteria['${docId}'][${i}].prompt=this.value"
         style="flex:1;min-width:160px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.42rem .75rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;outline:none">
       <div style="display:flex;align-items:center;gap:.3rem;flex-shrink:0">
@@ -2754,7 +2803,7 @@ function renderCustomCriteria() {
     <div style="background:#0f172a;border:1px solid rgba(11,93,59,.25);border-radius:12px;padding:1rem 1.1rem;margin-bottom:.75rem">
       <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;flex-wrap:wrap">
         <span style="background:rgba(11,93,59,.15);color:#0B5D3B;border-radius:6px;padding:.2rem .55rem;font-size:.7rem;font-weight:700;flex-shrink:0">معيار جديد</span>
-        <input type="text" value="${c.label}" placeholder="اكتب نص السؤال... مثال: هل لديك براءة اختراع؟"
+        <input type="text" value="${c.label}" data-i18n-placeholder="db.ph-custom-crit-label" placeholder="اكتب نص السؤال... مثال: هل لديك براءة اختراع؟"
           oninput="customCriteria[${ci}].label=this.value"
           style="flex:1;min-width:180px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.5rem .8rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;outline:none">
         <div style="display:flex;align-items:center;gap:.35rem;flex-shrink:0">
@@ -2769,7 +2818,7 @@ function renderCustomCriteria() {
       <div style="font-size:.72rem;color:#475569;margin-bottom:.5rem">خيارات الإجابة (حدد النقاط لكل خيار):</div>
       ${c.options.map((opt, oi) => `
         <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
-          <input type="text" value="${opt.text}" placeholder="نص الخيار..."
+          <input type="text" value="${opt.text}" data-i18n-placeholder="db.ph-crit-option" placeholder="نص الخيار..."
             oninput="customCriteria[${ci}].options[${oi}].text=this.value"
             style="flex:1;background:#1e293b;border:1px solid #1e293b;border-radius:6px;padding:.38rem .65rem;color:#e2e8f0;font-family:'ThmanyahSans',sans-serif;font-size:.78rem;outline:none">
           <input type="number" value="${opt.score}" min="0" max="${c.weight}"
@@ -2817,6 +2866,8 @@ async function confirmSaveForm() {
   const config = buildFormConfig();
   const newForm = { id: Date.now().toString(), slug: genSlug(), name, config, saved_at: new Date().toISOString() };
   savedForms.push(newForm);
+  editingFormId = newForm.id;
+  showEditingBanner(name);
   await persistSavedForms();
   renderSavedFormsList();
   toast(getT('db.toast-form-saved') + ': ' + name, 'success');
@@ -2977,7 +3028,7 @@ function applyFormConfig(fc) {
   renderCustomCriteria();
   optionScores = fc.option_scores || {};
   if (fc.option_scores) CRITERIA_IDS.forEach(id => { if (optionScores[id]) { const btn=document.getElementById('sc_btn_'+id); if(btn) btn.style.color='#16A870'; }});
-  updateWeightTotal();
+  onAppTypeChange(); // hide/show project-only criteria for the loaded app_type; also calls updateWeightTotal()
 }
 
 function loadFormConfigUI() {
@@ -3075,7 +3126,7 @@ function loadFormConfigUI() {
     DOC_IDS.forEach(id => { docReadCriteria[id] = []; });
   }
 
-  updateWeightTotal();
+  onAppTypeChange(); // reflect saved app_type's project-only criteria visibility immediately; also calls updateWeightTotal()
 
   const link = getPartnerLinkUrl();
   const preview = document.getElementById('fc_preview_link');
@@ -3152,6 +3203,7 @@ async function saveFormConfig() {
     result_price: parseInt(document.getElementById('fc_result_price')?.value) || 10,
     result_pay_msg: document.getElementById('fc_result_pay_msg')?.value.trim() || '',
     updated_at: new Date().toISOString(),
+    saved_forms: savedForms,
   };
 
   // Show loading state
@@ -3172,9 +3224,18 @@ async function saveFormConfig() {
   }
 
   partner.formConfig = fc;
+  // إذا كان يعدّل قالباً محفوظاً، حدّث القالب تلقائياً بنفس الحفظ — بدون خطوة يدوية ثانية
+  if (editingFormId) {
+    const idx = savedForms.findIndex(x => x.id === editingFormId);
+    if (idx !== -1) {
+      savedForms[idx] = { ...savedForms[idx], config: fc, saved_at: new Date().toISOString() };
+      await persistSavedForms();
+      renderSavedFormsList();
+    }
+  }
   // Update link preview
   document.getElementById('fc_preview_link').textContent = getPartnerLinkUrl();
-  toast('✅ تم حفظ إعدادات النموذج وتفعيله! — الرابط جاهز للمشاركة');
+  toast('✅ تم حفظ إعدادات النموذج وتفعيله! — الرابط جاهز للمشاركة' + (editingFormId ? ' — وتحديث القالب المحفوظ' : ''));
 }
 
 function resetFormConfig() {
@@ -3208,7 +3269,7 @@ function resetFormConfig() {
   });
   customDocs = [];
   renderCustomDocs();
-  updateWeightTotal();
+  onAppTypeChange(); // re-apply project-only criteria visibility for the current app_type; also calls updateWeightTotal()
 }
 
 // ===== START =====

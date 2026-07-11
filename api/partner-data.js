@@ -30,8 +30,8 @@ function validateToken(token) {
     const email = decoded.slice(0, secondBar);
     const ts = decoded.slice(secondBar + 1, lastBar);
     const sig = decoded.slice(lastBar + 1);
-    // 30-day expiry
-    if (Date.now() - parseInt(ts) > 30 * 24 * 60 * 60 * 1000) return null;
+    // 2-hour expiry
+    if (Date.now() - parseInt(ts) > 2 * 60 * 60 * 1000) return null;
     const expected = crypto.createHmac('sha256', secret()).update(`${email}|${ts}`).digest('hex');
     const sigBuf = Buffer.from(sig, 'hex');
     const expBuf = Buffer.from(expected, 'hex');

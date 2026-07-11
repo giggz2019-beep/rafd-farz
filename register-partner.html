@@ -235,7 +235,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="frow">
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-orgname">اسم الجهة الرسمي</span></label>
-        <input type="text" id="f_orgname" placeholder="مثال: شركة النخبة للتطوير">
+        <input type="text" id="f_orgname" data-i18n-placeholder="rp.ph-orgname" placeholder="مثال: شركة النخبة للتطوير">
       </div>
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-orgtype">نوع الجهة</span></label>
@@ -252,7 +252,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="frow">
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-crnum">رقم السجل التجاري</span></label>
-        <input type="text" id="f_crnum" placeholder="10 أرقام" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
+        <input type="text" id="f_crnum" data-i18n-placeholder="rp.ph-crnum" placeholder="10 أرقام" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
       </div>
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-country">دولة الجهة</span></label>
@@ -263,7 +263,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
             <span class="csel-arr">▾</span>
           </button>
           <div class="csel-panel" id="csel_country_panel">
-            <input class="csel-q" id="csel_country_q" type="text" placeholder="🔍 ابحث عن الدولة..." oninput="_cselFilter('country')">
+            <input class="csel-q" id="csel_country_q" type="text" data-i18n-placeholder="rp.ph-search-country" placeholder="🔍 ابحث عن الدولة..." oninput="_cselFilter('country')">
             <div class="csel-opts" id="csel_country_opts"></div>
           </div>
           <input type="hidden" id="f_country">
@@ -284,12 +284,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       </div>
       <div class="fld">
         <label data-i18n="rp.lbl-website">الموقع الإلكتروني</label>
-        <input type="url" id="f_website" placeholder="https://example.com">
+        <input type="url" id="f_website" data-i18n-placeholder="rp.ph-website" placeholder="https://example.com">
       </div>
     </div>
     <div class="fld">
       <label data-i18n="rp.lbl-orgdesc">وصف مختصر للجهة</label>
-      <textarea id="f_orgdesc" placeholder="اكتب وصفاً مختصراً عن جهتك وطبيعة عملها..."></textarea>
+      <textarea id="f_orgdesc" data-i18n-placeholder="rp.ph-orgdesc" placeholder="اكتب وصفاً مختصراً عن جهتك وطبيعة عملها..."></textarea>
     </div>
   </div>
 
@@ -305,17 +305,17 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div class="frow">
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-fname">الاسم الأول</span></label>
-        <input type="text" id="f_fname" placeholder="محمد">
+        <input type="text" id="f_fname" data-i18n-placeholder="rp.ph-fname" placeholder="محمد">
       </div>
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-lname">اسم العائلة</span></label>
-        <input type="text" id="f_lname" placeholder="الأحمدي">
+        <input type="text" id="f_lname" data-i18n-placeholder="rp.ph-lname" placeholder="الأحمدي">
       </div>
     </div>
     <div class="frow">
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-title">المسمى الوظيفي</span></label>
-        <input type="text" id="f_title" placeholder="مدير البرامج">
+        <input type="text" id="f_title" data-i18n-placeholder="rp.ph-title" placeholder="مدير البرامج">
       </div>
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-phone">رقم الجوال</span></label>
@@ -327,12 +327,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
               <span class="csel-arr">▾</span>
             </button>
             <div class="csel-panel" id="csel_phone_cc_panel">
-              <input class="csel-q" id="csel_phone_cc_q" type="text" placeholder="🔍 ابحث..." oninput="_cselFilter('phone_cc')">
+              <input class="csel-q" id="csel_phone_cc_q" type="text" data-i18n-placeholder="rp.ph-search-cc" placeholder="🔍 ابحث..." oninput="_cselFilter('phone_cc')">
               <div class="csel-opts" id="csel_phone_cc_opts"></div>
             </div>
             <input type="hidden" id="f_phone_cc" value="+966">
           </div>
-          <input type="tel" id="f_phone" placeholder="5XXXXXXXX" maxlength="9" class="cc-inp" style="border-radius:0 12px 12px 0!important">
+          <input type="tel" id="f_phone" data-i18n-placeholder="rp.ph-phone" placeholder="5XXXXXXXX" maxlength="9" class="cc-inp" style="border-radius:0 12px 12px 0!important">
         </div>
       </div>
     </div>
@@ -346,7 +346,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
             <span class="csel-arr">▾</span>
           </button>
           <div class="csel-panel" id="csel_nat_panel">
-            <input class="csel-q" id="csel_nat_q" type="text" placeholder="🔍 ابحث عن الجنسية..." oninput="_cselFilter('nat')">
+            <input class="csel-q" id="csel_nat_q" type="text" data-i18n-placeholder="rp.ph-search-nat" placeholder="🔍 ابحث عن الجنسية..." oninput="_cselFilter('nat')">
             <div class="csel-opts" id="csel_nat_opts"></div>
           </div>
           <input type="hidden" id="f_nat">
@@ -355,17 +355,17 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     </div>
     <div class="fld">
       <label><span class="req">*</span><span data-i18n="rp.lbl-email">البريد الإلكتروني الرسمي</span></label>
-      <input type="email" id="f_email" placeholder="name@company.com">
+      <input type="email" id="f_email" data-i18n-placeholder="rp.ph-email" placeholder="name@company.com">
       <div class="hint" data-i18n="rp.email-hint">سيُرسَل رمز التفعيل على هذا البريد</div>
     </div>
     <div class="frow">
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-pass">كلمة المرور</span></label>
-        <input type="password" id="f_pass" placeholder="8 أحرف على الأقل" oninput="updatePassStrength()">
+        <input type="password" id="f_pass" data-i18n-placeholder="rp.ph-pass" placeholder="8 أحرف على الأقل" oninput="updatePassStrength()">
       </div>
       <div class="fld">
         <label><span class="req">*</span><span data-i18n="rp.lbl-pass2">تأكيد كلمة المرور</span></label>
-        <input type="password" id="f_pass2" placeholder="أعد كتابة كلمة المرور">
+        <input type="password" id="f_pass2" data-i18n-placeholder="rp.ph-pass2" placeholder="أعد كتابة كلمة المرور">
       </div>
     </div>
     <!-- مؤشر قوة كلمة المرور -->
@@ -466,7 +466,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     </div>
     <div class="fld">
       <label data-i18n="rp.lbl-notes">ملاحظات أو متطلبات خاصة</label>
-      <textarea id="f_notes" placeholder="أي متطلبات أو تساؤلات تريد إيصالها لفريقنا..."></textarea>
+      <textarea id="f_notes" data-i18n-placeholder="rp.ph-notes" placeholder="أي متطلبات أو تساؤلات تريد إيصالها لفريقنا..."></textarea>
     </div>
   </div>
 

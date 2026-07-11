@@ -85,12 +85,15 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 
     <div class="fld">
       <label data-i18n="pl.lbl-email-user">البريد الإلكتروني أو اسم المستخدم</label>
-      <input type="text" id="loginEmail" placeholder="name@company.com أو RAFD-2025-XXXXX" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="username">
+      <input type="text" id="loginEmail" data-i18n-placeholder="pl.ph-email-user" placeholder="name@company.com أو RAFD-2025-XXXXX" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="username">
     </div>
     <div class="fld">
       <label data-i18n="pl.lbl-pass">كلمة المرور</label>
-      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="password" id="loginPass" data-i18n-placeholder="pl.ph-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
+    <!-- Cloudflare Turnstile widget — hidden/inert until a real site key is configured (see TURNSTILE_SITE_KEY below) -->
+    <div id="turnstileWidget" class="cf-turnstile" style="margin:.6rem 0;display:none"></div>
+
     <button class="btn-login" id="loginBtn" onclick="doLogin()"><span data-i18n="pl.btn-login">دخول للوحة التحكم</span></button>
 
     <div class="or-div" data-i18n="pl.or">أو</div>
@@ -150,7 +153,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     </div>
     <div id="nf_step1">
       <div style="font-size:.8rem;color:#94a3b8;margin-bottom:1.1rem;text-align:right" data-i18n="pl.nf-instructions">أدخل رقم هويتك الوطنية ثم أكّد الرقم العشوائي في تطبيق نفاذ</div>
-      <input type="text" id="nf_id" placeholder="رقم الهوية الوطنية (10 أرقام)" maxlength="10" inputmode="numeric"
+      <input type="text" id="nf_id" data-i18n-placeholder="pl.ph-nid" placeholder="رقم الهوية الوطنية (10 أرقام)" maxlength="10" inputmode="numeric"
         oninput="this.value=this.value.replace(/\D/g,'')"
         onkeydown="if(event.key==='Enter')initNafathLogin()"
         style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(10,95,63,.4);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:center;letter-spacing:.15em;direction:ltr;margin-bottom:.75rem">
@@ -182,7 +185,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fp-sub">أدخل بريدك الإلكتروني المسجّل وسنرسل لك رمز التحقق</div>
       <div class="fld">
         <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-fp-email">البريد الإلكتروني</span></label>
-        <input type="email" id="fp_email" placeholder="name@company.com"
+        <input type="email" id="fp_email" data-i18n-placeholder="pl.ph-email" placeholder="name@company.com"
           style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none"
           onkeydown="if(event.key==='Enter')sendResetOtp()">
       </div>
@@ -196,12 +199,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fp-otp-sub">تم إرسال رمز مكوّن من 6 أرقام إلى بريدك</div>
       <div class="fld">
         <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-otp">رمز التحقق</span></label>
-        <input type="text" id="fp_otp" placeholder="000000" maxlength="6" inputmode="numeric"
+        <input type="text" id="fp_otp" data-i18n-placeholder="pl.ph-otp" placeholder="000000" maxlength="6" inputmode="numeric"
           style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:1.3rem;color:#16A870;outline:none;text-align:center;letter-spacing:.3em;direction:ltr">
       </div>
       <div class="fld">
         <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-new-pass">كلمة المرور الجديدة</span></label>
-        <input type="password" id="fp_newpass" placeholder="••••••••"
+        <input type="password" id="fp_newpass" data-i18n-placeholder="pl.ph-newpass" placeholder="••••••••"
           style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none">
       </div>
       <div id="fp_reset_err" style="display:none;font-size:.78rem;color:#f87171;margin-bottom:.75rem"></div>
@@ -219,7 +222,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fe-sub">أدخل اسم جهتك للعثور على بريدك المسجّل</div>
     <div class="fld">
       <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-orgname">اسم الجهة</span></label>
-      <input type="text" id="fe_orgname" placeholder="مثال: جامعة الملك عبدالعزيز"
+      <input type="text" id="fe_orgname" data-i18n-placeholder="pl.ph-orgname-ex1" placeholder="مثال: جامعة الملك عبدالعزيز"
         style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
         onkeydown="if(event.key==='Enter')findEmailByPhone()">
     </div>
@@ -242,7 +245,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div style="font-size:.8rem;color:#64748b;margin-bottom:1.25rem" data-i18n="pl.fu-sub">أدخل اسم جهتك وسيظهر لك اسم المستخدم الخاص بك</div>
     <div class="fld">
       <label style="font-size:.82rem;font-weight:700;color:#94a3b8;display:block;margin-bottom:.4rem"><span data-i18n="pl.lbl-orgname">اسم الجهة</span></label>
-      <input type="text" id="fu_orgname" placeholder="مثال: شركة الأفق للتقنية"
+      <input type="text" id="fu_orgname" data-i18n-placeholder="pl.ph-orgname-ex2" placeholder="مثال: شركة الأفق للتقنية"
         style="width:100%;padding:.8rem 1rem;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-family:'ThmanyahSans', sans-serif;font-size:.9rem;color:#e2e8f0;outline:none;text-align:right"
         onkeydown="if(event.key==='Enter')findUsername()">
     </div>
@@ -260,7 +263,31 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 </div>
 
 <script src="/i18n.js"></script>
+<!-- Cloudflare Turnstile — bot-protection widget for the login form. render=explicit means it
+     only shows up once TURNSTILE_SITE_KEY below is a real key (see onloadTurnstileCallback). -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit" async defer></script>
 <script>
+// Cloudflare Turnstile site key — safe to expose in client-side code (it's public by design).
+// TODO(site owner): replace 'YOUR_SITE_KEY_HERE' with the real site key from the Cloudflare
+// dashboard (Turnstile → Add Widget) before going live. Until then the widget stays hidden
+// and login works exactly as before (no bot protection).
+const TURNSTILE_SITE_KEY = 'YOUR_SITE_KEY_HERE';
+const TURNSTILE_ENABLED = !!TURNSTILE_SITE_KEY && TURNSTILE_SITE_KEY !== 'YOUR_SITE_KEY_HERE';
+let _turnstileWidgetId = null;
+
+function onloadTurnstileCallback() {
+  if (!TURNSTILE_ENABLED) return; // placeholder key — don't render/require the widget
+  const el = document.getElementById('turnstileWidget');
+  if (!el || typeof turnstile === 'undefined') return;
+  el.style.display = 'block';
+  _turnstileWidgetId = turnstile.render(el, { sitekey: TURNSTILE_SITE_KEY });
+}
+
+function getTurnstileToken() {
+  if (!TURNSTILE_ENABLED || typeof turnstile === 'undefined') return '';
+  try { return turnstile.getResponse(_turnstileWidgetId) || ''; } catch (e) { return ''; }
+}
+
 async function partnerAuthApi(data) {
   const r = await fetch('/api/partner-auth', {
     method: 'POST',
@@ -604,7 +631,16 @@ async function doLogin() {
   btn.disabled = true; btn.textContent = 'جاري التحقق...';
 
   try {
-    const { status: loginStatus, data: loginRes } = await partnerAuthApi({ action: 'login', email, password: pass });
+    const turnstileToken = getTurnstileToken();
+    const { status: loginStatus, data: loginRes } = await partnerAuthApi({ action: 'login', email, password: pass, turnstileToken });
+
+    if (loginStatus === 400 && loginRes?.error === 'turnstile_failed') {
+      errEl.textContent = 'فشل التحقق الأمني (Turnstile). أعد تحميل الصفحة وحاول مرة أخرى.';
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'دخول للوحة التحكم';
+      if (TURNSTILE_ENABLED && typeof turnstile !== 'undefined' && _turnstileWidgetId !== null) turnstile.reset(_turnstileWidgetId);
+      return;
+    }
 
     if (loginStatus === 429) {
       errEl.textContent = 'تجاوزت عدد المحاولات المسموحة. انتظر بضع دقائق ثم حاول مجدداً.';
