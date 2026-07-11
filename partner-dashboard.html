@@ -1008,6 +1008,12 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
       <!-- المعايير المخصصة المضافة للقائمة الأساسية -->
       <div id="custom_criteria_inline"></div>
 
+      <!-- Suggested questions by application type -->
+      <div id="suggested_criteria_section" style="border-top:1px solid #1e293b;margin-top:.75rem;padding-top:.75rem;display:none">
+        <div style="font-size:.8rem;color:#64748b;font-weight:600;margin-bottom:.75rem" data-i18n="db.suggested-criteria">💡 أسئلة إضافية مقترحة حسب نوع التقديم — اختر ما يناسبك ويُضاف مباشرة لقائمة المعايير</div>
+        <div id="suggested_criteria_container" style="display:flex;flex-direction:column;gap:.5rem"></div>
+      </div>
+
       <!-- Custom criteria -->
       <div style="border-top:1px solid #1e293b;margin-top:.75rem;padding-top:.75rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
@@ -2245,6 +2251,43 @@ function copyEmbed() {
 const CRITERIA_IDS = ['edu','exp','prev','stage','cust','team','commit'];
 // Startup-pitch-only criteria — only relevant when app_type is 'project' or 'funding'.
 const PROJECT_ONLY_CRITERIA = ['prev','stage','cust','team'];
+
+// أسئلة إضافية مقترحة حسب نوع التقديم — الجهة تختار أيها تضيفه لقائمة المعايير
+const SUGGESTED_CRITERIA = {
+  job: [
+    { key:'job_exp', label:'هل لديك خبرة سابقة في وظيفة مشابهة؟', weight:10, options:[{text:'نعم، أكثر من سنتين',score:10},{text:'نعم، أقل من سنتين',score:6},{text:'لا',score:2}] },
+    { key:'job_shift', label:'ما نوع الدوام الذي تفضله؟', weight:10, options:[{text:'دوام كامل',score:10},{text:'عن بُعد',score:7},{text:'دوام جزئي',score:5}] },
+    { key:'job_start', label:'متى يمكنك مباشرة العمل؟', weight:10, options:[{text:'فوراً',score:10},{text:'خلال أسبوعين',score:7},{text:'خلال شهر',score:4},{text:'أكثر من شهر',score:1}] },
+    { key:'job_comm', label:'هل لديك مهارات تواصل مع العملاء؟', weight:10, options:[{text:'نعم، بخبرة عالية',score:10},{text:'نعم، بخبرة متوسطة',score:6},{text:'لا',score:2}] },
+  ],
+  academic: [
+    { key:'aca_major', label:'هل تخصصك الجامعي ذو صلة بالمجال المطلوب؟', weight:10, options:[{text:'نعم، مطابق تماماً',score:10},{text:'نعم، قريب منه',score:6},{text:'لا',score:2}] },
+    { key:'aca_cert', label:'هل لديك شهادات أو دورات تدريبية إضافية؟', weight:10, options:[{text:'نعم، عدة شهادات',score:10},{text:'نعم، شهادة واحدة',score:6},{text:'لا',score:2}] },
+    { key:'aca_activity', label:'هل شاركت في أنشطة طلابية أو بحثية؟', weight:10, options:[{text:'نعم، بشكل فعّال',score:10},{text:'نعم، بشكل محدود',score:6},{text:'لا',score:2}] },
+    { key:'aca_eng', label:'ما مستوى إتقانك للغة الإنجليزية؟', weight:10, options:[{text:'ممتاز',score:10},{text:'جيد جداً',score:7},{text:'متوسط',score:4},{text:'ضعيف',score:1}] },
+  ],
+  funding: [
+    { key:'fund_plan', label:'هل لديك دراسة جدوى مكتملة؟', weight:10, options:[{text:'نعم',score:10},{text:'جزئياً',score:5},{text:'لا',score:0}] },
+    { key:'fund_equity', label:'ما نسبة الملكية التي تعرضها مقابل التمويل؟', weight:10, options:[{text:'أقل من 10%',score:10},{text:'10% – 20%',score:7},{text:'أكثر من 20%',score:3}] },
+  ],
+  member: [
+    { key:'mem_reason', label:'ما دافعك الرئيسي للانضمام؟', weight:10, options:[{text:'تطوير مهني',score:10},{text:'فرص عمل',score:8},{text:'تواصل مجتمعي',score:6}] },
+    { key:'mem_prev', label:'هل شاركت سابقاً في عضويات أو مبادرات مشابهة؟', weight:10, options:[{text:'نعم',score:10},{text:'لا',score:4}] },
+    { key:'mem_time', label:'كم من الوقت تستطيع تخصيصه للمشاركة أسبوعياً؟', weight:10, options:[{text:'أكثر من 5 ساعات',score:10},{text:'2 – 5 ساعات',score:6},{text:'أقل من ساعتين',score:2}] },
+  ],
+  gov: [
+    { key:'gov_first', label:'هل استفدت سابقاً من خدمة مشابهة؟', weight:10, options:[{text:'لا، هذه أول مرة',score:10},{text:'نعم',score:5}] },
+    { key:'gov_eligible', label:'هل تنطبق عليك جميع الشروط النظامية المعلنة؟', weight:10, options:[{text:'نعم، بالكامل',score:10},{text:'جزئياً',score:4},{text:'لست متأكداً',score:2}] },
+  ],
+  npo: [
+    { key:'npo_exp', label:'هل لديك خبرة تطوعية سابقة؟', weight:10, options:[{text:'نعم، أكثر من سنة',score:10},{text:'نعم، أقل من سنة',score:6},{text:'لا',score:2}] },
+    { key:'npo_commit', label:'ما مدى التزامك بالحضور المنتظم؟', weight:10, options:[{text:'التزام كامل',score:10},{text:'التزام جزئي',score:5},{text:'غير محدد',score:1}] },
+  ],
+  general: [
+    { key:'gen_reason', label:'هل لديك دافع واضح ومحدد للتقديم؟', weight:10, options:[{text:'نعم، دافع واضح ومحدد',score:10},{text:'دافع عام',score:5}] },
+    { key:'gen_prev', label:'هل سبق أن تقدمت لبرنامج مشابه؟', weight:10, options:[{text:'لا، هذه أول مرة',score:10},{text:'نعم',score:6}] },
+  ],
+};
 const DOC_IDS = ['cv','reg','cert','id'];
 const qStates = {};
 const docStates = { cv: true, reg: true, cert: false, id: false };
@@ -2528,7 +2571,49 @@ function onAppTypeChange() {
       if (card) card.style.display = '';
     });
   }
+  renderSuggestedCriteria();
   updateWeightTotal();
+}
+
+function renderSuggestedCriteria() {
+  const container = document.getElementById('suggested_criteria_container');
+  const section = document.getElementById('suggested_criteria_section');
+  if (!container || !section) return;
+  const appType = document.getElementById('fc_app_type')?.value || 'project';
+  const list = SUGGESTED_CRITERIA[appType] || [];
+  if (!list.length) { section.style.display = 'none'; container.innerHTML = ''; return; }
+  section.style.display = '';
+  container.innerHTML = list.map(sug => {
+    const added = customCriteria.some(c => c.suggested_key === sug.key);
+    return `
+    <label style="display:flex;align-items:center;gap:.65rem;background:${added ? 'rgba(11,93,59,.1)' : '#0f172a'};border:1px solid ${added ? 'rgba(11,93,59,.35)' : '#1e293b'};border-radius:10px;padding:.65rem .85rem;cursor:pointer">
+      <input type="checkbox" ${added ? 'checked' : ''} onchange="toggleSuggestedCriterion('${sug.key}')" style="accent-color:#16A870;width:16px;height:16px;flex-shrink:0">
+      <span style="flex:1;font-size:.82rem;color:#e2e8f0">${sug.label}</span>
+      <span style="font-size:.7rem;color:#64748b;flex-shrink:0">${sug.options.map(o=>o.text).join(' / ')}</span>
+    </label>`;
+  }).join('');
+}
+
+async function toggleSuggestedCriterion(key) {
+  const appType = document.getElementById('fc_app_type')?.value || 'project';
+  const sug = (SUGGESTED_CRITERIA[appType] || []).find(s => s.key === key);
+  if (!sug) return;
+  const idx = customCriteria.findIndex(c => c.suggested_key === key);
+  if (idx !== -1) {
+    customCriteria.splice(idx, 1);
+  } else {
+    customCriteria.push({
+      label: sug.label, weight: sug.weight, confirmed: true, suggested_key: sug.key,
+      options: sug.options.map(o => ({ text:o.text, score:o.score })),
+    });
+  }
+  renderCustomCriteria();
+  renderSuggestedCriteria();
+  updateWeightTotal();
+  const fc = { ...(partner.formConfig || {}), custom_criteria: customCriteria };
+  await pdApi({ action: 'update_config', form_config: fc });
+  partner.formConfig = fc;
+  toast(idx !== -1 ? '✓ تمت إزالة السؤال' : '✓ تمت إضافة السؤال للمعايير', 'success');
 }
 
 function toggleGpaOptions() {
@@ -2748,6 +2833,7 @@ function editCriterion(ci) {
 function removeCustomCriterion(idx) {
   customCriteria.splice(idx, 1);
   renderCustomCriteria();
+  renderSuggestedCriteria();
   updateWeightTotal();
 }
 
