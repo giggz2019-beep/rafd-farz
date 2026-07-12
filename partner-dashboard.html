@@ -3318,10 +3318,18 @@ async function saveFormConfig() {
       await persistSavedForms();
       renderSavedFormsList();
     }
+  } else {
+    // أول حفظ لهذا الإعداد — يُحفظ تلقائياً كنموذج باسم البرنامج، بدون أي خطوة يدوية
+    const newForm = { id: Date.now().toString(), slug: genSlug(), name: programName, config: fc, saved_at: new Date().toISOString() };
+    savedForms.push(newForm);
+    editingFormId = newForm.id;
+    showEditingBanner(programName);
+    await persistSavedForms();
+    renderSavedFormsList();
   }
   // Update link preview
   document.getElementById('fc_preview_link').textContent = getPartnerLinkUrl();
-  toast('✅ تم حفظ إعدادات النموذج وتفعيله! — الرابط جاهز للمشاركة' + (editingFormId ? ' — وتحديث القالب المحفوظ' : ''));
+  toast('✅ تم حفظ إعدادات النموذج وتفعيله وحفظه كنموذج باسم "' + programName + '"');
 }
 
 function resetFormConfig() {
