@@ -173,7 +173,25 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   .steps-row{display:none}
   .otp-digit{width:44px;height:52px;font-size:1.3rem}
 }
-.lang-toggle{background:none;border:1.5px solid rgba(255,255,255,.3);border-radius:8px;padding:.3rem .7rem;font-size:.78rem;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;font-family:ThmanyahSans,sans-serif;white-space:nowrap}.lang-toggle:hover{background:rgba(255,255,255,.1)}</style>
+.lang-toggle{background:none;border:1.5px solid rgba(255,255,255,.3);border-radius:8px;padding:.3rem .7rem;font-size:.78rem;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;font-family:ThmanyahSans,sans-serif;white-space:nowrap}.lang-toggle:hover{background:rgba(255,255,255,.1)}
+/* ===== PAYMENT CHOICE ===== */
+.pay-choice-screen{display:none;max-width:480px;margin:0 auto;padding:2rem 1.5rem 4rem;text-align:center}
+.pay-choice-icon{width:80px;height:80px;background:linear-gradient(135deg,#0A1628,#123554);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1.5rem}
+.pay-choice-title{font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:.5rem}
+.pay-choice-desc{color:#94a3b8;font-size:.9rem;line-height:1.8;margin-bottom:2rem}
+.pay-method-btn{width:100%;background:rgba(30,41,59,.7);border:2px solid rgba(255,255,255,.1);border-radius:16px;padding:1.25rem;margin-bottom:.85rem;cursor:pointer;text-align:right;display:flex;align-items:center;gap:1rem;transition:border-color .2s,background .2s;font-family:'ThmanyahSans',sans-serif}
+.pay-method-btn:hover{border-color:rgba(233,205,138,.4);background:rgba(233,205,138,.05)}
+.pay-method-btn.tamara-btn{border-color:rgba(62,185,106,.2)}
+.pay-method-btn.tamara-btn:hover{border-color:rgba(62,185,106,.5);background:rgba(62,185,106,.05)}
+.pay-method-btn:disabled{opacity:.5;cursor:not-allowed}
+.pay-method-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.pay-method-icon.card-icon{background:rgba(233,205,138,.1);border:1px solid rgba(233,205,138,.25)}
+.pay-method-icon.tamara-icon{background:rgba(62,185,106,.1);border:1px solid rgba(62,185,106,.25)}
+.pay-method-label{font-size:.95rem;font-weight:800;color:#fff;margin-bottom:.2rem}
+.pay-method-sub{font-size:.78rem;color:#94a3b8}
+.pay-method-sub.green{color:#6ee7b7}
+.pay-choice-error{color:#ef4444;font-size:.85rem;margin-top:.5rem;display:none}
+</style>
 </head>
 <body>
 
@@ -524,6 +542,31 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <span class="otp-timer" id="otpTimerText"><span data-i18n="rp.resend-after">إعادة الإرسال بعد</span> <span id="otpTimer">3:00</span></span>
     <button class="btn-resend" id="resendBtn" onclick="resendOTP()" disabled data-i18n="rp.resend-btn">إعادة الإرسال</button>
   </div>
+</div>
+
+<!-- PAYMENT CHOICE SCREEN -->
+<div class="pay-choice-screen" id="paymentChoiceSection">
+  <div class="pay-choice-icon">💳</div>
+  <div class="pay-choice-title" data-i18n="rp.pay-title">اختر طريقة الدفع</div>
+  <div class="pay-choice-desc" data-i18n="rp.pay-desc">اختر الطريقة الأنسب لإتمام اشتراكك</div>
+
+  <button class="pay-method-btn" id="cardPayBtn" onclick="payWithCard()">
+    <div class="pay-method-icon card-icon">💳</div>
+    <div style="flex:1;text-align:right">
+      <div class="pay-method-label" data-i18n="rp.pay-card">دفع بالبطاقة البنكية</div>
+      <div class="pay-method-sub">Visa / Mastercard / Mada</div>
+    </div>
+  </button>
+
+  <button class="pay-method-btn tamara-btn" id="tamaraPayBtn" onclick="payWithTamara()">
+    <div class="pay-method-icon tamara-icon" style="font-size:1rem;font-weight:900;color:#3EB96A">تمارا</div>
+    <div style="flex:1;text-align:right">
+      <div class="pay-method-label" data-i18n="rp.pay-tamara">ادفع بالتقسيط — تمارا</div>
+      <div class="pay-method-sub green" data-i18n="rp.pay-tamara-sub">3 أقساط بدون فوائد</div>
+    </div>
+  </button>
+
+  <div class="pay-choice-error" id="payChoiceError"></div>
 </div>
 
 <!-- SUCCESS -->
@@ -1035,10 +1078,11 @@ async function verifyOTP() {
     showOTPError('حدث خطأ في الاتصال — تحقق من اتصالك بالإنترنت');
     return;
   }
-  // الرمز صحيح
+  // الرمز صحيح — نحفظ البيانات ونعرض شاشة اختيار طريقة الدفع
   sessionStorage.removeItem('rafd_challenge');
   clearInterval(timerInterval);
-  verifyBtn.textContent = 'جاري الحفظ...';
+  verifyBtn.textContent = '✓ تم التحقق';
+  verifyBtn.disabled = true;
 
   const partnerData = {
     org_name: pendingPartner.org,
@@ -1057,34 +1101,79 @@ async function verifyOTP() {
     ref_num: pendingPartner.refNum,
   };
 
-  // كل الخطط تمر عبر بوابة الدفع — الحساب يُنشأ فقط بعد تأكيد الدفع
-  try {
-    sessionStorage.setItem('rafd_pending_partner', JSON.stringify({
-      partnerData, password: pendingPartner.password, plan: pendingPartner.plan,
-    }));
+  sessionStorage.setItem('rafd_pending_partner', JSON.stringify({
+    partnerData, password: pendingPartner.password, plan: pendingPartner.plan,
+  }));
 
+  document.getElementById('otpSection').style.display = 'none';
+  document.getElementById('paymentChoiceSection').style.display = 'block';
+}
+
+async function payWithCard() {
+  const cardBtn = document.getElementById('cardPayBtn');
+  const tamaraBtn = document.getElementById('tamaraPayBtn');
+  const errEl = document.getElementById('payChoiceError');
+  cardBtn.disabled = true;
+  tamaraBtn.disabled = true;
+  errEl.style.display = 'none';
+
+  try {
+    const pp = JSON.parse(sessionStorage.getItem('rafd_pending_partner') || '{}');
     const res = await fetch('/api/create-payment', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        plan: pendingPartner.plan,
-        email: pendingPartner.email,
-        name: pendingPartner.fname,
-        phone: pendingPartner.phone,
-        org: pendingPartner.org,
+        plan: pp.plan,
+        email: pp.partnerData.email,
+        name: pp.partnerData.fname,
+        phone: pp.partnerData.phone,
+        org: pp.partnerData.org_name,
       }),
     });
-    const payData = await res.json();
-    if (!res.ok || !payData.paymentUrl) throw new Error(payData?.error || 'تعذّر بدء عملية الدفع');
+    const data = await res.json();
+    if (!res.ok || !data.paymentUrl) throw new Error(data?.error || 'تعذّر بدء عملية الدفع');
+    window.location.href = data.paymentUrl;
+  } catch (err) {
+    console.error('payWithCard error:', err);
+    errEl.textContent = 'حدث خطأ: ' + err.message;
+    errEl.style.display = 'block';
+    cardBtn.disabled = false;
+    tamaraBtn.disabled = false;
+  }
+}
 
-    window.location.href = payData.paymentUrl;
+async function payWithTamara() {
+  const cardBtn = document.getElementById('cardPayBtn');
+  const tamaraBtn = document.getElementById('tamaraPayBtn');
+  const errEl = document.getElementById('payChoiceError');
+  tamaraBtn.disabled = true;
+  cardBtn.disabled = true;
+  errEl.style.display = 'none';
 
-  } catch(err) {
-    console.error('Create payment error:', err);
-    sessionStorage.removeItem('rafd_pending_partner');
-    alert('حدث خطأ أثناء بدء عملية الدفع: ' + err.message);
-    verifyBtn.disabled = false;
-    verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
+  try {
+    const pp = JSON.parse(sessionStorage.getItem('rafd_pending_partner') || '{}');
+    const res = await fetch('/api/tamara-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan: pp.plan,
+        email: pp.partnerData.email,
+        firstName: pp.partnerData.fname,
+        lastName: pp.partnerData.lname,
+        phone: pp.partnerData.phone,
+        org: pp.partnerData.org_name,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.checkoutUrl) throw new Error(data?.error || 'تعذّر بدء عملية تمارا');
+    sessionStorage.setItem('rafd_tamara_order', JSON.stringify({ orderId: data.orderId, orderRef: data.orderRef }));
+    window.location.href = data.checkoutUrl;
+  } catch (err) {
+    console.error('payWithTamara error:', err);
+    errEl.textContent = 'حدث خطأ: ' + err.message;
+    errEl.style.display = 'block';
+    tamaraBtn.disabled = false;
+    cardBtn.disabled = false;
   }
 }
 

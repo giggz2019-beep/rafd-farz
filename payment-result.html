@@ -102,10 +102,30 @@ function showState(id) {
   });
 }
 
+function applySuccess(emailSent, refNum) {
+  const desc = document.getElementById('successDesc');
+  const descKey = emailSent === true ? 'pay.success-desc-sent' : 'pay.success-desc-nosend';
+  desc.setAttribute('data-i18n', descKey);
+  desc.textContent = typeof getT === 'function' ? getT(descKey) : desc.textContent;
+  if (refNum) {
+    const box = document.getElementById('refBox');
+    box.textContent = refNum;
+    box.style.display = 'inline-block';
+  }
+  showState('stateSuccess');
+}
+
 async function run() {
   const params = new URLSearchParams(window.location.search);
-  const ref = params.get('ref') || params.get('order') || params.get('order_ref') || '';
+  const provider = params.get('provider');
 
+  if (provider === 'tamara') {
+    await runTamara(params);
+    return;
+  }
+
+  // N-Genius flow
+  const ref = params.get('ref') || params.get('order') || params.get('order_ref') || '';
   if (!ref) { showState('stateFailed'); return; }
 
   let verifyData;
@@ -125,7 +145,6 @@ async function run() {
     const pendingRaw = sessionStorage.getItem('rafd_pending_partner');
 
     if (upgradeRaw) {
-      // Existing partner upgrading their plan
       try {
         const upgrade = JSON.parse(upgradeRaw);
         const res = await fetch('/api/partner-data', {
@@ -144,7 +163,6 @@ async function run() {
       } catch (e) { emailSent = false; }
 
     } else if (pendingRaw) {
-      // New partner registering after payment
       try {
         const pending = JSON.parse(pendingRaw);
         const res = await fetch('/api/partner-auth', {
@@ -169,21 +187,73 @@ async function run() {
         } else {
           emailSent = false;
         }
-      } catch (e) {
-        emailSent = false;
-      }
+      } catch (e) { emailSent = false; }
     }
 
-    const desc = document.getElementById('successDesc');
-    const descKey = emailSent === true ? 'pay.success-desc-sent' : 'pay.success-desc-nosend';
-    desc.setAttribute('data-i18n', descKey);
-    desc.textContent = typeof getT === 'function' ? getT(descKey) : desc.textContent;
-    if (refNum) {
-      const box = document.getElementById('refBox');
-      box.textContent = refNum;
-      box.style.display = 'inline-block';
+    applySuccess(emailSent, refNum);
+
+  } else if (verifyData.status === 'PENDING') {
+    showState('statePending');
+  } else {
+    showState('stateFailed');
+  }
+}
+
+async function runTamara(params) {
+  if (params.get('status') === 'failed') {
+    showState('stateFailed');
+    return;
+  }
+
+  // orderId: Tamara appends it to the redirect URL; sessionStorage is a fallback
+  const stored = JSON.parse(sessionStorage.getItem('rafd_tamara_order') || '{}');
+  const orderId = params.get('orderId') || stored.orderId;
+  if (!orderId) { showState('stateFailed'); return; }
+
+  let verifyData;
+  try {
+    const r = await fetch('/api/tamara-verify?orderId=' + encodeURIComponent(orderId));
+    verifyData = await r.json();
+  } catch (e) {
+    showState('statePending');
+    return;
+  }
+
+  if (verifyData.status === 'SUCCESS') {
+    let emailSent = null;
+    let refNum = '';
+    const pendingRaw = sessionStorage.getItem('rafd_pending_partner');
+
+    if (pendingRaw) {
+      try {
+        const pending = JSON.parse(pendingRaw);
+        const res = await fetch('/api/partner-auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'register_after_tamara_payment',
+            orderId,
+            plan: pending.plan,
+            partnerData: pending.partnerData,
+            password: pending.password,
+          }),
+        });
+        const data = await res.json();
+        if (res.ok && data.partner) {
+          sessionStorage.removeItem('rafd_pending_partner');
+          sessionStorage.removeItem('rafd_tamara_order');
+          localStorage.setItem('rafd_partner_session', JSON.stringify({
+            token: data.token, id: data.partner.id, email: data.partner.email, org: data.partner.org_name,
+          }));
+          emailSent = data.emailSent === true;
+          refNum = data.partner.ref_num || '';
+        } else {
+          emailSent = false;
+        }
+      } catch (e) { emailSent = false; }
     }
-    showState('stateSuccess');
+
+    applySuccess(emailSent, refNum);
 
   } else if (verifyData.status === 'PENDING') {
     showState('statePending');
