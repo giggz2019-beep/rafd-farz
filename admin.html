@@ -8,13 +8,15 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة تحكم المدير — RAFD</title>
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
 <style>
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Light.otf') format('opentype'); font-weight: 300; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Medium.otf') format('opentype'); font-weight: 500 600; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Bold.otf') format('opentype'); font-weight: 700 900; font-display: swap; }
+h1,h2,h3,h4,h5,h6,[class*="title"]{font-family:'ThmanyahSans',sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'ThmanyahSans', sans-serif;background:#0A1628;color:#e2e8f0;direction:rtl;min-height:100vh}
+body{font-family:'Almarai','Segoe UI',Tahoma,sans-serif;background:#0A1628;color:#e2e8f0;direction:rtl;min-height:100vh}
 
 /* ===== LOGIN SCREEN ===== */
 .admin-login{position:fixed;inset:0;background:#0A1628;display:flex;align-items:center;justify-content:center;z-index:9999}
@@ -219,7 +221,7 @@ td{padding:.9rem 1rem;font-size:.85rem;color:#cbd5e1;vertical-align:middle}
           <div class="admin-role">RAFD Digital</div>
         </div>
       </div>
-      <button id="langToggleBtn" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')" style="background:none;border:1px solid #334155;border-radius:6px;padding:.25rem .6rem;color:#94a3b8;font-size:.75rem;cursor:pointer;font-family:'ThmanyahSans',sans-serif;margin-top:.5rem;width:100%;white-space:nowrap">🌐 EN</button>
+      <button id="langToggleBtn" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')" style="background:none;border:1px solid #334155;border-radius:6px;padding:.25rem .6rem;color:#94a3b8;font-size:.75rem;cursor:pointer;font-family:'Almarai','Segoe UI',Tahoma,sans-serif;margin-top:.5rem;width:100%;white-space:nowrap">🌐 EN</button>
     </div>
   </aside>
 
