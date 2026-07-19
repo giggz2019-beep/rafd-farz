@@ -224,9 +224,30 @@ async function runTamara(params) {
   if (verifyData.status === 'SUCCESS') {
     let emailSent = null;
     let refNum = '';
+
+    const upgradeRaw = sessionStorage.getItem('rafd_upgrade_info');
     const pendingRaw = sessionStorage.getItem('rafd_pending_partner');
 
-    if (pendingRaw) {
+    if (upgradeRaw) {
+      try {
+        const upgrade = JSON.parse(upgradeRaw);
+        const res = await fetch('/api/partner-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'upgrade_plan_tamara', token: upgrade.token, orderId, plan: upgrade.plan }),
+        });
+        const data = await res.json();
+        if (res.ok && data.partner) {
+          sessionStorage.removeItem('rafd_upgrade_info');
+          sessionStorage.removeItem('rafd_tamara_order');
+          const sess = JSON.parse(localStorage.getItem('rafd_partner_session') || '{}');
+          localStorage.setItem('rafd_partner_session', JSON.stringify({ ...sess, plan: data.partner.plan }));
+          refNum = data.partner.ref_num || '';
+        }
+        emailSent = res.ok;
+      } catch (e) { emailSent = false; }
+
+    } else if (pendingRaw) {
       try {
         const pending = JSON.parse(pendingRaw);
         const res = await fetch('/api/partner-auth', {

@@ -231,6 +231,46 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true, partner: updated });
     }
 
+    if (action === 'upgrade_plan_tamara') {
+      const { orderId, plan } = body;
+      if (!orderId || !plan) return res.status(400).json({ error: 'missing_fields' });
+      const expectedPrice = PAID_PLAN_PRICES[plan];
+      if (!expectedPrice) return res.status(400).json({ error: 'invalid_plan' });
+
+      const existing = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=*&limit=1`, undefined, key);
+      if (!existing?.length) return res.status(404).json({ error: 'not_found' });
+      if (existing[0].payment_ref === orderId) return res.status(200).json({ ok: true, partner: existing[0] });
+
+      const tamaraToken = process.env.TAMARA_API_TOKEN;
+      const tamaraUrl = (process.env.TAMARA_API_URL || 'https://api.tamara.co').replace(/\/$/, '');
+      if (!tamaraToken) return res.status(500).json({ error: 'Tamara not configured' });
+
+      let tamaraOrder;
+      try {
+        const r = await fetch(`${tamaraUrl}/orders/${encodeURIComponent(orderId)}`, {
+          headers: { Authorization: `Bearer ${tamaraToken}` },
+        });
+        if (!r.ok) return res.status(502).json({ error: 'payment_verification_failed' });
+        tamaraOrder = await r.json();
+      } catch (err) {
+        return res.status(502).json({ error: 'payment_verification_failed' });
+      }
+
+      const s = (tamaraOrder.status || '').toLowerCase();
+      if (!['approved', 'fully_captured', 'partially_captured'].includes(s)) {
+        return res.status(402).json({ error: 'payment_not_confirmed', status: s });
+      }
+      const tamaraAmount = parseFloat(tamaraOrder.total_amount?.amount || '0');
+      if (Math.abs(tamaraAmount - expectedPrice) > 0.01) {
+        return res.status(400).json({ error: 'amount_mismatch' });
+      }
+
+      const rows = await sb('PATCH', `/partners?email=eq.${encodeURIComponent(email)}`,
+        { plan, price: expectedPrice, payment_ref: orderId, status: 'approved' }, key);
+      const updated = Array.isArray(rows) ? rows[0] : existing[0];
+      return res.status(200).json({ ok: true, partner: updated });
+    }
+
     return res.status(400).json({ error: 'unknown_action' });
 
   } catch (err) {

@@ -1289,6 +1289,33 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
   </div>
 </div>
 
+<!-- UPGRADE PAYMENT CHOICE MODAL -->
+<div class="modal-overlay" id="upgradePayModal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hdr">
+      <div class="modal-title">💳 <span data-i18n="db.pay-modal-title">اختر طريقة الدفع</span></div>
+      <button class="btn-close" onclick="document.getElementById('upgradePayModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:.75rem">
+      <button id="upgCardBtn" onclick="upgradeWithCard()" style="width:100%;background:rgba(233,205,138,.08);border:1.5px solid rgba(233,205,138,.25);border-radius:14px;padding:1rem 1.25rem;cursor:pointer;text-align:right;display:flex;align-items:center;gap:.85rem;font-family:inherit;transition:background .2s">
+        <div style="width:42px;height:42px;border-radius:10px;background:rgba(233,205,138,.12);border:1px solid rgba(233,205,138,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">💳</div>
+        <div style="flex:1;text-align:right">
+          <div style="font-size:.9rem;font-weight:800;color:#fff;margin-bottom:.15rem" data-i18n="db.pay-card">دفع بالبطاقة البنكية</div>
+          <div style="font-size:.75rem;color:#94a3b8">Visa / Mastercard / Mada</div>
+        </div>
+      </button>
+      <button id="upgTamaraBtn" onclick="upgradeWithTamara()" style="width:100%;background:rgba(62,185,106,.06);border:1.5px solid rgba(62,185,106,.2);border-radius:14px;padding:1rem 1.25rem;cursor:pointer;text-align:right;display:flex;align-items:center;gap:.85rem;font-family:inherit;transition:background .2s">
+        <div style="width:42px;height:42px;border-radius:10px;background:rgba(62,185,106,.1);border:1px solid rgba(62,185,106,.2);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:900;color:#3EB96A;flex-shrink:0">تمارا</div>
+        <div style="flex:1;text-align:right">
+          <div style="font-size:.9rem;font-weight:800;color:#fff;margin-bottom:.15rem" data-i18n="db.pay-tamara">ادفع بالتقسيط — تمارا</div>
+          <div style="font-size:.75rem;color:#6ee7b7" data-i18n="db.pay-tamara-sub">3 أقساط بدون فوائد</div>
+        </div>
+      </button>
+      <div id="upgPayError" style="color:#ef4444;font-size:.82rem;display:none;margin-top:.25rem"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===== API Helper =====
 async function pdApi(data) {
@@ -2080,12 +2107,25 @@ function renderSubscription() {
   });
 }
 
-async function requestUpgrade(plan) {
+let _upgradePlan = null;
+
+function requestUpgrade(plan) {
   const sess = JSON.parse(localStorage.getItem('rafd_partner_session') || '{}');
   if (!sess.token) { toast(getT('db.toast-session-expired'), 'warn'); return; }
+  _upgradePlan = plan;
+  document.getElementById('upgPayError').style.display = 'none';
+  document.getElementById('upgCardBtn').disabled = false;
+  document.getElementById('upgTamaraBtn').disabled = false;
+  document.getElementById('upgradePayModal').classList.add('open');
+}
 
-  const btn = document.getElementById('btn_' + plan);
-  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+async function upgradeWithCard() {
+  const sess = JSON.parse(localStorage.getItem('rafd_partner_session') || '{}');
+  const plan = _upgradePlan;
+  const errEl = document.getElementById('upgPayError');
+  document.getElementById('upgCardBtn').disabled = true;
+  document.getElementById('upgTamaraBtn').disabled = true;
+  errEl.style.display = 'none';
 
   try {
     const r = await fetch('/api/create-payment', {
@@ -2100,17 +2140,48 @@ async function requestUpgrade(plan) {
       }),
     });
     const data = await r.json();
-    if (!r.ok || !data.paymentUrl) {
-      toast(getT('db.toast-payment-error') || 'حدث خطأ في بدء الدفع', 'error');
-      if (btn) { btn.disabled = false; btn.textContent = getT('db.req-upgrade'); }
-      return;
-    }
-    // Store upgrade context so payment-result.html knows it's an upgrade not a new registration
+    if (!r.ok || !data.paymentUrl) throw new Error(data?.error || 'حدث خطأ في بدء الدفع');
     sessionStorage.setItem('rafd_upgrade_info', JSON.stringify({ token: sess.token, plan }));
     window.location.href = data.paymentUrl;
   } catch (e) {
-    toast(getT('db.toast-payment-error') || 'حدث خطأ في بدء الدفع', 'error');
-    if (btn) { btn.disabled = false; btn.textContent = getT('db.req-upgrade'); }
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+    document.getElementById('upgCardBtn').disabled = false;
+    document.getElementById('upgTamaraBtn').disabled = false;
+  }
+}
+
+async function upgradeWithTamara() {
+  const sess = JSON.parse(localStorage.getItem('rafd_partner_session') || '{}');
+  const plan = _upgradePlan;
+  const errEl = document.getElementById('upgPayError');
+  document.getElementById('upgTamaraBtn').disabled = true;
+  document.getElementById('upgCardBtn').disabled = true;
+  errEl.style.display = 'none';
+
+  try {
+    const r = await fetch('/api/tamara-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan,
+        email: partner.email,
+        firstName: partner.fname || partner.org || '',
+        lastName: partner.lname || 'الشريك',
+        phone: partner.phone || '',
+        org: partner.org || '',
+      }),
+    });
+    const data = await r.json();
+    if (!r.ok || !data.checkoutUrl) throw new Error(data?.error || 'تعذّر بدء عملية تمارا');
+    sessionStorage.setItem('rafd_upgrade_info', JSON.stringify({ token: sess.token, plan }));
+    sessionStorage.setItem('rafd_tamara_order', JSON.stringify({ orderId: data.orderId, orderRef: data.orderRef }));
+    window.location.href = data.checkoutUrl;
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+    document.getElementById('upgTamaraBtn').disabled = false;
+    document.getElementById('upgCardBtn').disabled = false;
   }
 }
 
