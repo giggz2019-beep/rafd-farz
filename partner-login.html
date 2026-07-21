@@ -108,6 +108,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <span data-i18n="pl.nafath-linked">✅ تم ربط حسابك بنفاذ — هويتك موثّقة</span>
     </div>
 
+    <!-- Google Sign-In button — hidden/inert until a real client ID is configured (see GOOGLE_CLIENT_ID below) -->
+    <div id="googleSignInWrap" style="display:none;margin-top:.75rem">
+      <div id="googleSignInBtn" style="display:flex;justify-content:center;color-scheme:light"></div>
+      <div id="googleErr" style="display:none;font-size:.78rem;color:#f87171;margin-top:.6rem;text-align:center"></div>
+    </div>
+
     <div class="links">
       <a href="/register-partner.html" class="reg-link" data-i18n="pl.link-register">تسجيل جهة جديدة ←</a>
       <a href="#" onclick="showForgot();return false;" style="color:#64748b"><span data-i18n="pl.link-forgot-pass">نسيت كلمة المرور؟</span></a>
@@ -268,6 +274,9 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 <!-- Cloudflare Turnstile — bot-protection widget for the login form. render=explicit means it
      only shows up once TURNSTILE_SITE_KEY below is a real key (see onloadTurnstileCallback). -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit" async defer></script>
+<!-- Google Identity Services — "Sign in with Google" button. Stays hidden until
+     GOOGLE_CLIENT_ID below is a real client ID (see initGoogleSignIn). -->
+<script src="https://accounts.google.com/gsi/client" onload="if(window.initGoogleSignIn)initGoogleSignIn()" async defer></script>
 <script>
 // Cloudflare Turnstile site key — safe to expose in client-side code (it's public by design).
 // TODO(site owner): replace 'YOUR_SITE_KEY_HERE' with the real site key from the Cloudflare
@@ -288,6 +297,83 @@ function onloadTurnstileCallback() {
 function getTurnstileToken() {
   if (!TURNSTILE_ENABLED || typeof turnstile === 'undefined') return '';
   try { return turnstile.getResponse(_turnstileWidgetId) || ''; } catch (e) { return ''; }
+}
+
+// Google OAuth client ID — safe to expose in client-side code (it's public by design).
+// TODO(site owner): create an OAuth 2.0 Web client in Google Cloud Console
+// (APIs & Services → Credentials → Create Credentials → OAuth client ID), add the site
+// origin to "Authorized JavaScript origins", then paste the client ID here AND set the
+// same value as the GOOGLE_CLIENT_ID env var in Vercel (used by api/partner-auth.js to
+// verify tokens). Until then the button stays hidden and login works exactly as before.
+const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID_HERE';
+const GOOGLE_ENABLED = !!GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID_HERE';
+
+function initGoogleSignIn() {
+  if (!GOOGLE_ENABLED) return; // placeholder client ID — keep the button hidden
+  if (typeof google === 'undefined' || !google.accounts?.id) return;
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: onGoogleCredential,
+    ux_mode: 'popup',
+  });
+  const lang = localStorage.getItem('rafd_lang') || 'en';
+  google.accounts.id.renderButton(document.getElementById('googleSignInBtn'), {
+    theme: 'outline', size: 'large', shape: 'pill',
+    text: 'signin_with', locale: lang === 'ar' ? 'ar' : 'en', width: 320,
+  });
+  document.getElementById('googleSignInWrap').style.display = 'block';
+}
+
+// The GIS script is async — if it finished loading before this script ran, its onload
+// already fired into the void, so try again now that initGoogleSignIn exists.
+if (typeof google !== 'undefined' && google.accounts?.id) initGoogleSignIn();
+
+// Re-render the Google button in the new locale when the user switches language
+document.addEventListener('rafd-lang-changed', function() {
+  if (!GOOGLE_ENABLED || typeof google === 'undefined' || !google.accounts?.id) return;
+  const btn = document.getElementById('googleSignInBtn');
+  btn.innerHTML = '';
+  const lang = localStorage.getItem('rafd_lang') || 'en';
+  google.accounts.id.renderButton(btn, {
+    theme: 'outline', size: 'large', shape: 'pill',
+    text: 'signin_with', locale: lang === 'ar' ? 'ar' : 'en', width: 320,
+  });
+});
+
+async function onGoogleCredential(response) {
+  const errEl = document.getElementById('googleErr');
+  errEl.style.display = 'none';
+  if (!response?.credential) return;
+  try {
+    const { status: gs, data: gd } = await partnerAuthApi({ action: 'google_login', credential: response.credential });
+
+    if (gs === 200 && gd.ok && gd.token) {
+      const p = gd.partner;
+      localStorage.setItem('rafd_partner_session', JSON.stringify({
+        token: gd.token,
+        id: p.id, email: p.email, org: p.org_name,
+        fname: p.fname, lname: p.lname, orgtype: p.org_type,
+        plan: p.plan, ref_num: p.ref_num, title: p.title
+      }));
+      window.location.href = '/partner-dashboard.html';
+      return;
+    }
+
+    if (gd?.rejected) {
+      errEl.textContent = getT('pl.google-err-rejected');
+    } else if (gs === 404 && gd?.error === 'no_account') {
+      errEl.textContent = getT('pl.google-err-no-account');
+    } else if (gs === 429) {
+      errEl.textContent = getT('pl.google-err-rate');
+    } else {
+      errEl.textContent = getT('pl.google-err-failed');
+    }
+    errEl.style.display = 'block';
+  } catch (err) {
+    console.error('Google sign-in error:', err);
+    errEl.textContent = getT('pl.google-err-failed');
+    errEl.style.display = 'block';
+  }
 }
 
 async function partnerAuthApi(data) {

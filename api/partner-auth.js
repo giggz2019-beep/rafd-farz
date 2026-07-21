@@ -45,6 +45,26 @@ async function verifyTurnstile(token, ip) {
   }
 }
 
+// Google Sign-In — verify the ID token issued by Google Identity Services on the client.
+// Google's tokeninfo endpoint validates the JWT signature and expiry; we additionally
+// check that the token was issued for OUR client ID and that the email is verified.
+// Requires GOOGLE_CLIENT_ID env var — if unset, the action returns not_configured
+// (the button is also hidden client-side until a real client ID is pasted in).
+async function verifyGoogleIdToken(credential, clientId) {
+  const r = await fetch('https://oauth2.googleapis.com/tokeninfo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ id_token: credential }).toString(),
+  });
+  if (!r.ok) return null; // invalid signature, expired, malformed…
+  const info = await r.json();
+  if (info.aud !== clientId) return null;
+  if (info.iss !== 'accounts.google.com' && info.iss !== 'https://accounts.google.com') return null;
+  if (info.email_verified !== 'true' && info.email_verified !== true) return null;
+  if (!info.email) return null;
+  return info; // { email, sub, name, picture, ... }
+}
+
 function makeToken(email) {
   const ts = Date.now().toString();
   const sig = crypto.createHmac('sha256', secret()).update(`${email}|${ts}`).digest('hex');
@@ -208,6 +228,36 @@ module.exports = async (req, res) => {
       }
 
       return res.status(200).json({ ok: true, challengeToken });
+    }
+
+    // ─── GOOGLE SIGN-IN — verify Google ID token, issue session directly ─────
+    // Google has already verified ownership of the email (the same guarantee the
+    // email-OTP step provides), so no OTP challenge is needed on this path.
+    if (body.action === 'google_login') {
+      const { credential } = body;
+      if (!credential) return res.status(400).json({ error: 'missing_fields' });
+
+      const clientId = process.env.GOOGLE_CLIENT_ID;
+      if (!clientId) return res.status(503).json({ error: 'google_not_configured' });
+
+      const { limited } = rateLimit(`glogin:${ip}`, 10, 15 * 60 * 1000);
+      if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
+      const info = await verifyGoogleIdToken(credential, clientId);
+      if (!info) return res.status(401).json({ error: 'invalid_google_token' });
+
+      const emailNorm = info.email.trim().toLowerCase();
+      const rows = await sbGet(
+        `/partners?email=eq.${encodeURIComponent(emailNorm)}&select=*&limit=1`, key
+      );
+      if (!rows?.length) return res.status(404).json({ error: 'no_account' });
+
+      const p = rows[0];
+      if (p.status === 'rejected') {
+        return res.status(200).json({ rejected: true });
+      }
+
+      return res.status(200).json({ ok: true, token: makeToken(p.email), partner: p });
     }
 
     // ─── SEARCH ORG ──────────────────────────────────────────────────────────
