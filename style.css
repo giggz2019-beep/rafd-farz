@@ -525,7 +525,8 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
   .price-card { grid-template-columns: 1fr; }
   .price-visual { min-height: 200px; }
   .cta-actions { flex-direction: row; justify-content: center; }
-  .footer-grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .footer-brand { grid-column: span 2; }
   .footer-bottom { flex-direction: row; justify-content: space-between; text-align: right; }
 }
 
@@ -570,5 +571,6 @@ h1, h2, h3, .hero-title, .section-title, .cta-title, .step-title, .feature-title
   .cta-box { padding: 4rem; }
   .cta-title { font-size: 2.5rem; }
   .footer { padding: 4rem 0 2rem; }
-  .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; }
+  .footer-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 2.5rem; }
+  .footer-brand { grid-column: span 2; max-width: 340px; }
 }
