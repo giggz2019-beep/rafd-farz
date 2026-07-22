@@ -297,6 +297,70 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true, partner, token: partner ? makeToken(partner.email) : null, emailSent });
     }
 
+    // ─── REGISTER AFTER TAMARA PAYMENT ───────────────────────────────────────
+    if (body.action === 'register_after_tamara_payment') {
+      const { orderId, plan, partnerData, password } = body;
+      if (!orderId || !plan || !partnerData || !password) return res.status(400).json({ error: 'missing_fields' });
+
+      const expectedPrice = PAID_PLAN_PRICES[plan];
+      if (!expectedPrice) return res.status(400).json({ error: 'invalid_plan' });
+
+      const existing = await sbGet(
+        `/partners?payment_ref=eq.${encodeURIComponent(orderId)}&select=*&limit=1`, key
+      );
+      if (existing?.length) {
+        const p = existing[0];
+        return res.status(200).json({ ok: true, partner: p, token: makeToken(p.email), alreadyProcessed: true });
+      }
+
+      const tamaraToken = process.env.TAMARA_API_TOKEN;
+      const tamaraUrl = (process.env.TAMARA_API_URL || 'https://api.tamara.co').replace(/\/$/, '');
+      if (!tamaraToken) return res.status(500).json({ error: 'Tamara not configured' });
+
+      let tamaraOrder;
+      try {
+        const r = await fetch(`${tamaraUrl}/orders/${encodeURIComponent(orderId)}`, {
+          headers: { Authorization: `Bearer ${tamaraToken}` },
+        });
+        if (!r.ok) {
+          console.error('register_after_tamara_payment: Tamara API error', r.status);
+          return res.status(502).json({ error: 'payment_verification_failed' });
+        }
+        tamaraOrder = await r.json();
+      } catch (err) {
+        console.error('register_after_tamara_payment: fetch error', err.message);
+        return res.status(502).json({ error: 'payment_verification_failed' });
+      }
+
+      const tamaraStatus = (tamaraOrder.status || '').toLowerCase();
+      if (!['approved', 'fully_captured', 'partially_captured'].includes(tamaraStatus)) {
+        return res.status(402).json({ error: 'payment_not_confirmed', status: tamaraStatus });
+      }
+
+      const tamaraAmount = parseFloat(tamaraOrder.total_amount?.amount || '0');
+      if (Math.abs(tamaraAmount - expectedPrice) > 0.01) {
+        console.error(`register_after_tamara_payment: amount mismatch — expected ${expectedPrice}, got ${tamaraAmount} (orderId ${orderId})`);
+        return res.status(402).json({ error: 'amount_mismatch' });
+      }
+
+      const row = buildPartnerRow(partnerData);
+      row.password = hashPassword(password);
+      row.status = 'approved';
+      row.plan = plan;
+      row.price = expectedPrice;
+      row.payment_ref = orderId;
+
+      const result = await sbWrite('POST', '/partners', row, key);
+      const partner = Array.isArray(result) ? result[0] : result;
+
+      let emailSent = false;
+      if (process.env.RESEND_API_KEY && partner) {
+        emailSent = await sendActivationEmail(partner).then(() => true).catch(() => false);
+      }
+
+      return res.status(200).json({ ok: true, partner, token: partner ? makeToken(partner.email) : null, emailSent });
+    }
+
     // ─── SEND RESET OTP (server-side — OTP never leaves server) ─────────────
     if (body.action === 'send_reset_otp') {
       const { email } = body;

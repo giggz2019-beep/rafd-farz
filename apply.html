@@ -8,13 +8,15 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="pageTitle">تقديم الطلب — RAFD Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Light.otf') format('opentype'); font-weight: 300; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Medium.otf') format('opentype'); font-weight: 500 600; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Bold.otf') format('opentype'); font-weight: 700 900; font-display: swap; }
+h1,h2,h3,h4,h5,h6,[class*="title"]{font-family:'ThmanyahSans',sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'ThmanyahSans',sans-serif;background:#f8fafc;color:#1e293b;direction:rtl;min-height:100vh;-webkit-user-select:none;user-select:none}
+body{font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;background:#f8fafc;color:#1e293b;direction:rtl;min-height:100vh;-webkit-user-select:none;user-select:none}
 input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text}
 .hdr{background:#fff;border-bottom:1px solid #e2e8f0;padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.04)}
 .hdr-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
@@ -69,7 +71,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .hero-features{display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:1.85rem}
 .hero-feat{display:flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:.28rem .7rem;font-size:.74rem;color:#94a3b8;font-weight:600}
 .ph-stats{display:none}
-.btn-start{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border:none;padding:.95rem 2.2rem;border-radius:13px;font-family:'ThmanyahSans',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;gap:.5rem;box-shadow:0 8px 28px rgba(37,99,235,.38)}
+.btn-start{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border:none;padding:.95rem 2.2rem;border-radius:13px;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;gap:.5rem;box-shadow:0 8px 28px rgba(37,99,235,.38)}
 .btn-start:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(37,99,235,.52)}
 .ph-note{font-size:.71rem;color:#3d5a7a;margin-top:.9rem;line-height:1.6}
 
@@ -129,12 +131,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .fld{margin-bottom:1.2rem}
 .fld label{display:block;font-size:.85rem;font-weight:600;color:#374151;margin-bottom:.45rem}
 .fld label .req{color:#ef4444;margin-right:.2rem}
-.fld input,.fld select,.fld textarea{width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.88rem;color:#1e293b;transition:border-color .2s;background:#fff}
+.fld input,.fld select,.fld textarea{width:100%;padding:.75rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.88rem;color:#1e293b;transition:border-color .2s;background:#fff}
 .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:#0A1628;box-shadow:0 0 0 3px rgba(10,22,40,.07)}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input[type=number]{-moz-appearance:textfield}
 .dob-row{display:grid;grid-template-columns:1fr 1.5fr 1.3fr;gap:.5rem}
-.dob-row select{padding:.75rem .6rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.86rem;color:#1e293b;background:#fff;width:100%;outline:none;transition:border-color .2s}
+.dob-row select{padding:.75rem .6rem;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.86rem;color:#1e293b;background:#fff;width:100%;outline:none;transition:border-color .2s}
 .dob-row select:focus{border-color:#0A1628;box-shadow:0 0 0 3px rgba(10,22,40,.07)}
 .dob-row.err select{border-color:#ef4444!important}
 .fld textarea{resize:vertical;min-height:90px}
@@ -169,7 +171,7 @@ input[type=number]{-moz-appearance:textfield}
 .fld input.valid,.fld select.valid,.fld textarea.valid,.fld .phone-wrap input.valid{border-color:#16A870!important;box-shadow:0 0 0 3px rgba(22,168,112,.09)!important}
 /* ===== Custom Searchable Select ===== */
 .csel{position:relative;direction:ltr}
-.csel-btn{width:100%;padding:.72rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;display:flex;align-items:center;gap:.55rem;cursor:pointer;font-family:'ThmanyahSans',sans-serif;font-size:.88rem;color:#1e293b;transition:border-color .2s}
+.csel-btn{width:100%;padding:.72rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;display:flex;align-items:center;gap:.55rem;cursor:pointer;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.88rem;color:#1e293b;transition:border-color .2s}
 .csel-btn:focus{outline:none;border-color:#0A1628;box-shadow:0 0 0 3px rgba(10,22,40,.07)}
 .csel-btn.sel-valid{border-color:#16A870!important;box-shadow:0 0 0 3px rgba(22,168,112,.09)!important}
 .csel-btn.sel-err{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.09)!important}
@@ -179,7 +181,7 @@ input[type=number]{-moz-appearance:textfield}
 .csel-arr{color:#9ca3af;font-size:.65rem;flex-shrink:0;transition:transform .2s;margin-right:auto}
 .csel.open .csel-arr{transform:rotate(180deg)}
 .csel-panel{position:absolute;top:calc(100% + 4px);right:0;left:0;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.13);overflow:hidden;display:none}
-.csel-q{width:100%;padding:.65rem 1rem;border:none;border-bottom:1px solid #f1f5f9;outline:none;font-family:'ThmanyahSans',sans-serif;font-size:.85rem;direction:rtl;box-sizing:border-box;background:#f8fafc}
+.csel-q{width:100%;padding:.65rem 1rem;border:none;border-bottom:1px solid #f1f5f9;outline:none;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.85rem;direction:rtl;box-sizing:border-box;background:#f8fafc}
 .csel-q:focus{background:#fff}
 .csel-opts{max-height:220px;overflow-y:auto}
 .csel-opt{padding:.52rem 1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;font-size:.84rem;color:#1e293b;direction:rtl;transition:background .1s}
@@ -193,9 +195,9 @@ input[type=number]{-moz-appearance:textfield}
 .cc-csel .csel-panel{right:auto;left:0;min-width:240px}
 .cc-inp{border-radius:0 10px 10px 0!important;flex:1}
 .step-err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);color:#dc2626;border-radius:10px;padding:.65rem 1rem;font-size:.82rem;margin-bottom:.75rem;text-align:right;display:none}
-.btn-prev{background:#f1f5f9;color:#64748b;border:none;padding:.7rem 1.4rem;border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-prev{background:#f1f5f9;color:#64748b;border:none;padding:.7rem 1.4rem;border-radius:10px;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-prev:hover{background:#e2e8f0}
-.btn-next{background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;padding:.75rem 1.75rem;border-radius:10px;font-family:'ThmanyahSans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.btn-next{background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;padding:.75rem 1.75rem;border-radius:10px;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
 .btn-next:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(10,22,40,.22)}
 .btn-submit{background:linear-gradient(135deg,#16A870,#16A870)}
 .step-ctr{font-size:.78rem;color:#94a3b8}
@@ -205,7 +207,7 @@ input[type=number]{-moz-appearance:textfield}
 .modal-bg.show .modal-box{transform:scale(1)}
 .modal-hdr{background:linear-gradient(135deg,#0A1628,#0B5D3B);border-radius:14px;padding:1.1rem;margin-bottom:1.4rem;text-align:center;color:#fff;font-size:1rem;font-weight:700}
 .modal-body{font-size:.875rem;color:#1f2937;line-height:1.9;margin-bottom:1.6rem;text-align:center}
-.btn-modal{background:linear-gradient(135deg,#16A870,#16A870);color:#fff;border:none;padding:.9rem 2rem;border-radius:12px;font-family:'ThmanyahSans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;transition:all .2s}
+.btn-modal{background:linear-gradient(135deg,#16A870,#16A870);color:#fff;border:none;padding:.9rem 2rem;border-radius:12px;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;transition:all .2s}
 .btn-modal:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(22,168,112,.28)}
 .ai-page{display:none;max-width:660px;margin:2rem auto;padding:0 1.5rem}
 .ai-page.show{display:block}
@@ -282,7 +284,7 @@ input[type=number]{-moz-appearance:textfield}
 .gauge-verdict{font-size:1rem;font-weight:800;margin-top:.6rem;padding:.4rem 1.4rem;border-radius:20px;display:inline-block;letter-spacing:.3px}
 .gv-ok{background:#dcfce7;color:#16A870}.gv-fail{background:#fee2e2;color:#dc2626}.gv-pending{background:#fef3c7;color:#b45309}
 .result-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
-.btn-cta-p{background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;padding:.9rem 1.75rem;border-radius:12px;font-family:'ThmanyahSans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
+.btn-cta-p{background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;padding:.9rem 1.75rem;border-radius:12px;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
 .btn-cta-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(10,22,40,.28)}
 .confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:300;overflow:hidden}
 .cp{position:absolute;top:-20px;animation:fall linear forwards}
@@ -634,7 +636,7 @@ input[type=number]{-moz-appearance:textfield}
       <input type="text" id="nfah_id" data-i18n-placeholder="apply.ph-nid" placeholder="10 أرقام" maxlength="10" inputmode="numeric" style="font-family:monospace;letter-spacing:.08em;direction:ltr;text-align:center">
     </div>
     <button onclick="sendNafathApplicantOtp()" id="nfah_send_btn"
-      style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'ThmanyahSans',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.6rem">
+      style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.6rem">
       <span style="font-size:.7rem;background:rgba(255,255,255,.2);border-radius:4px;padding:.15rem .4rem;font-weight:900">نفاذ</span>
       <span data-i18n="apply.nafath-btn">طلب التحقق عبر نفاذ</span></button>
   </div>
@@ -646,10 +648,10 @@ input[type=number]{-moz-appearance:textfield}
     <div id="nfah_sent_to" style="font-size:2.2rem;font-weight:900;letter-spacing:.25em;color:#16A870;font-family:monospace;background:rgba(22,168,112,.06);border:2px solid rgba(22,168,112,.25);border-radius:14px;padding:1rem;margin-bottom:.75rem;direction:ltr">——</div>
     <div style="font-size:.72rem;color:#4ade80;margin-bottom:1rem" data-i18n="apply.nafath-confirm-hint">📱 تحقق من إشعار تطبيق نفاذ وأكّد الرقم أعلاه</div>
     <button onclick="verifyNafathApplicantOtp()" id="nfah_verify_btn"
-      style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'ThmanyahSans',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
+      style="width:100%;background:linear-gradient(135deg,#0a5f3f,#0d7a52);color:#fff;border:none;border-radius:12px;padding:.9rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:.65rem">
       <span data-i18n="apply.nafath-confirmed">✓ تم التأكيد في تطبيق نفاذ</span></button>
     <button onclick="document.getElementById('nafath_form').style.display='block';document.getElementById('nafath_otp_form').style.display='none'"
-      style="width:100%;background:none;border:1px solid #e2e8f0;color:#64748b;border-radius:10px;padding:.65rem;font-family:'ThmanyahSans',sans-serif;font-size:.8rem;cursor:pointer">
+      style="width:100%;background:none;border:1px solid #e2e8f0;color:#64748b;border-radius:10px;padding:.65rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.8rem;cursor:pointer">
       <span data-i18n="apply.back-btn2">← رجوع</span></button>
   </div>
 
