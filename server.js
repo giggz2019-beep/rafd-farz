@@ -24,15 +24,17 @@ app.use((req, res, next) => {
   // X-XSS-Protection — Legacy XSS filter (for old browsers)
   res.setHeader('X-XSS-Protection', '1; mode=block');
   
-  // Content-Security-Policy — Strict policy to prevent XSS and injection attacks
+  // Content-Security-Policy — must match the production policy in vercel.json;
+  // the site relies on inline scripts/styles, so 'unsafe-inline' is required here too
   const supabaseUrl = process.env.SUPABASE_URL || 'https://ycnnawohrbbluawxzttt.supabase.co';
   res.setHeader('Content-Security-Policy', [
     "default-src 'self'",
-    "script-src 'self' https://cdn.jsdelivr.net",
-    "style-src 'self' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
+    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://challenges.cloudflare.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: https:",
-    `connect-src 'self' ${supabaseUrl} https://api.resend.com`,
+    `connect-src 'self' ${supabaseUrl} https://api.resend.com https://challenges.cloudflare.com`,
+    "frame-src https://challenges.cloudflare.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

@@ -99,6 +99,24 @@ const T = {
     'chat.placeholder':'اكتب سؤالك...',
     'chat.q1':'كيف اشترك؟','chat.q2':'طريقة عملكم','chat.q3':'الباقات والأسعار',
     'chat.q4':'كيف أسجل؟','chat.q5':'كيف أدخل؟','chat.q6':'تواصل معنا',
+    'chat.whatsapp':'واتساب',
+    // ===== PAGE TITLES =====
+    'title.index':'رافد — منصة الفرز الذكي للمتقدمين',
+    'title.about':'من نحن — Rafd Digital',
+    'title.how':'كيف نعمل — Rafd Digital',
+    'title.pricing':'الباقات والأسعار — RAFD Digital',
+    'title.privacy':'سياسة الخصوصية — RAFD Digital',
+    'title.terms':'الشروط والأحكام — RAFD Digital',
+    'title.partners':'برنامج الشراكة الرسمية — RAFD Digital',
+    'title.contact':'تواصل معنا — Rafd Digital',
+    'title.demo-apply':'جرّب النظام — Rafd Smart Platform',
+    'title.register-partner':'تسجيل شريك — RAFD Digital',
+    'title.partner-login':'دخول الشركاء — RAFD Digital',
+    'title.partner-dashboard':'لوحة تحكم الشريك — RAFD Digital',
+    'title.admin':'لوحة تحكم المدير — RAFD',
+    'title.login':'تسجيل الدخول — Rafd',
+    'title.signup':'إنشاء حساب — Rafd',
+    'title.payment-result':'نتيجة الدفع — RAFD Digital',
     // ===== FOOTER =====
     'footer.desc':'منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي',
     'footer.platform':'المنصة','footer.features':'المميزات','footer.how':'كيف نعمل',
@@ -106,7 +124,7 @@ const T = {
     'footer.sectors':'القطاعات','footer.banks':'البنوك','footer.unis':'الجامعات',
     'footer.accel':'المسرعات','footer.gov':'الحكومية',
     'footer.company':'الشركة','footer.about':'من نحن','footer.contact':'تواصل معنا',
-    'footer.privacy':'سياسة الخصوصية','footer.terms':'الشروط والأحكام',
+    'footer.privacy':'سياسة الخصوصية','footer.terms':'الشروط والأحكام','footer.refund':'سياسة الاسترداد',
     'footer.partners':'الشركاء','footer.prog':'برنامج الشراكة',
     'footer.reg':'سجّل كشريك','footer.plogin':'دخول الشركاء',
     'footer.copy':'© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية',
@@ -667,6 +685,7 @@ const T = {
     'db.result-switch-hint':'تعديل النتيجة — للجهة صلاحية كاملة لتغيير القرار',
     'db.th-name':'الاسم','db.th-id':'رقم الهوية','db.th-purpose':'الغرض',
     'db.th-score':'النتيجة','db.th-result':'القرار','db.th-date':'التاريخ','db.th-actions':'إجراءات',
+    'db.th-contact':'تواصل','db.toast-session-expired':'انتهت الجلسة — يرجى تسجيل الدخول من جديد',
     'db.no-requests':'لا توجد طلبات بعد',
     // New Request page
     'db.new-req-title':'طلب يدوي جديد','db.new-req-sub':'أدخل بيانات المتقدم يدوياً',
@@ -1029,6 +1048,24 @@ const T = {
     'chat.placeholder':'Type your question...',
     'chat.q1':'How to subscribe?','chat.q2':'How it works','chat.q3':'Plans & pricing',
     'chat.q4':'How to register?','chat.q5':'How to login?','chat.q6':'Contact us',
+    'chat.whatsapp':'WhatsApp',
+    // ===== PAGE TITLES =====
+    'title.index':'Rafd — Smart Applicant Screening Platform',
+    'title.about':'About Us — Rafd Digital',
+    'title.how':'How It Works — Rafd Digital',
+    'title.pricing':'Plans & Pricing — RAFD Digital',
+    'title.privacy':'Privacy Policy — RAFD Digital',
+    'title.terms':'Terms & Conditions — RAFD Digital',
+    'title.partners':'Official Partnership Program — RAFD Digital',
+    'title.contact':'Contact Us — Rafd Digital',
+    'title.demo-apply':'Try the System — Rafd Smart Platform',
+    'title.register-partner':'Partner Registration — RAFD Digital',
+    'title.partner-login':'Partner Login — RAFD Digital',
+    'title.partner-dashboard':'Partner Dashboard — RAFD Digital',
+    'title.admin':'Admin Dashboard — RAFD',
+    'title.login':'Login — Rafd',
+    'title.signup':'Create Account — Rafd',
+    'title.payment-result':'Payment Result — RAFD Digital',
     // ===== FOOTER =====
     'footer.desc':'Integrated AI platform for automating acceptance and rejection decisions — designed for the Saudi market',
     'footer.platform':'Platform','footer.features':'Features','footer.how':'How It Works',
@@ -1036,7 +1073,7 @@ const T = {
     'footer.sectors':'Sectors','footer.banks':'Banks','footer.unis':'Universities',
     'footer.accel':'Accelerators','footer.gov':'Government',
     'footer.company':'Company','footer.about':'About Us','footer.contact':'Contact Us',
-    'footer.privacy':'Privacy Policy','footer.terms':'Terms & Conditions',
+    'footer.privacy':'Privacy Policy','footer.terms':'Terms & Conditions','footer.refund':'Refund Policy',
     'footer.partners':'Partners','footer.prog':'Partnership Program',
     'footer.reg':'Register as Partner','footer.plogin':'Partner Login',
     'footer.copy':'© 2025 Rafd Digital. All rights reserved — Riyadh, Saudi Arabia',
@@ -1599,6 +1636,7 @@ const T = {
     'db.result-switch-hint':'Edit Result — the organization has full authority to change the decision',
     'db.th-name':'Name','db.th-id':'ID Number','db.th-purpose':'Purpose',
     'db.th-score':'Score','db.th-result':'Decision','db.th-date':'Date','db.th-actions':'Actions',
+    'db.th-contact':'Contact','db.toast-session-expired':'Session expired — please log in again',
     'db.no-requests':'No applications yet',
     // New Request page
     'db.new-req-title':'New Manual Request','db.new-req-sub':'Enter applicant data manually',
@@ -1798,7 +1836,7 @@ const T = {
     'su.opt-bank':'Bank or Financial Institution','su.opt-uni':'University or Educational Institution',
     'su.opt-acc':'Accelerator or Incubator','su.opt-gov':'Government Entity',
     'su.opt-priv':'Private Company','su.opt-other':'Other',
-    'su.lbl-email':'Email Address','su.lbl-pass':'Password','su.ph-pass':'At least 8 characters',
+    'su.lbl-email':'Email Address','su.lbl-pass':'Password','su.ph-pass':'At least 8 characters','su.ph-email':'name@company.com',
     'su.btn':'Create Account & Get Started',
     'su.terms-pre':'By creating an account, you agree to our ','su.terms-tos':'Terms of Service',
     'su.terms-and':' and ','su.terms-pp':'Privacy Policy',
@@ -1875,6 +1913,10 @@ function setLang(lang) {
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     const key = el.dataset.i18nPlaceholder;
     if (T[lang] && T[lang][key] !== undefined) el.placeholder = T[lang][key];
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.dataset.i18nTitle;
+    if (T[lang] && T[lang][key] !== undefined) el.title = T[lang][key];
   });
   document.querySelectorAll('.lang-toggle').forEach(btn => { btn.textContent = isAR ? '🌐 EN' : '🌐 عربي'; });
   localStorage.setItem('rafd_lang', lang);

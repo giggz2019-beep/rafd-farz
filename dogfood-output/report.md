@@ -19,6 +19,14 @@
 
 ## Issues
 
+> **Status update (same day):** all four issues below were fixed and re-verified in the browser.
+> - ISSUE-001 → `html[dir="ltr"] body{direction:ltr}` override added to `style.css` and to the six standalone pages with their own hardcoded `body{direction:rtl}`.
+> - ISSUE-002 → `footer.refund` + `chat.whatsapp` i18n keys added (footer link, WhatsApp button title/text). The pricing-page part of this finding was a **false positive**: `pricing.html` already translates prices via `updatePrices()`; it only looked broken locally because ISSUE-003's CSP blocked the inline script.
+> - ISSUE-003 → `server.js` CSP now mirrors `vercel.json` (`'unsafe-inline'`, Cloudflare Turnstile hosts, `frame-src`, `font-src data:`).
+> - ISSUE-004 → `<title data-i18n="title.*">` added to all 16 i18n pages + `title.*` keys in both `T.ar`/`T.en` (`apply.html` excluded — its title is set dynamically per organization). Bonus fix: duplicated ▼ caret on the pricing-page Login button.
+>
+> A cross-file consistency sweep after the fixes caught and fixed five more gaps: the LTR override was also needed in `apply.html` and `partner-dashboard.html` (they don't link `style.css`); pre-existing missing i18n keys `su.ph-email` (EN), `db.th-contact` and `db.toast-session-expired` (both languages); and hardcoded untranslated Login buttons in `privacy.html`/`terms.html`.
+
 ### ISSUE-001: Entire site stays RTL when language is English
 
 | Field | Value |
