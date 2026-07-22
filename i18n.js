@@ -707,7 +707,7 @@ const T = {
     'db.embed-title':'كود التضمين',
     // Form Setup page
     'db.form-title':'إعداد النموذج','db.form-sub':'تخصيص نموذج تقديم جهتك',
-    'db.btn-save-form':'حفظ الإعدادات','db.saved-forms':'النماذج المحفوظة',
+    'db.saved-forms':'النماذج المحفوظة',
     'db.prog-info':'معلومات البرنامج',
     'db.lbl-prog-name':'اسم البرنامج','db.lbl-app-type':'نوع الطلب','db.lbl-prog-desc':'وصف البرنامج',
     'db.lbl-min-score':'الحد الأدنى للقبول','db.lbl-form-status':'حالة النموذج',
@@ -1305,7 +1305,6 @@ const T = {
     'db.weight-total':'Total Weights:',
     'db.sup-pkg':'Plan Inquiry','db.sup-tech':'Technical Issue',
     'db.sup-upgrade':'Upgrade Request','db.sup-cancel':'Cancel Subscription',
-    'db.lbl-form-name':'Form Name','db.err-form-name':'Please enter a name for the form',
     // ===== PARTNER LOGIN =====
     'pl.back-home':'← Home','pl.portal-sub':'Partner Portal','pl.badge':'Partner Zone',
     'pl.err-login':'Invalid login credentials. Check your email and password.',
@@ -1635,7 +1634,7 @@ const T = {
     'db.embed-title':'Embed Code',
     // Form Setup page
     'db.form-title':'Form Setup','db.form-sub':'Customize your organization\'s application form',
-    'db.btn-save-form':'Save Settings','db.saved-forms':'Saved Forms',
+    'db.saved-forms':'Saved Forms',
     'db.prog-info':'Program Info',
     'db.lbl-prog-name':'Program Name','db.lbl-app-type':'Application Type','db.lbl-prog-desc':'Description',
     'db.lbl-min-score':'Minimum Acceptance Score','db.lbl-form-status':'Form Status',
