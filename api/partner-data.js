@@ -120,12 +120,14 @@ module.exports = async (req, res) => {
       const { fileExt } = body;
       const ext = (fileExt || 'png').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'png';
       const filePath = `partner-logos/${rows[0].id}/avatar_${Date.now()}.${ext}`;
-      const r = await fetch(`${SB_URL}/storage/v1/object/sign/upload/applicant-docs/${filePath}`, {
+      const r = await fetch(`${SB_URL}/storage/v1/object/upload/sign/applicant-docs/${filePath}`, {
         method: 'POST',
         headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       });
       if (!r.ok) throw new Error(`Storage sign ${r.status}`);
-      const { signedURL } = await r.json();
+      const { url } = await r.json();
+      const token = new URL(SB_URL + url).searchParams.get('token');
+      const signedURL = `/storage/v1/object/upload/sign/applicant-docs/${filePath}?token=${token}`;
       const publicUrl = `${SB_URL}/storage/v1/object/public/applicant-docs/${filePath}`;
       return res.status(200).json({ signedURL, storageUrl: SB_URL, publicUrl });
     }

@@ -1929,10 +1929,11 @@ async function submitApp() {
         try {
           const { status: urlStatus, data: urlData } = await applyApi({ action: 'get_upload_url', filePath });
           if (urlStatus === 200 && urlData.signedURL) {
-            await fetch(urlData.storageUrl + urlData.signedURL, {
+            const putRes = await fetch(urlData.storageUrl + urlData.signedURL, {
               method: 'PUT', body: file,
               headers: { 'Content-Type': file.type || 'application/octet-stream' },
             });
+            if (!putRes.ok) throw new Error('upload_failed');
             const publicUrl = `${urlData.storageUrl}/storage/v1/object/public/applicant-docs/${filePath}`;
             uploadedDocs[docId] = { name: file.name, url: publicUrl };
           }
