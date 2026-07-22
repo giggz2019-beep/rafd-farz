@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Memory — read this first
+
+**At the start of every session, read `MEMORY.md`** — it is the long-term memory across sessions: who the owner is, how to communicate with them, and a dated log of all significant work. **After completing any significant piece of work, append a short dated entry to `MEMORY.md`** (newest first, never delete history) and include it in the commit.
+
+Key facts (details in MEMORY.md): the owner is not a developer — always explain in simple Arabic (Saudi dialect), step by step, with copy-paste-ready commands.
+
 ## Commands
 
 ```bash
