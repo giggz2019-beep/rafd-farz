@@ -51,14 +51,16 @@ module.exports = async (req, res) => {
     if (body.action === 'get_upload_url') {
       const { filePath } = body;
       if (!filePath) return res.status(400).json({ error: 'missing_filePath' });
-      const r = await fetch(`${SB_URL}/storage/v1/object/sign/upload/applicant-docs/${filePath}`, {
+      const r = await fetch(`${SB_URL}/storage/v1/object/upload/sign/applicant-docs/${filePath}`, {
         method: 'POST',
-        headers: { apikey: key, Authorization: `Bearer ${key}` },
+        headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       });
       if (!r.ok) {
         throw new Error(`Storage sign ${r.status}`);
       }
-      const { signedURL } = await r.json();
+      const { url } = await r.json();
+      const token = new URL(SB_URL + url).searchParams.get('token');
+      const signedURL = `/storage/v1/object/upload/sign/applicant-docs/${filePath}?token=${token}`;
       return res.status(200).json({ signedURL, storageUrl: SB_URL });
     }
 
