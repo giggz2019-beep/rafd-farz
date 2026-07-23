@@ -236,8 +236,8 @@ body{font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;background:
 <header class="hdr">
   <a href="/" class="hdr-back" data-i18n="da.back">← الرئيسية</a>
   <a href="/" class="hdr-logo">
-    <img src="/rafd-logo.png" alt="Rafd" style="height:38px;width:auto;object-fit:contain;border-radius:9px">
-    <span class="hdr-name">Rafd</span>
+    <img src="/rafd-logo.png" alt="RAFD Digital" style="height:38px;width:auto;object-fit:contain;border-radius:9px">
+    <span class="hdr-name">RAFD Digital</span>
   </a>
   <button id="langToggleBtn" class="lang-toggle" style="font-size:.78rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;background:none;border:1.5px solid #e2e8f0;border-radius:8px;padding:.3rem .7rem;cursor:pointer;font-weight:700;color:#1e293b;white-space:nowrap" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button><span class="hdr-badge" data-i18n="da.badge">تجربة مجانية</span>
 </header>
@@ -529,7 +529,7 @@ function togC(el) { el.classList.toggle('sel'); }
 
 function toast(msg) {
   const t = document.createElement('div');
-  t.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#0A1628;color:#fff;padding:.7rem 1.4rem;border-radius:12px;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.85rem;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.2)';
+  t.style.cssText = "position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#0A1628;color:#fff;padding:.7rem 1.4rem;border-radius:12px;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.85rem;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.2)";
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3000);
