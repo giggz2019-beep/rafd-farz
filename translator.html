@@ -131,8 +131,9 @@ body{background:var(--ab-navy)}
   <div class="container">
     <div class="tr-console">
 
+      <div class="tr-warn" id="trInApp" data-i18n="tr.inapp">يبدو أنك فاتحة الصفحة من داخل تطبيق (واتساب / تيليجرام / انستقرام...) — المتصفح المدمج ما يدعم المايكروفون. اضغطي قائمة النقاط ⋮ واختاري «فتح في Chrome».</div>
       <div class="tr-warn" id="trUnsupported" data-i18n="tr.unsupported">متصفحك لا يدعم التعرف على الكلام. استخدمي Chrome أو Edge على الكمبيوتر، أو Safari / Chrome على الجوال.</div>
-      <div class="tr-warn" id="trMicDenied" data-i18n="tr.mic-denied">تم رفض إذن المايكروفون. اسمحي للموقع باستخدام المايك من إعدادات المتصفح ثم حدّثي الصفحة.</div>
+      <div class="tr-warn" id="trMicDenied" data-i18n="tr.mic-denied">المايكروفون مرفوض لهذا الموقع. اضغطي رمز القفل 🔒 بجانب عنوان الصفحة → الأذونات → المايكروفون → سماح، ثم حدّثي الصفحة.</div>
       <div class="tr-warn" id="trNoVoice" data-i18n="tr.no-ar-voice">ما لقينا صوت عربي مثبّت على جهازك — الترجمة النصية بتشتغل، لكن النطق الصوتي يحتاج تثبيت صوت عربي من إعدادات الجهاز (Text-to-Speech).</div>
       <div class="tr-warn" id="trSvcDown" data-i18n="tr.svc-down">خدمة الترجمة غير مفعّلة حالياً على الخادم. تواصلي مع الإدارة لتفعيل مفتاح الذكاء الاصطناعي.</div>
 
@@ -323,6 +324,11 @@ document.addEventListener('click', () => {
     micBtn.style.cursor = 'not-allowed';
   }
 
+  // In-app browsers (WhatsApp / Telegram / Instagram...) have no mic
+  // permission plumbing at all — the prompt simply never appears.
+  const inApp = /FBAN|FBAV|Instagram|Line\/|Telegram|WhatsApp|Snapchat|TikTok|musical_ly|GSA\/|; wv\)/i.test(navigator.userAgent || '');
+  if (inApp) showWarn('trInApp', true);
+
   // ---- Arabic TTS voice ----
   let voices = [];
   function loadVoices(){ voices = window.speechSynthesis ? speechSynthesis.getVoices() : []; }
@@ -512,10 +518,16 @@ document.addEventListener('click', () => {
     // Explicitly request the mic first: forces the permission prompt to appear
     // and turns silent failures into a visible warning.
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // If neither grant nor deny arrives, the prompt likely never showed
+      // (hidden, or an in-app browser) — surface the warning instead of hanging.
+      const promptWatch = setTimeout(() => showWarn('trMicDenied', true), 9000);
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        clearTimeout(promptWatch);
+        showWarn('trMicDenied', false);
         stream.getTracks().forEach(t => t.stop());
       } catch (e) {
+        clearTimeout(promptWatch);
         showWarn('trMicDenied', true);
         return;
       }

@@ -72,8 +72,9 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
   </div>
 
   <div class="console">
+    <div class="warn" id="wInApp">يبدو أنك فاتحة الصفحة من داخل تطبيق (واتساب / تيليجرام / انستقرام...) — المتصفح المدمج ما يدعم المايكروفون. اضغطي قائمة النقاط ⋮ فوق واختاري <b>«فتح في Chrome»</b> أو انسخي الرابط والصقيه في المتصفح.</div>
     <div class="warn" id="wUnsupported">متصفحك لا يدعم التعرف على الكلام. افتحي الصفحة في Chrome أو Edge على الكمبيوتر، أو Safari / Chrome على الجوال.</div>
-    <div class="warn" id="wMicDenied">تم رفض إذن المايكروفون. اسمحي للصفحة باستخدام المايك من إعدادات المتصفح ثم حدّثي الصفحة.</div>
+    <div class="warn" id="wMicDenied">المايكروفون مرفوض لهذا الموقع. الحل: اضغطي رمز القفل 🔒 (أو 🎙️) بجانب عنوان الصفحة فوق → الأذونات → المايكروفون → <b>سماح</b> — ثم حدّثي الصفحة واضغطي المايك من جديد.</div>
     <div class="warn" id="wNoVoice">ما لقينا صوت عربي مثبّت على جهازك — الترجمة النصية شغالة، لكن النطق الصوتي يحتاج تثبيت صوت عربي من إعدادات الجهاز (Text-to-Speech).</div>
     <div class="warn" id="wSvcDown">خدمة الترجمة غير متاحة حالياً — تأكدي من اتصال النت، أو أن الخدمة مفعّلة على الخادم.</div>
 
@@ -191,6 +192,12 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     showWarn('wUnsupported', true);
     micBtn.disabled = true; micBtn.style.opacity = .4; micBtn.style.cursor = 'not-allowed';
   }
+
+  // In-app browsers (WhatsApp / Telegram / Instagram...) have no mic
+  // permission plumbing at all — the prompt simply never appears.
+  var UA = navigator.userAgent || '';
+  var inApp = /FBAN|FBAV|Instagram|Line\/|Telegram|WhatsApp|Snapchat|TikTok|musical_ly|GSA\/|; wv\)/i.test(UA);
+  if (inApp) showWarn('wInApp', true);
 
   // ---- Arabic TTS ----
   var voices = [];
@@ -396,13 +403,22 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     // Explicitly request the mic first: forces the permission prompt to appear
     // and turns silent failures into a visible message.
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      setStatus('نطلب إذن المايكروفون…');
+      setStatus('نطلب إذن المايكروفون… (إذا طلع سؤال فوق اضغطي سماح)');
+      // If neither grant nor deny arrives, the prompt likely never showed
+      // (hidden, or an in-app browser) — tell her instead of hanging quietly.
+      var promptWatch = setTimeout(function(){
+        setStatus('ما ظهر طلب الإذن؟ افتحي الصفحة في متصفح Chrome نفسه، أو فعّلي المايك من إعدادات الموقع (رمز القفل 🔒 فوق)', true);
+        showWarn('wMicDenied', true);
+      }, 9000);
       try {
         var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        clearTimeout(promptWatch);
+        showWarn('wMicDenied', false);
         stream.getTracks().forEach(function(t){ t.stop(); });
       } catch (e) {
+        clearTimeout(promptWatch);
         showWarn('wMicDenied', true);
-        setStatus('ما قدرنا نشغل المايك (' + ((e && e.name) || 'خطأ') + ') — اسمحي بالإذن من إعدادات المتصفح وحاولي من جديد', true);
+        setStatus('ما قدرنا نشغل المايك (' + ((e && e.name) || 'خطأ') + ') — اتبعي خطوات التنبيه الأحمر فوق', true);
         return;
       }
     }
