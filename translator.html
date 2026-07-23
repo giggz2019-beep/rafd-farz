@@ -381,10 +381,11 @@ document.addEventListener('click', () => {
     processing = true;
     const { text, dstEl } = queue.shift();
     try {
-      const r = await fetch('/api/translate-live', {
+      const r = await fetch('/api/chat-khalid', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          mode: 'translate',
           text,
           target: dstSel.value,
           style: styleSel.value,
