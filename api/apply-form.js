@@ -50,7 +50,20 @@ module.exports = async (req, res) => {
     // ─── GET SIGNED STORAGE UPLOAD URL ──────────────────────────────────────
     if (body.action === 'get_upload_url') {
       const { filePath } = body;
-      if (!filePath) return res.status(400).json({ error: 'missing_filePath' });
+      if (!filePath || typeof filePath !== 'string') return res.status(400).json({ error: 'missing_filePath' });
+      // filePath is fully client-supplied and this endpoint is unauthenticated —
+      // reject anything that could traverse out of / overwrite outside the intended
+      // applicant-docs key space (path traversal, absolute paths, null bytes, etc.).
+      // Expected shape: "<REF>/<APP-REF>/<docId>_<filename>" — 3 segments, safe chars.
+      const badPath =
+        filePath.length > 400 ||
+        filePath.includes('..') ||
+        filePath.includes('\\') ||
+        filePath.includes('\0') ||
+        filePath.includes('//') ||
+        /^[/.]/.test(filePath) ||           // no leading slash or dot
+        !/^[^/]+\/[^/]+\/[^/]+$/.test(filePath); // exactly 3 non-empty segments
+      if (badPath) return res.status(400).json({ error: 'invalid_filePath' });
       const r = await fetch(`${SB_URL}/storage/v1/object/upload/sign/applicant-docs/${filePath}`, {
         method: 'POST',
         headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },

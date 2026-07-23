@@ -232,7 +232,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
     <div id="fe_result" style="display:none;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.9rem;text-align:center">
       <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem" data-i18n="pl.fe-result-lbl">البريد الإلكتروني المسجّل</div>
       <div id="fe_email_show" style="font-size:1rem;font-weight:800;color:#34d399;direction:ltr"></div>
-      <button id="fe_use_btn" onclick="useFoundEmail()" style="margin-top:.75rem;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fe-use-btn">استخدم هذا البريد للدخول ←</span></button>
+      <button id="fe_use_btn" onclick="useFoundEmail()" style="margin-top:.75rem;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fe-use-btn">تذكرته؟ اكتب بريدك الكامل للدخول ←</span></button>
     </div>
     <button onclick="findEmailByPhone()" id="fe_search_btn"
       style="width:100%;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.btn-search">بحث</span></button>
@@ -256,7 +256,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
       <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.3rem" data-i18n="pl.fu-result-lbl">اسم المستخدم الخاص بك</div>
       <div id="fu_username_show" style="font-size:1rem;font-weight:800;color:#16A870;direction:ltr;letter-spacing:.05em"></div>
       <div style="font-size:.72rem;color:#64748b;margin-top:.4rem" data-i18n="pl.fu-hint">استخدمه مع كلمة المرور لتسجيل الدخول</div>
-      <button id="fu_use_btn" onclick="useFoundUsername()" style="margin-top:.75rem;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fu-use-btn">استخدم اسم المستخدم للدخول ←</span></button>
+      <button id="fu_use_btn" onclick="useFoundUsername()" style="margin-top:.75rem;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.82rem;font-weight:700;cursor:pointer"><span data-i18n="pl.fu-use-btn">تذكرته؟ اكتب رقمك المرجعي للدخول ←</span></button>
     </div>
     <button onclick="findUsername()" id="fu_search_btn"
       style="width:100%;background:linear-gradient(135deg,#0A1628,#123554);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-bottom:.65rem"><span data-i18n="pl.btn-search">بحث</span></button>
@@ -474,20 +474,21 @@ async function findEmailByPhone() {
   btn.textContent = 'جارٍ البحث...'; btn.disabled = true;
   const { status: feStatus, data: feRes } = await partnerAuthApi({ action: 'search_org', orgName: orgname });
   btn.textContent = 'بحث'; btn.disabled = false;
-  if (feStatus !== 200 || !feRes.results?.length) {
+  if (feStatus === 429) {
+    errEl.textContent = 'محاولات كثيرة — انتظر قليلاً ثم أعد المحاولة.';
+    errEl.style.display = 'block'; return;
+  }
+  if (feStatus !== 200 || !feRes.results?.length || !feRes.results[0].masked_email) {
     errEl.textContent = 'لم يُعثر على حساب. تأكد من اسم الجهة أو تواصل مع الدعم.';
     errEl.style.display = 'block'; return;
   }
-  _foundEmail = feRes.results[0].email;
-  const [u, d] = _foundEmail.split('@');
-  document.getElementById('fe_email_show').textContent = u.slice(0,2) + '***@' + d;
+  // السيرفر يرجع البريد مموهاً فقط — للتذكير، والمستخدم يكتب بريده الكامل بنفسه
+  document.getElementById('fe_email_show').textContent = feRes.results[0].masked_email;
   document.getElementById('fe_result').style.display = 'block';
 }
 function useFoundEmail() {
-  if (!_foundEmail) return;
-  document.getElementById('loginEmail').value = _foundEmail;
   hideForgotEmail();
-  document.getElementById('loginPass').focus();
+  document.getElementById('loginEmail').focus();
 }
 
 let _foundUsername = '';
@@ -509,19 +510,21 @@ async function findUsername() {
   btn.textContent = 'جارٍ البحث...'; btn.disabled = true;
   const { status: fuStatus, data: fuRes } = await partnerAuthApi({ action: 'search_org', orgName: orgname });
   btn.textContent = 'بحث'; btn.disabled = false;
-  if (fuStatus !== 200 || !fuRes.results?.length || !fuRes.results[0].ref_num) {
+  if (fuStatus === 429) {
+    errEl.textContent = 'محاولات كثيرة — انتظر قليلاً ثم أعد المحاولة.';
+    errEl.style.display = 'block'; return;
+  }
+  if (fuStatus !== 200 || !fuRes.results?.length || !fuRes.results[0].masked_ref) {
     errEl.textContent = 'لم يُعثر على حساب. تأكد من اسم الجهة.';
     errEl.style.display = 'block'; return;
   }
-  _foundUsername = fuRes.results[0].ref_num;
-  document.getElementById('fu_username_show').textContent = _foundUsername;
+  // السيرفر يرجع الرقم المرجعي مموهاً فقط — للتذكير، أو استخدم بريدك الإلكتروني للدخول
+  document.getElementById('fu_username_show').textContent = fuRes.results[0].masked_ref;
   document.getElementById('fu_result').style.display = 'block';
 }
 function useFoundUsername() {
-  if (!_foundUsername) return;
-  document.getElementById('loginEmail').value = _foundUsername;
   hideForgotUsername();
-  document.getElementById('loginPass').focus();
+  document.getElementById('loginEmail').focus();
 }
 
 function showForgot() {

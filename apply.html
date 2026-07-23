@@ -1934,8 +1934,9 @@ async function submitApp() {
               headers: { 'Content-Type': file.type || 'application/octet-stream' },
             });
             if (!putRes.ok) throw new Error('upload_failed');
-            const publicUrl = `${urlData.storageUrl}/storage/v1/object/public/applicant-docs/${filePath}`;
-            uploadedDocs[docId] = { name: file.name, url: publicUrl };
+            // نخزّن مسار الملف فقط — الـ bucket خاص، والرابط الموقّع يُنشئه
+            // السيرفر للشريك المصرّح له فقط عند فتح لوحة التحكم
+            uploadedDocs[docId] = { name: file.name, path: filePath };
           }
         } catch(upErr) { console.warn('Upload error:', upErr); }
       }

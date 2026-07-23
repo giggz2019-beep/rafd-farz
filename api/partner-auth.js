@@ -129,7 +129,7 @@ module.exports = async (req, res) => {
       const turnstileOk = await verifyTurnstile(turnstileToken, ip);
       if (!turnstileOk) return res.status(400).json({ error: 'turnstile_failed' });
 
-      const { limited } = rateLimit(`login:${ip}`, 10, 15 * 60 * 1000);
+      const { limited } = await rateLimit(`login:${ip}`, 10, 15 * 60 * 1000);
       if (limited) return res.status(429).json({ error: 'too_many_attempts' });
 
       const isRef = /^(RAFD|MAN)-/i.test(email.trim());
@@ -154,7 +154,7 @@ module.exports = async (req, res) => {
       }
 
       // Generate and send login OTP server-side — never returned to browser
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 1000000).toString();
       const challengeToken = makeOtpToken(p.email, otp);
 
       if (process.env.RESEND_API_KEY) {
@@ -169,7 +169,7 @@ module.exports = async (req, res) => {
       const { challengeToken, otp } = body;
       if (!challengeToken || !otp) return res.status(400).json({ error: 'missing_fields' });
 
-      const { limited } = rateLimit(`otp:${ip}`, 10, 5 * 60 * 1000);
+      const { limited } = await rateLimit(`otp:${ip}`, 10, 5 * 60 * 1000);
       if (limited) return res.status(429).json({ error: 'too_many_attempts' });
 
       const email = verifyOtpToken(challengeToken, otp, 5 * 60 * 1000);
@@ -189,7 +189,7 @@ module.exports = async (req, res) => {
       const { email } = body;
       if (!email) return res.status(400).json({ error: 'missing_fields' });
 
-      const { limited } = rateLimit(`resend:${ip}`, 5, 5 * 60 * 1000);
+      const { limited } = await rateLimit(`resend:${ip}`, 5, 5 * 60 * 1000);
       if (limited) return res.status(429).json({ error: 'too_many_attempts' });
 
       const emailNorm = email.trim().toLowerCase();
@@ -200,7 +200,7 @@ module.exports = async (req, res) => {
       if (!rows?.length) return res.status(200).json({ ok: true }); // silent — no enumeration
 
       const p = rows[0];
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 1000000).toString();
       const challengeToken = makeOtpToken(p.email, otp);
 
       if (process.env.RESEND_API_KEY) {
@@ -211,13 +211,27 @@ module.exports = async (req, res) => {
     }
 
     // ─── SEARCH ORG ──────────────────────────────────────────────────────────
+    // Unauthenticated helper for the "forgot email / forgot username" flows.
+    // Returns MASKED identifiers only — the full email and ref_num must never
+    // leave the server for an unauthenticated caller (enumeration/phishing risk).
     if (body.action === 'search_org') {
       const { orgName } = body;
       if (!orgName) return res.status(400).json({ error: 'missing_fields' });
+
+      const { limited } = await rateLimit(`search_org:${ip}`, 5, 15 * 60 * 1000);
+      if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
       const rows = await sbGet(
         `/partners?org_name=ilike.*${encodeURIComponent(orgName)}*&select=email,org_name,ref_num&limit=5`, key
       );
-      return res.status(200).json({ results: rows || [] });
+      const results = (rows || []).map(p => {
+        const [u, d] = String(p.email || '').split('@');
+        const maskedEmail = u && d ? `${u.slice(0, 2)}***@${d}` : null;
+        const ref = String(p.ref_num || '');
+        const maskedRef = ref ? `${ref.slice(0, ref.indexOf('-') + 2)}***${ref.slice(-2)}` : null;
+        return { org_name: p.org_name, masked_email: maskedEmail, masked_ref: maskedRef };
+      });
+      return res.status(200).json({ results });
     }
 
     // ─── NAFATH LOOKUP (محاكاة تجريبية — الربط مع سدايا قيد التطوير) ─────────
@@ -225,21 +239,14 @@ module.exports = async (req, res) => {
       return res.status(200).json({ simulation: true, message: 'nafath_pending_sdaia' });
     }
 
-    // ─── LOOKUP BY EMAIL ─────────────────────────────────────────────────────
-    if (body.action === 'lookup_email') {
-      const { email } = body;
-      if (!email) return res.status(400).json({ error: 'missing_fields' });
-      const rows = await sbGet(
-        `/partners?email=eq.${encodeURIComponent(email.trim().toLowerCase())}&select=id,email,org_name&limit=1`, key
-      );
-      if (!rows?.length) return res.status(404).json({ error: 'not_found' });
-      return res.status(200).json({ partner: rows[0] });
-    }
-
-    // ─── CHECK EMAIL ─────────────────────────────────────────────────────────
+    // ─── CHECK EMAIL (registration duplicate check — boolean only) ───────────
     if (body.action === 'check_email') {
       const { email } = body;
       if (!email) return res.status(400).json({ error: 'missing_fields' });
+
+      const { limited } = await rateLimit(`check_email:${ip}`, 15, 15 * 60 * 1000);
+      if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
       const rows = await sbGet(
         `/partners?email=eq.${encodeURIComponent(email.trim().toLowerCase())}&select=id&limit=1`, key
       );
@@ -366,7 +373,7 @@ module.exports = async (req, res) => {
       const { email } = body;
       if (!email) return res.status(400).json({ error: 'missing_fields' });
 
-      const { limited } = rateLimit(`reset:${ip}`, 3, 15 * 60 * 1000);
+      const { limited } = await rateLimit(`reset:${ip}`, 3, 15 * 60 * 1000);
       if (limited) return res.status(429).json({ error: 'too_many_attempts' });
 
       const emailNorm = email.trim().toLowerCase();
@@ -378,7 +385,7 @@ module.exports = async (req, res) => {
       if (!rows?.length) return res.status(200).json({ ok: true });
 
       const p = rows[0];
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 1000000).toString();
       const resetToken = makeOtpToken(emailNorm, otp);
 
       if (process.env.RESEND_API_KEY) {

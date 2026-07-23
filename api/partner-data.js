@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const { hash: hashPassword, verify: verifyPassword } = require('./_lib/password');
 const { getOrder, classifyOrder } = require('./_lib/ngenius');
 const { PAID_PLAN_PRICES } = require('./_lib/plans');
+const { rateLimit, getIp } = require('./_lib/rate-limit');
 
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
@@ -70,8 +71,17 @@ module.exports = async (req, res) => {
 
   // ─── ADMIN PREVIEW (admin password required) ─────────────────────────────
   if (body.action === 'admin_preview') {
+    // Rate limit BEFORE the password compare — this endpoint returns partner
+    // PII + signed doc URLs, so unlimited guessing of ADMIN_PASSWORD is not OK
+    const { limited } = await rateLimit(`admin_preview:${getIp(req)}`, 10, 15 * 60 * 1000);
+    if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
     const adminPass = process.env.ADMIN_PASSWORD;
-    if (!adminPass || body.adminPassword !== adminPass) {
+    const given = String(body.adminPassword || '');
+    // timing-safe compare — hash both sides to equalize length first
+    const a = crypto.createHash('sha256').update(given).digest();
+    const b = crypto.createHash('sha256').update(String(adminPass || '')).digest();
+    if (!adminPass || !crypto.timingSafeEqual(a, b)) {
       return res.status(401).json({ error: 'unauthorized' });
     }
     const { refNum } = body;
@@ -79,6 +89,7 @@ module.exports = async (req, res) => {
     if (!rows?.length) return res.status(404).json({ error: 'not_found' });
     const partner = rows[0];
     const apps = await sb('GET', `/applications?partner_id=eq.${partner.id}&order=created_at.desc&limit=500`, undefined, key);
+    await signApplicationDocs(apps || [], key);
     return res.status(200).json({ partner, applications: apps || [] });
   }
 
@@ -114,21 +125,24 @@ module.exports = async (req, res) => {
     }
 
     // GET SIGNED UPLOAD URL FOR PARTNER AVATAR/LOGO
+    // Avatars are display images (not sensitive) and live in their own PUBLIC
+    // bucket `partner-logos` — kept separate from the private applicant-docs
+    // bucket so applicant PII can be locked down without breaking avatars.
     if (action === 'get_avatar_upload_url') {
       const rows = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=id&limit=1`, undefined, key);
       if (!rows?.length) return res.status(404).json({ error: 'not_found' });
       const { fileExt } = body;
       const ext = (fileExt || 'png').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'png';
-      const filePath = `partner-logos/${rows[0].id}/avatar_${Date.now()}.${ext}`;
-      const r = await fetch(`${SB_URL}/storage/v1/object/upload/sign/applicant-docs/${filePath}`, {
+      const filePath = `${rows[0].id}/avatar_${Date.now()}.${ext}`;
+      const r = await fetch(`${SB_URL}/storage/v1/object/upload/sign/partner-logos/${filePath}`, {
         method: 'POST',
         headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       });
       if (!r.ok) throw new Error(`Storage sign ${r.status}`);
       const { url } = await r.json();
       const token = new URL(SB_URL + url).searchParams.get('token');
-      const signedURL = `/storage/v1/object/upload/sign/applicant-docs/${filePath}?token=${token}`;
-      const publicUrl = `${SB_URL}/storage/v1/object/public/applicant-docs/${filePath}`;
+      const signedURL = `/storage/v1/object/upload/sign/partner-logos/${filePath}?token=${token}`;
+      const publicUrl = `${SB_URL}/storage/v1/object/public/partner-logos/${filePath}`;
       return res.status(200).json({ signedURL, storageUrl: SB_URL, publicUrl });
     }
 
@@ -162,11 +176,18 @@ module.exports = async (req, res) => {
     }
 
     // LOAD APPLICATIONS
+    // Doc files live in a PRIVATE bucket — the stored docs JSONB holds storage
+    // paths (or legacy public URLs, converted here). Every load bulk-signs the
+    // paths server-side and injects short-lived signed URLs, so only the
+    // authenticated owning partner ever gets working links.
     if (action === 'load_apps') {
       const rows = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=id&limit=1`, undefined, key);
       if (!rows?.length) return res.status(404).json({ error: 'not_found' });
       const partnerId = rows[0].id;
       const apps = await sb('GET', `/applications?partner_id=eq.${partnerId}&order=created_at.desc&limit=500`, undefined, key);
+
+      await signApplicationDocs(apps || [], key);
+
       return res.status(200).json({ applications: apps || [] });
     }
 
@@ -280,3 +301,60 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: 'internal_error' });
   }
 };
+
+// ── Signed URLs for applicant documents (private bucket) ─────────────────────
+// docs JSONB entries look like { name, path } (new) or { name, url } (legacy —
+// a public URL from before the bucket was made private; the path is extracted
+// from it). Mutates each app's docs in place, adding a short-lived signed `url`.
+const DOCS_BUCKET = 'applicant-docs';
+const SIGNED_URL_TTL_SEC = 60 * 60; // 1 hour — matches dashboard session length
+
+function docEntryPath(d) {
+  if (!d) return null;
+  if (d.path) return String(d.path);
+  if (d.url) {
+    const marker = `/storage/v1/object/public/${DOCS_BUCKET}/`;
+    const i = String(d.url).indexOf(marker);
+    if (i !== -1) return decodeURIComponent(String(d.url).slice(i + marker.length));
+  }
+  return null;
+}
+
+async function signApplicationDocs(apps, key) {
+  const paths = [];
+  const slots = []; // { docsObj, key, path }
+
+  for (const app of apps) {
+    let docs = app.docs;
+    if (typeof docs === 'string') { try { docs = JSON.parse(docs); } catch { docs = null; } }
+    if (!docs || typeof docs !== 'object') continue;
+    app.docs = docs;
+    for (const k of Object.keys(docs)) {
+      const p = docEntryPath(docs[k]);
+      if (p) { paths.push(p); slots.push({ docs, key: k, path: p }); }
+    }
+  }
+  if (!paths.length) return;
+
+  try {
+    // Bulk sign — one call for all paths
+    const r = await fetch(`${SB_URL}/storage/v1/object/sign/${DOCS_BUCKET}`, {
+      method: 'POST',
+      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ expiresIn: SIGNED_URL_TTL_SEC, paths }),
+    });
+    if (!r.ok) throw new Error(`bulk sign ${r.status}`);
+    const signed = await r.json(); // [{ path, signedURL|error }]
+    const byPath = new Map();
+    for (const s of signed || []) {
+      if (s && s.path && s.signedURL) byPath.set(s.path, `${SB_URL}/storage/v1${s.signedURL.replace(/^\/storage\/v1/, '')}`);
+    }
+    for (const slot of slots) {
+      const u = byPath.get(slot.path);
+      if (u) slot.docs[slot.key] = { ...slot.docs[slot.key], url: u };
+    }
+  } catch (err) {
+    // Fail soft: dashboard still works, doc links just stay unsigned this load
+    console.error('signApplicationDocs error:', err.message);
+  }
+}

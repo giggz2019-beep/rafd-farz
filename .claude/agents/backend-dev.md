@@ -33,7 +33,7 @@ Partners authenticate with a token: `base64url(email|timestamp|sha256_hmac)` usi
 ### Existing api/ functions
 | File | Purpose | Key env vars |
 |---|---|---|
-| `partner-auth.js` | login, register, nafath_lookup, lookup_email, search_org, reset_password, register_after_payment, check_email | SUPABASE_SERVICE_KEY |
+| `partner-auth.js` | login, register, nafath_lookup, search_org (masked results), reset_password, register_after_payment, check_email | SUPABASE_SERVICE_KEY |
 | `partner-data.js` | load, update_config, update_profile, update_password, update_ref, load_apps, update_app, delete_app, add_app, admin_preview | SUPABASE_SERVICE_KEY, ADMIN_PASSWORD |
 | `apply-form.js` | get_form, get_upload_url, submit | SUPABASE_SERVICE_KEY |
 | `admin-data.js` | ping, load, update_plan, update_status, delete_partner, insert_partner, update_notes | SUPABASE_SERVICE_KEY, ADMIN_PASSWORD |
