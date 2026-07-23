@@ -58,8 +58,16 @@ async function redisRateLimit(key, maxRequests, windowMs) {
   });
   if (!r.ok) throw new Error(`redis ${r.status}`);
   const results = await r.json();
+  if (results?.[0]?.error) throw new Error(`redis INCR: ${results[0].error}`);
   const count = Number(results?.[0]?.result ?? 1);
   const pttl = Number(results?.[2]?.result ?? windowMs);
+  // Guard against a counter that never got a TTL (e.g. EXPIRE NX unsupported):
+  // a key with no expiry (PTTL -1) would otherwise lock the caller out forever.
+  if (pttl === -1) {
+    await fetch(`${REDIS_URL}/expire/${encodeURIComponent(redisKey)}/${Math.ceil(windowMs / 1000)}`, {
+      headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
+    }).catch(() => {});
+  }
   const resetTime = Date.now() + (pttl > 0 ? pttl : windowMs);
   return {
     limited: count > maxRequests,

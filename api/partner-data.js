@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const { hash: hashPassword, verify: verifyPassword } = require('./_lib/password');
 const { getOrder, classifyOrder } = require('./_lib/ngenius');
 const { PAID_PLAN_PRICES } = require('./_lib/plans');
+const { rateLimit, getIp } = require('./_lib/rate-limit');
 
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
 
@@ -70,6 +71,11 @@ module.exports = async (req, res) => {
 
   // ─── ADMIN PREVIEW (admin password required) ─────────────────────────────
   if (body.action === 'admin_preview') {
+    // Rate limit BEFORE the password compare — this endpoint returns partner
+    // PII + signed doc URLs, so unlimited guessing of ADMIN_PASSWORD is not OK
+    const { limited } = await rateLimit(`admin_preview:${getIp(req)}`, 10, 15 * 60 * 1000);
+    if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
     const adminPass = process.env.ADMIN_PASSWORD;
     const given = String(body.adminPassword || '');
     // timing-safe compare — hash both sides to equalize length first

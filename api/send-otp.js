@@ -71,7 +71,7 @@ module.exports = async (req, res) => {
     if (limited) return res.status(429).json({ error: 'too_many_attempts' });
 
     const safeName = String(fname || '').replace(/<[^>]*>/g, '').slice(0, 80);
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
     const challengeToken = makeOtpToken(email, otp);
 
     const response = await fetch('https://api.resend.com/emails', {

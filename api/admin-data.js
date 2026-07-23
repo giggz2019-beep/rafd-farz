@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
   const ip = getIp(req);
   const rl = await rateLimit(`admin:${ip}`, 10, 15 * 60 * 1000);
   if (rl.limited) {
-    res.setHeader('Retry-After', String(rl.retryAfter));
+    res.setHeader('Retry-After', String(Math.max(1, Math.ceil(((rl.resetTime || Date.now()) - Date.now()) / 1000))));
     return res.status(429).json({ error: 'too_many_attempts' });
   }
 
@@ -30,10 +30,20 @@ module.exports = async (req, res) => {
 
   const body = req.body || {};
 
-  // Authenticate: Supabase token only
+  // Authenticate: ADMIN_PASSWORD (what admin.html sends) or a Supabase Auth
+  // token belonging to an allow-listed admin email. Rate-limited above.
   let authenticated = false;
 
-  if (body.supabase_token) {
+  const adminPass = process.env.ADMIN_PASSWORD;
+  if (adminPass && body.password) {
+    // timing-safe compare — hash both sides to equalize length first
+    const crypto = require('crypto');
+    const a = crypto.createHash('sha256').update(String(body.password)).digest();
+    const b = crypto.createHash('sha256').update(String(adminPass)).digest();
+    if (crypto.timingSafeEqual(a, b)) authenticated = true;
+  }
+
+  if (!authenticated && body.supabase_token) {
     try {
       const userRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
         headers: {

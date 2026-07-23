@@ -857,7 +857,8 @@ async function saveClient() {
       plan,
       status: 'approved',
       notes: document.getElementById('f_notes').value.trim(),
-      password: Math.random().toString(36).slice(2, 10)
+      // مولّد مشفّر — الحقل يُتجاهل server-side حالياً لكن لا نترك مولّداً ضعيفاً
+      password: crypto.randomUUID().replace(/-/g, '').slice(0, 16)
     }});
     await loadFromSupabase();
     closeAddModal();

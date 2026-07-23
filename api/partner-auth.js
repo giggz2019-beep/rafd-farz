@@ -154,7 +154,7 @@ module.exports = async (req, res) => {
       }
 
       // Generate and send login OTP server-side — never returned to browser
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 1000000).toString();
       const challengeToken = makeOtpToken(p.email, otp);
 
       if (process.env.RESEND_API_KEY) {
@@ -200,7 +200,7 @@ module.exports = async (req, res) => {
       if (!rows?.length) return res.status(200).json({ ok: true }); // silent — no enumeration
 
       const p = rows[0];
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 1000000).toString();
       const challengeToken = makeOtpToken(p.email, otp);
 
       if (process.env.RESEND_API_KEY) {
@@ -385,7 +385,7 @@ module.exports = async (req, res) => {
       if (!rows?.length) return res.status(200).json({ ok: true });
 
       const p = rows[0];
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 1000000).toString();
       const resetToken = makeOtpToken(emailNorm, otp);
 
       if (process.env.RESEND_API_KEY) {
