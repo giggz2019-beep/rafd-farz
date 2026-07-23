@@ -348,13 +348,43 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     if (!t) return;
     pendingText += (pendingText ? ' ' : '') + t;
     clearTimeout(flushTimer);
-    if (pendingText.length >= 110) return flushPending();
-    flushTimer = setTimeout(flushPending, 350);
+    if (pendingText.length >= 90) return flushPending();
+    flushTimer = setTimeout(flushPending, 250);
   }
   function flushPending(){
     clearTimeout(flushTimer);
     if (pendingText.trim().length > 1) enqueue(pendingText);
     pendingText = '';
+  }
+
+  // TRUE simultaneous mode: mobile recognizers withhold the "final" result
+  // until the speaker pauses for seconds, so waiting for finals is what made
+  // the reaction feel slow. Instead we cut chunks straight from the LIVE
+  // interim text: long enough runs are sent while the person is still
+  // talking, and a short stability timer flushes the rest. handleFinal then
+  // only forwards whatever words were not already sent.
+  var interimWordsSent = 0, lastInterimText = '', interimStableTimer = null;
+  function splitWords(s){ return s.trim().split(/\s+/).filter(Boolean); }
+
+  function cutFromInterim(interim, force){
+    var w = splitWords(interim);
+    var pending = w.slice(interimWordsSent);
+    if (!pending.length) return;
+    if (force ? pending.length >= 2 : pending.length >= 12) {
+      // While not forced, hold the last 2 words back — they often still change.
+      var take = force ? pending : pending.slice(0, pending.length - 2);
+      if (!take.length) return;
+      interimWordsSent += take.length;
+      enqueue(take.join(' '));
+    }
+  }
+
+  function handleFinal(t){
+    clearTimeout(interimStableTimer);
+    var rest = splitWords(t).slice(interimWordsSent).join(' ');
+    interimWordsSent = 0;
+    lastInterimText = '';
+    if (rest) queueFinal(rest);
   }
 
   // ---- Speech recognition ----
@@ -371,11 +401,21 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     r.maxAlternatives = 1;
     r.onresult = function(e){
       var interim = '';
-      for (var i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) queueFinal(e.results[i][0].transcript);
-        else interim += e.results[i][0].transcript;
+      for (var i = 0; i < e.results.length; i++) {
+        var res = e.results[i];
+        if (res.isFinal) {
+          if (i >= e.resultIndex) handleFinal(res[0].transcript);
+        } else {
+          interim += res[0].transcript;
+        }
       }
       interimEl.textContent = interim;
+      if (interim.trim() && interim !== lastInterimText) {
+        lastInterimText = interim;
+        cutFromInterim(interim, false);
+        clearTimeout(interimStableTimer);
+        interimStableTimer = setTimeout(function(){ cutFromInterim(lastInterimText, true); }, 600);
+      }
     };
     r.onstart = function(){
       audioErrCount = 0;
@@ -469,6 +509,9 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
   function stopAll(keepStatus){
     running = false;
     speakingHold = false;
+    clearTimeout(interimStableTimer);
+    if (lastInterimText) cutFromInterim(lastInterimText, true);
+    interimWordsSent = 0; lastInterimText = '';
     flushPending();
     try { if (rec) rec.stop(); } catch(e){}
     if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch(e){} }

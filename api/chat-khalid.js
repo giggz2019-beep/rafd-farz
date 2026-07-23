@@ -157,6 +157,7 @@ Rules:
 - Keep technical terms that are normally said in English (AI, API, deep learning...) in English inside the translation when that is how people actually say them.
 - The translation will be read aloud by text-to-speech: short natural sentences, no abbreviations that sound wrong when spoken, no markdown, no quotes.
 - Output ONLY the translation of the CURRENT segment. No explanations, no notes, no repetition of the source text.
+- Segments are cut live for speed and may be partial clauses ending mid-sentence. Translate exactly the words given so they flow naturally after the previous segments — never wait for, complete, or invent the rest of the sentence.
 - If the segment is pure noise or has no translatable content, output exactly: ...`;
 }
 

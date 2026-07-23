@@ -476,13 +476,43 @@ document.addEventListener('click', () => {
     if (!t) return;
     pendingText += (pendingText ? ' ' : '') + t;
     clearTimeout(flushTimer);
-    if (pendingText.length >= 110) return flushPending();
-    flushTimer = setTimeout(flushPending, 350);
+    if (pendingText.length >= 90) return flushPending();
+    flushTimer = setTimeout(flushPending, 250);
   }
   function flushPending(){
     clearTimeout(flushTimer);
     if (pendingText.trim().length > 1) enqueue(pendingText);
     pendingText = '';
+  }
+
+  // TRUE simultaneous mode: mobile recognizers withhold the "final" result
+  // until the speaker pauses for seconds, so waiting for finals is what made
+  // the reaction feel slow. Instead we cut chunks straight from the LIVE
+  // interim text: long enough runs are sent while the person is still
+  // talking, and a short stability timer flushes the rest. handleFinal then
+  // only forwards whatever words were not already sent.
+  let interimWordsSent = 0, lastInterimText = '', interimStableTimer = null;
+  function splitWords(s){ return s.trim().split(/\s+/).filter(Boolean); }
+
+  function cutFromInterim(interim, force){
+    const w = splitWords(interim);
+    const pending = w.slice(interimWordsSent);
+    if (!pending.length) return;
+    if (force ? pending.length >= 2 : pending.length >= 12) {
+      // While not forced, hold the last 2 words back — they often still change.
+      const take = force ? pending : pending.slice(0, pending.length - 2);
+      if (!take.length) return;
+      interimWordsSent += take.length;
+      enqueue(take.join(' '));
+    }
+  }
+
+  function handleFinal(t){
+    clearTimeout(interimStableTimer);
+    const rest = splitWords(t).slice(interimWordsSent).join(' ');
+    interimWordsSent = 0;
+    lastInterimText = '';
+    if (rest) queueFinal(rest);
   }
 
   // ---- Speech recognition ----
@@ -495,12 +525,21 @@ document.addEventListener('click', () => {
 
     r.onresult = (e) => {
       let interim = '';
-      for (let i = e.resultIndex; i < e.results.length; i++) {
+      for (let i = 0; i < e.results.length; i++) {
         const res = e.results[i];
-        if (res.isFinal) queueFinal(res[0].transcript);
-        else interim += res[0].transcript;
+        if (res.isFinal) {
+          if (i >= e.resultIndex) handleFinal(res[0].transcript);
+        } else {
+          interim += res[0].transcript;
+        }
       }
       interimEl.textContent = interim;
+      if (interim.trim() && interim !== lastInterimText) {
+        lastInterimText = interim;
+        cutFromInterim(interim, false);
+        clearTimeout(interimStableTimer);
+        interimStableTimer = setTimeout(() => cutFromInterim(lastInterimText, true), 600);
+      }
     };
     r.onstart = () => {
       audioErrCount = 0;
@@ -577,6 +616,9 @@ document.addEventListener('click', () => {
   function stopAll(){
     running = false;
     speakingHold = false;
+    clearTimeout(interimStableTimer);
+    if (lastInterimText) cutFromInterim(lastInterimText, true);
+    interimWordsSent = 0; lastInterimText = '';
     flushPending();
     try { rec?.stop(); } catch(e){}
     if (window.speechSynthesis) try { speechSynthesis.cancel(); } catch(e){}
