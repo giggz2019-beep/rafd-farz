@@ -449,11 +449,22 @@ document.addEventListener('click', () => {
     return r;
   }
 
-  function startAll(){
-    if (!SR) return;
+  async function startAll(){
+    if (!SR) { showWarn('trUnsupported', true); return; }
     showWarn('trMicDenied', false);
+    // Explicitly request the mic first: forces the permission prompt to appear
+    // and turns silent failures into a visible warning.
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(t => t.stop());
+      } catch (e) {
+        showWarn('trMicDenied', true);
+        return;
+      }
+    }
     rec = buildRec();
-    try { rec.start(); } catch(e){ return; }
+    try { rec.start(); } catch(e){ showWarn('trMicDenied', true); return; }
     running = true;
     micBtn.classList.add('live');
     micBtn.textContent = '⏹';

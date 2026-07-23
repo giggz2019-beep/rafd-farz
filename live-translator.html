@@ -202,7 +202,7 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
   function fmt(s){ var m = Math.floor(s/60), r = s%60; return ('0'+m).slice(-2)+':'+('0'+r).slice(-2); }
   function startTimer(){ startedAt = Date.now(); timerInt = setInterval(function(){ timerEl.textContent = fmt(Math.floor((Date.now()-startedAt)/1000)); }, 1000); }
   function stopTimer(){ clearInterval(timerInt); }
-  function grabWakeLock(){ try { if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(function(l){ wakeLock = l; }); } catch(e){} }
+  function grabWakeLock(){ try { if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(function(l){ wakeLock = l; }).catch(function(){}); } catch(e){} }
   function releaseWakeLock(){ try { if (wakeLock) { wakeLock.release(); wakeLock = null; } } catch(e){} }
   document.addEventListener('visibilitychange', function(){ if (running && document.visibilityState === 'visible') grabWakeLock(); });
 
@@ -279,6 +279,11 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
   }
 
   // ---- Speech recognition ----
+  function setStatus(t, isErr){
+    statusEl.textContent = t;
+    statusEl.style.color = isErr ? '#f2b8a8' : '';
+  }
+
   function buildRec(){
     var r = new SR();
     r.lang = srcSel.value;
@@ -294,7 +299,15 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
       interimEl.textContent = interim;
     };
     r.onerror = function(e){
-      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { showWarn('wMicDenied', true); stopAll(); }
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        showWarn('wMicDenied', true);
+        setStatus('المتصفح رفض تشغيل المايك — اسمحي بالإذن ثم اضغطي المايك من جديد', true);
+        stopAll(true);
+      } else if (e.error === 'audio-capture') {
+        setStatus('ما لقينا مايكروفون شغال بالجهاز — تأكدي إن المايك مو مستخدم من تطبيق ثاني', true);
+        stopAll(true);
+      }
+      // 'no-speech' / 'aborted' / 'network' → onend handles the restart
     };
     r.onend = function(){
       interimEl.textContent = '';
@@ -303,27 +316,48 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     return r;
   }
 
-  function startAll(){
-    if (!SR) return;
+  async function startAll(){
+    if (!SR) { showWarn('wUnsupported', true); setStatus('المتصفح هذا ما يدعم التعرف على الكلام — افتحي الصفحة في Chrome', true); return; }
     showWarn('wMicDenied', false);
+    if (window.isSecureContext === false) {
+      setStatus('المتصفح مانع المايك لأن الصفحة مفتوحة بطريقة غير آمنة — افتحي الرابط المباشر للصفحة بدل الملف المحمّل', true);
+      showWarn('wMicDenied', true);
+      return;
+    }
+    // Explicitly request the mic first: forces the permission prompt to appear
+    // and turns silent failures into a visible message.
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      setStatus('نطلب إذن المايكروفون…');
+      try {
+        var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(function(t){ t.stop(); });
+      } catch (e) {
+        showWarn('wMicDenied', true);
+        setStatus('ما قدرنا نشغل المايك (' + ((e && e.name) || 'خطأ') + ') — اسمحي بالإذن من إعدادات المتصفح وحاولي من جديد', true);
+        return;
+      }
+    }
     rec = buildRec();
-    try { rec.start(); } catch(e){ return; }
+    try { rec.start(); } catch(e){
+      setStatus('تعذر تشغيل التعرف على الكلام: ' + ((e && e.message) || e), true);
+      return;
+    }
     running = true;
     micBtn.classList.add('live');
     micBtn.textContent = '⏹';
-    statusEl.textContent = 'يسمع الآن… تكلم المتحدث والترجمة توصلك';
+    setStatus('يسمع الآن… تكلم المتحدث والترجمة توصلك');
     srcSel.disabled = true;
     startTimer(); grabWakeLock();
     if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch(e){} }
   }
 
-  function stopAll(){
+  function stopAll(keepStatus){
     running = false;
     try { if (rec) rec.stop(); } catch(e){}
     if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch(e){} }
     micBtn.classList.remove('live');
     micBtn.textContent = '🎙️';
-    statusEl.textContent = 'متوقف — اضغطي المايك للبدء من جديد';
+    if (!keepStatus) setStatus('متوقف — اضغطي المايك للبدء من جديد');
     srcSel.disabled = false;
     interimEl.textContent = '';
     stopTimer(); releaseWakeLock();
