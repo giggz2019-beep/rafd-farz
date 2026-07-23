@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).end();
 
   const ip = getIp(req);
-  const rl = rateLimit(`admin:${ip}`, 10, 15 * 60 * 1000);
+  const rl = await rateLimit(`admin:${ip}`, 10, 15 * 60 * 1000);
   if (rl.limited) {
     res.setHeader('Retry-After', String(rl.retryAfter));
     return res.status(429).json({ error: 'too_many_attempts' });

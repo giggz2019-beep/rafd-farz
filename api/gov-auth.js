@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
     }
     
     // Rate limiting: 10 auth attempts per hour per IP
-    const { limited } = rateLimit(`gov_auth:${ip}`, 10, 60 * 60 * 1000);
+    const { limited } = await rateLimit(`gov_auth:${ip}`, 10, 60 * 60 * 1000);
     if (limited) {
       log('gov_auth_rate_limit', { ip, govId });
       return res.status(429).json({ error: 'too_many_attempts' });
@@ -89,7 +89,7 @@ module.exports = async (req, res) => {
     if (!sessionToken) return res.status(400).json({ error: 'missing_token' });
     
     // Rate limiting: 30 verify attempts per 10 minutes
-    const { limited } = rateLimit(`verify_token:${ip}`, 30, 10 * 60 * 1000);
+    const { limited } = await rateLimit(`verify_token:${ip}`, 30, 10 * 60 * 1000);
     if (limited) {
       log('verify_token_rate_limit', { ip });
       return res.status(429).json({ error: 'too_many_attempts' });

@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
     if (!challengeToken || !otp) return res.status(400).json({ error: 'missing_fields' });
     if (!/^\d{6}$/.test(otp)) return res.status(400).json({ error: 'invalid_otp_format' });
 
-    const { limited } = rateLimit(`otp_verify:${ip}`, 5, 10 * 60 * 1000);
+    const { limited } = await rateLimit(`otp_verify:${ip}`, 5, 10 * 60 * 1000);
     if (limited) return res.status(429).json({ error: 'too_many_attempts' });
 
     const email = verifyOtpToken(challengeToken, otp, 10 * 60 * 1000);
@@ -67,7 +67,7 @@ module.exports = async (req, res) => {
     if (!email) return res.status(400).json({ error: 'missing_fields' });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'invalid_email' });
 
-    const { limited } = rateLimit(`otp_send:${ip}`, 3, 10 * 60 * 1000);
+    const { limited } = await rateLimit(`otp_send:${ip}`, 3, 10 * 60 * 1000);
     if (limited) return res.status(429).json({ error: 'too_many_attempts' });
 
     const safeName = String(fname || '').replace(/<[^>]*>/g, '').slice(0, 80);
