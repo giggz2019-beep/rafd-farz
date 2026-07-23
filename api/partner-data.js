@@ -134,6 +134,13 @@ module.exports = async (req, res) => {
       const { fileExt } = body;
       const ext = (fileExt || 'png').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'png';
       const filePath = `${rows[0].id}/avatar_${Date.now()}.${ext}`;
+      // تأكّد أن الـ bucket العام موجود — إنشاء idempotent (يتجاهل "موجود مسبقاً")
+      // حتى يعمل رفع الصورة دون الحاجة لتشغيل أي SQL يدوي مسبقاً.
+      await fetch(`${SB_URL}/storage/v1/bucket`, {
+        method: 'POST',
+        headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: 'partner-logos', name: 'partner-logos', public: true }),
+      }).catch(() => {});
       const r = await fetch(`${SB_URL}/storage/v1/object/upload/sign/partner-logos/${filePath}`, {
         method: 'POST',
         headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
