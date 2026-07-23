@@ -166,7 +166,6 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     'https://www.rafd-digital.com'
   );
   var apiIdx = 0;
-  function apiUrl(){ return API_BASES[apiIdx] + '/api/chat-khalid'; }
 
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var micBtn = document.getElementById('micBtn');
@@ -181,7 +180,7 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
   var ttsRate = document.getElementById('ttsRate');
 
   var rec = null, running = false, timerInt = null, startedAt = 0;
-  var queue = [], processing = false, recentSources = [], segments = [];
+  var recentSources = [], segments = [];
   var wakeLock = null;
   var pauseTts = document.getElementById('pauseTts');
   var speakingHold = false;
@@ -262,11 +261,71 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     return dst;
   }
 
+  // Simultaneous pipeline: every phrase is sent for translation IMMEDIATELY
+  // (requests run in parallel, nothing waits in line), and finished
+  // translations are displayed/spoken in the original order.
+  var seq = 0, nextToPlay = 0, results = {};
+
   function enqueue(srcText){
     var text = srcText.trim();
     if (text.length < 2) return;
-    queue.push({ text: text, dstEl: addCard(text) });
-    processQueue();
+    requestTranslation(text, seq++, addCard(text));
+  }
+
+  function requestTranslation(text, id, dstEl){
+    var recent = recentSources.slice(-2);
+    recentSources.push(text);
+    if (recentSources.length > 10) recentSources.shift();
+    function attempt(baseIdx){
+      fetch(API_BASES[baseIdx] + '/api/chat-khalid', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: 'translate', text: text, target: 'ar', style: styleSel.value, recent: recent })
+      }).then(function(r){ return r.json(); }).then(function(data){
+        if (data && typeof data.translation === 'string' && data.translation) {
+          results[id] = { tr: data.translation, src: text, dstEl: dstEl };
+        } else if (data && data.skipped) {
+          results[id] = { skip: true, dstEl: dstEl };
+        } else if (baseIdx < API_BASES.length - 1) {
+          apiIdx = Math.max(apiIdx, baseIdx + 1);
+          return attempt(baseIdx + 1);
+        } else {
+          if (data && data.error === 'no_key') showWarn('wSvcDown', true);
+          results[id] = { err: true, dstEl: dstEl };
+        }
+        drain();
+      }).catch(function(){
+        if (baseIdx < API_BASES.length - 1) {
+          apiIdx = Math.max(apiIdx, baseIdx + 1);
+          return attempt(baseIdx + 1);
+        }
+        showWarn('wSvcDown', true);
+        results[id] = { err: true, dstEl: dstEl };
+        drain();
+      });
+    }
+    attempt(apiIdx);
+  }
+
+  function drain(){
+    while (Object.prototype.hasOwnProperty.call(results, nextToPlay)) {
+      var r = results[nextToPlay];
+      delete results[nextToPlay];
+      nextToPlay++;
+      if (r.tr) {
+        r.dstEl.className = 'dst';
+        r.dstEl.textContent = r.tr;
+        segments.push({ src: r.src, dst: r.tr });
+        speak(r.tr);
+      } else if (r.skip) {
+        r.dstEl.className = 'dst err';
+        r.dstEl.textContent = '… (مقطع غير واضح)';
+      } else {
+        r.dstEl.className = 'dst err';
+        r.dstEl.textContent = 'تعذرت ترجمة هذه الجملة — استمري، الجاية بتترجم عادي';
+      }
+    }
+    feedEl.scrollTop = feedEl.scrollHeight;
   }
 
   // Recognition emits choppy partial "finals" mid-sentence, and translating
@@ -279,66 +338,13 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     if (!t) return;
     pendingText += (pendingText ? ' ' : '') + t;
     clearTimeout(flushTimer);
-    if (pendingText.length >= 180) return flushPending();
-    flushTimer = setTimeout(flushPending, 900);
+    if (pendingText.length >= 110) return flushPending();
+    flushTimer = setTimeout(flushPending, 350);
   }
   function flushPending(){
     clearTimeout(flushTimer);
     if (pendingText.trim().length > 1) enqueue(pendingText);
     pendingText = '';
-  }
-
-  function processQueue(){
-    if (processing || !queue.length) return;
-    processing = true;
-    var item = queue.shift();
-    fetch(apiUrl(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'translate', text: item.text, target: 'ar', style: styleSel.value, recent: recentSources.slice(-3) })
-    }).then(function(r){ return r.json(); }).then(function(data){
-      if (data && typeof data.translation === 'string' && data.translation) {
-        item.dstEl.className = 'dst';
-        item.dstEl.textContent = data.translation;
-        segments.push({ src: item.text, dst: data.translation });
-        speak(data.translation);
-        finish(item.text);
-      } else if (data && data.skipped) {
-        item.dstEl.className = 'dst err';
-        item.dstEl.textContent = '… (مقطع غير واضح)';
-        finish(item.text);
-      } else if (retryNextBase(item)) {
-        // trying the next server — item re-queued
-      } else {
-        showWarn('wSvcDown', !!(data && data.error === 'no_key'));
-        item.dstEl.className = 'dst err';
-        item.dstEl.textContent = 'تعذرت ترجمة هذه الجملة — استمري، الجاية بتترجم عادي';
-        finish(item.text);
-      }
-    }).catch(function(){
-      if (retryNextBase(item)) return;
-      showWarn('wSvcDown', true);
-      item.dstEl.className = 'dst err';
-      item.dstEl.textContent = 'تعذر الاتصال بخدمة الترجمة — تأكدي من النت';
-      finish(item.text);
-    });
-  }
-  // A server that is unreachable, or deployed without translate support yet,
-  // makes us advance to the next base and retry the same segment there.
-  function retryNextBase(item){
-    if (apiIdx >= API_BASES.length - 1) return false;
-    apiIdx++;
-    queue.unshift(item);
-    processing = false;
-    processQueue();
-    return true;
-  }
-  function finish(srcText){
-    recentSources.push(srcText);
-    if (recentSources.length > 10) recentSources.shift();
-    feedEl.scrollTop = feedEl.scrollHeight;
-    processing = false;
-    processQueue();
   }
 
   // ---- Speech recognition ----
@@ -450,6 +456,7 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     var cards = feedEl.querySelectorAll('.card');
     for (var i = 0; i < cards.length; i++) cards[i].remove();
     segments = []; recentSources = [];
+    seq = 0; nextToPlay = 0; results = {};
     emptyEl.style.display = 'block';
   });
 

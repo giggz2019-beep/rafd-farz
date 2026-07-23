@@ -185,7 +185,7 @@ async function handleTranslate(req, res, apiKey) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 500,
+        max_tokens: 300,
         temperature: 0.2,
         system: buildTranslateSystemPrompt(target, style),
         messages: [{ role: 'user', content: userContent }]

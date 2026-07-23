@@ -306,8 +306,6 @@ document.addEventListener('click', () => {
   let running = false;
   let startedAt = 0;
   let timerInt = null;
-  let queue = [];
-  let processing = false;
   let recentSources = [];
   let segments = [];          // {src, dst}
   let wakeLock = null;
@@ -405,13 +403,57 @@ document.addEventListener('click', () => {
     return dst;
   }
 
-  // ---- Translation queue (sequential to keep order) ----
+  // Simultaneous pipeline: every phrase is sent for translation IMMEDIATELY
+  // (requests run in parallel, nothing waits in line), and finished
+  // translations are displayed/spoken in the original order.
+  let seq = 0, nextToPlay = 0, results = {};
+
   function enqueue(srcText){
     const text = srcText.trim();
     if (text.length < 2) return;
-    const dstEl = addCard(text);
-    queue.push({ text, dstEl });
-    processQueue();
+    requestTranslation(text, seq++, addCard(text));
+  }
+
+  function requestTranslation(text, id, dstEl){
+    const recent = recentSources.slice(-2);
+    recentSources.push(text);
+    if (recentSources.length > 10) recentSources.shift();
+    fetch('/api/chat-khalid', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'translate', text, target: dstSel.value, style: styleSel.value, recent })
+    }).then(r => r.json()).then(data => {
+      if (data && typeof data.translation === 'string' && data.translation) {
+        results[id] = { tr: data.translation, src: text, dstEl };
+      } else if (data && data.skipped) {
+        results[id] = { skip: true, dstEl };
+      } else {
+        if (data && data.error === 'no_key') { svcDown = true; showWarn('trSvcDown', true); }
+        results[id] = { err: true, noKey: data && data.error === 'no_key', dstEl };
+      }
+      drain();
+    }).catch(() => {
+      results[id] = { err: true, dstEl };
+      drain();
+    });
+  }
+
+  function drain(){
+    while (Object.prototype.hasOwnProperty.call(results, nextToPlay)) {
+      const r = results[nextToPlay];
+      delete results[nextToPlay];
+      nextToPlay++;
+      if (r.tr) {
+        r.dstEl.className = 'dst';
+        r.dstEl.textContent = r.tr;
+        segments.push({ src: r.src, dst: r.tr });
+        speak(r.tr);
+      } else {
+        r.dstEl.className = 'dst err';
+        r.dstEl.textContent = tKey(r.noKey ? 'tr.svc-down' : 'tr.err-net');
+      }
+    }
+    feedEl.scrollTop = feedEl.scrollHeight;
   }
 
   // Recognition emits choppy partial "finals" mid-sentence, and translating
@@ -424,55 +466,13 @@ document.addEventListener('click', () => {
     if (!t) return;
     pendingText += (pendingText ? ' ' : '') + t;
     clearTimeout(flushTimer);
-    if (pendingText.length >= 180) return flushPending();
-    flushTimer = setTimeout(flushPending, 900);
+    if (pendingText.length >= 110) return flushPending();
+    flushTimer = setTimeout(flushPending, 350);
   }
   function flushPending(){
     clearTimeout(flushTimer);
     if (pendingText.trim().length > 1) enqueue(pendingText);
     pendingText = '';
-  }
-
-  async function processQueue(){
-    if (processing || !queue.length) return;
-    processing = true;
-    const { text, dstEl } = queue.shift();
-    try {
-      const r = await fetch('/api/chat-khalid', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mode: 'translate',
-          text,
-          target: dstSel.value,
-          style: styleSel.value,
-          recent: recentSources.slice(-3)
-        })
-      });
-      const data = await r.json();
-      if (data.error === 'no_key') {
-        svcDown = true;
-        showWarn('trSvcDown', true);
-        dstEl.className = 'dst err';
-        dstEl.textContent = tKey('tr.svc-down');
-      } else if (data.error || data.skipped || !data.translation) {
-        dstEl.className = 'dst err';
-        dstEl.textContent = tKey('tr.err-net');
-      } else {
-        dstEl.className = 'dst';
-        dstEl.textContent = data.translation;
-        segments.push({ src: text, dst: data.translation });
-        speak(data.translation);
-      }
-      recentSources.push(text);
-      if (recentSources.length > 10) recentSources.shift();
-    } catch (e) {
-      dstEl.className = 'dst err';
-      dstEl.textContent = tKey('tr.err-net');
-    }
-    feedEl.scrollTop = feedEl.scrollHeight;
-    processing = false;
-    processQueue();
   }
 
   // ---- Speech recognition ----
@@ -575,6 +575,7 @@ document.addEventListener('click', () => {
     feedEl.querySelectorAll('.tr-card').forEach(c => c.remove());
     segments = [];
     recentSources = [];
+    seq = 0; nextToPlay = 0; results = {};
     emptyEl.style.display = 'block';
   });
 
