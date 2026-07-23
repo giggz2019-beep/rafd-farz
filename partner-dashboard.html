@@ -2194,11 +2194,17 @@ async function upgradeWithTamara() {
 // ===== SUPPORT =====
 function sendSupport() {
   const msg = document.getElementById('sup_msg').value.trim();
-  const subject = document.getElementById('sup_subject').value;
+  const subjectSel = document.getElementById('sup_subject').value;
   if (!msg) { toast(getT('db.toast-msg-required'), 'warn'); return; }
-  const msgs = JSON.parse(localStorage.getItem('rafd_support_msgs') || '[]');
-  msgs.unshift({id: Date.now(), partnerId: partner.id, org: partner.org, email: partner.email, subject, msg, date: new Date().toLocaleDateString('ar-SA')});
-  localStorage.setItem('rafd_support_msgs', JSON.stringify(msgs));
+  // افتح تطبيق البريد لدى الشريك برسالة جاهزة موجّهة لدعم رافد
+  const subject = encodeURIComponent('[دعم] ' + subjectSel + ' — ' + (partner.org || ''));
+  const body = encodeURIComponent(
+    msg +
+    '\n\n———\nالجهة: ' + (partner.org || '') +
+    '\nالمسؤول: ' + ((partner.fname || '') + ' ' + (partner.lname || '')).trim() +
+    '\nبريد الحساب: ' + (partner.email || '')
+  );
+  window.location.href = 'mailto:support@rafd-digital.com?subject=' + subject + '&body=' + body;
   document.getElementById('sup_msg').value = '';
   toast(getT('db.toast-msg-sent'));
 }
