@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="/favicon-512.png" type="image/png" sizes="512x512">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المترجم الحي — Rafd Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/style.css">
+<style>
+:root{
+  --ab-navy:#0A1628; --ab-navy-deep:#050B14; --ab-panel:#111F35;
+  --ab-green:#0B5D3B; --ab-green-bright:#16A870;
+  --ab-gold:#C9A24B; --ab-gold-bright:#E9CD8A;
+  --ab-ink:#F3EFE4; --ab-muted:#8FA39B; --ab-line:rgba(201,162,75,.2); --ab-line-soft:rgba(201,162,75,.1);
+}
+body{background:var(--ab-navy)}
+.page-hero{background:linear-gradient(160deg,var(--ab-navy-deep) 0%,var(--ab-navy) 55%,var(--ab-navy-deep) 100%);padding:100px 0 50px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--ab-line-soft)}
+.page-hero-tag{display:inline-block;background:rgba(201,162,75,.1);color:var(--ab-gold-bright);border:1px solid var(--ab-line);padding:.4rem 1.2rem;border-radius:50px;font-size:.82rem;font-weight:600;margin-bottom:1.2rem;position:relative}
+.page-hero h1{font-weight:900;color:#fff;margin-bottom:1rem;line-height:1.3;position:relative}
+.page-hero p{color:var(--ab-muted);font-size:1rem;max-width:620px;margin:0 auto;line-height:1.8;position:relative}
+.tr-section{padding:50px 0 70px;background:var(--ab-navy)}
+.tr-console{max-width:760px;margin:0 auto;background:linear-gradient(160deg,var(--ab-panel),var(--ab-navy-deep));border:1px solid var(--ab-line-soft);border-radius:24px;padding:1.6rem;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.tr-warn{background:rgba(201,80,60,.12);border:1px solid rgba(201,80,60,.4);color:#f2b8a8;border-radius:14px;padding:.9rem 1.1rem;font-size:.9rem;line-height:1.7;margin-bottom:1.2rem;display:none}
+.tr-warn.show{display:block}
+.tr-topbar{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.4rem}
+.tr-mic{width:96px;height:96px;border-radius:50%;border:2px solid var(--ab-line);background:radial-gradient(circle at 30% 30%,#153a2c,#0B5D3B);color:#fff;font-size:2.2rem;cursor:pointer;transition:all .25s;position:relative;flex-shrink:0}
+.tr-mic:hover{transform:scale(1.05);border-color:var(--ab-gold)}
+.tr-mic.live{background:radial-gradient(circle at 30% 30%,#a83a2a,#7a1f14);border-color:#e2725b}
+.tr-mic.live::after{content:'';position:absolute;inset:-10px;border-radius:50%;border:2px solid rgba(226,114,91,.5);animation:trPulse 1.4s ease-out infinite}
+@keyframes trPulse{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.25);opacity:0}}
+.tr-statebox{text-align:center;min-width:220px}
+.tr-status{color:var(--ab-ink);font-weight:700;font-size:1rem;margin-bottom:.3rem}
+.tr-timer{color:var(--ab-gold-bright);font-size:.85rem;font-weight:600;letter-spacing:.08em;direction:ltr}
+.tr-settings{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem;margin-bottom:1.3rem}
+.tr-field label{display:block;color:var(--ab-muted);font-size:.74rem;font-weight:700;margin-bottom:.35rem}
+.tr-field select,.tr-field input[type=range]{width:100%;background:var(--ab-navy-deep);border:1px solid var(--ab-line-soft);color:var(--ab-ink);border-radius:10px;padding:.55rem .6rem;font-size:.85rem;font-family:inherit}
+.tr-field input[type=range]{padding:.55rem 0;accent-color:var(--ab-green-bright)}
+.tr-toggle-row{display:flex;align-items:center;gap:.5rem;background:var(--ab-navy-deep);border:1px solid var(--ab-line-soft);border-radius:10px;padding:.55rem .6rem}
+.tr-toggle-row input{accent-color:var(--ab-green-bright);width:18px;height:18px}
+.tr-toggle-row span{color:var(--ab-ink);font-size:.82rem;font-weight:600}
+.tr-interim{background:var(--ab-navy-deep);border:1px dashed var(--ab-line);border-radius:14px;padding:.8rem 1rem;margin-bottom:1rem;min-height:52px}
+.tr-interim .lbl{color:var(--ab-muted);font-size:.7rem;font-weight:700;display:block;margin-bottom:.25rem}
+.tr-interim .txt{color:var(--ab-gold-bright);font-size:.92rem;line-height:1.6;direction:ltr;text-align:left;unicode-bidi:plaintext;min-height:1.2em}
+.tr-feed{display:flex;flex-direction:column;gap:.7rem;max-height:420px;overflow-y:auto;padding:2px}
+.tr-empty{color:var(--ab-muted);text-align:center;font-size:.88rem;padding:1.4rem 0}
+.tr-card{background:var(--ab-navy-deep);border:1px solid var(--ab-line-soft);border-radius:14px;padding:.85rem 1rem;animation:trIn .3s ease}
+@keyframes trIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tr-card .src{color:var(--ab-muted);font-size:.8rem;line-height:1.6;unicode-bidi:plaintext;text-align:start;border-bottom:1px solid var(--ab-line-soft);padding-bottom:.45rem;margin-bottom:.45rem}
+.tr-card .dst{color:#fff;font-size:1.02rem;font-weight:600;line-height:1.8;unicode-bidi:plaintext;text-align:start}
+.tr-card .dst.pending{color:var(--ab-muted);font-weight:400;font-size:.85rem}
+.tr-card .dst.err{color:#f2b8a8;font-weight:400;font-size:.85rem}
+.tr-actions{display:flex;gap:.6rem;justify-content:center;margin-top:1.1rem;flex-wrap:wrap}
+.tr-actions button{background:transparent;border:1px solid var(--ab-line);color:var(--ab-gold-bright);border-radius:10px;padding:.5rem 1.1rem;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.tr-actions button:hover{background:rgba(201,162,75,.1)}
+.tr-tips{max-width:760px;margin:1.6rem auto 0;background:linear-gradient(160deg,var(--ab-panel),var(--ab-navy-deep));border:1px solid var(--ab-line-soft);border-radius:20px;padding:1.4rem 1.6rem}
+.tr-tips h3{color:#fff;font-size:1rem;font-weight:800;margin-bottom:.8rem}
+.tr-tips li{color:var(--ab-muted);font-size:.87rem;line-height:1.9;margin-inline-start:1.1rem}
+.tr-rate-cta{max-width:760px;margin:1rem auto 0;text-align:center;color:var(--ab-muted);font-size:.85rem;line-height:1.8}
+.tr-rate-cta a{color:var(--ab-green-bright);font-weight:700;text-decoration:none}
+@media(max-width:768px){
+  .page-hero h1{font-size:1.7rem}
+  .tr-console{padding:1.1rem}
+  .tr-feed{max-height:340px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="container nav-inner">
+    <a href="/" class="brand">
+      <img src="/rafd-logo.png" alt="RAFD Digital Company" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="brand-fallback" style="display:none;align-items:center;gap:.5rem">
+        <div class="brand-icon">R</div>
+        <div class="brand-text">
+          <span class="brand-name">RAFD</span>
+          <span class="brand-tagline">Digital Company</span>
+        </div>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#features" data-i18n="nav.features">المميزات</a></li>
+      <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
+      <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
+      <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
+      <li class="mobile-nav-sep"></li>
+      <li class="mobile-nav-login"><a href="/partner-login.html">🤝 <span data-i18n="nav.partner-login">دخول الشركاء</span></a></li>
+      <li class="mobile-nav-login"><a href="/admin.html">🛡️ <span data-i18n="nav.admin">دخول الإدارة</span></a></li>
+      <li class="mobile-nav-login mobile-nav-cta"><a href="/register-partner.html">← <span data-i18n="nav.join">انضم كشريك</span></a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="langToggleBtn" class="lang-toggle" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
+      <div class="login-dropdown-wrap" id="loginDropWrap">
+        <button class="btn-ghost" onclick="toggleLoginDrop(event)" style="display:flex;align-items:center;gap:.4rem">
+          <span data-i18n="nav.login">تسجيل الدخول <span style="font-size:.7rem;opacity:.7">▼</span></span>
+        </button>
+        <div class="login-drop" id="loginDrop">
+          <a href="/partner-login.html" class="login-drop-item">
+            <span style="font-size:1.1rem">🤝</span>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.partner-login">دخول الشركاء</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.partner-login-sub">لوحة تحكم الجهات</div></div>
+          </a>
+          <a href="/admin.html" class="login-drop-item">
+            <span style="font-size:1.1rem">🛡️</span>
+            <div><div style="font-weight:700;font-size:.88rem" data-i18n="nav.admin">الإدارة</div><div style="font-size:.72rem;opacity:.6" data-i18n="nav.admin-sub">دخول مشرفي النظام</div></div>
+          </a>
+        </div>
+      </div>
+      <a href="/register-partner.html" class="btn-primary-sm" style="background:#0B5D3B" data-i18n="nav.join">انضم كشريك</a>
+    </div>
+    <button class="hamburger" id="hamburger">&#9776;</button>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-tag" data-i18n="tr.hero-tag">🎧 ميزة تجريبية — أنتِ أول من يجربها</span>
+    <h1 data-i18n="tr.hero-h1">المترجم الحي — أذنك الثانية في أي فعالية</h1>
+    <p data-i18n="tr.hero-p">شغّلي الصفحة، البسي سماعتك، وخلّي الجوال يسمع المتحدث — النظام يلتقط الكلام، يصحح الكلمات غير الواضحة من السياق، ويترجمها لك صوتاً لحظة بلحظة كأن معك مترجم خاص.</p>
+  </div>
+</section>
+
+<!-- LIVE CONSOLE -->
+<section class="tr-section">
+  <div class="container">
+    <div class="tr-console">
+
+      <div class="tr-warn" id="trUnsupported" data-i18n="tr.unsupported">متصفحك لا يدعم التعرف على الكلام. استخدمي Chrome أو Edge على الكمبيوتر، أو Safari / Chrome على الجوال.</div>
+      <div class="tr-warn" id="trMicDenied" data-i18n="tr.mic-denied">تم رفض إذن المايكروفون. اسمحي للموقع باستخدام المايك من إعدادات المتصفح ثم حدّثي الصفحة.</div>
+      <div class="tr-warn" id="trNoVoice" data-i18n="tr.no-ar-voice">ما لقينا صوت عربي مثبّت على جهازك — الترجمة النصية بتشتغل، لكن النطق الصوتي يحتاج تثبيت صوت عربي من إعدادات الجهاز (Text-to-Speech).</div>
+      <div class="tr-warn" id="trSvcDown" data-i18n="tr.svc-down">خدمة الترجمة غير مفعّلة حالياً على الخادم. تواصلي مع الإدارة لتفعيل مفتاح الذكاء الاصطناعي.</div>
+
+      <div class="tr-topbar">
+        <button class="tr-mic" id="micBtn" title="Start">🎙️</button>
+        <div class="tr-statebox">
+          <div class="tr-status" id="trStatus" data-i18n="tr.status-idle">جاهز — اضغطي زر المايك للبدء</div>
+          <div class="tr-timer" id="trTimer">00:00</div>
+        </div>
+      </div>
+
+      <div class="tr-settings">
+        <div class="tr-field">
+          <label data-i18n="tr.lbl-src">لغة المتحدث</label>
+          <select id="srcLang">
+            <option value="en-US" selected>English</option>
+            <option value="en-GB">English (UK)</option>
+            <option value="fr-FR">Français</option>
+            <option value="es-ES">Español</option>
+            <option value="de-DE">Deutsch</option>
+            <option value="zh-CN">中文</option>
+            <option value="ar-SA">العربية</option>
+          </select>
+        </div>
+        <div class="tr-field">
+          <label data-i18n="tr.lbl-target">ترجم إلى</label>
+          <select id="dstLang">
+            <option value="ar" selected>العربية</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <div class="tr-field">
+          <label data-i18n="tr.lbl-style">أسلوب الترجمة</label>
+          <select id="trStyle">
+            <option value="fusha" selected data-i18n="tr.style-fusha">عربي واضح مبسّط</option>
+            <option value="saudi" data-i18n="tr.style-saudi">لهجة سعودية</option>
+          </select>
+        </div>
+        <div class="tr-field">
+          <label data-i18n="tr.lbl-voice">النطق في السماعة</label>
+          <div class="tr-toggle-row">
+            <input type="checkbox" id="ttsOn" checked>
+            <span data-i18n="tr.voice-on">تشغيل الصوت</span>
+          </div>
+        </div>
+        <div class="tr-field">
+          <label data-i18n="tr.lbl-rate">سرعة الصوت</label>
+          <input type="range" id="ttsRate" min="0.7" max="1.5" step="0.1" value="1">
+        </div>
+      </div>
+
+      <div class="tr-interim">
+        <span class="lbl" data-i18n="tr.interim-hint">ما يُسمع الآن…</span>
+        <div class="txt" id="interimTxt"></div>
+      </div>
+
+      <div class="tr-feed" id="trFeed">
+        <div class="tr-empty" id="trEmpty" data-i18n="tr.feed-empty">الترجمة بتظهر هنا أول ما يبدأ الكلام 👂</div>
+      </div>
+
+      <div class="tr-actions">
+        <button id="dlBtn" data-i18n="tr.dl">⬇ تحميل النص</button>
+        <button id="clearBtn" data-i18n="tr.clear">🗑 مسح</button>
+      </div>
+    </div>
+
+    <div class="tr-tips">
+      <h3 data-i18n="tr.tips-title">💡 عشان يسمع أوضح — مثل ما تسمعين أنتِ</h3>
+      <ul>
+        <li data-i18n="tr.tip1">كل ما قرب الجهاز من المتحدث كان الالتقاط أدق — في القاعات الكبيرة اجلسي قريب من السماعات، أو وجّهي مايك الجوال نحو الصوت.</li>
+        <li data-i18n="tr.tip2">البسي سماعة بلوتوث واخلي الجوال على الطاولة — المايك يسمع القاعة والترجمة توصلك في أذنك.</li>
+        <li data-i18n="tr.tip3">إذا كانت كلمة غير واضحة، النظام يقرّبها تلقائياً لأقرب كلمة منطقية من سياق الكلام قبل ترجمتها.</li>
+        <li data-i18n="tr.tip4">أفضل تجربة على متصفح Chrome، وتأكدي إن النت شغال — الترجمة تمر عبر الذكاء الاصطناعي لحظياً.</li>
+      </ul>
+    </div>
+
+    <p class="tr-rate-cta" data-i18n="tr.rate-cta">أنتِ المستخدمة الأولى لهذه الميزة — بعد ما تجربينها في ندوتك، <a href="https://wa.me/966558184381?text=%D8%AA%D9%82%D9%8A%D9%8A%D9%85%D9%8A%20%D9%84%D9%84%D9%85%D8%AA%D8%B1%D8%AC%D9%85%20%D8%A7%D9%84%D8%AD%D9%8A%3A%20" target="_blank">أرسلي تقييمك وملاحظاتك واتساب</a> عشان نطورها.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="/rafd-logo.png" alt="RAFD Digital" style="height:50px;background:#fff;border-radius:10px;padding:5px 10px;margin-bottom:1rem;display:block" onerror="this.style.display='none'">
+        <p class="footer-desc" data-i18n="footer.desc">منصة ذكاء اصطناعي متكاملة لأتمتة قرارات القبول والرفض — مصممة للسوق السعودي</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.platform">المنصة</h4>
+        <ul>
+          <li><a href="/#features" data-i18n="nav.features">المميزات</a></li>
+          <li><a href="/how-it-works.html" data-i18n="nav.how">كيف نعمل</a></li>
+          <li><a href="/#pricing" data-i18n="nav.pricing">الأسعار</a></li>
+          <li><a href="/demo-apply.html" data-i18n="footer.trial">تجربة مجانية</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.company">الشركة</h4>
+        <ul>
+          <li><a href="/about.html" data-i18n="nav.about">من نحن</a></li>
+          <li><a href="/contact.html" data-i18n="footer.contact">تواصل معنا</a></li>
+          <li><a href="/privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a></li>
+          <li><a href="/terms.html" data-i18n="footer.terms">الشروط والأحكام</a></li>
+        </ul>
+        <div style="margin-top:1rem">
+          <a href="mailto:info@rafd-digital.com" style="color:#0B5D3B;font-size:.82rem;font-weight:600;text-decoration:none">✉ info@rafd-digital.com</a>
+          <br><a href="https://wa.me/966558184381" target="_blank" dir="ltr" style="color:#0B5D3B;font-size:.82rem;font-weight:600;text-decoration:none;display:inline-block;margin-top:.4rem">💬 +966 55 818 4381</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy"><span data-i18n="footer.copy">© 2025 Rafd Digital. جميع الحقوق محفوظة — الرياض، المملكة العربية السعودية</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.getElementById('hamburger').addEventListener('click', function() {
+  const nav = document.querySelector('.nav-links');
+  nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+  nav.style.flexDirection = 'column';
+  nav.style.position = 'absolute';
+  nav.style.top = '72px';
+  nav.style.right = '0';
+  nav.style.left = '0';
+  nav.style.background = '#fff';
+  nav.style.padding = '1rem 2rem';
+  nav.style.borderBottom = '1px solid #e2e8f0';
+  nav.style.zIndex = '999';
+});
+window.addEventListener('scroll', function() {
+  const nb = document.getElementById('navbar');
+  if(window.scrollY > 50) nb.style.boxShadow = '0 4px 24px rgba(0,0,0,.08)';
+  else nb.style.boxShadow = 'none';
+});
+function toggleLoginDrop(e) {
+  e.stopPropagation();
+  document.getElementById('loginDrop').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  document.getElementById('loginDrop')?.classList.remove('open');
+});
+</script>
+
+<script>
+// ============ RAFD Live Interpreter ============
+(function(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const micBtn = document.getElementById('micBtn');
+  const statusEl = document.getElementById('trStatus');
+  const timerEl = document.getElementById('trTimer');
+  const interimEl = document.getElementById('interimTxt');
+  const feedEl = document.getElementById('trFeed');
+  const emptyEl = document.getElementById('trEmpty');
+  const srcSel = document.getElementById('srcLang');
+  const dstSel = document.getElementById('dstLang');
+  const styleSel = document.getElementById('trStyle');
+  const ttsOn = document.getElementById('ttsOn');
+  const ttsRate = document.getElementById('ttsRate');
+
+  let rec = null;
+  let running = false;
+  let startedAt = 0;
+  let timerInt = null;
+  let queue = [];
+  let processing = false;
+  let recentSources = [];
+  let segments = [];          // {src, dst}
+  let wakeLock = null;
+  let svcDown = false;
+
+  function tKey(k){ return (typeof getT === 'function') ? getT(k) : k; }
+  function showWarn(id, on){ document.getElementById(id).classList.toggle('show', !!on); }
+
+  if (!SR) {
+    showWarn('trUnsupported', true);
+    micBtn.disabled = true;
+    micBtn.style.opacity = .4;
+    micBtn.style.cursor = 'not-allowed';
+  }
+
+  // ---- Arabic TTS voice ----
+  let voices = [];
+  function loadVoices(){ voices = window.speechSynthesis ? speechSynthesis.getVoices() : []; }
+  if (window.speechSynthesis) {
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  function pickVoice(langPrefix){
+    if (!voices.length) loadVoices();
+    return voices.find(v => v.lang && v.lang.toLowerCase().startsWith(langPrefix)) || null;
+  }
+
+  function speak(text){
+    if (!ttsOn.checked || !window.speechSynthesis || !text) return;
+    const target = dstSel.value;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = target === 'ar' ? 'ar-SA' : 'en-US';
+    const v = pickVoice(target === 'ar' ? 'ar' : 'en');
+    if (v) u.voice = v;
+    else if (target === 'ar') showWarn('trNoVoice', true);
+    u.rate = parseFloat(ttsRate.value) || 1;
+    speechSynthesis.speak(u);
+  }
+
+  // ---- Timer ----
+  function fmt(s){ const m = Math.floor(s/60), r = s%60; return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0'); }
+  function startTimer(){
+    startedAt = Date.now();
+    timerInt = setInterval(() => { timerEl.textContent = fmt(Math.floor((Date.now()-startedAt)/1000)); }, 1000);
+  }
+  function stopTimer(){ clearInterval(timerInt); }
+
+  // ---- Wake lock (keep screen on during a lecture) ----
+  async function grabWakeLock(){
+    try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
+  }
+  function releaseWakeLock(){ try { wakeLock?.release(); wakeLock = null; } catch(e){} }
+  document.addEventListener('visibilitychange', () => { if (running && document.visibilityState === 'visible') grabWakeLock(); });
+
+  // ---- Segment feed ----
+  function addCard(srcText){
+    emptyEl.style.display = 'none';
+    const card = document.createElement('div');
+    card.className = 'tr-card';
+    const src = document.createElement('div'); src.className = 'src'; src.textContent = srcText;
+    const dst = document.createElement('div'); dst.className = 'dst pending'; dst.textContent = tKey('tr.translating');
+    card.appendChild(src); card.appendChild(dst);
+    feedEl.appendChild(card);
+    feedEl.scrollTop = feedEl.scrollHeight;
+    return dst;
+  }
+
+  // ---- Translation queue (sequential to keep order) ----
+  function enqueue(srcText){
+    const text = srcText.trim();
+    if (text.length < 2) return;
+    const dstEl = addCard(text);
+    queue.push({ text, dstEl });
+    processQueue();
+  }
+
+  async function processQueue(){
+    if (processing || !queue.length) return;
+    processing = true;
+    const { text, dstEl } = queue.shift();
+    try {
+      const r = await fetch('/api/translate-live', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          target: dstSel.value,
+          style: styleSel.value,
+          recent: recentSources.slice(-3)
+        })
+      });
+      const data = await r.json();
+      if (data.error === 'no_key') {
+        svcDown = true;
+        showWarn('trSvcDown', true);
+        dstEl.className = 'dst err';
+        dstEl.textContent = tKey('tr.svc-down');
+      } else if (data.error || data.skipped || !data.translation) {
+        dstEl.className = 'dst err';
+        dstEl.textContent = tKey('tr.err-net');
+      } else {
+        dstEl.className = 'dst';
+        dstEl.textContent = data.translation;
+        segments.push({ src: text, dst: data.translation });
+        speak(data.translation);
+      }
+      recentSources.push(text);
+      if (recentSources.length > 10) recentSources.shift();
+    } catch (e) {
+      dstEl.className = 'dst err';
+      dstEl.textContent = tKey('tr.err-net');
+    }
+    feedEl.scrollTop = feedEl.scrollHeight;
+    processing = false;
+    processQueue();
+  }
+
+  // ---- Speech recognition ----
+  function buildRec(){
+    const r = new SR();
+    r.lang = srcSel.value;
+    r.continuous = true;
+    r.interimResults = true;
+    r.maxAlternatives = 1;
+
+    r.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const res = e.results[i];
+        if (res.isFinal) enqueue(res[0].transcript);
+        else interim += res[0].transcript;
+      }
+      interimEl.textContent = interim;
+    };
+    r.onerror = (e) => {
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        showWarn('trMicDenied', true);
+        stopAll();
+      }
+      // 'no-speech' / 'aborted' / 'network' → onend handles the restart
+    };
+    r.onend = () => {
+      interimEl.textContent = '';
+      if (running) setTimeout(() => { try { rec.start(); } catch(e){} }, 250);
+    };
+    return r;
+  }
+
+  function startAll(){
+    if (!SR) return;
+    showWarn('trMicDenied', false);
+    rec = buildRec();
+    try { rec.start(); } catch(e){ return; }
+    running = true;
+    micBtn.classList.add('live');
+    micBtn.textContent = '⏹';
+    statusEl.textContent = tKey('tr.status-listening');
+    srcSel.disabled = true;
+    startTimer();
+    grabWakeLock();
+    // Unlock TTS on mobile: browsers require a user-gesture-initiated utterance
+    if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch(e){} }
+  }
+
+  function stopAll(){
+    running = false;
+    try { rec?.stop(); } catch(e){}
+    if (window.speechSynthesis) try { speechSynthesis.cancel(); } catch(e){}
+    micBtn.classList.remove('live');
+    micBtn.textContent = '🎙️';
+    statusEl.textContent = tKey('tr.status-idle');
+    srcSel.disabled = false;
+    interimEl.textContent = '';
+    stopTimer();
+    releaseWakeLock();
+  }
+
+  micBtn.addEventListener('click', () => running ? stopAll() : startAll());
+
+  // ---- Actions ----
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    feedEl.querySelectorAll('.tr-card').forEach(c => c.remove());
+    segments = [];
+    recentSources = [];
+    emptyEl.style.display = 'block';
+  });
+
+  document.getElementById('dlBtn').addEventListener('click', () => {
+    if (!segments.length) return;
+    const lines = segments.map(s => s.src + '\n→ ' + s.dst + '\n');
+    const blob = new Blob(['RAFD Live Interpreter — transcript\n\n' + lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'rafd-translation.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  // Refresh status label when the site language changes
+  document.addEventListener('rafd-lang-changed', () => {
+    statusEl.textContent = tKey(running ? 'tr.status-listening' : 'tr.status-idle');
+  });
+})();
+</script>
+<script src="/i18n.js"></script>
+</body>
+</html>
