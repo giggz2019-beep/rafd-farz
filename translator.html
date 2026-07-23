@@ -134,6 +134,7 @@ body{background:var(--ab-navy)}
       <div class="tr-warn" id="trInApp" data-i18n="tr.inapp">يبدو أنك فاتحة الصفحة من داخل تطبيق (واتساب / تيليجرام / انستقرام...) — المتصفح المدمج ما يدعم المايكروفون. اضغطي قائمة النقاط ⋮ واختاري «فتح في Chrome».</div>
       <div class="tr-warn" id="trUnsupported" data-i18n="tr.unsupported">متصفحك لا يدعم التعرف على الكلام. استخدمي Chrome أو Edge على الكمبيوتر، أو Safari / Chrome على الجوال.</div>
       <div class="tr-warn" id="trMicDenied" data-i18n="tr.mic-denied">المايكروفون مرفوض لهذا الموقع. اضغطي رمز القفل 🔒 بجانب عنوان الصفحة → الأذونات → المايكروفون → سماح، ثم حدّثي الصفحة.</div>
+      <div class="tr-warn" id="trMicBusy" data-i18n="tr.mic-busy">المايك مشغول أو ما ينفتح — سكّري أي تطبيق ثاني يستخدم المايك، حدّثي الصفحة، وجربي من جديد.</div>
       <div class="tr-warn" id="trNoVoice" data-i18n="tr.no-ar-voice">ما لقينا صوت عربي مثبّت على جهازك — الترجمة النصية بتشتغل، لكن النطق الصوتي يحتاج تثبيت صوت عربي من إعدادات الجهاز (Text-to-Speech).</div>
       <div class="tr-warn" id="trSvcDown" data-i18n="tr.svc-down">خدمة الترجمة غير مفعّلة حالياً على الخادم. تواصلي مع الإدارة لتفعيل مفتاح الذكاء الاصطناعي.</div>
 
@@ -313,6 +314,7 @@ document.addEventListener('click', () => {
   let svcDown = false;
   const pauseTts = document.getElementById('pauseTts');
   let speakingHold = false;
+  let audioErrCount = 0;
 
   function tKey(k){ return (typeof getT === 'function') ? getT(k) : k; }
   function showWarn(id, on){ document.getElementById(id).classList.toggle('show', !!on); }
@@ -346,7 +348,9 @@ document.addEventListener('click', () => {
   function unlockTts(){
     if (!window.speechSynthesis) return;
     try {
-      const u = new SpeechSynthesisUtterance(' ');
+      // Empty text: ends instantly, so it never holds the audio channel
+      // while the recognizer is trying to open the mic.
+      const u = new SpeechSynthesisUtterance('');
       u.volume = 0;
       speechSynthesis.speak(u);
     } catch(e){}
@@ -498,10 +502,22 @@ document.addEventListener('click', () => {
       }
       interimEl.textContent = interim;
     };
+    r.onstart = () => {
+      audioErrCount = 0;
+      if (running) statusEl.textContent = tKey('tr.status-listening');
+    };
     r.onerror = (e) => {
       if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
         showWarn('trMicDenied', true);
         stopAll();
+      } else if (e.error === 'audio-capture') {
+        // Often transient: the mic was still held by TTS/getUserMedia a
+        // moment ago. The onend auto-restart retries; only give up after 3.
+        audioErrCount++;
+        if (audioErrCount >= 3) {
+          showWarn('trMicBusy', true);
+          stopAll();
+        }
       }
       // 'no-speech' / 'aborted' / 'network' → onend handles the restart
     };
@@ -517,7 +533,18 @@ document.addEventListener('click', () => {
     showWarn('trMicDenied', false);
     // Explicitly request the mic first: forces the permission prompt to appear
     // and turns silent failures into a visible warning.
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // Ask the browser what the mic permission actually is. When it is
+    // already granted we skip the getUserMedia priming entirely — holding
+    // the mic ourselves, even briefly, blocks the speech recognizer from
+    // opening it on many phones.
+    let perm = 'unknown';
+    try {
+      if (navigator.permissions && navigator.permissions.query) {
+        perm = (await navigator.permissions.query({ name: 'microphone' })).state;
+      }
+    } catch(e){}
+    if (perm === 'denied') { showWarn('trMicDenied', true); return; }
+    if (perm !== 'granted' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       // If neither grant nor deny arrives, the prompt likely never showed
       // (hidden, or an in-app browser) — surface the warning instead of hanging.
       const promptWatch = setTimeout(() => showWarn('trMicDenied', true), 9000);
@@ -531,7 +558,11 @@ document.addEventListener('click', () => {
         showWarn('trMicDenied', true);
         return;
       }
+      // Give the device a moment to fully release the mic we just held,
+      // or the recognizer's own open can fail right after.
+      await new Promise(res => setTimeout(res, 400));
     }
+    audioErrCount = 0;
     rec = buildRec();
     try { rec.start(); } catch(e){ showWarn('trMicDenied', true); return; }
     running = true;
@@ -541,8 +572,6 @@ document.addEventListener('click', () => {
     srcSel.disabled = true;
     startTimer();
     grabWakeLock();
-    // Clear any speech left queued from a previous session
-    if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch(e){} }
   }
 
   function stopAll(){

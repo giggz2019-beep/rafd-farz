@@ -185,6 +185,7 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
   var wakeLock = null;
   var pauseTts = document.getElementById('pauseTts');
   var speakingHold = false;
+  var audioErrCount = 0;
 
   function showWarn(id, on){ document.getElementById(id).classList.toggle('show', !!on); }
 
@@ -213,7 +214,9 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
   function unlockTts(){
     if (!window.speechSynthesis) return;
     try {
-      var u = new SpeechSynthesisUtterance(' ');
+      // Empty text: ends instantly, so it never holds the audio channel
+      // while the recognizer is trying to open the mic.
+      var u = new SpeechSynthesisUtterance('');
       u.volume = 0;
       speechSynthesis.speak(u);
     } catch(e){}
@@ -374,14 +377,23 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
       }
       interimEl.textContent = interim;
     };
+    r.onstart = function(){
+      audioErrCount = 0;
+      if (running) setStatus('يسمع الآن… تكلم المتحدث والترجمة توصلك');
+    };
     r.onerror = function(e){
       if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
         showWarn('wMicDenied', true);
-        setStatus('المتصفح رفض تشغيل المايك — اسمحي بالإذن ثم اضغطي المايك من جديد', true);
+        setStatus('المتصفح رفض تشغيل المايك — اتبعي خطوات التنبيه الأحمر فوق', true);
         stopAll(true);
       } else if (e.error === 'audio-capture') {
-        setStatus('ما لقينا مايكروفون شغال بالجهاز — تأكدي إن المايك مو مستخدم من تطبيق ثاني', true);
-        stopAll(true);
+        // Often transient: the mic was still held by TTS/getUserMedia a
+        // moment ago. The onend auto-restart retries; only give up after 3.
+        audioErrCount++;
+        if (audioErrCount >= 3) {
+          setStatus('المايك مشغول أو ما ينفتح — سكري أي تطبيق ثاني يستخدم المايك، حدّثي الصفحة، وجربي من جديد', true);
+          stopAll(true);
+        }
       }
       // 'no-speech' / 'aborted' / 'network' → onend handles the restart
     };
@@ -402,7 +414,22 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     }
     // Explicitly request the mic first: forces the permission prompt to appear
     // and turns silent failures into a visible message.
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // Ask the browser what the mic permission actually is. When it is
+    // already granted we skip the getUserMedia priming entirely — holding
+    // the mic ourselves, even briefly, blocks the speech recognizer from
+    // opening it on many phones (the "mic won't open" symptom).
+    var perm = 'unknown';
+    try {
+      if (navigator.permissions && navigator.permissions.query) {
+        perm = (await navigator.permissions.query({ name: 'microphone' })).state;
+      }
+    } catch(e){}
+    if (perm === 'denied') {
+      showWarn('wMicDenied', true);
+      setStatus('إذن المايكروفون مرفوض لهذا الموقع — اتبعي خطوات التنبيه الأحمر فوق', true);
+      return;
+    }
+    if (perm !== 'granted' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       setStatus('نطلب إذن المايكروفون… (إذا طلع سؤال فوق اضغطي سماح)');
       // If neither grant nor deny arrives, the prompt likely never showed
       // (hidden, or an in-app browser) — tell her instead of hanging quietly.
@@ -421,7 +448,11 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
         setStatus('ما قدرنا نشغل المايك (' + ((e && e.name) || 'خطأ') + ') — اتبعي خطوات التنبيه الأحمر فوق', true);
         return;
       }
+      // Give the device a moment to fully release the mic we just held,
+      // or the recognizer's own open can fail right after.
+      await new Promise(function(res){ setTimeout(res, 400); });
     }
+    audioErrCount = 0;
     rec = buildRec();
     try { rec.start(); } catch(e){
       setStatus('تعذر تشغيل التعرف على الكلام: ' + ((e && e.message) || e), true);
@@ -430,10 +461,9 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     running = true;
     micBtn.classList.add('live');
     micBtn.textContent = '⏹';
-    setStatus('يسمع الآن… تكلم المتحدث والترجمة توصلك');
+    setStatus('جاري فتح المايك…');
     srcSel.disabled = true;
     startTimer(); grabWakeLock();
-    if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch(e){} }
   }
 
   function stopAll(keepStatus){
