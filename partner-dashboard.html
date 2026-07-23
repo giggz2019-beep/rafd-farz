@@ -3009,9 +3009,12 @@ function genSlug() {
 }
 
 async function persistSavedForms() {
+  // يحفظ مصفوفة النماذج المحفوظة فقط دون المساس بإعدادات النموذج المُفعّل حالياً.
   const fc = { ...(partner.formConfig || {}), saved_forms: savedForms };
-  await pdApi({ action: 'update_config', form_config: fc });
+  const { status } = await pdApi({ action: 'update_config', form_config: fc });
+  if (status !== 200) return false;
   partner.formConfig = fc;
+  return true;
 }
 
 function loadSavedForm(id) {
@@ -3270,8 +3273,14 @@ function loadFormConfigUI() {
 
 async function saveFormConfig() {
   const programName = document.getElementById('fc_program_name').value.trim();
-  if (!programName) { toast('يرجى إدخال اسم البرنامج', 'warn'); return; }
+  // اسم البرنامج هو الشرط الوحيد للحفظ في "النماذج المحفوظة" — أي نموذج له اسم يُحفظ مباشرة.
+  if (!programName) {
+    toast('اكتب اسم البرنامج أولاً ليُحفظ النموذج', 'warn');
+    document.getElementById('fc_program_name')?.focus();
+    return;
+  }
 
+  // ─── بناء إعدادات النموذج من الواجهة (متسامح — لا يمنع الحفظ) ───
   let total = 0;
   const criteria = {};
   CRITERIA_IDS.forEach(id => {
@@ -3283,21 +3292,6 @@ async function saveFormConfig() {
   customCriteria.forEach(c => { total += c.weight || 0; });
   total += computeDocCriteriaWeight();
 
-  if (total !== 100) { toast('⚠️ مجموع الأوزان (المعايير + المستندات) يجب أن يساوي 100 نقطة بالضبط', 'warn'); return; }
-
-  // Validate custom criteria
-  for (let i = 0; i < customCriteria.length; i++) {
-    if (!customCriteria[i].label.trim()) {
-      toast(`⚠️ يرجى كتابة نص المعيار المخصص رقم ${i+1}`, 'warn'); return;
-    }
-    for (let o = 0; o < customCriteria[i].options.length; o++) {
-      if (!customCriteria[i].options[o].text.trim()) {
-        toast(`⚠️ يرجى كتابة نص الخيار في المعيار ${i+1}`, 'warn'); return;
-      }
-    }
-  }
-
-  // Collect docs config (including read criteria)
   const required_docs = {};
   DOC_IDS.forEach(id => {
     required_docs[id] = {
@@ -3306,11 +3300,6 @@ async function saveFormConfig() {
       read_criteria: (docReadCriteria[id] || []).filter(c => c.prompt.trim()),
     };
   });
-
-  // Validate custom docs labels
-  for (let i = 0; i < customDocs.length; i++) {
-    if (!customDocs[i].label.trim()) { toast(`⚠️ يرجى كتابة اسم المستند المخصص رقم ${i+1}`, 'warn'); return; }
-  }
 
   const appType = document.getElementById('fc_app_type')?.value || 'project';
   const gpaEnabled = document.getElementById('edu_gpa_enabled')?.checked ?? false;
@@ -3341,44 +3330,60 @@ async function saveFormConfig() {
     saved_forms: savedForms,
   };
 
-  // Show loading state
   const saveBtns = document.querySelectorAll('[onclick="saveFormConfig()"]');
   saveBtns.forEach(b => { b.disabled = true; b.textContent = '⏳ جارٍ الحفظ...'; });
+  const restoreBtns = () => saveBtns.forEach(b => { b.disabled = false; b.textContent = '💾 حفظ وتفعيل النموذج'; });
 
-  const { status: sfStatus, data: sfData } = await pdApi({ action: 'update_config', form_config: fc });
-
-  saveBtns.forEach(b => { b.disabled = false; b.textContent = '💾 حفظ وتفعيل النموذج'; });
-
-  if (sfStatus !== 200) {
-    if (sfStatus === 401) {
-      toast('لم يُحفظ — الجلسة منتهية، سجّل الدخول مرة أخرى', 'error');
-    } else {
-      toast('خطأ أثناء الحفظ: ' + (sfData?.error || ''), 'error');
-    }
-    return;
-  }
-
-  partner.formConfig = fc;
-  // إذا كان يعدّل قالباً محفوظاً، حدّث القالب تلقائياً بنفس الحفظ — بدون خطوة يدوية ثانية
-  if (editingFormId) {
+  // ═══ الخطوة 1: احفظ النموذج مباشرة في "النماذج المحفوظة" دائماً ═══
+  if (editingFormId && savedForms.some(x => x.id === editingFormId)) {
     const idx = savedForms.findIndex(x => x.id === editingFormId);
-    if (idx !== -1) {
-      savedForms[idx] = { ...savedForms[idx], name: programName, config: fc, saved_at: new Date().toISOString() };
-      await persistSavedForms();
-      renderSavedFormsList();
-    }
+    savedForms[idx] = { ...savedForms[idx], name: programName, config: fc, saved_at: new Date().toISOString() };
   } else {
-    // أول حفظ لهذا الإعداد — يُحفظ تلقائياً كنموذج باسم البرنامج، بدون أي خطوة يدوية
     const newForm = { id: Date.now().toString(), slug: genSlug(), name: programName, config: fc, saved_at: new Date().toISOString() };
     savedForms.push(newForm);
     editingFormId = newForm.id;
     showEditingBanner(programName);
-    await persistSavedForms();
-    renderSavedFormsList();
   }
-  // Update link preview
+  fc.saved_forms = savedForms;
+  const savedOk = await persistSavedForms();
+  renderSavedFormsList();
+
+  if (!savedOk) {
+    restoreBtns();
+    toast('❌ لم يُحفظ — تأكد من اتصالك وأعد المحاولة (قد تكون الجلسة منتهية)', 'error');
+    return;
+  }
+
+  // ═══ الخطوة 2: تحقّق التفعيل (شرط العرض العام فقط — لا يمنع الحفظ أعلاه) ═══
+  let activationBlock = '';
+  if (total !== 100) {
+    activationBlock = `مجموع الأوزان = ${total} (يجب أن يكون 100 بالضبط للتفعيل)`;
+  } else if (customCriteria.some(c => !c.label.trim())) {
+    activationBlock = 'أحد المعايير المخصصة بدون نص';
+  } else if (customCriteria.some(c => c.options.some(o => !o.text.trim()))) {
+    activationBlock = 'أحد خيارات المعايير المخصصة بدون نص';
+  } else if (customDocs.some(d => !d.label.trim())) {
+    activationBlock = 'أحد المستندات المخصصة بدون اسم';
+  }
+
+  if (activationBlock) {
+    restoreBtns();
+    toast('💾 تم حفظ النموذج في "النماذج المحفوظة". لتفعيله للتقديم: ' + activationBlock, 'warn');
+    return;
+  }
+
+  // ═══ الخطوة 3: فعّل النموذج (اكتبه كنموذج نشط للعرض العام) ═══
+  const { status: sfStatus, data: sfData } = await pdApi({ action: 'update_config', form_config: fc });
+  restoreBtns();
+
+  if (sfStatus !== 200) {
+    toast('حُفظ في النماذج، لكن تعذّر التفعيل: ' + (sfData?.error || 'خطأ بالخادم'), 'error');
+    return;
+  }
+
+  partner.formConfig = fc;
   document.getElementById('fc_preview_link').textContent = getPartnerLinkUrl();
-  toast('✅ تم حفظ إعدادات النموذج وتفعيله وحفظه كنموذج باسم "' + programName + '"');
+  toast('✅ تم حفظ النموذج وتفعيله باسم "' + programName + '"');
 }
 
 function resetFormConfig() {
