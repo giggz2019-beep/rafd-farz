@@ -179,6 +179,13 @@ body{background:var(--ab-navy)}
           </div>
         </div>
         <div class="tr-field">
+          <label data-i18n="tr.lbl-pause">أثناء نطق الترجمة</label>
+          <div class="tr-toggle-row">
+            <input type="checkbox" id="pauseTts">
+            <span data-i18n="tr.pause-on">وقفي الاستماع مؤقتاً</span>
+          </div>
+        </div>
+        <div class="tr-field">
           <label data-i18n="tr.lbl-rate">سرعة الصوت</label>
           <input type="range" id="ttsRate" min="0.7" max="1.5" step="0.1" value="1">
         </div>
@@ -194,6 +201,7 @@ body{background:var(--ab-navy)}
       </div>
 
       <div class="tr-actions">
+        <button id="testVoiceBtn" data-i18n="tr.test-voice">🔊 اختبار الصوت</button>
         <button id="dlBtn" data-i18n="tr.dl">⬇ تحميل النص</button>
         <button id="clearBtn" data-i18n="tr.clear">🗑 مسح</button>
       </div>
@@ -304,6 +312,8 @@ document.addEventListener('click', () => {
   let segments = [];          // {src, dst}
   let wakeLock = null;
   let svcDown = false;
+  const pauseTts = document.getElementById('pauseTts');
+  let speakingHold = false;
 
   function tKey(k){ return (typeof getT === 'function') ? getT(k) : k; }
   function showWarn(id, on){ document.getElementById(id).classList.toggle('show', !!on); }
@@ -327,16 +337,44 @@ document.addEventListener('click', () => {
     return voices.find(v => v.lang && v.lang.toLowerCase().startsWith(langPrefix)) || null;
   }
 
+  // Mobile browsers only allow speech that was "unlocked" by a user tap —
+  // called from inside the mic/test button click handlers.
+  function unlockTts(){
+    if (!window.speechSynthesis) return;
+    try {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+    } catch(e){}
+  }
+
   function speak(text){
     if (!ttsOn.checked || !window.speechSynthesis || !text) return;
     const target = dstSel.value;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = target === 'ar' ? 'ar-SA' : 'en-US';
     const v = pickVoice(target === 'ar' ? 'ar' : 'en');
-    if (v) u.voice = v;
-    else if (target === 'ar') showWarn('trNoVoice', true);
-    u.rate = parseFloat(ttsRate.value) || 1;
-    speechSynthesis.speak(u);
+    if (!v && target === 'ar') showWarn('trNoVoice', true);
+    // Optionally pause recognition while speaking — on some phones the
+    // recognizer holds the audio channel and mutes speech output.
+    const hold = pauseTts.checked && running && rec;
+    if (hold) { speakingHold = true; try { rec.abort(); } catch(e){} }
+    // Split long text into sentences: Android cuts utterances longer than ~15s.
+    const parts = text.match(/[^.!؟?…،]+[.!؟?…،]*/g) || [text];
+    const clean = parts.map(p => p.trim()).filter(Boolean);
+    clean.forEach((p, i) => {
+      const u = new SpeechSynthesisUtterance(p);
+      u.lang = target === 'ar' ? 'ar-SA' : 'en-US';
+      if (v) u.voice = v;
+      u.rate = parseFloat(ttsRate.value) || 1;
+      if (i === clean.length - 1) {
+        u.onend = u.onerror = () => {
+          if (speakingHold) {
+            speakingHold = false;
+            if (running) { try { rec.start(); } catch(e){} }
+          }
+        };
+      }
+      speechSynthesis.speak(u);
+    });
   }
 
   // ---- Timer ----
@@ -374,6 +412,25 @@ document.addEventListener('click', () => {
     const dstEl = addCard(text);
     queue.push({ text, dstEl });
     processQueue();
+  }
+
+  // Recognition emits choppy partial "finals" mid-sentence, and translating
+  // each fragment alone produces broken output. Buffer them and flush on a
+  // natural pause (or when the buffer is long enough) so the model gets
+  // whole sentences.
+  let pendingText = '', flushTimer = null;
+  function queueFinal(t){
+    t = t.trim();
+    if (!t) return;
+    pendingText += (pendingText ? ' ' : '') + t;
+    clearTimeout(flushTimer);
+    if (pendingText.length >= 180) return flushPending();
+    flushTimer = setTimeout(flushPending, 900);
+  }
+  function flushPending(){
+    clearTimeout(flushTimer);
+    if (pendingText.trim().length > 1) enqueue(pendingText);
+    pendingText = '';
   }
 
   async function processQueue(){
@@ -430,7 +487,7 @@ document.addEventListener('click', () => {
       let interim = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const res = e.results[i];
-        if (res.isFinal) enqueue(res[0].transcript);
+        if (res.isFinal) queueFinal(res[0].transcript);
         else interim += res[0].transcript;
       }
       interimEl.textContent = interim;
@@ -444,7 +501,7 @@ document.addEventListener('click', () => {
     };
     r.onend = () => {
       interimEl.textContent = '';
-      if (running) setTimeout(() => { try { rec.start(); } catch(e){} }, 250);
+      if (running && !speakingHold) setTimeout(() => { try { rec.start(); } catch(e){} }, 250);
     };
     return r;
   }
@@ -472,12 +529,14 @@ document.addEventListener('click', () => {
     srcSel.disabled = true;
     startTimer();
     grabWakeLock();
-    // Unlock TTS on mobile: browsers require a user-gesture-initiated utterance
+    // Clear any speech left queued from a previous session
     if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch(e){} }
   }
 
   function stopAll(){
     running = false;
+    speakingHold = false;
+    flushPending();
     try { rec?.stop(); } catch(e){}
     if (window.speechSynthesis) try { speechSynthesis.cancel(); } catch(e){}
     micBtn.classList.remove('live');
@@ -489,7 +548,27 @@ document.addEventListener('click', () => {
     releaseWakeLock();
   }
 
-  micBtn.addEventListener('click', () => running ? stopAll() : startAll());
+  micBtn.addEventListener('click', () => {
+    if (!running) unlockTts();
+    running ? stopAll() : startAll();
+  });
+
+  // Standalone voice check: runs directly from the tap (always allowed),
+  // so it tells apart "TTS blocked" from "no target-language voice installed".
+  document.getElementById('testVoiceBtn').addEventListener('click', () => {
+    if (!window.speechSynthesis) return;
+    const target = dstSel.value;
+    const v = pickVoice(target === 'ar' ? 'ar' : 'en');
+    if (!v && target === 'ar') showWarn('trNoVoice', true);
+    // Spoken in the TARGET language (what the earpiece will say), not the UI language.
+    const u = new SpeechSynthesisUtterance(target === 'ar'
+      ? 'مرحباً، أنا مترجمك الشخصي والصوت يعمل تمام'
+      : 'Hello! I am your personal interpreter, and the voice is working.');
+    u.lang = target === 'ar' ? 'ar-SA' : 'en-US';
+    if (v) u.voice = v;
+    u.rate = parseFloat(ttsRate.value) || 1;
+    try { speechSynthesis.cancel(); speechSynthesis.speak(u); } catch(e){}
+  });
 
   // ---- Actions ----
   document.getElementById('clearBtn').addEventListener('click', () => {

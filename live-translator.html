@@ -111,6 +111,13 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
           <span>تشغيل الصوت</span>
         </div>
       </div>
+      <div class="field">
+        <label>أثناء نطق الترجمة</label>
+        <div class="toggle-row">
+          <input type="checkbox" id="pauseTts">
+          <span>وقفي الاستماع مؤقتاً</span>
+        </div>
+      </div>
       <div class="field" style="grid-column:1/-1">
         <label>سرعة الصوت</label>
         <input type="range" id="ttsRate" min="0.7" max="1.5" step="0.1" value="1">
@@ -127,6 +134,7 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     </div>
 
     <div class="actions">
+      <button id="testVoiceBtn">🔊 اختبار الصوت</button>
       <button id="dlBtn">⬇ تحميل النص</button>
       <button id="clearBtn">🗑 مسح</button>
     </div>
@@ -175,6 +183,8 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
   var rec = null, running = false, timerInt = null, startedAt = 0;
   var queue = [], processing = false, recentSources = [], segments = [];
   var wakeLock = null;
+  var pauseTts = document.getElementById('pauseTts');
+  var speakingHold = false;
 
   function showWarn(id, on){ document.getElementById(id).classList.toggle('show', !!on); }
 
@@ -187,15 +197,49 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
   var voices = [];
   function loadVoices(){ voices = window.speechSynthesis ? speechSynthesis.getVoices() : []; }
   if (window.speechSynthesis) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+  function arVoice(){
+    if (!voices.length) loadVoices();
+    return voices.find(function(x){ return x.lang && x.lang.toLowerCase().indexOf('ar') === 0; }) || null;
+  }
+
+  // Mobile browsers only allow speech that was "unlocked" by a user tap —
+  // called from inside the mic/test button click handlers.
+  function unlockTts(){
+    if (!window.speechSynthesis) return;
+    try {
+      var u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+    } catch(e){}
+  }
+
   function speak(text){
     if (!ttsOn.checked || !window.speechSynthesis || !text) return;
-    var u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ar-SA';
-    if (!voices.length) loadVoices();
-    var v = voices.find(function(x){ return x.lang && x.lang.toLowerCase().indexOf('ar') === 0; });
-    if (v) u.voice = v; else showWarn('wNoVoice', true);
-    u.rate = parseFloat(ttsRate.value) || 1;
-    speechSynthesis.speak(u);
+    var v = arVoice();
+    if (!v) showWarn('wNoVoice', true);
+    // Optionally pause recognition while speaking — on some phones the
+    // recognizer holds the audio channel and mutes speech output.
+    var hold = pauseTts.checked && running && rec;
+    if (hold) { speakingHold = true; try { rec.abort(); } catch(e){} }
+    // Split long text into sentences: Android cuts utterances longer than ~15s.
+    var parts = text.match(/[^.!؟?…،]+[.!؟?…،]*/g) || [text];
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i].trim();
+      if (!p) continue;
+      var u = new SpeechSynthesisUtterance(p);
+      u.lang = 'ar-SA';
+      if (v) u.voice = v;
+      u.rate = parseFloat(ttsRate.value) || 1;
+      if (i === parts.length - 1) {
+        u.onend = u.onerror = function(){
+          if (speakingHold) {
+            speakingHold = false;
+            if (running) { try { rec.start(); } catch(e){} }
+          }
+        };
+      }
+      speechSynthesis.speak(u);
+    }
   }
 
   // ---- Timer / wake lock ----
@@ -223,6 +267,25 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     if (text.length < 2) return;
     queue.push({ text: text, dstEl: addCard(text) });
     processQueue();
+  }
+
+  // Recognition emits choppy partial "finals" mid-sentence, and translating
+  // each fragment alone produces broken output. Buffer them and flush on a
+  // natural pause (or when the buffer is long enough) so the model gets
+  // whole sentences.
+  var pendingText = '', flushTimer = null;
+  function queueFinal(t){
+    t = t.trim();
+    if (!t) return;
+    pendingText += (pendingText ? ' ' : '') + t;
+    clearTimeout(flushTimer);
+    if (pendingText.length >= 180) return flushPending();
+    flushTimer = setTimeout(flushPending, 900);
+  }
+  function flushPending(){
+    clearTimeout(flushTimer);
+    if (pendingText.trim().length > 1) enqueue(pendingText);
+    pendingText = '';
   }
 
   function processQueue(){
@@ -293,7 +356,7 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     r.onresult = function(e){
       var interim = '';
       for (var i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) enqueue(e.results[i][0].transcript);
+        if (e.results[i].isFinal) queueFinal(e.results[i][0].transcript);
         else interim += e.results[i][0].transcript;
       }
       interimEl.textContent = interim;
@@ -311,7 +374,7 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     };
     r.onend = function(){
       interimEl.textContent = '';
-      if (running) setTimeout(function(){ try { rec.start(); } catch(e){} }, 250);
+      if (running && !speakingHold) setTimeout(function(){ try { rec.start(); } catch(e){} }, 250);
     };
     return r;
   }
@@ -353,6 +416,8 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
 
   function stopAll(keepStatus){
     running = false;
+    speakingHold = false;
+    flushPending();
     try { if (rec) rec.stop(); } catch(e){}
     if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch(e){} }
     micBtn.classList.remove('live');
@@ -363,7 +428,23 @@ body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;background
     stopTimer(); releaseWakeLock();
   }
 
-  micBtn.addEventListener('click', function(){ running ? stopAll() : startAll(); });
+  micBtn.addEventListener('click', function(){
+    if (!running) unlockTts();
+    running ? stopAll() : startAll();
+  });
+
+  // Standalone voice check: runs directly from the tap (always allowed),
+  // so it tells apart "TTS blocked" from "no Arabic voice installed".
+  document.getElementById('testVoiceBtn').addEventListener('click', function(){
+    if (!window.speechSynthesis) { setStatus('جهازك ما يدعم النطق الصوتي', true); return; }
+    var v = arVoice();
+    if (!v) showWarn('wNoVoice', true);
+    var u = new SpeechSynthesisUtterance('مرحباً، أنا مترجمك الشخصي والصوت يعمل تمام');
+    u.lang = 'ar-SA';
+    if (v) u.voice = v;
+    u.rate = parseFloat(ttsRate.value) || 1;
+    try { speechSynthesis.cancel(); speechSynthesis.speak(u); } catch(e){ setStatus('تعذر تشغيل الصوت: ' + e, true); }
+  });
 
   document.getElementById('clearBtn').addEventListener('click', function(){
     var cards = feedEl.querySelectorAll('.card');
