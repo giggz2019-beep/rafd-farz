@@ -14,7 +14,7 @@ const T = {
     'hero.badge':'محرك تقييم بالذكاء الاصطناعي',
     'hero.title':'<span class="ht-center">مرحباً بكم</span><span class="ht-center gradient-text">في مستقبل التقييم</span><span class="ht-center">الذكي</span>',
     'hero.desc':'RAFD — منصة تُمكّن جميع الجهات الحكومية والخاصة والغير ربحية وغيرها من أتمتة قرارات القبول والرفض وترتيب الأفضليات للمتقدمين بدقة واحترافية عالية — بناءً على معاييرها الخاصة، بدون تحيّز، وفي دقائق معدودة.',
-    'hero.cta1':'ابدأ تجربتك المجانية ←','hero.cta2':'جرّب النظام الآن',
+    'hero.cta1':'استعرض لوحة الشريك ←','hero.cta2':'جرّب النظام الآن',
     'hero.stat1':'جهة مسجّلة','hero.stat2':'دقة التصنيف',
     'hero.stat3':'فوري <small style="font-size:.6em">⚡</small>','hero.stat3-lbl':'وقت المعالجة','hero.stat4-lbl':'توفير التكاليف',
     // ===== HERO SCORE CARD =====
@@ -92,7 +92,7 @@ const T = {
     'demo.ai5':'تطبيق معايير البرنامج...',
     'cta.title':'جاهز لأتمتة قراراتك؟',
     'cta.desc':'انضم لأكثر من 20 جهة تستخدم Rafd لتوفير الوقت وتحسين جودة القرارات',
-    'cta.btn1':'ابدأ تجربتك المجانية ←','cta.btn2':'جرّب النظام أولاً','cta.btn3':'انضم كشريك',
+    'cta.btn1':'استعرض لوحة الشريك ←','cta.btn2':'جرّب النظام أولاً','cta.btn3':'انضم كشريك',
     // ===== CHATBOT =====
     'chat.label':'خالد — خدمة العملاء','chat.name':'خالد','chat.status':'متاح الآن · خدمة عملاء RAFD',
     'chat.welcome':'مرحباً! أنا خالد، مساعدك الذكي في منصة RAFD 👋 كيف أقدر أساعدك اليوم؟',
@@ -557,7 +557,7 @@ const T = {
     'about.team-intro':'فريق متخصص في الذكاء الاصطناعي وتقنية المعلومات وإدارة الأعمال — يجمعهم شغف واحد: تحويل القرارات المعقدة إلى عمليات بسيطة وعادلة.',
     'about.cta-title':'جاهز للبدء مع RAFD؟',
     'about.cta-p':'جرّب المنصة مجاناً لمدة 7 أيام — بدون بطاقة ائتمان',
-    'about.cta-btn1':'ابدأ تجربتك المجانية ←','about.cta-btn2':'تواصل معنا',
+    'about.cta-btn1':'استعرض لوحة الشريك ←','about.cta-btn2':'تواصل معنا',
     // ===== HOW IT WORKS PAGE =====
     'hiw.hero-tag':'كيف نعمل',
     'hiw.hero-h1':'من الطلب إلى القرار<br>في ثوانٍ معدودة',
@@ -855,7 +855,7 @@ const T = {
     'adm.ph-pass':'••••••••','adm.ph-fname':'محمد','adm.ph-lname':'الأحمدي','adm.ph-org':'شركة الأفق للتقنية',
     'adm.ph-email':'name@company.com','adm.ph-phone':'05xxxxxxxx','adm.ph-notes':'أي ملاحظات إضافية...',
     // ===== SIGNUP =====
-    'su.title':'أنشئ حسابك مجاناً','su.sub':'ابدأ في أتمتة قرارات جهتك اليوم',
+    'su.title':'معاينة لوحة الشريك','su.sub':'استعرض كيف تبدو لوحة تحكم الشريك بأمثلة توضيحية — عرض تجريبي',
     'su.lbl-fname':'الاسم الأول','su.lbl-lname':'اسم العائلة',
     'su.ph-fname':'محمد','su.ph-lname':'الأحمدي',
     'su.lbl-org':'اسم الجهة / الشركة','su.ph-org':'مسرعة الأعمال السعودية',
@@ -864,7 +864,7 @@ const T = {
     'su.opt-acc':'مسرعة أو حاضنة أعمال','su.opt-gov':'جهة حكومية',
     'su.opt-priv':'شركة خاصة','su.opt-other':'أخرى',
     'su.lbl-email':'البريد الإلكتروني','su.lbl-pass':'كلمة المرور','su.ph-pass':'8 أحرف على الأقل','su.ph-email':'name@company.com',
-    'su.btn':'إنشاء الحساب والبدء',
+    'su.btn':'ادخل إلى العرض التوضيحي ←',
     'su.terms-pre':'بإنشاء حساب، أنت توافق على ','su.terms-tos':'شروط الخدمة',
     'su.terms-and':' و','su.terms-pp':'سياسة الخصوصية',
     'su.have-acc':'لديك حساب بالفعل؟ ','su.login-link':'سجّل دخولك','su.back':'← العودة للرئيسية',
@@ -942,7 +942,7 @@ const T = {
     'hero.badge':'AI Evaluation Engine',
     'hero.title':'Welcome to the<br><span class="gradient-text">Future of Smart</span><br>Assessment',
     'hero.desc':'RAFD empowers government, private, non-profit, and all other organizations to automate applicant decisions — acceptance, rejection, or priority ranking — with precision and professionalism, based on their own criteria, without bias, in minutes.',
-    'hero.cta1':'Start Free Trial →','hero.cta2':'Try the System Now',
+    'hero.cta1':'Preview the Dashboard →','hero.cta2':'Try the System Now',
     'hero.stat1':'Organizations','hero.stat2':'Classification Accuracy',
     'hero.stat3':'Instant ⚡','hero.stat3-lbl':'Processing Time','hero.stat4-lbl':'Cost Savings',
     // ===== HERO SCORE CARD =====
@@ -1020,7 +1020,7 @@ const T = {
     // ===== CTA =====
     'cta.title':'Ready to Automate Your Decisions?',
     'cta.desc':'Join 20+ organizations using Rafd to save time and improve decision quality',
-    'cta.btn1':'Start Free Trial →','cta.btn2':'Try the System First','cta.btn3':'Join as Partner',
+    'cta.btn1':'Preview the Dashboard →','cta.btn2':'Try the System First','cta.btn3':'Join as Partner',
     // ===== CHATBOT =====
     'chat.label':'Khalid — Customer Support','chat.name':'Khalid','chat.status':'Online now · RAFD Customer Support',
     'chat.welcome':'Hello! I\'m Khalid, your smart assistant at RAFD 👋 How can I help you today?',
@@ -1487,7 +1487,7 @@ const T = {
     'about.team-intro':'A specialized team in AI, information technology, and business management — united by one passion: transforming complex decisions into simple, fair processes.',
     'about.cta-title':'Ready to Start with RAFD?',
     'about.cta-p':'Try the platform free for 7 days — no credit card required',
-    'about.cta-btn1':'Start Free Trial →','about.cta-btn2':'Contact Us',
+    'about.cta-btn1':'Preview the Dashboard →','about.cta-btn2':'Contact Us',
     // ===== HOW IT WORKS PAGE =====
     'hiw.hero-tag':'How It Works',
     'hiw.hero-h1':'From Application to Decision<br>in Seconds',
@@ -1786,7 +1786,7 @@ const T = {
     'adm.plan-trial-full':'Trial (Free)',
     'adm.plan-basic-full':'Basic (499 SAR)','adm.plan-pro-full':'Advanced (999 SAR)',
     // ===== SIGNUP =====
-    'su.title':'Create Your Account Free','su.sub':'Start automating your organization\'s decisions today',
+    'su.title':'Partner Dashboard Preview','su.sub':'See how the partner dashboard looks with sample data — interactive demo',
     'su.lbl-fname':'First Name','su.lbl-lname':'Last Name',
     'su.ph-fname':'Mohammed','su.ph-lname':'Al-Ahmadi',
     'su.lbl-org':'Organization / Company Name','su.ph-org':'Saudi Business Accelerator',
@@ -1795,7 +1795,7 @@ const T = {
     'su.opt-acc':'Accelerator or Incubator','su.opt-gov':'Government Entity',
     'su.opt-priv':'Private Company','su.opt-other':'Other',
     'su.lbl-email':'Email Address','su.lbl-pass':'Password','su.ph-pass':'At least 8 characters',
-    'su.btn':'Create Account & Get Started',
+    'su.btn':'Enter the Demo →',
     'su.terms-pre':'By creating an account, you agree to our ','su.terms-tos':'Terms of Service',
     'su.terms-and':' and ','su.terms-pp':'Privacy Policy',
     'su.have-acc':'Already have an account? ','su.login-link':'Sign in','su.back':'← Back to Home',
