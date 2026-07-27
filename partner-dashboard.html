@@ -501,7 +501,7 @@ select option{background:#1e293b;color:#e2e8f0}
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-i18n="db.applicant-data">بيانات المتقدم</span></div>
       <div class="frow">
         <div class="fld-m">
-          <label data-i18n="db.lbl-name">الاسم الكامل <span style="color:#ef4444">*</span></label>
+          <label><span data-i18n="db.lbl-name">الاسم الكامل</span> <span style="color:#ef4444">*</span></label>
           <input type="text" id="nf_name" data-i18n-placeholder="db.ph-nf-name" placeholder="محمد أحمد الغامدي">
         </div>
         <div class="fld-m">
@@ -516,15 +516,15 @@ select option{background:#1e293b;color:#e2e8f0}
         </div>
         <div class="fld-m">
           <label data-i18n="db.lbl-phone">رقم الجوال</label>
-          <div style="display:flex">
-            <select id="nf_phone_cc" style="background:#1e293b;border:1px solid #334155;border-left:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
-            <input type="tel" id="nf_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1">
+          <div style="display:flex;direction:ltr">
+            <select id="nf_phone_cc" style="background:#1e293b;border:1px solid #334155;border-right:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
+            <input type="tel" id="nf_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1;min-width:0;direction:ltr;text-align:left">
           </div>
         </div>
       </div>
       <div class="frow">
         <div class="fld-m">
-          <label data-i18n="db.lbl-purpose">غرض الطلب <span style="color:#ef4444">*</span></label>
+          <label><span data-i18n="db.lbl-purpose">غرض الطلب</span> <span style="color:#ef4444">*</span></label>
           <select id="nf_purpose">
             <option value="" data-i18n="db.opt-select">اختر...</option>
             <option data-i18n="db.opt-job">توظيف</option>
@@ -619,7 +619,7 @@ select option{background:#1e293b;color:#e2e8f0}
           <label data-i18n="db.lbl-phone">رقم الجوال</label>
           <div style="display:flex;direction:ltr">
             <select id="set_phone_cc" style="background:#1e293b;border:1px solid #334155;border-right:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
-            <input type="tel" id="set_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1;direction:ltr;text-align:left">
+            <input type="tel" id="set_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1;min-width:0;direction:ltr;text-align:left">
           </div>
         </div>
       </div>
@@ -754,20 +754,20 @@ select option{background:#1e293b;color:#e2e8f0}
     <div class="card">
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> <span data-i18n="db.share-title">كيفية المشاركة</span></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem">
-        <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
+        <div onclick="shareForm('whatsapp')" role="button" tabindex="0" style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='#16A870'" onmouseout="this.style.borderColor='#334155'">
           <div style="font-size:1.5rem;margin-bottom:.4rem">💬</div>
           <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem" data-i18n="db.share-wa">واتساب / رسالة</div>
-          <div style="font-size:.75rem;color:#64748b" data-i18n="db.share-wa-sub">انسخ الرابط وأرسله مباشرةً</div>
+          <div style="font-size:.75rem;color:#64748b" data-i18n="db.share-wa-sub">أرسل الرابط عبر واتساب مباشرةً</div>
         </div>
-        <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
+        <div onclick="shareForm('email')" role="button" tabindex="0" style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='#16A870'" onmouseout="this.style.borderColor='#334155'">
           <div style="font-size:1.5rem;margin-bottom:.4rem">📧</div>
           <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem" data-i18n="db.share-email">البريد الإلكتروني</div>
-          <div style="font-size:.75rem;color:#64748b" data-i18n="db.share-email-sub">ضمّنه في نشرتك البريدية</div>
+          <div style="font-size:.75rem;color:#64748b" data-i18n="db.share-email-sub">افتح بريدك برسالة جاهزة</div>
         </div>
-        <div style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center">
-          <div style="font-size:1.5rem;margin-bottom:.4rem">🌐</div>
-          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem" data-i18n="db.share-web">موقعك الإلكتروني</div>
-          <div style="font-size:.75rem;color:#64748b" data-i18n="db.share-web-sub">ضع الرابط في صفحة التقديم</div>
+        <div onclick="shareForm('copy')" role="button" tabindex="0" style="background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:12px;padding:1rem;text-align:center;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='#16A870'" onmouseout="this.style.borderColor='#334155'">
+          <div style="font-size:1.5rem;margin-bottom:.4rem">🔗</div>
+          <div style="font-size:.82rem;font-weight:700;color:#e2e8f0;margin-bottom:.2rem" data-i18n="db.share-web">نسخ الرابط</div>
+          <div style="font-size:.75rem;color:#64748b" data-i18n="db.share-web-sub">انسخه لموقعك أو أي مكان</div>
         </div>
       </div>
     </div>
@@ -824,11 +824,11 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
     <div class="card">
       <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg> <span data-i18n="db.prog-info">معلومات البرنامج</span></div>
       <div class="fld-m">
-        <label data-i18n="db.lbl-prog-name">اسم البرنامج / المبادرة <span style="color:#ef4444">*</span></label>
+        <label><span data-i18n="db.lbl-prog-name">اسم البرنامج / المبادرة</span> <span style="color:#ef4444">*</span></label>
         <input type="text" id="fc_program_name" data-i18n-placeholder="db.ph-prog-name" placeholder="مثال: برنامج دعم الشركات الناشئة 2026">
       </div>
       <div class="fld-m">
-        <label data-i18n="db.lbl-app-type">نوع التقديم <span style="color:#ef4444">*</span></label>
+        <label><span data-i18n="db.lbl-app-type">نوع التقديم</span> <span style="color:#ef4444">*</span></label>
         <select id="fc_app_type" onchange="onAppTypeChange()">
           <option value="project" data-i18n="db.opt-project">مشروع / شركة ناشئة</option>
           <option value="job" data-i18n="db.opt-job">توظيف واختيار كوادر</option>
@@ -1319,7 +1319,10 @@ async function pdApi(data) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token: sess.token, ...data }),
   });
-  const result = { status: r.status, data: await r.json() };
+  // رد الخادم قد لا يكون JSON (صفحة خطأ 500 مثلاً) — لا نترك JSON.parse يرمي استثناء يعلّق الواجهة
+  let parsed = null;
+  try { parsed = await r.json(); } catch { parsed = null; }
+  const result = { status: r.status, data: parsed };
   // Session expired mid-use (2h token lifetime) — force re-login rather than
   // leaving the user on a dashboard silently failing every action.
   // Skip for admin-bypass/preview sessions, which have no real partner token.
@@ -2320,6 +2323,21 @@ function openPartnerLink() {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+}
+
+// مشاركة رابط النموذج عبر القناة المختارة (طرق المشاركة أصبحت فعّالة)
+function shareForm(channel) {
+  const url = getPartnerLinkUrl();
+  const prog = partner.formConfig?.program_name || partner.org || '';
+  const msg = `يسعدنا استقبال طلبك عبر منصة ${partner.org || 'رافد'}${prog ? '، برنامج: ' + prog : ''}\n${url}`;
+  if (channel === 'whatsapp') {
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+  } else if (channel === 'email') {
+    const subject = encodeURIComponent('رابط التقديم — ' + (partner.org || 'رافد'));
+    window.location.href = 'mailto:?subject=' + subject + '&body=' + encodeURIComponent(msg);
+  } else { // copy
+    navigator.clipboard.writeText(url).then(() => toast(getT('db.toast-link-copied'))).catch(() => {});
+  }
 }
 
 function copyEmbed() {
@@ -3340,56 +3358,59 @@ async function saveFormConfig() {
   saveBtns.forEach(b => { b.disabled = true; b.textContent = '⏳ جارٍ الحفظ...'; });
   const restoreBtns = () => saveBtns.forEach(b => { b.disabled = false; b.textContent = '💾 حفظ وتفعيل النموذج'; });
 
-  // ═══ الخطوة 1: احفظ النموذج مباشرة في "النماذج المحفوظة" دائماً ═══
-  if (editingFormId && savedForms.some(x => x.id === editingFormId)) {
-    const idx = savedForms.findIndex(x => x.id === editingFormId);
-    savedForms[idx] = { ...savedForms[idx], name: programName, config: fc, saved_at: new Date().toISOString() };
-  } else {
-    const newForm = { id: Date.now().toString(), slug: genSlug(), name: programName, config: fc, saved_at: new Date().toISOString() };
-    savedForms.push(newForm);
-    editingFormId = newForm.id;
-    showEditingBanner(programName);
-  }
-  fc.saved_forms = savedForms;
-  const savedOk = await persistSavedForms();
-  renderSavedFormsList();
+  // كل النداءات داخل try/finally حتى لا يبقى الزر معلّقاً على "جارٍ الحفظ" أبداً
+  try {
+    // ═══ الخطوة 1: احفظ النموذج مباشرة في "النماذج المحفوظة" دائماً ═══
+    if (editingFormId && savedForms.some(x => x.id === editingFormId)) {
+      const idx = savedForms.findIndex(x => x.id === editingFormId);
+      savedForms[idx] = { ...savedForms[idx], name: programName, config: fc, saved_at: new Date().toISOString() };
+    } else {
+      const newForm = { id: Date.now().toString(), slug: genSlug(), name: programName, config: fc, saved_at: new Date().toISOString() };
+      savedForms.push(newForm);
+      editingFormId = newForm.id;
+      showEditingBanner(programName);
+    }
+    fc.saved_forms = savedForms;
+    const savedOk = await persistSavedForms();
+    renderSavedFormsList();
 
-  if (!savedOk) {
+    if (!savedOk) {
+      toast('❌ لم يُحفظ — تأكد من اتصالك وأعد المحاولة (قد تكون الجلسة منتهية)', 'error');
+      return;
+    }
+
+    // ═══ الخطوة 2: تحقّق التفعيل (شرط العرض العام فقط — لا يمنع الحفظ أعلاه) ═══
+    let activationBlock = '';
+    if (total !== 100) {
+      activationBlock = `مجموع الأوزان = ${total} (يجب أن يكون 100 بالضبط للتفعيل)`;
+    } else if (customCriteria.some(c => !c.label.trim())) {
+      activationBlock = 'أحد المعايير المخصصة بدون نص';
+    } else if (customCriteria.some(c => c.options.some(o => !o.text.trim()))) {
+      activationBlock = 'أحد خيارات المعايير المخصصة بدون نص';
+    } else if (customDocs.some(d => !d.label.trim())) {
+      activationBlock = 'أحد المستندات المخصصة بدون اسم';
+    }
+
+    if (activationBlock) {
+      toast('💾 تم حفظ النموذج في "النماذج المحفوظة". لتفعيله للتقديم: ' + activationBlock, 'warn');
+      return;
+    }
+
+    // ═══ الخطوة 3: فعّل النموذج (اكتبه كنموذج نشط للعرض العام) ═══
+    const { status: sfStatus, data: sfData } = await pdApi({ action: 'update_config', form_config: fc });
+    if (sfStatus !== 200) {
+      toast('حُفظ في النماذج، لكن تعذّر التفعيل: ' + (sfData?.error || 'خطأ بالخادم'), 'error');
+      return;
+    }
+
+    partner.formConfig = fc;
+    document.getElementById('fc_preview_link').textContent = getPartnerLinkUrl();
+    toast('✅ تم حفظ النموذج وتفعيله باسم "' + programName + '"');
+  } catch (e) {
+    toast('حدث خطأ غير متوقع أثناء الحفظ: ' + (e?.message || e), 'error');
+  } finally {
     restoreBtns();
-    toast('❌ لم يُحفظ — تأكد من اتصالك وأعد المحاولة (قد تكون الجلسة منتهية)', 'error');
-    return;
   }
-
-  // ═══ الخطوة 2: تحقّق التفعيل (شرط العرض العام فقط — لا يمنع الحفظ أعلاه) ═══
-  let activationBlock = '';
-  if (total !== 100) {
-    activationBlock = `مجموع الأوزان = ${total} (يجب أن يكون 100 بالضبط للتفعيل)`;
-  } else if (customCriteria.some(c => !c.label.trim())) {
-    activationBlock = 'أحد المعايير المخصصة بدون نص';
-  } else if (customCriteria.some(c => c.options.some(o => !o.text.trim()))) {
-    activationBlock = 'أحد خيارات المعايير المخصصة بدون نص';
-  } else if (customDocs.some(d => !d.label.trim())) {
-    activationBlock = 'أحد المستندات المخصصة بدون اسم';
-  }
-
-  if (activationBlock) {
-    restoreBtns();
-    toast('💾 تم حفظ النموذج في "النماذج المحفوظة". لتفعيله للتقديم: ' + activationBlock, 'warn');
-    return;
-  }
-
-  // ═══ الخطوة 3: فعّل النموذج (اكتبه كنموذج نشط للعرض العام) ═══
-  const { status: sfStatus, data: sfData } = await pdApi({ action: 'update_config', form_config: fc });
-  restoreBtns();
-
-  if (sfStatus !== 200) {
-    toast('حُفظ في النماذج، لكن تعذّر التفعيل: ' + (sfData?.error || 'خطأ بالخادم'), 'error');
-    return;
-  }
-
-  partner.formConfig = fc;
-  document.getElementById('fc_preview_link').textContent = getPartnerLinkUrl();
-  toast('✅ تم حفظ النموذج وتفعيله باسم "' + programName + '"');
 }
 
 function resetFormConfig() {
