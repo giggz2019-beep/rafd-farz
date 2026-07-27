@@ -3327,7 +3327,8 @@ async function saveFormConfig() {
     result_price: parseInt(document.getElementById('fc_result_price')?.value) || 10,
     result_pay_msg: document.getElementById('fc_result_pay_msg')?.value.trim() || '',
     updated_at: new Date().toISOString(),
-    saved_forms: savedForms,
+    // ملاحظة: لا نضع saved_forms داخل fc — النموذج المحفوظ يخزّن fc كـ config،
+    // ووضع saved_forms داخله ينتج مرجعاً دائرياً يفشل JSON.stringify.
   };
 
   const saveBtns = document.querySelectorAll('[onclick="saveFormConfig()"]');
@@ -3346,7 +3347,6 @@ async function saveFormConfig() {
       editingFormId = newForm.id;
       showEditingBanner(programName);
     }
-    fc.saved_forms = savedForms;
     const savedOk = await persistSavedForms();
     renderSavedFormsList();
 
@@ -3373,13 +3373,16 @@ async function saveFormConfig() {
     }
 
     // ═══ الخطوة 3: فعّل النموذج (اكتبه كنموذج نشط للعرض العام) ═══
-    const { status: sfStatus, data: sfData } = await pdApi({ action: 'update_config', form_config: fc });
+    // كائن جديد يجمع إعدادات النموذج + قائمة النماذج المحفوظة (بدون مرجع دائري:
+    // كل config داخل saved_forms هو fc نقي لا يحتوي saved_forms).
+    const activeConfig = { ...fc, saved_forms: savedForms };
+    const { status: sfStatus, data: sfData } = await pdApi({ action: 'update_config', form_config: activeConfig });
     if (sfStatus !== 200) {
       toast('حُفظ في النماذج، لكن تعذّر التفعيل: ' + (sfData?.error || 'خطأ بالخادم'), 'error');
       return;
     }
 
-    partner.formConfig = fc;
+    partner.formConfig = activeConfig;
     document.getElementById('fc_preview_link').textContent = getPartnerLinkUrl();
     toast('✅ تم حفظ النموذج وتفعيله باسم "' + programName + '"');
   } catch (e) {
