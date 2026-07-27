@@ -187,8 +187,8 @@ select option{background:#1e293b;color:#e2e8f0}
 .plan-price{font-size:1.4rem;font-weight:900;color:var(--tier-color,#16A870)}
 .plan-period{font-size:.72rem;color:#64748b}
 .plan-features{list-style:none;margin:.75rem 0;text-align:right}
-.plan-features li{font-size:.75rem;color:#94a3b8;padding:.2rem 0;display:flex;align-items:center;gap:.4rem}
-.plan-features li::before{content:'✓';color:var(--tier-color,#0B5D3B);font-weight:900}
+.plan-features li{font-size:.75rem;color:#94a3b8;padding:.25rem 0;display:flex;align-items:flex-start;gap:.4rem;line-height:1.5}
+.plan-features li::before{content:'✓';color:var(--tier-color,#0B5D3B);font-weight:900;flex-shrink:0}
 .btn-upgrade{background:linear-gradient(135deg,var(--tier-color,#0A1628),#0A1628);color:#fff;border:none;border-radius:10px;padding:.6rem 1.25rem;font-family:'ThmanyahSans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:.75rem;width:100%}
 .btn-upgrade:disabled{opacity:.4;cursor:not-allowed}
 
@@ -647,9 +647,13 @@ select option{background:#1e293b;color:#e2e8f0}
           <div class="plan-price">99</div>
           <div class="plan-period" data-i18n="db.per-month">ر.س/شهر</div>
           <ul class="plan-features">
-            <li data-i18n="db.plan-basic49-f1">50 طلب/شهر</li>
-            <li data-i18n="db.plan-basic49-f2">تقييم ذكي بالذكاء الاصطناعي</li>
-            <li data-i18n="db.plan-basic49-f3">لوحة تحكم أساسية</li>
+            <li data-i18n="pg.trial-f1">50 طلباً كحد أقصى/شهر</li>
+            <li data-i18n="pg.trial-f2">نموذج طلب واحد قابل للتخصيص</li>
+            <li data-i18n="pg.trial-f3">تقييم ذكي بالذكاء الاصطناعي</li>
+            <li data-i18n="pg.trial-f4">لوحة تحكم أساسية</li>
+            <li data-i18n="pg.trial-f5">تقارير أساسية</li>
+            <li data-i18n="pg.trial-f6">تحقق الهوية</li>
+            <li data-i18n="pg.trial-f7">إشعارات البريد الإلكتروني</li>
           </ul>
           <button class="btn-upgrade" id="btn_basic49" onclick="requestUpgrade('basic49')"><span data-i18n="db.btn-upgrade">ترقية</span></button>
         </div>
@@ -658,9 +662,15 @@ select option{background:#1e293b;color:#e2e8f0}
           <div class="plan-price">249</div>
           <div class="plan-period" data-i18n="db.per-month">ر.س/شهر</div>
           <ul class="plan-features">
-            <li data-i18n="db.plan-basic-f1">حتى 500 طلب/شهر</li>
-            <li data-i18n="db.plan-basic-f2">تقارير متقدمة</li>
-            <li data-i18n="db.plan-basic-f3">دعم أولوية</li>
+            <li data-i18n="pg.basic-f1">500 طلب شهرياً</li>
+            <li data-i18n="pg.basic-f2">3 نماذج طلبات مخصصة</li>
+            <li data-i18n="pg.basic-f3">تقييم ذكي متقدم بالذكاء الاصطناعي</li>
+            <li data-i18n="pg.basic-f4">لوحة تحكم كاملة</li>
+            <li data-i18n="pg.basic-f5">تقارير وتحليلات تفصيلية</li>
+            <li data-i18n="pg.basic-f6">تحقق الهوية للمتقدمين</li>
+            <li data-i18n="pg.basic-f7">إشعارات بريد إلكتروني تلقائية</li>
+            <li data-i18n="pg.basic-f8">تصدير البيانات (Excel / PDF)</li>
+            <li data-i18n="pg.basic-f9">دعم فني عبر البريد (خلال 48 ساعة)</li>
           </ul>
           <button class="btn-upgrade" id="btn_basic" onclick="requestUpgrade('basic')"><span data-i18n="db.btn-upgrade">ترقية</span></button>
         </div>
@@ -670,9 +680,15 @@ select option{background:#1e293b;color:#e2e8f0}
           <div class="plan-price">499</div>
           <div class="plan-period" data-i18n="db.per-month">ر.س/شهر</div>
           <ul class="plan-features">
-            <li data-i18n="db.plan-adv-f1">طلبات غير محدودة</li>
-            <li data-i18n="db.plan-adv-f2">API كامل</li>
-            <li data-i18n="db.plan-adv-f3">مدير حساب مخصص</li>
+            <li data-i18n="pg.adv-f1">طلبات غير محدودة</li>
+            <li data-i18n="pg.adv-f2">نماذج غير محدودة</li>
+            <li data-i18n="pg.adv-f3">تقييم ذكي متقدم + تخصيص الأوزان</li>
+            <li data-i18n="pg.adv-f4">لوحة تحكم متقدمة مع تقارير مخصصة</li>
+            <li data-i18n="pg.adv-f5">تحليلات متقدمة + رسوم بيانية</li>
+            <li data-i18n="pg.adv-f6">تحقق الهوية المتقدم</li>
+            <li data-i18n="pg.adv-f7">إشعارات SMS + بريد إلكتروني</li>
+            <li data-i18n="pg.adv-f8">تكامل API كامل مع أنظمتك</li>
+            <li data-i18n="pg.adv-f9">مدير حساب مخصص + دعم أولوية</li>
           </ul>
           <button class="btn-upgrade" id="btn_advanced" onclick="requestUpgrade('advanced')"><span data-i18n="db.btn-upgrade">ترقية</span></button>
         </div>
