@@ -412,14 +412,14 @@ select option{background:#1e293b;color:#e2e8f0}
     </div>
     <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.25rem">
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
-        <input type="text" id="req_search" data-i18n-placeholder="db.ph-search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.85rem;outline:none" oninput="filterRequests()">
-        <select id="req_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.82rem;outline:none" onchange="filterRequests()">
+        <input type="text" id="res_search" data-i18n-placeholder="db.ph-search" placeholder="🔍 بحث بالاسم أو رقم الهوية..." style="flex:1;min-width:200px;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.85rem;outline:none" oninput="filterResultsCards()">
+        <select id="res_filter_status" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.82rem;outline:none" onchange="filterResultsCards()">
           <option value="" data-i18n="db.all-status">كل الحالات</option>
           <option value="approved" data-i18n="db.opt-approved">مقبول</option>
           <option value="rejected" data-i18n="db.opt-rejected">مرفوض</option>
           <option value="pending" data-i18n="db.opt-pending">قيد المراجعة</option>
         </select>
-        <select id="req_sort" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.82rem;outline:none" onchange="filterRequests()">
+        <select id="res_sort" style="background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;color:#94a3b8;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.82rem;outline:none" onchange="filterResultsCards()">
           <option value="newest" data-i18n="db.sort-newest">الأحدث</option>
           <option value="oldest" data-i18n="db.sort-oldest">الأقدم</option>
           <option value="best" data-i18n="db.sort-best">الأفضل (الدرجة)</option>
@@ -428,15 +428,32 @@ select option{background:#1e293b;color:#e2e8f0}
         </select>
       </div>
     </div>
-    <div class="card" style="padding:0;overflow:hidden">
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>#</th><th data-i18n="db.th-name">اسم المتقدم</th><th data-i18n="db.th-id">رقم الهوية</th><th data-i18n="db.th-purpose">الغرض</th><th data-i18n="db.th-score">الدرجة</th><th data-i18n="db.th-date">التاريخ</th><th data-i18n="db.th-result">النتيجة</th><th data-i18n="db.th-contact">تواصل</th><th data-i18n="db.th-actions">إجراءات</th></tr></thead>
-          <tbody id="all_requests_table">
-            <tr><td colspan="9" style="text-align:center;color:#475569;padding:2rem"><span data-i18n="db.no-requests">لا توجد طلبات بعد</span></td></tr>
-          </tbody>
-        </table>
+    <div id="results_sections">
+      <div class="results-section" id="res_sec_approved" style="margin-bottom:1.75rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#16A870;display:inline-block"></span>
+          <span style="font-weight:800;color:#e2e8f0;font-size:.95rem" data-i18n="db.opt-approved">مقبول</span>
+          <span id="res_count_approved" style="background:rgba(22,168,112,.15);color:#16A870;border-radius:20px;padding:.1rem .65rem;font-size:.75rem;font-weight:700">0</span>
+        </div>
+        <div id="results_grid_approved" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem"></div>
       </div>
+      <div class="results-section" id="res_sec_rejected" style="margin-bottom:1.75rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block"></span>
+          <span style="font-weight:800;color:#e2e8f0;font-size:.95rem" data-i18n="db.opt-rejected">مرفوض</span>
+          <span id="res_count_rejected" style="background:rgba(239,68,68,.15);color:#ef4444;border-radius:20px;padding:.1rem .65rem;font-size:.75rem;font-weight:700">0</span>
+        </div>
+        <div id="results_grid_rejected" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem"></div>
+      </div>
+      <div class="results-section" id="res_sec_pending" style="margin-bottom:1.75rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem">
+          <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block"></span>
+          <span style="font-weight:800;color:#e2e8f0;font-size:.95rem" data-i18n="db.opt-pending">قيد المراجعة</span>
+          <span id="res_count_pending" style="background:rgba(245,158,11,.15);color:#f59e0b;border-radius:20px;padding:.1rem .65rem;font-size:.75rem;font-weight:700">0</span>
+        </div>
+        <div id="results_grid_pending" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem"></div>
+      </div>
+      <div id="results_empty" style="display:none;text-align:center;color:#475569;padding:2rem"></div>
     </div>
   </div>
 
@@ -2196,7 +2213,7 @@ function showPage(pageId, navEl) {
   const page = document.getElementById('page-' + pageId);
   if (page) page.classList.add('active');
   if (navEl) navEl.classList.add('active');
-  if (pageId === 'requests') { loadApplications().then(() => filterRequests()); }
+  if (pageId === 'requests') { loadApplications().then(() => filterResultsCards()); }
   if (pageId === 'overview') { loadApplications().then(() => { renderStats(); renderRecentRequests(); }); }
   if (pageId === 'subscription') renderSubscription();
   if (pageId === 'settings') renderSettings();
