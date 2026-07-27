@@ -660,7 +660,7 @@ const T = {
     'db.day-labels-short':'أحد,اثنين,ثلاثاء,أربعاء,خميس,جمعة,سبت',
     'db.add-first':'أضف أول طلب يدوي',
     // Requests page
-    'db.requests-title':'الطلبات','db.requests-sub':'سجل كل الطلبات المستلمة — إدارة وحذف وتواصل مع المتقدمين',
+    'db.requests-title':'الطلبات والنتائج','db.requests-sub':'سجل كل الطلبات المستلمة ونتائجها — فرز، بحث، إدارة وتواصل مع المتقدمين',
     'db.results-title':'نتائج المتقدمين','db.results-sub':'النتائج مصنّفة حسب الحالة — مقبول / مرفوض / قيد المراجعة','db.btn-view-details':'عرض التفاصيل',
     'db.sort-newest':'الأحدث','db.sort-oldest':'الأقدم','db.sort-best':'الأفضل (الدرجة)','db.sort-worst':'الأسوأ (الدرجة)','db.sort-city':'المدينة',
     'db.result-switch-hint':'تعديل النتيجة — للجهة صلاحية كاملة لتغيير القرار',
@@ -1590,7 +1590,7 @@ const T = {
     'db.day-labels-short':'Sun,Mon,Tue,Wed,Thu,Fri,Sat',
     'db.add-first':'Add your first manual request',
     // Requests page
-    'db.requests-title':'Applications','db.requests-sub':'Full log of received applications — manage, delete, and contact applicants',
+    'db.requests-title':'Applications & Results','db.requests-sub':'Full log of received applications and their results — sort, search, manage, and contact applicants',
     'db.results-title':'Applicant Results','db.results-sub':'Results grouped by status — Approved / Rejected / Under Review','db.btn-view-details':'View Details',
     'db.sort-newest':'Newest','db.sort-oldest':'Oldest','db.sort-best':'Best (Score)','db.sort-worst':'Worst (Score)','db.sort-city':'City',
     'db.result-switch-hint':'Edit Result — the organization has full authority to change the decision',
