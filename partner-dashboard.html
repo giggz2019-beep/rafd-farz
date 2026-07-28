@@ -79,6 +79,13 @@ body.theme-light .modal-body{color:#1e293b}
 .sb-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#0A1628,#0B5D3B);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:1rem;flex-shrink:0}
 .sb-logo-text{font-size:.95rem;font-weight:800;color:#fff}
 .sb-logo-sub{font-size:.68rem;color:#64748b}
+.sb-brand-logo{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,#0A1628,#0B5D3B);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;flex-shrink:0;overflow:hidden}
+.sb-brand-logo img{width:100%;height:100%;object-fit:cover}
+.sb-powered{display:flex;align-items:center;gap:.4rem;padding:.85rem 1.25rem;border-top:1px solid #334155;font-size:.68rem;color:#64748b;text-decoration:none}
+.sb-powered span{color:#64748b}
+.sb-powered:hover span{color:#94a3b8}
+body.theme-light .sb-brand-logo{background:linear-gradient(135deg,#123554,#0B5D3B)}
+body.theme-light .sb-powered{border-color:rgba(255,255,255,.1)}
 .sb-org{padding:.9rem 1.25rem;border-bottom:1px solid #334155;background:rgba(22,168,112,.05)}
 .sb-org-name{font-size:.85rem;font-weight:700;color:#16A870}
 .sb-org-type{font-size:.72rem;color:#64748b;margin-top:.1rem}
@@ -356,13 +363,11 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sb-logo">
-    <a href="/" style="display:flex;align-items:center;gap:.7rem;text-decoration:none">
-    <img src="/rafd-logo.png" alt="RAFD Digital" style="height:62px;width:auto;border-radius:10px;background:#fff;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.25)">
-    <div>
-      <div class="sb-logo-text" style="font-size:1.15rem;font-family:'Inter','Segoe UI',sans-serif;font-weight:900;letter-spacing:-.02em">RAFD Digital</div>
+    <div id="sb_brand_logo" class="sb-brand-logo">🏢</div>
+    <div style="min-width:0">
+      <div class="sb-logo-text" id="sb_brand_name" style="font-size:1rem;font-weight:900;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px">—</div>
       <div class="sb-logo-sub" data-i18n="db.sidebar-title">لوحة تحكم الشريك</div>
     </div>
-    </a>
   </div>
   <nav class="sb-nav">
     <div class="nav-sec" data-i18n="db.nav-main">الرئيسية</div>
@@ -376,6 +381,11 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
     <div class="nav-item" onclick="showPage('subscription',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> <span data-i18n="db.sub">الاشتراك</span></div>
     <div class="nav-item" onclick="showPage('support',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> <span data-i18n="db.support">الدعم والتواصل</span></div>
   </nav>
+  <a href="/" class="sb-powered" title="RAFD Digital">
+    <span data-i18n="db.powered-by">مدعوم من</span>
+    <img src="/rafd-logo.png" alt="RAFD Digital" style="height:18px;width:auto;border-radius:4px;background:#fff;padding:2px">
+    <span style="font-weight:800">RAFD Digital</span>
+  </a>
 </aside>
 
 <!-- MAIN -->
@@ -606,10 +616,7 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
         </div>
         <div class="fld-m">
           <label data-i18n="db.lbl-phone">رقم الجوال</label>
-          <div style="display:flex;direction:ltr">
-            <select id="nf_phone_cc" style="background:#1e293b;border:1px solid #334155;border-right:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
-            <input type="tel" id="nf_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1;min-width:0;direction:ltr;text-align:left">
-          </div>
+          <input type="tel" id="nf_phone" data-i18n-placeholder="db.ph-phone-full" placeholder="+966 5XXXXXXXX" style="width:100%;direction:ltr;text-align:left">
         </div>
       </div>
       <div class="frow">
@@ -707,10 +714,7 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
         </div>
         <div class="fld-m">
           <label data-i18n="db.lbl-phone">رقم الجوال</label>
-          <div style="display:flex;direction:ltr">
-            <select id="set_phone_cc" style="background:#1e293b;border:1px solid #334155;border-right:none;border-radius:8px 0 0 8px;padding:.5rem .4rem;color:#94a3b8;font-size:.75rem;cursor:pointer;outline:none;flex-shrink:0;direction:ltr"><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option><option value="+973">🇧🇭 +973</option><option value="+965">🇰🇼 +965</option><option value="+968">🇴🇲 +968</option><option value="+974">🇶🇦 +974</option><option value="+1">🇺🇸 +1</option></select>
-            <input type="tel" id="set_phone" data-i18n-placeholder="db.ph-phone" placeholder="5XXXXXXXX" style="border-radius:0 8px 8px 0;flex:1;min-width:0;direction:ltr;text-align:left">
-          </div>
+          <input type="tel" id="set_phone" data-i18n-placeholder="db.ph-phone-full" placeholder="+966 5XXXXXXXX" style="width:100%;direction:ltr;text-align:left">
         </div>
       </div>
       <div class="fld-m">
@@ -1589,6 +1593,10 @@ function getOrgTypeLabel(orgtype) {
 }
 
 function initUI() {
+  document.getElementById('sb_brand_name').textContent = partner.org;
+  const brandLogo = document.getElementById('sb_brand_logo');
+  if (partner.avatar_url) brandLogo.innerHTML = `<img src="${partner.avatar_url}" alt="">`;
+  else brandLogo.textContent = '🏢';
   document.getElementById('sb_orgname').textContent = partner.org;
   document.getElementById('sb_orgtype').textContent = getOrgTypeLabel(partner.orgtype);
   const planLabels = {trial: getT('db.plan-trial-short'), basic49: getT('db.plan-basic49-short'), basic: getT('db.plan-basic-short'), advanced: getT('db.plan-adv-short')};
@@ -1905,7 +1913,7 @@ async function submitRequest() {
     name,
     national_id: document.getElementById('nf_id').value.trim(),
     email: document.getElementById('nf_email').value.trim(),
-    phone: (document.getElementById('nf_phone_cc')?.value||'+966') + document.getElementById('nf_phone').value.trim(),
+    phone: document.getElementById('nf_phone').value.trim(),
     company: purpose,
     score,
     result,
@@ -2168,9 +2176,7 @@ function renderSettings() {
   document.getElementById('set_fname').value = partner.fname || '';
   document.getElementById('set_lname').value = partner.lname || '';
   document.getElementById('set_title').value = partner.title || '';
-  const { cc, local } = splitPhone(partner.phone);
-  document.getElementById('set_phone_cc').value = cc;
-  document.getElementById('set_phone').value = local;
+  document.getElementById('set_phone').value = partner.phone || '';
   document.getElementById('set_email').value = partner.email || '';
 }
 
@@ -2182,7 +2188,7 @@ async function saveSettings() {
   partner.fname = document.getElementById('set_fname').value.trim();
   partner.lname = document.getElementById('set_lname').value.trim();
   partner.title = document.getElementById('set_title').value.trim();
-  partner.phone = (document.getElementById('set_phone_cc')?.value||'+966') + document.getElementById('set_phone').value.trim();
+  partner.phone = document.getElementById('set_phone').value.trim();
   await updatePartnerInStorage();
   initUI();
   toast(getT('db.toast-changes-saved'));
