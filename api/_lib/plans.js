@@ -27,4 +27,26 @@ const PAID_PLAN_PRICES = {
   advanced: PLANS.advanced.setup,
 };
 
-module.exports = { PLANS, TRIAL, PAID_PLAN_PRICES };
+// Monthly request caps enforced server-side at application-creation time.
+// Unknown/legacy plan keys fall back to the trial cap.
+const PLAN_LIMITS = {
+  trial: TRIAL.requests,      // 50
+  basic49: PLANS.basic.requests,
+  basic: PLANS.basic.requests,       // 500 (Plus)
+  advanced: PLANS.advanced.requests, // 1000 (Pro)
+};
+
+function planLimit(plan) {
+  return Object.prototype.hasOwnProperty.call(PLAN_LIMITS, plan) ? PLAN_LIMITS[plan] : TRIAL.requests;
+}
+
+// A trial account is only usable for TRIAL.days after it was created.
+function trialExpired(plan, createdAt) {
+  if (plan !== 'trial') return false;
+  if (!createdAt) return false;
+  const created = new Date(createdAt).getTime();
+  if (!created) return false;
+  return Date.now() > created + TRIAL.days * 24 * 3600 * 1000;
+}
+
+module.exports = { PLANS, TRIAL, PAID_PLAN_PRICES, PLAN_LIMITS, planLimit, trialExpired };

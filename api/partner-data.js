@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const { hash: hashPassword, verify: verifyPassword } = require('./_lib/password');
 const { getOrder, classifyOrder } = require('./_lib/ngenius');
-const { PAID_PLAN_PRICES } = require('./_lib/plans');
+const { PAID_PLAN_PRICES, planLimit, trialExpired } = require('./_lib/plans');
 const { rateLimit, getIp } = require('./_lib/rate-limit');
 
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
@@ -226,8 +226,21 @@ module.exports = async (req, res) => {
     if (action === 'add_app') {
       const { app } = body;
       if (!app) return res.status(400).json({ error: 'missing_fields' });
-      const rows = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=id,ref_num&limit=1`, undefined, key);
+      const rows = await sb('GET', `/partners?email=eq.${encodeURIComponent(email)}&select=id,ref_num,plan,created_at&limit=1`, undefined, key);
       if (!rows?.length) return res.status(404).json({ error: 'not_found' });
+
+      // Same server-side quota enforcement as the public apply endpoint.
+      if (trialExpired(rows[0].plan, rows[0].created_at)) {
+        return res.status(403).json({ error: 'trial_expired' });
+      }
+      const cr = await fetch(`${SB_URL}/rest/v1/applications?partner_id=eq.${encodeURIComponent(rows[0].id)}&select=id`, {
+        headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: 'count=exact', Range: '0-0' },
+      });
+      const total = parseInt(((cr.headers.get('content-range') || '').split('/')[1] || '').trim(), 10);
+      if (Number.isFinite(total) && total >= planLimit(rows[0].plan)) {
+        return res.status(403).json({ error: 'limit_reached' });
+      }
+
       const row = {};
       for (const k of ALLOWED_ADD_APP_FIELDS) {
         if (app[k] !== undefined) row[k] = app[k];
