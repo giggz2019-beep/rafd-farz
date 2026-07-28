@@ -81,6 +81,30 @@ body.theme-light .modal-body{color:#1e293b}
 .sb-logo-sub{font-size:.68rem;color:#64748b}
 .sb-brand-logo{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,#0A1628,#0B5D3B);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;flex-shrink:0;overflow:hidden}
 .sb-brand-logo img{width:100%;height:100%;object-fit:cover}
+.sb-brand-logo-wrap{position:relative;cursor:pointer;flex-shrink:0}
+.sb-brand-edit{position:absolute;bottom:-3px;inset-inline-end:-3px;background:#16A870;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.58rem;border:2px solid #1e293b}
+.sb-brand-type{font-size:.72rem;color:#64748b;margin-top:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.nav-badge{background:#ef4444;color:#fff;border-radius:20px;font-size:.62rem;font-weight:800;padding:.05rem .4rem;min-width:16px;text-align:center;margin-inline-start:auto;line-height:1.5}
+body.theme-light .sb-brand-edit{border-color:#0A1628}
+body.theme-light .sb-brand-type{color:rgba(255,255,255,.55)}
+/* ===== CHAT (Khalid) ===== */
+.chat-bubble{max-width:80%;padding:.65rem 1rem;border-radius:14px;font-size:.88rem;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.chat-user{align-self:flex-start;background:linear-gradient(135deg,#0B5D3B,#16A870);color:#fff;border-bottom-right-radius:4px}
+.chat-bot{align-self:flex-end;background:#0f172a;border:1px solid #334155;color:#e2e8f0;border-bottom-left-radius:4px}
+.chat-typing{align-self:flex-end;color:#64748b;font-size:.82rem;padding:.4rem .6rem}
+body.theme-light .chat-bot{background:#f1f5f9;border-color:#e2e8f0;color:#1e293b}
+/* ===== NOTIFICATIONS ===== */
+.notif-item{display:flex;align-items:flex-start;gap:.75rem;padding:.9rem .2rem;border-bottom:1px solid #334155}
+.notif-item:last-child{border-bottom:none}
+.notif-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:.4rem;background:#475569}
+.notif-item.unread .notif-dot{background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.18)}
+.notif-title{font-size:.88rem;font-weight:700;color:#cbd5e1}
+.notif-item.unread .notif-title{color:#fff}
+.notif-time{font-size:.72rem;color:#64748b;margin-top:.15rem}
+.notif-empty{text-align:center;color:#475569;padding:2rem;font-size:.85rem}
+body.theme-light .notif-item{border-color:#f0f4f8}
+body.theme-light .notif-title{color:#334155}
+body.theme-light .notif-item.unread .notif-title{color:#0A1628}
 .sb-powered{display:flex;align-items:center;gap:.4rem;padding:.85rem 1.25rem;border-top:1px solid #334155;font-size:.68rem;color:#64748b;text-decoration:none}
 .sb-powered span{color:#64748b}
 .sb-powered:hover span{color:#94a3b8}
@@ -368,10 +392,16 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sb-logo">
-    <div id="sb_brand_logo" class="sb-brand-logo">🏢</div>
+    <div class="sb-brand-logo-wrap" onclick="document.getElementById('brand_logo_input').click()" title="تغيير الصورة">
+      <div id="sb_brand_logo" class="sb-brand-logo">🏢</div>
+      <span class="sb-brand-edit">📷</span>
+    </div>
+    <input type="file" id="brand_logo_input" accept="image/*" style="display:none" onchange="uploadAvatar(this.files[0])">
     <div style="min-width:0">
-      <div class="sb-logo-text" id="sb_brand_name" style="font-size:1rem;font-weight:900;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px">—</div>
-      <div class="sb-logo-sub" data-i18n="db.sidebar-title">لوحة تحكم الشريك</div>
+      <div class="sb-logo-text" id="sb_orgname" style="font-size:1rem;font-weight:900;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px">—</div>
+      <div class="sb-brand-type" id="sb_orgtype">—</div>
+      <div style="margin-top:.3rem"><span class="sb-plan" id="sb_plan">—</span></div>
+      <div class="sb-logo-sub" data-i18n="db.sidebar-title" style="margin-top:.35rem">لوحة تحكم الشريك</div>
     </div>
   </div>
   <nav class="sb-nav">
@@ -384,7 +414,10 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
     <div class="nav-item" onclick="showPage('new-request',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg> <span data-i18n="db.new-req">طلب يدوي</span></div>
     <div class="nav-item" onclick="showPage('settings',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span data-i18n="db.settings">الإعدادات</span></div>
     <div class="nav-item" onclick="showPage('subscription',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> <span data-i18n="db.sub">الاشتراك</span></div>
-    <div class="nav-item" onclick="showPage('support',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> <span data-i18n="db.support">الدعم والتواصل</span></div>
+    <div class="nav-sec" data-i18n="db.nav-help">روابط المساعدة</div>
+    <div class="nav-item" onclick="showPage('chat',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span data-i18n="db.chat">المحادثة</span></div>
+    <div class="nav-item" onclick="showPage('notifications',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> <span data-i18n="db.notifications">مركز التنبيهات</span> <span class="nav-badge" id="notif_badge" style="display:none">0</span></div>
+    <div class="nav-item" onclick="showPage('support',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> <span data-i18n="db.support">الدعم والمساعدة</span></div>
   </nav>
   <a href="/" class="sb-powered" title="RAFD Digital">
     <span data-i18n="db.powered-by">مدعوم من</span>
@@ -397,14 +430,7 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
 <main class="main">
 
   <!-- ===== TOP BAR (partner/account moved up) ===== -->
-  <header class="topbar">
-    <div class="tb-start">
-      <div class="tb-org">
-        <div class="tb-org-row"><span class="tb-k" data-i18n="db.tb-name">اسمها</span><span class="tb-v" id="sb_orgname">—</span></div>
-        <div class="tb-org-row"><span class="tb-k" data-i18n="db.tb-activity">نشاطها</span><span class="tb-v" id="sb_orgtype">—</span></div>
-        <div class="tb-org-row"><span class="tb-k" data-i18n="db.tb-plan">الباقة</span><span class="tb-v tb-plan-v" id="sb_plan">—</span></div>
-      </div>
-    </div>
+  <header class="topbar" style="justify-content:flex-end">
     <div class="tb-end">
       <button class="tb-icon-btn" onclick="showPage('support',document.querySelector('.nav-item[onclick*=support]'))" title="الدعم والتواصل" aria-label="الدعم"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
       <button class="tb-icon-btn" onclick="toggleDashThemeQuick()" title="تبديل الوضع الفاتح/الداكن" aria-label="تبديل الوضع">🌓</button>
@@ -1303,10 +1329,42 @@ ALTER TABLE applications DISABLE ROW LEVEL SECURITY;</pre>
   </div>
 
   <!-- ===== PAGE: SUPPORT ===== -->
+  <!-- ===== PAGE: CHAT (Khalid) ===== -->
+  <div class="page" id="page-chat">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title" data-i18n="db.chat-title">المحادثة مع خالد</div>
+        <div class="page-sub" data-i18n="db.chat-sub">مساعدك الذكي — اسأل خالد عن أي شيء يخص المنصة</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;height:64vh;padding:0;overflow:hidden">
+      <div id="chat_messages" style="flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:.6rem"></div>
+      <div id="chat_escalate" style="display:none;padding:.75rem 1.25rem;border-top:1px solid #334155"></div>
+      <div style="display:flex;gap:.5rem;padding:1rem 1.25rem;border-top:1px solid #334155">
+        <input id="chat_input" type="text" data-i18n-placeholder="db.chat-ph" placeholder="اكتب رسالتك لخالد..." onkeydown="if(event.key==='Enter')sendChatMsg()" style="flex:1;min-width:0;background:rgba(15,23,42,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:.7rem 1rem;color:#e2e8f0;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.9rem;outline:none">
+        <button class="btn-primary" onclick="sendChatMsg()" id="chat_send"><span data-i18n="db.chat-send">إرسال</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: NOTIFICATIONS ===== -->
+  <div class="page" id="page-notifications">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title" data-i18n="db.notif-title">مركز التنبيهات</div>
+        <div class="page-sub" data-i18n="db.notif-sub">تنبيهات الطلبات الجديدة ورسائل التحديثات</div>
+      </div>
+      <button class="btn-ghost" onclick="markAllNotifsRead()"><span data-i18n="db.notif-mark-read">تعليم الكل كمقروء</span></button>
+    </div>
+    <div class="card">
+      <div id="notif_list"></div>
+    </div>
+  </div>
+
   <div class="page" id="page-support">
     <div class="page-hdr">
       <div>
-        <div class="page-title" data-i18n="db.support-title">الدعم والتواصل</div>
+        <div class="page-title" data-i18n="db.support-title">الدعم والمساعدة</div>
         <div class="page-sub" data-i18n="db.support-sub">نحن هنا لمساعدتك</div>
       </div>
     </div>
@@ -1588,10 +1646,7 @@ function getOrgTypeLabel(orgtype) {
 }
 
 function initUI() {
-  document.getElementById('sb_brand_name').textContent = partner.org;
-  const brandLogo = document.getElementById('sb_brand_logo');
-  if (partner.avatar_url) brandLogo.innerHTML = `<img src="${partner.avatar_url}" alt="">`;
-  else brandLogo.textContent = '🏢';
+  renderBrandLogo();
   document.getElementById('sb_orgname').textContent = partner.org;
   document.getElementById('sb_orgtype').textContent = getOrgTypeLabel(partner.orgtype);
   const planLabels = {trial: getT('db.plan-trial-short'), basic49: getT('db.plan-basic49-short'), basic: getT('db.plan-basic-short'), advanced: getT('db.plan-adv-short')};
@@ -1642,6 +1697,7 @@ async function loadApplications() {
   if (partner._adminPreview) return allApplications;
   const { status, data } = await pdApi({ action: 'load_apps' });
   allApplications = (status === 200 && data.applications) ? data.applications : [];
+  renderNotifBadge();
   return allApplications;
 }
 
@@ -2131,7 +2187,7 @@ function renderAvatar(el, url, fallbackLetter) {
 
 async function uploadAvatar(file) {
   if (!file) return;
-  const status = document.getElementById('set_avatar_status');
+  const status = document.getElementById('set_avatar_status') || { };
   status.textContent = getT('db.avatar-uploading');
   const ext = (file.name.split('.').pop() || 'png').toLowerCase();
   const { status: urlStatus, data: urlData } = await pdApi({ action: 'get_avatar_upload_url', fileExt: ext });
@@ -2145,9 +2201,13 @@ async function uploadAvatar(file) {
     const { status: saveStatus } = await pdApi({ action: 'update_profile', profile: { avatar_url: urlData.publicUrl } });
     if (saveStatus !== 200) throw new Error('save_failed');
     partner.avatar_url = urlData.publicUrl;
-    renderAvatar(document.getElementById('set_avatar_preview'), urlData.publicUrl);
-    renderAvatar(document.getElementById('sb_av'), urlData.publicUrl);
+    const prev = document.getElementById('set_avatar_preview');
+    if (prev) renderAvatar(prev, urlData.publicUrl);
+    const sbav = document.getElementById('sb_av');
+    if (sbav) renderAvatar(sbav, urlData.publicUrl);
+    renderBrandLogo();
     status.textContent = getT('db.avatar-upload-ok');
+    toast(getT('db.avatar-upload-ok'));
   } catch (e) {
     status.textContent = getT('db.avatar-upload-error');
   }
@@ -2394,6 +2454,8 @@ function showPage(pageId, navEl) {
   if (pageId === 'requests') { loadApplications().then(() => filterResultsCards()); }
   if (pageId === 'overview') { loadApplications().then(() => { renderStats(); renderRecentRequests(); }); }
   if (pageId === 'subscription') renderSubscription();
+  if (pageId === 'chat') initKhalidChat();
+  if (pageId === 'notifications') { renderNotifications(); localStorage.setItem(notifSeenKey(), new Date().toISOString()); renderNotifBadge(); }
   if (pageId === 'settings') renderSettings();
   if (pageId === 'link') renderLinkPage();
   if (pageId === 'form-setup') loadFormConfigUI();
@@ -2658,10 +2720,118 @@ function toggleAccountMenu(e) {
   if (a) a.classList.toggle('open');
 }
 
+function renderBrandLogo() {
+  const brandLogo = document.getElementById('sb_brand_logo');
+  if (!brandLogo) return;
+  if (partner.avatar_url) brandLogo.innerHTML = `<img src="${partner.avatar_url}" alt="">`;
+  else brandLogo.textContent = '🏢';
+}
+
 function requestTopUp() {
   const org = partner.org || '';
   const msg = encodeURIComponent(getT('db.topup-wa') + (org ? ' — ' + org : ''));
   window.open('https://wa.me/966558184381?text=' + msg, '_blank');
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ===== Notifications center ===== */
+function notifSeenKey() { return 'rafd_notif_seen_' + ((partner && (partner.id || partner.ref_num)) || 'x'); }
+function getNotifSeen() { const v = localStorage.getItem(notifSeenKey()); return v ? new Date(v).getTime() : 0; }
+function newNotifCount() {
+  const seen = getNotifSeen();
+  return allApplications.filter(a => a.created_at && new Date(a.created_at).getTime() > seen).length;
+}
+function renderNotifBadge() {
+  const b = document.getElementById('notif_badge');
+  if (!b) return;
+  const n = newNotifCount();
+  if (n > 0) { b.textContent = n > 99 ? '99+' : n; b.style.display = ''; }
+  else b.style.display = 'none';
+}
+function renderNotifications() {
+  const list = document.getElementById('notif_list');
+  if (!list) return;
+  const seen = getNotifSeen();
+  const apps = [...allApplications].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  let html = `<div class="notif-item"><div class="notif-dot" style="background:#C9A24B"></div><div style="flex:1"><div class="notif-title">📣 ${getT('db.notif-update-title')}</div><div class="notif-time">${getT('db.notif-update-body')}</div></div></div>`;
+  if (!apps.length) {
+    html += `<div class="notif-empty">${getT('db.notif-empty')}</div>`;
+  } else {
+    html += apps.map(a => {
+      const unread = a.created_at && new Date(a.created_at).getTime() > seen;
+      const who = a.name || a.company || '—';
+      const res = a.result === 'approved' ? getT('db.opt-approved') : a.result === 'rejected' ? getT('db.opt-rejected') : getT('db.opt-pending');
+      return `<div class="notif-item ${unread ? 'unread' : ''}" onclick="openReqModal('${a.id}')" style="cursor:pointer"><div class="notif-dot"></div><div style="flex:1"><div class="notif-title">🔔 ${getT('db.notif-new-app')}: ${escHtml(who)}</div><div class="notif-time">${fmtDate(a.created_at)} · ${res}</div></div></div>`;
+    }).join('');
+  }
+  list.innerHTML = html;
+}
+function markAllNotifsRead() {
+  localStorage.setItem(notifSeenKey(), new Date().toISOString());
+  renderNotifBadge();
+  renderNotifications();
+}
+
+/* ===== Khalid chat ===== */
+let khalidHistory = [];
+let khalidStarted = false;
+function initKhalidChat() {
+  if (khalidStarted) return;
+  khalidStarted = true;
+  appendChat('bot', getT('db.chat-welcome'));
+}
+function appendChat(role, text) {
+  const box = document.getElementById('chat_messages');
+  if (!box) return;
+  const div = document.createElement('div');
+  div.className = 'chat-bubble ' + (role === 'user' ? 'chat-user' : 'chat-bot');
+  div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+async function sendChatMsg() {
+  const input = document.getElementById('chat_input');
+  const text = (input.value || '').trim();
+  if (!text) return;
+  input.value = '';
+  appendChat('user', text);
+  khalidHistory.push({ role: 'user', content: text });
+  const sendBtn = document.getElementById('chat_send');
+  sendBtn.disabled = true;
+  const box = document.getElementById('chat_messages');
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.textContent = getT('db.chat-typing');
+  box.appendChild(typing);
+  box.scrollTop = box.scrollHeight;
+  try {
+    const r = await fetch('/api/chat-khalid', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, history: khalidHistory.slice(0, -1) }),
+    });
+    const data = await r.json();
+    typing.remove();
+    const reply = data.reply || getT('db.chat-error');
+    appendChat('bot', reply);
+    khalidHistory.push({ role: 'assistant', content: reply });
+    if (data.escalate) showChatEscalate();
+  } catch (e) {
+    typing.remove();
+    appendChat('bot', getT('db.chat-error'));
+    showChatEscalate();
+  } finally {
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+function showChatEscalate() {
+  const el = document.getElementById('chat_escalate');
+  if (!el) return;
+  el.style.display = 'block';
+  el.innerHTML = `<div style="font-size:.8rem;color:#94a3b8;margin-bottom:.5rem">${getT('db.chat-escalate')}</div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><a href="https://wa.me/966558184381" target="_blank" rel="noopener" class="btn-sm" style="background:rgba(22,168,112,.15);color:#16A870;border:1px solid rgba(22,168,112,.3)">💬 واتساب</a><a href="mailto:support@rafd-digital.com" class="btn-sm">✉ support@rafd-digital.com</a></div>`;
 }
 
 document.addEventListener('click', function (ev) {
