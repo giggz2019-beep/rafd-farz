@@ -360,7 +360,7 @@ const T = {
     // === apply page result page - no-requests ===
     'apply.no-requests':'لا توجد طلبات بعد',
     // ===== DASHBOARD =====
-    'db.sidebar-title':'لوحة تحكم الشريك','db.nav-main':'الرئيسية','db.nav-admin':'الإدارة',
+    'db.sidebar-title':'لوحة تحكم الشريك','db.powered-by':'مدعوم من','db.nav-main':'الرئيسية','db.nav-admin':'الإدارة',
     'db.overview':'نظرة عامة','db.requests':'الطلبات','db.results-nav':'النتائج','db.apply-link':'رابط التقديم',
     'db.form-setup':'إعداد النموذج','db.new-req':'طلب يدوي','db.settings':'الإعدادات',
     'db.sub':'الاشتراك','db.support':'الدعم والتواصل','db.logout':'تسجيل الخروج',
@@ -787,7 +787,7 @@ const T = {
     'db.custom-scores-btn':'تخصيص الدرجات لكل إجابة','db.score-inputs-lbl':'نقاط كل إجابة (من الوزن الكلي للمعيار):',
     'db.embed-desc':'ضع هذا الكود في موقعك وسيظهر النموذج مباشرةً دون توجيه الزوار لرابط خارجي.','db.btn-copy-embed':'نسخ كود التضمين','db.embed-pro-only':'متاح فقط لباقة المتقدمة',
     'db.ph-prog-desc':'اشرح هدف البرنامج والفئة المستهدفة...','db.ph-nf-notes':'أي ملاحظات إضافية على هذا الطلب...','db.ph-sup-msg':'اكتب رسالتك هنا...','db.ph-nf-score':'مثال: 85','db.ph-search':'بحث بالاسم أو رقم الهوية...',
-    'db.ph-nf-name':'محمد أحمد الغامدي','db.ph-nf-id':'1XXXXXXXXX','db.ph-nf-email':'applicant@email.com','db.ph-phone':'5XXXXXXXX',
+    'db.ph-nf-name':'محمد أحمد الغامدي','db.ph-nf-id':'1XXXXXXXXX','db.ph-nf-email':'applicant@email.com','db.ph-phone':'5XXXXXXXX','db.ph-phone-full':'+966 5XXXXXXXX',
     'db.ph-prog-name':'مثال: برنامج دعم الشركات الناشئة 2026','db.ph-pending-msg':'مثال: تم قبولك مبدئياً في برنامجنا، وسيتم التواصل معك خلال أسبوعين بالقرار النهائي.',
     'db.ph-gpa-min':'من','db.ph-gpa-max':'إلى','db.ph-gpa-score':'نقطة','db.ph-custom-doc':'اسم المستند... مثال: خطة العمل','db.ph-doc-criterion':'مثال: هل مؤهل المتقدم بكالوريوس أو أعلى؟','db.ph-custom-crit-label':'اكتب نص السؤال... مثال: هل لديك براءة اختراع؟','db.ph-crit-option':'نص الخيار...',
     'db.gpa-from5':'من 5','db.gpa-from4':'من 4','db.gpa-pct':'نسبة مئوية (%)',
@@ -1718,7 +1718,7 @@ const T = {
     'db.custom-scores-btn':'Customize scores per answer','db.score-inputs-lbl':'Points per answer (from total criterion weight):',
     'db.embed-desc':'Place this code on your website and the form will appear directly without redirecting visitors to an external link.','db.btn-copy-embed':'Copy Embed Code','db.embed-pro-only':'Available for Advanced plan only',
     'db.ph-prog-desc':'Describe the program objective and target audience...','db.ph-nf-notes':'Any additional notes about this request...','db.ph-sup-msg':'Write your message here...','db.ph-nf-score':'e.g. 85','db.ph-search':'Search by name or ID...',
-    'db.ph-nf-name':'Mohammed Ahmed Al-Ghamdi','db.ph-nf-id':'1XXXXXXXXX','db.ph-nf-email':'applicant@email.com','db.ph-phone':'5XXXXXXXX',
+    'db.ph-nf-name':'Mohammed Ahmed Al-Ghamdi','db.ph-nf-id':'1XXXXXXXXX','db.ph-nf-email':'applicant@email.com','db.ph-phone':'5XXXXXXXX','db.ph-phone-full':'+966 5XXXXXXXX',
     'db.ph-prog-name':'e.g. 2026 Startup Support Program','db.ph-pending-msg':"e.g. You've been preliminarily accepted into our program, and we'll follow up with a final decision within two weeks.",
     'db.ph-gpa-min':'from','db.ph-gpa-max':'to','db.ph-gpa-score':'points','db.ph-custom-doc':'Document name... e.g. Business Plan','db.ph-doc-criterion':'e.g. Is the applicant qualified with a bachelor\'s degree or higher?','db.ph-custom-crit-label':'Write the question... e.g. Do you hold a patent?','db.ph-crit-option':'Option text...',
     'db.gpa-from5':'out of 5','db.gpa-from4':'out of 4','db.gpa-pct':'Percentage (%)',
