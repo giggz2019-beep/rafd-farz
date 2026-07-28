@@ -215,6 +215,41 @@ select option{background:#1e293b;color:#e2e8f0}
 .toast.error{background:rgba(239,68,68,.95);color:#fff}
 .toast.warn{background:rgba(245,158,11,.95);color:#0f172a}
 
+/* ===== TOP BAR (account/partner data moved up, Salla-style) ===== */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:#1e293b;border:1px solid #334155;border-radius:16px;padding:.65rem .9rem;margin-bottom:1.5rem;position:relative;z-index:50;flex-wrap:wrap}
+.tb-start{display:flex;align-items:center;gap:.6rem;min-width:0}
+.tb-end{display:flex;align-items:center;gap:.5rem}
+.tb-org{text-align:start;min-width:0}
+.tb-org-name{font-size:.92rem;font-weight:800;color:#16A870;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+.tb-org-meta{font-size:.7rem;color:#64748b;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.15rem}
+.tb-org-meta .sb-plan{margin-top:0;padding:.12rem .5rem;font-size:.66rem}
+.tb-account{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem;border-radius:12px;cursor:pointer;transition:.15s;position:relative;user-select:none}
+.tb-account:hover{background:rgba(255,255,255,.05)}
+.tb-account .sb-av{width:36px;height:36px}
+.tb-account-info{text-align:start;line-height:1.2}
+.tb-uname{font-size:.82rem;font-weight:700;color:#e2e8f0;white-space:nowrap}
+.tb-urole{font-size:.68rem;color:#64748b;white-space:nowrap}
+.tb-chevron{width:15px;height:15px;color:#64748b;transition:transform .2s;flex-shrink:0}
+.tb-account.open .tb-chevron{transform:rotate(180deg)}
+.tb-menu{position:absolute;top:calc(100% + .5rem);inset-inline-start:0;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:.4rem;min-width:200px;box-shadow:0 12px 30px rgba(0,0,0,.4);display:none;flex-direction:column;gap:.1rem;z-index:200}
+.tb-account.open .tb-menu{display:flex}
+.tb-menu button{display:flex;align-items:center;gap:.6rem;width:100%;background:none;border:none;color:#cbd5e1;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.83rem;font-weight:600;padding:.55rem .7rem;border-radius:9px;cursor:pointer;text-align:start;transition:.15s}
+.tb-menu button:hover{background:rgba(255,255,255,.06);color:#fff}
+.tb-menu button.danger{color:#f87171}
+.tb-menu button.danger:hover{background:rgba(239,68,68,.12);color:#fca5a5}
+.tb-menu-sep{height:1px;background:#334155;margin:.25rem .2rem}
+.tb-icon-btn{display:flex;align-items:center;gap:.3rem;background:rgba(15,23,42,.5);border:1px solid #334155;border-radius:10px;padding:.45rem .6rem;color:#94a3b8;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
+.tb-icon-btn:hover{background:rgba(255,255,255,.06);color:#e2e8f0}
+.tb-icon-btn .icon{width:16px;height:16px}
+body.theme-light .topbar{background:#fff;border-color:#dde3ec;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+body.theme-light .tb-uname{color:#0A1628}
+body.theme-light .tb-menu{background:#fff;border-color:#dde3ec}
+body.theme-light .tb-menu button{color:#334155}
+body.theme-light .tb-menu button:hover{background:#f1f5f9;color:#0A1628}
+body.theme-light .tb-menu-sep{background:#e2e8f0}
+body.theme-light .tb-icon-btn{background:#f8fafc;border-color:#dde3ec;color:#475569}
+body.theme-light .tb-icon-btn:hover{color:#0A1628}
+
 /* ===== OVERVIEW (Salla-style layout) ===== */
 .ov-top-row{display:grid;grid-template-columns:1.7fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
 .ov-mid-row{display:grid;grid-template-columns:1.55fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
@@ -315,11 +350,6 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
     </div>
     </a>
   </div>
-  <div class="sb-org">
-    <div class="sb-org-name" id="sb_orgname">—</div>
-    <div class="sb-org-type" id="sb_orgtype">—</div>
-    <div class="sb-plan" id="sb_plan">—</div>
-  </div>
   <nav class="sb-nav">
     <div class="nav-sec" data-i18n="db.nav-main">الرئيسية</div>
     <div class="nav-item active" onclick="showPage('overview',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> <span data-i18n="db.overview">نظرة عامة</span></div>
@@ -332,20 +362,39 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
     <div class="nav-item" onclick="showPage('subscription',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> <span data-i18n="db.sub">الاشتراك</span></div>
     <div class="nav-item" onclick="showPage('support',this)"><svg class="nav-icon icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> <span data-i18n="db.support">الدعم والتواصل</span></div>
   </nav>
-  <div class="sb-footer">
-    <div class="sb-user">
-      <div class="sb-av" id="sb_av">—</div>
-      <div>
-        <div class="sb-uname" id="sb_uname">—</div>
-        <div class="sb-urole" id="sb_urole">—</div>
-        <button id="langToggleBtn" class="lang-toggle" style="background:none;border:1px solid #334155;border-radius:6px;padding:.25rem .6rem;color:#94a3b8;font-size:.75rem;cursor:pointer;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;margin-bottom:.4rem;width:100%;white-space:nowrap" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button><button class="btn-logout" onclick="logout()" data-i18n="db.logout">تسجيل الخروج</button>
-      </div>
-    </div>
-  </div>
 </aside>
 
 <!-- MAIN -->
 <main class="main">
+
+  <!-- ===== TOP BAR (partner/account moved up) ===== -->
+  <header class="topbar">
+    <div class="tb-start">
+      <div class="tb-org">
+        <div class="tb-org-name" id="sb_orgname">—</div>
+        <div class="tb-org-meta"><span id="sb_orgtype">—</span> <span class="sb-plan" id="sb_plan">—</span></div>
+      </div>
+    </div>
+    <div class="tb-end">
+      <button class="tb-icon-btn" onclick="showPage('support',document.querySelector('.nav-item[onclick*=support]'))" title="الدعم والتواصل" aria-label="الدعم"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+      <button class="tb-icon-btn" onclick="toggleDashThemeQuick()" title="تبديل الوضع الفاتح/الداكن" aria-label="تبديل الوضع">🌓</button>
+      <button id="langToggleBtn" class="tb-icon-btn" onclick="setLang(document.documentElement.lang==='ar'?'en':'ar')">🌐 EN</button>
+      <div class="tb-account" id="tb_account" onclick="toggleAccountMenu(event)">
+        <div class="sb-av" id="sb_av">—</div>
+        <div class="tb-account-info">
+          <div class="tb-uname" id="sb_uname">—</div>
+          <div class="tb-urole" id="sb_urole">—</div>
+        </div>
+        <svg class="tb-chevron icon" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        <div class="tb-menu" id="tb_menu">
+          <button onclick="showPage('settings',document.querySelector('.nav-item[onclick*=settings]'))"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span data-i18n="db.settings">الإعدادات</span></button>
+          <button onclick="showPage('subscription',document.querySelector('.nav-item[onclick*=subscription]'))"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> <span data-i18n="db.sub">الاشتراك</span></button>
+          <div class="tb-menu-sep"></div>
+          <button class="danger" onclick="logout()"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg> <span data-i18n="db.logout">تسجيل الخروج</span></button>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <!-- ===== PAGE: OVERVIEW ===== -->
   <div class="page active" id="page-overview">
@@ -2266,6 +2315,8 @@ function sendSupport() {
 
 // ===== NAVIGATION =====
 function showPage(pageId, navEl) {
+  const acc = document.getElementById('tb_account');
+  if (acc) acc.classList.remove('open');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const page = document.getElementById('page-' + pageId);
@@ -2527,6 +2578,21 @@ function setDashTheme(theme) {
   if (lRad) lRad.checked = theme === 'light';
   applyThemeInlineOverrides(theme);
 }
+
+function toggleDashThemeQuick() {
+  setDashTheme(document.body.classList.contains('theme-light') ? 'dark' : 'light');
+}
+
+function toggleAccountMenu(e) {
+  if (e) e.stopPropagation();
+  const a = document.getElementById('tb_account');
+  if (a) a.classList.toggle('open');
+}
+
+document.addEventListener('click', function (ev) {
+  const a = document.getElementById('tb_account');
+  if (a && !a.contains(ev.target)) a.classList.remove('open');
+});
 
 function applyThemeInlineOverrides(theme) {
   let st = document.getElementById('_theme_inline_override');
