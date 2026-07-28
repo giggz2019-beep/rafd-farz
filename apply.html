@@ -870,6 +870,18 @@ async function init() {
       return;
     }
 
+    // Server says this org can't currently receive applications
+    // (trial expired / monthly cap reached / not active).
+    if (gfData.accepting === false) {
+      const msg = {
+        trial_expired: getT('apply.err-closed-trial'),
+        limit_reached: getT('apply.err-closed-limit'),
+        partner_not_active: getT('apply.err-disabled'),
+      }[gfData.reason] || getT('apply.err-paused');
+      showError(msg);
+      return;
+    }
+
     partnerData = data;
 
     // Load specific saved template if ?form=SLUG is in the URL

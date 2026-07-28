@@ -1982,7 +1982,11 @@ async function submitRequest() {
     source: 'manual',
   }});
 
-  if (addStatus !== 200) { toast(getT('db.toast-save-error') + ': ' + (addData?.error || ''), 'error'); return; }
+  if (addStatus !== 200) {
+    const quotaMsg = { trial_expired: getT('db.err-trial-expired'), limit_reached: getT('db.err-limit-reached') }[addData?.error];
+    if (quotaMsg) { toast(quotaMsg, 'warn'); showPage('subscription', document.querySelector('.nav-item[onclick*=subscription]')); return; }
+    toast(getT('db.toast-save-error') + ': ' + (addData?.error || ''), 'error'); return;
+  }
 
   clearRequestForm();
   await loadApplications();

@@ -1,5 +1,17 @@
 // Public endpoints for the apply page — no auth required
 const SB_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
+const { planLimit, trialExpired } = require('./_lib/plans');
+
+// Count a partner's applications via PostgREST's exact count header.
+async function countApplications(partnerId, key) {
+  const r = await fetch(`${SB_URL}/rest/v1/applications?partner_id=eq.${encodeURIComponent(partnerId)}&select=id`, {
+    method: 'GET',
+    headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: 'count=exact', Range: '0-0' },
+  });
+  const cr = r.headers.get('content-range') || '';        // e.g. "0-0/42" or "* /0"
+  const total = parseInt((cr.split('/')[1] || '').trim(), 10);
+  return Number.isFinite(total) ? total : 0;
+}
 
 // Fields the applicant can submit — result, partner_id, status are always server-side
 const ALLOWED_APP_FIELDS = [
@@ -40,11 +52,21 @@ module.exports = async (req, res) => {
       const { ref } = body;
       if (!ref) return res.status(400).json({ error: 'missing_ref' });
       const rows = await sb('GET',
-        `/partners?ref_num=eq.${encodeURIComponent(ref.toUpperCase())}&select=id,org_name,org_type,city,plan,ref_num,status,form_config&limit=1`,
+        `/partners?ref_num=eq.${encodeURIComponent(ref.toUpperCase())}&select=id,org_name,org_type,city,plan,ref_num,status,created_at,form_config&limit=1`,
         undefined, key
       );
       if (!rows?.length) return res.status(404).json({ error: 'not_found' });
-      return res.status(200).json({ partner: rows[0] });
+      const p = rows[0];
+      // Tell the apply page up-front whether this org can still receive
+      // applications (active + trial not expired + under the monthly cap).
+      let accepting = p.status === 'approved';
+      let reason = accepting ? null : 'partner_not_active';
+      if (accepting && trialExpired(p.plan, p.created_at)) { accepting = false; reason = 'trial_expired'; }
+      if (accepting) {
+        const used = await countApplications(p.id, key);
+        if (used >= planLimit(p.plan)) { accepting = false; reason = 'limit_reached'; }
+      }
+      return res.status(200).json({ partner: p, accepting, reason });
     }
 
     // ─── GET SIGNED STORAGE UPLOAD URL ──────────────────────────────────────
@@ -87,11 +109,22 @@ module.exports = async (req, res) => {
       if (!partnerRef) return res.status(400).json({ error: 'missing_partner_ref' });
 
       const partners = await sb('GET',
-        `/partners?ref_num=eq.${encodeURIComponent(String(partnerRef).toUpperCase())}&select=id,ref_num,status&limit=1`,
+        `/partners?ref_num=eq.${encodeURIComponent(String(partnerRef).toUpperCase())}&select=id,ref_num,status,plan,created_at&limit=1`,
         undefined, key
       );
       if (!partners?.length) return res.status(404).json({ error: 'partner_not_found' });
-      if (partners[0].status !== 'approved') return res.status(403).json({ error: 'partner_not_active' });
+      const partner = partners[0];
+      if (partner.status !== 'approved') return res.status(403).json({ error: 'partner_not_active' });
+
+      // Server-side quota enforcement — a trial that has expired, or any
+      // plan that has hit its monthly cap, may not receive new applications.
+      if (trialExpired(partner.plan, partner.created_at)) {
+        return res.status(403).json({ error: 'trial_expired' });
+      }
+      const used = await countApplications(partner.id, key);
+      if (used >= planLimit(partner.plan)) {
+        return res.status(403).json({ error: 'limit_reached' });
+      }
 
       // Apply field allowlist — strip any field not explicitly permitted
       const row = {};
