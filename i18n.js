@@ -366,7 +366,7 @@ const T = {
     'db.sub':'الاشتراك','db.support':'الدعم والتواصل','db.logout':'تسجيل الخروج',
     'db.stat-total':'إجمالي الطلبات','db.stat-accepted':'الطلبات المقبولة',
     'db.stat-rejected':'الطلبات المرفوضة','db.stat-pending':'قيد المراجعة',
-    'db.since-start':'منذ بدء الاشتراك','db.welcome-sub':'لوحة التحكم الخاصة بجهتك','db.welcome-badge':'لوحة الشريك','db.gen-stats':'إحصائيات عامة',
+    'db.since-start':'منذ بدء الاشتراك','db.welcome-sub':'لوحة التحكم الخاصة بجهتك','db.welcome-badge':'لوحة الشريك','db.welcome-tagline':'تابع طلبات جهتك ونتائجها من مكان واحد','db.tb-name':'اسمها','db.tb-activity':'نشاطها','db.tb-plan':'الباقة','db.gen-stats':'إحصائيات عامة',
     // db extended
     'db.opt-project':'مشروع / شركة ناشئة','db.opt-job':'توظيف واختيار كوادر',
     'db.opt-funding':'تمويل واستثمار','db.opt-academic':'قبول أكاديمي / تدريب',
@@ -1296,7 +1296,7 @@ const T = {
     'db.sub':'Subscription','db.support':'Support & Contact','db.logout':'Log Out',
     'db.stat-total':'Total Applications','db.stat-accepted':'Accepted Applications',
     'db.stat-rejected':'Rejected Applications','db.stat-pending':'Under Review',
-    'db.since-start':'Since subscription start','db.welcome-sub':'Your organization\'s dashboard','db.welcome-badge':'Partner Portal','db.gen-stats':'General Statistics',
+    'db.since-start':'Since subscription start','db.welcome-sub':'Your organization\'s dashboard','db.welcome-badge':'Partner Portal','db.welcome-tagline':'Track your organization\'s applications and results in one place','db.tb-name':'Name','db.tb-activity':'Activity','db.tb-plan':'Plan','db.gen-stats':'General Statistics',
     // db extended
     'db.opt-project':'Project / Startup','db.opt-job':'Employment & Talent Selection',
     'db.opt-funding':'Funding & Investment','db.opt-academic':'Academic Admission / Training',
