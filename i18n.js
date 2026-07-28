@@ -360,10 +360,12 @@ const T = {
     // === apply page result page - no-requests ===
     'apply.no-requests':'لا توجد طلبات بعد',
     // ===== DASHBOARD =====
-    'db.sidebar-title':'لوحة تحكم الشريك','db.powered-by':'مدعوم من','db.nav-main':'الرئيسية','db.nav-admin':'الإدارة',
+    'db.sidebar-title':'لوحة تحكم الشريك','db.powered-by':'مدعوم من','db.nav-main':'الرئيسية','db.nav-admin':'الإدارة','db.nav-help':'روابط المساعدة','db.chat':'المحادثة','db.notifications':'مركز التنبيهات',
+    'db.chat-title':'المحادثة مع خالد','db.chat-sub':'مساعدك الذكي — اسأل خالد عن أي شيء يخص المنصة','db.chat-ph':'اكتب رسالتك لخالد...','db.chat-send':'إرسال','db.chat-welcome':'أهلاً! أنا خالد، مساعدك في رافد. كيف أقدر أساعدك اليوم؟','db.chat-typing':'خالد يكتب...','db.chat-error':'عذراً، تعذّر الاتصال. جرّب مرة ثانية أو تواصل معنا مباشرة.','db.chat-escalate':'تحتاج مساعدة بشرية؟ تواصل معنا مباشرة:',
+    'db.notif-title':'مركز التنبيهات','db.notif-sub':'تنبيهات الطلبات الجديدة ورسائل التحديثات','db.notif-mark-read':'تعليم الكل كمقروء','db.notif-new-app':'طلب جديد','db.notif-empty':'لا توجد تنبيهات بعد','db.notif-update-title':'تحديثات المنصة','db.notif-update-body':'نعمل باستمرار على تحسين رافد — ستصلك التحديثات الجديدة هنا.',
     'db.overview':'نظرة عامة','db.requests':'الطلبات','db.results-nav':'النتائج','db.apply-link':'رابط التقديم',
     'db.form-setup':'إعداد النموذج','db.new-req':'طلب يدوي','db.settings':'الإعدادات',
-    'db.sub':'الاشتراك','db.support':'الدعم والتواصل','db.logout':'تسجيل الخروج',
+    'db.sub':'الاشتراك','db.support':'الدعم والمساعدة','db.logout':'تسجيل الخروج',
     'db.stat-total':'إجمالي الطلبات','db.stat-accepted':'الطلبات المقبولة',
     'db.stat-rejected':'الطلبات المرفوضة','db.stat-pending':'قيد المراجعة',
     'db.since-start':'منذ بدء الاشتراك','db.welcome-sub':'لوحة التحكم الخاصة بجهتك','db.welcome-badge':'لوحة الشريك','db.welcome-tagline':'تابع طلبات جهتك ونتائجها من مكان واحد','db.tb-name':'اسمها','db.tb-activity':'نشاطها','db.tb-plan':'الباقة','db.gen-stats':'إحصائيات عامة',
@@ -724,7 +726,7 @@ const T = {
     'db.nafath-title':'التحقق بنفاذ','db.nafath-desc':'اختر هل تشترط على المتقدمين التحقق من هويتهم عبر منصة نفاذ الحكومية','db.docs-title':'المستندات المطلوبة',
     'db.doc-cv':'السيرة الذاتية','db.doc-reg':'وثيقة التسجيل التجاري',
     // Support page
-    'db.support-title':'الدعم والتواصل','db.support-sub':'نحن هنا لمساعدتك',
+    'db.support-title':'الدعم والمساعدة','db.support-sub':'نحن هنا لمساعدتك',
     'db.sup-send':'إرسال رسالة للدعم','db.sup-subject':'موضوع الرسالة','db.sup-msg':'نص الرسالة',
     'db.btn-send':'إرسال الرسالة',
     'db.contact-info':'معلومات التواصل المباشر',
@@ -1292,10 +1294,12 @@ const T = {
     'apply.ai-t11':'Calculating final score and preparing detailed report...','apply.ai-done':'Analysis complete — Score:',
     'apply.no-requests':'No applications yet',
     // ===== DASHBOARD =====
-    'db.sidebar-title':'Partner Dashboard','db.nav-main':'Main','db.nav-admin':'Management',
+    'db.sidebar-title':'Partner Dashboard','db.nav-main':'Main','db.nav-admin':'Management','db.nav-help':'Help Links','db.chat':'Chat','db.notifications':'Notifications',
+    'db.chat-title':'Chat with Khalid','db.chat-sub':'Your smart assistant — ask Khalid anything about the platform','db.chat-ph':'Type your message to Khalid...','db.chat-send':'Send','db.chat-welcome':'Hi! I\'m Khalid, your RAFD assistant. How can I help you today?','db.chat-typing':'Khalid is typing...','db.chat-error':'Sorry, connection failed. Try again or contact us directly.','db.chat-escalate':'Need human help? Contact us directly:',
+    'db.notif-title':'Notifications','db.notif-sub':'New application alerts and update messages','db.notif-mark-read':'Mark all as read','db.notif-new-app':'New application','db.notif-empty':'No notifications yet','db.notif-update-title':'Platform updates','db.notif-update-body':'We keep improving RAFD — new updates will appear here.',
     'db.overview':'Overview','db.requests':'Applications','db.results-nav':'Results','db.apply-link':'Application Link',
     'db.form-setup':'Form Setup','db.new-req':'Manual Request','db.settings':'Settings',
-    'db.sub':'Subscription','db.support':'Support & Contact','db.logout':'Log Out',
+    'db.sub':'Subscription','db.support':'Support & Help','db.logout':'Log Out',
     'db.stat-total':'Total Applications','db.stat-accepted':'Accepted Applications',
     'db.stat-rejected':'Rejected Applications','db.stat-pending':'Under Review',
     'db.since-start':'Since subscription start','db.welcome-sub':'Your organization\'s dashboard','db.welcome-badge':'Partner Portal','db.welcome-tagline':'Track your organization\'s applications and results in one place','db.tb-name':'Name','db.tb-activity':'Activity','db.tb-plan':'Plan','db.gen-stats':'General Statistics',
@@ -1656,7 +1660,7 @@ const T = {
     'db.nafath-title':'Nafath Verification','db.docs-title':'Required Documents',
     'db.doc-cv':'CV / Resume','db.doc-reg':'Commercial Registration',
     // Support page
-    'db.support-title':'Support & Contact','db.support-sub':'We are here to help you',
+    'db.support-title':'Support & Help','db.support-sub':'We are here to help you',
     'db.sup-send':'Send a Support Message','db.sup-subject':'Subject','db.sup-msg':'Message',
     'db.btn-send':'Send Message',
     'db.contact-info':'Direct Contact Info',
