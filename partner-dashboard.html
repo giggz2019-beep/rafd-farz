@@ -240,10 +240,15 @@ select option{background:#1e293b;color:#e2e8f0}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:#1e293b;border:1px solid #334155;border-radius:16px;padding:.65rem .9rem;margin-bottom:1.5rem;position:relative;z-index:50;flex-wrap:wrap}
 .tb-start{display:flex;align-items:center;gap:.6rem;min-width:0}
 .tb-end{display:flex;align-items:center;gap:.5rem}
-.tb-org{text-align:start;min-width:0}
-.tb-org-name{font-size:.92rem;font-weight:800;color:#16A870;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
-.tb-org-meta{font-size:.7rem;color:#64748b;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.15rem}
-.tb-org-meta .sb-plan{margin-top:0;padding:.12rem .5rem;font-size:.66rem}
+.tb-org{display:flex;flex-direction:column;gap:.12rem;min-width:0}
+.tb-org-row{display:flex;align-items:center;gap:.4rem;font-size:.78rem;line-height:1.3}
+.tb-k{color:#64748b;font-weight:600;min-width:48px;flex-shrink:0}
+.tb-k::after{content:':'}
+.tb-v{color:#e2e8f0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.tb-plan-v{color:#16A870}
+body.theme-light .tb-k{color:#64748b}
+body.theme-light .tb-v{color:#0A1628}
+body.theme-light .tb-plan-v{color:#0B5D3B}
 .tb-account{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem;border-radius:12px;cursor:pointer;transition:.15s;position:relative;user-select:none}
 .tb-account:hover{background:rgba(255,255,255,.05)}
 .tb-account .sb-av{width:36px;height:36px}
@@ -395,8 +400,9 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
   <header class="topbar">
     <div class="tb-start">
       <div class="tb-org">
-        <div class="tb-org-name" id="sb_orgname">—</div>
-        <div class="tb-org-meta"><span id="sb_orgtype">—</span> <span class="sb-plan" id="sb_plan">—</span></div>
+        <div class="tb-org-row"><span class="tb-k" data-i18n="db.tb-name">اسمها</span><span class="tb-v" id="sb_orgname">—</span></div>
+        <div class="tb-org-row"><span class="tb-k" data-i18n="db.tb-activity">نشاطها</span><span class="tb-v" id="sb_orgtype">—</span></div>
+        <div class="tb-org-row"><span class="tb-k" data-i18n="db.tb-plan">الباقة</span><span class="tb-v tb-plan-v" id="sb_plan">—</span></div>
       </div>
     </div>
     <div class="tb-end">
@@ -427,7 +433,6 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
     <!-- ROW 1: welcome hero + KPI cards -->
     <div class="ov-top-row">
       <div class="welcome-hero">
-        <span class="wh-badge">✨ <span data-i18n="db.welcome-badge">لوحة الشريك</span></span>
         <div class="wh-greeting"><span data-i18n="db.hello">مرحباً،</span> <span id="welcome_name">—</span> 👋</div>
         <div class="wh-sub" id="welcome_sub" data-i18n="db.welcome-sub">لوحة التحكم الخاصة بجهتك</div>
         <div class="wh-actions">
@@ -1605,7 +1610,7 @@ function initUI() {
   document.getElementById('sb_uname').textContent = partner.fname + ' ' + partner.lname;
   document.getElementById('sb_urole').textContent = partner.title;
   document.getElementById('welcome_name').textContent = partner.fname;
-  document.getElementById('welcome_sub').textContent = getT('db.dashboard-lbl') + ' — ' + partner.org;
+  document.getElementById('welcome_sub').textContent = getT('db.welcome-tagline');
 
   // Status alert
   if (partner.status === 'approved') {
@@ -1628,7 +1633,7 @@ function initUI() {
     const planLbls = {trial: getT('db.plan-trial-short'), basic49: getT('db.plan-basic49-short'), basic: getT('db.plan-basic-short'), advanced: getT('db.plan-adv-short')};
     document.getElementById('sb_plan').textContent = planLbls[partner.plan] || partner.plan;
     document.getElementById('sb_orgtype').textContent = getOrgTypeLabel(partner.orgtype);
-    document.getElementById('welcome_sub').textContent = getT('db.dashboard-lbl') + ' — ' + partner.org;
+    document.getElementById('welcome_sub').textContent = getT('db.welcome-tagline');
     renderSubscription();
     renderLinkPage();
     renderStats();
