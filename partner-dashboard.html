@@ -503,6 +503,8 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
           </div>
           <div class="progress-bar"><div class="progress-fill" id="usage_bar" style="width:0%"></div></div>
           <div style="color:#475569;font-size:.72rem;margin-top:.4rem" id="usage_note">—</div>
+          <div style="color:#64748b;font-size:.68rem;margin-top:.5rem;line-height:1.5" data-i18n="db.topup-note">عند انتهاء حد الطلبات قبل نهاية الشهر يمكنك زيادته بسعر رمزي</div>
+          <button class="btn-sm" onclick="requestTopUp()" style="margin-top:.5rem;background:rgba(201,162,75,.15);color:#C9A24B;border:1px solid rgba(201,162,75,.3);font-size:.75rem;padding:.4rem .8rem;width:100%"><span data-i18n="db.btn-topup">🔋 شحن طلبات إضافية</span></button>
         </div>
       </div>
     </div>
@@ -796,8 +798,9 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
           <div class="plan-price">989 <span style="font-size:.72rem;font-weight:700" data-i18n="pg.sar">ر.س</span></div>
           <div class="plan-period" data-i18n="db.setup-once">رسوم تشغيل — مرة واحدة</div>
           <div style="font-size:.82rem;color:#16A870;font-weight:800;margin-top:.4rem" data-i18n="db.plus-monthly">+ 79 ر.س/شهر صيانة وتحديثات</div>
+          <div style="font-size:.68rem;color:#64748b;margin-top:.2rem" data-i18n="db.vat-excl">غير شامل الضريبة</div>
           <ul class="plan-features">
-            <li data-i18n="pg.basic-f1"><strong>200 طلب</strong> شهرياً</li>
+            <li data-i18n="pg.basic-f1"><strong>500 طلب</strong> شهرياً</li>
             <li data-i18n="pg.basic-f2">نموذج طلب قابل للتخصيص</li>
             <li data-i18n="pg.basic-f3">تقييم ذكي بالذكاء الاصطناعي</li>
             <li data-i18n="pg.basic-f4">لوحة تحكم كاملة</li>
@@ -813,6 +816,7 @@ body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0
           <div class="plan-price">1499 <span style="font-size:.72rem;font-weight:700" data-i18n="pg.sar">ر.س</span></div>
           <div class="plan-period" data-i18n="db.setup-once">رسوم تشغيل — مرة واحدة</div>
           <div style="font-size:.82rem;color:#C9A24B;font-weight:800;margin-top:.4rem" data-i18n="db.pro-monthly">+ 99 ر.س/شهر صيانة وتحديثات</div>
+          <div style="font-size:.68rem;color:#64748b;margin-top:.2rem" data-i18n="db.vat-excl">غير شامل الضريبة</div>
           <ul class="plan-features">
             <li data-i18n="pg.adv-f1"><strong>1000 طلب</strong> شهرياً</li>
             <li data-i18n="pg.adv-f2">نماذج طلبات متعددة</li>
@@ -1657,7 +1661,7 @@ function renderStats() {
   document.getElementById('stat_pending_req').textContent = pending;
   document.getElementById('stat_approved_pct').textContent = reqs.length ? Math.round(approved/reqs.length*100) + `% ${getT('db.opt-approved')}` : '—';
   document.getElementById('stat_rejected_pct').textContent = reqs.length ? Math.round(rejected/reqs.length*100) + `% ${getT('db.opt-rejected')}` : '—';
-  const limits = {trial:50, basic49:200, basic:200, advanced:1000};
+  const limits = {trial:50, basic49:500, basic:500, advanced:1000};
   const limit = limits[partner.plan] || 50;
   const pct = Math.min(100, Math.round(reqs.length / limit * 100));
   document.getElementById('usage_text').textContent = reqs.length + ' / ' + (limit === 999999 ? getT('db.unlimited') : limit);
@@ -2652,6 +2656,12 @@ function toggleAccountMenu(e) {
   if (e) e.stopPropagation();
   const a = document.getElementById('tb_account');
   if (a) a.classList.toggle('open');
+}
+
+function requestTopUp() {
+  const org = partner.org || '';
+  const msg = encodeURIComponent(getT('db.topup-wa') + (org ? ' — ' + org : ''));
+  window.open('https://wa.me/966558184381?text=' + msg, '_blank');
 }
 
 document.addEventListener('click', function (ev) {
