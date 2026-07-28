@@ -215,12 +215,61 @@ select option{background:#1e293b;color:#e2e8f0}
 .toast.error{background:rgba(239,68,68,.95);color:#fff}
 .toast.warn{background:rgba(245,158,11,.95);color:#0f172a}
 
+/* ===== OVERVIEW (Salla-style layout) ===== */
+.ov-top-row{display:grid;grid-template-columns:1.7fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.ov-mid-row{display:grid;grid-template-columns:1.55fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.welcome-hero{background:linear-gradient(135deg,#0A1628 0%,#0B3D2B 55%,#0B5D3B 100%);border:1px solid rgba(22,168,112,.28);border-radius:18px;padding:1.6rem 1.7rem;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.welcome-hero::after{content:"";position:absolute;top:-50px;inset-inline-start:-50px;width:180px;height:180px;background:radial-gradient(circle,rgba(201,162,75,.22),transparent 70%);pointer-events:none}
+.welcome-hero::before{content:"";position:absolute;bottom:-30px;inset-inline-end:-30px;width:130px;height:130px;background:radial-gradient(circle,rgba(22,168,112,.25),transparent 70%);pointer-events:none}
+.wh-badge{display:inline-flex;align-items:center;gap:.35rem;align-self:flex-start;background:rgba(201,162,75,.18);color:#E9CD8A;border:1px solid rgba(201,162,75,.35);border-radius:20px;padding:.22rem .7rem;font-size:.7rem;font-weight:700;margin-bottom:.85rem;position:relative;z-index:1}
+.wh-greeting{font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:.35rem;position:relative;z-index:1}
+.wh-sub{color:rgba(226,232,240,.8);font-size:.85rem;line-height:1.6;margin-bottom:1.15rem;position:relative;z-index:1}
+.wh-actions{display:flex;gap:.6rem;flex-wrap:wrap;position:relative;z-index:1}
+.wh-btn{display:inline-flex;align-items:center;gap:.4rem;border:none;border-radius:11px;padding:.6rem 1.2rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:.2s}
+.wh-btn-solid{background:#fff;color:#0A1628}
+.wh-btn-solid:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.wh-btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.wh-btn-ghost:hover{background:rgba(255,255,255,.2)}
+.wh-btn-ghost.copied{background:rgba(22,168,112,.25);border-color:rgba(22,168,112,.5);color:#6ee7b7}
+.kpi-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.4rem;display:flex;flex-direction:column;gap:.35rem;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.kpi-card:hover{transform:translateY(-3px);border-color:rgba(201,162,75,.4)}
+.kpi-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:.4rem}
+.kpi-ico .icon{width:22px;height:22px}
+.kpi-label{color:#64748b;font-size:.78rem;font-weight:600}
+.kpi-val{font-size:2rem;font-weight:900;color:#fff;line-height:1.05}
+.kpi-note{font-size:.72rem;color:#475569}
+.gstat-list{display:flex;flex-direction:column}
+.gstat-row{display:flex;align-items:center;gap:.8rem;padding:.75rem .2rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.gstat-row:last-child{border-bottom:none}
+.gstat-dot{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gstat-dot .icon{width:19px;height:19px}
+.gstat-info{flex:1;min-width:0}
+.gstat-name{font-size:.85rem;font-weight:700;color:#e2e8f0}
+.gstat-sub{font-size:.71rem;color:#64748b;margin-top:.1rem}
+.gstat-badge{font-size:1.35rem;font-weight:900;color:#fff;flex-shrink:0}
+.promo-banner{background:linear-gradient(135deg,rgba(26,58,74,.4),rgba(11,93,59,.18));border:1px solid rgba(11,93,59,.35);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.25rem}
+body.theme-light .kpi-card{background:#fff;border-color:#dde3ec;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+body.theme-light .kpi-label{color:#64748b}
+body.theme-light .kpi-val{color:#0A1628}
+body.theme-light .kpi-note{color:#94a3b8}
+body.theme-light .gstat-row{border-color:#f0f4f8}
+body.theme-light .gstat-name{color:#0A1628}
+body.theme-light .gstat-sub{color:#94a3b8}
+body.theme-light .gstat-badge{color:#0A1628}
+body.theme-light .promo-banner{background:#fff;border-color:#dde3ec;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+
 /* ===== RESPONSIVE ===== */
+@media(max-width:1024px){
+  .ov-top-row{grid-template-columns:1fr 1fr}
+  .welcome-hero{grid-column:1 / -1}
+  .ov-mid-row{grid-template-columns:1fr}
+}
 @media(max-width:768px){
   .sidebar{width:100%;height:auto;position:relative}
   .main{margin-right:0;padding:1rem}
   .plan-grid{grid-template-columns:1fr}
   .frow{grid-template-columns:1fr}
+  .ov-top-row{grid-template-columns:1fr}
   table{font-size:.78rem}
   th,td{padding:.6rem .5rem}
 }
@@ -300,45 +349,88 @@ select option{background:#1e293b;color:#e2e8f0}
 
   <!-- ===== PAGE: OVERVIEW ===== -->
   <div class="page active" id="page-overview">
-    <div class="page-hdr">
-      <div>
-        <div class="page-title"><span data-i18n="db.hello">مرحباً،</span> <span id="welcome_name">—</span> 👋</div>
-        <div class="page-sub" id="welcome_sub" data-i18n="db.welcome-sub">لوحة التحكم الخاصة بجهتك</div>
-      </div>
-      <button class="btn-primary" onclick="showPage('new-request',document.querySelector('[onclick*=\"new-request\"]'))"><span data-i18n="db.btn-new-ov">➕ طلب جديد</span></button>
-    </div>
-
     <div id="status_alert"></div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#64748b"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg>
-        <div class="stat-label" data-i18n="db.stat-total">إجمالي الطلبات</div>
-        <div class="stat-val" id="stat_total">0</div>
-        <div class="stat-note" data-i18n="db.since-start">منذ بدء الاشتراك</div>
+    <!-- ROW 1: welcome hero + KPI cards -->
+    <div class="ov-top-row">
+      <div class="welcome-hero">
+        <span class="wh-badge">✨ <span data-i18n="db.welcome-badge">لوحة الشريك</span></span>
+        <div class="wh-greeting"><span data-i18n="db.hello">مرحباً،</span> <span id="welcome_name">—</span> 👋</div>
+        <div class="wh-sub" id="welcome_sub" data-i18n="db.welcome-sub">لوحة التحكم الخاصة بجهتك</div>
+        <div class="wh-actions">
+          <button class="wh-btn wh-btn-solid" onclick="showPage('new-request',document.querySelector('[onclick*=\"new-request\"]'))"><span data-i18n="db.btn-new-ov">➕ طلب جديد</span></button>
+          <button class="wh-btn wh-btn-ghost" id="ov_copy_btn" onclick="copyPartnerLink()"><span data-i18n="db.btn-copy">📋 نسخ الرابط</span></button>
+        </div>
       </div>
-      <div class="stat-card">
-        <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#16A870"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
-        <div class="stat-label" data-i18n="db.stat-accepted">الطلبات المقبولة</div>
-        <div class="stat-val" id="stat_approved">0</div>
-        <div class="stat-note" id="stat_approved_pct">—</div>
+      <div class="kpi-card">
+        <div class="kpi-ico" style="background:rgba(22,168,112,.14)"><svg class="icon" viewBox="0 0 24 24" style="color:#16A870"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 12h6M9 16h6"/></svg></div>
+        <div class="kpi-label" data-i18n="db.stat-total">إجمالي الطلبات</div>
+        <div class="kpi-val" id="stat_total">0</div>
+        <div class="kpi-note" data-i18n="db.since-start">منذ بدء الاشتراك</div>
       </div>
-      <div class="stat-card">
-        <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#ef4444"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
-        <div class="stat-label" data-i18n="db.stat-rejected">الطلبات المرفوضة</div>
-        <div class="stat-val" id="stat_rejected">0</div>
-        <div class="stat-note" id="stat_rejected_pct">—</div>
-      </div>
-      <div class="stat-card">
-        <svg class="stat-icon icon" viewBox="0 0 24 24" style="color:#f59e0b"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        <div class="stat-label" data-i18n="db.stat-pending">قيد المراجعة</div>
-        <div class="stat-val" id="stat_pending_req">0</div>
-        <div class="stat-note" data-i18n="db.stat-req">طلب</div>
+      <div class="kpi-card">
+        <div class="kpi-ico" style="background:rgba(245,158,11,.14)"><svg class="icon" viewBox="0 0 24 24" style="color:#f59e0b"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <div class="kpi-label" data-i18n="db.stat-pending">قيد المراجعة</div>
+        <div class="kpi-val" id="stat_pending_req">0</div>
+        <div class="kpi-note" data-i18n="db.stat-req">طلب</div>
       </div>
     </div>
 
-    <!-- Apply Link Card -->
-    <div class="card" style="background:linear-gradient(135deg,rgba(26,58,74,.3),rgba(11,93,59,.15));border-color:rgba(11,93,59,.3)">
+    <!-- ROW 2: analytics chart panel + general statistics list -->
+    <div class="ov-mid-row">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg> <span data-i18n="db.analytics-title">تحليل الذكاء الاصطناعي</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:center;margin-bottom:1.5rem">
+          <div id="analytics_donut" style="width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <div style="width:92px;height:92px;border-radius:50%;background:#1e293b;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <span id="analytics_donut_total" style="font-size:1.4rem;font-weight:900;color:#fff">0</span>
+              <span style="font-size:.62rem;color:#64748b" data-i18n="db.stat-total">إجمالي الطلبات</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.5rem">
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span style="width:10px;height:10px;border-radius:50%;background:#16A870;flex-shrink:0"></span><span style="color:#94a3b8" data-i18n="db.opt-approved">مقبول</span> <span id="analytics_pct_approved" style="font-weight:800;color:#e2e8f0">0%</span></div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0"></span><span style="color:#94a3b8" data-i18n="db.opt-rejected">مرفوض</span> <span id="analytics_pct_rejected" style="font-weight:800;color:#e2e8f0">0%</span></div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;flex-shrink:0"></span><span style="color:#94a3b8" data-i18n="db.opt-pending">قيد المراجعة</span> <span id="analytics_pct_pending" style="font-weight:800;color:#e2e8f0">0%</span></div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #334155;padding-top:1.25rem">
+          <div style="font-size:.8rem;color:#94a3b8;font-weight:700;margin-bottom:.85rem" data-i18n="db.analytics-by-day">الطلبات حسب اليوم (آخر 7 أيام)</div>
+          <div id="analytics_bars" style="display:flex;align-items:flex-end;gap:.6rem;height:100px"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> <span data-i18n="db.gen-stats">إحصائيات عامة</span></div>
+        <div class="gstat-list">
+          <div class="gstat-row">
+            <div class="gstat-dot" style="background:rgba(22,168,112,.14)"><svg class="icon" viewBox="0 0 24 24" style="color:#16A870"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <div class="gstat-info">
+              <div class="gstat-name" data-i18n="db.stat-accepted">الطلبات المقبولة</div>
+              <div class="gstat-sub" id="stat_approved_pct">—</div>
+            </div>
+            <div class="gstat-badge" id="stat_approved" style="color:#16A870">0</div>
+          </div>
+          <div class="gstat-row">
+            <div class="gstat-dot" style="background:rgba(239,68,68,.14)"><svg class="icon" viewBox="0 0 24 24" style="color:#ef4444"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div>
+            <div class="gstat-info">
+              <div class="gstat-name" data-i18n="db.stat-rejected">الطلبات المرفوضة</div>
+              <div class="gstat-sub" id="stat_rejected_pct">—</div>
+            </div>
+            <div class="gstat-badge" id="stat_rejected" style="color:#ef4444">0</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #334155;padding-top:1rem;margin-top:.25rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+            <span style="color:#94a3b8;font-size:.8rem" data-i18n="db.usage-used">الطلبات المستخدمة</span>
+            <span style="color:#e2e8f0;font-weight:700;font-size:.85rem" id="usage_text">0 / —</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="usage_bar" style="width:0%"></div></div>
+          <div style="color:#475569;font-size:.72rem;margin-top:.4rem" id="usage_note">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promo banner: apply link -->
+    <div class="promo-banner">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
         <div style="display:flex;align-items:center;gap:.75rem">
           <span style="font-size:1.5rem">🔗</span>
@@ -348,8 +440,7 @@ select option{background:#1e293b;color:#e2e8f0}
           </div>
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <button class="btn-sm" id="ov_copy_btn" onclick="copyPartnerLink()" style="background:rgba(22,168,112,.15);color:#16A870;border:1px solid rgba(22,168,112,.3);font-size:.8rem;padding:.4rem .9rem"><span data-i18n="db.btn-copy">📋 نسخ الرابط</span></button>
-          <button class="btn-sm" onclick="gotoLinkPage()" style="font-size:.8rem;padding:.4rem .9rem"><span data-i18n="db.btn-view-link">عرض الرابط ←</span></button>
+          <button class="btn-sm" onclick="gotoLinkPage()" style="background:rgba(22,168,112,.15);color:#16A870;border:1px solid rgba(22,168,112,.3);font-size:.8rem;padding:.4rem .9rem"><span data-i18n="db.btn-view-link">عرض الرابط ←</span></button>
         </div>
       </div>
     </div>
@@ -365,39 +456,6 @@ select option{background:#1e293b;color:#e2e8f0}
           </tbody>
         </table>
       </div>
-    </div>
-
-    <!-- AI Analysis -->
-    <div class="card">
-      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg> <span data-i18n="db.analytics-title">تحليل الذكاء الاصطناعي</span></div>
-      <div style="display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:center;margin-bottom:1.5rem">
-        <div id="analytics_donut" style="width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <div style="width:98px;height:98px;border-radius:50%;background:#1e293b;display:flex;flex-direction:column;align-items:center;justify-content:center">
-            <span id="analytics_donut_total" style="font-size:1.4rem;font-weight:900;color:#fff">0</span>
-            <span style="font-size:.65rem;color:#64748b" data-i18n="db.stat-total">إجمالي الطلبات</span>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:.5rem">
-          <div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span style="width:10px;height:10px;border-radius:50%;background:#16A870;flex-shrink:0"></span><span style="color:#94a3b8" data-i18n="db.opt-approved">مقبول</span> <span id="analytics_pct_approved" style="font-weight:800;color:#e2e8f0">0%</span></div>
-          <div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0"></span><span style="color:#94a3b8" data-i18n="db.opt-rejected">مرفوض</span> <span id="analytics_pct_rejected" style="font-weight:800;color:#e2e8f0">0%</span></div>
-          <div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;flex-shrink:0"></span><span style="color:#94a3b8" data-i18n="db.opt-pending">قيد المراجعة</span> <span id="analytics_pct_pending" style="font-weight:800;color:#e2e8f0">0%</span></div>
-        </div>
-      </div>
-      <div style="border-top:1px solid #334155;padding-top:1.25rem">
-        <div style="font-size:.8rem;color:#94a3b8;font-weight:700;margin-bottom:.85rem" data-i18n="db.analytics-by-day">الطلبات حسب اليوم (آخر 7 أيام)</div>
-        <div id="analytics_bars" style="display:flex;align-items:flex-end;gap:.6rem;height:100px"></div>
-      </div>
-    </div>
-
-    <!-- Usage Bar -->
-    <div class="card">
-      <div class="card-title" style="display:flex;align-items:center;gap:.5rem"><svg class="icon card-title-icon" viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> <span data-i18n="db.usage-title">استخدام الباقة الشهري</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
-        <span style="color:#94a3b8;font-size:.82rem" data-i18n="db.usage-used">الطلبات المستخدمة</span>
-        <span style="color:#e2e8f0;font-weight:700;font-size:.85rem" id="usage_text">0 / —</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" id="usage_bar" style="width:0%"></div></div>
-      <div style="color:#475569;font-size:.72rem;margin-top:.4rem" id="usage_note">—</div>
     </div>
   </div>
 
