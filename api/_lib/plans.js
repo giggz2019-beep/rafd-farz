@@ -13,7 +13,7 @@
 // (Plus features, 50 requests) handled by register_free; it has no setup
 // fee and never hits the payment gateway.
 const PLANS = {
-  basic:    { key: 'basic',    label: 'بلس', setup: 989,  monthly: 79, requests: 200 },
+  basic:    { key: 'basic',    label: 'بلس', setup: 989,  monthly: 79, requests: 500 },
   advanced: { key: 'advanced', label: 'برو', setup: 1499, monthly: 99, requests: 1000 },
 };
 
