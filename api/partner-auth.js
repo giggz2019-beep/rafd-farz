@@ -253,6 +253,42 @@ module.exports = async (req, res) => {
       return res.status(200).json({ exists: !!rows?.length });
     }
 
+    // ─── REGISTER FREE (real 7-day trial — no payment; OTP is the gate) ──────
+    if (body.action === 'register_free') {
+      const { partnerData, password, challengeToken, otp } = body;
+      if (!partnerData || !password || !challengeToken || !otp) return res.status(400).json({ error: 'missing_fields' });
+
+      const { limited } = await rateLimit(`register_free:${ip}`, 5, 60 * 60 * 1000);
+      if (limited) return res.status(429).json({ error: 'too_many_attempts' });
+
+      // OTP proves control of the email — required since there's no payment.
+      const otpEmail = verifyOtpToken(challengeToken, otp, 15 * 60 * 1000);
+      if (!otpEmail) return res.status(401).json({ error: 'invalid_or_expired_otp' });
+
+      const email = (partnerData.email || '').trim().toLowerCase();
+      if (!email || email !== otpEmail.toLowerCase()) return res.status(400).json({ error: 'email_mismatch' });
+
+      // One free trial per email.
+      const existing = await sbGet(`/partners?email=eq.${encodeURIComponent(email)}&select=id&limit=1`, key);
+      if (existing?.length) return res.status(409).json({ error: 'email_exists' });
+
+      const row = buildPartnerRow(partnerData);
+      row.password = hashPassword(password);
+      row.status = 'approved';   // real, active account
+      row.plan = 'trial';        // trial cap (50 requests) + 7-day window (created_at + 7d)
+      row.price = 0;
+
+      const result = await sbWrite('POST', '/partners', row, key);
+      const partner = Array.isArray(result) ? result[0] : result;
+
+      let emailSent = false;
+      if (process.env.RESEND_API_KEY && partner) {
+        emailSent = await sendActivationEmail(partner).then(() => true).catch(() => false);
+      }
+
+      return res.status(200).json({ ok: true, partner, token: partner ? makeToken(partner.email) : null, emailSent });
+    }
+
     // ─── REGISTER AFTER PAYMENT ──────────────────────────────────────────────
     if (body.action === 'register_after_payment') {
       const { orderRef, plan, partnerData, password } = body;

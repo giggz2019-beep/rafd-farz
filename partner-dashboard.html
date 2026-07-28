@@ -1658,7 +1658,16 @@ function initUI() {
   document.getElementById('welcome_sub').textContent = getT('db.welcome-tagline');
 
   // Status alert
-  if (partner.status === 'approved') {
+  const upgBtn = `<button onclick="showPage('subscription',document.querySelector('.nav-item[onclick*=subscription]'))" style="background:#fff;color:#0A1628;border:none;border-radius:8px;padding:.35rem .8rem;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;margin-inline-start:.5rem">${getT('db.trial-upgrade')}</button>`;
+  if (partner.plan === 'trial') {
+    const created = partner._raw && partner._raw.created_at ? new Date(partner._raw.created_at) : null;
+    const end = created ? new Date(created.getTime() + 7 * 24 * 3600 * 1000) : null;
+    const daysLeft = end ? Math.max(0, Math.ceil((end.getTime() - Date.now()) / (24 * 3600 * 1000))) : 7;
+    const expired = end ? Date.now() > end.getTime() : false;
+    document.getElementById('status_alert').innerHTML = expired
+      ? `<div class="alert alert-warn" style="align-items:center">⏳ ${getT('db.trial-expired')} ${upgBtn}</div>`
+      : `<div class="alert alert-info" style="align-items:center">🎁 ${getT('db.trial-active').replace('{d}', daysLeft)} ${upgBtn}</div>`;
+  } else if (partner.status === 'approved') {
     document.getElementById('status_alert').innerHTML = `<div class="alert alert-success">✅ ${getT('db.status-active')}</div>`;
   } else if (partner.status === 'pending') {
     document.getElementById('status_alert').innerHTML = `<div class="alert alert-warn">⏳ ${getT('db.status-pending')}</div>`;

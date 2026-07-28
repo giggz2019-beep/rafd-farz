@@ -611,6 +611,22 @@ function selectPkg(pkg) {
   });
 }
 
+let isTrialMode = false;
+function enterTrialMode() {
+  isTrialMode = true;
+  selectedPkg = 'trial';
+  const grid = document.querySelector('.pkg-grid');
+  if (grid) {
+    grid.style.display = 'none';
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:linear-gradient(135deg,rgba(22,168,112,.12),rgba(11,93,59,.12));border:1px solid rgba(22,168,112,.3);border-radius:14px;padding:1.1rem 1.3rem;margin-bottom:1rem;text-align:center';
+    const t = (typeof getT === 'function' && getT('rp.trial-mode-title')) || '🎁 تجربة مجانية 7 أيام';
+    const s = (typeof getT === 'function' && getT('rp.trial-mode-sub')) || 'حساب حقيقي كامل بمزايا باقة بلس · حتى 50 طلب · بدون بطاقة · بدون دفع';
+    banner.innerHTML = '<div style="font-size:1.05rem;font-weight:800;color:#16A870;margin-bottom:.3rem">' + t + '</div><div style="font-size:.85rem;color:#94a3b8;line-height:1.7">' + s + '</div>';
+    grid.parentNode.insertBefore(banner, grid);
+  }
+}
+
 // ===== OTP digit auto-advance =====
 // ===== بيانات الجنسيات والدول ورموز الاتصال =====
 const NAT_LIST = [
@@ -733,9 +749,11 @@ document.addEventListener('click', function(e) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-  // الباقة عبر رابط الأسعار (?plan=basic|advanced)
+  // الباقة عبر رابط الأسعار (?plan=trial|basic|advanced)
   const planParam = new URLSearchParams(window.location.search).get('plan');
-  if (planParam && ['basic','advanced'].includes(planParam)) {
+  if (planParam === 'trial') {
+    enterTrialMode();
+  } else if (planParam && ['basic','advanced'].includes(planParam)) {
     selectPkg(planParam);
   }
   // تهيئة القوائم المخصصة
@@ -1093,6 +1111,33 @@ async function verifyOTP() {
     notes: pendingPartner.notes,
     ref_num: pendingPartner.refNum,
   };
+
+  // ── Real free trial: register without payment and go straight in ──────────
+  if (pendingPartner.plan === 'trial') {
+    try {
+      const freeRes = await fetch('/api/partner-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'register_free', partnerData, password: pendingPartner.password, challengeToken, otp: entered }),
+      });
+      const freeData = await freeRes.json();
+      if (!freeRes.ok || !freeData.token || !freeData.partner) {
+        const errMap = { email_exists: 'هذا البريد مسجّل مسبقاً — سجّل الدخول بدلاً من ذلك', invalid_or_expired_otp: 'انتهت صلاحية الرمز — أعد المحاولة' };
+        throw new Error(errMap[freeData?.error] || 'تعذّر إنشاء الحساب التجريبي');
+      }
+      sessionStorage.removeItem('rafd_pending_partner');
+      localStorage.setItem('rafd_partner_session', JSON.stringify({
+        token: freeData.token, id: freeData.partner.id, email: freeData.partner.email, org: freeData.partner.org_name,
+      }));
+      window.location.href = '/partner-dashboard.html';
+      return;
+    } catch (err) {
+      verifyBtn.disabled = false;
+      verifyBtn.textContent = 'تحقق وفعّل الحساب ✓';
+      showOTPError(err.message);
+      return;
+    }
+  }
 
   sessionStorage.setItem('rafd_pending_partner', JSON.stringify({
     partnerData, password: pendingPartner.password, plan: pendingPartner.plan,
