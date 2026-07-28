@@ -1,9 +1,8 @@
 const { PAID_PLAN_PRICES } = require('./_lib/plans');
 
 const PLAN_LABELS = {
-  basic49: 'الأساسية',
   basic: 'بلس',
-  advanced: 'المتقدمة',
+  advanced: 'برو',
 };
 
 function toSaudiPhone(phone) {

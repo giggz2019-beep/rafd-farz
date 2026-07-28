@@ -1,7 +1,7 @@
 const { createOrder } = require('./_lib/ngenius');
 const { PAID_PLAN_PRICES } = require('./_lib/plans');
 
-const PLAN_LABELS = { basic49: 'الأساسية', advanced: 'المتقدمة' };
+const PLAN_LABELS = { basic: 'بلس', advanced: 'برو' };
 
 module.exports = async (req, res) => {
   const _ORIGIN = process.env.ALLOWED_ORIGIN || '*';

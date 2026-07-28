@@ -1,15 +1,30 @@
-// Canonical plan price list (SAR/month) — single source of truth for
-// api/create-payment.js and the register_after_payment action in
-// api/partner-auth.js. Must stay in sync with the prices shown on
-// pricing.html. Server code must always look prices up from here and never
-// trust a client-supplied price.
+// Canonical plan definitions — single source of truth for pricing,
+// payment (create-payment.js, tamara-checkout.js) and registration
+// (partner-auth.js). Server code must always look values up from here
+// and never trust a client-supplied amount.
 //
-// "basic" (بلس) is intentionally not a "paid plan" here — it registers for
-// free (7-day trial) through the register_free action instead of payment.
-const PAID_PLAN_PRICES = {
-  basic49: 99,
-  basic: 249,
-  advanced: 499,
+// Model: a one-time setup/operation fee charged up-front at registration,
+// plus a monthly maintenance & updates subscription billed separately.
+// All amounts are in SAR and are VAT-inclusive (15%).
+//
+// Internal plan keys stay `basic` (= بلس / Plus) and `advanced` (= برو /
+// Pro) for backward compatibility with existing accounts and the payment
+// plumbing — only the labels/prices changed. "trial" is a free 7-day plan
+// (Plus features, 50 requests) handled by register_free; it has no setup
+// fee and never hits the payment gateway.
+const PLANS = {
+  basic:    { key: 'basic',    label: 'بلس', setup: 989,  monthly: 79, requests: 200 },
+  advanced: { key: 'advanced', label: 'برو', setup: 1499, monthly: 99, requests: 1000 },
 };
 
-module.exports = { PAID_PLAN_PRICES };
+const TRIAL = { days: 7, requests: 50 };
+
+// The amount charged up-front at checkout for each paid plan = its
+// one-time setup fee. Used by create-payment.js, tamara-checkout.js and
+// the amount-verification in partner-auth.js.
+const PAID_PLAN_PRICES = {
+  basic: PLANS.basic.setup,
+  advanced: PLANS.advanced.setup,
+};
+
+module.exports = { PLANS, TRIAL, PAID_PLAN_PRICES };

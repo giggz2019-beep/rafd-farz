@@ -193,15 +193,7 @@ body{background:var(--pg-navy)}
   <div class="container">
     <span class="page-hero-tag" data-i18n="pg.hero-tag">الباقات والأسعار</span>
     <h1 data-i18n="pg.hero-h1">اختر الباقة المناسبة<br>لجهتك</h1>
-    <p data-i18n="pg.hero-p">ابدأ مجاناً وطوّر باقتك عند الحاجة — بدون عقود طويلة أو رسوم خفية</p>
-    <div class="billing-toggle">
-      <span data-i18n="pg.toggle-monthly">شهري</span>
-      <div class="toggle-wrap" id="billingToggle" onclick="toggleBilling()">
-        <div class="toggle-knob"></div>
-      </div>
-      <span data-i18n="pg.toggle-annual">سنوي</span>
-      <span class="save-badge" data-i18n="pg.save-badge">وفّر 20%</span>
-    </div>
+    <p data-i18n="pg.hero-p">جرّب مجاناً 7 أيام — ثم رسوم تشغيل مرة واحدة + اشتراك شهري بسيط للصيانة والتحديثات</p>
   </div>
 </section>
 
@@ -212,14 +204,13 @@ body{background:var(--pg-navy)}
     <!-- أساسية -->
     <div class="pricing-card tier-green">
       <div class="card-icon icon-trial">🏁</div>
-      <div class="card-name" data-i18n="pg.trial-name">أساسية</div>
-      <div class="card-desc" data-i18n="pg.trial-desc">للجهات الناشئة التي تريد البدء باشتراك رمزي</div>
+      <div class="card-name" data-i18n="pg.trial-name">تجريبية</div>
+      <div class="card-desc" data-i18n="pg.trial-desc">جرّب مزايا باقة بلس مجاناً لمدة 7 أيام — بدون بطاقة</div>
       <div class="price-wrap">
         <div class="price-main">
-          <span class="price-num" id="trialPrice">99</span>
-          <span class="price-currency" data-i18n="pg.sar">ر.س</span>
+          <span class="price-num" id="trialPrice" data-i18n="pg.trial-free">مجاناً</span>
         </div>
-        <div class="price-period" id="trialPeriod">شهرياً</div>
+        <div class="price-period" id="trialPeriod" data-i18n="pg.trial-days">7 أيام · حتى 50 طلب</div>
       </div>
       <ul class="features-list">
         <li>
@@ -259,7 +250,7 @@ body{background:var(--pg-navy)}
           <div class="feat-text" style="color:#8FA39B" data-i18n="pg.trial-f9">دعم فني مخصص</div>
         </li>
       </ul>
-      <a href="/register-partner.html?plan=basic49" class="btn-plan btn-trial"><span data-i18n="pg.trial-btn">اطلب الآن ←</span></a>
+      <a href="/demo-apply.html" class="btn-plan btn-trial"><span data-i18n="pg.trial-btn">ابدأ التجربة المجانية ←</span></a>
     </div>
 
     <!-- بلس -->
@@ -271,13 +262,12 @@ body{background:var(--pg-navy)}
       <div class="card-desc" data-i18n="pg.basic-desc">مثالية للجهات الناشئة التي تحتاج أتمتة فعّالة بتكلفة معقولة</div>
       <div class="price-wrap">
         <div class="price-main">
-          <span class="price-strike" id="basicStrike">249</span>
-          <span class="price-num" id="basicPrice">249</span>
+          <span class="price-num" id="basicPrice">989</span>
           <span class="price-currency" data-i18n="pg.sar">ر.س</span>
         </div>
-        <div class="price-period" id="basicPeriod">شهرياً</div>
-        <div style="font-size:.78rem;color:#16A870;font-weight:700;margin-top:.3rem" data-i18n="pg.basic-trial-badge">✓ 7 أيام مجاناً عند التسجيل</div>
-        <div class="price-annual" id="basicAnnual">2,388 ر.س سنوياً — وفّر 600 ر.س</div>
+        <div class="price-period" id="basicPeriod" data-i18n="pg.setup-once">رسوم تشغيل — مرة واحدة</div>
+        <div style="font-size:.85rem;color:#16A870;font-weight:800;margin-top:.4rem" data-i18n="pg.plus-monthly">+ 79 ر.س/شهر صيانة وتحديثات</div>
+        <div style="font-size:.78rem;color:#16A870;font-weight:700;margin-top:.3rem" data-i18n="pg.basic-trial-badge">✓ 7 أيام تجريبية مجانية · حتى 50 طلب</div>
       </div>
       <ul class="features-list">
         <li>
@@ -328,12 +318,11 @@ body{background:var(--pg-navy)}
       <div class="card-desc" data-i18n="pg.adv-desc">للجهات الكبيرة التي تحتاج طاقة استيعابية عالية وتكاملات متقدمة</div>
       <div class="price-wrap">
         <div class="price-main">
-          <span class="price-strike" id="advStrike">499</span>
-          <span class="price-num" id="advPrice">499</span>
+          <span class="price-num" id="advPrice">1499</span>
           <span class="price-currency" data-i18n="pg.sar">ر.س</span>
         </div>
-        <div class="price-period" id="advPeriod">شهرياً</div>
-        <div class="price-annual" id="advAnnual">4,788 ر.س سنوياً — وفّر 1,200 ر.س</div>
+        <div class="price-period" id="advPeriod" data-i18n="pg.setup-once">رسوم تشغيل — مرة واحدة</div>
+        <div style="font-size:.85rem;color:var(--pg-gold-bright);font-weight:800;margin-top:.4rem" data-i18n="pg.pro-monthly">+ 99 ر.س/شهر صيانة وتحديثات</div>
       </div>
       <ul class="features-list">
         <li>
@@ -379,7 +368,7 @@ body{background:var(--pg-navy)}
   </div>
 
   <!-- ملاحظة -->
-  <p style="text-align:center;color:#94a3b8;font-size:.82rem;margin-top:2rem" data-i18n="pg.price-note">جميع الأسعار بدون ضريبة القيمة المضافة · يمكن الإلغاء في أي وقت · لا توجد رسوم خفية</p>
+  <p style="text-align:center;color:#94a3b8;font-size:.82rem;margin-top:2rem" data-i18n="pg.price-note">رسوم التشغيل تُدفع مرة واحدة + اشتراك شهري بسيط للصيانة والتحديثات · جميع الأسعار شاملة ضريبة القيمة المضافة 15% · لا توجد رسوم خفية</p>
 </section>
 
 <!-- COMPARISON TABLE -->
@@ -394,9 +383,9 @@ body{background:var(--pg-navy)}
       <thead>
         <tr>
           <th style="width:35%" data-i18n="pg.comp-feat">الميزة</th>
-          <th class="th-trial"><span data-i18n="pg.trial-name">أساسية</span><br><small id="trialTablePrice" style="font-weight:400;opacity:.8">99 ر.س/شهر</small></th>
-          <th class="th-basic"><span data-i18n="pg.basic-name">الأساسية</span><br><small id="basicTablePrice" style="font-weight:400;opacity:.8">249 ر.س/شهر</small></th>
-          <th class="th-advanced"><span data-i18n="pg.adv-name">بلس</span><br><small id="advTablePrice" style="font-weight:400;opacity:.8">499 ر.س/شهر</small></th>
+          <th class="th-trial"><span data-i18n="pg.trial-name">تجريبية</span><br><small id="trialTablePrice" style="font-weight:400;opacity:.8" data-i18n="pg.trial-table-price">مجاناً · 7 أيام</small></th>
+          <th class="th-basic"><span data-i18n="pg.basic-name">بلس</span><br><small id="basicTablePrice" style="font-weight:400;opacity:.8" data-i18n="pg.basic-table-price">989 + 79/شهر</small></th>
+          <th class="th-advanced"><span data-i18n="pg.adv-name">برو</span><br><small id="advTablePrice" style="font-weight:400;opacity:.8" data-i18n="pg.adv-table-price">1499 + 99/شهر</small></th>
         </tr>
       </thead>
       <tbody>
@@ -404,21 +393,21 @@ body{background:var(--pg-navy)}
         <tr class="section-row"><td colspan="4" data-i18n="pg.sec-cap">📊 الطاقة الاستيعابية</td></tr>
         <tr>
           <td data-i18n="pg.c-req">عدد الطلبات الشهرية</td>
-          <td>50 طلباً (تجربة)</td>
-          <td>500 طلب</td>
-          <td>غير محدود</td>
+          <td>50 (تجربة)</td>
+          <td>200 طلب</td>
+          <td>1000 طلب</td>
         </tr>
         <tr>
           <td data-i18n="pg.c-forms">عدد النماذج</td>
           <td>1 نموذج</td>
-          <td>3 نماذج</td>
-          <td>غير محدود</td>
+          <td>1 نموذج</td>
+          <td data-i18n="pg.c-multi">متعددة</td>
         </tr>
         <tr>
           <td data-i18n="pg.c-users">عدد المستخدمين</td>
           <td>1</td>
-          <td>3</td>
-          <td>غير محدود</td>
+          <td>1</td>
+          <td data-i18n="pg.c-multi">متعددون</td>
         </tr>
         <tr>
           <td data-i18n="pg.c-storage">مساحة التخزين</td>
@@ -727,64 +716,8 @@ body{background:var(--pg-navy)}
 </footer>
 
 <script>
-// Billing Toggle + Language-aware prices
-let isAnnual = false;
-const PRICES = {
-  ar: {
-    trialMonthly:'99',
-    basicMonthly:'249', basicAnnual:'199', advMonthly:'499', advAnnual:'399',
-    currency:'ر.س',
-    trialTableMonthly:'99 ر.س/شهر',
-    basicTableMonthly:'249 ر.س/شهر', advTableMonthly:'499 ر.س/شهر',
-    basicTableAnnual:'199 ر.س/شهر (سنوي)', advTableAnnual:'399 ر.س/شهر (سنوي)',
-    basicAnnualNote:'2,388 ر.س سنوياً — وفّر 600 ر.س',
-    advAnnualNote:'4,788 ر.س سنوياً — وفّر 1,200 ر.س',
-    periodMonthly:'شهرياً', periodAnnual:'شهرياً (عند الدفع سنوياً)'
-  },
-  en: {
-    trialMonthly:'$13',
-    basicMonthly:'$66', basicAnnual:'$53', advMonthly:'$133', advAnnual:'$106',
-    currency:'',
-    trialTableMonthly:'$13/mo',
-    basicTableMonthly:'$66/mo', advTableMonthly:'$133/mo',
-    basicTableAnnual:'$53/mo (annual)', advTableAnnual:'$106/mo (annual)',
-    basicAnnualNote:'$636/year — Save $156',
-    advAnnualNote:'$1,272/year — Save $324',
-    periodMonthly:'Monthly', periodAnnual:'Monthly (billed annually)'
-  }
-};
-function updatePrices() {
-  const lang = document.documentElement.lang || 'ar';
-  const p = PRICES[lang] || PRICES.ar;
-  const tEl = document.getElementById('trialPrice');
-  const tpEl = document.getElementById('trialPeriod');
-  const ttEl = document.getElementById('trialTablePrice');
-  if(tEl) tEl.textContent = p.trialMonthly;
-  if(tpEl) tpEl.textContent = p.periodMonthly;
-  if(ttEl) ttEl.textContent = p.trialTableMonthly;
-  document.getElementById('basicPrice').textContent = isAnnual ? p.basicAnnual : p.basicMonthly;
-  document.getElementById('advPrice').textContent = isAnnual ? p.advAnnual : p.advMonthly;
-  const bs = document.getElementById('basicStrike'), as = document.getElementById('advStrike');
-  if(bs){ bs.textContent = p.basicMonthly; bs.classList.toggle('show', isAnnual); }
-  if(as){ as.textContent = p.advMonthly; as.classList.toggle('show', isAnnual); }
-  document.querySelectorAll('.price-currency').forEach(el => el.textContent = p.currency);
-  document.getElementById('basicPeriod').textContent = isAnnual ? p.periodAnnual : p.periodMonthly;
-  document.getElementById('advPeriod').textContent = isAnnual ? p.periodAnnual : p.periodMonthly;
-  document.getElementById('basicAnnual').textContent = p.basicAnnualNote;
-  document.getElementById('advAnnual').textContent = p.advAnnualNote;
-  document.getElementById('basicAnnual').classList.toggle('show', isAnnual);
-  document.getElementById('advAnnual').classList.toggle('show', isAnnual);
-  const bt = document.getElementById('basicTablePrice');
-  const at = document.getElementById('advTablePrice');
-  if(bt) bt.textContent = isAnnual ? p.basicTableAnnual : p.basicTableMonthly;
-  if(at) at.textContent = isAnnual ? p.advTableAnnual : p.advTableMonthly;
-}
-function toggleBilling() {
-  isAnnual = !isAnnual;
-  document.getElementById('billingToggle').classList.toggle('active', isAnnual);
-  updatePrices();
-}
-document.addEventListener('rafd-lang-changed', updatePrices);
+// Prices are static in the markup (setup fee + monthly) and localized
+// via i18n; no runtime price toggle in the setup-fee model.
 
 // FAQ Toggle
 function toggleFaq(el) {
