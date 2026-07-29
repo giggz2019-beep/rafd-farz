@@ -5,108 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>رفد تعليم — منصة إدارة المدارس ومتابعة أولياء الأمور</title>
 <meta name="description" content="منصة سعودية لإدارة المدارس: الجدول الدراسي، الاختبارات، الواجبات، الدرجات، والحضور — تصل لولي الأمر والطالب مباشرة بدون قروبات واتساب.">
+<meta property="og:title" content="رفد تعليم — مدرسة كاملة في منصة واحدة">
+<meta property="og:description" content="الجدول والاختبارات والواجبات والدرجات والحضور تصل لولي الأمر والطالب لحظة بلحظة.">
+<meta property="og:type" content="website">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css">
-<style>
-.edu-hero { min-height:auto; padding:7rem 0 4rem;
-  background:linear-gradient(135deg,#050B14 0%,#0A1628 50%,#0B3D2A 100%); }
-.edu-pills { display:flex; flex-wrap:wrap; gap:.6rem; justify-content:center; margin-top:1.5rem; }
-.edu-pill { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
-  color:#E2E8F0; font-size:.8rem; padding:.45rem .95rem; border-radius:999px; }
-.role-grid { display:grid; grid-template-columns:1fr; gap:1.25rem; }
-.role-card { background:#fff; border:1px solid var(--border); border-radius:18px; padding:1.5rem;
-  box-shadow:0 4px 24px rgba(10,22,40,.06); display:flex; flex-direction:column; }
-.role-card h3 { font-size:1.1rem; font-weight:800; color:var(--dark); margin-bottom:.4rem;
-  font-family:var(--font-heading); }
-.role-card .role-for { font-size:.78rem; color:var(--accent); font-weight:700; margin-bottom:.75rem; }
-.role-card ul { list-style:none; margin:0 0 1.25rem; padding:0; }
-.role-card li { font-size:.85rem; color:var(--muted); line-height:1.9;
-  padding-inline-start:1.35rem; position:relative; }
-.role-card li::before { content:'✓'; position:absolute; inset-inline-start:0; color:var(--accent); font-weight:700; }
-.role-card .role-cta { margin-top:auto; }
-.compare { width:100%; border-collapse:collapse; font-size:.85rem; }
-.compare th, .compare td { padding:.85rem .75rem; text-align:start; border-bottom:1px solid var(--border); }
-.compare th { background:#F8FAFC; font-weight:700; font-size:.8rem; color:var(--muted); }
-.compare td.no { color:#B91C1C; }
-.compare td.yes { color:#166534; font-weight:600; }
-.compare-wrap { overflow-x:auto; background:#fff; border-radius:16px; border:1px solid var(--border); }
-.roadmap { display:grid; grid-template-columns:1fr; gap:1rem; }
-.road-step { background:#fff; border:1px solid var(--border); border-inline-start:3px solid var(--accent);
-  border-radius:14px; padding:1.1rem; }
-.road-step .step-tag { font-size:.72rem; font-weight:700; color:var(--accent); }
-.road-step h4 { font-size:.95rem; font-weight:800; color:var(--dark); margin:.3rem 0 .4rem;
-  font-family:var(--font-heading); }
-.road-step p { font-size:.82rem; color:var(--muted); line-height:1.75; }
-@media (min-width:768px) {
-  .role-grid { grid-template-columns:repeat(3,1fr); }
-  .roadmap { grid-template-columns:repeat(2,1fr); }
-}
-</style>
+<link rel="stylesheet" href="/edu.css">
 </head>
-<body>
+<body class="edu-site">
 
-<nav class="navbar">
-  <div class="container">
-    <div class="nav-inner">
-      <a href="/" style="display:flex;align-items:center;gap:.6rem;text-decoration:none">
-        <img src="/rafd-logo.png" alt="رفد" style="height:38px;width:auto">
-      </a>
-      <div style="display:flex;align-items:center;gap:.6rem">
-        <a href="/" class="btn-ghost">الموقع الرئيسي</a>
-        <a href="/edu-login.html" class="btn-primary-sm">دخول المنصة</a>
-      </div>
+<nav class="mk-nav">
+  <div class="mk-wrap mk-nav-inner">
+    <a href="/edu.html" class="mk-logo">
+      <span class="mk-logo-mark">ر</span>
+      <span>
+        <span class="mk-logo-text">رفد تعليم</span>
+        <span class="mk-logo-sub">منصة إدارة المدارس</span>
+      </span>
+    </a>
+    <div class="mk-nav-links">
+      <a href="#problem">المشكلة</a>
+      <a href="#roles">البوابات</a>
+      <a href="#why">لماذا رفد تعليم</a>
+      <a href="#roadmap">خارطة الطريق</a>
+    </div>
+    <div class="mk-nav-cta">
+      <a href="/edu-login.html" class="mk-btn primary sm">دخول المنصة</a>
     </div>
   </div>
 </nav>
 
 <!-- ══ البطل ══ -->
-<header class="hero edu-hero">
-  <div class="container">
-    <div class="hero-inner">
-      <div class="hero-content">
-        <div class="hero-badge"><span class="badge-dot"></span> منتج جديد من رفد</div>
-        <h1 class="hero-title">رفد تعليم<br>مدرسة كاملة في تطبيق واحد</h1>
-        <p class="hero-desc">
-          الجدول الدراسي، الاختبارات، الواجبات، الدرجات، والحضور — تُدار من المدرسة
-          وتصل لولي الأمر والطالب لحظة بلحظة. بدون قروبات واتساب، وبدون رسائل ضائعة.
-        </p>
-        <div class="hero-cta">
-          <a href="/edu-login.html" class="btn-hero-primary">جرّب المنصة الآن ←</a>
-          <a href="#roles" class="btn-hero-ghost">شاهد ما تقدّمه</a>
-        </div>
-        <div class="edu-pills">
-          <span class="edu-pill">🇸🇦 بيانات داخل المملكة</span>
-          <span class="edu-pill">📱 يعمل من الجوال</span>
-          <span class="edu-pill">🔐 متوافق مع PDPL</span>
-          <span class="edu-pill">🏫 يبدأ بالمدارس ويتوسّع للجامعات</span>
-        </div>
-      </div>
+<header class="mk-hero">
+  <div class="mk-wrap">
+    <span class="mk-tag"><span class="dot"></span> متاحة الآن للتجربة</span>
+    <h1>مدرسة كاملة<br>في منصة واحدة</h1>
+    <p>
+      الجدول الدراسي، الاختبارات، الواجبات، الدرجات، والحضور — تُدار من المدرسة
+      وتصل لولي الأمر والطالب لحظة بلحظة. بدون قروبات واتساب، وبدون رسائل ضائعة.
+    </p>
+    <div class="mk-hero-cta">
+      <a href="/edu-login.html" class="mk-btn primary">جرّب المنصة الآن ←</a>
+      <a href="#roles" class="mk-btn outline">شاهد ما تقدّمه</a>
+    </div>
+    <div class="mk-pills">
+      <span class="mk-pill">🇸🇦 بيانات داخل المملكة</span>
+      <span class="mk-pill">📱 تعمل من الجوال</span>
+      <span class="mk-pill">🔐 متوافقة مع PDPL</span>
+      <span class="mk-pill">🏫 تبدأ بالمدارس وتتوسّع للجامعات</span>
     </div>
   </div>
 </header>
 
 <!-- ══ المشكلة ══ -->
-<section style="padding:3.5rem 0;background:#fff">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">المشكلة</span>
-      <h2 class="section-title">متابعة الطالب اليوم موزّعة على عشر جهات</h2>
-      <p class="section-desc">
+<section class="mk-section" id="problem">
+  <div class="mk-wrap">
+    <div class="mk-head">
+      <span class="mk-eyebrow">المشكلة</span>
+      <h2>متابعة الطالب اليوم موزّعة على عشر جهات</h2>
+      <p>
         قروب واتساب للفصل، وآخر للمادة، ورسالة من المعلم، وورقة في الحقيبة، وجدول مصوّر —
         النتيجة أن ولي الأمر يعرف بالاختبار متأخراً، ولا يعرف مستوى ابنه إلا في نهاية الفصل.
       </p>
     </div>
-    <div class="compare-wrap">
-      <table class="compare">
+    <div class="mk-compare-wrap">
+      <table class="mk-compare">
         <thead>
           <tr><th>الاحتياج</th><th>الوضع الحالي</th><th>مع رفد تعليم</th></tr>
         </thead>
         <tbody>
           <tr><td>جدول الحصص</td><td class="no">صورة في قروب واتساب</td><td class="yes">جدول مباشر ومحدّث لكل فصل</td></tr>
-          <tr><td>موعد الاختبار</td><td class="no">إشعار متأخر أو منسي</td><td class="yes">تنبيه مسبق بالمقرر المطلوب</td></tr>
+          <tr><td>موعد الاختبار</td><td class="no">إشعار متأخر أو منسي</td><td class="yes">تنبيه مسبق مع المقرر المطلوب</td></tr>
           <tr><td>الواجبات</td><td class="no">تُنقل شفهياً من الطالب</td><td class="yes">قائمة بحالة تسليم لكل واجب</td></tr>
           <tr><td>الدرجات</td><td class="no">تظهر في نهاية الفترة</td><td class="yes">فور الرصد + مؤشر مستوى لكل مادة</td></tr>
           <tr><td>الغياب والتأخير</td><td class="no">اتصال هاتفي أحياناً</td><td class="yes">سجل يومي ونسبة حضور محدّثة</td></tr>
@@ -118,17 +89,17 @@
 </section>
 
 <!-- ══ الأدوار ══ -->
-<section id="roles" class="features-section">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">ثلاث بوابات</span>
-      <h2 class="section-title">كل طرف يرى ما يخصّه فقط</h2>
-      <p class="section-desc">صلاحيات منفصلة بالكامل — ولي الأمر يرى أبناءه، والطالب يرى نفسه، والمدرسة تدير الجميع.</p>
+<section class="mk-section green" id="roles">
+  <div class="mk-wrap">
+    <div class="mk-head">
+      <span class="mk-eyebrow">ثلاث بوابات</span>
+      <h2>كل طرف يرى ما يخصّه فقط</h2>
+      <p>صلاحيات منفصلة بالكامل — ولي الأمر يرى أبناءه، والطالب يرى نفسه، والمدرسة تدير الجميع.</p>
     </div>
 
-    <div class="role-grid">
-      <div class="role-card">
-        <div class="role-for">👨‍👦 لولي الأمر</div>
+    <div class="mk-roles">
+      <div class="mk-role">
+        <div class="who">👨‍👦 لولي الأمر</div>
         <h3>تابع مستوى ابنك بدون عناء</h3>
         <ul>
           <li>جدول اليوم والأسبوع</li>
@@ -139,76 +110,76 @@
           <li>مراسلة المعلم والإدارة مباشرة</li>
           <li>عدة أبناء في حساب واحد</li>
         </ul>
-        <div class="role-cta"><a href="/edu-login.html" class="btn-price" style="background:var(--primary);color:#fff">دخول ولي الأمر</a></div>
+        <a href="/edu-login.html" class="mk-btn primary">دخول ولي الأمر</a>
       </div>
 
-      <div class="role-card">
-        <div class="role-for">🎒 للطالب</div>
+      <div class="mk-role">
+        <div class="who">🎒 للطالب</div>
         <h3>كل مهامك في مكان واحد</h3>
         <ul>
           <li>جدولك اليومي والأسبوعي</li>
-          <li>واجباتك مع تنبيه قبل موعد التسليم</li>
+          <li>واجباتك مع موعد تسليم واضح</li>
           <li>تعليم الواجب كمُسلَّم</li>
           <li>اختباراتك والمقرر المطلوب</li>
           <li>درجاتك ومستواك في كل مادة</li>
           <li>سجل حضورك</li>
           <li>التواصل مع معلميك</li>
         </ul>
-        <div class="role-cta"><a href="/edu-login.html" class="btn-price" style="background:var(--accent);color:#fff">دخول الطالب</a></div>
+        <a href="/edu-login.html" class="mk-btn primary">دخول الطالب</a>
       </div>
 
-      <div class="role-card">
-        <div class="role-for">🏫 للمدرسة</div>
+      <div class="mk-role">
+        <div class="who">🏫 للمدرسة</div>
         <h3>أدر مدرستك من لوحة واحدة</h3>
         <ul>
           <li>الفصول والمواد والطلاب</li>
-          <li>بناء الجدول الدراسي</li>
+          <li>الجدول الدراسي لكل فصل</li>
           <li>جدولة الاختبارات وإسناد الواجبات</li>
-          <li>رصد الدرجات لفصل كامل دفعة واحدة</li>
+          <li>رصد درجات فصل كامل دفعة واحدة</li>
           <li>تحضير يومي سريع</li>
           <li>إعلانات للمدرسة أو لفصل محدد</li>
-          <li>مؤشرات فورية: الحضور، الطلاب، الفصول</li>
+          <li>مؤشرات فورية للحضور والطلاب</li>
         </ul>
-        <div class="role-cta"><a href="/edu-login.html" class="btn-price" style="background:var(--dark);color:#fff">دخول المدرسة</a></div>
+        <a href="/edu-login.html" class="mk-btn primary">دخول المدرسة</a>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ══ المزايا ══ -->
-<section style="padding:3.5rem 0;background:#fff">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">لماذا رفد تعليم</span>
-      <h2 class="section-title">مبنية للسوق السعودي منذ السطر الأول</h2>
+<section class="mk-section" id="why">
+  <div class="mk-wrap">
+    <div class="mk-head">
+      <span class="mk-eyebrow">لماذا رفد تعليم</span>
+      <h2>مبنية للسوق السعودي منذ السطر الأول</h2>
     </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(11,93,59,.1)">🇸🇦</div>
-        <div class="feature-text">
-          <div class="feature-title">عربية أصلاً وليست مترجمة</div>
-          <div class="feature-desc">الواجهة والتقويم والأسبوع الدراسي (الأحد–الخميس) والمصطلحات التربوية مصمّمة للمدرسة السعودية، مع دعم كامل للإنجليزية.</div>
+    <div class="mk-features">
+      <div class="mk-feature">
+        <div class="ico">🇸🇦</div>
+        <div>
+          <h4>عربية أصلاً وليست مترجمة</h4>
+          <p>الواجهة والتقويم والأسبوع الدراسي (الأحد–الخميس) والمصطلحات التربوية مصمّمة للمدرسة السعودية، مع دعم كامل للإنجليزية.</p>
         </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(14,165,233,.1)">🔐</div>
-        <div class="feature-text">
-          <div class="feature-title">سيادة البيانات والامتثال</div>
-          <div class="feature-desc">بيانات الطلاب تبقى داخل المملكة، مع تشفير وصلاحيات صارمة لكل دور — بما يتوافق مع نظام حماية البيانات الشخصية (PDPL) وضوابط الأمن السيبراني.</div>
+      <div class="mk-feature">
+        <div class="ico">🔐</div>
+        <div>
+          <h4>سيادة البيانات والامتثال</h4>
+          <p>بيانات الطلاب تبقى داخل المملكة، مع صلاحيات صارمة تُحسم على الخادم لكل دور — بما يتوافق مع نظام حماية البيانات الشخصية (PDPL) وضوابط الأمن السيبراني.</p>
         </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(245,158,11,.1)">⚡</div>
-        <div class="feature-text">
-          <div class="feature-title">تشغيل خلال أيام</div>
-          <div class="feature-desc">لا تحتاج المدرسة لتطبيق تُنزّله أو خادم تشتريه — رابط واحد يعمل على الجوال والحاسب فوراً.</div>
+      <div class="mk-feature">
+        <div class="ico">⚡</div>
+        <div>
+          <h4>تشغيل خلال أيام</h4>
+          <p>لا تحتاج المدرسة لتطبيق تُنزّله ولا خادم تشتريه — رابط واحد يعمل على الجوال والحاسب فوراً.</p>
         </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(124,58,237,.1)">📊</div>
-        <div class="feature-text">
-          <div class="feature-title">مستوى الطالب لا مجرد درجاته</div>
-          <div class="feature-desc">متوسط موزون لكل مادة، وإبراز المواد التي تحتاج دعماً — حتى يتدخل ولي الأمر مبكراً بدل نهاية الفصل.</div>
+      <div class="mk-feature">
+        <div class="ico">📊</div>
+        <div>
+          <h4>مستوى الطالب لا مجرد درجاته</h4>
+          <p>متوسط موزون لكل مادة، وإبراز المواد التي تحتاج دعماً — حتى يتدخل ولي الأمر مبكراً بدل نهاية الفصل.</p>
         </div>
       </div>
     </div>
@@ -216,30 +187,30 @@
 </section>
 
 <!-- ══ خارطة الطريق ══ -->
-<section style="padding:3.5rem 0;background:linear-gradient(160deg,#f8fafc,#f1f5f9)">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">خارطة الطريق</span>
-      <h2 class="section-title">نبدأ بالمدارس ثم نتوسّع للجامعات</h2>
+<section class="mk-section alt" id="roadmap">
+  <div class="mk-wrap">
+    <div class="mk-head">
+      <span class="mk-eyebrow">خارطة الطريق</span>
+      <h2>نبدأ بالمدارس ثم نتوسّع للجامعات</h2>
     </div>
-    <div class="roadmap">
-      <div class="road-step">
-        <div class="step-tag">المرحلة الأولى — متاحة الآن</div>
+    <div class="mk-roadmap">
+      <div class="mk-step">
+        <div class="when">المرحلة الأولى — متاحة الآن</div>
         <h4>إدارة المدرسة ومتابعة ولي الأمر</h4>
         <p>الفصول والمواد والطلاب، الجدول الدراسي، الاختبارات، الواجبات، الدرجات، الحضور، الإعلانات، والمراسلة — عبر ثلاث بوابات منفصلة.</p>
       </div>
-      <div class="road-step">
-        <div class="step-tag">المرحلة الثانية</div>
+      <div class="mk-step">
+        <div class="when">المرحلة الثانية</div>
         <h4>الإشعارات والتقارير</h4>
         <p>تنبيهات فورية عند رصد درجة أو تسجيل غياب، وتقارير فصلية قابلة للطباعة، وربط مع نظام نور لمدارس التعليم العام.</p>
       </div>
-      <div class="road-step">
-        <div class="step-tag">المرحلة الثالثة</div>
+      <div class="mk-step">
+        <div class="when">المرحلة الثالثة</div>
         <h4>الاختبارات الإلكترونية</h4>
         <p>بنك أسئلة، وتصحيح آلي، وتحليل سيكومتري لصعوبة الأسئلة وتمييزها — مبني على نفس البيانات الموجودة في المنصة.</p>
       </div>
-      <div class="road-step">
-        <div class="step-tag">المرحلة الرابعة</div>
+      <div class="mk-step">
+        <div class="when">المرحلة الرابعة</div>
         <h4>التوسّع للجامعات</h4>
         <p>مقررات وشُعب بدلاً من الفصول، وساعات معتمدة، وربط معياري مع أنظمة إدارة التعلم عبر LTI.</p>
       </div>
@@ -248,28 +219,22 @@
 </section>
 
 <!-- ══ دعوة للتجربة ══ -->
-<section style="padding:3.5rem 0;background:linear-gradient(135deg,#0A1628,#0B5D3B);text-align:center">
-  <div class="container">
-    <h2 style="font-size:1.6rem;font-weight:900;color:#fff;margin-bottom:.85rem;font-family:var(--font-heading)">
-      جرّب المنصة قبل أي التزام
-    </h2>
-    <p style="color:rgba(255,255,255,.75);font-size:.92rem;line-height:1.9;max-width:560px;margin:0 auto 1.75rem">
-      وضع تجريبي كامل بحسابات جاهزة لولي الأمر والطالب والمدرسة — بدون تسجيل وبدون بيانات حقيقية.
-    </p>
-    <a href="/edu-login.html" class="btn-cta-white" style="display:inline-block;padding:1rem 2rem">ادخل الوضع التجريبي ←</a>
+<section class="mk-cta">
+  <div class="mk-wrap">
+    <h2>جرّب المنصة قبل أي التزام</h2>
+    <p>وضع تجريبي كامل بحسابات جاهزة لولي الأمر والطالب والمدرسة — بدون تسجيل وبدون بيانات حقيقية.</p>
+    <a href="/edu-login.html" class="mk-btn light">ادخل الوضع التجريبي ←</a>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="container">
-    <div class="footer-bottom">
-      <div class="footer-copy">© <span id="yr"></span> رفد الرقمية — المملكة العربية السعودية، الرياض</div>
-      <div class="footer-links">
-        <a href="/" style="color:rgba(255,255,255,.6);text-decoration:none;font-size:.8rem">الرئيسية</a>
-        <a href="/privacy.html" style="color:rgba(255,255,255,.6);text-decoration:none;font-size:.8rem">الخصوصية</a>
-        <a href="/terms.html" style="color:rgba(255,255,255,.6);text-decoration:none;font-size:.8rem">الشروط</a>
-        <a href="/edu-login.html" style="color:rgba(255,255,255,.6);text-decoration:none;font-size:.8rem">دخول المنصة</a>
-      </div>
+<footer class="mk-foot">
+  <div class="mk-wrap mk-foot-inner">
+    <div class="copy">© <span id="yr"></span> رفد تعليم — المملكة العربية السعودية، الرياض</div>
+    <div class="links">
+      <a href="#roles">البوابات</a>
+      <a href="#why">لماذا رفد تعليم</a>
+      <a href="#roadmap">خارطة الطريق</a>
+      <a href="/edu-login.html">دخول المنصة</a>
     </div>
   </div>
 </footer>
