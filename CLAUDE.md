@@ -74,6 +74,66 @@ A minimal Express server that serves all static files and provides a stub `POST 
 | Application flow | `demo-apply.html`, `apply.html`, `demo-jobs.html` |
 | Partner portal | `register-partner.html`, `partner-login.html`, `partner-dashboard.html` |
 | Admin / internal | `admin.html`, `dashboard.html`, `login.html`, `signup.html` |
+| RAFD Edu (رفد تعليم) | `edu.html`, `edu-login.html`, `edu-parent.html`, `edu-student.html`, `edu-school.html` |
+
+## RAFD Edu — منصة رفد تعليم
+
+A **second product** living in the same repo: school management + parent/student
+follow-up (timetable, exams, homework, grades, attendance, announcements,
+messaging). Targets schools first; the schema is deliberately generic enough to
+extend to universities later (`edu_schools.org_type`).
+
+It is fully self-contained — it shares nothing with the applicant-screening
+product except the host, the fonts, and `api/_lib/password.js` +
+`api/_lib/rate-limit.js`. Editing screening code never affects Edu and vice versa.
+
+### Files
+
+| File | Role |
+|---|---|
+| `edu.html` | Public landing page for schools (uses `style.css`) |
+| `edu-login.html` | Single login for all four roles; also serves the demo accounts |
+| `edu-parent.html` / `edu-student.html` | Thin shells — both load `edu-portal.js` |
+| `edu-portal.js` | **Shared** portal logic for parent + student, switched by `window.EDU_PORTAL_ROLE` |
+| `edu-school.html` | Teacher / school-admin console (self-contained script) |
+| `edu-common.js` | Session, API wrapper, formatting helpers, and the full demo dataset |
+| `edu.css` | Portal shell styles (separate from `style.css` so marketing pages stay light) |
+| `api/_lib/edu.js` | Shared server helpers: HMAC session token, Supabase REST, scoping |
+| `api/edu-auth.js` | `login`, `request_otp`, `verify_otp`, `me`, `change_password` |
+| `api/edu-data.js` | Every authenticated read/write, role-scoped |
+| `supabase-edu.sql` | Schema (15 `edu_*` tables) + deny-all RLS |
+
+### Roles and scoping
+
+`school_admin` · `teacher` · `parent` · `student`. **All scoping is decided
+server-side in `api/edu-data.js`** — never trust a `student_id` from the client:
+
+- `parent` → only students linked via `edu_guardians`
+- `student` → only their own `edu_students` row
+- `teacher` / `school_admin` → their school only; `school_id` is injected from
+  the session token and stripped from any client payload
+
+Staff writes go through one generic `save` / `delete` action guarded by the
+`WRITABLE` table+field allowlist at the top of `api/edu-data.js`. To expose a new
+writable field, add it there — nothing else needs to change.
+
+### Demo mode
+
+`edu-login.html` offers three demo accounts (`parent@demo.sa`, `student@demo.sa`,
+`school@demo.sa`). They set `session.demo = true`, and `Edu.data()` then serves
+everything from the generated dataset in `edu-common.js` — **no Supabase and no
+env vars needed**. This is how the product is demoed before a school is onboarded.
+Dates in the demo data are generated relative to today, so it never goes stale.
+
+### Env vars
+
+| Var | Needed for | If missing |
+|---|---|---|
+| `SUPABASE_SERVICE_KEY` | all real (non-demo) data | API returns 500; demo mode still works |
+| `EDU_SECRET` | session token signing | falls back to `PARTNER_SECRET` → `SUPABASE_SERVICE_KEY` |
+| `RESEND_API_KEY` | OTP login emails | console warning, OTP silently not sent (password login unaffected) |
+
+Run `supabase-edu.sql` once in the Supabase SQL editor before using real data.
 
 ### i18n conventions
 
@@ -83,3 +143,11 @@ A minimal Express server that serves all static files and provides a stub `POST 
 - Use `data-i18n-placeholder="key"` (not `data-i18n`) to translate `placeholder` attributes on inputs.
 - For programmatic access to a translated string in JS logic, use `getT('key')` — reads from `localStorage` and falls back to Arabic.
 - Pages can listen to the `rafd-lang-changed` CustomEvent on `document` (detail: `{ lang }`) to react to language switches without polling.
+
+**Exception — the RAFD Edu pages (`edu*.html`) do not load `i18n.js` yet.** Their
+chrome is Arabic-only for now; only the data-layer strings are bilingual
+(`Edu.weekdayName`, `Edu.fmtDate`, `HW_LABELS` / `ATT_LABELS` / `EXAM_LABELS` in
+`edu-common.js` all switch on `Edu.lang()`, which reads the same `rafdLang`
+localStorage key). Adding the `edu.*` / `epar.*` / `estu.*` / `esch.*` key sets to
+`T.ar` and `T.en` and wiring `data-i18n` through the portal chrome is the next
+step for this module — new Edu strings should be written with that in mind.

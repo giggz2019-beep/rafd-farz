@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دخول رفد تعليم</title>
+<meta name="description" content="بوابة الدخول لولي الأمر والطالب والمدرسة — منصة رفد تعليم">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/edu.css">
+<style>
+body.edu { display:flex; align-items:center; justify-content:center; padding:1.5rem;
+  background:linear-gradient(135deg,#0A1628,#0d2a3f 55%,#0B5D3B); }
+.login-wrap { width:100%; max-width:980px; display:grid; grid-template-columns:1fr 420px;
+  gap:2rem; align-items:center; }
+.login-pitch { color:#E2E8F0; }
+.login-pitch h1 { font-size:2.1rem; font-weight:900; color:#fff; line-height:1.4; margin-bottom:1rem; }
+.login-pitch p { font-size:.98rem; line-height:2; color:#CBD5E1; margin-bottom:1.5rem; }
+.pitch-list { display:flex; flex-direction:column; gap:.7rem; }
+.pitch-item { display:flex; align-items:center; gap:.7rem; font-size:.9rem; color:#E2E8F0; }
+.pitch-item .ico { width:34px; height:34px; border-radius:10px; background:rgba(255,255,255,.1);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.login-card { background:#fff; border-radius:22px; padding:2rem; box-shadow:0 24px 60px rgba(0,0,0,.3); }
+.login-card h2 { font-size:1.3rem; font-weight:800; margin-bottom:.4rem; }
+.login-card .sub { font-size:.85rem; color:var(--edu-muted); margin-bottom:1.5rem; }
+.tabs { display:flex; background:#F1F5F9; border-radius:12px; padding:.25rem; margin-bottom:1.25rem; }
+.tabs button { flex:1; background:none; border:none; padding:.6rem; border-radius:9px;
+  font-family:inherit; font-size:.84rem; font-weight:600; color:var(--edu-muted); cursor:pointer; }
+.tabs button.active { background:#fff; color:var(--edu-text); box-shadow:0 1px 3px rgba(0,0,0,.08); }
+.demo-box { margin-top:1.25rem; padding-top:1.25rem; border-top:1px dashed var(--edu-line); }
+.demo-box h3 { font-size:.82rem; font-weight:700; color:var(--edu-muted); margin-bottom:.6rem; }
+.demo-btns { display:flex; flex-wrap:wrap; gap:.5rem; }
+.demo-btns button { background:#F8FAFC; border:1.5px solid var(--edu-line); border-radius:9px;
+  padding:.45rem .8rem; font-family:inherit; font-size:.78rem; cursor:pointer; color:var(--edu-text); }
+.demo-btns button:hover { border-color:var(--edu-green); background:#ECFDF5; }
+.back { text-align:center; margin-top:1.25rem; }
+.back a { font-size:.82rem; color:var(--edu-muted); text-decoration:none; }
+@media (max-width:880px) {
+  .login-wrap { grid-template-columns:1fr; max-width:440px; }
+  .login-pitch { display:none; }
+}
+</style>
+</head>
+<body class="edu">
+
+<div class="login-wrap">
+  <div class="login-pitch">
+    <h1>متابعة ابنك الدراسية<br>في مكان واحد</h1>
+    <p>الجدول، الاختبارات، الواجبات، الدرجات، والحضور — تصلك مباشرة من المدرسة بدون قروبات واتساب ولا رسائل متفرقة.</p>
+    <div class="pitch-list">
+      <div class="pitch-item"><span class="ico">📅</span> جدول اليوم والأسبوع لحظة بلحظة</div>
+      <div class="pitch-item"><span class="ico">📝</span> تنبيه بكل اختبار قبل موعده</div>
+      <div class="pitch-item"><span class="ico">📚</span> الواجبات وحالة تسليمها</div>
+      <div class="pitch-item"><span class="ico">📊</span> مستوى ابنك في كل مادة</div>
+      <div class="pitch-item"><span class="ico">💬</span> تواصل مباشر مع المعلم والإدارة</div>
+    </div>
+  </div>
+
+  <div class="login-card">
+    <h2>تسجيل الدخول</h2>
+    <p class="sub">ولي أمر · طالب · معلم · إدارة المدرسة</p>
+
+    <div class="tabs">
+      <button id="tabPass" class="active" type="button">كلمة المرور</button>
+      <button id="tabOtp" type="button">رمز عبر البريد</button>
+    </div>
+
+    <div id="alert"></div>
+
+    <form id="loginForm" autocomplete="on">
+      <div class="edu-field">
+        <label for="identifier">البريد الإلكتروني أو الجوال أو رقم الهوية</label>
+        <input id="identifier" name="username" type="text" inputmode="email"
+               autocomplete="username" placeholder="parent@school.sa" required>
+      </div>
+
+      <div class="edu-field" id="passField">
+        <label for="password">كلمة المرور</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••">
+      </div>
+
+      <div class="edu-field" id="otpField" hidden>
+        <label for="otp">رمز التحقق المرسل إلى بريدك</label>
+        <input id="otp" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+      </div>
+
+      <button class="edu-btn green" type="submit" id="submitBtn" style="width:100%">دخول</button>
+    </form>
+
+    <div class="demo-box">
+      <h3>جرّب المنصة الآن (وضع تجريبي — بدون تسجيل)</h3>
+      <div class="demo-btns">
+        <button type="button" data-demo="parent@demo.sa">👨‍👦 ولي أمر</button>
+        <button type="button" data-demo="student@demo.sa">🎒 طالب</button>
+        <button type="button" data-demo="school@demo.sa">🏫 إدارة مدرسة</button>
+      </div>
+    </div>
+
+    <div class="back"><a href="/edu.html">← عن منصة رفد تعليم</a></div>
+  </div>
+</div>
+
+<script src="/edu-common.js"></script>
+<script>
+(function () {
+  var mode = 'password';       // password | otp-request | otp-verify
+  var alertBox = document.getElementById('alert');
+  var form = document.getElementById('loginForm');
+  var submitBtn = document.getElementById('submitBtn');
+  var passField = document.getElementById('passField');
+  var otpField = document.getElementById('otpField');
+
+  // جلسة قائمة؟ اذهب مباشرة للبوابة المناسبة
+  var existing = Edu.getSession();
+  if (existing) location.replace(Edu.homeFor(existing.user.role));
+
+  function say(msg, kind) {
+    alertBox.innerHTML = msg ? '<div class="edu-alert ' + (kind || 'danger') + '">' + Edu.esc(msg) + '</div>' : '';
+  }
+
+  function setMode(next) {
+    mode = next;
+    var otp = next !== 'password';
+    passField.hidden = otp;
+    otpField.hidden = next !== 'otp-verify';
+    document.getElementById('password').required = !otp;
+    document.getElementById('tabPass').classList.toggle('active', !otp);
+    document.getElementById('tabOtp').classList.toggle('active', otp);
+    submitBtn.textContent = next === 'otp-request' ? 'إرسال الرمز' : 'دخول';
+    say('');
+  }
+
+  document.getElementById('tabPass').onclick = function () { setMode('password'); };
+  document.getElementById('tabOtp').onclick = function () { setMode('otp-request'); };
+
+  function finish(session) {
+    Edu.setSession(session);
+    location.href = Edu.homeFor(session.user.role);
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var identifier = document.getElementById('identifier').value.trim();
+    if (!identifier) return;
+
+    // الحسابات التجريبية تعمل بلا خادم
+    var demo = Edu.Demo.login(identifier);
+    if (demo) return finish(demo);
+
+    submitBtn.disabled = true;
+    var original = submitBtn.textContent;
+    submitBtn.textContent = 'جارٍ...';
+    try {
+      if (mode === 'password') {
+        var res = await Edu.callApi('edu-auth', {
+          action: 'login', identifier: identifier,
+          password: document.getElementById('password').value,
+        });
+        finish({ token: res.token, user: res.user });
+      } else if (mode === 'otp-request') {
+        await Edu.callApi('edu-auth', { action: 'request_otp', identifier: identifier });
+        setMode('otp-verify');
+        say('إذا كان الحساب مسجّلاً فقد أُرسل رمز التحقق إلى بريده.', 'ok');
+        document.getElementById('otp').focus();
+      } else {
+        var v = await Edu.callApi('edu-auth', {
+          action: 'verify_otp', identifier: identifier,
+          code: document.getElementById('otp').value.trim(),
+        });
+        finish({ token: v.token, user: v.user });
+      }
+    } catch (err) {
+      say(err.message || 'تعذّر تسجيل الدخول');
+    } finally {
+      submitBtn.disabled = false;
+      if (submitBtn.textContent === 'جارٍ...') submitBtn.textContent = original;
+    }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-demo]'), function (btn) {
+    btn.addEventListener('click', function () {
+      finish(Edu.Demo.login(btn.getAttribute('data-demo')));
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة المدرسة — رفد تعليم</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/edu.css">
+</head>
+<body class="edu">
+
+<div class="edu-shell">
+  <aside class="edu-side">
+    <div class="edu-brand">
+      <div class="edu-brand-mark">ر</div>
+      <div>
+        <div class="edu-brand-text">رفد تعليم</div>
+        <div class="edu-brand-sub" id="schoolName">—</div>
+      </div>
+    </div>
+
+    <button class="edu-nav-item active" data-view="overview"><span class="ico">🏠</span><span class="lbl">لوحة المدرسة</span></button>
+    <button class="edu-nav-item" data-view="classes"><span class="ico">🏫</span><span class="lbl">الفصول</span></button>
+    <button class="edu-nav-item" data-view="students"><span class="ico">🎒</span><span class="lbl">الطلاب</span></button>
+    <button class="edu-nav-item" data-view="attendance"><span class="ico">✅</span><span class="lbl">تحضير اليوم</span></button>
+    <button class="edu-nav-item" data-view="exams"><span class="ico">📝</span><span class="lbl">الاختبارات</span></button>
+    <button class="edu-nav-item" data-view="homework"><span class="ico">📚</span><span class="lbl">الواجبات</span></button>
+    <button class="edu-nav-item" data-view="grades"><span class="ico">📊</span><span class="lbl">رصد الدرجات</span></button>
+    <button class="edu-nav-item" data-view="announcements"><span class="ico">📢</span><span class="lbl">الإعلانات</span></button>
+
+    <div class="edu-side-foot">
+      <button class="edu-nav-item" id="logoutBtn"><span class="ico">↩</span><span class="lbl">تسجيل الخروج</span></button>
+    </div>
+  </aside>
+
+  <div class="edu-main">
+    <header class="edu-top">
+      <button class="edu-burger" aria-label="القائمة">☰</button>
+      <h1 id="viewTitle">لوحة المدرسة</h1>
+      <div class="edu-top-actions">
+        <div class="edu-user-chip">
+          <span class="edu-avatar" id="userAvatar">؟</span>
+          <span id="userName">—</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="edu-content">
+      <div id="demoBanner"></div>
+      <div id="view">
+        <div class="edu-card">
+          <div class="edu-skeleton" style="width:40%"></div>
+          <div class="edu-skeleton"></div>
+          <div class="edu-skeleton" style="width:70%"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="edu-modal" id="modal">
+  <div class="edu-modal-box">
+    <div class="edu-modal-head">
+      <h3 id="modalTitle">—</h3>
+      <button type="button" id="modalClose" aria-label="إغلاق">×</button>
+    </div>
+    <form id="modalForm"></form>
+  </div>
+</div>
+
+<script src="/edu-common.js"></script>
+<script>
+(function () {
+  var session = Edu.requireRole(['school_admin', 'teacher']);
+  if (!session) return;
+
+  var E = Edu.esc;
+  var viewEl = document.getElementById('view');
+  var state = { view: 'overview', base: null, classId: null };
+
+  document.getElementById('userName').textContent = session.user.full_name;
+  document.getElementById('userAvatar').textContent = Edu.initials(session.user.full_name);
+  document.getElementById('schoolName').textContent = session.user.school_name || 'المدرسة';
+  document.getElementById('logoutBtn').onclick = Edu.logout;
+  Edu.mountSidebar();
+
+  if (Edu.isDemo()) {
+    document.getElementById('demoBanner').innerHTML =
+      '<div class="edu-alert info">أنت في <strong>الوضع التجريبي</strong> — البيانات توضيحية والتعديلات لا تُحفظ. ' +
+      'بعد تفعيل المدرسة يعمل الحفظ فعلياً وتصل التحديثات لأولياء الأمور والطلاب فوراً.</div>';
+  }
+
+  var TITLES = {
+    overview: 'لوحة المدرسة', classes: 'الفصول', students: 'الطلاب',
+    attendance: 'تحضير اليوم', exams: 'الاختبارات', homework: 'الواجبات',
+    grades: 'رصد الدرجات', announcements: 'الإعلانات',
+  };
+
+  Array.prototype.forEach.call(document.querySelectorAll('.edu-nav-item[data-view]'), function (b) {
+    b.addEventListener('click', function () { go(b.getAttribute('data-view')); });
+  });
+
+  function go(view) {
+    state.view = view;
+    document.getElementById('viewTitle').textContent = TITLES[view] || '';
+    Array.prototype.forEach.call(document.querySelectorAll('.edu-nav-item[data-view]'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-view') === view);
+    });
+    location.hash = view;
+    render();
+  }
+
+  function loading() {
+    viewEl.innerHTML = '<div class="edu-card"><div class="edu-skeleton" style="width:35%"></div>' +
+      '<div class="edu-skeleton"></div><div class="edu-skeleton" style="width:60%"></div></div>';
+  }
+
+  function fail(e) {
+    viewEl.innerHTML = '<div class="edu-alert danger">' + E(e.message || 'تعذّر تحميل البيانات') + '</div>';
+  }
+
+  async function ensureBase() {
+    if (state.base) return state.base;
+    state.base = await Edu.data('overview', {});
+    if (!state.classId && (state.base.classes || []).length) state.classId = state.base.classes[0].id;
+    return state.base;
+  }
+
+  async function render() {
+    loading();
+    try {
+      var d = await ensureBase();
+      ({
+        overview: viewOverview, classes: viewClasses, students: viewStudents,
+        attendance: viewAttendance, exams: viewExams, homework: viewHomework,
+        grades: viewGrades, announcements: viewAnnouncements,
+      }[state.view] || viewOverview)(d);
+    } catch (e) { fail(e); }
+  }
+
+  // ── نظرة عامة ────────────────────────────────────────────────────────
+  function viewOverview(d) {
+    var s = d.stats || {};
+    var att = s.attendance_today || {};
+    var html = '<div class="edu-grid c4" style="margin-bottom:1.25rem">' +
+      stat('الطلاب', s.students || 0, 'مسجّلون ونشطون', '') +
+      stat('حضور اليوم', att.rate != null ? att.rate + '%' : '—',
+           (att.absent || 0) + ' غياب · ' + (att.late || 0) + ' تأخير', att.rate >= 90 ? 'sky' : 'amber') +
+      stat('الفصول', s.classes || 0, (s.subjects || 0) + ' مادة', 'sky') +
+      stat('المعلمون', s.teachers || 0, 'في الكادر التعليمي', '') +
+      '</div>';
+
+    html += '<div class="edu-grid c2">';
+
+    html += card('📝 اختبارات قادمة', (d.exams || []).length
+      ? '<div class="edu-list">' + d.exams.slice(0, 6).map(function (x) {
+          return row('<span class="edu-dot">📝</span>', E(x.title),
+            E(x.subject_name || '') + ' · ' + E(x.class_name || '') + ' · ' + E(Edu.fmtDate(x.exam_date)),
+            '<span class="edu-badge info">' + E(Edu.relativeDay(x.exam_date)) + '</span>');
+        }).join('') + '</div>'
+      : empty('📭', 'لا توجد اختبارات مجدولة'),
+      '<button class="more edu-btn ghost sm" data-nav="exams">إدارة الاختبارات</button>');
+
+    html += card('📚 واجبات قائمة', (d.homework || []).length
+      ? '<div class="edu-list">' + d.homework.slice(0, 6).map(function (h) {
+          return row('<span class="edu-dot">📖</span>', E(h.title),
+            E(h.subject_name || '') + ' · ' + E(h.class_name || '') + ' · التسليم ' + E(Edu.fmtDate(h.due_date)),
+            '<span class="edu-badge">' + E(Edu.relativeDay(h.due_date)) + '</span>');
+        }).join('') + '</div>'
+      : empty('📭', 'لا توجد واجبات نشطة'),
+      '<button class="more edu-btn ghost sm" data-nav="homework">إدارة الواجبات</button>');
+
+    html += card('📢 آخر الإعلانات', (d.announcements || []).length
+      ? '<div class="edu-list">' + d.announcements.slice(0, 5).map(function (a) {
+          return row('<span class="edu-dot">' + (a.pinned ? '📌' : '📢') + '</span>',
+            E(a.title), E(a.body || '').slice(0, 90), '<span class="edu-badge">' + E(Edu.fmtShort(a.created_at)) + '</span>');
+        }).join('') + '</div>'
+      : empty('📭', 'لا توجد إعلانات'),
+      '<button class="more edu-btn ghost sm" data-nav="announcements">إدارة الإعلانات</button>');
+
+    html += card('⚡ إجراءات سريعة',
+      '<div style="display:flex;flex-wrap:wrap;gap:.6rem">' +
+      '<button class="edu-btn green sm" data-quick="exam">+ اختبار جديد</button>' +
+      '<button class="edu-btn green sm" data-quick="homework">+ واجب جديد</button>' +
+      '<button class="edu-btn green sm" data-quick="announcement">+ إعلان جديد</button>' +
+      '<button class="edu-btn ghost sm" data-nav="attendance">✅ تحضير اليوم</button>' +
+      '<button class="edu-btn ghost sm" data-nav="grades">📊 رصد الدرجات</button>' +
+      '</div>');
+
+    html += '</div>';
+    viewEl.innerHTML = html;
+    wire();
+  }
+
+  // ── الفصول ───────────────────────────────────────────────────────────
+  async function viewClasses(d) {
+    var classes = d.classes || [];
+    if (!classes.length) {
+      viewEl.innerHTML = card('الفصول', empty('🏫', 'لم تُضف فصول بعد'));
+      return;
+    }
+    loading();
+    try {
+      var detail = await Edu.data('class_detail', { class_id: state.classId });
+      var html = classPicker(classes);
+      var cl = classes.filter(function (c) { return c.id === state.classId; })[0] || classes[0];
+
+      html += '<div class="edu-grid c2">';
+      html += card('🎒 طلاب ' + E(cl.name) + ' (' + (detail.students || []).length + ')',
+        (detail.students || []).length
+          ? '<div class="edu-list">' + detail.students.map(function (st) {
+              return row('<span class="edu-avatar">' + E(Edu.initials(st.full_name)) + '</span>',
+                E(st.full_name), 'رقم الطالب: ' + E(st.student_number || '—'), '');
+            }).join('') + '</div>'
+          : empty('🎒', 'لا يوجد طلاب في هذا الفصل'));
+
+      html += card('📅 جدول الفصل', (detail.timetable || []).length
+        ? timetableTable(detail.timetable)
+        : empty('📅', 'لم يُنشأ الجدول بعد'));
+
+      html += card('📝 اختبارات الفصل', (detail.exams || []).length
+        ? '<div class="edu-list">' + detail.exams.slice(0, 10).map(function (x) {
+            return row('<span class="edu-dot">📝</span>', E(x.title),
+              E(x.subject_name || '') + ' · ' + E(Edu.fmtDate(x.exam_date)), '');
+          }).join('') + '</div>'
+        : empty('📭', 'لا توجد اختبارات'));
+
+      html += card('📚 واجبات الفصل', (detail.homework || []).length
+        ? '<div class="edu-list">' + detail.homework.slice(0, 10).map(function (h) {
+            return row('<span class="edu-dot">📖</span>', E(h.title),
+              E(h.subject_name || '') + ' · التسليم ' + E(Edu.fmtDate(h.due_date)), '');
+          }).join('') + '</div>'
+        : empty('📭', 'لا توجد واجبات'));
+      html += '</div>';
+
+      viewEl.innerHTML = html;
+      wire();
+    } catch (e) { fail(e); }
+  }
+
+  function timetableTable(tt) {
+    var periods = [];
+    tt.forEach(function (p) { if (periods.indexOf(p.period_no) === -1) periods.push(p.period_no); });
+    periods.sort(function (a, b) { return a - b; });
+    var html = '<div class="edu-table-wrap"><table class="edu-table"><thead><tr><th>الحصة</th>' +
+      Edu.SCHOOL_DAYS.map(function (wd) { return '<th>' + E(Edu.weekdayName(wd)) + '</th>'; }).join('') +
+      '</tr></thead><tbody>';
+    periods.forEach(function (pn) {
+      html += '<tr><td><strong>' + pn + '</strong></td>';
+      Edu.SCHOOL_DAYS.forEach(function (wd) {
+        var c = tt.filter(function (t) { return t.weekday === wd && t.period_no === pn; })[0];
+        html += '<td>' + (c ? '<div class="edu-period"><strong>' + E(c.subject_name || '—') +
+          '</strong><small>' + E(c.teacher_name || '') + '</small></div>' : '—') + '</td>';
+      });
+      html += '</tr>';
+    });
+    return html + '</tbody></table></div>';
+  }
+
+  // ── الطلاب ───────────────────────────────────────────────────────────
+  async function viewStudents() {
+    loading();
+    try {
+      var res = await Edu.data('roster', {});
+      var students = res.students || [];
+      var html = '<div class="edu-card"><div class="edu-card-head"><h2>🎒 الطلاب (' + students.length + ')</h2></div>' +
+        '<div class="edu-field"><input id="stSearch" type="search" placeholder="ابحث بالاسم أو رقم الطالب..."></div>' +
+        '<div class="edu-table-wrap"><table class="edu-table"><thead><tr>' +
+        '<th>الطالب</th><th>رقم الطالب</th><th>الفصل</th></tr></thead><tbody id="stBody">' +
+        students.map(studentTr).join('') + '</tbody></table></div></div>';
+      viewEl.innerHTML = html;
+
+      document.getElementById('stSearch').addEventListener('input', function () {
+        var q = this.value.trim().toLowerCase();
+        document.getElementById('stBody').innerHTML = students.filter(function (s) {
+          return !q || (s.full_name || '').toLowerCase().indexOf(q) !== -1 ||
+                 String(s.student_number || '').indexOf(q) !== -1;
+        }).map(studentTr).join('');
+      });
+    } catch (e) { fail(e); }
+  }
+
+  function studentTr(s) {
+    return '<tr><td>' + E(s.full_name) + '</td><td>' + E(s.student_number || '—') +
+      '</td><td>' + E(s.class_name || '—') + '</td></tr>';
+  }
+
+  // ── تحضير اليوم ──────────────────────────────────────────────────────
+  async function viewAttendance(d) {
+    if (!(d.classes || []).length) {
+      viewEl.innerHTML = card('تحضير اليوم', empty('🏫', 'أضف فصولاً أولاً'));
+      return;
+    }
+    loading();
+    try {
+      var detail = await Edu.data('class_detail', { class_id: state.classId });
+      var students = detail.students || [];
+      var today = new Date().toISOString().slice(0, 10);
+      var cl = d.classes.filter(function (c) { return c.id === state.classId; })[0];
+
+      var html = classPicker(d.classes);
+      html += '<div class="edu-card"><div class="edu-card-head"><h2>✅ تحضير ' + E(cl.name) +
+        ' — ' + E(Edu.fmtDate(today)) + '</h2></div>';
+      if (!students.length) {
+        html += empty('🎒', 'لا يوجد طلاب في هذا الفصل') + '</div>';
+      } else {
+        html += '<div class="edu-list" id="attList">' + students.map(function (st) {
+          return '<div class="edu-row"><span class="edu-avatar">' + E(Edu.initials(st.full_name)) + '</span>' +
+            '<div class="edu-row-main"><div class="edu-row-title">' + E(st.full_name) + '</div>' +
+            '<div class="edu-row-sub">رقم ' + E(st.student_number || '—') + '</div></div>' +
+            '<div class="edu-row-end"><select data-att="' + E(st.id) + '" ' +
+            'style="padding:.45rem .7rem;border:1.5px solid var(--edu-line);border-radius:9px;font-family:inherit;font-size:.82rem">' +
+            '<option value="present">حاضر</option><option value="absent">غائب</option>' +
+            '<option value="late">متأخر</option><option value="excused">بعذر</option>' +
+            '</select></div></div>';
+        }).join('') + '</div>' +
+        '<button class="edu-btn green" id="saveAtt" style="margin-top:1rem">حفظ التحضير</button></div>';
+      }
+      viewEl.innerHTML = html;
+      wire();
+
+      var saveBtn = document.getElementById('saveAtt');
+      if (saveBtn) saveBtn.onclick = async function () {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'جارٍ الحفظ...';
+        var selects = viewEl.querySelectorAll('[data-att]');
+        try {
+          for (var i = 0; i < selects.length; i++) {
+            await Edu.data('save', {
+              table: 'edu_attendance',
+              data: { student_id: selects[i].getAttribute('data-att'), date: today, status: selects[i].value },
+            });
+          }
+          Edu.toast('تم حفظ تحضير ' + selects.length + ' طالب');
+          state.base = null;
+        } catch (e) { Edu.toast(e.message); }
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'حفظ التحضير';
+      };
+    } catch (e) { fail(e); }
+  }
+
+  // ── الاختبارات ───────────────────────────────────────────────────────
+  function viewExams(d) {
+    var exams = d.exams || [];
+    viewEl.innerHTML = '<div class="edu-card"><div class="edu-card-head"><h2>📝 الاختبارات القادمة</h2>' +
+      '<button class="more edu-btn green sm" data-quick="exam">+ اختبار جديد</button></div>' +
+      (exams.length
+        ? '<div class="edu-table-wrap"><table class="edu-table"><thead><tr><th>العنوان</th><th>المادة</th>' +
+          '<th>الفصل</th><th>النوع</th><th>التاريخ</th><th>الدرجة</th></tr></thead><tbody>' +
+          exams.map(function (x) {
+            return '<tr><td>' + E(x.title) + '</td><td>' + E(x.subject_name || '—') + '</td><td>' +
+              E(x.class_name || '—') + '</td><td>' + E(Edu.label(Edu.EXAM_LABELS, x.exam_type)) +
+              '</td><td>' + E(Edu.fmtDate(x.exam_date)) + '</td><td>' + E(x.max_score) + '</td></tr>';
+          }).join('') + '</tbody></table></div>'
+        : empty('📭', 'لا توجد اختبارات مجدولة')) + '</div>';
+    wire();
+  }
+
+  // ── الواجبات ─────────────────────────────────────────────────────────
+  function viewHomework(d) {
+    var hw = d.homework || [];
+    viewEl.innerHTML = '<div class="edu-card"><div class="edu-card-head"><h2>📚 الواجبات</h2>' +
+      '<button class="more edu-btn green sm" data-quick="homework">+ واجب جديد</button></div>' +
+      (hw.length
+        ? '<div class="edu-table-wrap"><table class="edu-table"><thead><tr><th>العنوان</th><th>المادة</th>' +
+          '<th>الفصل</th><th>الإسناد</th><th>التسليم</th></tr></thead><tbody>' +
+          hw.map(function (h) {
+            return '<tr><td>' + E(h.title) + '</td><td>' + E(h.subject_name || '—') + '</td><td>' +
+              E(h.class_name || '—') + '</td><td>' + E(Edu.fmtShort(h.assigned_date)) +
+              '</td><td>' + E(Edu.fmtDate(h.due_date)) + '</td></tr>';
+          }).join('') + '</tbody></table></div>'
+        : empty('📭', 'لا توجد واجبات')) + '</div>';
+    wire();
+  }
+
+  // ── رصد الدرجات ──────────────────────────────────────────────────────
+  async function viewGrades(d) {
+    if (!(d.classes || []).length) {
+      viewEl.innerHTML = card('رصد الدرجات', empty('🏫', 'أضف فصولاً أولاً'));
+      return;
+    }
+    loading();
+    try {
+      var detail = await Edu.data('class_detail', { class_id: state.classId });
+      var students = detail.students || [];
+      var cl = d.classes.filter(function (c) { return c.id === state.classId; })[0];
+
+      var html = classPicker(d.classes);
+      html += '<div class="edu-card"><div class="edu-card-head"><h2>📊 رصد درجات ' + E(cl.name) + '</h2></div>';
+      html += '<div class="edu-grid c3">' +
+        '<div class="edu-field"><label>المادة</label><select id="grSubject">' +
+        (d.subjects || []).map(function (s) {
+          return '<option value="' + E(s.id) + '">' + E(s.name) + '</option>';
+        }).join('') + '</select></div>' +
+        '<div class="edu-field"><label>عنوان التقييم</label><input id="grTitle" placeholder="اختبار الوحدة الثالثة"></div>' +
+        '<div class="edu-field"><label>الدرجة العظمى</label><input id="grMax" type="number" value="20" min="1"></div>' +
+        '</div>';
+
+      if (!students.length) {
+        html += empty('🎒', 'لا يوجد طلاب في هذا الفصل') + '</div>';
+      } else {
+        html += '<div class="edu-list">' + students.map(function (st) {
+          return '<div class="edu-row"><span class="edu-avatar">' + E(Edu.initials(st.full_name)) + '</span>' +
+            '<div class="edu-row-main"><div class="edu-row-title">' + E(st.full_name) + '</div></div>' +
+            '<div class="edu-row-end"><input data-score="' + E(st.id) + '" type="number" step="0.5" min="0" ' +
+            'placeholder="—" style="width:90px;padding:.45rem;border:1.5px solid var(--edu-line);' +
+            'border-radius:9px;font-family:inherit;text-align:center"></div></div>';
+        }).join('') + '</div>' +
+        '<button class="edu-btn green" id="saveGrades" style="margin-top:1rem">حفظ الدرجات</button></div>';
+      }
+      viewEl.innerHTML = html;
+      wire();
+
+      var btn = document.getElementById('saveGrades');
+      if (btn) btn.onclick = async function () {
+        var title = document.getElementById('grTitle').value.trim();
+        var max = Number(document.getElementById('grMax').value) || 20;
+        var subject = document.getElementById('grSubject').value;
+        if (!title) return Edu.toast('اكتب عنوان التقييم');
+        var inputs = Array.prototype.filter.call(viewEl.querySelectorAll('[data-score]'), function (i) {
+          return i.value !== '';
+        });
+        if (!inputs.length) return Edu.toast('أدخل درجة واحدة على الأقل');
+        btn.disabled = true;
+        btn.textContent = 'جارٍ الحفظ...';
+        try {
+          for (var i = 0; i < inputs.length; i++) {
+            await Edu.data('save', {
+              table: 'edu_grades',
+              data: {
+                student_id: inputs[i].getAttribute('data-score'), subject_id: subject,
+                kind: 'exam', title: title, score: Number(inputs[i].value),
+                max_score: max, weight: 2, published: true,
+              },
+            });
+          }
+          Edu.toast('تم رصد ' + inputs.length + ' درجة — ستظهر لأولياء الأمور مباشرة');
+          inputs.forEach(function (i) { i.value = ''; });
+          document.getElementById('grTitle').value = '';
+        } catch (e) { Edu.toast(e.message); }
+        btn.disabled = false;
+        btn.textContent = 'حفظ الدرجات';
+      };
+    } catch (e) { fail(e); }
+  }
+
+  // ── الإعلانات ────────────────────────────────────────────────────────
+  function viewAnnouncements(d) {
+    var list = d.announcements || [];
+    viewEl.innerHTML = '<div class="edu-card"><div class="edu-card-head"><h2>📢 الإعلانات</h2>' +
+      '<button class="more edu-btn green sm" data-quick="announcement">+ إعلان جديد</button></div>' +
+      (list.length
+        ? '<div class="edu-list">' + list.map(function (a) {
+            return '<div class="edu-row"><span class="edu-dot">' + (a.pinned ? '📌' : '📢') + '</span>' +
+              '<div class="edu-row-main"><div class="edu-row-title">' + E(a.title) + '</div>' +
+              (a.body ? '<div class="edu-row-sub" style="margin-top:.25rem">' + E(a.body) + '</div>' : '') +
+              '<div class="edu-row-sub" style="margin-top:.3rem;opacity:.8">' +
+              E(Edu.fmtDate(a.created_at)) + '</div></div></div>';
+          }).join('') + '</div>'
+        : empty('📭', 'لا توجد إعلانات')) + '</div>';
+    wire();
+  }
+
+  // ── النوافذ المنبثقة للإنشاء ─────────────────────────────────────────
+  var modal = document.getElementById('modal');
+  var modalForm = document.getElementById('modalForm');
+  document.getElementById('modalClose').onclick = closeModal;
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+
+  function closeModal() { modal.classList.remove('open'); }
+
+  function selectField(id, label, options, valueKey, labelKey) {
+    return '<div class="edu-field"><label for="' + id + '">' + E(label) + '</label><select id="' + id + '">' +
+      options.map(function (o) {
+        return '<option value="' + E(o[valueKey]) + '">' + E(o[labelKey]) + '</option>';
+      }).join('') + '</select></div>';
+  }
+
+  var FORMS = {
+    exam: {
+      title: 'اختبار جديد',
+      html: function (d) {
+        return selectField('fClass', 'الفصل', d.classes || [], 'id', 'name') +
+          selectField('fSubject', 'المادة', d.subjects || [], 'id', 'name') +
+          '<div class="edu-field"><label for="fTitle">عنوان الاختبار</label><input id="fTitle" required placeholder="اختبار الوحدة الثالثة"></div>' +
+          '<div class="edu-field"><label for="fType">النوع</label><select id="fType">' +
+          '<option value="quiz">اختبار قصير</option><option value="midterm">اختبار فترة</option>' +
+          '<option value="final">اختبار نهائي</option></select></div>' +
+          '<div class="edu-grid c2" style="gap:.75rem">' +
+          '<div class="edu-field"><label for="fDate">التاريخ</label><input id="fDate" type="date" required></div>' +
+          '<div class="edu-field"><label for="fTime">وقت البداية</label><input id="fTime" type="time"></div>' +
+          '<div class="edu-field"><label for="fDur">المدة (دقيقة)</label><input id="fDur" type="number" value="45"></div>' +
+          '<div class="edu-field"><label for="fMax">الدرجة العظمى</label><input id="fMax" type="number" value="20"></div>' +
+          '</div>' +
+          '<div class="edu-field"><label for="fLoc">المكان</label><input id="fLoc" placeholder="قاعة 103"></div>' +
+          '<div class="edu-field"><label for="fTopics">المقرر المطلوب</label><textarea id="fTopics" placeholder="الوحدة الثالثة كاملة، صفحات 40–72"></textarea></div>';
+      },
+      collect: function () {
+        return {
+          table: 'edu_exams',
+          data: {
+            class_id: val('fClass'), subject_id: val('fSubject'), title: val('fTitle'),
+            exam_type: val('fType'), exam_date: val('fDate'), start_time: val('fTime') || null,
+            duration_min: Number(val('fDur')) || null, max_score: Number(val('fMax')) || 100,
+            location: val('fLoc'), topics: val('fTopics'), teacher_id: session.user.id,
+          },
+        };
+      },
+      required: ['fTitle', 'fDate'],
+    },
+    homework: {
+      title: 'واجب جديد',
+      html: function (d) {
+        return selectField('fClass', 'الفصل', d.classes || [], 'id', 'name') +
+          selectField('fSubject', 'المادة', d.subjects || [], 'id', 'name') +
+          '<div class="edu-field"><label for="fTitle">عنوان الواجب</label><input id="fTitle" required placeholder="تمارين الكسور — صفحة 74"></div>' +
+          '<div class="edu-field"><label for="fDesc">التفاصيل</label><textarea id="fDesc" placeholder="حل التمارين من 1 إلى 12"></textarea></div>' +
+          '<div class="edu-grid c2" style="gap:.75rem">' +
+          '<div class="edu-field"><label for="fDue">موعد التسليم</label><input id="fDue" type="date" required></div>' +
+          '<div class="edu-field"><label for="fMax">الدرجة</label><input id="fMax" type="number" value="10"></div>' +
+          '</div>';
+      },
+      collect: function () {
+        return {
+          table: 'edu_homework',
+          data: {
+            class_id: val('fClass'), subject_id: val('fSubject'), title: val('fTitle'),
+            description: val('fDesc'), due_date: val('fDue'),
+            max_score: Number(val('fMax')) || 10, teacher_id: session.user.id,
+          },
+        };
+      },
+      required: ['fTitle', 'fDue'],
+    },
+    announcement: {
+      title: 'إعلان جديد',
+      html: function (d) {
+        return '<div class="edu-field"><label for="fClass">النطاق</label><select id="fClass">' +
+          '<option value="">كل المدرسة</option>' +
+          (d.classes || []).map(function (c) {
+            return '<option value="' + E(c.id) + '">' + E(c.name) + '</option>';
+          }).join('') + '</select></div>' +
+          '<div class="edu-field"><label for="fAudience">الفئة المستهدفة</label><select id="fAudience">' +
+          '<option value="all">الجميع</option><option value="parents">أولياء الأمور</option>' +
+          '<option value="students">الطلاب</option><option value="teachers">المعلمون</option></select></div>' +
+          '<div class="edu-field"><label for="fTitle">العنوان</label><input id="fTitle" required placeholder="اجتماع أولياء الأمور"></div>' +
+          '<div class="edu-field"><label for="fBody">نص الإعلان</label><textarea id="fBody"></textarea></div>' +
+          '<div class="edu-field"><label style="display:flex;align-items:center;gap:.5rem;font-weight:500">' +
+          '<input id="fPinned" type="checkbox" style="width:auto"> تثبيت الإعلان في الأعلى</label></div>';
+      },
+      collect: function () {
+        return {
+          table: 'edu_announcements',
+          data: {
+            class_id: val('fClass') || null, audience: val('fAudience'),
+            title: val('fTitle'), body: val('fBody'),
+            pinned: document.getElementById('fPinned').checked,
+          },
+        };
+      },
+      required: ['fTitle'],
+    },
+  };
+
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function openForm(kind) {
+    var cfg = FORMS[kind];
+    if (!cfg) return;
+    document.getElementById('modalTitle').textContent = cfg.title;
+    modalForm.innerHTML = cfg.html(state.base || {}) +
+      '<button class="edu-btn green" type="submit" style="width:100%;margin-top:.5rem">حفظ</button>';
+    modal.classList.add('open');
+
+    modalForm.onsubmit = async function (e) {
+      e.preventDefault();
+      for (var i = 0; i < cfg.required.length; i++) {
+        if (!val(cfg.required[i])) return Edu.toast('أكمل الحقول المطلوبة');
+      }
+      var btn = modalForm.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'جارٍ الحفظ...';
+      try {
+        await Edu.data('save', cfg.collect());
+        Edu.toast('تم الحفظ — سيظهر لأولياء الأمور والطلاب مباشرة');
+        closeModal();
+        state.base = null;
+        render();
+      } catch (err) {
+        Edu.toast(err.message);
+        btn.disabled = false;
+        btn.textContent = 'حفظ';
+      }
+    };
+  }
+
+  // ── أدوات ────────────────────────────────────────────────────────────
+  function classPicker(classes) {
+    return '<div class="edu-kids">' + classes.map(function (c) {
+      return '<button class="edu-kid' + (c.id === state.classId ? ' active' : '') +
+        '" data-class="' + E(c.id) + '"><span>' + E(c.name) + '</span></button>';
+    }).join('') + '</div>';
+  }
+
+  function card(title, inner, action) {
+    return '<div class="edu-card"><div class="edu-card-head"><h2>' + title + '</h2>' +
+      (action || '') + '</div>' + inner + '</div>';
+  }
+
+  function empty(icon, text) {
+    return '<div class="edu-empty"><div class="ico">' + icon + '</div><p>' + E(text) + '</p></div>';
+  }
+
+  function stat(lbl, val_, hint, cls) {
+    return '<div class="edu-stat ' + (cls || '') + '"><div class="lbl">' + E(lbl) + '</div>' +
+      '<div class="val">' + E(val_) + '</div><div class="hint">' + E(hint || '') + '</div></div>';
+  }
+
+  function row(icon, title, sub, end) {
+    return '<div class="edu-row">' + icon + '<div class="edu-row-main">' +
+      '<div class="edu-row-title">' + title + '</div><div class="edu-row-sub">' + sub + '</div></div>' +
+      '<div class="edu-row-end">' + (end || '') + '</div></div>';
+  }
+
+  function wire() {
+    Array.prototype.forEach.call(viewEl.querySelectorAll('[data-nav]'), function (b) {
+      b.addEventListener('click', function () { go(b.getAttribute('data-nav')); });
+    });
+    Array.prototype.forEach.call(viewEl.querySelectorAll('[data-quick]'), function (b) {
+      b.addEventListener('click', function () { openForm(b.getAttribute('data-quick')); });
+    });
+    Array.prototype.forEach.call(viewEl.querySelectorAll('[data-class]'), function (b) {
+      b.addEventListener('click', function () {
+        state.classId = b.getAttribute('data-class');
+        render();
+      });
+    });
+  }
+
+  var initial = (location.hash || '').replace('#', '');
+  go(TITLES[initial] ? initial : 'overview');
+})();
+</script>
+</body>
+</html>
