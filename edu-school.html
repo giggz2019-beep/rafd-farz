@@ -29,6 +29,8 @@
     <button class="edu-nav-item" data-view="exams"><span class="ico">📝</span><span class="lbl">الاختبارات</span></button>
     <button class="edu-nav-item" data-view="homework"><span class="ico">📚</span><span class="lbl">الواجبات</span></button>
     <button class="edu-nav-item" data-view="grades"><span class="ico">📊</span><span class="lbl">رصد الدرجات</span></button>
+    <button class="edu-nav-item" data-view="finance"><span class="ico">💰</span><span class="lbl">الرسوم والتحصيل</span></button>
+    <button class="edu-nav-item" data-view="import"><span class="ico">📥</span><span class="lbl">استيراد الطلاب</span></button>
     <button class="edu-nav-item" data-view="announcements"><span class="ico">📢</span><span class="lbl">الإعلانات</span></button>
 
     <div class="edu-side-foot">
@@ -97,6 +99,7 @@
     overview: 'لوحة المدرسة', classes: 'الفصول', students: 'الطلاب',
     attendance: 'تحضير اليوم', exams: 'الاختبارات', homework: 'الواجبات',
     grades: 'رصد الدرجات', announcements: 'الإعلانات',
+    finance: 'الرسوم والتحصيل', import: 'استيراد الطلاب',
   };
 
   Array.prototype.forEach.call(document.querySelectorAll('.edu-nav-item[data-view]'), function (b) {
@@ -137,6 +140,7 @@
         overview: viewOverview, classes: viewClasses, students: viewStudents,
         attendance: viewAttendance, exams: viewExams, homework: viewHomework,
         grades: viewGrades, announcements: viewAnnouncements,
+        finance: viewFinance, import: viewImport,
       }[state.view] || viewOverview)(d);
     } catch (e) { fail(e); }
   }
@@ -465,6 +469,228 @@
     wire();
   }
 
+  // ── الرسوم والتحصيل ──────────────────────────────────────────────────
+  async function viewFinance(d) {
+    loading();
+    try {
+      var res = await Edu.data('finance', {});
+      var s = res.summary || {};
+      var overdue = res.overdue || [];
+
+      var html = '<div class="edu-grid c4" style="margin-bottom:1.25rem">' +
+        stat('إجمالي المستحق', Edu.money(s.billed), s.count + ' فاتورة', '') +
+        stat('المحصَّل', Edu.money(s.collected),
+             s.collection_rate != null ? 'نسبة التحصيل ' + s.collection_rate + '%' : '', 'sky') +
+        stat('المتبقي', Edu.money(s.outstanding), 'لم يُحصَّل بعد', 'amber') +
+        stat('متأخرات', Edu.money(s.overdue), s.overdue_count + ' قسط تجاوز موعده',
+             s.overdue_count ? 'red' : '') +
+        '</div>';
+
+      if (s.collection_rate != null) {
+        var tone = s.collection_rate >= 85 ? '' : s.collection_rate >= 70 ? ' warn' : ' danger';
+        html += '<div class="edu-card"><div class="edu-card-head"><h2>نسبة التحصيل</h2>' +
+          '<span class="more edu-badge ' + (s.collection_rate >= 85 ? 'ok' : 'warn') + '">' +
+          s.collection_rate + '%</span></div>' +
+          '<div class="edu-bar' + tone + '"><span style="width:' +
+          Math.min(100, s.collection_rate) + '%"></span></div></div>';
+      }
+
+      // قائمة المتابعة اليومية للمحاسب — الأعلى مبلغاً أولاً
+      html += '<div class="edu-card"><div class="edu-card-head"><h2>🔴 متأخرات تحتاج متابعة (' +
+        overdue.length + ')</h2>' +
+        '<button class="more edu-btn ghost sm" data-quick="issue">+ إصدار أقساط لفصل</button></div>';
+      if (!overdue.length) {
+        html += empty('🎉', 'لا توجد متأخرات — التحصيل مكتمل');
+      } else {
+        html += '<div class="edu-table-wrap"><table class="edu-table"><thead><tr>' +
+          '<th>الطالب</th><th>الفصل</th><th>البيان</th><th>الاستحقاق</th><th>المتبقي</th><th></th>' +
+          '</tr></thead><tbody>' + overdue.slice(0, 60).map(function (inv) {
+            return '<tr><td>' + E(inv.student_name || '—') +
+              '<br><small style="color:var(--edu-muted)">' + E(inv.student_number || '') + '</small></td>' +
+              '<td>' + E(inv.class_name || '—') + '</td><td>' + E(inv.title) + '</td>' +
+              '<td>' + E(Edu.fmtShort(inv.due_date)) +
+              '<br><small style="color:var(--edu-red)">' + E(Edu.relativeDay(inv.due_date)) + '</small></td>' +
+              '<td><strong>' + E(Edu.money(inv.remaining)) + '</strong></td>' +
+              '<td><button class="edu-btn ghost sm" data-pay="' + E(inv.id) +
+              '" data-max="' + E(inv.remaining) + '" data-name="' + E(inv.student_name || '') +
+              '">تسجيل دفعة</button></td></tr>';
+          }).join('') + '</tbody></table></div>';
+        if (overdue.length > 60) {
+          html += '<p style="font-size:.78rem;color:var(--edu-muted);margin-top:.75rem">' +
+            'معروض أول 60 من ' + overdue.length + ' — الباقي يظهر بعد معالجة هذه.</p>';
+        }
+      }
+      html += '</div>';
+
+      if ((res.payments || []).length) {
+        html += '<div class="edu-card"><div class="edu-card-head"><h2>🧾 آخر المدفوعات</h2></div>' +
+          '<div class="edu-list">' + res.payments.slice(0, 12).map(function (p) {
+            return row('<span class="edu-dot">✅</span>', E(p.student_name || '—'),
+              E(Edu.label(Edu.PAY_LABELS, p.method)) + ' · ' + E(Edu.fmtDate(p.paid_at)),
+              '<strong>' + E(Edu.money(p.amount)) + '</strong>');
+          }).join('') + '</div></div>';
+      }
+
+      viewEl.innerHTML = html;
+      wire();
+
+      Array.prototype.forEach.call(viewEl.querySelectorAll('[data-pay]'), function (b) {
+        b.addEventListener('click', function () { openPayment(b); });
+      });
+    } catch (e) { fail(e); }
+  }
+
+  function openPayment(btn) {
+    var id = btn.getAttribute('data-pay');
+    var max = btn.getAttribute('data-max');
+    document.getElementById('modalTitle').textContent = 'تسجيل دفعة — ' + btn.getAttribute('data-name');
+    modalForm.innerHTML =
+      '<div class="edu-field"><label for="pAmount">المبلغ المستلم (ر.س)</label>' +
+      '<input id="pAmount" type="number" step="0.01" min="0.01" value="' + E(max) + '" required></div>' +
+      '<div class="edu-field"><label for="pMethod">طريقة السداد</label><select id="pMethod">' +
+      '<option value="transfer">تحويل بنكي</option><option value="card">شبكة / بطاقة</option>' +
+      '<option value="cash">نقداً</option><option value="cheque">شيك</option></select></div>' +
+      '<div class="edu-field"><label for="pRef">رقم العملية / المرجع</label><input id="pRef" placeholder="اختياري"></div>' +
+      '<div class="edu-field"><label for="pDate">تاريخ السداد</label><input id="pDate" type="date" value="' +
+      new Date().toISOString().slice(0, 10) + '"></div>' +
+      '<button class="edu-btn green" type="submit" style="width:100%">تسجيل الدفعة</button>';
+    modal.classList.add('open');
+
+    modalForm.onsubmit = async function (e) {
+      e.preventDefault();
+      var amount = Number(val('pAmount'));
+      if (!(amount > 0)) return Edu.toast('أدخل مبلغاً صحيحاً');
+      var b = modalForm.querySelector('button[type="submit"]');
+      b.disabled = true;
+      b.textContent = 'جارٍ الحفظ...';
+      try {
+        await Edu.data('record_payment', {
+          invoice_id: id, amount: amount, method: val('pMethod'),
+          reference: val('pRef'), paid_at: val('pDate'),
+        });
+        Edu.toast('تم تسجيل الدفعة — يظهر التحديث لولي الأمر فوراً');
+        closeModal();
+        render();
+      } catch (err) {
+        Edu.toast(err.message);
+        b.disabled = false;
+        b.textContent = 'تسجيل الدفعة';
+      }
+    };
+  }
+
+  // ── استيراد الطلاب ───────────────────────────────────────────────────
+  var importRows = [];
+
+  function viewImport(d) {
+    var classes = d.classes || [];
+    viewEl.innerHTML = '<div class="edu-card"><div class="edu-card-head"><h2>📥 استيراد الطلاب</h2></div>' +
+      '<div class="edu-alert info">انسخ الأعمدة من ملف Excel والصقها هنا مباشرة، أو ارفع ملف CSV. ' +
+      'الترتيب المتوقع: <strong>اسم الطالب</strong> · رقم الطالب · رقم الهوية · الفصل. ' +
+      'أول صف يُتجاهل إذا كان عناوين أعمدة.</div>' +
+      '<div class="edu-grid c2" style="gap:1rem;margin-bottom:1rem">' +
+      '<div class="edu-field"><label for="impFile">رفع ملف CSV</label>' +
+      '<input id="impFile" type="file" accept=".csv,text/csv,text/plain"></div>' +
+      '<div class="edu-field"><label for="impClass">الفصل الافتراضي (لمن لم يُحدَّد له فصل)</label>' +
+      '<select id="impClass"><option value="">بدون فصل</option>' +
+      classes.map(function (c) { return '<option value="' + E(c.id) + '">' + E(c.name) + '</option>'; }).join('') +
+      '</select></div></div>' +
+      '<div class="edu-field"><label for="impPaste">أو الصق البيانات هنا</label>' +
+      '<textarea id="impPaste" style="min-height:150px;font-family:monospace;direction:ltr;text-align:left" ' +
+      'placeholder="عبدالرحمن محمد&#9;4512&#9;1098765432&#10;ليان محمد&#9;4788&#9;1098765433"></textarea></div>' +
+      '<button class="edu-btn ghost" id="impPreview">معاينة</button>' +
+      '<div id="impResult" style="margin-top:1.25rem"></div></div>';
+
+    document.getElementById('impFile').addEventListener('change', function () {
+      var f = this.files && this.files[0];
+      if (!f) return;
+      if (f.size > 2 * 1024 * 1024) return Edu.toast('حجم الملف كبير — الحد 2 ميجابايت');
+      var reader = new FileReader();
+      reader.onload = function () {
+        document.getElementById('impPaste').value = String(reader.result || '');
+        Edu.toast('تم تحميل الملف — اضغط معاينة');
+      };
+      reader.readAsText(f, 'utf-8');
+    });
+
+    document.getElementById('impPreview').onclick = previewImport;
+  }
+
+  // يقبل الفاصل TAB (لصق من Excel) أو الفاصلة (CSV)
+  function parseRows(text, defaultClass, classes) {
+    var byName = {};
+    classes.forEach(function (c) { byName[String(c.name).trim()] = c.id; });
+    var out = [];
+    String(text || '').split(/\r?\n/).forEach(function (line, idx) {
+      if (!line.trim()) return;
+      var cells = (line.indexOf('\t') !== -1 ? line.split('\t') : line.split(','))
+        .map(function (c) { return c.trim().replace(/^"|"$/g, ''); });
+      // تجاهل صف العناوين
+      if (idx === 0 && /اسم|name/i.test(cells[0])) return;
+      if (!cells[0]) return;
+      out.push({
+        full_name: cells[0],
+        student_number: cells[1] || '',
+        national_id: cells[2] || '',
+        class_id: (cells[3] && byName[cells[3]]) || defaultClass || null,
+        class_label: cells[3] || '',
+      });
+    });
+    return out;
+  }
+
+  function previewImport() {
+    var classes = (state.base && state.base.classes) || [];
+    var defaultClass = document.getElementById('impClass').value;
+    importRows = parseRows(document.getElementById('impPaste').value, defaultClass, classes);
+    var box = document.getElementById('impResult');
+
+    if (!importRows.length) {
+      box.innerHTML = '<div class="edu-alert danger">لم يُعثر على صفوف صالحة. تأكد أن العمود الأول هو اسم الطالب.</div>';
+      return;
+    }
+    var byId = {};
+    classes.forEach(function (c) { byId[c.id] = c.name; });
+    var noClass = importRows.filter(function (r) { return !r.class_id; }).length;
+
+    box.innerHTML = '<div class="edu-alert ok">جاهز لاستيراد <strong>' + importRows.length +
+      '</strong> طالب' + (noClass ? ' — منهم <strong>' + noClass + '</strong> بلا فصل محدد (يمكن إسنادهم لاحقاً)' : '') +
+      '</div><div class="edu-table-wrap"><table class="edu-table"><thead><tr>' +
+      '<th>#</th><th>الاسم</th><th>رقم الطالب</th><th>رقم الهوية</th><th>الفصل</th>' +
+      '</tr></thead><tbody>' + importRows.slice(0, 25).map(function (r, i) {
+        return '<tr><td>' + (i + 1) + '</td><td>' + E(r.full_name) + '</td><td>' +
+          E(r.student_number || '—') + '</td><td>' + E(r.national_id || '—') + '</td><td>' +
+          E(byId[r.class_id] || '—') + '</td></tr>';
+      }).join('') + '</tbody></table></div>' +
+      (importRows.length > 25 ? '<p style="font-size:.78rem;color:var(--edu-muted);margin:.6rem 0">' +
+        'معاينة أول 25 صف من ' + importRows.length + '.</p>' : '') +
+      '<button class="edu-btn green" id="impConfirm" style="margin-top:1rem">تأكيد الاستيراد (' +
+      importRows.length + ' طالب)</button>';
+
+    document.getElementById('impConfirm').onclick = async function () {
+      var btn = this;
+      btn.disabled = true;
+      btn.textContent = 'جارٍ الاستيراد...';
+      try {
+        var res = await Edu.data('import_students', {
+          students: importRows.map(function (r) {
+            return { full_name: r.full_name, student_number: r.student_number,
+                     national_id: r.national_id, class_id: r.class_id };
+          }),
+        });
+        Edu.toast('تم استيراد ' + (res.created || importRows.length) + ' طالب');
+        document.getElementById('impPaste').value = '';
+        importRows = [];
+        state.base = null;
+        box.innerHTML = '<div class="edu-alert ok">تم الاستيراد بنجاح.</div>';
+      } catch (e) {
+        Edu.toast(e.message);
+        btn.disabled = false;
+        btn.textContent = 'إعادة المحاولة';
+      }
+    };
+  }
+
   // ── النوافذ المنبثقة للإنشاء ─────────────────────────────────────────
   var modal = document.getElementById('modal');
   var modalForm = document.getElementById('modalForm');
@@ -564,6 +790,33 @@
       },
       required: ['fTitle'],
     },
+    issue: {
+      title: 'إصدار أقساط لفصل كامل',
+      html: function (d) {
+        return '<div class="edu-alert info">تُنشأ فاتورة لكل طالب في الفصل، مقسّمة على عدد الأقساط، ' +
+          'باستحقاق شهري يبدأ من التاريخ المحدد.</div>' +
+          selectField('fClass', 'الفصل', d.classes || [], 'id', 'name') +
+          '<div class="edu-grid c2" style="gap:.75rem">' +
+          '<div class="edu-field"><label for="fTotal">إجمالي الرسوم للطالب (ر.س)</label>' +
+          '<input id="fTotal" type="number" min="1" step="0.01" value="18000" required></div>' +
+          '<div class="edu-field"><label for="fCount">عدد الأقساط</label>' +
+          '<input id="fCount" type="number" min="1" max="12" value="4" required></div>' +
+          '<div class="edu-field"><label for="fFirst">استحقاق القسط الأول</label>' +
+          '<input id="fFirst" type="date" required></div>' +
+          '<div class="edu-field"><label for="fYear">العام الدراسي</label>' +
+          '<input id="fYear" placeholder="1447"></div>' +
+          '</div>';
+      },
+      collect: function () {
+        return {
+          _action: 'issue_invoices',
+          class_id: val('fClass'), total_amount: Number(val('fTotal')),
+          installments: Number(val('fCount')), first_due_date: val('fFirst'),
+          academic_year: val('fYear'),
+        };
+      },
+      required: ['fTotal', 'fCount', 'fFirst'],
+    },
   };
 
   function val(id) {
@@ -588,8 +841,14 @@
       btn.disabled = true;
       btn.textContent = 'جارٍ الحفظ...';
       try {
-        await Edu.data('save', cfg.collect());
-        Edu.toast('تم الحفظ — سيظهر لأولياء الأمور والطلاب مباشرة');
+        // بعض النماذج تستدعي إجراءً خاصاً بدل الحفظ العام (مثل إصدار الأقساط)
+        var payload = cfg.collect();
+        var custom = payload._action;
+        if (custom) { delete payload._action; }
+        var out = await Edu.data(custom || 'save', payload);
+        Edu.toast(custom === 'issue_invoices' && out && out.invoices
+          ? 'تم إصدار ' + out.invoices + ' فاتورة لـ ' + out.students + ' طالب'
+          : 'تم الحفظ — سيظهر لأولياء الأمور والطلاب مباشرة');
         closeModal();
         state.base = null;
         render();

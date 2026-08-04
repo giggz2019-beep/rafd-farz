@@ -30,6 +30,7 @@
       <a href="#roles">البوابات</a>
       <a href="#why">لماذا رفد تعليم</a>
       <a href="#roadmap">خارطة الطريق</a>
+      <a href="#demo">اطلب عرضاً</a>
     </div>
     <div class="mk-nav-cta">
       <a href="/edu-login.html" class="mk-btn primary sm">دخول المنصة</a>
@@ -48,7 +49,7 @@
     </p>
     <div class="mk-hero-cta">
       <a href="/edu-login.html" class="mk-btn primary">جرّب المنصة الآن ←</a>
-      <a href="#roles" class="mk-btn outline">شاهد ما تقدّمه</a>
+      <a href="#demo" class="mk-btn outline">اطلب عرضاً لمدرستك</a>
     </div>
     <div class="mk-pills">
       <span class="mk-pill">🇸🇦 بيانات داخل المملكة</span>
@@ -218,6 +219,65 @@
   </div>
 </section>
 
+<!-- ══ طلب عرض ══ -->
+<section class="mk-section" id="demo">
+  <div class="mk-wrap">
+    <div class="mk-head">
+      <span class="mk-eyebrow">ابدأ الآن</span>
+      <h2>اطلب عرضاً لمدرستك</h2>
+      <p>اترك بياناتك ونتواصل معك خلال يوم عمل واحد لجدولة عرض مباشر وتجهيز حساب تجريبي باسم مدرستك.</p>
+    </div>
+
+    <form class="mk-form" id="leadForm" novalidate>
+      <div id="leadAlert"></div>
+      <div class="mk-form-grid">
+        <div class="edu-field">
+          <label for="ldSchool">اسم المدرسة *</label>
+          <input id="ldSchool" name="organization" autocomplete="organization" required>
+        </div>
+        <div class="edu-field">
+          <label for="ldName">اسم المسؤول *</label>
+          <input id="ldName" name="name" autocomplete="name" required>
+        </div>
+        <div class="edu-field">
+          <label for="ldPhone">رقم الجوال *</label>
+          <input id="ldPhone" name="tel" type="tel" inputmode="tel" autocomplete="tel"
+                 placeholder="05XXXXXXXX" required>
+        </div>
+        <div class="edu-field">
+          <label for="ldEmail">البريد الإلكتروني</label>
+          <input id="ldEmail" name="email" type="email" inputmode="email" autocomplete="email">
+        </div>
+        <div class="edu-field">
+          <label for="ldCity">المدينة</label>
+          <input id="ldCity" autocomplete="address-level2">
+        </div>
+        <div class="edu-field">
+          <label for="ldSize">عدد الطلاب تقريباً</label>
+          <select id="ldSize">
+            <option value="">اختر</option>
+            <option value="&lt;200">أقل من 200</option>
+            <option value="200-500">200 – 500</option>
+            <option value="500-1000">500 – 1000</option>
+            <option value="1000+">أكثر من 1000</option>
+          </select>
+        </div>
+      </div>
+      <div class="edu-field">
+        <label for="ldNote">ما الذي يهمّك أكثر؟</label>
+        <textarea id="ldNote" placeholder="مثال: يهمّنا متابعة أولياء الأمور وتحصيل الرسوم"></textarea>
+      </div>
+      <!-- حقل مصيدة للروبوتات — مخفي عن المستخدم -->
+      <div class="mk-hp" aria-hidden="true">
+        <label for="ldWebsite">لا تملأ هذا الحقل</label>
+        <input id="ldWebsite" tabindex="-1" autocomplete="off">
+      </div>
+      <button class="mk-btn primary" type="submit" id="ldSubmit" style="width:100%">أرسل الطلب</button>
+      <p class="mk-form-note">بياناتك تُستخدم للتواصل بخصوص المنصة فقط، ولا تُشارك مع أي جهة أخرى.</p>
+    </form>
+  </div>
+</section>
+
 <!-- ══ دعوة للتجربة ══ -->
 <section class="mk-cta">
   <div class="mk-wrap">
@@ -234,11 +294,62 @@
       <a href="#roles">البوابات</a>
       <a href="#why">لماذا رفد تعليم</a>
       <a href="#roadmap">خارطة الطريق</a>
+      <a href="#demo">اطلب عرضاً</a>
       <a href="/edu-login.html">دخول المنصة</a>
     </div>
   </div>
 </footer>
 
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+(function () {
+  var form = document.getElementById('leadForm');
+  var btn = document.getElementById('ldSubmit');
+  var alertBox = document.getElementById('leadAlert');
+  var val = function (id) { return (document.getElementById(id).value || '').trim(); };
+
+  function say(msg, kind) {
+    alertBox.innerHTML = '<div class="edu-alert ' + kind + '">' + msg + '</div>';
+    alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // زوّار المعرض يصلون برابط ?src=expo فنُسجّل المصدر تلقائياً
+  var source = new URLSearchParams(location.search).get('src') === 'expo' ? 'expo' : 'website';
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!val('ldSchool') || !val('ldName') || !val('ldPhone')) {
+      return say('اسم المدرسة واسم المسؤول ورقم الجوال مطلوبة.', 'danger');
+    }
+    btn.disabled = true;
+    var label = btn.textContent;
+    btn.textContent = 'جارٍ الإرسال...';
+    try {
+      var r = await fetch('/api/edu-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          school_name: val('ldSchool'), contact_name: val('ldName'),
+          phone: val('ldPhone'), email: val('ldEmail'), city: val('ldCity'),
+          students_est: document.getElementById('ldSize').value,
+          note: val('ldNote'), website: val('ldWebsite'), source: source,
+        }),
+      });
+      var data = await r.json().catch(function () { return {}; });
+      if (!r.ok) throw new Error(data.error || 'تعذّر إرسال الطلب');
+      form.reset();
+      say('وصلنا طلبك ✅ — سنتواصل معك خلال يوم عمل واحد. وتقدر تجرّب المنصة الآن من زر «دخول المنصة».', 'ok');
+    } catch (err) {
+      say(err.message || 'تعذّر إرسال الطلب. حاول مرة أخرى أو تواصل معنا مباشرة.', 'danger');
+      btn.disabled = false;
+      btn.textContent = label;
+      return;
+    }
+    btn.disabled = false;
+    btn.textContent = label;
+  });
+})();
+</script>
 </body>
 </html>

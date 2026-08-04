@@ -256,6 +256,80 @@ CREATE TABLE IF NOT EXISTS edu_otp (
 );
 CREATE INDEX IF NOT EXISTS edu_otp_ident_idx ON edu_otp (identifier, created_at DESC);
 
+-- ===== 13. الرسوم الدراسية والتحصيل المالي =====
+-- خطة رسوم = القيمة السنوية لصف أو لفصل، تُقسّم على أقساط.
+CREATE TABLE IF NOT EXISTS edu_fee_plans (
+  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  school_id     uuid NOT NULL REFERENCES edu_schools(id) ON DELETE CASCADE,
+  name          text NOT NULL,               -- "رسوم الصف الخامس 1447"
+  academic_year text,
+  grade_level   int,                         -- تُطبَّق على صف كامل
+  class_id      uuid REFERENCES edu_classes(id) ON DELETE SET NULL,
+  total_amount  numeric NOT NULL DEFAULT 0,  -- بالريال
+  installments  int NOT NULL DEFAULT 1,
+  notes         text,
+  created_at    timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS edu_fee_plans_school_idx ON edu_fee_plans (school_id);
+
+-- فاتورة/قسط مستحق على طالب بعينه
+CREATE TABLE IF NOT EXISTS edu_invoices (
+  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  school_id     uuid NOT NULL REFERENCES edu_schools(id) ON DELETE CASCADE,
+  student_id    uuid NOT NULL REFERENCES edu_students(id) ON DELETE CASCADE,
+  fee_plan_id   uuid REFERENCES edu_fee_plans(id) ON DELETE SET NULL,
+  title         text NOT NULL,               -- "القسط الأول"
+  academic_year text,
+  term          text,
+  amount        numeric NOT NULL DEFAULT 0,
+  discount      numeric NOT NULL DEFAULT 0,  -- خصم أخوة/منحة
+  due_date      date NOT NULL,
+  -- unpaid = غير مدفوع | partial = مدفوع جزئياً | paid = مسدّد | cancelled = ملغى
+  -- حالة "متأخر" تُحسب عند العرض من due_date، ولا تُخزَّن حتى لا تتقادم
+  status        text NOT NULL DEFAULT 'unpaid',
+  notes         text,
+  created_by    uuid REFERENCES edu_users(id) ON DELETE SET NULL,
+  created_at    timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS edu_invoices_student_idx ON edu_invoices (student_id, due_date);
+CREATE INDEX IF NOT EXISTS edu_invoices_school_idx  ON edu_invoices (school_id, due_date);
+
+-- دفعة مسجّلة على فاتورة (المدرسة تسجّلها بعد الاستلام)
+CREATE TABLE IF NOT EXISTS edu_payments (
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  school_id   uuid NOT NULL REFERENCES edu_schools(id) ON DELETE CASCADE,
+  invoice_id  uuid NOT NULL REFERENCES edu_invoices(id) ON DELETE CASCADE,
+  student_id  uuid NOT NULL REFERENCES edu_students(id) ON DELETE CASCADE,
+  amount      numeric NOT NULL,
+  -- cash = نقداً | transfer = تحويل | card = شبكة/بطاقة | cheque = شيك
+  method      text NOT NULL DEFAULT 'transfer',
+  reference   text,                          -- رقم العملية / المرجع
+  paid_at     date NOT NULL DEFAULT current_date,
+  note        text,
+  recorded_by uuid REFERENCES edu_users(id) ON DELETE SET NULL,
+  created_at  timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS edu_payments_invoice_idx ON edu_payments (invoice_id);
+CREATE INDEX IF NOT EXISTS edu_payments_school_idx  ON edu_payments (school_id, paid_at DESC);
+
+-- ===== 14. طلبات العرض من المدارس (نموذج التسويق / المعرض) =====
+-- الجدول الوحيد الذي يكتب فيه زائر غير مسجَّل، عبر api/edu-lead.js فقط.
+CREATE TABLE IF NOT EXISTS edu_leads (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  school_name  text NOT NULL,
+  contact_name text NOT NULL,
+  phone        text NOT NULL,
+  email        text,
+  city         text,
+  students_est text,                         -- عدد الطلاب التقريبي
+  source       text DEFAULT 'website',       -- website | expo | referral
+  note         text,
+  -- new = جديد | contacted = تم التواصل | demo = عرض مجدول | won | lost
+  status       text NOT NULL DEFAULT 'new',
+  created_at   timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS edu_leads_created_idx ON edu_leads (created_at DESC);
+
 -- ============================================================
 -- الأمان: RLS مفعّل مع رفض افتراضي على كل الجداول.
 -- لا سياسات SELECT/INSERT عامة — الوصول حصراً عبر service key
@@ -267,7 +341,8 @@ BEGIN
   FOREACH t IN ARRAY ARRAY[
     'edu_schools','edu_users','edu_classes','edu_subjects','edu_students',
     'edu_guardians','edu_timetable','edu_exams','edu_grades','edu_homework',
-    'edu_homework_status','edu_attendance','edu_announcements','edu_messages','edu_otp'
+    'edu_homework_status','edu_attendance','edu_announcements','edu_messages','edu_otp',
+    'edu_fee_plans','edu_invoices','edu_payments','edu_leads'
   ] LOOP
     EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t);
     EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', t);

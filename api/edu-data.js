@@ -23,6 +23,9 @@ const WRITABLE = {
   edu_homework_status: ['homework_id', 'student_id', 'status', 'submitted_at', 'score', 'feedback'],
   edu_attendance: ['student_id', 'date', 'status', 'note'],
   edu_announcements: ['class_id', 'title', 'body', 'audience', 'pinned'],
+  edu_fee_plans: ['name', 'academic_year', 'grade_level', 'class_id', 'total_amount', 'installments', 'notes'],
+  edu_invoices: ['student_id', 'fee_plan_id', 'title', 'academic_year', 'term', 'amount', 'discount', 'due_date', 'status', 'notes'],
+  edu_payments: ['invoice_id', 'student_id', 'amount', 'method', 'reference', 'paid_at', 'note'],
 };
 
 function pick(table, payload) {
@@ -163,6 +166,48 @@ function summarizeAttendance(rows) {
   for (const r of rows) if (counts[r.status] !== undefined) counts[r.status] += 1;
   const total = rows.length;
   return { ...counts, total, rate: total ? Math.round((counts.present / total) * 1000) / 10 : null };
+}
+
+// ── المالية ─────────────────────────────────────────────────────────────────
+// يدمج الفواتير مع دفعاتها ويشتق المتبقي والحالة الفعلية (متأخر يُحسب من
+// تاريخ الاستحقاق وقت العرض، ولا يُخزَّن في قاعدة البيانات).
+function mergeInvoices(invoices, payments) {
+  const paidByInvoice = {};
+  for (const p of payments) {
+    paidByInvoice[p.invoice_id] = (paidByInvoice[p.invoice_id] || 0) + Number(p.amount || 0);
+  }
+  const today = todayISO();
+  return invoices.map((inv) => {
+    const net = Number(inv.amount || 0) - Number(inv.discount || 0);
+    const paid = paidByInvoice[inv.id] || 0;
+    const remaining = Math.round((net - paid) * 100) / 100;
+    let status = inv.status;
+    if (status !== 'cancelled') {
+      if (remaining <= 0) status = 'paid';
+      else if (paid > 0) status = 'partial';
+      else status = 'unpaid';
+      if (remaining > 0 && inv.due_date < today) status = 'overdue';
+    }
+    return { ...inv, net, paid, remaining, status };
+  });
+}
+
+function summarizeFinance(merged) {
+  const t = { billed: 0, collected: 0, outstanding: 0, overdue: 0, overdue_count: 0, count: merged.length };
+  for (const inv of merged) {
+    if (inv.status === 'cancelled') continue;
+    t.billed += inv.net;
+    t.collected += inv.paid;
+    t.outstanding += Math.max(0, inv.remaining);
+    if (inv.status === 'overdue') { t.overdue += inv.remaining; t.overdue_count += 1; }
+  }
+  const round = (n) => Math.round(n * 100) / 100;
+  return {
+    billed: round(t.billed), collected: round(t.collected),
+    outstanding: round(t.outstanding), overdue: round(t.overdue),
+    overdue_count: t.overdue_count, count: t.count,
+    collection_rate: t.billed ? Math.round((t.collected / t.billed) * 1000) / 10 : null,
+  };
 }
 
 module.exports = async (req, res) => {
@@ -410,6 +455,167 @@ module.exports = async (req, res) => {
       return res.status(200).json({
         students, timetable: decorate(timetable, lk),
         exams: decorate(exams, lk), homework: decorate(homework, lk),
+      });
+    }
+
+    // ═══ 8. المالية — لوحة المدرسة ═════════════════════════════════════
+    if (action === 'finance') {
+      if (!isStaff(session.role)) return res.status(403).json({ error: 'غير مصرح' });
+      const [invoices, payments, students, plans] = await Promise.all([
+        select(`/edu_invoices?school_id=eq.${school}&select=*&order=due_date.asc&limit=2000`),
+        select(`/edu_payments?school_id=eq.${school}&select=*&order=paid_at.desc&limit=4000`),
+        select(`/edu_students?school_id=eq.${school}&active=is.true&select=id,full_name,student_number,class_id`),
+        select(`/edu_fee_plans?school_id=eq.${school}&select=*&order=created_at.desc`),
+      ]);
+      const byStudent = Object.fromEntries(students.map((s) => [s.id, s]));
+      const merged = mergeInvoices(invoices, payments).map((inv) => ({
+        ...inv,
+        student_name: byStudent[inv.student_id]?.full_name || null,
+        student_number: byStudent[inv.student_id]?.student_number || null,
+        class_name: lk.classes[byStudent[inv.student_id]?.class_id]?.name || null,
+      }));
+      return res.status(200).json({
+        summary: summarizeFinance(merged),
+        invoices: merged,
+        // المتأخرون أولاً وبأعلى مبلغ — هذه هي قائمة المتابعة اليومية للمحاسب
+        overdue: merged.filter((i) => i.status === 'overdue')
+                       .sort((a, b) => b.remaining - a.remaining),
+        payments: payments.slice(0, 50).map((p) => ({
+          ...p, student_name: byStudent[p.student_id]?.full_name || null,
+        })),
+        plans, students, classes: lk.classList,
+      });
+    }
+
+    // ═══ 9. المالية — ما يراه ولي الأمر / الطالب ═══════════════════════
+    if (action === 'fees') {
+      const sid = await resolveStudent(session, body.student_id);
+      if (!sid) return res.status(403).json({ error: 'غير مصرح بالوصول لهذا الطالب' });
+      const [invoices, payments] = await Promise.all([
+        select(`/edu_invoices?student_id=eq.${sid}&select=*&order=due_date.asc`),
+        select(`/edu_payments?student_id=eq.${sid}&select=*&order=paid_at.desc`),
+      ]);
+      const merged = mergeInvoices(invoices, payments);
+      return res.status(200).json({
+        invoices: merged, payments, summary: summarizeFinance(merged),
+      });
+    }
+
+    // ═══ 10. تسجيل دفعة (يحدّث حالة الفاتورة تلقائياً) ═════════════════
+    if (action === 'record_payment') {
+      if (!isStaff(session.role)) return res.status(403).json({ error: 'غير مصرح' });
+      const amount = Number(body.amount);
+      if (!body.invoice_id || !(amount > 0)) {
+        return res.status(400).json({ error: 'الفاتورة أو المبلغ غير صحيح' });
+      }
+      const rows = await select(
+        `/edu_invoices?id=eq.${body.invoice_id}&school_id=eq.${school}&select=*&limit=1`
+      );
+      const inv = rows?.[0];
+      if (!inv) return res.status(404).json({ error: 'الفاتورة غير موجودة' });
+
+      await insert('edu_payments', [{
+        school_id: school, invoice_id: inv.id, student_id: inv.student_id,
+        amount, method: body.method || 'transfer', reference: body.reference || null,
+        paid_at: body.paid_at || todayISO(), note: body.note || null, recorded_by: session.id,
+      }]);
+
+      // نعيد قراءة الدفعات لاحتساب الحالة من المجموع الفعلي بدل الاعتماد
+      // على قيمة مُرسلة من العميل
+      const paidRows = await select(`/edu_payments?invoice_id=eq.${inv.id}&select=amount`);
+      const paid = paidRows.reduce((a, p) => a + Number(p.amount || 0), 0);
+      const net = Number(inv.amount || 0) - Number(inv.discount || 0);
+      const status = paid >= net ? 'paid' : paid > 0 ? 'partial' : 'unpaid';
+      await update('edu_invoices', `id=eq.${inv.id}&school_id=eq.${school}`, { status });
+      return res.status(200).json({ ok: true, paid, remaining: Math.round((net - paid) * 100) / 100, status });
+    }
+
+    // ═══ 11. إصدار أقساط دفعة واحدة لفصل كامل ══════════════════════════
+    if (action === 'issue_invoices') {
+      if (!isStaff(session.role)) return res.status(403).json({ error: 'غير مصرح' });
+      const total = Number(body.total_amount);
+      const count = Math.min(12, Math.max(1, parseInt(body.installments, 10) || 1));
+      if (!body.class_id || !(total > 0) || !body.first_due_date) {
+        return res.status(400).json({ error: 'الفصل أو المبلغ أو تاريخ أول قسط ناقص' });
+      }
+      const students = await select(
+        `/edu_students?school_id=eq.${school}&class_id=eq.${body.class_id}&active=is.true&select=id`
+      );
+      if (!students.length) return res.status(400).json({ error: 'لا يوجد طلاب في هذا الفصل' });
+
+      // نوزّع المبلغ على الأقساط ونضع الكسر المتبقي في القسط الأخير حتى
+      // يساوي مجموع الأقساط الإجمالي بالضبط
+      const per = Math.floor((total / count) * 100) / 100;
+      const last = Math.round((total - per * (count - 1)) * 100) / 100;
+      const first = new Date(body.first_due_date + 'T00:00:00');
+      if (isNaN(first)) return res.status(400).json({ error: 'تاريخ غير صحيح' });
+
+      const rows = [];
+      for (const st of students) {
+        for (let i = 0; i < count; i++) {
+          const due = new Date(first);
+          due.setMonth(due.getMonth() + i);
+          rows.push({
+            school_id: school, student_id: st.id,
+            title: count === 1 ? (body.title || 'الرسوم الدراسية') : `القسط ${i + 1} من ${count}`,
+            academic_year: body.academic_year || null,
+            amount: i === count - 1 ? last : per,
+            discount: 0, due_date: due.toISOString().slice(0, 10),
+            status: 'unpaid', created_by: session.id,
+          });
+        }
+      }
+      await insert('edu_invoices', rows);
+      return res.status(200).json({ ok: true, students: students.length, invoices: rows.length });
+    }
+
+    // ═══ 12. استيراد الطلاب دفعة واحدة ═════════════════════════════════
+    if (action === 'import_students') {
+      if (!isStaff(session.role)) return res.status(403).json({ error: 'غير مصرح' });
+      const list = Array.isArray(body.students) ? body.students : [];
+      if (!list.length) return res.status(400).json({ error: 'لا توجد صفوف للاستيراد' });
+      if (list.length > 500) return res.status(400).json({ error: 'حد الاستيراد 500 طالب في المرة' });
+
+      const validClassIds = new Set(lk.classList.map((c) => c.id));
+      const rows = [];
+      for (const r of list) {
+        const name = String(r.full_name || '').trim();
+        if (!name) continue;
+        rows.push({
+          school_id: school,
+          full_name: name.slice(0, 120),
+          student_number: r.student_number ? String(r.student_number).trim().slice(0, 40) : null,
+          national_id: r.national_id ? String(r.national_id).trim().slice(0, 20) : null,
+          // فصل غير معروف يُترك فارغاً بدل رفض الصف كاملاً
+          class_id: validClassIds.has(r.class_id) ? r.class_id : null,
+          gender: r.gender === 'female' || r.gender === 'male' ? r.gender : null,
+          active: true,
+        });
+      }
+      if (!rows.length) return res.status(400).json({ error: 'كل الصفوف بلا اسم طالب' });
+      const created = await insert('edu_students', rows);
+      return res.status(200).json({ ok: true, created: created ? created.length : rows.length });
+    }
+
+    // ═══ 13. كشف الدرجات الفصلي (قابل للطباعة) ═════════════════════════
+    if (action === 'report_card') {
+      const sid = await resolveStudent(session, body.student_id);
+      if (!sid) return res.status(403).json({ error: 'غير مصرح بالوصول لهذا الطالب' });
+      const student = await studentRow(sid);
+      if (!student) return res.status(404).json({ error: 'الطالب غير موجود' });
+
+      const [grades, attendance, schoolRows] = await Promise.all([
+        childGrades(student, lk, body.term),
+        childAttendance(student, { from: body.from, to: body.to }),
+        select(`/edu_schools?id=eq.${school}&select=name,logo_url,stage,city&limit=1`),
+      ]);
+      return res.status(200).json({
+        student: { ...student, class_name: lk.classes[student.class_id]?.name || null },
+        school: schoolRows?.[0] || null,
+        term: body.term || null,
+        grades,
+        grade_summary: summarizeGrades(grades),
+        attendance_summary: summarizeAttendance(attendance),
       });
     }
 

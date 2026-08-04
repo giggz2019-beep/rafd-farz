@@ -37,6 +37,9 @@
     homework: 'الواجبات', grades: 'الدرجات والمستوى', attendance: 'الحضور والغياب',
     announcements: 'إعلانات المدرسة', messages: 'التواصل مع المعلمين',
   };
+  // الرسوم تخصّ ولي الأمر وحده — الطالب لا يرى ماليات أسرته
+  if (!IS_STUDENT) TITLES.fees = 'الرسوم الدراسية';
+  TITLES.report = 'كشف الدرجات';
 
   // عناوين القائمة الجانبية تتبع نفس الاختلاف
   Array.prototype.forEach.call(document.querySelectorAll('.edu-nav-item[data-view]'), function (b) {
@@ -116,6 +119,7 @@
         overview: viewOverview, timetable: viewTimetable, exams: viewExams,
         homework: viewHomework, grades: viewGrades, attendance: viewAttendance,
         announcements: viewAnnouncements, messages: viewMessages,
+        fees: viewFees, report: viewReport,
       }[state.view] || viewOverview)(d);
     } catch (e) { fail(e); }
   }
@@ -514,6 +518,119 @@
         } catch (e) { Edu.toast(e.message); this.disabled = false; }
       };
     } catch (e) { fail(e); }
+  }
+
+  // 9) الرسوم الدراسية (ولي الأمر) ──────────────────────────────────────
+  async function viewFees() {
+    loading();
+    try {
+      var res = await Edu.data('fees', { student_id: state.studentId });
+      var invoices = res.invoices || [];
+      var s = res.summary || {};
+      var open = invoices.filter(function (i) { return i.status !== 'paid' && i.status !== 'cancelled'; });
+      var nextDue = open.slice().sort(function (a, b) { return a.due_date < b.due_date ? -1 : 1; })[0];
+
+      var html = '<div class="edu-grid c4" style="margin-bottom:1.25rem">' +
+        stat('إجمالي الرسوم', Edu.money(s.billed), 'للعام الدراسي الحالي', '') +
+        stat('المسدَّد', Edu.money(s.collected),
+             s.collection_rate != null ? s.collection_rate + '% من الإجمالي' : '', 'sky') +
+        stat('المتبقي', Edu.money(s.outstanding),
+             open.length + ' دفعة غير مسدَّدة', s.outstanding > 0 ? 'amber' : '') +
+        stat('القسط القادم', nextDue ? Edu.money(nextDue.remaining) : '—',
+             nextDue ? Edu.fmtDate(nextDue.due_date) + ' · ' + Edu.relativeDay(nextDue.due_date) : 'لا يوجد',
+             s.overdue_count ? 'red' : 'sky') +
+        '</div>';
+
+      if (s.overdue_count) {
+        html += '<div class="edu-alert warn">لديك <strong>' + s.overdue_count +
+          '</strong> قسط متأخر بمبلغ <strong>' + E(Edu.money(s.overdue)) +
+          '</strong>. الرجاء التواصل مع إدارة المدرسة للسداد.</div>';
+      }
+
+      html += '<div class="edu-card"><div class="edu-card-head"><h2>💳 الأقساط</h2>' +
+        '<button class="more edu-btn ghost sm" onclick="window.print()">🖨️ طباعة</button></div>';
+      if (!invoices.length) {
+        html += '<div class="edu-empty"><div class="ico">🧾</div><p>لا توجد رسوم مسجّلة</p></div>';
+      } else {
+        html += '<div class="edu-table-wrap"><table class="edu-table"><thead><tr>' +
+          '<th>البيان</th><th>الاستحقاق</th><th>المبلغ</th><th>المسدَّد</th><th>المتبقي</th><th>الحالة</th>' +
+          '</tr></thead><tbody>' + invoices.map(function (inv) {
+            return '<tr><td>' + E(inv.title) + '</td><td>' + E(Edu.fmtDate(inv.due_date)) +
+              '</td><td>' + E(Edu.money(inv.net)) + '</td><td>' + E(Edu.money(inv.paid)) +
+              '</td><td><strong>' + E(Edu.money(inv.remaining)) + '</strong></td>' +
+              '<td><span class="edu-badge ' + Edu.tone(Edu.INV_LABELS, inv.status) + '">' +
+              E(Edu.label(Edu.INV_LABELS, inv.status)) + '</span></td></tr>';
+          }).join('') + '</tbody></table></div>';
+      }
+      html += '</div>';
+
+      if ((res.payments || []).length) {
+        html += '<div class="edu-card"><div class="edu-card-head"><h2>🧾 سجل المدفوعات</h2></div>' +
+          '<div class="edu-list">' + res.payments.map(function (p) {
+            return row('<span class="edu-dot">✅</span>', E(Edu.money(p.amount)),
+              E(Edu.label(Edu.PAY_LABELS, p.method)) + ' · ' + E(Edu.fmtDate(p.paid_at)) +
+              (p.reference ? ' · مرجع ' + E(p.reference) : ''), '');
+          }).join('') + '</div></div>';
+      }
+      viewEl.innerHTML = html;
+    } catch (e) { fail(e); }
+  }
+
+  // 10) كشف الدرجات القابل للطباعة ──────────────────────────────────────
+  async function viewReport() {
+    loading();
+    try {
+      var r = await Edu.data('report_card', { student_id: state.studentId });
+      var subs = (r.grade_summary && r.grade_summary.subjects) || [];
+      var att = r.attendance_summary || {};
+      var overall = r.grade_summary && r.grade_summary.overall;
+
+      var html = '<div class="edu-card edu-report">' +
+        '<div class="edu-report-head">' +
+        '<div><div class="edu-report-school">' + E((r.school && r.school.name) || 'المدرسة') + '</div>' +
+        '<div class="edu-report-meta">' + E((r.school && r.school.stage) || '') +
+        ((r.school && r.school.city) ? ' · ' + E(r.school.city) : '') + '</div></div>' +
+        '<div class="edu-report-title">كشف الدرجات<small>' + E(r.term || 'الفصل الحالي') + '</small></div>' +
+        '</div>' +
+        '<div class="edu-report-student">' +
+        '<div><span>الطالب</span><strong>' + E(r.student.full_name) + '</strong></div>' +
+        '<div><span>الفصل</span><strong>' + E(r.student.class_name || '—') + '</strong></div>' +
+        '<div><span>رقم الطالب</span><strong>' + E(r.student.student_number || '—') + '</strong></div>' +
+        '<div><span>المعدل العام</span><strong>' + (overall != null ? E(overall) + '%' : '—') + '</strong></div>' +
+        '</div>';
+
+      html += '<div class="edu-table-wrap"><table class="edu-table"><thead><tr>' +
+        '<th>المادة</th><th>عدد التقييمات</th><th>المتوسط</th><th>التقدير</th>' +
+        '</tr></thead><tbody>' + (subs.length ? subs.map(function (s) {
+          return '<tr><td>' + E(s.subject_name) + '</td><td>' + E(s.count) + '</td><td><strong>' +
+            E(s.average) + '%</strong></td><td><span class="edu-badge ' + Edu.gradeTone(s.average) +
+            '">' + E(gradeLetter(s.average)) + '</span></td></tr>';
+        }).join('') : '<tr><td colspan="4">لا توجد درجات مرصودة</td></tr>') + '</tbody></table></div>';
+
+      html += '<div class="edu-report-foot">' +
+        '<div><span>أيام الحضور</span><strong>' + (att.present || 0) + ' من ' + (att.total || 0) + '</strong></div>' +
+        '<div><span>نسبة الحضور</span><strong>' + (att.rate != null ? att.rate + '%' : '—') + '</strong></div>' +
+        '<div><span>الغياب</span><strong>' + ((att.absent || 0) + (att.excused || 0)) + '</strong></div>' +
+        '<div><span>التأخير</span><strong>' + (att.late || 0) + '</strong></div>' +
+        '</div>' +
+        '<div class="edu-report-sign"><span>توقيع إدارة المدرسة</span><span>الختم</span></div>' +
+        '<div class="edu-report-issued">صدر آلياً من منصة رفد تعليم بتاريخ ' +
+        E(Edu.fmtDate(new Date().toISOString().slice(0, 10))) + '</div>' +
+        '</div>';
+
+      html += '<button class="edu-btn green" onclick="window.print()" style="margin-bottom:1.5rem">🖨️ طباعة الكشف / حفظ PDF</button>';
+      viewEl.innerHTML = html;
+    } catch (e) { fail(e); }
+  }
+
+  function gradeLetter(p) {
+    if (p == null) return '—';
+    if (p >= 95) return 'ممتاز مرتفع';
+    if (p >= 90) return 'ممتاز';
+    if (p >= 80) return 'جيد جداً';
+    if (p >= 70) return 'جيد';
+    if (p >= 60) return 'مقبول';
+    return 'يحتاج دعماً';
   }
 
   // ── أدوات بناء HTML ──────────────────────────────────────────────────

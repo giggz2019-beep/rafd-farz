@@ -292,6 +292,45 @@ h1, h2, h3, h4, .edu-title { font-family: 'ThmanyahSans', 'IBM Plex Sans Arabic'
 .edu-msg.me { background: var(--edu-navy); color: #fff; align-self: flex-end; border-start-end-radius: 4px; }
 .edu-msg time { display: block; font-size: .68rem; opacity: .6; margin-top: .3rem; }
 
+
+/* ── كشف الدرجات القابل للطباعة ─────────────────────────────────────── */
+.edu-report { border: 2px solid var(--edu-navy); }
+.edu-report-head {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding-bottom: 1rem; margin-bottom: 1.25rem; border-bottom: 2px solid var(--edu-navy);
+}
+.edu-report-school { font-family: 'ThmanyahSans', sans-serif; font-size: 1.15rem; font-weight: 900; color: var(--edu-navy); }
+.edu-report-meta { font-size: .8rem; color: var(--edu-muted); margin-top: .2rem; }
+.edu-report-title {
+  margin-inline-start: auto; text-align: end;
+  font-family: 'ThmanyahSans', sans-serif; font-size: 1.05rem; font-weight: 800; color: var(--edu-green);
+}
+.edu-report-title small { display: block; font-size: .75rem; font-weight: 500; color: var(--edu-muted); margin-top: .2rem; }
+
+.edu-report-student,
+.edu-report-foot {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: .85rem; background: #F8FAFC; border: 1px solid var(--edu-line);
+  border-radius: 12px; padding: .9rem 1rem; margin-bottom: 1.25rem;
+}
+.edu-report-foot { margin-top: 1.25rem; margin-bottom: 0; }
+.edu-report-student > div,
+.edu-report-foot > div { display: flex; flex-direction: column; gap: .15rem; }
+.edu-report-student span,
+.edu-report-foot span { font-size: .73rem; color: var(--edu-muted); }
+.edu-report-student strong,
+.edu-report-foot strong { font-size: .92rem; font-weight: 700; }
+
+.edu-report-sign {
+  display: flex; justify-content: space-between; gap: 2rem;
+  margin-top: 2.5rem; padding-top: .5rem;
+}
+.edu-report-sign span {
+  flex: 1; border-top: 1px solid #94A3B8; padding-top: .5rem;
+  text-align: center; font-size: .78rem; color: var(--edu-muted);
+}
+.edu-report-issued { margin-top: 1.25rem; text-align: center; font-size: .7rem; color: #94A3B8; }
+
 /* ── الاستجابة للجوال ───────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .edu-burger { display: block; }
@@ -320,9 +359,15 @@ h1, h2, h3, h4, .edu-title { font-family: 'ThmanyahSans', 'IBM Plex Sans Arabic'
 }
 
 @media print {
-  .edu-side, .edu-top, .edu-burger, .edu-btn { display: none !important; }
-  .edu-content { padding: 0; }
-  .edu-card { break-inside: avoid; box-shadow: none; }
+  .edu-side, .edu-top, .edu-burger, .edu-btn,
+  .edu-kids, .edu-alert, .edu-nav-badge, .edu-toast { display: none !important; }
+  .edu-content { padding: 0; max-width: none; }
+  .edu-shell { display: block; }
+  .edu-card { break-inside: avoid; box-shadow: none; margin-bottom: 0; }
+  .edu-report { border-width: 1px; page-break-inside: avoid; }
+  .edu-table { min-width: 0; }
+  .edu-badge { border: 1px solid #CBD5E1; }
+  @page { size: A4; margin: 14mm; }
 }
 
 /* ============================================================
@@ -527,4 +572,19 @@ body.edu-site {
   .mk-head h2 { font-size: 2rem; }
   .mk-foot-inner { flex-direction: row; text-align: start; }
   .mk-foot .links { margin-inline-start: auto; }
+}
+
+/* ── نموذج طلب العرض ────────────────────────────────────────────────── */
+.mk-form {
+  max-width: 760px; margin: 0 auto; background: #fff;
+  border: 1px solid var(--edu-line); border-radius: 18px;
+  padding: 1.75rem; box-shadow: var(--edu-shadow);
+}
+.mk-form-grid { display: grid; grid-template-columns: 1fr; gap: 0 1rem; }
+.mk-form-note { font-size: .76rem; color: var(--edu-muted); text-align: center; margin-top: .85rem; }
+/* حقل المصيدة: مخفي بصرياً وعن قارئات الشاشة، لكنه يبقى قابلاً للملء آلياً */
+.mk-hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (min-width: 640px) {
+  .mk-form-grid { grid-template-columns: 1fr 1fr; }
 }

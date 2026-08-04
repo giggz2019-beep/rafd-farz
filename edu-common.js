@@ -186,6 +186,30 @@
     final:   { ar: 'اختبار نهائي', en: 'Final' },
   };
 
+  var INV_LABELS = {
+    paid:      { ar: 'مسدَّد',        en: 'Paid',      tone: 'ok' },
+    partial:   { ar: 'مدفوع جزئياً',  en: 'Partial',   tone: 'warn' },
+    unpaid:    { ar: 'غير مسدَّد',    en: 'Unpaid',    tone: 'neutral' },
+    overdue:   { ar: 'متأخر',         en: 'Overdue',   tone: 'danger' },
+    cancelled: { ar: 'ملغاة',         en: 'Cancelled', tone: 'neutral' },
+  };
+
+  var PAY_LABELS = {
+    cash:     { ar: 'نقداً',   en: 'Cash' },
+    transfer: { ar: 'تحويل',   en: 'Transfer' },
+    card:     { ar: 'شبكة',    en: 'Card' },
+    cheque:   { ar: 'شيك',     en: 'Cheque' },
+  };
+
+  // مبلغ بالريال بفواصل آلاف — يُستخدم في كل شاشات المالية
+  function money(n) {
+    if (n == null || isNaN(n)) return '—';
+    var v = Math.round(Number(n) * 100) / 100;
+    var s = v.toLocaleString(lang() === 'en' ? 'en-US' : 'ar-SA-u-nu-latn',
+      { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    return s + (lang() === 'en' ? ' SAR' : ' ر.س');
+  }
+
   function label(map, key) {
     var e = map[key];
     if (!e) return key || '—';
@@ -438,6 +462,100 @@
 
     var PARENT_USER = { id: 'pa1', full_name: 'محمد عبدالله', role: 'parent' };
 
+    // ── المالية ───────────────────────────────────────────────────────
+    // أربعة أقساط سنوية لكل طالب: الأول والثاني مسدَّدان، الثالث مستحق
+    // قريباً، والرابع لاحقاً — مع قسط متأخر عند أحد الطلاب لإظهار
+    // شاشة المتابعة في لوحة المدرسة.
+    var FEE_PLANS = [
+      { id: 'fp1', name: 'رسوم المرحلة الابتدائية 1447', academic_year: '1447',
+        grade_level: null, class_id: null, total_amount: 18000, installments: 4 },
+      { id: 'fp2', name: 'رسوم النقل المدرسي 1447', academic_year: '1447',
+        grade_level: null, class_id: null, total_amount: 3200, installments: 2 },
+    ];
+
+    function buildInvoices(studentId) {
+      var plan = studentId === 'st1'
+        ? [{ t: 'القسط الأول من 4',  amount: 4500, due: -150, paid: 4500 },
+           { t: 'القسط الثاني من 4', amount: 4500, due: -60,  paid: 4500 },
+           { t: 'القسط الثالث من 4', amount: 4500, due: 12,   paid: 1500 },
+           { t: 'القسط الرابع من 4', amount: 4500, due: 100,  paid: 0 },
+           { t: 'رسوم النقل المدرسي', amount: 1600, due: 5,   paid: 0 }]
+        : [{ t: 'القسط الأول من 4',  amount: 4000, due: -150, paid: 4000 },
+           { t: 'القسط الثاني من 4', amount: 4000, due: -60,  paid: 4000 },
+           { t: 'القسط الثالث من 4', amount: 4000, due: -9,   paid: 0 },
+           { t: 'القسط الرابع من 4', amount: 4000, due: 100,  paid: 0 }];
+      var today = iso(0);
+      return plan.map(function (p, i) {
+        var due = iso(p.due);
+        var net = p.amount;
+        var remaining = Math.round((net - p.paid) * 100) / 100;
+        var status = remaining <= 0 ? 'paid' : p.paid > 0 ? 'partial' : 'unpaid';
+        if (remaining > 0 && due < today) status = 'overdue';
+        return {
+          id: 'inv-' + studentId + '-' + i, student_id: studentId,
+          title: p.t, academic_year: '1447', amount: net, discount: 0,
+          due_date: due, net: net, paid: p.paid, remaining: remaining, status: status,
+        };
+      });
+    }
+
+    function buildPayments(studentId) {
+      return buildInvoices(studentId).filter(function (inv) { return inv.paid > 0; })
+        .map(function (inv, i) {
+          return {
+            id: 'pay-' + studentId + '-' + i, invoice_id: inv.id, student_id: studentId,
+            amount: inv.paid, method: i % 2 ? 'transfer' : 'card',
+            reference: 'TRX' + (884210 + i * 37), paid_at: inv.due_date,
+          };
+        });
+    }
+
+    function summarizeFinance(list) {
+      var t = { billed: 0, collected: 0, outstanding: 0, overdue: 0, overdue_count: 0 };
+      list.forEach(function (inv) {
+        if (inv.status === 'cancelled') return;
+        t.billed += inv.net;
+        t.collected += inv.paid;
+        t.outstanding += Math.max(0, inv.remaining);
+        if (inv.status === 'overdue') { t.overdue += inv.remaining; t.overdue_count += 1; }
+      });
+      var r = function (n) { return Math.round(n * 100) / 100; };
+      return {
+        billed: r(t.billed), collected: r(t.collected), outstanding: r(t.outstanding),
+        overdue: r(t.overdue), overdue_count: t.overdue_count, count: list.length,
+        collection_rate: t.billed ? Math.round((t.collected / t.billed) * 1000) / 10 : null,
+      };
+    }
+
+    // لوحة المدرسة تعرض مدرسة بحجم واقعي — نولّد أسماء ومبالغ لـ 412 طالباً
+    // بدل الاكتفاء بطالبَي العرض، حتى تبدو الأرقام مقنعة أمام مدير المدرسة.
+    var FIRST = ['عبدالرحمن','ليان','سارة','فيصل','نورة','محمد','ريما','خالد','جود','عبدالله',
+                 'دانة','تركي','لمى','سلطان','هيا','ناصر','رنا','بدر','شهد','مشاري'];
+    var FAMILY = ['المطيري','العتيبي','القحطاني','الشمري','الحربي','الدوسري','الغامدي',
+                  'الزهراني','السبيعي','العنزي'];
+
+    var SCHOOL_INVOICES = (function () {
+      var out = [];
+      for (var i = 0; i < 412; i++) {
+        var name = FIRST[i % FIRST.length] + ' ' + FAMILY[(i * 7) % FAMILY.length];
+        var cls = CLASSES[i % CLASSES.length];
+        var amount = 4500;
+        // ‏7% من الطلاب لديهم قسط متأخر — نسبة واقعية لمدرسة أهلية
+        var overdue = i % 14 === 0;
+        var paid = overdue ? 0 : (i % 5 === 0 ? 2000 : 4500);
+        var remaining = amount - paid;
+        var status = remaining <= 0 ? 'paid' : (overdue ? 'overdue' : (paid > 0 ? 'partial' : 'unpaid'));
+        out.push({
+          id: 'sinv' + i, student_id: 'sst' + i, student_name: name,
+          student_number: String(4000 + i), class_name: cls.name,
+          title: 'القسط الثالث من 4', due_date: iso(overdue ? -(9 + (i % 20)) : 12),
+          amount: amount, discount: 0, net: amount, paid: paid,
+          remaining: remaining, status: status, academic_year: '1447',
+        });
+      }
+      return out;
+    })();
+
     function studentsFor(session) {
       if (session.user.role === 'student') return [STUDENTS[0]];
       if (session.user.role === 'parent') return STUDENTS;
@@ -607,6 +725,48 @@
         });
       }
 
+      // ── المالية ─────────────────────────────────────────────────────
+      if (action === 'finance') {
+        return Promise.resolve({
+          summary: summarizeFinance(SCHOOL_INVOICES),
+          invoices: SCHOOL_INVOICES,
+          overdue: SCHOOL_INVOICES.filter(function (i) { return i.status === 'overdue'; })
+            .sort(function (a, b) { return b.remaining - a.remaining; }),
+          payments: SCHOOL_INVOICES.filter(function (i) { return i.paid > 0; })
+            .slice(0, 20).map(function (i, n) {
+              return { id: 'p' + n, invoice_id: i.id, student_id: i.student_id,
+                       student_name: i.student_name, amount: i.paid,
+                       method: n % 2 ? 'transfer' : 'card', paid_at: iso(-(n % 25)) };
+            }),
+          plans: FEE_PLANS, students: STUDENTS.map(decorateStudent), classes: CLASSES,
+        });
+      }
+
+      if (action === 'fees') {
+        var invs = buildInvoices(target.id);
+        return Promise.resolve({
+          invoices: invs, payments: buildPayments(target.id), summary: summarizeFinance(invs),
+        });
+      }
+
+      if (action === 'record_payment' || action === 'issue_invoices' || action === 'import_students') {
+        return Promise.resolve({ ok: true, demo: true });
+      }
+
+      // ── كشف الدرجات ─────────────────────────────────────────────────
+      if (action === 'report_card') {
+        var rcGrades = buildGrades(target.id);
+        return Promise.resolve({
+          student: target,
+          school: { name: session.user.school_name || 'مدرسة الرواد الأهلية',
+                    stage: 'ابتدائي', city: 'الرياض' },
+          term: 'الفصل الأول',
+          grades: rcGrades,
+          grade_summary: summarizeGrades(rcGrades),
+          attendance_summary: summarizeAttendance(buildAttendance(target.id)),
+        });
+      }
+
       if (action === 'save' || action === 'delete') {
         return Promise.resolve({ ok: true, demo: true });
       }
@@ -648,6 +808,7 @@
     daysUntil: daysUntil, relativeDay: relativeDay,
     initials: initials, pct: pct, gradeTone: gradeTone, esc: esc,
     HW_LABELS: HW_LABELS, ATT_LABELS: ATT_LABELS, EXAM_LABELS: EXAM_LABELS,
+    INV_LABELS: INV_LABELS, PAY_LABELS: PAY_LABELS, money: money,
     label: label, tone: tone,
     toast: toast, mountSidebar: mountSidebar,
     Demo: Demo,
