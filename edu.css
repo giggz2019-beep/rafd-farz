@@ -611,3 +611,121 @@ body.edu-site {
   background: var(--edu-red); color: #fff; font-size: .62rem; font-weight: 700;
   padding: .08rem .4rem; border-radius: 999px;
 }
+
+/* ============================================================
+   شاشة الحضور (edu-kiosk.html)
+   مصممة لشاشة كبيرة في بهو المدرسة: نتيجة ضخمة تُقرأ من بعيد،
+   ولوحة جانبية للإدارة.
+   ============================================================ */
+body.edu.kiosk { background: #0A1628; color: #E2E8F0; overflow: hidden; height: 100vh; }
+
+.kiosk-top {
+  display: flex; align-items: center; gap: 1.25rem;
+  padding: .9rem 1.5rem; background: rgba(255,255,255,.04);
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.kiosk-brand { display: flex; align-items: center; gap: .7rem; }
+.kiosk-clock {
+  margin-inline-start: auto; font-size: 1.05rem; font-weight: 700;
+  color: #CBD5E1; font-variant-numeric: tabular-nums;
+}
+.kiosk-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.kiosk-actions .edu-btn.ghost {
+  background: rgba(255,255,255,.08); color: #E2E8F0; border-color: rgba(255,255,255,.16);
+}
+.kiosk-actions .edu-btn.ghost:hover { background: rgba(255,255,255,.14); }
+
+.kiosk-main {
+  display: grid; grid-template-columns: 1fr 340px;
+  height: calc(100vh - 66px); overflow: hidden;
+}
+
+.kiosk-stage {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 2rem; position: relative; overflow: hidden;
+}
+/* حقل المسح موجود ومركّز لكنه غير مرئي — القارئ يكتب فيه */
+#scanInput {
+  position: absolute; inset-block-start: 0; inset-inline-start: 0;
+  width: 1px; height: 1px; opacity: 0; border: 0; padding: 0;
+}
+
+.kiosk-result {
+  width: 100%; max-width: 720px; text-align: center;
+  border-radius: 28px; padding: 3rem 2rem;
+  background: rgba(255,255,255,.05); border: 2px solid rgba(255,255,255,.1);
+  transition: background .2s, border-color .2s;
+}
+.kiosk-result.ok   { background: rgba(11,93,59,.28);  border-color: #16A34A; }
+.kiosk-result.late { background: rgba(245,158,11,.22); border-color: var(--edu-amber); }
+.kiosk-result.dup  { background: rgba(14,165,233,.18); border-color: var(--edu-sky); }
+.kiosk-result.err  { background: rgba(220,38,38,.22);  border-color: var(--edu-red); }
+
+.kiosk-mark { font-size: 5rem; line-height: 1; margin-bottom: .75rem; }
+.kiosk-name {
+  font-family: 'ThmanyahSans', sans-serif; font-size: 2.6rem; font-weight: 900;
+  color: #fff; line-height: 1.35;
+}
+.kiosk-meta { font-size: 1.1rem; color: #CBD5E1; margin-top: .4rem; }
+.kiosk-headline { font-size: 1.35rem; font-weight: 700; color: #fff; margin-top: 1rem; }
+
+.kiosk-idle { color: #94A3B8; }
+.kiosk-idle-icon { font-size: 4rem; margin-bottom: 1rem; opacity: .55; }
+.kiosk-idle h1 { font-size: 1.7rem; font-weight: 800; color: #CBD5E1; line-height: 1.5; }
+.kiosk-idle p { font-size: 1rem; margin-top: .5rem; }
+
+#cam {
+  position: absolute; inset-block-end: 1.25rem; inset-inline-end: 1.25rem;
+  width: 240px; border-radius: 14px; border: 2px solid rgba(255,255,255,.2);
+}
+
+.kiosk-side {
+  background: rgba(255,255,255,.03); border-inline-start: 1px solid rgba(255,255,255,.1);
+  padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;
+}
+.kiosk-stats { display: grid; gap: .75rem; }
+.kiosk-stat {
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px; padding: .85rem 1rem; border-top: 3px solid var(--edu-sky);
+}
+.kiosk-stat.ok    { border-top-color: #16A34A; }
+.kiosk-stat.amber { border-top-color: var(--edu-amber); }
+.kiosk-stat.red   { border-top-color: var(--edu-red); }
+.kiosk-stat .lbl  { font-size: .78rem; color: #94A3B8; }
+.kiosk-stat .val  { font-size: 1.6rem; font-weight: 900; color: #fff; line-height: 1.2; }
+.kiosk-stat .hint { font-size: .74rem; color: #94A3B8; }
+
+.kiosk-panel {
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px; padding: .9rem 1rem;
+}
+.kiosk-panel h2 { font-size: .88rem; font-weight: 800; color: #fff; margin-bottom: .6rem; }
+.kiosk-panel .edu-row { border-bottom-color: rgba(255,255,255,.08); padding: .55rem 0; }
+.kiosk-panel .edu-row-title { color: #E2E8F0; font-size: .85rem; }
+.kiosk-panel .edu-row-sub { color: #94A3B8; font-size: .74rem; }
+.kiosk-muted { color: #64748B; font-size: .82rem; }
+
+/* النوافذ داخل الشاشة تبقى فاتحة لسهولة الإدخال */
+body.edu.kiosk .edu-modal-box { background: #fff; color: var(--edu-text); }
+
+@media (max-width: 900px) {
+  .kiosk-main { grid-template-columns: 1fr; height: auto; }
+  body.edu.kiosk { overflow: auto; height: auto; }
+  .kiosk-side { border-inline-start: none; border-top: 1px solid rgba(255,255,255,.1); }
+  .kiosk-name { font-size: 1.9rem; }
+  .kiosk-mark { font-size: 3.5rem; }
+  .kiosk-result { padding: 2rem 1.25rem; }
+}
+
+/* ── بطاقة الحضور (الباركود على صفحة الشخص) ─────────────────────────── */
+.edu-badge-card {
+  background: #fff; border: 2px solid var(--edu-navy); border-radius: 16px;
+  padding: 1.25rem; text-align: center; max-width: 360px; margin: 0 auto;
+}
+.edu-badge-card .who { font-family: 'ThmanyahSans', sans-serif; font-size: 1.1rem; font-weight: 900; }
+.edu-badge-card .sub { font-size: .8rem; color: var(--edu-muted); margin-bottom: .9rem; }
+.edu-barcode { display: block; max-width: 100%; height: auto; }
+.edu-badge-timer {
+  font-size: .78rem; color: var(--edu-muted); margin-top: .6rem;
+  font-variant-numeric: tabular-nums;
+}

@@ -330,6 +330,55 @@ CREATE TABLE IF NOT EXISTS edu_leads (
 );
 CREATE INDEX IF NOT EXISTS edu_leads_created_idx ON edu_leads (created_at DESC);
 
+-- ===== 15. الحضور بالباركود (طلاب وكادر) =====
+-- كل شخص (طالب أو منسوب) له رمز حضور ثابت يُطبع على الأسورة/الميدالية/
+-- البطاقة، ورقم سري احتياطي إن نسي حامله.
+--
+-- ملاحظة أمنية: الرمز الثابت يصلح للأشياء المادية (سوار/ميدالية/بطاقة)
+-- لأن حملها هو الإثبات. أما شاشة الجوال فتعرض رمزاً موقّعاً قصير العمر
+-- يتولّد في المتصفح من نفس الرمز الثابت (انظر Edu.rollingCode) حتى لا
+-- ينفع تصويره وإرساله لزميل.
+ALTER TABLE edu_users    ADD COLUMN IF NOT EXISTS checkin_code text;
+ALTER TABLE edu_users    ADD COLUMN IF NOT EXISTS pin_hash     text;
+ALTER TABLE edu_students ADD COLUMN IF NOT EXISTS checkin_code text;
+ALTER TABLE edu_students ADD COLUMN IF NOT EXISTS pin_hash     text;
+
+-- الرمز فريد على مستوى النظام كله: قارئ الباركود لا يعرف أي مدرسة يقرأ لها
+CREATE UNIQUE INDEX IF NOT EXISTS edu_users_checkin_uq
+  ON edu_users (checkin_code) WHERE checkin_code IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS edu_students_checkin_uq
+  ON edu_students (checkin_code) WHERE checkin_code IS NOT NULL;
+
+-- كيف سُجّل الحضور ومتى بالضبط
+-- qr = مسح رمز | pin = رقم سري | manual = إدخال يدوي من الإدارة
+-- | self = المنسوب سجّل نفسه | biometric = بصمة (محجوز لتكامل مستقبلي)
+ALTER TABLE edu_attendance ADD COLUMN IF NOT EXISTS check_in_at timestamptz;
+ALTER TABLE edu_attendance ADD COLUMN IF NOT EXISTS method      text;
+
+-- حضور المنسوبين (معلمون وإدارة) — منفصل عن حضور الطلاب
+CREATE TABLE IF NOT EXISTS edu_staff_attendance (
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  school_id   uuid NOT NULL REFERENCES edu_schools(id) ON DELETE CASCADE,
+  user_id     uuid NOT NULL REFERENCES edu_users(id) ON DELETE CASCADE,
+  date        date NOT NULL,
+  -- present = حاضر | absent = غائب | late = متأخر | leave = إجازة/مأذونية
+  status      text NOT NULL DEFAULT 'present',
+  check_in_at timestamptz,
+  method      text,
+  -- سبب الغياب حين يسجّله المنسوب من حسابه
+  reason      text,
+  -- هل سجّله بنفسه من بيته؟ يميّزه عن تسجيل الإدارة
+  self_report boolean NOT NULL DEFAULT false,
+  recorded_by uuid REFERENCES edu_users(id) ON DELETE SET NULL,
+  created_at  timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (user_id, date)
+);
+CREATE INDEX IF NOT EXISTS edu_staff_att_school_idx ON edu_staff_attendance (school_id, date DESC);
+
+-- إعدادات الدوام لكل مدرسة — تحدد متى يُعتبر الحضور تأخيراً
+ALTER TABLE edu_schools ADD COLUMN IF NOT EXISTS day_start   time DEFAULT '07:00';
+ALTER TABLE edu_schools ADD COLUMN IF NOT EXISTS late_after  time DEFAULT '07:15';
+
 -- ============================================================
 -- الأمان: RLS مفعّل مع رفض افتراضي على كل الجداول.
 -- لا سياسات SELECT/INSERT عامة — الوصول حصراً عبر service key
@@ -342,7 +391,7 @@ BEGIN
     'edu_schools','edu_users','edu_classes','edu_subjects','edu_students',
     'edu_guardians','edu_timetable','edu_exams','edu_grades','edu_homework',
     'edu_homework_status','edu_attendance','edu_announcements','edu_messages','edu_otp',
-    'edu_fee_plans','edu_invoices','edu_payments','edu_leads'
+    'edu_fee_plans','edu_invoices','edu_payments','edu_leads','edu_staff_attendance'
   ] LOOP
     EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t);
     EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', t);

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة الحضور — رفد تعليم</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/edu.css">
+</head>
+<body class="edu kiosk">
+
+<header class="kiosk-top">
+  <div class="kiosk-brand">
+    <span class="edu-brand-mark">ر</span>
+    <div>
+      <div class="edu-brand-text">شاشة الحضور</div>
+      <div class="edu-brand-sub" id="schoolName">—</div>
+    </div>
+  </div>
+  <div class="kiosk-clock" id="clock">—</div>
+  <div class="kiosk-actions">
+    <button class="edu-btn ghost sm" id="pinBtn">🔢 رقم سري</button>
+    <button class="edu-btn ghost sm" id="lookupBtn">🔍 بحث الإدارة</button>
+    <button class="edu-btn ghost sm" id="camBtn" hidden>📷 كاميرا</button>
+    <a class="edu-btn ghost sm" href="/edu-school.html">↩ اللوحة</a>
+  </div>
+</header>
+
+<main class="kiosk-main">
+  <section class="kiosk-stage">
+    <!-- حقل المسح: مركّز دائماً، يستقبل قارئ USB الذي يعمل كلوحة مفاتيح -->
+    <form id="scanForm" autocomplete="off">
+      <input id="scanInput" inputmode="none" autocomplete="off"
+             aria-label="امسح الباركود" placeholder="امسح الباركود…">
+    </form>
+
+    <div class="kiosk-result" id="result">
+      <div class="kiosk-idle">
+        <div class="kiosk-idle-icon">📇</div>
+        <h1>مرّر السوار أو البطاقة أمام القارئ</h1>
+        <p>أو اعرض الرمز من شاشة جوالك</p>
+      </div>
+    </div>
+
+    <video id="cam" playsinline muted hidden></video>
+  </section>
+
+  <aside class="kiosk-side">
+    <div class="kiosk-stats" id="stats"></div>
+
+    <div class="kiosk-panel">
+      <h2>🚨 غياب الكادر اليوم</h2>
+      <div id="absentList"><p class="kiosk-muted">—</p></div>
+    </div>
+
+    <div class="kiosk-panel">
+      <h2>آخر من حضر</h2>
+      <div id="feed"><p class="kiosk-muted">—</p></div>
+    </div>
+  </aside>
+</main>
+
+<div class="edu-modal" id="modal">
+  <div class="edu-modal-box">
+    <div class="edu-modal-head">
+      <h3 id="modalTitle">—</h3>
+      <button type="button" id="modalClose" aria-label="إغلاق">×</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="/edu-common.js"></script>
+<script>
+(function () {
+  var session = Edu.requireRole(['school_admin', 'teacher']);
+  if (!session) return;
+
+  var E = Edu.esc;
+  var scanInput = document.getElementById('scanInput');
+  var resultEl = document.getElementById('result');
+  var modal = document.getElementById('modal');
+  var modalBody = document.getElementById('modalBody');
+
+  document.getElementById('schoolName').textContent = session.user.school_name || 'المدرسة';
+
+  // ── الساعة ───────────────────────────────────────────────────────────
+  function tickClock() {
+    var d = new Date();
+    document.getElementById('clock').textContent =
+      Edu.weekdayName(d.getDay()) + ' · ' +
+      d.toLocaleTimeString(Edu.lang() === 'en' ? 'en-GB' : 'ar-SA',
+        { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  // ── التركيز الدائم على حقل المسح ─────────────────────────────────────
+  // قارئ USB يتصرف كلوحة مفاتيح: يكتب الرمز ثم Enter. إن لم يكن الحقل
+  // مركّزاً ضاع المسح، فنعيد التركيز إليه ما لم تكن نافذة مفتوحة.
+  function refocus() {
+    if (!modal.classList.contains('open')) scanInput.focus();
+  }
+  setInterval(refocus, 800);
+  document.addEventListener('click', refocus);
+  refocus();
+
+  // ── عرض النتيجة ──────────────────────────────────────────────────────
+  var resetTimer = null;
+
+  function showIdle() {
+    resultEl.className = 'kiosk-result';
+    resultEl.innerHTML = '<div class="kiosk-idle"><div class="kiosk-idle-icon">📇</div>' +
+      '<h1>مرّر السوار أو البطاقة أمام القارئ</h1>' +
+      '<p>أو اعرض الرمز من شاشة جوالك</p></div>';
+  }
+
+  function showResult(kind, res) {
+    clearTimeout(resetTimer);
+    var late = res.record && res.record.status === 'late';
+    var cls = res.duplicate ? 'dup' : late ? 'late' : 'ok';
+    resultEl.className = 'kiosk-result ' + cls;
+    var icon = res.duplicate ? '↺' : late ? '⏰' : '✓';
+    var headline = res.duplicate ? 'مسجّل مسبقاً' : late ? 'حضور متأخر' : 'تم تسجيل الحضور';
+    var when = res.record && res.record.check_in_at
+      ? new Date(res.record.check_in_at).toLocaleTimeString(
+          Edu.lang() === 'en' ? 'en-GB' : 'ar-SA', { hour: '2-digit', minute: '2-digit' })
+      : '';
+
+    resultEl.innerHTML =
+      '<div class="kiosk-mark">' + icon + '</div>' +
+      '<div class="kiosk-name">' + E(res.person.full_name) + '</div>' +
+      '<div class="kiosk-meta">' +
+        E(res.person.class_name || (res.person.role === 'school_admin' ? 'الإدارة' :
+          res.person.role === 'teacher' ? 'معلم' : '')) +
+        (res.person.student_number ? ' · رقم ' + E(res.person.student_number) : '') +
+      '</div>' +
+      '<div class="kiosk-headline">' + E(headline) + (when ? ' — ' + E(when) : '') + '</div>';
+
+    // نغمة قصيرة تُسمع في بهو المدرسة دون الحاجة لملف صوت
+    beep(res.duplicate ? 320 : late ? 520 : 880);
+    resetTimer = setTimeout(showIdle, 4000);
+    loadFeed();
+  }
+
+  function showError(msg) {
+    clearTimeout(resetTimer);
+    resultEl.className = 'kiosk-result err';
+    resultEl.innerHTML = '<div class="kiosk-mark">✕</div>' +
+      '<div class="kiosk-headline">' + E(msg) + '</div>';
+    beep(200);
+    resetTimer = setTimeout(showIdle, 3500);
+  }
+
+  var audioCtx = null;
+  function beep(freq) {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      var o = audioCtx.createOscillator();
+      var g = audioCtx.createGain();
+      o.frequency.value = freq;
+      g.gain.value = 0.06;
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start();
+      o.stop(audioCtx.currentTime + 0.12);
+    } catch (e) { /* الصوت كمالي — لا يعطّل التسجيل */ }
+  }
+
+  // ── الاتصال ──────────────────────────────────────────────────────────
+  // Edu.checkin يوجّه للخادم، أو للبيانات التجريبية في وضع العرض
+  var api = Edu.checkin;
+
+  var busy = false;
+
+  document.getElementById('scanForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var code = scanInput.value.trim();
+    scanInput.value = '';
+    if (!code || busy) return;
+    busy = true;
+    try {
+      var res = await api('scan', { code: code });
+      showResult(res.kind, res);
+    } catch (err) {
+      showError(err.message || 'رمز غير معروف');
+    }
+    busy = false;
+    refocus();
+  });
+
+  // ── الرقم السري ──────────────────────────────────────────────────────
+  document.getElementById('pinBtn').onclick = function () {
+    openModal('الدخول بالرقم السري',
+      '<div class="edu-field"><label for="pIdent">رقم الطالب أو الهوية</label>' +
+      '<input id="pIdent" inputmode="numeric" autocomplete="off"></div>' +
+      '<div class="edu-field"><label for="pPin">الرقم السري</label>' +
+      '<input id="pPin" type="password" inputmode="numeric" autocomplete="off"></div>' +
+      '<div id="pMsg"></div>' +
+      '<button class="edu-btn green" id="pGo" style="width:100%">تسجيل الحضور</button>');
+    setTimeout(function () { document.getElementById('pIdent').focus(); }, 60);
+    document.getElementById('pGo').onclick = async function () {
+      var btn = this;
+      btn.disabled = true;
+      try {
+        var res = await api('pin', {
+          identifier: document.getElementById('pIdent').value.trim(),
+          pin: document.getElementById('pPin').value.trim(),
+        });
+        closeModal();
+        showResult(res.kind, res);
+      } catch (err) {
+        document.getElementById('pMsg').innerHTML =
+          '<div class="edu-alert danger">' + E(err.message) + '</div>';
+        btn.disabled = false;
+      }
+    };
+  };
+
+  // ── بحث الإدارة ──────────────────────────────────────────────────────
+  document.getElementById('lookupBtn').onclick = function () {
+    openModal('بحث الإدارة',
+      '<div class="edu-alert info">للحالات التي لا يحمل فيها الشخص سواره ولا يذكر رقمه السري. ' +
+      'يُسجَّل الحضور باسم من أدخله.</div>' +
+      '<div class="edu-field"><label for="lq">الاسم أو رقم الطالب أو الهوية</label>' +
+      '<input id="lq" autocomplete="off"></div><div id="lRes"></div>');
+    var input = document.getElementById('lq');
+    setTimeout(function () { input.focus(); }, 60);
+    var t = null;
+    input.addEventListener('input', function () {
+      clearTimeout(t);
+      t = setTimeout(runLookup, 300);
+    });
+  };
+
+  async function runLookup() {
+    var term = document.getElementById('lq').value.trim();
+    var box = document.getElementById('lRes');
+    if (term.length < 2) { box.innerHTML = ''; return; }
+    try {
+      var res = await api('lookup', { q: term });
+      var rows = (res.students || []).map(function (s) {
+        return listRow('student', s.id, s.full_name,
+          (s.class_name || '') + (s.student_number ? ' · ' + s.student_number : ''));
+      }).concat((res.staff || []).map(function (u) {
+        return listRow('staff', u.id, u.full_name,
+          u.role === 'school_admin' ? 'الإدارة' : 'معلم');
+      }));
+      box.innerHTML = rows.length
+        ? '<div class="edu-list">' + rows.join('') + '</div>'
+        : '<div class="edu-empty"><p>لا نتائج</p></div>';
+      Array.prototype.forEach.call(box.querySelectorAll('[data-pick]'), function (b) {
+        b.addEventListener('click', async function () {
+          b.disabled = true;
+          try {
+            var r = await api('manual', {
+              kind: b.getAttribute('data-kind'), id: b.getAttribute('data-pick'),
+            });
+            closeModal();
+            showResult(r.kind, r);
+          } catch (err) { Edu.toast(err.message); b.disabled = false; }
+        });
+      });
+    } catch (e) {
+      box.innerHTML = '<div class="edu-alert danger">' + E(e.message) + '</div>';
+    }
+  }
+
+  function listRow(kind, id, name, detail) {
+    return '<div class="edu-row"><span class="edu-avatar">' + E(Edu.initials(name)) + '</span>' +
+      '<div class="edu-row-main"><div class="edu-row-title">' + E(name) + '</div>' +
+      '<div class="edu-row-sub">' + E(detail) + '</div></div>' +
+      '<div class="edu-row-end"><button class="edu-btn sm" data-pick="' + E(id) +
+      '" data-kind="' + E(kind) + '">تسجيل</button></div></div>';
+  }
+
+  // ── الكاميرا (حين يدعمها المتصفح) ────────────────────────────────────
+  // BarcodeDetector متاح في Chrome/Android. غيابه لا يعطّل شيئاً —
+  // قارئ USB والرقم السري والبحث اليدوي كلها تعمل بدونه.
+  if ('BarcodeDetector' in window) {
+    var camBtn = document.getElementById('camBtn');
+    camBtn.hidden = false;
+    var video = document.getElementById('cam');
+    var scanning = false;
+    camBtn.onclick = async function () {
+      if (scanning) { stopCam(); return; }
+      try {
+        var stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        video.srcObject = stream;
+        video.hidden = false;
+        await video.play();
+        scanning = true;
+        camBtn.textContent = '⏹ إيقاف الكاميرا';
+        var detector = new window.BarcodeDetector({
+          formats: ['code_128', 'qr_code', 'ean_13'],
+        });
+        (function loop() {
+          if (!scanning) return;
+          detector.detect(video).then(function (codes) {
+            if (codes && codes.length) {
+              scanInput.value = codes[0].rawValue;
+              document.getElementById('scanForm').requestSubmit();
+              // مهلة قبل القراءة التالية حتى لا يتكرر نفس الرمز
+              setTimeout(loop, 2500);
+            } else {
+              setTimeout(loop, 250);
+            }
+          }).catch(function () { setTimeout(loop, 500); });
+        })();
+      } catch (e) {
+        Edu.toast('تعذّر فتح الكاميرا — استخدم قارئ الباركود');
+      }
+    };
+    function stopCam() {
+      scanning = false;
+      video.hidden = true;
+      if (video.srcObject) video.srcObject.getTracks().forEach(function (t) { t.stop(); });
+      camBtn.textContent = '📷 كاميرا';
+    }
+  }
+
+  // ── اللوحة الجانبية ──────────────────────────────────────────────────
+  async function loadFeed() {
+    try {
+      var f = await api('feed', {});
+      var s = f.summary || {};
+      document.getElementById('stats').innerHTML =
+        kstat('طلاب حضروا', s.students_in + ' / ' + s.students_total,
+              s.students_missing + ' لم يحضروا', s.students_missing > 0 ? 'amber' : 'ok') +
+        kstat('كادر حضر', s.staff_in + ' / ' + s.staff_total,
+              s.staff_absent + ' غياب', s.staff_absent > 0 ? 'red' : 'ok');
+
+      var abs = f.staff_absent || [];
+      document.getElementById('absentList').innerHTML = abs.length
+        ? abs.map(function (a) {
+            return '<div class="edu-row"><span class="edu-dot">🚫</span>' +
+              '<div class="edu-row-main"><div class="edu-row-title">' + E(a.full_name) + '</div>' +
+              '<div class="edu-row-sub">' + E(a.reason || (a.status === 'leave' ? 'إجازة' : 'غياب')) +
+              (a.self_report ? ' · سجّله بنفسه' : '') + '</div></div></div>';
+          }).join('')
+        : '<p class="kiosk-muted">لا يوجد غياب مسجّل</p>';
+
+      var recent = f.recent || [];
+      document.getElementById('feed').innerHTML = recent.length
+        ? recent.map(function (r) {
+            var t = r.at ? new Date(r.at).toLocaleTimeString(
+              Edu.lang() === 'en' ? 'en-GB' : 'ar-SA', { hour: '2-digit', minute: '2-digit' }) : '';
+            return '<div class="edu-row"><span class="edu-avatar">' +
+              E(Edu.initials(r.full_name)) + '</span>' +
+              '<div class="edu-row-main"><div class="edu-row-title">' + E(r.full_name) + '</div>' +
+              '<div class="edu-row-sub">' + E(r.detail || '') + ' · ' +
+              E(Edu.label(Edu.CHECKIN_METHODS, r.method)) + '</div></div>' +
+              '<div class="edu-row-end"><span class="edu-badge ' +
+              (r.status === 'late' ? 'warn' : 'ok') + '">' + E(t) + '</span></div></div>';
+          }).join('')
+        : '<p class="kiosk-muted">لم يسجّل أحد بعد</p>';
+    } catch (e) { /* الشاشة تبقى تعمل حتى لو تعذّر تحديث اللوحة */ }
+  }
+
+  function kstat(lbl, val, hint, tone) {
+    return '<div class="kiosk-stat ' + tone + '"><div class="lbl">' + E(lbl) + '</div>' +
+      '<div class="val">' + E(val) + '</div><div class="hint">' + E(hint) + '</div></div>';
+  }
+
+  loadFeed();
+  setInterval(loadFeed, 20000);
+
+  // ── النافذة ──────────────────────────────────────────────────────────
+  function openModal(title, html) {
+    document.getElementById('modalTitle').textContent = title;
+    modalBody.innerHTML = html;
+    modal.classList.add('open');
+  }
+  function closeModal() {
+    modal.classList.remove('open');
+    modalBody.innerHTML = '';
+    refocus();
+  }
+  document.getElementById('modalClose').onclick = closeModal;
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+})();
+</script>
+</body>
+</html>

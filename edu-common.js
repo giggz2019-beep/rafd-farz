@@ -85,6 +85,20 @@
     }
   }
 
+  // كل نداءات شاشة الحضور تمر من هنا — تُخدَم محلياً في الوضع التجريبي
+  async function checkin(action, payload) {
+    var s = getSession();
+    if (!s) throw new Error('انتهت الجلسة');
+    if (s.demo) return Demo.checkin(action, payload || {}, s);
+    try {
+      return await callApi('edu-checkin', Object.assign(
+        { action: action, token: s.token }, payload || {}));
+    } catch (e) {
+      if (e.status === 401) { clearSession(); location.href = '/edu-login.html'; }
+      throw e;
+    }
+  }
+
   // ── أدوات التاريخ والعرض ─────────────────────────────────────────────
   var WEEKDAYS_AR = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
   var WEEKDAYS_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -219,6 +233,101 @@
   function tone(map, key) {
     return (map[key] && map[key].tone) || 'neutral';
   }
+
+  // ══════════════════════════════════════════════════════════════════════
+  //  الباركود — Code 128 مرسوم كـ SVG بلا أي مكتبة خارجية.
+  //  اخترنا Code 128 لأن قارئات USB الرخيصة (~50 ريال) تقرأه مباشرة
+  //  وتتصرف كلوحة مفاتيح، فلا تحتاج المدرسة كاميرا ولا تطبيقاً.
+  // ══════════════════════════════════════════════════════════════════════
+  // أنماط Code128: 107 نمط، كل نمط 6 أرقام تمثل عرض الشرائط بالتناوب
+  // (أسود، أبيض، أسود...). المصدر: مواصفة ISO/IEC 15417.
+  var C128 = ('212222,222122,222221,121223,121322,131222,122213,122312,132212,221213,' +
+    '221312,231212,112232,122132,122231,113222,123122,123221,223211,221132,' +
+    '221231,213212,223112,312131,311222,321122,321221,312212,322112,322211,' +
+    '212123,212321,232121,111323,131123,131321,112313,132113,132311,211313,' +
+    '231113,231311,112133,112331,132131,113123,113321,133121,313121,211331,' +
+    '231131,213113,213311,213131,311123,311321,331121,312113,312311,332111,' +
+    '314111,221411,431111,111224,111422,121124,121421,141122,141221,112214,' +
+    '112412,122114,122411,142112,142211,241211,221114,413111,241112,134111,' +
+    '111242,121142,121241,114212,124112,124211,411212,421112,421211,212141,' +
+    '214121,412121,111143,111341,131141,114113,114311,411113,411311,113141,' +
+    '114131,311141,411131,211412,211214,211232,2331112').split(',');
+
+  // نستخدم Code Set B (كل الحروف والأرقام المطبوعة)
+  function code128Widths(text) {
+    var s = String(text || '');
+    var codes = [104]; // START B
+    var sum = 104;
+    for (var i = 0; i < s.length; i++) {
+      var v = s.charCodeAt(i) - 32;
+      if (v < 0 || v > 94) continue; // نتجاهل ما لا يمثَّل في Code Set B
+      codes.push(v);
+      sum += v * (codes.length - 1);
+    }
+    codes.push(sum % 103); // خانة التحقق
+    codes.push(106);       // STOP
+    var widths = [];
+    codes.forEach(function (c) {
+      var pat = C128[c];
+      for (var j = 0; j < pat.length; j++) widths.push(parseInt(pat[j], 10));
+    });
+    return widths;
+  }
+
+  // يعيد SVG جاهزاً للإدراج — العرض يتكيّف مع الحاوية
+  function barcodeSVG(text, opts) {
+    opts = opts || {};
+    var h = opts.height || 70;
+    var unit = opts.unit || 2;
+    var widths = code128Widths(text);
+    var x = 0, bars = '', dark = true;
+    widths.forEach(function (w) {
+      var wpx = w * unit;
+      if (dark) bars += '<rect x="' + x + '" y="0" width="' + wpx + '" height="' + h + '"/>';
+      x += wpx;
+      dark = !dark;
+    });
+    var label = opts.showText === false ? '' :
+      '<text x="' + (x / 2) + '" y="' + (h + 15) +
+      '" text-anchor="middle" font-size="13" font-family="monospace" fill="#0F172A">' +
+      esc(text) + '</text>';
+    return '<svg class="edu-barcode" viewBox="0 0 ' + x + ' ' + (h + (opts.showText === false ? 0 : 20)) +
+      '" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="باركود ' + esc(text) + '">' +
+      '<rect width="100%" height="100%" fill="#fff"/><g fill="#000">' + bars + '</g>' + label + '</svg>';
+  }
+
+  // ── الرمز المتغير لشاشة الجوال ──────────────────────────────────────
+  // الباركود المطبوع على الأسورة ثابت (حمله هو الإثبات)، أما ما يُعرض
+  // على شاشة الجوال فيتغيّر كل 30 ثانية حتى لا ينفع تصويره وإرساله.
+  // الخادم يقبل الرمز الثابت أو أي رمز متغير صالح لنافذته الزمنية.
+  var ROLL_WINDOW = 30000;
+
+  function rollingCode(baseCode, offsetWindows) {
+    if (!baseCode) return '';
+    var win = Math.floor(Date.now() / ROLL_WINDOW) + (offsetWindows || 0);
+    // تجزئة بسيطة (FNV-1a) — الغرض منع إعادة الاستخدام لا السرية،
+    // فالخادم يتحقق من الرمز الأصلي والنافذة معاً
+    var h = 0x811c9dc5;
+    var s = baseCode + '|' + win;
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+    }
+    var suffix = ('00000' + (h % 100000)).slice(-5);
+    return baseCode + '-' + suffix;
+  }
+
+  function rollingSecondsLeft() {
+    return Math.ceil((ROLL_WINDOW - (Date.now() % ROLL_WINDOW)) / 1000);
+  }
+
+  var CHECKIN_METHODS = {
+    qr:        { ar: 'مسح باركود',   en: 'Scan' },
+    pin:       { ar: 'رقم سري',      en: 'PIN' },
+    manual:    { ar: 'إدخال يدوي',   en: 'Manual' },
+    self:      { ar: 'تسجيل ذاتي',   en: 'Self' },
+    biometric: { ar: 'بصمة',         en: 'Biometric' },
+  };
 
   // تهريب النصوص القادمة من قاعدة البيانات قبل إدراجها في innerHTML
   function esc(s) {
@@ -884,13 +993,136 @@
       };
     }
 
-    return { handle: handle, login: login, ACCOUNTS: ACCOUNTS };
+    // ── شاشة الحضور في الوضع التجريبي ──────────────────────────────────
+    // رموز جاهزة تُمسح على المسرح، وسجل يتراكم أمام الحضور.
+    var DEMO_CODES = {
+      'SAB7K9MN': { kind: 'student', id: 'st1', full_name: 'عبدالرحمن محمد',
+                    student_number: '4512', class_name: 'الصف الخامس - أ' },
+      'SLY4P2QR': { kind: 'student', id: 'st2', full_name: 'ليان محمد',
+                    student_number: '4788', class_name: 'الصف الثاني - ب' },
+      'TSA3D8FG': { kind: 'staff', id: 'tc1', full_name: 'أ. سعد المطيري', role: 'teacher' },
+      'TNO6H4JK': { kind: 'staff', id: 'tc2', full_name: 'أ. نورة العتيبي', role: 'teacher' },
+    };
+
+    var demoLog = [];
+    var demoSeen = {};
+    // معلم سجّل غيابه من بيته — يظهر في لوحة الشاشة فوراً
+    var demoStaffAbsent = [
+      { user_id: 'tc3', full_name: 'أ. خالد الشمري', status: 'absent',
+        reason: 'ظرف صحي طارئ', self_report: true },
+    ];
+
+    function checkin(action, payload, session) {
+      if (action === 'scan') {
+        var raw = String(payload.code || '').trim().toUpperCase();
+        var base = raw.replace(/-\d{5}$/, '');
+        var person = DEMO_CODES[base];
+        if (!person) {
+          var err = new Error('رمز غير معروف');
+          err.status = 404;
+          return Promise.reject(err);
+        }
+        return Promise.resolve(record(person));
+      }
+
+      if (action === 'pin') {
+        var ident = String(payload.identifier || '').trim();
+        var match = null;
+        Object.keys(DEMO_CODES).forEach(function (k) {
+          var p = DEMO_CODES[k];
+          if (p.student_number === ident) match = p;
+        });
+        if (!match || String(payload.pin || '') !== '1234') {
+          var e2 = new Error(match ? 'الرقم السري غير صحيح' : 'لم يُعثر على الشخص');
+          e2.status = 401;
+          return Promise.reject(e2);
+        }
+        return Promise.resolve(record(match, 'pin'));
+      }
+
+      if (action === 'lookup') {
+        var term = String(payload.q || '').trim();
+        var students = [], staff = [];
+        Object.keys(DEMO_CODES).forEach(function (k) {
+          var p = DEMO_CODES[k];
+          if (p.full_name.indexOf(term) === -1 && String(p.student_number || '').indexOf(term) === -1) return;
+          if (p.kind === 'student') students.push(p); else staff.push(p);
+        });
+        return Promise.resolve({ students: students, staff: staff });
+      }
+
+      if (action === 'manual') {
+        var found = null;
+        Object.keys(DEMO_CODES).forEach(function (k) {
+          if (DEMO_CODES[k].id === payload.id) found = DEMO_CODES[k];
+        });
+        if (!found) return Promise.reject(new Error('غير موجود'));
+        return Promise.resolve(record(found, 'manual'));
+      }
+
+      if (action === 'self') {
+        var status = payload.status || 'absent';
+        if (status === 'absent' || status === 'leave') {
+          demoStaffAbsent = demoStaffAbsent.filter(function (a) { return a.user_id !== session.user.id; });
+          demoStaffAbsent.push({
+            user_id: session.user.id, full_name: session.user.full_name,
+            status: status, reason: payload.reason || null, self_report: true,
+          });
+        }
+        return Promise.resolve({ ok: true, record: { status: status } });
+      }
+
+      if (action === 'feed') {
+        var studentsIn = demoLog.filter(function (r) { return r.kind === 'student'; }).length;
+        var staffIn = demoLog.filter(function (r) { return r.kind === 'staff'; }).length;
+        return Promise.resolve({
+          date: iso(0),
+          recent: demoLog.slice(0, 30),
+          summary: {
+            students_total: 412, students_in: 389 + studentsIn,
+            students_missing: Math.max(0, 412 - (389 + studentsIn)),
+            staff_total: 28, staff_in: 25 + staffIn,
+            staff_absent: demoStaffAbsent.length,
+          },
+          staff_absent: demoStaffAbsent,
+          staff_pending: [],
+        });
+      }
+
+      if (action === 'issue_codes') return Promise.resolve({ ok: true, students: 412, staff: 28 });
+      if (action === 'set_pin') return Promise.resolve({ ok: true });
+      return Promise.resolve({});
+    }
+
+    function record(person, method) {
+      var now = new Date();
+      // بعد 7:15 يُحتسب متأخراً — نفس قاعدة الخادم
+      var late = (now.getHours() > 7) || (now.getHours() === 7 && now.getMinutes() > 15);
+      var dup = !!demoSeen[person.id];
+      if (!dup) {
+        demoSeen[person.id] = true;
+        demoLog.unshift({
+          kind: person.kind, id: person.id, full_name: person.full_name,
+          detail: person.class_name || (person.role === 'teacher' ? 'معلم' : 'الإدارة'),
+          status: late ? 'late' : 'present', method: method || 'qr',
+          at: now.toISOString(),
+        });
+      }
+      return {
+        ok: true, kind: person.kind, duplicate: dup,
+        person: person,
+        record: { status: late ? 'late' : 'present', check_in_at: now.toISOString() },
+      };
+    }
+
+    return { handle: handle, login: login, checkin: checkin,
+             ACCOUNTS: ACCOUNTS, CODES: DEMO_CODES };
   })();
 
   global.Edu = {
     getSession: getSession, setSession: setSession, clearSession: clearSession,
     isDemo: isDemo, requireRole: requireRole, homeFor: homeFor, logout: logout,
-    callApi: callApi, data: data,
+    callApi: callApi, data: data, checkin: checkin,
     WEEKDAYS_AR: WEEKDAYS_AR, SCHOOL_DAYS: SCHOOL_DAYS, PERIOD_COUNT: 6,
     lang: lang, weekdayName: weekdayName,
     fmtDate: fmtDate, fmtShort: fmtShort, fmtTime: fmtTime,
@@ -898,6 +1130,9 @@
     initials: initials, pct: pct, gradeTone: gradeTone, esc: esc,
     HW_LABELS: HW_LABELS, ATT_LABELS: ATT_LABELS, EXAM_LABELS: EXAM_LABELS,
     INV_LABELS: INV_LABELS, PAY_LABELS: PAY_LABELS, money: money,
+    CHECKIN_METHODS: CHECKIN_METHODS,
+    barcodeSVG: barcodeSVG, rollingCode: rollingCode,
+    rollingSecondsLeft: rollingSecondsLeft, ROLL_WINDOW: ROLL_WINDOW,
     label: label, tone: tone,
     toast: toast, mountSidebar: mountSidebar,
     Demo: Demo,

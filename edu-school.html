@@ -34,6 +34,8 @@
     <button class="edu-nav-item" data-view="grades"><span class="ico">📊</span><span class="lbl">رصد الدرجات</span></button>
     <button class="edu-nav-item" data-view="finance"><span class="ico">💰</span><span class="lbl">الرسوم والتحصيل</span></button>
     <button class="edu-nav-item" data-view="import"><span class="ico">📥</span><span class="lbl">استيراد الطلاب</span></button>
+    <button class="edu-nav-item" data-view="badge"><span class="ico">📇</span><span class="lbl">بطاقتي وحضوري</span></button>
+    <a class="edu-nav-item" href="/edu-kiosk.html"><span class="ico">🖥️</span><span class="lbl">شاشة الحضور</span></a>
     <button class="edu-nav-item" data-view="announcements"><span class="ico">📢</span><span class="lbl">الإعلانات</span></button>
 
     <div class="edu-side-foot">
@@ -104,6 +106,7 @@
     grades: 'رصد الدرجات', announcements: 'الإعلانات',
     finance: 'الرسوم والتحصيل', import: 'استيراد الطلاب',
     board: 'بناء الجدول', teachers: 'جداول المعلمين', cover: 'احتياط الغياب',
+    badge: 'بطاقتي وحضوري',
   };
 
   Array.prototype.forEach.call(document.querySelectorAll('.edu-nav-item[data-view]'), function (b) {
@@ -146,6 +149,7 @@
         grades: viewGrades, announcements: viewAnnouncements,
         finance: viewFinance, import: viewImport,
         board: viewBoard, teachers: viewTeachers, cover: viewCover,
+        badge: viewBadge,
       }[state.view] || viewOverview)(d);
     } catch (e) { fail(e); }
   }
@@ -472,6 +476,80 @@
           }).join('') + '</div>'
         : empty('📭', 'لا توجد إعلانات')) + '</div>';
     wire();
+  }
+
+  // ── بطاقتي وحضوري ────────────────────────────────────────────────────
+  // المنسوب يعرض باركوده أمام القارئ، أو يسجّل غيابه من بيته.
+  var badgeTimer = null;
+
+  function viewBadge() {
+    clearInterval(badgeTimer);
+    // في العرض التجريبي نستخدم رمز أ. سعد المطيري ليعمل المسح على المسرح
+    var code = session.user.checkin_code ||
+      (Edu.isDemo() ? 'TSA3D8FG' : null);
+
+    var html = '<div class="edu-grid c2">';
+
+    html += '<div class="edu-card"><div class="edu-card-head"><h2>📇 بطاقة الحضور</h2>' +
+      '<button class="more edu-btn ghost sm" onclick="window.print()">🖨️ طباعة</button></div>';
+    if (!code) {
+      html += '<div class="edu-alert warn">لم يُصدَر رمز حضور لحسابك بعد. ' +
+        'تطلبه إدارة المدرسة من «شاشة الحضور ← إصدار الرموز».</div>';
+    } else {
+      html += '<div class="edu-badge-card">' +
+        '<div class="who">' + E(session.user.full_name) + '</div>' +
+        '<div class="sub">' + E(session.user.school_name || '') + '</div>' +
+        '<div id="badgeBox"></div>' +
+        '<div class="edu-badge-timer" id="badgeTimer"></div>' +
+        '</div>' +
+        '<div class="edu-alert info" style="margin-top:1rem">الرمز المعروض يتغيّر كل 30 ثانية، ' +
+        'فلا ينفع تصويره وإرساله لأحد. امسحه مباشرة من الشاشة أمام القارئ.</div>';
+    }
+    html += '</div>';
+
+    html += '<div class="edu-card"><div class="edu-card-head"><h2>🏠 تسجيل غياب اليوم</h2></div>' +
+      '<div class="edu-alert info">إذا لم تتمكن من الحضور، سجّل غيابك من هنا — تصل الإدارة فوراً ' +
+      'وتظهر حصصك في شاشة الاحتياط ليُدبَّر لها بديل.</div>' +
+      '<div class="edu-field"><label for="abStatus">الحالة</label><select id="abStatus">' +
+      '<option value="absent">غياب</option>' +
+      '<option value="leave">إجازة / مأذونية</option>' +
+      '<option value="present">حاضر (تراجع عن الغياب)</option></select></div>' +
+      '<div class="edu-field"><label for="abReason">السبب (اختياري)</label>' +
+      '<textarea id="abReason" placeholder="ظرف صحي طارئ"></textarea></div>' +
+      '<button class="edu-btn green" id="abGo">تسجيل</button>' +
+      '<div id="abMsg" style="margin-top:1rem"></div></div>';
+
+    html += '</div>';
+    viewEl.innerHTML = html;
+
+    if (code) {
+      var box = document.getElementById('badgeBox');
+      var timer = document.getElementById('badgeTimer');
+      var paint = function () {
+        var rolling = Edu.rollingCode(code);
+        box.innerHTML = Edu.barcodeSVG(rolling, { height: 80, unit: 2 });
+        timer.textContent = 'يتجدّد خلال ' + Edu.rollingSecondsLeft() + ' ثانية';
+      };
+      paint();
+      badgeTimer = setInterval(paint, 1000);
+    }
+
+    document.getElementById('abGo').onclick = async function () {
+      var btn = this;
+      btn.disabled = true;
+      try {
+        await Edu.checkin('self', {
+          status: document.getElementById('abStatus').value,
+          reason: document.getElementById('abReason').value.trim(),
+        });
+        document.getElementById('abMsg').innerHTML =
+          '<div class="edu-alert ok">تم التسجيل — وصلت الإدارة وظهرت في شاشة الحضور.</div>';
+      } catch (e) {
+        document.getElementById('abMsg').innerHTML =
+          '<div class="edu-alert danger">' + E(e.message) + '</div>';
+      }
+      btn.disabled = false;
+    };
   }
 
   // ── بناء الجدول: شبكة قابلة للتعديل + كشف تعارض فوري ─────────────────
