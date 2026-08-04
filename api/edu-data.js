@@ -419,6 +419,31 @@ module.exports = async (req, res) => {
       if (!patch || !Object.keys(patch).length) {
         return res.status(400).json({ error: 'لا توجد بيانات للحفظ' });
       }
+
+      // معلم واحد لا يمكن أن يكون في فصلين في نفس الحصة. يُفحص على الخادم
+      // لأن واجهة واحدة لا تكفي: معلمان يبنيان الجدول في نفس اللحظة قد
+      // يحجزان نفس الخانة، والقيد لا يمكن تمثيله كـ UNIQUE في الجدول
+      // (يجب أن يسمح بـ teacher_id فارغ ومتكرر).
+      if (table === 'edu_timetable' && patch.teacher_id) {
+        const wd = patch.weekday, pn = patch.period_no;
+        if (wd !== undefined && pn !== undefined) {
+          const clash = await select(
+            `/edu_timetable?school_id=eq.${school}&teacher_id=eq.${patch.teacher_id}` +
+            `&weekday=eq.${wd}&period_no=eq.${pn}&select=id,class_id` +
+            (body.id ? `&id=neq.${body.id}` : '')
+          );
+          if (clash?.length) {
+            return res.status(409).json({
+              error: 'تعارض: المعلم مسنَد لحصة أخرى في نفس الوقت',
+              conflict: {
+                class_id: clash[0].class_id,
+                class_name: lk.classes[clash[0].class_id]?.name || null,
+                weekday: wd, period_no: pn,
+              },
+            });
+          }
+        }
+      }
       if (body.id) {
         const rows = await update(table, `id=eq.${body.id}&school_id=eq.${school}`, patch);
         if (!rows?.length) return res.status(404).json({ error: 'السجل غير موجود' });
@@ -455,6 +480,111 @@ module.exports = async (req, res) => {
       return res.status(200).json({
         students, timetable: decorate(timetable, lk),
         exams: decorate(exams, lk), homework: decorate(homework, lk),
+      });
+    }
+
+    // ═══ 7ب. الجدول الدراسي — البناء والتعارضات والنصاب ════════════════
+    // كل ما يخص الجدول يُحسب من نفس الصفوف، وهذا هو الفرق الجوهري عن
+    // ملف Excel: جدول الفصل وجدول المعلم ونصابه وقائمة الاحتياط كلها
+    // اشتقاقات لمصدر واحد، لا نسخ متوازية يدوية.
+    if (action === 'timetable_board') {
+      if (!isStaff(session.role)) return res.status(403).json({ error: 'غير مصرح' });
+      const rows = await select(
+        `/edu_timetable?school_id=eq.${school}&select=*&order=weekday.asc,period_no.asc`
+      );
+      const decorated = decorate(rows, lk);
+
+      // نصاب كل معلم = عدد حصصه الأسبوعية، وأيامه المشغولة
+      const load = {};
+      for (const t of lk.teacherList) load[t.id] = { teacher_id: t.id, full_name: t.full_name, periods: 0, days: new Set() };
+      for (const r of rows) {
+        if (!r.teacher_id || !load[r.teacher_id]) continue;
+        load[r.teacher_id].periods += 1;
+        load[r.teacher_id].days.add(r.weekday);
+      }
+
+      // تعارضات قائمة: نفس المعلم في نفس اليوم والحصة عند أكثر من فصل.
+      // نعرضها حتى لو دخلت البيانات قبل تفعيل الفحص أو عبر استيراد مباشر.
+      const seen = {};
+      const conflicts = [];
+      for (const r of decorated) {
+        if (!r.teacher_id) continue;
+        const key = `${r.teacher_id}|${r.weekday}|${r.period_no}`;
+        if (seen[key]) {
+          conflicts.push({
+            teacher_id: r.teacher_id, teacher_name: r.teacher_name,
+            weekday: r.weekday, period_no: r.period_no,
+            classes: [seen[key].class_name, r.class_name],
+          });
+        } else {
+          seen[key] = r;
+        }
+      }
+
+      return res.status(200).json({
+        timetable: decorated,
+        classes: lk.classList, subjects: lk.subjectList, teachers: lk.teacherList,
+        load: Object.values(load).map((l) => ({
+          teacher_id: l.teacher_id, full_name: l.full_name,
+          periods: l.periods, days: l.days.size,
+        })).sort((a, b) => b.periods - a.periods),
+        conflicts,
+      });
+    }
+
+    // جدول معلم واحد — مشتق من نفس الصفوف، لا يُبنى يدوياً
+    if (action === 'teacher_schedule') {
+      if (!isStaff(session.role)) return res.status(403).json({ error: 'غير مصرح' });
+      // المعلم يرى جدوله هو؛ مدير المدرسة يرى أي معلم
+      const target = session.role === 'school_admin' && body.teacher_id ? body.teacher_id : session.id;
+      const rows = await select(
+        `/edu_timetable?school_id=eq.${school}&teacher_id=eq.${target}&select=*&order=weekday.asc,period_no.asc`
+      );
+      const decorated = decorate(rows, lk);
+      const byDay = {};
+      for (const r of decorated) byDay[r.weekday] = (byDay[r.weekday] || 0) + 1;
+      return res.status(200).json({
+        teacher_id: target,
+        teacher_name: lk.teachers[target]?.full_name || null,
+        timetable: decorated,
+        load: { periods: decorated.length, days: Object.keys(byDay).length, by_day: byDay },
+        teachers: lk.teacherList,
+      });
+    }
+
+    // من يغطي حصص معلم غائب — لكل حصة، المعلمون غير المشغولين فيها
+    if (action === 'substitutes') {
+      if (!isStaff(session.role)) return res.status(403).json({ error: 'غير مصرح' });
+      const weekday = parseInt(body.weekday, 10);
+      if (!(weekday >= 0 && weekday <= 6) || !body.teacher_id) {
+        return res.status(400).json({ error: 'اليوم أو المعلم ناقص' });
+      }
+      const rows = await select(
+        `/edu_timetable?school_id=eq.${school}&weekday=eq.${weekday}&select=*&order=period_no.asc`
+      );
+      const decorated = decorate(rows, lk);
+      const affected = decorated.filter((r) => r.teacher_id === body.teacher_id);
+
+      // معلم مشغول في حصة = له صف في نفس اليوم ونفس رقم الحصة
+      const busy = {};
+      for (const r of rows) {
+        if (!r.teacher_id) continue;
+        (busy[r.period_no] = busy[r.period_no] || new Set()).add(r.teacher_id);
+      }
+      const gaps = affected.map((r) => ({
+        period_no: r.period_no,
+        start_time: r.start_time,
+        class_id: r.class_id, class_name: r.class_name,
+        subject_id: r.subject_id, subject_name: r.subject_name,
+        available: lk.teacherList
+          .filter((t) => t.id !== body.teacher_id && !(busy[r.period_no] || new Set()).has(t.id))
+          .map((t) => ({ id: t.id, full_name: t.full_name })),
+      }));
+      return res.status(200).json({
+        weekday,
+        teacher_name: lk.teachers[body.teacher_id]?.full_name || null,
+        gaps,
+        teachers: lk.teacherList,
       });
     }
 

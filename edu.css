@@ -588,3 +588,26 @@ body.edu-site {
 @media (min-width: 640px) {
   .mk-form-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── خانات بناء الجدول ──────────────────────────────────────────────── */
+.edu-slot {
+  width: 100%; min-height: 62px; border: 1.5px solid var(--edu-line);
+  border-radius: 10px; background: #fff; padding: .45rem .55rem;
+  font-family: inherit; text-align: start; cursor: pointer;
+  display: flex; flex-direction: column; gap: .15rem; position: relative;
+  transition: border-color .15s, background .15s;
+}
+.edu-slot:hover { border-color: var(--edu-green); background: #F0FDF4; }
+.edu-slot strong { font-size: .82rem; font-weight: 700; color: var(--edu-text); }
+.edu-slot small { font-size: .71rem; color: var(--edu-muted); }
+.edu-slot.empty {
+  border-style: dashed; align-items: center; justify-content: center;
+  background: #F8FAFC;
+}
+.edu-slot-add { font-size: 1.2rem; color: #94A3B8; line-height: 1; }
+.edu-slot.clash { border-color: var(--edu-red); background: #FEF2F2; }
+.edu-slot-flag {
+  position: absolute; inset-block-start: -8px; inset-inline-end: 6px;
+  background: var(--edu-red); color: #fff; font-size: .62rem; font-weight: 700;
+  padding: .08rem .4rem; border-radius: 999px;
+}

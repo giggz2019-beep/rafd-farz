@@ -24,6 +24,9 @@
 
     <button class="edu-nav-item active" data-view="overview"><span class="ico">🏠</span><span class="lbl">لوحة المدرسة</span></button>
     <button class="edu-nav-item" data-view="classes"><span class="ico">🏫</span><span class="lbl">الفصول</span></button>
+    <button class="edu-nav-item" data-view="board"><span class="ico">🗓️</span><span class="lbl">بناء الجدول</span><span class="edu-nav-badge" id="clashBadge" hidden></span></button>
+    <button class="edu-nav-item" data-view="teachers"><span class="ico">👨‍🏫</span><span class="lbl">جداول المعلمين</span></button>
+    <button class="edu-nav-item" data-view="cover"><span class="ico">🔄</span><span class="lbl">احتياط الغياب</span></button>
     <button class="edu-nav-item" data-view="students"><span class="ico">🎒</span><span class="lbl">الطلاب</span></button>
     <button class="edu-nav-item" data-view="attendance"><span class="ico">✅</span><span class="lbl">تحضير اليوم</span></button>
     <button class="edu-nav-item" data-view="exams"><span class="ico">📝</span><span class="lbl">الاختبارات</span></button>
@@ -100,6 +103,7 @@
     attendance: 'تحضير اليوم', exams: 'الاختبارات', homework: 'الواجبات',
     grades: 'رصد الدرجات', announcements: 'الإعلانات',
     finance: 'الرسوم والتحصيل', import: 'استيراد الطلاب',
+    board: 'بناء الجدول', teachers: 'جداول المعلمين', cover: 'احتياط الغياب',
   };
 
   Array.prototype.forEach.call(document.querySelectorAll('.edu-nav-item[data-view]'), function (b) {
@@ -141,6 +145,7 @@
         attendance: viewAttendance, exams: viewExams, homework: viewHomework,
         grades: viewGrades, announcements: viewAnnouncements,
         finance: viewFinance, import: viewImport,
+        board: viewBoard, teachers: viewTeachers, cover: viewCover,
       }[state.view] || viewOverview)(d);
     } catch (e) { fail(e); }
   }
@@ -467,6 +472,317 @@
           }).join('') + '</div>'
         : empty('📭', 'لا توجد إعلانات')) + '</div>';
     wire();
+  }
+
+  // ── بناء الجدول: شبكة قابلة للتعديل + كشف تعارض فوري ─────────────────
+  var boardData = null;
+
+  async function viewBoard(d) {
+    loading();
+    try {
+      boardData = await Edu.data('timetable_board', {});
+      var classes = boardData.classes || [];
+      if (!classes.length) {
+        viewEl.innerHTML = card('بناء الجدول', empty('🏫', 'أضف فصولاً أولاً'));
+        return;
+      }
+      if (!state.classId || !classes.some(function (c) { return c.id === state.classId; })) {
+        state.classId = classes[0].id;
+      }
+      var conflicts = boardData.conflicts || [];
+      var badge = document.getElementById('clashBadge');
+      badge.hidden = !conflicts.length;
+      badge.textContent = conflicts.length;
+
+      var html = '';
+      // التعارضات أولاً — هذه هي الشاشة التي لا يستطيع Excel تقديمها
+      if (conflicts.length) {
+        html += '<div class="edu-alert danger"><strong>⚠️ ' + conflicts.length +
+          ' تعارض في الجدول</strong><br>' + conflicts.slice(0, 6).map(function (c) {
+            return E(c.teacher_name || 'معلم') + ' مسنَد إلى <strong>' + E(c.classes[0]) +
+              '</strong> و<strong>' + E(c.classes[1]) + '</strong> في نفس الوقت — ' +
+              E(Edu.weekdayName(c.weekday)) + '، الحصة ' + c.period_no;
+          }).join('<br>') +
+          (conflicts.length > 6 ? '<br>و' + (conflicts.length - 6) + ' تعارض آخر…' : '') + '</div>';
+      } else {
+        html += '<div class="edu-alert ok">✅ لا توجد تعارضات — كل معلم في فصل واحد فقط في كل حصة.</div>';
+      }
+
+      html += classPicker(classes);
+      html += '<div class="edu-card"><div class="edu-card-head"><h2>🗓️ جدول ' +
+        E((classes.filter(function (c) { return c.id === state.classId; })[0] || {}).name || '') + '</h2>' +
+        '<span class="more" style="font-size:.78rem;color:var(--edu-muted)">اضغط أي خانة لإسناد مادة ومعلم</span></div>' +
+        boardGrid() + '</div>';
+
+      // النصاب — يُحسب تلقائياً، وفي Excel يُعدّ يدوياً
+      html += '<div class="edu-card"><div class="edu-card-head"><h2>📊 نصاب المعلمين الأسبوعي</h2></div>' +
+        '<div class="edu-table-wrap"><table class="edu-table"><thead><tr>' +
+        '<th>المعلم</th><th>الحصص الأسبوعية</th><th>أيام الدوام</th><th>التوزيع</th>' +
+        '</tr></thead><tbody>' + (boardData.load || []).map(function (l) {
+          var pctBar = Math.min(100, (l.periods / 25) * 100);
+          var tone = l.periods > 24 ? ' danger' : l.periods < 12 ? ' warn' : '';
+          return '<tr><td>' + E(l.full_name) + '</td><td><strong>' + l.periods + '</strong></td>' +
+            '<td>' + l.days + '</td><td style="min-width:140px">' +
+            '<div class="edu-bar' + tone + '"><span style="width:' + pctBar + '%"></span></div></td></tr>';
+        }).join('') + '</tbody></table></div>' +
+        '<p style="font-size:.76rem;color:var(--edu-muted);margin-top:.6rem">' +
+        'النصاب يتحدّث تلقائياً مع كل تعديل على الجدول.</p></div>';
+
+      viewEl.innerHTML = html;
+      wire();
+      wireBoardCells();
+    } catch (e) { fail(e); }
+  }
+
+  function boardCell(wd, pn) {
+    return (boardData.timetable || []).filter(function (r) {
+      return r.class_id === state.classId && r.weekday === wd && r.period_no === pn;
+    })[0];
+  }
+
+  // معلم مشغول في هذه الخانة عند فصل آخر
+  function busyAt(wd, pn, teacherId, exceptId) {
+    return (boardData.timetable || []).filter(function (r) {
+      return r.teacher_id === teacherId && r.weekday === wd && r.period_no === pn && r.id !== exceptId;
+    })[0];
+  }
+
+  function boardGrid() {
+    var periods = [1, 2, 3, 4, 5, 6];
+    var html = '<div class="edu-table-wrap"><table class="edu-table"><thead><tr><th>الحصة</th>' +
+      Edu.SCHOOL_DAYS.map(function (wd) { return '<th>' + E(Edu.weekdayName(wd)) + '</th>'; }).join('') +
+      '</tr></thead><tbody>';
+    periods.forEach(function (pn) {
+      html += '<tr><td><strong>' + pn + '</strong></td>';
+      Edu.SCHOOL_DAYS.forEach(function (wd) {
+        var c = boardCell(wd, pn);
+        var clash = c && c.teacher_id && busyAt(wd, pn, c.teacher_id, c.id);
+        html += '<td><button class="edu-slot' + (c ? '' : ' empty') + (clash ? ' clash' : '') +
+          '" data-slot="' + wd + ':' + pn + '">' +
+          (c ? '<strong>' + E(c.subject_name || '—') + '</strong><small>' +
+               E(c.teacher_name || 'بلا معلم') + '</small>' +
+               (clash ? '<span class="edu-slot-flag">تعارض</span>' : '')
+             : '<span class="edu-slot-add">+</span>') +
+          '</button></td>';
+      });
+      html += '</tr>';
+    });
+    return html + '</tbody></table></div>';
+  }
+
+  function wireBoardCells() {
+    Array.prototype.forEach.call(viewEl.querySelectorAll('[data-slot]'), function (b) {
+      b.addEventListener('click', function () {
+        var parts = b.getAttribute('data-slot').split(':');
+        openSlot(parseInt(parts[0], 10), parseInt(parts[1], 10));
+      });
+    });
+  }
+
+  function openSlot(wd, pn) {
+    var cell = boardCell(wd, pn);
+    var subjects = boardData.subjects || [];
+    var teachers = boardData.teachers || [];
+
+    document.getElementById('modalTitle').textContent =
+      Edu.weekdayName(wd) + ' — الحصة ' + pn;
+
+    modalForm.innerHTML =
+      '<div class="edu-field"><label for="sSubject">المادة</label><select id="sSubject">' +
+      '<option value="">— بدون —</option>' +
+      subjects.map(function (s) {
+        return '<option value="' + E(s.id) + '"' +
+          (cell && cell.subject_id === s.id ? ' selected' : '') + '>' + E(s.name) + '</option>';
+      }).join('') + '</select></div>' +
+      '<div class="edu-field"><label for="sTeacher">المعلم</label><select id="sTeacher">' +
+      '<option value="">— بدون —</option>' +
+      teachers.map(function (t) {
+        // نُعلّم المشغولين قبل الاختيار بدل رفضهم بعده
+        var busy = busyAt(wd, pn, t.id, cell && cell.id);
+        return '<option value="' + E(t.id) + '"' +
+          (cell && cell.teacher_id === t.id ? ' selected' : '') + '>' + E(t.full_name) +
+          (busy ? ' — مشغول مع ' + E(busy.class_name || 'فصل آخر') : '') + '</option>';
+      }).join('') + '</select></div>' +
+      '<div class="edu-field"><label for="sRoom">القاعة</label>' +
+      '<input id="sRoom" value="' + E((cell && cell.room) || '') + '" placeholder="قاعة 103"></div>' +
+      '<div id="slotWarn"></div>' +
+      '<div style="display:flex;gap:.6rem">' +
+      '<button class="edu-btn green" type="submit" style="flex:1">حفظ</button>' +
+      (cell ? '<button class="edu-btn ghost" type="button" id="slotDel">حذف الحصة</button>' : '') +
+      '</div>';
+    modal.classList.add('open');
+
+    function checkBusy() {
+      var t = val('sTeacher');
+      var busy = t && busyAt(wd, pn, t, cell && cell.id);
+      document.getElementById('slotWarn').innerHTML = busy
+        ? '<div class="edu-alert danger">هذا المعلم مسنَد إلى <strong>' +
+          E(busy.class_name || 'فصل آخر') + '</strong> في نفس الحصة.</div>' : '';
+    }
+    document.getElementById('sTeacher').addEventListener('change', checkBusy);
+    checkBusy();
+
+    if (cell) {
+      document.getElementById('slotDel').onclick = async function () {
+        this.disabled = true;
+        try {
+          await Edu.data('delete', { table: 'edu_timetable', id: cell.id });
+          Edu.toast('تم حذف الحصة');
+          closeModal();
+          viewBoard();
+        } catch (err) { Edu.toast(err.message); this.disabled = false; }
+      };
+    }
+
+    modalForm.onsubmit = async function (e) {
+      e.preventDefault();
+      var btn = modalForm.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'جارٍ الحفظ...';
+      try {
+        await Edu.data('save', {
+          table: 'edu_timetable',
+          id: cell ? cell.id : undefined,
+          data: {
+            class_id: state.classId, weekday: wd, period_no: pn,
+            subject_id: val('sSubject') || null,
+            teacher_id: val('sTeacher') || null,
+            room: val('sRoom') || null,
+          },
+        });
+        Edu.toast('تم حفظ الحصة');
+        closeModal();
+        viewBoard();
+      } catch (err) {
+        // الخادم يرفض التعارض حتى لو تجاوزت الواجهة — نعرض سببه
+        Edu.toast(err.message);
+        btn.disabled = false;
+        btn.textContent = 'حفظ';
+      }
+    };
+  }
+
+  // ── جداول المعلمين ───────────────────────────────────────────────────
+  var teacherId = null;
+
+  async function viewTeachers() {
+    loading();
+    try {
+      var res = await Edu.data('teacher_schedule', teacherId ? { teacher_id: teacherId } : {});
+      var teachers = res.teachers || [];
+      teacherId = res.teacher_id;
+      var load = res.load || {};
+
+      var html = '<div class="edu-field" style="max-width:320px"><label for="tPick">اختر المعلم</label>' +
+        '<select id="tPick">' + teachers.map(function (t) {
+          return '<option value="' + E(t.id) + '"' + (t.id === teacherId ? ' selected' : '') +
+            '>' + E(t.full_name) + '</option>';
+        }).join('') + '</select></div>';
+
+      html += '<div class="edu-grid c3" style="margin-bottom:1.25rem">' +
+        stat('الحصص الأسبوعية', load.periods || 0, 'النصاب الحالي', '') +
+        stat('أيام الدوام', load.days || 0, 'من 5 أيام', 'sky') +
+        stat('متوسط اليوم', load.days ? (Math.round((load.periods / load.days) * 10) / 10) : 0,
+             'حصة في اليوم', 'amber') +
+        '</div>';
+
+      html += '<div class="edu-card"><div class="edu-card-head"><h2>🗓️ جدول ' +
+        E(res.teacher_name || '') + '</h2>' +
+        '<button class="more edu-btn ghost sm" onclick="window.print()">🖨️ طباعة</button></div>';
+
+      var tt = res.timetable || [];
+      if (!tt.length) {
+        html += empty('🗓️', 'لا توجد حصص مسنَدة لهذا المعلم');
+      } else {
+        html += '<div class="edu-table-wrap"><table class="edu-table"><thead><tr><th>الحصة</th>' +
+          Edu.SCHOOL_DAYS.map(function (wd) { return '<th>' + E(Edu.weekdayName(wd)) + '</th>'; }).join('') +
+          '</tr></thead><tbody>';
+        [1, 2, 3, 4, 5, 6].forEach(function (pn) {
+          html += '<tr><td><strong>' + pn + '</strong></td>';
+          Edu.SCHOOL_DAYS.forEach(function (wd) {
+            var c = tt.filter(function (r) { return r.weekday === wd && r.period_no === pn; })[0];
+            html += '<td>' + (c
+              ? '<div class="edu-period"><strong>' + E(c.class_name || '—') + '</strong><small>' +
+                E(c.subject_name || '') + (c.room ? ' · ' + E(c.room) : '') + '</small></div>'
+              : '<span style="color:#CBD5E1">فراغ</span>') + '</td>';
+          });
+          html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+      }
+      viewEl.innerHTML = html + '</div>';
+
+      document.getElementById('tPick').addEventListener('change', function () {
+        teacherId = this.value;
+        viewTeachers();
+      });
+    } catch (e) { fail(e); }
+  }
+
+  // ── احتياط الغياب ────────────────────────────────────────────────────
+  var coverState = { teacher: null, weekday: new Date().getDay() };
+
+  async function viewCover(d) {
+    loading();
+    try {
+      var teachers = (boardData && boardData.teachers) || d.teachers || [];
+      if (!teachers.length) {
+        var b = await Edu.data('timetable_board', {});
+        boardData = b;
+        teachers = b.teachers || [];
+      }
+      if (!coverState.teacher && teachers.length) coverState.teacher = teachers[0].id;
+      if (Edu.SCHOOL_DAYS.indexOf(coverState.weekday) === -1) coverState.weekday = Edu.SCHOOL_DAYS[0];
+
+      var res = await Edu.data('substitutes', {
+        teacher_id: coverState.teacher, weekday: coverState.weekday,
+      });
+
+      var html = '<div class="edu-alert info">اختر المعلم الغائب واليوم — يعرض النظام حصصه ' +
+        'ومَن هو <strong>فعلاً فاضٍ</strong> في كل حصة منها. هذا محسوب من الجدول نفسه، ' +
+        'ولا يحتاج مراجعة يدوية.</div>';
+
+      html += '<div class="edu-grid c2" style="gap:1rem;margin-bottom:1rem">' +
+        '<div class="edu-field"><label for="cvTeacher">المعلم الغائب</label><select id="cvTeacher">' +
+        teachers.map(function (t) {
+          return '<option value="' + E(t.id) + '"' + (t.id === coverState.teacher ? ' selected' : '') +
+            '>' + E(t.full_name) + '</option>';
+        }).join('') + '</select></div>' +
+        '<div class="edu-field"><label for="cvDay">اليوم</label><select id="cvDay">' +
+        Edu.SCHOOL_DAYS.map(function (wd) {
+          return '<option value="' + wd + '"' + (wd === coverState.weekday ? ' selected' : '') +
+            '>' + E(Edu.weekdayName(wd)) + '</option>';
+        }).join('') + '</select></div></div>';
+
+      var gaps = res.gaps || [];
+      html += '<div class="edu-card"><div class="edu-card-head"><h2>🔄 حصص تحتاج تغطية (' +
+        gaps.length + ')</h2></div>';
+      if (!gaps.length) {
+        html += empty('🌤️', 'لا توجد حصص لهذا المعلم في ' + Edu.weekdayName(coverState.weekday));
+      } else {
+        html += '<div class="edu-list">' + gaps.map(function (g) {
+          return '<div class="edu-row"><span class="edu-dot">' + g.period_no + '</span>' +
+            '<div class="edu-row-main"><div class="edu-row-title">' + E(g.class_name || '—') +
+            ' — ' + E(g.subject_name || '') + '</div>' +
+            '<div class="edu-row-sub">' + (g.start_time ? E(Edu.fmtTime(g.start_time)) + ' · ' : '') +
+            (g.available.length
+              ? '<strong>متاح:</strong> ' + g.available.map(function (a) { return E(a.full_name); }).join(' · ')
+              : '<span style="color:var(--edu-red)">لا يوجد معلم فاضٍ في هذه الحصة</span>') +
+            '</div></div>' +
+            '<div class="edu-row-end"><span class="edu-badge ' +
+            (g.available.length ? 'ok' : 'danger') + '">' +
+            (g.available.length ? g.available.length + ' متاح' : 'لا بديل') + '</span></div></div>';
+        }).join('') + '</div>';
+      }
+      viewEl.innerHTML = html + '</div>';
+
+      document.getElementById('cvTeacher').addEventListener('change', function () {
+        coverState.teacher = this.value; viewCover(d);
+      });
+      document.getElementById('cvDay').addEventListener('change', function () {
+        coverState.weekday = parseInt(this.value, 10); viewCover(d);
+      });
+    } catch (e) { fail(e); }
   }
 
   // ── الرسوم والتحصيل ──────────────────────────────────────────────────

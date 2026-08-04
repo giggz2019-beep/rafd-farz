@@ -296,6 +296,8 @@
       { id: 'tc4', full_name: 'أ. هند القحطاني', role: 'teacher' },
       { id: 'ad1', full_name: 'إدارة المدرسة',   role: 'school_admin' },
     ];
+    // المعلمون وحدهم — الإدارة لا تُحتسب في النصاب ولا في الاحتياط
+    var TEACH_ONLY = TEACHERS.filter(function (t) { return t.role === 'teacher'; });
 
     var CLASSES = [
       { id: 'cl1', name: 'الصف الخامس - أ', grade_level: 5, section: 'أ' },
@@ -328,10 +330,18 @@
 
     function buildTimetable(classId) {
       var out = [];
+      // إزاحة المعلمين حسب الفصل حتى لا يتعارض الجميع مع الجميع —
+      // ونترك تعارضاً واحداً مقصوداً (الفصل الثالث، الأحد، الحصة الأولى)
+      // ليظهر كاشف التعارض وهو يعمل أثناء العرض بدل شاشة فارغة.
+      var ci = CLASSES.map(function (c) { return c.id; }).indexOf(classId);
+      if (ci < 0) ci = 0;
       SCHOOL_DAYS.forEach(function (wd) {
         (WEEK_PLAN[wd] || []).forEach(function (sid, i) {
           var subj = SUBJECTS.filter(function (s) { return s.id === sid; })[0];
-          var teacher = TEACHERS[i % 4];
+          // (i + ci) % 4 يضمن أن الفصول الثلاثة تأخذ معلمين مختلفين في كل
+          // حصة، فلا يوجد تعارض إلا الذي نزرعه عمداً أدناه
+          var planted = (ci === 2 && wd === 0 && i === 0);
+          var teacher = planted ? TEACH_ONLY[0] : TEACH_ONLY[(i + ci) % TEACH_ONLY.length];
           out.push({
             id: 'tt-' + classId + '-' + wd + '-' + i,
             class_id: classId, subject_id: sid, teacher_id: teacher.id,
@@ -722,6 +732,85 @@
         return Promise.resolve({
           students: STUDENTS.map(decorateStudent), classes: CLASSES,
           subjects: SUBJECTS, teachers: TEACHERS,
+        });
+      }
+
+      // ── الجدول: الشبكة والنصاب والتعارضات ───────────────────────────
+      if (action === 'timetable_board') {
+        var all = CLASSES.reduce(function (acc, c) {
+          return acc.concat(buildTimetable(c.id).map(function (r) {
+            return Object.assign({}, r, { class_name: c.name });
+          }));
+        }, []);
+        var load = {}, seen = {}, conflicts = [];
+        TEACH_ONLY.forEach(function (t) {
+          load[t.id] = { teacher_id: t.id, full_name: t.full_name, periods: 0, days: {} };
+        });
+        all.forEach(function (r) {
+          if (!r.teacher_id || !load[r.teacher_id]) return;
+          load[r.teacher_id].periods += 1;
+          load[r.teacher_id].days[r.weekday] = 1;
+          var k = r.teacher_id + '|' + r.weekday + '|' + r.period_no;
+          if (seen[k]) {
+            conflicts.push({
+              teacher_id: r.teacher_id, teacher_name: r.teacher_name,
+              weekday: r.weekday, period_no: r.period_no,
+              classes: [seen[k].class_name, r.class_name],
+            });
+          } else { seen[k] = r; }
+        });
+        return Promise.resolve({
+          timetable: all, classes: CLASSES, subjects: SUBJECTS, teachers: TEACH_ONLY,
+          load: Object.keys(load).map(function (k) {
+            return { teacher_id: load[k].teacher_id, full_name: load[k].full_name,
+                     periods: load[k].periods, days: Object.keys(load[k].days).length };
+          }).sort(function (a, b) { return b.periods - a.periods; }),
+          conflicts: conflicts,
+        });
+      }
+
+      if (action === 'teacher_schedule') {
+        var tid = payload.teacher_id || TEACH_ONLY[0].id;
+        var mine = CLASSES.reduce(function (acc, c) {
+          return acc.concat(buildTimetable(c.id).filter(function (r) { return r.teacher_id === tid; })
+            .map(function (r) { return Object.assign({}, r, { class_name: c.name }); }));
+        }, []);
+        var days = {};
+        mine.forEach(function (r) { days[r.weekday] = (days[r.weekday] || 0) + 1; });
+        return Promise.resolve({
+          teacher_id: tid,
+          teacher_name: (TEACH_ONLY.filter(function (t) { return t.id === tid; })[0] || {}).full_name,
+          timetable: mine, teachers: TEACH_ONLY,
+          load: { periods: mine.length, days: Object.keys(days).length, by_day: days },
+        });
+      }
+
+      if (action === 'substitutes') {
+        var wd = parseInt(payload.weekday, 10);
+        var absent = payload.teacher_id || TEACH_ONLY[0].id;
+        var dayRows = CLASSES.reduce(function (acc, c) {
+          return acc.concat(buildTimetable(c.id).filter(function (r) { return r.weekday === wd; })
+            .map(function (r) { return Object.assign({}, r, { class_name: c.name }); }));
+        }, []);
+        var busy = {};
+        dayRows.forEach(function (r) {
+          if (!r.teacher_id) return;
+          (busy[r.period_no] = busy[r.period_no] || {})[r.teacher_id] = 1;
+        });
+        return Promise.resolve({
+          weekday: wd,
+          teacher_name: (TEACH_ONLY.filter(function (t) { return t.id === absent; })[0] || {}).full_name,
+          teachers: TEACH_ONLY,
+          gaps: dayRows.filter(function (r) { return r.teacher_id === absent; }).map(function (r) {
+            return {
+              period_no: r.period_no, start_time: r.start_time,
+              class_id: r.class_id, class_name: r.class_name,
+              subject_id: r.subject_id, subject_name: r.subject_name,
+              available: TEACH_ONLY.filter(function (t) {
+                return t.id !== absent && !(busy[r.period_no] || {})[t.id];
+              }).map(function (t) { return { id: t.id, full_name: t.full_name }; }),
+            };
+          }),
         });
       }
 
