@@ -137,12 +137,51 @@
 
 <!-- ══ Input ════════════════════════════════════════════ -->
 <div id="stepInput">
-  <div class="card">
-    <div class="eyebrow">الخطوة الأولى</div>
+
+  <!-- ── Inbox: submissions arrive here automatically ── -->
+  <div class="card" style="margin-bottom:18px">
+    <div class="eyebrow">التسليمات الواردة</div>
     <h1>تقييم اختبار مهندس ذكاء اصطناعي</h1>
     <p class="lede">
-      الصق كود التسليم الذي أرسله المرشح، وسيقوم النظام بقراءة إجاباته وإنتاج تقرير تقييم كامل
-      بالعربية — مع درجة من ١٠٠ وتوصية توظيف واضحة.
+      كل مرشح ينهي الاختبار يظهر تسليمه هنا تلقائياً. اختر مرشحاً لعرض إجاباته
+      وإنتاج تقرير التقييم — درجة من ١٠٠ وتوصية توظيف واضحة بالعربية.
+    </p>
+
+    <hr class="divider">
+
+    <div id="inboxLogin">
+      <div class="field" style="max-width:420px">
+        <label for="adminPass">كلمة مرور الإدارة</label>
+        <div class="hint" style="margin-top:0;margin-bottom:9px">نفس كلمة المرور المستخدمة في لوحة الأدمن.</div>
+        <input type="password" id="adminPass" autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" id="btnInboxLogin">عرض التسليمات</button>
+    </div>
+
+    <div id="inboxBusy" class="hidden row" style="gap:12px;padding:8px 0">
+      <span class="spinner" style="color:var(--accent)"></span>
+      <span class="muted">جارٍ تحميل التسليمات…</span>
+    </div>
+
+    <div id="inboxError" class="callout callout-warn hidden" style="margin-top:14px">
+      <span class="callout-icon">&#9888;</span>
+      <span id="inboxErrorText"></span>
+    </div>
+
+    <div id="inboxList" class="hidden">
+      <div class="row" style="justify-content:space-between;margin-bottom:14px">
+        <span class="muted small" id="inboxCount"></span>
+        <button class="btn btn-ghost btn-sm" id="btnInboxRefresh">تحديث</button>
+      </div>
+      <div id="inboxRows" class="stack" style="gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- ── Manual fallback: paste a code ── -->
+  <div class="card">
+    <h3>أو الصق كود تسليم يدوياً</h3>
+    <p class="muted small" style="margin-top:6px">
+      للتسليمات القديمة، أو إذا أرسل المرشح الكود بنفسه.
     </p>
 
     <hr class="divider">
@@ -166,8 +205,8 @@
     </div>
 
     <div class="nav-row">
-      <span class="faint small">لا تُحفظ بيانات المرشح على أي خادم — التقييم يجري لحظياً.</span>
-      <button class="btn btn-primary btn-lg" id="btnLoad">قراءة التسليم</button>
+      <span></span>
+      <button class="btn btn-primary" id="btnLoad">قراءة التسليم</button>
     </div>
   </div>
 </div>
@@ -393,6 +432,8 @@
   };
 
   var submission = null;
+  var submissionId = null;   // set when opened from the inbox — lets the server persist the report
+  var ADMIN_KEY = 'rafd_assess_admin';
 
   // ── Helpers ────────────────────────────────────────────
 
@@ -458,35 +499,190 @@
     reader.readAsText(f);
   });
 
-  $('btnLoad').addEventListener('click', function () {
-    $('inputError').classList.add('hidden');
-    var raw = $('codeInput').value.trim();
-    if (!raw) return fail('الصق كود التسليم أولاً.');
+  // Open a decoded submission: from the inbox (with id + maybe a stored report)
+  // or from a hand-pasted code (no id).
+  function openSubmission(sub, id, report) {
+    submission = sub;
+    submissionId = id || null;
 
-    try {
-      submission = decode(raw);
-    } catch (err) {
-      return fail('تعذّر قراءة الكود. تأكد من نسخه كاملاً كما أرسله المرشح، دون حذف أي جزء منه.');
-    }
-
-    if (!submission || !submission.answers || !submission.candidate) {
-      return fail('الكود صالح شكلاً لكنه لا يحتوي على تسليم اختبار.');
-    }
-
-    var c = submission.candidate;
+    var c = sub.candidate;
     $('loadedName').textContent = c.name || 'مرشح';
     $('loadedMeta').innerHTML =
       '<span>' + esc(c.title || '—') + '</span>' +
       '<span>' + esc(c.years || '?') + ' سنوات خبرة</span>' +
       '<span>' + esc(c.email || '—') + '</span>' +
-      '<span>استغرق ' + esc(submission.timeUsedLabel || '—') + ' من ٣٠:٠٠</span>';
+      '<span>استغرق ' + esc(sub.timeUsedLabel || '—') + ' من ٣٠:٠٠</span>';
 
     $('stepInput').classList.add('hidden');
-    $('stepEvaluate').classList.remove('hidden');
     $('btnReset').classList.remove('hidden');
     renderAnswers();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (report && report.scores) {
+      // Already graded on a previous visit — show the saved report immediately.
+      renderReport(report, false);
+    } else {
+      $('stepEvaluate').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  $('btnLoad').addEventListener('click', function () {
+    $('inputError').classList.add('hidden');
+    var raw = $('codeInput').value.trim();
+    if (!raw) return fail('الصق كود التسليم أولاً.');
+
+    var sub;
+    try {
+      sub = decode(raw);
+    } catch (err) {
+      return fail('تعذّر قراءة الكود. تأكد من نسخه كاملاً كما أرسله المرشح، دون حذف أي جزء منه.');
+    }
+
+    if (!sub || !sub.answers || !sub.candidate) {
+      return fail('الكود صالح شكلاً لكنه لا يحتوي على تسليم اختبار.');
+    }
+    openSubmission(sub, null, null);
   });
+
+  // ── Inbox ──────────────────────────────────────────────
+
+  var inboxRowsCache = [];
+
+  function inboxFail(msg, forgetPass) {
+    $('inboxBusy').classList.add('hidden');
+    $('inboxErrorText').textContent = msg;
+    $('inboxError').classList.remove('hidden');
+    if (forgetPass) {
+      sessionStorage.removeItem(ADMIN_KEY);
+      $('inboxLogin').classList.remove('hidden');
+      $('inboxList').classList.add('hidden');
+    }
+  }
+
+  function fetchInbox(pass) {
+    $('inboxError').classList.add('hidden');
+    $('inboxLogin').classList.add('hidden');
+    $('inboxBusy').classList.remove('hidden');
+
+    fetch('/api/assess-candidate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'inbox', password: pass })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { status: r.status, d: d }; }); })
+      .then(function (out) {
+        $('inboxBusy').classList.add('hidden');
+        if (out.status === 401) return inboxFail('كلمة المرور غير صحيحة.', true);
+        if (out.status === 429) return inboxFail('محاولات كثيرة — انتظر قليلاً ثم أعد المحاولة.', true);
+        if (out.status === 503) return inboxFail('ADMIN_PASSWORD غير مضبوطة في إعدادات الخادم.', true);
+        if (!out.d || !out.d.ok) {
+          var reason = out.d && out.d.reason;
+          if (reason === 'table_missing') {
+            return inboxFail('صندوق التسليمات غير مجهّز بعد: شغّل ملف supabase-assessment.sql مرة واحدة في Supabase (SQL Editor)، ثم اضغط تحديث. حتى ذلك الحين تصل التسليمات بالبريد وبكود اللصق اليدوي.', false);
+          }
+          if (reason === 'no_service_key') {
+            return inboxFail('SUPABASE_SERVICE_KEY غير مضبوط في إعدادات الخادم.', false);
+          }
+          return inboxFail('تعذّر تحميل التسليمات. أعد المحاولة.', false);
+        }
+        sessionStorage.setItem(ADMIN_KEY, pass);
+        inboxRowsCache = out.d.rows || [];
+        renderInbox();
+      })
+      .catch(function () { inboxFail('تعذّر الاتصال بالخادم. أعد المحاولة.', false); });
+  }
+
+  function renderInbox() {
+    var host = $('inboxRows');
+    host.innerHTML = '';
+    $('inboxList').classList.remove('hidden');
+    $('inboxCount').textContent = inboxRowsCache.length
+      ? inboxRowsCache.length + ' تسليم'
+      : '';
+
+    if (!inboxRowsCache.length) {
+      var empty = document.createElement('div');
+      empty.className = 'callout callout-info';
+      empty.innerHTML = '<span class="callout-icon">&#9432;</span><span>لا توجد تسليمات بعد. أرسل رابط الاختبار للمرشح: <span class="num" style="font-family:var(--mono)">rafd-digital.com/assessment</span> — وسيظهر تسليمه هنا فور إنهائه.</span>';
+      host.appendChild(empty);
+      return;
+    }
+
+    inboxRowsCache.forEach(function (row) {
+      var sub = row.submission || {};
+      var evaluated = row.status === 'evaluated' && row.report;
+      var when = row.created_at ? new Date(row.created_at) : null;
+      var total = evaluated && row.report.total != null ? row.report.total : null;
+
+      var el = document.createElement('div');
+      el.className = 'row';
+      el.style.cssText = 'justify-content:space-between;padding:13px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg);gap:12px';
+      el.innerHTML =
+        '<div style="min-width:0">' +
+          '<div style="font-weight:600">' + esc(row.candidate_name || 'مرشح') + '</div>' +
+          '<div class="faint small" style="margin-top:2px">' +
+            esc(row.candidate_title || '—') + ' · ' + esc(row.candidate_years || '?') + ' سنوات' +
+            (when ? ' · ' + when.toLocaleDateString('ar') + ' ' + when.toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' }) : '') +
+            (row.time_used_label ? ' · استغرق <span class="num">' + esc(row.time_used_label) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="row" style="gap:8px;flex-shrink:0">' +
+          (evaluated
+            ? '<span class="pill v-b">تم تقييمه' + (total != null ? ' — <span class="num">' + total + '/100</span>' : '') + '</span>'
+            : '<span class="pill v-d">جديد</span>') +
+        '</div>';
+
+      var openBtn = document.createElement('button');
+      openBtn.className = 'btn btn-primary btn-sm';
+      openBtn.textContent = evaluated ? 'عرض التقرير' : 'تقييم';
+      openBtn.addEventListener('click', function () {
+        if (sub && sub.answers && sub.candidate) {
+          openSubmission(sub, row.id, evaluated ? row.report : null);
+        }
+      });
+      el.lastElementChild.appendChild(openBtn);
+
+      var delBtn = document.createElement('button');
+      delBtn.className = 'btn btn-ghost btn-sm';
+      delBtn.innerHTML = '&times;';
+      delBtn.title = 'حذف هذا التسليم';
+      delBtn.addEventListener('click', function () {
+        if (!confirm('حذف تسليم ' + (row.candidate_name || 'المرشح') + ' نهائياً؟')) return;
+        fetch('/api/assess-candidate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete_submission', password: sessionStorage.getItem(ADMIN_KEY) || '', id: row.id })
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.ok) {
+            inboxRowsCache = inboxRowsCache.filter(function (x) { return x.id !== row.id; });
+            renderInbox();
+          }
+        }).catch(function () {});
+      });
+      el.lastElementChild.appendChild(delBtn);
+
+      host.appendChild(el);
+    });
+  }
+
+  $('btnInboxLogin').addEventListener('click', function () {
+    var pass = $('adminPass').value;
+    if (!pass) return inboxFail('أدخل كلمة المرور أولاً.', true);
+    fetchInbox(pass);
+  });
+
+  $('adminPass').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') $('btnInboxLogin').click();
+  });
+
+  $('btnInboxRefresh').addEventListener('click', function () {
+    fetchInbox(sessionStorage.getItem(ADMIN_KEY) || '');
+  });
+
+  // Session already unlocked? Load the inbox straight away.
+  if (sessionStorage.getItem(ADMIN_KEY)) {
+    fetchInbox(sessionStorage.getItem(ADMIN_KEY));
+  }
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
@@ -504,7 +700,7 @@
     fetch('/api/assess-candidate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'evaluate', submission: submission })
+      body: JSON.stringify({ action: 'evaluate', submission: submission, submission_id: submissionId })
     })
       .then(function (r) { return r.json(); })
       .then(function (d) {

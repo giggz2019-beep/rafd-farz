@@ -786,9 +786,11 @@
     fetch('/api/assess-candidate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'notify', submission: sub, code: code })
+      body: JSON.stringify({ action: 'submit', submission: sub, code: code })
     }).then(function (r) { return r.json(); }).then(function (d) {
-      if (d && d.emailed) {
+      // Stored in the review inbox or emailed — either way it reached RAFD,
+      // so the manual submission code is no longer needed.
+      if (d && (d.saved || d.emailed)) {
         $('doneEmailed').classList.remove('hidden');
         $('doneCodeWrap').classList.add('hidden');
       }

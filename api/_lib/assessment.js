@@ -1,8 +1,15 @@
 // RAFD — AI Engineer practical assessment evaluator.
 //
 // Actions:
-//   evaluate  → grades a submission with Claude and returns structured JSON
-//   notify    → emails the raw submission to the hiring manager (best-effort)
+//   submit    → candidate finished: store in assessment_submissions + email (both best-effort)
+//   evaluate  → grades a submission with Claude; persists the report when submission_id given
+//   inbox     → employer (ADMIN_PASSWORD): list stored submissions, newest first
+//   delete_submission → employer (ADMIN_PASSWORD): remove one row
+//   notify    → legacy email-only path, kept for older cached pages
+//
+// Storage is the assessment_submissions table (supabase-assessment.sql). If the
+// table or SUPABASE_SERVICE_KEY is missing, submit degrades to email + the
+// on-screen RAFD1 code, and inbox reports that it is not set up.
 //
 // This lives in _lib rather than being its own api/*.js route because the Hobby
 // plan caps a deployment at 12 Serverless Functions and api/ is already at 12.
@@ -14,6 +21,12 @@
 //   ANTHROPIC_API_KEY  missing → { manual: true }, dashboard falls back to manual scoring
 //   RESEND_API_KEY     missing → notify is a no-op, candidate still gets a submission code
 //   ASSESSMENT_EMAIL   where submissions are mailed (default info@rafd-digital.com)
+
+const { rateLimit, getIp } = require('./rate-limit');
+
+// Same Supabase project already used by admin-data.js / chat-khalid.js.
+const SUPABASE_URL = 'https://ycnnawohrbbluawxzttt.supabase.co';
+const TABLE = 'assessment_submissions';
 
 const MODEL = 'claude-opus-5';
 
@@ -346,19 +359,152 @@ async function notify(submission, code) {
   }
 }
 
+// ─── Storage (Supabase REST, service key bypasses the deny-all RLS) ───
+
+function sbHeaders(serviceKey, extra) {
+  return Object.assign({
+    apikey: serviceKey,
+    Authorization: `Bearer ${serviceKey}`,
+    'Content-Type': 'application/json'
+  }, extra || {});
+}
+
+async function saveSubmission(submission) {
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY;
+  if (!serviceKey) return { saved: false, reason: 'no_service_key' };
+
+  const c = submission.candidate || {};
+  const row = {
+    candidate_name: c.name ? String(c.name).slice(0, 200) : null,
+    candidate_email: c.email ? String(c.email).slice(0, 200) : null,
+    candidate_title: c.title ? String(c.title).slice(0, 200) : null,
+    candidate_years: c.years ? String(c.years).slice(0, 20) : null,
+    time_used_label: submission.timeUsedLabel ? String(submission.timeUsedLabel).slice(0, 20) : null,
+    submission
+  };
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+      method: 'POST',
+      headers: sbHeaders(serviceKey, { Prefer: 'return=representation' }),
+      body: JSON.stringify(row)
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '');
+      console.error('assessment save error:', res.status, detail.slice(0, 300));
+      // 404 / PGRST205 = the table has not been created yet
+      return { saved: false, reason: res.status === 404 || detail.includes('PGRST205') ? 'table_missing' : 'save_failed' };
+    }
+    const data = await res.json();
+    return { saved: true, id: Array.isArray(data) && data[0] ? data[0].id : null };
+  } catch (err) {
+    console.error('assessment save error:', err);
+    return { saved: false, reason: 'save_failed' };
+  }
+}
+
+async function listSubmissions() {
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY;
+  if (!serviceKey) return { ok: false, reason: 'no_service_key' };
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABLE}?select=*&order=created_at.desc&limit=50`,
+      { headers: sbHeaders(serviceKey) }
+    );
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '');
+      console.error('assessment list error:', res.status, detail.slice(0, 300));
+      return { ok: false, reason: res.status === 404 || detail.includes('PGRST205') ? 'table_missing' : 'list_failed' };
+    }
+    return { ok: true, rows: await res.json() };
+  } catch (err) {
+    console.error('assessment list error:', err);
+    return { ok: false, reason: 'list_failed' };
+  }
+}
+
+async function saveReport(id, report) {
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY;
+  if (!serviceKey || !id) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: sbHeaders(serviceKey, { Prefer: 'return=minimal' }),
+      body: JSON.stringify({ report, status: 'evaluated', evaluated_at: new Date().toISOString() })
+    });
+  } catch (err) {
+    console.error('assessment report save error:', err);
+  }
+}
+
+async function deleteSubmission(id) {
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY;
+  if (!serviceKey || !id) return { ok: false };
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: sbHeaders(serviceKey)
+    });
+    return { ok: res.ok };
+  } catch (err) {
+    console.error('assessment delete error:', err);
+    return { ok: false };
+  }
+}
+
+// Same auth as admin-data.js: ADMIN_PASSWORD compared timing-safe.
+function isAdmin(body) {
+  const adminPass = process.env.ADMIN_PASSWORD;
+  if (!adminPass || !body || !body.password) return false;
+  const crypto = require('crypto');
+  const a = crypto.createHash('sha256').update(String(body.password)).digest();
+  const b = crypto.createHash('sha256').update(String(adminPass)).digest();
+  return crypto.timingSafeEqual(a, b);
+}
+
+const ACTIONS = ['evaluate', 'notify', 'submit', 'inbox', 'delete_submission'];
+
 // True when this request is an assessment call rather than a document read.
 function handles(body) {
-  const action = body && body.action;
-  return action === 'evaluate' || action === 'notify';
+  return !!body && ACTIONS.includes(body.action);
 }
 
 async function handle(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
 
   try {
-    const { action, submission, code } = req.body || {};
+    const body = req.body || {};
+    const { action, submission, code } = body;
+
+    // ── Employer actions: ADMIN_PASSWORD required, brute-force rate-limited ──
+    if (action === 'inbox' || action === 'delete_submission') {
+      const rl = await rateLimit(`assess-admin:${getIp(req)}`, 10, 15 * 60 * 1000);
+      if (rl.limited) return res.status(429).json({ error: 'too_many_attempts' });
+      if (!process.env.ADMIN_PASSWORD) return res.status(503).json({ error: 'server_not_configured' });
+      if (!isAdmin(body)) return res.status(401).json({ error: 'unauthorized' });
+
+      if (action === 'inbox') {
+        const out = await listSubmissions();
+        return res.status(200).json(out);
+      }
+      const out = await deleteSubmission(body.id);
+      return res.status(200).json(out);
+    }
+
     if (!submission || typeof submission !== 'object') {
       return res.status(400).json({ error: 'missing submission' });
+    }
+
+    // ── Candidate finished: store + email, both best-effort ──
+    if (action === 'submit') {
+      const rl = await rateLimit(`assess-submit:${getIp(req)}`, 10, 60 * 60 * 1000);
+      if (rl.limited) return res.status(429).json({ ok: false, error: 'too_many_attempts' });
+      if (JSON.stringify(submission).length > 300000) {
+        return res.status(400).json({ ok: false, error: 'submission too large' });
+      }
+      const stored = await saveSubmission(submission);
+      const mailed = await notify(submission, code);
+      return res.status(200).json({ ok: true, saved: stored.saved, emailed: !!mailed.emailed });
     }
 
     if (action === 'notify') {
@@ -368,6 +514,10 @@ async function handle(req, res) {
 
     if (action === 'evaluate') {
       const result = await evaluate(submission);
+      // Persist the report so reopening the inbox never re-pays for grading.
+      if (body.submission_id && result && !result.manual) {
+        await saveReport(String(body.submission_id).slice(0, 60), result);
+      }
       return res.status(200).json({ ok: true, result });
     }
 
