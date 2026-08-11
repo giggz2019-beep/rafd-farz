@@ -4,6 +4,12 @@
 //   evaluate  → grades a submission with Claude and returns structured JSON
 //   notify    → emails the raw submission to the hiring manager (best-effort)
 //
+// This lives in _lib rather than being its own api/*.js route because the Hobby
+// plan caps a deployment at 12 Serverless Functions and api/ is already at 12.
+// Files under _lib are not counted, so api/read-document.js dispatches here when
+// the request body carries an assessment action, and vercel.json rewrites
+// /api/assess-candidate onto it so the frontend keeps a route of its own.
+//
 // Env vars (both optional — the feature degrades instead of breaking):
 //   ANTHROPIC_API_KEY  missing → { manual: true }, dashboard falls back to manual scoring
 //   RESEND_API_KEY     missing → notify is a no-op, candidate still gets a submission code
@@ -11,9 +17,11 @@
 
 const MODEL = 'claude-opus-5';
 
-// Effort is the main latency lever. Vercel caps this function at 60s (vercel.json),
-// and Opus 5 grades well below its ceiling — 'medium' fits the budget with room to
-// spare. Raise to 'high' only if maxDuration is also raised.
+// Effort is the main latency lever, and the whole call has to finish inside the
+// host function's maxDuration (currently the plan default — no `functions` entry
+// in vercel.json, because a bad value there fails the deployment outright).
+// Opus 5 grades well below its ceiling, so 'medium' buys latency headroom cheaply.
+// Raise to 'high' only alongside a verified maxDuration increase.
 const EFFORT = 'medium';
 
 const RUBRIC = [
@@ -338,15 +346,14 @@ async function notify(submission, code) {
   }
 }
 
-module.exports = async (req, res) => {
-  const origin = process.env.ALLOWED_ORIGIN || '*';
-  res.setHeader('Access-Control-Allow-Origin', origin);
-  if (origin !== '*') res.setHeader('Vary', 'Origin');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+// True when this request is an assessment call rather than a document read.
+function handles(body) {
+  const action = body && body.action;
+  return action === 'evaluate' || action === 'notify';
+}
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+async function handle(req, res) {
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
 
   try {
     const { action, submission, code } = req.body || {};
@@ -373,4 +380,6 @@ module.exports = async (req, res) => {
       error: 'تعذّر التقييم الآلي. يمكنك إدخال الدرجات يدوياً.'
     });
   }
-};
+}
+
+module.exports = { handles, handle };

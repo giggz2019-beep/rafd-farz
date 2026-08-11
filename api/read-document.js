@@ -1,3 +1,9 @@
+// The Hobby plan allows 12 Serverless Functions per deployment and api/ is at
+// that limit, so the hiring-assessment endpoints ride along on this function
+// (the other Anthropic-backed route) instead of adding a 13th. vercel.json
+// rewrites /api/assess-candidate here; the two paths share nothing else.
+const assessment = require('./_lib/assessment');
+
 // Expected detected_type per docType slot
 const EXPECTED_TYPE = {
   id:   'national_id',
@@ -50,6 +56,8 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
+
+  if (assessment.handles(req.body)) return assessment.handle(req, res);
 
   const { base64, mediaType, docType, readCriteria } = req.body || {};
 

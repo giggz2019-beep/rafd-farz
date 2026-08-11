@@ -1,10 +1,11 @@
 {
   "cleanUrls": true,
-  "functions": {
-    "api/assess-candidate.js": {
-      "maxDuration": 60
+  "rewrites": [
+    {
+      "source": "/api/assess-candidate",
+      "destination": "/api/read-document"
     }
-  },
+  ],
   "headers": [
     {
       "source": "/(.*)",
