@@ -717,7 +717,7 @@
     FIELDS.forEach(function (id) {
       var el = $(id);
       if (!el) return;
-      el.value = state.answers[id] || el.value || '';
+      el.value = state.answers[id] || '';
       el.addEventListener('input', function () {
         state.answers[id] = el.value;
         save();
@@ -844,9 +844,18 @@
     }
     $('intakeError').classList.add('hidden');
 
-    state.candidate = { name: name, email: email, years: years, title: title };
-    state.startedAt = Date.now();
-    state.step = 0;
+    // A fresh attempt starts from a completely fresh state. Without this, a
+    // previous submission on the same browser leaves submitted:true (and old
+    // answers) behind — the next candidate's Submit button silently does
+    // nothing, and they could even see the previous candidate's answers.
+    state = {
+      candidate: { name: name, email: email, years: years, title: title },
+      startedAt: Date.now(),
+      answers: {},
+      blocks: [],
+      step: 0,
+      submitted: false
+    };
     save();
     beginTest();
   });
