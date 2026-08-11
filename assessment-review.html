@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>تقييم المرشح — RAFD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assessment.css">
+<style>
+  .score-hero {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px;
+    align-items: center;
+  }
+  .dial { position: relative; width: 146px; height: 146px; flex-shrink: 0; }
+  .dial svg { transform: rotate(-90deg); }
+  .dial-mid {
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    text-align: center;
+  }
+  .dial-num { font-size: 40px; font-weight: 700; line-height: 1; letter-spacing: -1px; }
+  .dial-den { font-size: 12px; color: var(--text-faint); margin-top: 3px; }
+
+  .verdict {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 16px; border-radius: 999px;
+    font-weight: 600; font-size: 15px;
+    border: 1px solid;
+  }
+  .v-a { background: rgba(52,211,153,.12); border-color: rgba(52,211,153,.4); color: #6EE7B7; }
+  .v-b { background: rgba(20,184,166,.12); border-color: rgba(20,184,166,.4); color: #5EEAD4; }
+  .v-c { background: rgba(99,102,241,.12); border-color: rgba(99,102,241,.4); color: #A5B4FC; }
+  .v-d { background: rgba(251,191,36,.1); border-color: rgba(251,191,36,.38); color: #FCD34D; }
+  .v-e { background: rgba(248,113,113,.1); border-color: rgba(248,113,113,.4); color: #FCA5A5; }
+
+  .bar-row { display: grid; grid-template-columns: 1fr auto; gap: 10px 14px; align-items: center; }
+  .bar-track { height: 7px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; transition: width .7s cubic-bezier(.4,0,.2,1); }
+  .bar-label { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 6px; }
+  /* Bidi isolation: "15 / 20" is a neutral run and RTL flips it to "20 / 15",
+     which reads as a score above the maximum. Force these fragments to LTR. */
+  .num { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .bar-val { font-variant-numeric: tabular-nums; font-weight: 600; direction: ltr; unicode-bidi: isolate; }
+
+  .pill {
+    display: inline-block; padding: 3px 11px; border-radius: 999px;
+    font-size: 12.5px; font-weight: 600; border: 1px solid;
+  }
+
+  .li-list { list-style: none; display: grid; gap: 10px; }
+  .li-list li {
+    position: relative; padding-inline-start: 24px;
+    font-size: 14.5px; color: var(--text-dim); line-height: 1.75;
+  }
+  .li-list li::before {
+    content: ''; position: absolute; inset-inline-start: 6px; top: 11px;
+    width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .5;
+  }
+  .li-ok { color: var(--ok); }
+  .li-warn { color: var(--warn); }
+  .li-danger { color: var(--danger); }
+  .li-list.li-ok li, .li-list.li-warn li, .li-list.li-danger li { color: var(--text-dim); }
+  .li-list.li-ok li::before { background: var(--ok); }
+  .li-list.li-warn li::before { background: var(--warn); }
+  .li-list.li-danger li::before { background: var(--danger); }
+  .li-list.li-info li::before { background: var(--accent-2); }
+
+  .lvl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); gap: 12px; }
+  .lvl {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; background: var(--bg);
+  }
+  .lvl-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 7px; }
+  .lvl-name { font-size: 13.5px; font-weight: 600; }
+  .lvl-note { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+
+  .answer-block { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+  .answer-head {
+    padding: 11px 15px; background: var(--surface-2); cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    font-size: 13.5px; font-weight: 600; user-select: none;
+  }
+  .answer-body {
+    padding: 15px; display: none; direction: ltr; text-align: left;
+    font-family: var(--mono); font-size: 12.5px; line-height: 1.75;
+    color: var(--text-dim); white-space: pre-wrap; word-break: break-word;
+    background: var(--bg); max-height: 420px; overflow-y: auto;
+  }
+  .answer-block.open .answer-body { display: block; }
+
+  .manual-row {
+    display: grid; grid-template-columns: 1fr 96px; gap: 12px;
+    align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-soft);
+  }
+  .manual-row:last-of-type { border-bottom: 0; }
+  .manual-row input { text-align: center; padding: 8px; }
+
+  @media print {
+    body { background: #fff !important; color: #111 !important; }
+    .topbar, .no-print, .answer-block, .btn { display: none !important; }
+    .card { background: #fff !important; border: 1px solid #ddd !important; box-shadow: none !important;
+            break-inside: avoid; page-break-inside: avoid; padding: 18px !important; }
+    h1, h2, h3, .dial-num, .lvl-name { color: #111 !important; }
+    .muted, .faint, .lvl-note, .li-list li, .lede { color: #444 !important; }
+    .bar-track { background: #eee !important; }
+    .verdict, .pill { border-color: #999 !important; color: #111 !important; background: #f4f4f4 !important; }
+    .lvl { background: #fafafa !important; border-color: #ddd !important; }
+    a { color: #111 !important; }
+    @page { margin: 14mm; }
+  }
+</style>
+</head>
+<body dir="rtl">
+
+<header class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">R</div>
+      <div>
+        <div class="brand-name">RAFD</div>
+        <div class="brand-sub">لوحة تقييم المرشحين — للاستخدام الداخلي</div>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn btn-ghost btn-sm hidden" id="btnPrint">طباعة / حفظ PDF</button>
+      <button class="btn btn-ghost btn-sm hidden" id="btnReset">تقييم مرشح آخر</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap-wide" style="padding-top:32px;padding-bottom:70px">
+
+<!-- ══ Input ════════════════════════════════════════════ -->
+<div id="stepInput">
+  <div class="card">
+    <div class="eyebrow">الخطوة الأولى</div>
+    <h1>تقييم اختبار مهندس ذكاء اصطناعي</h1>
+    <p class="lede">
+      الصق كود التسليم الذي أرسله المرشح، وسيقوم النظام بقراءة إجاباته وإنتاج تقرير تقييم كامل
+      بالعربية — مع درجة من ١٠٠ وتوصية توظيف واضحة.
+    </p>
+
+    <hr class="divider">
+
+    <div class="field">
+      <label for="codeInput">كود التسليم</label>
+      <div class="hint" style="margin-top:0;margin-bottom:9px">
+        يبدأ الكود بـ <code style="font-family:var(--mono)">RAFD1.</code> — يصلك من المرشح أو في البريد الإلكتروني تلقائياً.
+      </div>
+      <textarea id="codeInput" style="min-height:130px;font-family:var(--mono);font-size:12px;direction:ltr;text-align:left" placeholder="RAFD1.eyJ2IjoxLCJjYW5kaWRhdGUiOn..."></textarea>
+    </div>
+
+    <div class="row">
+      <button class="btn btn-ghost btn-sm" id="btnUpload">أو ارفع ملف التسليم</button>
+      <input type="file" id="fileInput" accept=".txt,.json" class="hidden">
+    </div>
+
+    <div id="inputError" class="callout callout-danger hidden" style="margin-top:16px">
+      <span class="callout-icon">!</span>
+      <span id="inputErrorText"></span>
+    </div>
+
+    <div class="nav-row">
+      <span class="faint small">لا تُحفظ بيانات المرشح على أي خادم — التقييم يجري لحظياً.</span>
+      <button class="btn btn-primary btn-lg" id="btnLoad">قراءة التسليم</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Loaded / evaluating ══════════════════════════════ -->
+<div id="stepEvaluate" class="hidden">
+  <div class="card">
+    <div class="eyebrow">الخطوة الثانية</div>
+    <h2 id="loadedName">—</h2>
+    <div class="row muted small" id="loadedMeta" style="margin-top:8px;gap:18px"></div>
+
+    <hr class="divider">
+
+    <div id="evalIdle">
+      <div class="callout callout-info">
+        <span class="callout-icon">&#9432;</span>
+        <span>سيقرأ المُقيّم الآلي كل إجابة ويمنح الدرجات على <strong>الفهم المُثبت</strong> لا على ذكر أسماء التقنيات،
+        ولن يُخصم من المرشح بسبب اختياره لأداة أو منصة معينة. قد تستغرق العملية حتى دقيقة.</span>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="btnManualMode">إدخال الدرجات يدوياً</button>
+        <button class="btn btn-primary btn-lg" id="btnEvaluate">تقييم آلي بالذكاء الاصطناعي</button>
+      </div>
+    </div>
+
+    <div id="evalBusy" class="hidden center" style="padding:26px 0">
+      <div class="row" style="justify-content:center;gap:12px">
+        <span class="spinner" style="color:var(--accent)"></span>
+        <span class="muted">جارٍ تحليل الإجابات وتقييمها…</span>
+      </div>
+      <p class="faint small" style="margin-top:12px">لا تُغلق هذه الصفحة.</p>
+    </div>
+
+    <div id="evalError" class="callout callout-warn hidden" style="margin-top:4px">
+      <span class="callout-icon">&#9888;</span>
+      <span id="evalErrorText"></span>
+    </div>
+  </div>
+
+  <!-- Manual scoring -->
+  <div class="card hidden" id="manualCard">
+    <h3>التقييم اليدوي</h3>
+    <p class="muted small" style="margin-top:6px">
+      اقرأ إجابات المرشح في الأسفل، ثم أدخل درجة كل محور. المجموع يُحسب تلقائياً.
+    </p>
+    <hr class="divider">
+    <div id="manualRows"></div>
+    <hr class="divider">
+    <div class="row" style="justify-content:space-between">
+      <div>
+        <span class="faint small">المجموع</span>
+        <div class="num" style="font-size:26px;font-weight:700" id="manualTotal">0 <span class="faint" style="font-size:15px">/ 100</span></div>
+      </div>
+      <button class="btn btn-primary" id="btnManualReport">إنشاء التقرير</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Report ═══════════════════════════════════════════ -->
+<div id="stepReport" class="hidden">
+
+  <div class="card">
+    <div class="row" style="justify-content:space-between;align-items:flex-start;gap:16px">
+      <div>
+        <div class="eyebrow">تقرير التقييم النهائي — RAFD</div>
+        <h1 id="rName">—</h1>
+        <div class="row muted small" id="rMeta" style="margin-top:9px;gap:18px"></div>
+      </div>
+      <div class="faint small" id="rDate" style="text-align:end;white-space:nowrap"></div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="score-hero">
+      <div class="dial">
+        <svg width="146" height="146" viewBox="0 0 146 146">
+          <circle cx="73" cy="73" r="63" fill="none" stroke="#1E2A40" stroke-width="11"/>
+          <circle id="dialArc" cx="73" cy="73" r="63" fill="none" stroke="#14B8A6" stroke-width="11"
+                  stroke-linecap="round" stroke-dasharray="396" stroke-dashoffset="396"
+                  style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        </svg>
+        <div class="dial-mid">
+          <div>
+            <div class="dial-num" id="rScore">0</div>
+            <div class="dial-den">من ١٠٠</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="faint small" style="margin-bottom:8px">المستوى العام</div>
+        <div id="rLevel" class="verdict">—</div>
+        <p class="lede" id="rSummary" style="margin-top:16px"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- The decision -->
+  <div class="card">
+    <div class="eyebrow">القرار</div>
+    <h2 style="font-size:19px;margin-top:4px">هل يستطيع هذا المرشح استلام مشروع حقيقي من رفد وتنفيذه من المتطلبات حتى Production؟</h2>
+    <div id="rDeliver" class="verdict" style="margin-top:14px">—</div>
+    <p class="muted" id="rDeliverWhy" style="margin-top:12px;font-size:14.5px"></p>
+
+    <hr class="divider">
+
+    <div class="faint small" style="margin-bottom:8px">التوصية النهائية لرفد</div>
+    <div id="rRec" class="verdict" style="font-size:17px;padding:10px 20px">—</div>
+    <p class="muted" id="rRecWhy" style="margin-top:12px;font-size:14.5px"></p>
+  </div>
+
+  <!-- Breakdown -->
+  <div class="card">
+    <div class="eyebrow">تفصيل الدرجات</div>
+    <h3 style="margin:4px 0 20px">أين كسب المرشح درجاته وأين فقدها</h3>
+    <div id="rBars" class="stack" style="gap:18px"></div>
+  </div>
+
+  <!-- Levels -->
+  <div class="card">
+    <div class="eyebrow">مستوى المرشح لكل مجال</div>
+    <h3 style="margin:4px 0 18px">تقييم مفصّل</h3>
+    <div class="lvl-grid" id="rLevels"></div>
+  </div>
+
+  <!-- Strengths / weaknesses / risks -->
+  <div class="card">
+    <div class="stack" style="gap:26px">
+      <div>
+        <h3 style="color:var(--ok);margin-bottom:12px">١. نقاط القوة</h3>
+        <ul class="li-list li-ok" id="rStrengths"></ul>
+      </div>
+      <hr class="divider" style="margin:0">
+      <div>
+        <h3 style="color:var(--warn);margin-bottom:12px">٢. نقاط الضعف</h3>
+        <ul class="li-list li-warn" id="rWeaknesses"></ul>
+      </div>
+      <hr class="divider" style="margin:0">
+      <div>
+        <h3 style="color:var(--danger);margin-bottom:12px">٣. المخاطر التقنية</h3>
+        <ul class="li-list li-danger" id="rRisks"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interview questions -->
+  <div class="card" id="rQuestionsCard">
+    <div class="eyebrow">الخطوة التالية</div>
+    <h3 style="margin:4px 0 14px">أسئلة نقترح طرحها في المقابلة</h3>
+    <p class="muted small" style="margin-bottom:14px">هذه الأسئلة تستهدف الفجوات التي ظهرت في إجاباته تحديداً.</p>
+    <ul class="li-list li-info" id="rQuestions"></ul>
+  </div>
+
+  <!-- Flags -->
+  <div class="card hidden" id="rFlagsCard">
+    <div class="eyebrow" style="color:var(--warn)">ملاحظات تستحق الانتباه</div>
+    <ul class="li-list li-warn" id="rFlags" style="margin-top:12px"></ul>
+  </div>
+
+  <!-- Raw answers -->
+  <div class="card no-print">
+    <div class="eyebrow">المرجع</div>
+    <h3 style="margin:4px 0 6px">إجابات المرشح كما كتبها</h3>
+    <p class="muted small" style="margin-bottom:16px">اضغط أي قسم لعرضه. لا تظهر هذه الإجابات في النسخة المطبوعة.</p>
+    <div id="rAnswers"></div>
+  </div>
+
+  <div class="center no-print" style="margin-top:22px">
+    <button class="btn btn-primary" id="btnPrint2">طباعة / حفظ PDF</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  var RUBRIC = [
+    { key: 'ai_llm',          max: 20, label: 'هندسة الذكاء الاصطناعي و LLM' },
+    { key: 'rag',             max: 15, label: 'استرجاع المعرفة RAG' },
+    { key: 'backend_api',     max: 15, label: 'الـ Backend وتكامل الـ APIs' },
+    { key: 'architecture',    max: 15, label: 'تصميم النظام' },
+    { key: 'security',        max: 10, label: 'الأمان وحماية البيانات' },
+    { key: 'production',      max: 10, label: 'التشغيل والنشر Production' },
+    { key: 'problem_solving', max: 10, label: 'حل المشكلات' },
+    { key: 'communication',   max: 5,  label: 'وضوح الشرح والتواصل' }
+  ];
+
+  var SECTIONS = [
+    { key: 's1',           label: 'القسم ١ — تصميم النظام' },
+    { key: 's1_diagram',   label: 'القسم ١ — المخطط (البلوكات)' },
+    { key: 's2',           label: 'القسم ٢ — تصميم RAG' },
+    { key: 's2_ingest',    label: 'القسم ٢أ — إدخال المعرفة' },
+    { key: 's2_retrieval', label: 'القسم ٢ب — آلية الاسترجاع' },
+    { key: 's2_fallback',  label: 'القسم ٢ج — عند غياب إجابة موثوقة' },
+    { key: 's2_eval',      label: 'القسم ٢د — قياس جودة الاسترجاع' },
+    { key: 's3_lang',      label: 'القسم ٣ — اللغة المختارة' },
+    { key: 's3',           label: 'القسم ٣ — كود استدعاء الـ API' },
+    { key: 's4_action',    label: 'القسم ٤أ — تصرّف الوكيل' },
+    { key: 's4_access',    label: 'القسم ٤ب — منع الوصول غير المصرّح' },
+    { key: 's4_secrets',   label: 'القسم ٤ج — حماية المفاتيح والبيانات' },
+    { key: 's4_tenant',    label: 'القسم ٤د — منع تسريب بيانات العملاء' },
+    { key: 's5',           label: 'القسم ٥ — النشر والتشغيل' },
+    { key: 'proto',        label: 'اختياري — النموذج الأولي' }
+  ];
+
+  var LEVELS = [
+    { min: 90, text: 'ممتاز جدًا — Senior / موصى به بقوة', cls: 'v-a', color: '#34D399' },
+    { min: 80, text: 'قوي — موصى به',                      cls: 'v-b', color: '#14B8A6' },
+    { min: 70, text: 'جيد — موصى به مع إشراف',              cls: 'v-c', color: '#6366F1' },
+    { min: 60, text: 'متوسط — يحتاج تطوير',                 cls: 'v-d', color: '#FBBF24' },
+    { min: 0,  text: 'غير موصى به',                        cls: 'v-e', color: '#F87171' }
+  ];
+
+  var VERDICT_CLASS = {
+    'نعم، بشكل مستقل': 'v-a', 'نعم، مع إشراف محدود': 'v-b',
+    'يحتاج إشراف مستمر': 'v-d', 'لا': 'v-e',
+    'توظيف بقوة': 'v-a', 'مناسب للتوظيف': 'v-b',
+    'مناسب بشرط': 'v-d', 'لا يوصى بالتوظيف': 'v-e',
+    'ممتاز': 'v-a', 'قوي': 'v-b', 'متوسط': 'v-c', 'ضعيف': 'v-d', 'غير كافٍ': 'v-e'
+  };
+
+  var submission = null;
+
+  // ── Helpers ────────────────────────────────────────────
+
+  function decode(code) {
+    var trimmed = String(code || '').trim();
+    var payload = trimmed.indexOf('RAFD1.') === 0 ? trimmed.slice(6) : trimmed;
+    payload = payload.replace(/\s+/g, '');
+    var bin = atob(payload);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+
+  function levelFor(total) {
+    for (var i = 0; i < LEVELS.length; i++) if (total >= LEVELS[i].min) return LEVELS[i];
+    return LEVELS[LEVELS.length - 1];
+  }
+
+  function barColor(pct) {
+    if (pct >= 0.85) return '#34D399';
+    if (pct >= 0.65) return '#14B8A6';
+    if (pct >= 0.45) return '#6366F1';
+    if (pct >= 0.25) return '#FBBF24';
+    return '#F87171';
+  }
+
+  function setList(el, items, fallback) {
+    el.innerHTML = '';
+    var arr = Array.isArray(items) ? items.filter(function (t) { return String(t || '').trim(); }) : [];
+    if (!arr.length) {
+      var li = document.createElement('li');
+      li.textContent = fallback;
+      li.style.opacity = '.6';
+      el.appendChild(li);
+      return;
+    }
+    arr.forEach(function (t) {
+      var li = document.createElement('li');
+      li.textContent = t;
+      el.appendChild(li);
+    });
+  }
+
+  function setVerdict(el, text, extraClass) {
+    el.className = 'verdict ' + (VERDICT_CLASS[text] || extraClass || 'v-c');
+    el.textContent = text || '—';
+  }
+
+  function fail(msg) {
+    $('inputErrorText').textContent = msg;
+    $('inputError').classList.remove('hidden');
+  }
+
+  // ── Load submission ────────────────────────────────────
+
+  $('btnUpload').addEventListener('click', function () { $('fileInput').click(); });
+
+  $('fileInput').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () { $('codeInput').value = reader.result; $('btnLoad').click(); };
+    reader.readAsText(f);
+  });
+
+  $('btnLoad').addEventListener('click', function () {
+    $('inputError').classList.add('hidden');
+    var raw = $('codeInput').value.trim();
+    if (!raw) return fail('الصق كود التسليم أولاً.');
+
+    try {
+      submission = decode(raw);
+    } catch (err) {
+      return fail('تعذّر قراءة الكود. تأكد من نسخه كاملاً كما أرسله المرشح، دون حذف أي جزء منه.');
+    }
+
+    if (!submission || !submission.answers || !submission.candidate) {
+      return fail('الكود صالح شكلاً لكنه لا يحتوي على تسليم اختبار.');
+    }
+
+    var c = submission.candidate;
+    $('loadedName').textContent = c.name || 'مرشح';
+    $('loadedMeta').innerHTML =
+      '<span>' + esc(c.title || '—') + '</span>' +
+      '<span>' + esc(c.years || '?') + ' سنوات خبرة</span>' +
+      '<span>' + esc(c.email || '—') + '</span>' +
+      '<span>استغرق ' + esc(submission.timeUsedLabel || '—') + ' من ٣٠:٠٠</span>';
+
+    $('stepInput').classList.add('hidden');
+    $('stepEvaluate').classList.remove('hidden');
+    $('btnReset').classList.remove('hidden');
+    renderAnswers();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+
+  // ── AI evaluation ──────────────────────────────────────
+
+  $('btnEvaluate').addEventListener('click', function () {
+    $('evalIdle').classList.add('hidden');
+    $('evalError').classList.add('hidden');
+    $('evalBusy').classList.remove('hidden');
+
+    fetch('/api/assess-candidate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'evaluate', submission: submission })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        $('evalBusy').classList.add('hidden');
+        if (d && d.ok && d.result && !d.result.manual) {
+          renderReport(d.result, false);
+          return;
+        }
+        var reason = (d && (d.error || (d.result && d.result.reason))) ||
+          'التقييم الآلي غير متاح حالياً.';
+        showManual(reason);
+      })
+      .catch(function () {
+        $('evalBusy').classList.add('hidden');
+        showManual('تعذّر الاتصال بخدمة التقييم. قد يكون السبب انتهاء المهلة — يمكنك المحاولة مرة أخرى أو إدخال الدرجات يدوياً.');
+      });
+  });
+
+  function showManual(reason) {
+    if (reason) {
+      $('evalErrorText').textContent = reason + ' استخدم التقييم اليدوي بالأسفل، أو أعد المحاولة.';
+      $('evalError').classList.remove('hidden');
+    }
+    $('evalIdle').classList.remove('hidden');
+    buildManual();
+    $('manualCard').classList.remove('hidden');
+    $('manualCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  $('btnManualMode').addEventListener('click', function () { showManual(''); });
+
+  // ── Manual scoring ─────────────────────────────────────
+
+  function buildManual() {
+    var host = $('manualRows');
+    if (host.childElementCount) return;
+    RUBRIC.forEach(function (r) {
+      var row = document.createElement('div');
+      row.className = 'manual-row';
+      row.innerHTML = '<label for="m_' + r.key + '" style="margin:0">' + r.label +
+        ' <span class="faint small">— من <span class="num">' + r.max + '</span></span></label>' +
+        '<input type="number" id="m_' + r.key + '" min="0" max="' + r.max + '" step="1" value="0">';
+      host.appendChild(row);
+    });
+    host.addEventListener('input', updateManualTotal);
+    updateManualTotal();
+  }
+
+  function readManual() {
+    var scores = {}, total = 0;
+    RUBRIC.forEach(function (r) {
+      var el = $('m_' + r.key);
+      var v = el ? Number(el.value) : 0;
+      if (!isFinite(v) || v < 0) v = 0;
+      if (v > r.max) v = r.max;
+      scores[r.key] = Math.round(v);
+      total += scores[r.key];
+    });
+    return { scores: scores, total: total };
+  }
+
+  function updateManualTotal() {
+    var m = readManual();
+    $('manualTotal').innerHTML = m.total + ' <span class="faint" style="font-size:15px">/ 100</span>';
+  }
+
+  $('btnManualReport').addEventListener('click', function () {
+    var m = readManual();
+    var lvl = levelFor(m.total);
+    renderReport({
+      scores: m.scores,
+      total: m.total,
+      score_reasons: {},
+      strengths: [], weaknesses: [], risks: [],
+      levels: {},
+      can_deliver: m.total >= 85 ? 'نعم، بشكل مستقل'
+                 : m.total >= 70 ? 'نعم، مع إشراف محدود'
+                 : m.total >= 55 ? 'يحتاج إشراف مستمر' : 'لا',
+      can_deliver_reason: 'مستنتج من الدرجة التي أدخلتها يدوياً.',
+      recommendation: m.total >= 85 ? 'توظيف بقوة'
+                    : m.total >= 75 ? 'مناسب للتوظيف'
+                    : m.total >= 60 ? 'مناسب بشرط' : 'لا يوصى بالتوظيف',
+      recommendation_reason: 'مستنتجة من الدرجة اليدوية. راجع الإجابات بنفسك قبل اتخاذ القرار.',
+      interview_questions: [],
+      flags: [],
+      summary: 'تقييم يدوي — الدرجات أُدخلت من قبل فريق رفد وليست من المُقيّم الآلي. المستوى العام: ' + lvl.text + '.'
+    }, true);
+  });
+
+  // ── Report ─────────────────────────────────────────────
+
+  function renderReport(r, manual) {
+    var total = Number(r.total) || 0;
+    var lvl = levelFor(total);
+    var c = submission.candidate || {};
+
+    $('rName').textContent = c.name || 'مرشح';
+    $('rMeta').innerHTML =
+      '<span>' + esc(c.title || '—') + '</span>' +
+      '<span>' + esc(c.years || '?') + ' سنوات خبرة</span>' +
+      '<span>' + esc(c.email || '—') + '</span>' +
+      '<span>استغرق ' + esc(submission.timeUsedLabel || '—') + ' من ٣٠:٠٠</span>' +
+      (manual ? '<span style="color:var(--warn)">تقييم يدوي</span>' : '');
+    $('rDate').textContent = new Date().toLocaleDateString('ar', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    $('rScore').textContent = total;
+    $('rScore').style.color = lvl.color;
+    var arc = $('dialArc');
+    arc.style.stroke = lvl.color;
+    setTimeout(function () { arc.style.strokeDashoffset = String(396 - (396 * Math.min(100, total) / 100)); }, 60);
+
+    $('rLevel').className = 'verdict ' + lvl.cls;
+    $('rLevel').textContent = lvl.text;
+    $('rSummary').textContent = r.summary || '';
+
+    setVerdict($('rDeliver'), r.can_deliver);
+    $('rDeliverWhy').textContent = r.can_deliver_reason || '';
+    setVerdict($('rRec'), r.recommendation);
+    $('rRecWhy').textContent = r.recommendation_reason || '';
+
+    // Score bars
+    var bars = $('rBars');
+    bars.innerHTML = '';
+    RUBRIC.forEach(function (item) {
+      var val = Number(r.scores && r.scores[item.key]) || 0;
+      var pct = item.max ? val / item.max : 0;
+      var wrap = document.createElement('div');
+      var reason = r.score_reasons && r.score_reasons[item.key];
+      wrap.innerHTML =
+        '<div class="bar-label"><span>' + esc(item.label) + '</span>' +
+        '<span class="bar-val" style="color:' + barColor(pct) + '">' + val + ' <span class="faint">/ ' + item.max + '</span></span></div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:0;background:' + barColor(pct) + '"></div></div>' +
+        (reason ? '<p class="muted small" style="margin-top:8px;line-height:1.7">' + esc(reason) + '</p>' : '');
+      bars.appendChild(wrap);
+      setTimeout(function () { wrap.querySelector('.bar-fill').style.width = (pct * 100) + '%'; }, 80);
+    });
+
+    // Levels
+    var lvlHost = $('rLevels');
+    var lvlMap = [
+      ['ai', 'مستوى AI'], ['coding', 'مستوى البرمجة'], ['backend', 'مستوى Backend و APIs'],
+      ['architecture', 'مستوى Architecture'], ['security', 'مستوى Security'], ['production', 'الجاهزية لـ Production']
+    ];
+    lvlHost.innerHTML = '';
+    lvlMap.forEach(function (pair) {
+      var d = (r.levels && r.levels[pair[0]]) || null;
+      var el = document.createElement('div');
+      el.className = 'lvl';
+      var rating = d && d.rating ? d.rating : '—';
+      var cls = VERDICT_CLASS[rating] || 'v-c';
+      el.innerHTML =
+        '<div class="lvl-top"><span class="lvl-name">' + pair[1] + '</span>' +
+        '<span class="pill ' + cls + '">' + esc(rating) + '</span></div>' +
+        '<div class="lvl-note">' + esc(d && d.note ? d.note : 'لم يُقيَّم آلياً.') + '</div>';
+      lvlHost.appendChild(el);
+    });
+
+    setList($('rStrengths'), r.strengths, 'لم تُرصد نقاط قوة واضحة في هذا التسليم.');
+    setList($('rWeaknesses'), r.weaknesses, 'لا توجد ملاحظات مسجّلة.');
+    setList($('rRisks'), r.risks, 'لا توجد مخاطر مسجّلة.');
+
+    var qs = Array.isArray(r.interview_questions) ? r.interview_questions.filter(Boolean) : [];
+    if (qs.length) {
+      setList($('rQuestions'), qs, '');
+      $('rQuestionsCard').classList.remove('hidden');
+    } else {
+      $('rQuestionsCard').classList.add('hidden');
+    }
+
+    var flags = Array.isArray(r.flags) ? r.flags.filter(Boolean) : [];
+    if (flags.length) {
+      setList($('rFlags'), flags, '');
+      $('rFlagsCard').classList.remove('hidden');
+    } else {
+      $('rFlagsCard').classList.add('hidden');
+    }
+
+    $('stepEvaluate').classList.add('hidden');
+    $('stepReport').classList.remove('hidden');
+    $('btnPrint').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Raw answers ────────────────────────────────────────
+
+  function renderAnswers() {
+    var host = $('rAnswers');
+    host.innerHTML = '';
+    SECTIONS.forEach(function (s) {
+      var val = (submission.answers[s.key] || '').trim();
+      var block = document.createElement('div');
+      block.className = 'answer-block';
+      block.innerHTML =
+        '<div class="answer-head"><span>' + s.label + '</span>' +
+        '<span class="faint small">' + (val ? val.length.toLocaleString() + ' حرف' : 'فارغ') + '</span></div>' +
+        '<div class="answer-body">' + esc(val || '— لم يُجب المرشح على هذا القسم —') + '</div>';
+      block.querySelector('.answer-head').addEventListener('click', function () { block.classList.toggle('open'); });
+      host.appendChild(block);
+    });
+  }
+
+  // ── Controls ───────────────────────────────────────────
+
+  function doPrint() { window.print(); }
+  $('btnPrint').addEventListener('click', doPrint);
+  $('btnPrint2').addEventListener('click', doPrint);
+
+  $('btnReset').addEventListener('click', function () {
+    if (!confirm('سيتم مسح التسليم الحالي والبدء من جديد. متابعة؟')) return;
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>

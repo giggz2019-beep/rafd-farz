@@ -37,6 +37,7 @@ Active serverless functions (Vercel format: `module.exports = async (req, res) =
 | `api/chat-khalid.js` | Powers the "Khalid" AI chatbot using Claude Haiku | `ANTHROPIC_API_KEY` |
 | `api/send-otp.js` | Sends OTP verification emails via [Resend](https://resend.com) | `RESEND_API_KEY` |
 | `api/partner-auth.js` | Partner login/register/OTP/reset flows; `login` action optionally verifies a Cloudflare Turnstile token before sending the login OTP | `SUPABASE_SERVICE_KEY`, optional `TURNSTILE_SECRET_KEY` |
+| `api/assess-candidate.js` | Grades the AI Engineer hiring assessment with Claude (`evaluate`) and emails submissions (`notify`) | optional `ANTHROPIC_API_KEY`, `RESEND_API_KEY`, `ASSESSMENT_EMAIL` |
 
 **Critical**: If `ANTHROPIC_API_KEY` is not set in Vercel environment variables, `chat-khalid.js` immediately returns `escalate: true`, which causes the frontend to show WhatsApp/email contact links instead of a chat response. This is the most common cause of Khalid appearing "broken."
 
@@ -74,6 +75,7 @@ A minimal Express server that serves all static files and provides a stub `POST 
 | Application flow | `demo-apply.html`, `apply.html`, `demo-jobs.html` |
 | Partner portal | `register-partner.html`, `partner-login.html`, `partner-dashboard.html` |
 | Admin / internal | `admin.html`, `dashboard.html`, `login.html`, `signup.html` |
+| Hiring assessment | `assessment.html` (candidate, English/LTR), `assessment-review.html` (employer, Arabic/RTL), `assessment.css` |
 
 ### i18n conventions
 
@@ -83,6 +85,18 @@ A minimal Express server that serves all static files and provides a stub `POST 
 - Use `data-i18n-placeholder="key"` (not `data-i18n`) to translate `placeholder` attributes on inputs.
 - For programmatic access to a translated string in JS logic, use `getT('key')` — reads from `localStorage` and falls back to Arabic.
 - Pages can listen to the `rafd-lang-changed` CustomEvent on `document` (detail: `{ lang }`) to react to language switches without polling.
+- **Exception — the hiring-assessment pages.** `assessment.html`, `assessment-review.html` and `assessment.css` deliberately do **not** use `i18n.js` or `style.css`. Each page is single-language by design (the candidate sits the test in English; the employer reads the report in Arabic), and they are self-contained so the marketing theme can change without disturbing them. Do not "fix" them by wiring in `data-i18n` attributes.
+
+### Hiring assessment (`assessment.html` → `assessment-review.html`)
+
+A 30-minute practical assessment for AI Engineer candidates, plus an employer-only evaluation dashboard. There is no database: on submit the candidate page serialises the whole submission to a base64 **submission code** (`RAFD1.…`) which the employer pastes into the review dashboard. If `RESEND_API_KEY` is set, `api/assess-candidate.js` also emails the submission and the code to `ASSESSMENT_EMAIL`.
+
+- The timer start is written to `localStorage` under `rafd_assessment_v1`, so reloading resumes the same countdown and a candidate cannot restart the clock. On expiry the page auto-submits whatever was written.
+- The candidate never sees a score, the rubric, or the scoring criteria — grading lives entirely in `api/assess-candidate.js` and the review page.
+- Grading uses `claude-opus-5` with structured outputs (`output_config.format`) against a fixed 100-point rubric, at `effort: 'medium'` to stay inside the 60s `maxDuration` set for this function in `vercel.json`. Raise both together or neither.
+- Category scores are clamped to their rubric maximum server-side and the total is recomputed from the parts, so the headline number can never contradict the breakdown.
+- Every failure path (no API key, model refusal, timeout, network error) degrades to the dashboard's **manual scoring** mode rather than erroring out.
+- Arabic report text is bidi-sensitive: score fragments like `15 / 20` must carry `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL reverses them to `20 / 15`.
 
 ## Operating standard (working style)
 
