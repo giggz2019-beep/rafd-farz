@@ -321,7 +321,7 @@ async function notify(submission, code) {
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'RAFD Assessment <onboarding@resend.dev>',
+        from: 'RAFD Digital <noreply@rafd-digital.com>',
         to: [to],
         subject: `Assessment submission — ${c.name || 'candidate'}`,
         html
