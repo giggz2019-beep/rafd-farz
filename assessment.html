@@ -459,6 +459,9 @@
     </div>
 
     <p class="faint small mt-lg">Thank you for your time. Your results are reviewed by the RAFD engineering team.</p>
+
+    <hr class="divider">
+    <button class="btn btn-ghost btn-sm" id="btnEmployerResult">النتيجة — لمسؤول RAFD فقط</button>
   </div>
 </div>
 
@@ -781,7 +784,7 @@
     $('doneUsed').textContent = sub.timeUsedLabel + ' of 30:00';
     $('doneCode').textContent = code;
 
-    window.__rafdSubmission = { code: code, submission: sub };
+    window.__rafdSubmission = { code: code, submission: sub, id: null };
 
     fetch('/api/assess-candidate', {
       method: 'POST',
@@ -790,6 +793,7 @@
     }).then(function (r) { return r.json(); }).then(function (d) {
       // Stored in the review inbox or emailed — either way it reached RAFD,
       // so the manual submission code is no longer needed.
+      if (d && d.id) window.__rafdSubmission.id = d.id;
       if (d && (d.saved || d.emailed)) {
         $('doneEmailed').classList.remove('hidden');
         $('doneCodeWrap').classList.add('hidden');
@@ -883,6 +887,18 @@
     a.download = 'rafd-assessment-' + (state.candidate.name || 'candidate').replace(/[^\w-]+/g, '-').toLowerCase() + '.txt';
     a.click();
     URL.revokeObjectURL(url);
+  });
+
+  // Employer takes the laptop after the candidate finishes: one click carries
+  // the submission to the review page, which asks for the admin password and
+  // shows the report. The candidate never sees a score on this page.
+  $('btnEmployerResult').addEventListener('click', function () {
+    var data = window.__rafdSubmission;
+    if (!data) return;
+    try {
+      sessionStorage.setItem('rafd_assess_handoff', JSON.stringify({ code: data.code, id: data.id || null }));
+    } catch (e) { /* private mode — review page falls back to its inbox */ }
+    location.href = 'assessment-review.html';
   });
 
   document.addEventListener('click', function (e) {

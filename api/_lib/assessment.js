@@ -504,7 +504,7 @@ async function handle(req, res) {
       }
       const stored = await saveSubmission(submission);
       const mailed = await notify(submission, code);
-      return res.status(200).json({ ok: true, saved: stored.saved, emailed: !!mailed.emailed });
+      return res.status(200).json({ ok: true, saved: stored.saved, id: stored.id || null, emailed: !!mailed.emailed });
     }
 
     if (action === 'notify') {
@@ -513,6 +513,12 @@ async function handle(req, res) {
     }
 
     if (action === 'evaluate') {
+      // Deliberately unauthenticated: the employer sits with the candidate and
+      // opens the result on the same laptop right after submission. The inbox
+      // (listing everyone's data) stays behind ADMIN_PASSWORD; grading one
+      // submission you already hold does not.
+      const rl = await rateLimit(`assess-eval:${getIp(req)}`, 10, 60 * 60 * 1000);
+      if (rl.limited) return res.status(429).json({ error: 'too_many_attempts' });
       const result = await evaluate(submission);
       // Persist the report so reopening the inbox never re-pays for grading.
       if (body.submission_id && result && !result.manual) {

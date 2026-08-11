@@ -679,10 +679,8 @@
     fetchInbox(sessionStorage.getItem(ADMIN_KEY) || '');
   });
 
-  // Session already unlocked? Load the inbox straight away.
-  if (sessionStorage.getItem(ADMIN_KEY)) {
-    fetchInbox(sessionStorage.getItem(ADMIN_KEY));
-  }
+  // (handoff from the assessment page is handled at the end of this script,
+  //  after every listener above is attached)
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
@@ -912,6 +910,34 @@
     if (!confirm('سيتم مسح التسليم الحالي والبدء من جديد. متابعة؟')) return;
     location.reload();
   });
+
+  // ── Handoff from the assessment page ───────────────────
+  // The employer clicked "النتيجة" on the candidate's done screen: the
+  // submission arrives via sessionStorage and grading starts immediately —
+  // zero extra clicks. Must run last, after every listener is attached.
+  var handoffRaw = null;
+  try {
+    handoffRaw = sessionStorage.getItem('rafd_assess_handoff');
+    if (handoffRaw) sessionStorage.removeItem('rafd_assess_handoff');
+  } catch (e) {}
+
+  var handoffDone = false;
+  if (handoffRaw) {
+    try {
+      var h = JSON.parse(handoffRaw);
+      var hsub = decode(h.code);
+      if (hsub && hsub.answers && hsub.candidate) {
+        openSubmission(hsub, h.id || null, null);
+        handoffDone = true;
+        $('btnEvaluate').click();
+      }
+    } catch (e) { /* fall through to the normal inbox */ }
+  }
+
+  // Session already unlocked? Load the inbox straight away.
+  if (!handoffDone && sessionStorage.getItem(ADMIN_KEY)) {
+    fetchInbox(sessionStorage.getItem(ADMIN_KEY));
+  }
 })();
 </script>
 </body>
