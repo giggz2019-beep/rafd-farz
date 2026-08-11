@@ -179,6 +179,32 @@ const RESULT_SCHEMA = {
   additionalProperties: false
 };
 
+// Knowledge-check answer key. Server-side ONLY — never shipped to the page, so
+// a candidate reading the page source finds nothing.
+const MCQ_KEY = {
+  mcq_q1: 'B', mcq_q2: 'C', mcq_q3: 'A', mcq_q4: 'D', mcq_q5: 'B',
+  mcq_q6: 'A', mcq_q7: 'C', mcq_q8: 'B', mcq_q9: 'A', mcq_q10: 'D'
+};
+
+const MCQ_TOPICS = {
+  mcq_q1: 'RAG purpose', mcq_q2: 'Embeddings', mcq_q3: 'Hallucination',
+  mcq_q4: 'Tool calling', mcq_q5: 'HTTP 401', mcq_q6: 'Idempotency',
+  mcq_q7: 'Binary search complexity', mcq_q8: 'Database index',
+  mcq_q9: 'Containers vs VMs', mcq_q10: 'Secrets handling'
+};
+
+function gradeMcq(answers) {
+  let score = 0, answered = 0;
+  const wrong = [];
+  for (const [q, key] of Object.entries(MCQ_KEY)) {
+    const got = (answers && answers[q] || '').toString().trim().toUpperCase();
+    if (got) answered++;
+    if (got === key) score++;
+    else wrong.push(`${MCQ_TOPICS[q]} (chose ${got || 'nothing'})`);
+  }
+  return { score, total: Object.keys(MCQ_KEY).length, answered, wrong };
+}
+
 const SECTION_LABELS = {
   s1: 'SECTION 1 — System Architecture',
   s1_diagram: 'SECTION 1 — Architecture diagram (blocks the candidate placed)',
@@ -200,11 +226,17 @@ const SECTION_LABELS = {
 function buildTranscript(sub) {
   const c = sub.candidate || {};
   const a = sub.answers || {};
+  const mcq = gradeMcq(a);
   const lines = [
     `Candidate: ${c.name || '(not given)'}`,
     `Current job title: ${c.title || '(not given)'}`,
     `Years of experience: ${c.years || '(not given)'}`,
     `Time used: ${sub.timeUsedLabel || '(unknown)'} of 30 minutes`,
+    '',
+    `=== KNOWLEDGE CHECK (10 objective MCQs, graded automatically) ===`,
+    `Score: ${mcq.score}/${mcq.total} (${mcq.answered} answered).`,
+    mcq.wrong.length ? `Missed: ${mcq.wrong.join('; ')}.` : 'All correct.',
+    'Use this as supporting evidence for breadth of fundamentals (AI, programming, engineering) — the written sections remain the primary basis for every category score.',
     '',
     '=== CANDIDATE ANSWERS (verbatim) ==='
   ];
@@ -299,7 +331,12 @@ async function evaluate(submission) {
     total += val;
   }
 
-  return { ...parsed, scores, total, model: data.model || MODEL, evaluatedAt: new Date().toISOString() };
+  const mcq = gradeMcq(submission.answers || {});
+  return {
+    ...parsed, scores, total,
+    mcq: { score: mcq.score, total: mcq.total, answered: mcq.answered },
+    model: data.model || MODEL, evaluatedAt: new Date().toISOString()
+  };
 }
 
 function escapeHtml(s) {

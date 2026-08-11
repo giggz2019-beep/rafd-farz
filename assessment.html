@@ -44,9 +44,9 @@
     <div class="eyebrow">Practical Assessment</div>
     <h1>AI Engineer — Build an intelligent customer-service agent</h1>
     <p class="lede">
-      This is a practical design exercise, not a quiz. There are no multiple-choice questions and no
-      single correct answer. You will design a real AI system for a real business problem, and you will
-      be assessed on your engineering reasoning and technical depth.
+      This is a practical design exercise: a short knowledge check, then you design a real AI system
+      for a real business problem. You are assessed on engineering reasoning and technical depth —
+      the written sections carry most of the weight.
     </p>
 
     <hr class="divider">
@@ -56,7 +56,7 @@
         <div class="brief-title">Format</div>
         <ul class="brief-list">
           <li><strong>30 minutes</strong>, timed. The clock starts when you click begin.</li>
-          <li>Five written sections plus one optional implementation section.</li>
+          <li>Ten quick multiple-choice questions, five written sections, plus one optional implementation section.</li>
           <li>Your answers save automatically as you type.</li>
           <li>You may move freely between sections until you submit.</li>
         </ul>
@@ -160,12 +160,96 @@
 
     <div class="nav-row">
       <span></span>
-      <button class="btn btn-primary" data-go="1">Begin Section 1 &rarr;</button>
+      <button class="btn btn-primary" data-go="1">Begin: Knowledge Check &rarr;</button>
     </div>
   </section>
 
-  <!-- ── Step 1: architecture ── -->
+  <!-- ── Step 1: knowledge check (MCQ) ── -->
   <section class="section" data-step="1">
+    <div class="card">
+      <div class="eyebrow">Knowledge Check</div>
+      <h2>Quick fundamentals — 10 questions</h2>
+      <p class="lede">One best answer each. These take 4–5 minutes; the written sections carry most of the weight.</p>
+      <hr class="divider">
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">1. Which problem does RAG (Retrieval-Augmented Generation) primarily solve?</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q1" value="A"><span><strong>A.</strong> Making the model respond faster</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q1" value="B"><span><strong>B.</strong> Grounding answers in trusted, up-to-date knowledge</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q1" value="C"><span><strong>C.</strong> Reducing GPU memory usage</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q1" value="D"><span><strong>D.</strong> Compressing the model weights</span></label>
+      </div>
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">2. In a RAG pipeline, embeddings are used to…</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q2" value="A"><span><strong>A.</strong> Encrypt the client's documents</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q2" value="B"><span><strong>B.</strong> Generate the user interface</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q2" value="C"><span><strong>C.</strong> Represent text as vectors so similar meanings can be found</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q2" value="D"><span><strong>D.</strong> Translate text between languages</span></label>
+      </div>
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">3. An LLM "hallucination" is when the model…</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q3" value="A"><span><strong>A.</strong> States false information confidently</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q3" value="B"><span><strong>B.</strong> Responds too slowly</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q3" value="C"><span><strong>C.</strong> Runs out of context window</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q3" value="D"><span><strong>D.</strong> Repeats the user's question</span></label>
+      </div>
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">4. A "tool call" (function calling) lets an AI agent…</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q4" value="A"><span><strong>A.</strong> Train itself on new data</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q4" value="B"><span><strong>B.</strong> Increase its context window</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q4" value="C"><span><strong>C.</strong> Change its own system prompt</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q4" value="D"><span><strong>D.</strong> Execute a predefined function or API to fetch real data or act</span></label>
+      </div>
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">5. An HTTP response with status 401 means…</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q5" value="A"><span><strong>A.</strong> The server crashed</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q5" value="B"><span><strong>B.</strong> Authentication is required or failed</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q5" value="C"><span><strong>C.</strong> The resource moved permanently</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q5" value="D"><span><strong>D.</strong> The request succeeded</span></label>
+      </div>
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">6. An API endpoint is "idempotent" when…</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q6" value="A"><span><strong>A.</strong> Calling it repeatedly gives the same result as calling it once</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q6" value="B"><span><strong>B.</strong> It responds in under one second</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q6" value="C"><span><strong>C.</strong> It requires no authentication</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q6" value="D"><span><strong>D.</strong> It can only be called once per day</span></label>
+      </div>
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">7. The time complexity of binary search on a sorted array is…</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q7" value="A"><span><strong>A.</strong> O(n²)</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q7" value="B"><span><strong>B.</strong> O(n)</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q7" value="C"><span><strong>C.</strong> O(log n)</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q7" value="D"><span><strong>D.</strong> O(1)</span></label>
+      </div>
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">8. The primary purpose of a database index is to…</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q8" value="A"><span><strong>A.</strong> Encrypt rows at rest</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q8" value="B"><span><strong>B.</strong> Speed up lookups at the cost of extra storage and slower writes</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q8" value="C"><span><strong>C.</strong> Back up the table automatically</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q8" value="D"><span><strong>D.</strong> Enforce foreign keys</span></label>
+      </div>
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">9. Compared to virtual machines, Docker containers…</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q9" value="A"><span><strong>A.</strong> Share the host OS kernel, so they are lighter and start faster</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q9" value="B"><span><strong>B.</strong> Each include a full guest operating system</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q9" value="C"><span><strong>C.</strong> Cannot run databases</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q9" value="D"><span><strong>D.</strong> Only run on Linux laptops</span></label>
+      </div>
+      <div class="field mcq-q" style="margin-bottom:22px">
+        <label style="font-size:14px">10. The correct place to keep a production API key is…</label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q10" value="A"><span><strong>A.</strong> Hard-coded in the frontend JavaScript</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q10" value="B"><span><strong>B.</strong> Committed to the git repository</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q10" value="C"><span><strong>C.</strong> Sent to the client in a cookie</span></label>
+        <label class="mcq-opt"><input type="radio" name="mcq_q10" value="D"><span><strong>D.</strong> An environment variable or secrets manager on the server</span></label>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" data-go="0">&larr; Back</button>
+      <button class="btn btn-primary" data-go="2">Next: System Architecture &rarr;</button>
+    </div>
+  </section>
+
+  <!-- ── Step 2: architecture ── -->
+  <section class="section" data-step="2">
     <div class="card">
       <div class="eyebrow">Section 1 of 5</div>
       <h2>System Architecture</h2>
@@ -199,12 +283,12 @@
 
     <div class="nav-row">
       <button class="btn btn-ghost" data-go="0">&larr; Back</button>
-      <button class="btn btn-primary" data-go="2">Next: AI / RAG Design &rarr;</button>
+      <button class="btn btn-primary" data-go="3">Next: AI / RAG Design &rarr;</button>
     </div>
   </section>
 
   <!-- ── Step 2: RAG ── -->
-  <section class="section" data-step="2">
+  <section class="section" data-step="3">
     <div class="card">
       <div class="eyebrow">Section 2 of 5</div>
       <h2>AI / RAG Design</h2>
@@ -243,13 +327,13 @@
     </div>
 
     <div class="nav-row">
-      <button class="btn btn-ghost" data-go="1">&larr; Back</button>
-      <button class="btn btn-primary" data-go="3">Next: Tool / API Integration &rarr;</button>
+      <button class="btn btn-ghost" data-go="2">&larr; Back</button>
+      <button class="btn btn-primary" data-go="4">Next: Tool / API Integration &rarr;</button>
     </div>
   </section>
 
   <!-- ── Step 3: tools ── -->
-  <section class="section" data-step="3">
+  <section class="section" data-step="4">
     <div class="card">
       <div class="eyebrow">Section 3 of 5</div>
       <h2>Tool / API Integration</h2>
@@ -288,13 +372,13 @@
     </div>
 
     <div class="nav-row">
-      <button class="btn btn-ghost" data-go="2">&larr; Back</button>
-      <button class="btn btn-primary" data-go="4">Next: Failure &amp; Security &rarr;</button>
+      <button class="btn btn-ghost" data-go="3">&larr; Back</button>
+      <button class="btn btn-primary" data-go="5">Next: Failure &amp; Security &rarr;</button>
     </div>
   </section>
 
   <!-- ── Step 4: security ── -->
-  <section class="section" data-step="4">
+  <section class="section" data-step="5">
     <div class="card">
       <div class="eyebrow">Section 4 of 5</div>
       <h2>Failure &amp; Security</h2>
@@ -331,13 +415,13 @@
     </div>
 
     <div class="nav-row">
-      <button class="btn btn-ghost" data-go="3">&larr; Back</button>
-      <button class="btn btn-primary" data-go="5">Next: Production &rarr;</button>
+      <button class="btn btn-ghost" data-go="4">&larr; Back</button>
+      <button class="btn btn-primary" data-go="6">Next: Production &rarr;</button>
     </div>
   </section>
 
   <!-- ── Step 5: production ── -->
-  <section class="section" data-step="5">
+  <section class="section" data-step="6">
     <div class="card">
       <div class="eyebrow">Section 5 of 5</div>
       <h2>Production &amp; Deployment</h2>
@@ -357,13 +441,13 @@
     </div>
 
     <div class="nav-row">
-      <button class="btn btn-ghost" data-go="4">&larr; Back</button>
-      <button class="btn btn-primary" data-go="6">Next: Prototype (optional) &rarr;</button>
+      <button class="btn btn-ghost" data-go="5">&larr; Back</button>
+      <button class="btn btn-primary" data-go="7">Next: Prototype (optional) &rarr;</button>
     </div>
   </section>
 
   <!-- ── Step 6: optional prototype ── -->
-  <section class="section" data-step="6">
+  <section class="section" data-step="7">
     <div class="card">
       <div class="eyebrow">Optional</div>
       <h2>Prototype / Implementation</h2>
@@ -384,13 +468,13 @@
     </div>
 
     <div class="nav-row">
-      <button class="btn btn-ghost" data-go="5">&larr; Back</button>
-      <button class="btn btn-primary" data-go="7">Review &amp; Submit &rarr;</button>
+      <button class="btn btn-ghost" data-go="6">&larr; Back</button>
+      <button class="btn btn-primary" data-go="8">Review &amp; Submit &rarr;</button>
     </div>
   </section>
 
   <!-- ── Step 7: review ── -->
-  <section class="section" data-step="7">
+  <section class="section" data-step="8">
     <div class="card">
       <div class="eyebrow">Final Step</div>
       <h2>Review &amp; Submit</h2>
@@ -407,7 +491,7 @@
       </div>
 
       <div class="nav-row">
-        <button class="btn btn-ghost" data-go="6">&larr; Back</button>
+        <button class="btn btn-ghost" data-go="7">&larr; Back</button>
         <button class="btn btn-primary btn-lg" id="btnSubmit">Submit Assessment</button>
       </div>
     </div>
@@ -497,8 +581,11 @@
     'a_s5', 'a_proto'
   ];
 
+  var MCQ_IDS = ['mcq_q1','mcq_q2','mcq_q3','mcq_q4','mcq_q5','mcq_q6','mcq_q7','mcq_q8','mcq_q9','mcq_q10'];
+
   var STEPS = [
     { label: 'Brief' },
+    { label: 'Knowledge Check', fields: MCQ_IDS },
     { label: 'Architecture', fields: ['a_s1'] },
     { label: 'AI / RAG', fields: ['a_s2', 'a_s2_ingest', 'a_s2_retrieval', 'a_s2_fallback', 'a_s2_eval'] },
     { label: 'Tools & API', fields: ['a_s3'] },
@@ -735,6 +822,22 @@
     out.textContent = n === 0 ? '' : n.toLocaleString() + ' characters';
   }
 
+  // MCQ radios: persist the chosen letter, restore on resume.
+  function wireMcq() {
+    MCQ_IDS.forEach(function (name) {
+      var radios = document.querySelectorAll('input[name="' + name + '"]');
+      for (var i = 0; i < radios.length; i++) {
+        if (state.answers[name] && radios[i].value === state.answers[name]) radios[i].checked = true;
+        radios[i].addEventListener('change', function (e) {
+          state.answers[name] = e.target.value;
+          save();
+          flashSaved();
+          renderSteps();
+        });
+      }
+    });
+  }
+
   // ── Submission ─────────────────────────────────────────
 
   function encode(obj) {
@@ -749,6 +852,7 @@
     var used = Math.min(DURATION_MS, endedAt - state.startedAt);
     var answers = {};
     FIELDS.forEach(function (id) { answers[id.replace(/^a_/, '')] = state.answers[id] || ''; });
+    MCQ_IDS.forEach(function (id) { answers[id] = state.answers[id] || ''; });
     answers.s1_diagram = state.blocks.join('  →  ');
     return {
       v: 1,
@@ -819,6 +923,7 @@
     renderPalette();
     renderDiagram();
     wireFields();
+    wireMcq();
     go(state.step || 0);
     startTimerLoop();
     window.addEventListener('beforeunload', warnOnLeave);

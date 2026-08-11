@@ -422,6 +422,38 @@ body[dir="rtl"] select { background-position: left 13px center; padding-right: 1
 
 .block-x:hover { color: var(--danger); }
 
+/* ─── MCQ options ────────────────────────────────────────── */
+
+.mcq-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 13px;
+  margin-top: 7px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--text-dim);
+  transition: border-color .15s, background .15s;
+}
+
+.mcq-opt:hover { border-color: var(--text-faint); }
+
+.mcq-opt input {
+  accent-color: var(--accent);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.mcq-opt:has(input:checked) {
+  border-color: var(--accent);
+  background: rgba(20, 184, 166, .08);
+  color: var(--text);
+}
+
 /* ─── Callouts ───────────────────────────────────────────── */
 
 .callout {

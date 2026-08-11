@@ -299,7 +299,10 @@
       </div>
       <div>
         <div class="faint small" style="margin-bottom:8px">المستوى العام</div>
-        <div id="rLevel" class="verdict">—</div>
+        <div class="row" style="gap:10px">
+          <div id="rLevel" class="verdict">—</div>
+          <div id="rMcq" class="verdict v-c hidden">—</div>
+        </div>
         <p class="lede" id="rSummary" style="margin-top:16px"></p>
       </div>
     </div>
@@ -400,6 +403,7 @@
   ];
 
   var SECTIONS = [
+    { key: 'mcq_summary',  label: 'أسئلة الخيارات — إجاباته العشر' },
     { key: 's1',           label: 'القسم ١ — تصميم النظام' },
     { key: 's1_diagram',   label: 'القسم ١ — المخطط (البلوكات)' },
     { key: 's2',           label: 'القسم ٢ — تصميم RAG' },
@@ -814,6 +818,13 @@
 
     $('rLevel').className = 'verdict ' + lvl.cls;
     $('rLevel').textContent = lvl.text;
+    if (r.mcq && r.mcq.total) {
+      $('rMcq').classList.remove('hidden');
+      $('rMcq').innerHTML = 'أسئلة الخيارات: <span class="num">' + r.mcq.score + '/' + r.mcq.total + '</span>';
+      $('rMcq').className = 'verdict ' + (r.mcq.score >= 8 ? 'v-a' : r.mcq.score >= 6 ? 'v-b' : r.mcq.score >= 4 ? 'v-d' : 'v-e');
+    } else {
+      $('rMcq').classList.add('hidden');
+    }
     $('rSummary').textContent = r.summary || '';
 
     setVerdict($('rDeliver'), r.can_deliver);
@@ -890,7 +901,18 @@
     var host = $('rAnswers');
     host.innerHTML = '';
     SECTIONS.forEach(function (s) {
-      var val = (submission.answers[s.key] || '').trim();
+      var val;
+      if (s.key === 'mcq_summary') {
+        var parts = [];
+        for (var q = 1; q <= 10; q++) {
+          var v = submission.answers['mcq_q' + q];
+          parts.push('Q' + q + ': ' + (v || '—'));
+        }
+        val = parts.join('   ');
+        if (/^(Q\d+: —\s*)+$/.test(val.replace(/\s+/g, ' ') + ' ')) val = '';
+      } else {
+        val = (submission.answers[s.key] || '').trim();
+      }
       var block = document.createElement('div');
       block.className = 'answer-block';
       block.innerHTML =
