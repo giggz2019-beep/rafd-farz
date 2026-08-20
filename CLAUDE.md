@@ -98,6 +98,25 @@ A 30-minute practical assessment for AI Engineer candidates, plus an employer-on
 - Every failure path (no API key, model refusal, timeout, network error) degrades to the dashboard's **manual scoring** mode rather than erroring out.
 - Arabic report text is bidi-sensitive: score fragments like `15 / 20` must carry `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL reverses them to `20 / 15`.
 
+### Dev tooling: MCP servers (`.mcp.json`)
+
+`.mcp.json` at the repo root registers project-scoped MCP servers. These are
+**development-time only** — they are not used by the deployed site and are
+unrelated to the Vercel environment variables above.
+
+| Server | Purpose | Env var required |
+|---|---|---|
+| `21st` | [21st.dev](https://21st.dev/mcp) UI component search and generation over HTTP (`https://21st.dev/api/mcp`) | `API_KEY_21ST` |
+
+The key is referenced as `${API_KEY_21ST}` rather than hardcoded, so no secret
+is committed. Export it in your shell (or put it in the repo-root `.env`, which
+is gitignored) before starting Claude Code; without it the server shows
+`Missing environment variables` in `claude mcp list`. Get a key at
+<https://21st.dev/mcp>.
+
+Project-scoped servers need a one-time approval per machine — run `claude` in
+this directory and accept the prompt, then confirm with `claude mcp list`.
+
 ## Operating standard (working style)
 
 Act as an executive-level assistant and thinking partner. Optimize for decision quality, speed, accuracy, and verifiable execution — not ceremony.
