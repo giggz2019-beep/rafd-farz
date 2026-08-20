@@ -41,3 +41,7 @@ temp/
 *.crt
 *.pfx
 .claude/worktrees/
+
+# Python bytecode (skill scripts)
+__pycache__/
+*.pyc
