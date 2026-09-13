@@ -283,6 +283,7 @@
     ratingsApi: '../api/trend-riyadh-place',   // مسار دالة جلب تقييم قوقل (على Vercel)
     googlePhoto: true,       // جلب صورة المكان من قوقل مع التقييم (طلب إضافي مدفوع لكل فتح)
     heroImage: '',           // مثال: 'img/hero.jpg' — يحل مكان رسم الأفق
+    bookingAid: '',          // معرّف شريك Booking.com (aid) — سجّل في برنامج الشركاء لتأخذ عمولة على كل حجز
     favKey: 'trend_riyadh_favs_v1',
   };
 
@@ -305,6 +306,7 @@
 
   const isNew = p => (Date.now() - new Date(p.addedAt || 0).getTime()) / 864e5 <= CONFIG.newDays;
   const priceStr = n => '$'.repeat(Math.max(1, Math.min(3, n|0)));
+  const bookingUrl = p => 'https://www.booking.com/searchresults.html?' + (CONFIG.bookingAid ? 'aid=' + encodeURIComponent(CONFIG.bookingAid) + '&' : '') + 'ss=' + encodeURIComponent((p.nameEn || p.name) + ' Riyadh') + '&lang=ar';
   const mapsUrl = p => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((p.maps || (p.nameEn || p.name)) + ' الرياض') + (p.placeId ? '&query_place_id=' + encodeURIComponent(p.placeId) : '');
   const normalize = s => String(s || '').toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[ً-ْ]/g,'');
 
@@ -468,6 +470,7 @@
       ${p.recommendedBy ? `<div class="rec" style="margin-bottom:10px">👍 بتوصية من ${esc(p.recommendedBy)}</div>` : ''}
       <div class="actions">
         <a class="btn primary" target="_blank" rel="noopener" href="${mapsUrl(p)}">📍 الاتجاهات في خرائط قوقل</a>
+        ${p.sec === 'hotel' && !p.demo ? `<a class="btn" target="_blank" rel="noopener sponsored" href="${bookingUrl(p)}" style="grid-column:1/-1;background:#003580;color:#fff;border-color:#003580">🛏️ الأسعار والحجز عبر Booking.com</a>` : ''}
         ${p.ig ? `<a class="btn" target="_blank" rel="noopener" href="https://instagram.com/${encodeURIComponent(p.ig)}">📸 انستقرام</a>` : '<span></span>'}
         <button class="btn" data-share="${esc(p.id)}">🔗 مشاركة</button>
         <button class="btn" data-fav="${esc(p.id)}" style="grid-column:1/-1">${favs.has(p.id) ? '♥ في المفضلة' : '♡ حفظ في المفضلة'}</button>
