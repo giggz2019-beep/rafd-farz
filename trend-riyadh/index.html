@@ -306,7 +306,7 @@
 
   const isNew = p => (Date.now() - new Date(p.addedAt || 0).getTime()) / 864e5 <= CONFIG.newDays;
   const priceStr = n => '$'.repeat(Math.max(1, Math.min(3, n|0)));
-  const bookingUrl = p => 'https://www.booking.com/searchresults.html?' + (CONFIG.bookingAid ? 'aid=' + encodeURIComponent(CONFIG.bookingAid) + '&' : '') + 'ss=' + encodeURIComponent((p.nameEn || p.name) + ' Riyadh') + '&lang=ar';
+  const bookingUrl = p => 'https://www.booking.com/searchresults.html?' + (CONFIG.bookingAid ? 'aid=' + encodeURIComponent(CONFIG.bookingAid) + '&' : '') + 'ss=' + encodeURIComponent(/riyadh|الرياض/i.test(p.nameEn || p.name) ? (p.nameEn || p.name) : (p.nameEn || p.name) + ' Riyadh') + '&lang=ar';
   const mapsUrl = p => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((p.maps || (p.nameEn || p.name)) + ' الرياض') + (p.placeId ? '&query_place_id=' + encodeURIComponent(p.placeId) : '');
   const normalize = s => String(s || '').toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[ً-ْ]/g,'');
 
