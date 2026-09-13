@@ -42,11 +42,20 @@
   .wrap{max-width:760px;margin:0 auto;padding-inline:16px}
   [hidden]{display:none!important}
 
-  header{color:#fff;padding:22px 0 18px;position:relative;overflow:hidden;background:#0f1a2e;min-height:230px;display:flex;align-items:flex-end}
+  header{color:#fff;padding:26px 0 22px;position:relative;overflow:hidden;background:#0f1a2e;min-height:270px;display:flex;align-items:flex-end}
   header .sky{position:absolute;inset:0;width:100%;height:100%;display:block}
-  header .photo{position:absolute;inset:0;background-size:cover;background-position:center 40%}
-  header::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,24,.15) 0%,rgba(8,12,24,.25) 45%,rgba(8,12,24,.82) 100%);pointer-events:none}
-  header .wrap{position:relative;z-index:1;width:100%}
+  header .photo{position:absolute;inset:0;background-size:cover;background-position:center 35%}
+  header::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,24,.05) 0%,rgba(8,12,24,.12) 40%,rgba(8,12,24,.78) 100%);pointer-events:none}
+  /* إطار ذهبي خفيف حول البنر */
+  header .frame{position:absolute;inset:10px;border-radius:16px;pointer-events:none;z-index:1;
+    border:1px solid rgba(236,196,98,.85);
+    box-shadow:0 0 0 1px rgba(0,0,0,.28), inset 0 0 0 1px rgba(0,0,0,.28), inset 0 0 0 3px rgba(236,196,98,.18), 0 0 22px rgba(236,196,98,.22)}
+  header .frame::before,header .frame::after{content:"";position:absolute;width:26px;height:26px;border:2px solid #f0cf7a;opacity:.9}
+  header .frame::before{top:-1px;inset-inline-start:-1px;border-inline-end:0;border-bottom:0;border-start-start-radius:16px}
+  header .frame::after{bottom:-1px;inset-inline-end:-1px;border-inline-start:0;border-top:0;border-end-end-radius:16px}
+  header .wrap{position:relative;z-index:2;width:100%}
+  @media (min-width:700px){ header{min-height:300px} header .photo{background-position:center 22%} }
+  .brand h1 span{color:#f0cf7a}
   .brand h1{text-shadow:0 2px 12px rgba(0,0,0,.45)}
   .brand p{text-shadow:0 1px 8px rgba(0,0,0,.5)}
   .brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -195,6 +204,7 @@
     <rect x="0" y="292" width="1200" height="8" fill="#08090f"/>
   </svg>
   <div class="photo" id="heroPhoto" hidden></div>
+  <div class="frame" aria-hidden="true"></div>
   <div class="wrap">
     <div class="brand">
       <div>
@@ -282,7 +292,7 @@
     newDays: 45,
     ratingsApi: '../api/trend-riyadh-place',   // مسار دالة جلب تقييم قوقل (على Vercel)
     googlePhoto: true,       // جلب صورة المكان من قوقل مع التقييم (طلب إضافي مدفوع لكل فتح)
-    heroImage: '',           // مثال: 'img/hero.jpg' — يحل مكان رسم الأفق
+    heroImage: 'img/hero.jpg', // صورة الواجهة — اتركها فارغة '' للرجوع لرسم الأفق
     bookingAid: '',          // زر Booking مخفي حتى تتفق معهم وتضع معرّف الشريك (aid) هنا
     favKey: 'trend_riyadh_favs_v1',
   };

@@ -1,7 +1,7 @@
 // Service worker بسيط: يخزّن ملفات التطبيق للعمل بدون إنترنت.
 // غيّر رقم الإصدار عند أي تعديل على الملفات حتى يُحدَّث الكاش عند المستخدمين.
-const CACHE = 'trend-riyadh-v1';
-const ASSETS = ['./', './index.html', './places.js', './manifest.webmanifest'];
+const CACHE = 'trend-riyadh-v2';
+const ASSETS = ['./', './index.html', './places.js', './manifest.webmanifest', './img/hero.jpg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
