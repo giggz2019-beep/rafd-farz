@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ترند الرياض</title>
+<meta name="description" content="ترند الرياض: كل شيء في الرياض في مكان واحد — للشباب، للبنات، كافيهات، مطاعم، شاليهات، قاعات، فنادق، فعاليات — مع تقييمات قوقل.">
+<meta name="theme-color" content="#161412">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f3ee; --card:#ffffff; --ink:#1c1917; --muted:#6b645c; --line:#e7e1d8;
+    --accent:#b8862b; --accent-ink:#ffffff; --accent-soft:#f5ead3;
+    --chip:#efe9df; --chip-on:#1c1917; --chip-on-ink:#fff; --star:#f59e0b;
+    --shadow:0 1px 2px rgba(28,25,23,.06),0 8px 24px -12px rgba(28,25,23,.18);
+    --radius:16px; --nav-h:64px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#141210; --card:#1f1b18; --ink:#f3efe8; --muted:#a8a097; --line:#2e2925;
+      --accent:#d9a441; --accent-ink:#1c1917; --accent-soft:#2f2718;
+      --chip:#2a2521; --chip-on:#f3efe8; --chip-on-ink:#141210;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#141210; --card:#1f1b18; --ink:#f3efe8; --muted:#a8a097; --line:#2e2925;
+    --accent:#d9a441; --accent-ink:#1c1917; --accent-soft:#2f2718;
+    --chip:#2a2521; --chip-on:#f3efe8; --chip-on-ink:#141210;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",sans-serif;font-size:16px;line-height:1.5}
+  body{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 16px)}
+  button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+  input,select,textarea{font:inherit;color:inherit}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .wrap{max-width:760px;margin:0 auto;padding-inline:16px}
+  [hidden]{display:none!important}
+
+  header{background:linear-gradient(160deg,#161412 0%,#3a2d1a 60%,#5b4315 100%);color:#fff;padding:18px 0 16px;position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;inset:auto -40px -80px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(217,164,65,.45),transparent 65%);pointer-events:none}
+  .brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand h1{margin:0;font-size:1.55rem;font-weight:800;cursor:pointer}
+  .brand h1 span{color:#e3b04b}
+  .brand p{margin:0;font-size:.88rem;opacity:.8}
+  .install{display:none;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff;padding:8px 12px;border-radius:999px;font-size:.85rem;font-weight:700;white-space:nowrap}
+  .install.show{display:inline-flex}
+  .search{margin-top:14px;position:relative}
+  .search input{width:100%;padding:13px 44px 13px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.12);color:#fff;font-size:1rem;outline:none}
+  .search input::placeholder{color:rgba(255,255,255,.65)}
+  .search input:focus{border-color:var(--accent);background:rgba(255,255,255,.18)}
+  .search svg{position:absolute;inset-inline-end:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:.75}
+
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px 4px;scrollbar-width:none;max-width:760px;margin:0 auto}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--chip);font-weight:700;font-size:.9rem;border:1px solid transparent}
+  .chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-ink)}
+  .filters{display:flex;gap:8px;padding:10px 16px 0;max-width:760px;margin:0 auto;flex-wrap:wrap}
+  .filters select{flex:1 1 110px;padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:.9rem}
+
+  section{padding-top:18px}
+  .sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 10px;gap:8px}
+  .sec-h h2{margin:0;font-size:1.15rem;font-weight:800}
+  .sec-h small{color:var(--muted);font-weight:500;font-size:.85rem}
+  .sec-h button{font-size:.85rem;color:var(--accent);font-weight:700}
+  .rail{display:flex;gap:12px;overflow-x:auto;padding:4px 16px 12px;margin:0 -16px;scrollbar-width:none;scroll-snap-type:x mandatory}
+  .rail::-webkit-scrollbar{display:none}
+  .rail .card{flex:0 0 72%;max-width:270px;scroll-snap-align:start}
+  @media (min-width:600px){ .rail .card{flex-basis:40%} }
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:10px}
+  .tile{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:14px 10px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+  .tile .ic{font-size:1.8rem;line-height:1}
+  .tile .lb{font-weight:800;font-size:.9rem;line-height:1.2}
+  .tile .ct{font-size:.72rem;color:var(--muted)}
+  .sec-head{display:flex;align-items:center;gap:12px;padding-top:16px}
+  .sec-head .ic{font-size:2.2rem}
+  .sec-head h2{margin:0;font-size:1.35rem;font-weight:800}
+  .sec-head p{margin:0;color:var(--muted);font-size:.88rem}
+  .back{font-size:.9rem;color:var(--accent);font-weight:700;padding:0}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;position:relative;display:flex;flex-direction:column;text-align:start;cursor:pointer}
+  .card .art{height:104px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative}
+  .art.men{background:linear-gradient(135deg,#0f172a,#475569)} .art.women{background:linear-gradient(135deg,#831843,#fb7185)}
+  .art.beauty{background:linear-gradient(135deg,#5b21b6,#c084fc)} .art.cafe{background:linear-gradient(135deg,#6b4423,#b8862b)}
+  .art.restaurant{background:linear-gradient(135deg,#7f1d1d,#ea580c)} .art.sweets{background:linear-gradient(135deg,#9d174d,#f472b6)}
+  .art.destination{background:linear-gradient(135deg,#1e3a8a,#38bdf8)} .art.market{background:linear-gradient(135deg,#4c1d95,#a78bfa)}
+  .art.kids{background:linear-gradient(135deg,#ca8a04,#fde047)} .art.chalet{background:linear-gradient(135deg,#14532d,#4ade80)}
+  .art.venue{background:linear-gradient(135deg,#7c2d12,#f5c26b)} .art.hotel{background:linear-gradient(135deg,#0c4a6e,#22d3ee)}
+  .art.event{background:linear-gradient(135deg,#b45309,#fbbf24)}
+  .badges{position:absolute;top:8px;inset-inline-start:8px;display:flex;gap:4px;flex-wrap:wrap}
+  .badge{font-size:.7rem;font-weight:800;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff}
+  .badge.trend{background:#dc2626} .badge.new{background:#15803d} .badge.demo{background:#525252} .badge.ad{background:#1d4ed8}
+  .fav{position:absolute;top:8px;inset-inline-end:8px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem}
+  .fav.on{background:#dc2626}
+  .card .body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+  .card .name{font-weight:800;font-size:1rem;line-height:1.3}
+  .card .meta{font-size:.8rem;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .price{color:var(--accent);font-weight:800;letter-spacing:1px;direction:ltr;unicode-bidi:isolate}
+  .rec{font-size:.75rem;color:var(--accent);font-weight:700}
+  .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+  .tag{font-size:.72rem;background:var(--chip);padding:2px 8px;border-radius:999px;color:var(--muted)}
+  .count{font-size:.85rem;color:var(--muted);padding-bottom:10px}
+  .empty{text-align:center;color:var(--muted);padding:48px 16px}
+  .empty .big{font-size:2.5rem}
+
+  nav.bottom{position:fixed;bottom:0;inset-inline:0;height:calc(var(--nav-h) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:var(--card);border-top:1px solid var(--line);display:flex;z-index:50}
+  nav.bottom button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.72rem;font-weight:700;color:var(--muted)}
+  nav.bottom button .ic{font-size:1.3rem;line-height:1}
+  nav.bottom button[aria-current="page"]{color:var(--accent)}
+
+  .sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;opacity:0;pointer-events:none;transition:.2s}
+  .sheet-bg.open{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;inset-inline:0;bottom:0;background:var(--card);border-radius:22px 22px 0 0;z-index:100;max-height:90vh;overflow:auto;transform:translateY(105%);transition:transform .25s cubic-bezier(.2,.8,.2,1);padding:12px 18px calc(24px + env(safe-area-inset-bottom));max-width:760px;margin:0 auto}
+  .sheet.open{transform:none}
+  @media (prefers-reduced-motion: reduce){ .sheet,.sheet-bg{transition:none} }
+  .handle{width:42px;height:5px;border-radius:99px;background:var(--line);margin:0 auto 12px}
+  .sheet .hero{height:130px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:3.3rem;margin-bottom:12px}
+  .sheet h3{margin:0 0 2px;font-size:1.35rem;font-weight:800}
+  .sheet .sub{color:var(--muted);font-size:.9rem;margin-bottom:10px}
+  .sheet p{margin:0 0 12px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:12px;font-weight:800;font-size:.95rem;border:1px solid var(--line);background:var(--bg);text-decoration:none}
+  .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);grid-column:1/-1}
+  .note{font-size:.8rem;color:var(--muted);background:var(--accent-soft);padding:8px 10px;border-radius:10px;margin-top:12px}
+  .form label{display:block;font-size:.85rem;font-weight:700;margin:10px 0 4px}
+  .form input,.form select,.form textarea{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-size:.95rem}
+  .form textarea{min-height:80px;resize:vertical}
+
+  .grating{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:4px 0 12px;display:flex;align-items:center;gap:12px;min-height:64px}
+  .grating .big{font-size:1.9rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;direction:ltr}
+  .grating .stars{color:var(--star);letter-spacing:1px;direction:ltr;unicode-bidi:isolate;font-size:1rem}
+  .grating .cnt{font-size:.82rem;color:var(--muted)}
+  .grating .src{margin-inline-start:auto;font-size:.75rem;color:var(--muted);text-align:center;line-height:1.3}
+  .grating .src b{display:block;font-size:.9rem;color:var(--ink);letter-spacing:.2px}
+  .grating.loading{color:var(--muted);font-size:.9rem;justify-content:center}
+  .review{border-top:1px solid var(--line);padding:10px 0;font-size:.9rem}
+  .review .who{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-bottom:2px}
+  .review .who a{color:var(--ink);font-weight:700;text-decoration:none}
+  .toast{position:fixed;bottom:calc(var(--nav-h) + 20px);inset-inline:16px;margin:0 auto;max-width:360px;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;text-align:center;font-weight:700;z-index:200;opacity:0;transition:.2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .banner{background:var(--accent-soft);color:var(--ink);font-size:.82rem;padding:8px 16px;text-align:center;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<div class="banner" id="demoBanner">نسخة تجريبية — الإدخالات المعلّمة "مثال" توضيحية، والبقية تحتاج تحقّق قبل النشر. <a href="#" id="hideBanner">إخفاء</a></div>
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <div>
+        <h1 id="brandHome">ترند <span>الرياض</span></h1>
+        <p>كل شيء في الرياض — في مكان واحد</p>
+      </div>
+      <button class="install" id="installBtn">⬇️ ثبّت التطبيق</button>
+    </div>
+    <div class="search">
+      <input id="q" type="search" placeholder="ابحث بالاسم أو الحي أو النوع…" autocomplete="off" enterkeyhint="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- شريط الأقسام: يظهر في كل الصفحات -->
+<div class="chips" id="secChips"></div>
+<!-- الأقسام الفرعية: تظهر داخل قسم -->
+<div class="chips" id="subChips" hidden></div>
+<div class="filters" id="filters" hidden>
+  <select id="audience" aria-label="الجمهور">
+    <option value="all">للجميع</option><option value="men">للشباب</option><option value="women">للبنات</option><option value="family">للعوائل</option>
+  </select>
+  <select id="district" aria-label="المنطقة"></select>
+  <select id="price" aria-label="السعر">
+    <option value="all">كل الأسعار</option><option value="1">$ اقتصادي</option><option value="2">$$ متوسط</option><option value="3">$$$ فاخر</option>
+  </select>
+  <select id="sort" aria-label="الترتيب">
+    <option value="trend">الأكثر رواجًا</option><option value="new">الأحدث</option><option value="name">الاسم</option>
+  </select>
+</div>
+
+<main class="wrap">
+  <!-- الرئيسية -->
+  <div id="homeView">
+    <section>
+      <div class="sec-h"><h2>الأقسام</h2><small id="totalCount"></small></div>
+      <div class="tiles" id="tiles"></div>
+    </section>
+    <section>
+      <div class="sec-h"><h2>🔥 ترند الآن</h2><button data-view="trend">عرض الكل</button></div>
+      <div class="rail" id="trendRail"></div>
+    </section>
+    <section id="newSec">
+      <div class="sec-h"><h2>✨ جديد في الرياض</h2></div>
+      <div class="rail" id="newRail"></div>
+    </section>
+    <section id="adSec">
+      <div class="sec-h"><h2>⭐ أماكن مميزة</h2><small>إعلان — شركاء ترند الرياض</small></div>
+      <div class="rail" id="adRail"></div>
+    </section>
+  </div>
+
+  <!-- قائمة (قسم / بحث / ترند / مفضلة) -->
+  <div id="listView" hidden>
+    <div class="sec-head" id="secHead" hidden></div>
+    <section style="padding-top:12px">
+      <div class="sec-h"><h2 id="listTitle"></h2></div>
+      <div class="count" id="count"></div>
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty" hidden></div>
+    </section>
+  </div>
+</main>
+
+<nav class="bottom">
+  <button data-view="home" aria-current="page"><span class="ic">🏠</span>الرئيسية</button>
+  <button data-view="sections"><span class="ic">🗂️</span>الأقسام</button>
+  <button data-view="trend"><span class="ic">🔥</span>ترند</button>
+  <button data-view="fav"><span class="ic">❤️</span>المفضلة</button>
+  <button data-view="add"><span class="ic">➕</span>أضف</button>
+</nav>
+
+<div class="sheet-bg" id="sheetBg"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast"></div>
+
+<script src="places.js"></script>
+<script>
+(function(){
+  'use strict';
+  const CONFIG = {
+    whatsapp: '',            // رقم استقبال التوصيات بصيغة دولية بدون + (مثل 9665xxxxxxxx)
+    email: '',               // أو بريد بديل
+    newDays: 45,
+    ratingsApi: '../api/trend-riyadh-place',   // مسار دالة جلب تقييم قوقل (على Vercel)
+    favKey: 'trend_riyadh_favs_v1',
+  };
+
+  const PLACES = (window.RIYADH_PLACES || []).filter(p => !p.endsAt || new Date(p.endsAt).getTime() > Date.now());
+  const SECTIONS = window.RIYADH_SECTIONS || [];
+  const DISTRICTS = window.RIYADH_DISTRICTS || [];
+  const secMap = Object.fromEntries(SECTIONS.map(s => [s.id, s]));
+  const distMap = Object.fromEntries(DISTRICTS.map(d => [d.id, d.label]));
+  const audLabel = { men: 'للشباب', women: 'للبنات', family: 'للعوائل', all: 'للجميع' };
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const subLabel = p => { const s = secMap[p.sec]; const x = s && s.subs.find(u => u.id === p.sub); return x ? x.label : ''; };
+
+  const state = { view: 'home', sec: null, sub: 'all', audience: 'all', district: 'all', price: 'all', sort: 'trend', q: '' };
+  let favs = new Set();
+  try { favs = new Set(JSON.parse(localStorage.getItem(CONFIG.favKey) || '[]')); } catch(e) {}
+  const saveFavs = () => { try { localStorage.setItem(CONFIG.favKey, JSON.stringify([...favs])); } catch(e) {} };
+
+  const isNew = p => (Date.now() - new Date(p.addedAt || 0).getTime()) / 864e5 <= CONFIG.newDays;
+  const priceStr = n => '$'.repeat(Math.max(1, Math.min(3, n|0)));
+  const mapsUrl = p => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((p.maps || (p.nameEn || p.name)) + ' الرياض') + (p.placeId ? '&query_place_id=' + encodeURIComponent(p.placeId) : '');
+  const normalize = s => String(s || '').toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[ً-ْ]/g,'');
+
+  function card(p){
+    const s = secMap[p.sec] || { icon: '📍', label: p.sec };
+    const badges = [
+      p.sponsored ? '<span class="badge ad">إعلان</span>' : (p.trend ? '<span class="badge trend">🔥 ترند</span>' : ''),
+      isNew(p) ? '<span class="badge new">جديد</span>' : '',
+      p.demo ? '<span class="badge demo">مثال</span>' : '',
+    ].join('');
+    return `<article class="card" data-id="${esc(p.id)}" tabindex="0" role="button">
+      <div class="art ${esc(p.sec)}">${s.icon}
+        <div class="badges">${badges}</div>
+        <button class="fav ${favs.has(p.id) ? 'on' : ''}" data-fav="${esc(p.id)}" aria-label="حفظ في المفضلة">${favs.has(p.id) ? '♥' : '♡'}</button>
+      </div>
+      <div class="body">
+        <div class="name">${esc(p.name)}</div>
+        <div class="meta"><span>${esc(subLabel(p) || s.label)}</span><span>·</span><span>${esc(distMap[p.district] || '')}${p.area ? ' — ' + esc(p.area) : ''}</span></div>
+        <div class="meta"><span class="price">${priceStr(p.price)}</span>${p.audience && p.audience !== 'all' ? `<span>·</span><span>${audLabel[p.audience]}</span>` : ''}</div>
+        ${p.recommendedBy ? `<div class="rec">👍 بتوصية من ${esc(p.recommendedBy)}</div>` : ''}
+        <div class="tags">${(p.tags || []).slice(0,3).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+      </div>
+    </article>`;
+  }
+
+  function filtered(){
+    const q = normalize(state.q.trim());
+    const list = PLACES.filter(p => {
+      if (state.view === 'fav' && !favs.has(p.id)) return false;
+      if (state.view === 'trend' && (!p.trend || p.sponsored)) return false;
+      if (state.sec && p.sec !== state.sec) return false;
+      if (state.sec && state.sub !== 'all' && p.sub !== state.sub) return false;
+      if (state.audience !== 'all' && p.audience !== state.audience && p.audience !== 'all') return false;
+      if (state.district !== 'all' && p.district !== state.district) return false;
+      if (state.price !== 'all' && String(p.price) !== state.price) return false;
+      if (q) {
+        const hay = normalize([p.name, p.nameEn, p.area, p.desc, subLabel(p), (secMap[p.sec]||{}).label, distMap[p.district], audLabel[p.audience], ...(p.tags || [])].join(' '));
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    const by = {
+      trend: (a,b) => ((a.demo?1:0)-(b.demo?1:0)) || ((b.trend&&!b.sponsored) - (a.trend&&!a.sponsored)) || (isNew(b) - isNew(a)) || (b.addedAt||'').localeCompare(a.addedAt||''),
+      new: (a,b) => (b.addedAt||'').localeCompare(a.addedAt||''),
+      name: (a,b) => a.name.localeCompare(b.name, 'ar'),
+    };
+    return list.sort(by[state.sort] || by.trend);
+  }
+
+  function render(){
+    const home = state.view === 'home';
+    $('#homeView').hidden = !home;
+    $('#listView').hidden = home;
+    $('#subChips').hidden = !state.sec;
+    $('#filters').hidden = home || state.view === 'sections';
+    document.querySelectorAll('#secChips .chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.sec === (state.sec || (home ? 'home' : '')))));
+
+    if (home) {
+      $('#totalCount').textContent = `${PLACES.length} مكان`;
+      $('#tiles').innerHTML = SECTIONS.map(s => `<button class="tile" data-sec="${s.id}"><span class="ic">${s.icon}</span><span class="lb">${s.label}</span><span class="ct">${PLACES.filter(p => p.sec === s.id).length} مكان</span></button>`).join('');
+      $('#trendRail').innerHTML = PLACES.filter(p => p.trend && !p.sponsored).sort((a,b) => (a.demo?1:0)-(b.demo?1:0)).map(card).join('');
+      const fresh = PLACES.filter(p => isNew(p) && !p.sponsored).sort((a,b) => ((a.demo?1:0)-(b.demo?1:0)) || (b.addedAt||'').localeCompare(a.addedAt||'')).slice(0, 10);
+      $('#newSec').hidden = !fresh.length; $('#newRail').innerHTML = fresh.map(card).join('');
+      const ads = PLACES.filter(p => p.sponsored);
+      $('#adSec').hidden = !ads.length; $('#adRail').innerHTML = ads.map(card).join('');
+      return;
+    }
+
+    if (state.view === 'sections') {
+      $('#secHead').hidden = true;
+      $('#listTitle').textContent = 'كل الأقسام';
+      $('#count').textContent = `${SECTIONS.length} قسم رئيسي · ${SECTIONS.reduce((a,s) => a + s.subs.length, 0)} قسم فرعي`;
+      $('#grid').innerHTML = SECTIONS.map(s => `<button class="card" data-sec="${s.id}" style="align-items:stretch"><div class="art ${s.id}" style="height:80px">${s.icon}</div><div class="body"><div class="name">${s.label}</div><div class="meta">${s.desc}</div><div class="tags">${s.subs.slice(0,4).map(u => `<span class="tag">${u.label}</span>`).join('')}${s.subs.length > 4 ? `<span class="tag">+${s.subs.length - 4}</span>` : ''}</div></div></button>`).join('');
+      $('#empty').hidden = true;
+      return;
+    }
+
+    const s = state.sec && secMap[state.sec];
+    $('#secHead').hidden = !s;
+    if (s) {
+      $('#secHead').innerHTML = `<span class="ic">${s.icon}</span><div><h2>${s.label}</h2><p>${s.desc}</p></div>`;
+      $('#subChips').innerHTML = [`<button class="chip" data-sub="all" aria-pressed="${state.sub === 'all'}">الكل</button>`]
+        .concat(s.subs.map(u => `<button class="chip" data-sub="${u.id}" aria-pressed="${state.sub === u.id}">${u.label} <small style="opacity:.6">${PLACES.filter(p => p.sec === s.id && p.sub === u.id).length}</small></button>`)).join('');
+    }
+    const list = filtered();
+    const sub = s && state.sub !== 'all' && s.subs.find(u => u.id === state.sub);
+    $('#listTitle').textContent = state.view === 'trend' ? '🔥 ترند الآن' : state.view === 'fav' ? '❤️ المفضلة' : state.q ? `نتائج: ${state.q}` : sub ? sub.label : s ? `كل ${s.label}` : 'كل الأماكن';
+    $('#count').textContent = list.length ? `${list.length} مكان` : '';
+    $('#grid').innerHTML = list.map(card).join('');
+    const empty = $('#empty'); empty.hidden = list.length > 0;
+    empty.innerHTML = state.view === 'fav' ? '<div class="big">🤍</div>ما عندك أماكن محفوظة بعد.<br>اضغط ♡ على أي مكان لحفظه.' : '<div class="big">🏜️</div>ما لقينا شيء يطابق.<br>جرّب كلمة ثانية أو غيّر الفلاتر.';
+  }
+
+  function nav(){
+    document.querySelectorAll('nav.bottom button').forEach(b => { const on = b.dataset.view === state.view || (b.dataset.view === 'sections' && state.sec && !state.q); on ? b.setAttribute('aria-current','page') : b.removeAttribute('aria-current'); });
+    const h = state.view === 'home' ? '' : state.sec ? `#sec=${state.sec}${state.sub !== 'all' ? '&sub=' + state.sub : ''}` : `#view=${state.view}`;
+    if (location.hash !== h) history.replaceState(null, '', location.pathname + location.search + h);
+    render();
+    window.scrollTo({ top: 0 });
+  }
+  function go(view){ if (view === 'add') { openAddSheet(); return; } state.view = view; state.sec = null; state.sub = 'all'; state.q = ''; $('#q').value = ''; nav(); }
+  function goSec(id, sub){ state.view = 'section'; state.sec = id; state.sub = sub || 'all'; state.q = ''; $('#q').value = ''; nav(); }
+
+  // ---------- wiring ----------
+  $('#secChips').innerHTML = `<button class="chip" data-sec="home" aria-pressed="true">🏠 الرئيسية</button>` + SECTIONS.map(s => `<button class="chip" data-sec="${s.id}">${s.icon} ${s.label}</button>`).join('');
+  $('#district').innerHTML = DISTRICTS.map(d => `<option value="${d.id}">${d.label}</option>`).join('');
+  $('#brandHome').addEventListener('click', () => go('home'));
+  document.addEventListener('click', e => {
+    const sec = e.target.closest('[data-sec]'); if (sec) { sec.dataset.sec === 'home' ? go('home') : goSec(sec.dataset.sec); return; }
+    const sub = e.target.closest('[data-sub]'); if (sub) { state.sub = sub.dataset.sub; nav(); return; }
+    const v = e.target.closest('[data-view]'); if (v) { go(v.dataset.view); return; }
+    const f = e.target.closest('[data-fav]'); if (f) { e.stopPropagation(); const id = f.dataset.fav; favs.has(id) ? favs.delete(id) : favs.add(id); saveFavs(); toast(favs.has(id) ? 'تمت الإضافة للمفضلة ❤️' : 'أُزيل من المفضلة'); render(); if (sheet.classList.contains('open') && $('#sheet [data-fav]')) $('#sheet [data-fav]').textContent = favs.has(id) ? '♥ في المفضلة' : '♡ حفظ في المفضلة'; return; }
+    const c = e.target.closest('.card[data-id]'); if (c) openPlace(c.dataset.id);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('card') && e.target.dataset.id) openPlace(e.target.dataset.id);
+    if (e.key === 'Escape') closeSheet();
+  });
+  ['audience','district','price','sort'].forEach(k => $('#' + k).addEventListener('change', e => { state[k] = e.target.value; render(); }));
+  // البحث من الشريط العلوي عام دائمًا (كل الأقسام)، وعند مسحه يرجع للرئيسية
+  let qt; $('#q').addEventListener('input', e => { clearTimeout(qt); qt = setTimeout(() => { state.q = e.target.value; if (state.q) { state.view = 'search'; state.sec = null; state.sub = 'all'; } else if (state.view === 'search') state.view = 'home'; nav(); }, 120); });
+
+  // ---------- sheet ----------
+  const sheet = $('#sheet'), sheetBg = $('#sheetBg');
+  function openSheet(html){ sheet.innerHTML = '<div class="handle"></div>' + html; sheet.classList.add('open'); sheetBg.classList.add('open'); document.body.style.overflow = 'hidden'; sheet.scrollTop = 0; }
+  function closeSheet(){ sheet.classList.remove('open'); sheetBg.classList.remove('open'); document.body.style.overflow = ''; }
+  sheetBg.addEventListener('click', closeSheet);
+
+  function stars(r){ const n = Math.round(r); return '★'.repeat(n) + '☆'.repeat(5 - n); }
+  async function loadRating(p){
+    const box = $('#grating'); if (!box) return;
+    const fallback = `<span>التقييم وآراء الناس في</span><a class="btn" style="padding:8px 12px;font-size:.85rem" target="_blank" rel="noopener" href="${mapsUrl(p)}">خرائط قوقل ↗</a>`;
+    if (!p.placeId) { box.className = 'grating'; box.innerHTML = fallback; return; }
+    try {
+      const r = await fetch(`${CONFIG.ratingsApi}?placeId=${encodeURIComponent(p.placeId)}`);
+      const d = await r.json();
+      if (!d.available || d.rating == null) { box.className = 'grating'; box.innerHTML = fallback; return; }
+      box.className = 'grating';
+      box.innerHTML = `<div class="big">${d.rating.toFixed(1)}</div><div><div class="stars">${stars(d.rating)}</div><div class="cnt">${(d.userRatingCount || 0).toLocaleString('ar-SA')} تقييم</div></div>
+        <a class="src" target="_blank" rel="noopener" href="${esc(d.googleMapsUri || mapsUrl(p))}"><b>Google</b>التقييم من خرائط قوقل</a>`;
+      if (d.reviews && d.reviews.length) {
+        box.insertAdjacentHTML('afterend', `<div id="reviews">${d.reviews.map(v => `<div class="review"><div class="who"><a target="_blank" rel="noopener" href="${esc(v.author && v.author.uri || '#')}">${esc(v.author && v.author.name || 'مستخدم قوقل')}</a><span><span class="stars" style="color:var(--star)">${stars(v.rating || 0)}</span> · ${esc(v.relativeTime)}</span></div>${esc(v.text)}</div>`).join('')}<div class="note" style="margin-top:0">المراجعات من Google كما هي، بدون تعديل.</div></div>`);
+      }
+    } catch(err) { box.className = 'grating'; box.innerHTML = fallback; }
+  }
+
+  function openPlace(id){
+    const p = PLACES.find(x => x.id === id); if (!p) return;
+    const s = secMap[p.sec] || { icon: '📍', label: p.sec };
+    openSheet(`
+      <div class="hero art ${esc(p.sec)}">${s.icon}</div>
+      <h3>${esc(p.name)}${p.nameEn ? ` <span style="font-size:.8rem;color:var(--muted);font-weight:500;direction:ltr;unicode-bidi:isolate">${esc(p.nameEn)}</span>` : ''}</h3>
+      <div class="sub"><a href="#" data-sec="${esc(p.sec)}" style="text-decoration:none">${s.icon} ${esc(s.label)}</a>${subLabel(p) ? ` › <a href="#" data-sec="${esc(p.sec)}" data-sub2="${esc(p.sub)}" style="text-decoration:none">${esc(subLabel(p))}</a>` : ''} · ${esc(distMap[p.district] || '')}${p.area ? ' — ' + esc(p.area) : ''} · <span class="price">${priceStr(p.price)}</span></div>
+      <div class="tags" style="margin-bottom:12px">${p.sponsored ? '<span class="badge ad">إعلان</span>' : (p.trend ? '<span class="badge trend">🔥 ترند</span>' : '')}${isNew(p) ? '<span class="badge new">جديد</span>' : ''}${p.audience && p.audience !== 'all' ? `<span class="tag">${audLabel[p.audience]}</span>` : ''}${(p.tags||[]).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+      <div class="grating loading" id="grating">جاري جلب تقييم قوقل…</div>
+      <p>${esc(p.desc || '')}</p>
+      ${p.recommendedBy ? `<div class="rec" style="margin-bottom:10px">👍 بتوصية من ${esc(p.recommendedBy)}</div>` : ''}
+      <div class="actions">
+        <a class="btn primary" target="_blank" rel="noopener" href="${mapsUrl(p)}">📍 الاتجاهات في خرائط قوقل</a>
+        ${p.ig ? `<a class="btn" target="_blank" rel="noopener" href="https://instagram.com/${encodeURIComponent(p.ig)}">📸 انستقرام</a>` : '<span></span>'}
+        <button class="btn" data-share="${esc(p.id)}">🔗 مشاركة</button>
+        <button class="btn" data-fav="${esc(p.id)}" style="grid-column:1/-1">${favs.has(p.id) ? '♥ في المفضلة' : '♡ حفظ في المفضلة'}</button>
+      </div>
+      ${p.sponsored ? '<div class="note">مكان شريك (إعلان مدفوع). الأماكن المدفوعة لا تُعرض أبدًا على أنها "ترند".</div>' : ''}
+      ${p.demo ? '<div class="note">إدخال توضيحي لعرض شكل القسم — استبدله بمكان حقيقي.</div>' : (!p.verified ? '<div class="note">المعلومات من مصادر عامة وتحتاج تأكيد قبل الاعتماد.</div>' : '')}
+    `);
+    loadRating(p);
+  }
+  // الضغط على القسم داخل صفحة المكان
+  sheet.addEventListener('click', e => { const a = e.target.closest('[data-sec]'); if (a) { e.preventDefault(); e.stopPropagation(); closeSheet(); goSec(a.dataset.sec, a.dataset.sub2); } }, true);
+
+  document.addEventListener('click', async e => {
+    const s = e.target.closest('[data-share]'); if (!s) return;
+    const p = PLACES.find(x => x.id === s.dataset.share); if (!p) return;
+    const url = location.origin + location.pathname + '#p=' + encodeURIComponent(p.id);
+    const text = `${p.name} — ${p.desc || ''} | ترند الرياض`;
+    try { if (navigator.share) { await navigator.share({ title: p.name, text, url }); return; } } catch(err) { return; }
+    try { await navigator.clipboard.writeText(`${text}\n${url}`); toast('تم نسخ الرابط'); } catch(err) { toast('انسخ الرابط من شريط العنوان'); }
+  });
+
+  function openAddSheet(){
+    const secs = SECTIONS.map(s => `<option value="${s.id}">${s.icon} ${s.label}</option>`).join('');
+    const dists = DISTRICTS.filter(d => d.id !== 'all').map(d => `<option value="${d.id}">${d.label}</option>`).join('');
+    openSheet(`
+      <h3>➕ أضف توصيتك</h3>
+      <div class="sub">تعرف مكان ترند أو جديد؟ أرسله باسمك — يظهر "بتوصية من" على البطاقة بعد التحقق.</div>
+      <form class="form" id="addForm">
+        <label for="f-name">اسم المكان</label><input id="f-name" name="name" required maxlength="80">
+        <label for="f-sec">القسم</label><select id="f-sec" name="sec">${secs}</select>
+        <label for="f-sub">القسم الفرعي</label><select id="f-sub" name="sub"></select>
+        <label for="f-district">المنطقة</label><select id="f-district" name="district">${dists}</select>
+        <label for="f-area">الحي أو الموقع</label><input id="f-area" name="area" maxlength="80" placeholder="مثال: حي الياسمين">
+        <label for="f-ig">حساب المكان في انستقرام (اختياري)</label><input id="f-ig" name="ig" maxlength="40" placeholder="بدون @" dir="ltr">
+        <label for="f-why">ليش ترند؟</label><textarea id="f-why" name="why" maxlength="300"></textarea>
+        <label for="f-by">اسمك أو حسابك (تُنسب التوصية لك)</label><input id="f-by" name="by" maxlength="40">
+        <div class="actions"><button class="btn primary" type="submit">إرسال التوصية</button></div>
+      </form>
+      <div class="note">${CONFIG.whatsapp || CONFIG.email ? 'تُرسل التوصية عبر ' + (CONFIG.whatsapp ? 'واتساب' : 'البريد') + ' وتُضاف بعد التحقق.' : 'لم يُضبط رقم واتساب أو بريد بعد — ستُنسخ التوصية للحافظة. عدّل CONFIG في index.html.'}</div>
+    `);
+    const fillSubs = () => { const s = secMap[$('#f-sec').value]; $('#f-sub').innerHTML = s.subs.map(u => `<option value="${u.id}">${u.label}</option>`).join(''); };
+    fillSubs(); $('#f-sec').addEventListener('change', fillSubs);
+    $('#addForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const f = new FormData(e.target); const s = secMap[f.get('sec')]; const u = s.subs.find(x => x.id === f.get('sub'));
+      const msg = `توصية لترند الرياض\nالمكان: ${f.get('name')}\nالقسم: ${s.label} › ${u ? u.label : ''}\nالمنطقة: ${distMap[f.get('district')] || ''} — ${f.get('area') || ''}\nانستقرام: ${f.get('ig') || '-'}\nليش ترند: ${f.get('why') || '-'}\nبتوصية من: ${f.get('by') || '-'}`;
+      if (CONFIG.whatsapp) window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+      else if (CONFIG.email) location.href = 'mailto:' + CONFIG.email + '?subject=' + encodeURIComponent('توصية — ترند الرياض') + '&body=' + encodeURIComponent(msg);
+      else { try { await navigator.clipboard.writeText(msg); toast('نُسخت التوصية للحافظة'); } catch(err) { toast('تعذّر النسخ'); } }
+      closeSheet();
+    });
+  }
+
+  let tt; function toast(m){ const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 1800); }
+
+  try { if (localStorage.getItem('trend_riyadh_banner') === '0') $('#demoBanner').hidden = true; } catch(e) {}
+  $('#hideBanner').addEventListener('click', e => { e.preventDefault(); $('#demoBanner').hidden = true; try { localStorage.setItem('trend_riyadh_banner', '0'); } catch(err) {} });
+
+  // ---------- deep links ----------
+  const h = new URLSearchParams(location.hash.replace(/^#/, ''));
+  if (h.get('sec') && secMap[h.get('sec')]) goSec(h.get('sec'), h.get('sub'));
+  else if (h.get('view') && ['trend','fav','sections'].includes(h.get('view'))) go(h.get('view'));
+  else nav();
+  if (h.get('p')) setTimeout(() => openPlace(h.get('p')), 50);
+
+  // ---------- PWA ----------
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('#installBtn').classList.add('show'); });
+  $('#installBtn').addEventListener('click', async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; $('#installBtn').classList.remove('show'); });
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>

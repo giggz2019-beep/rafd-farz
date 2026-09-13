@@ -1,14 +1,14 @@
 {
-  "name": "دليل الرياض — ترندات الرياض في مكان واحد",
-  "short_name": "دليل الرياض",
-  "description": "أجدد الكافيهات والمطاعم والوجهات والأسواق والفنادق والشاليهات في الرياض.",
+  "name": "ترند الرياض",
+  "short_name": "ترند الرياض",
+  "description": "كل شيء في الرياض في مكان واحد — للشباب، للبنات، كافيهات، مطاعم، شاليهات، قاعات، فنادق، فعاليات.",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f6f3ee",
-  "theme_color": "#1c1917",
+  "theme_color": "#161412",
   "icons": [
     { "src": "../favicon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
     { "src": "../apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }

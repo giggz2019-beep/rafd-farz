@@ -38,6 +38,7 @@ Active serverless functions (Vercel format: `module.exports = async (req, res) =
 | `api/send-otp.js` | Sends OTP verification emails via [Resend](https://resend.com) | `RESEND_API_KEY` |
 | `api/partner-auth.js` | Partner login/register/OTP/reset flows; `login` action optionally verifies a Cloudflare Turnstile token before sending the login OTP | `SUPABASE_SERVICE_KEY`, optional `TURNSTILE_SECRET_KEY` |
 | `api/assess-candidate.js` | Grades the AI Engineer hiring assessment with Claude (`evaluate`) and emails submissions (`notify`) | optional `ANTHROPIC_API_KEY`, `RESEND_API_KEY`, `ASSESSMENT_EMAIL` |
+| `api/trend-riyadh-place.js` | Fetches a live Google rating (Places API New) for one `placeId` for the Trend Riyadh app in `trend-riyadh/`. Fails open (`available:false`) without the key | optional `GOOGLE_MAPS_API_KEY` |
 
 **Critical**: If `ANTHROPIC_API_KEY` is not set in Vercel environment variables, `chat-khalid.js` immediately returns `escalate: true`, which causes the frontend to show WhatsApp/email contact links instead of a chat response. This is the most common cause of Khalid appearing "broken."
 
@@ -76,6 +77,7 @@ A minimal Express server that serves all static files and provides a stub `POST 
 | Partner portal | `register-partner.html`, `partner-login.html`, `partner-dashboard.html` |
 | Admin / internal | `admin.html`, `dashboard.html`, `login.html`, `signup.html` |
 | Hiring assessment | `assessment.html` (candidate, English/LTR), `assessment-review.html` (employer, Arabic/RTL), `assessment.css` |
+| Trend Riyadh (separate product prototype) | `trend-riyadh/` — self-contained Arabic PWA directory of Riyadh places; does not use `style.css` or `i18n.js`. See `trend-riyadh/README.md` |
 
 ### i18n conventions
 

@@ -1,6 +1,6 @@
 // Service worker بسيط: يخزّن ملفات التطبيق للعمل بدون إنترنت.
 // غيّر رقم الإصدار عند أي تعديل على الملفات حتى يُحدَّث الكاش عند المستخدمين.
-const CACHE = 'riyadh-guide-v1';
+const CACHE = 'trend-riyadh-v1';
 const ASSETS = ['./', './index.html', './places.js', './manifest.webmanifest'];
 
 self.addEventListener('install', e => {
