@@ -42,8 +42,13 @@
   .wrap{max-width:760px;margin:0 auto;padding-inline:16px}
   [hidden]{display:none!important}
 
-  header{background:linear-gradient(160deg,#161412 0%,#3a2d1a 60%,#5b4315 100%);color:#fff;padding:18px 0 16px;position:relative;overflow:hidden}
-  header::after{content:"";position:absolute;inset:auto -40px -80px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(217,164,65,.45),transparent 65%);pointer-events:none}
+  header{color:#fff;padding:22px 0 18px;position:relative;overflow:hidden;background:#0f1a2e;min-height:230px;display:flex;align-items:flex-end}
+  header .sky{position:absolute;inset:0;width:100%;height:100%;display:block}
+  header .photo{position:absolute;inset:0;background-size:cover;background-position:center 40%}
+  header::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,24,.15) 0%,rgba(8,12,24,.25) 45%,rgba(8,12,24,.82) 100%);pointer-events:none}
+  header .wrap{position:relative;z-index:1;width:100%}
+  .brand h1{text-shadow:0 2px 12px rgba(0,0,0,.45)}
+  .brand p{text-shadow:0 1px 8px rgba(0,0,0,.5)}
   .brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .brand h1{margin:0;font-size:1.55rem;font-weight:800;cursor:pointer}
   .brand h1 span{color:#e3b04b}
@@ -78,6 +83,11 @@
   .tile .ic{font-size:1.8rem;line-height:1}
   .tile .lb{font-weight:800;font-size:.9rem;line-height:1.2}
   .tile .ct{font-size:.72rem;color:var(--muted)}
+  .tile.has-img{background-size:cover;background-position:center;color:#fff;position:relative;overflow:hidden;min-height:96px;justify-content:flex-end}
+  .tile.has-img::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.7))}
+  .tile.has-img>*{position:relative} .tile.has-img .ct{color:rgba(255,255,255,.8)}
+  .card .art{background-size:cover;background-position:center}
+  .photo-credit{font-size:.7rem;color:var(--muted);margin:-8px 0 10px;text-align:start}
   .sec-head{display:flex;align-items:center;gap:12px;padding-top:16px}
   .sec-head .ic{font-size:2.2rem}
   .sec-head h2{margin:0;font-size:1.35rem;font-weight:800}
@@ -153,6 +163,38 @@
 <div class="banner" id="demoBanner">نسخة تجريبية — الإدخالات المعلّمة "مثال" توضيحية، والبقية تحتاج تحقّق قبل النشر. <a href="#" id="hideBanner">إخفاء</a></div>
 
 <header>
+  <!-- أفق الرياض: برج المملكة والفيصلية عند الغروب — رسم افتراضي يُستبدل بصورة عبر CONFIG.heroImage -->
+  <svg class="sky" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1330"/><stop offset=".55" stop-color="#2b2350"/><stop offset=".8" stop-color="#8a4a2a"/><stop offset="1" stop-color="#e2933a"/></linearGradient>
+      <linearGradient id="cityG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1a2e"/><stop offset="1" stop-color="#0a0c18"/></linearGradient>
+      <radialGradient id="sunG" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd27a" stop-opacity=".9"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+      <pattern id="win" width="8" height="10" patternUnits="userSpaceOnUse"><rect x="2" y="2" width="3" height="4" fill="#ffd98a" opacity=".55"/></pattern>
+      <mask id="kcMask"><rect x="0" y="0" width="1200" height="300" fill="#fff"/><path d="M560 118 Q600 40 640 118 L640 160 L560 160 Z" fill="#000"/></mask>
+    </defs>
+    <rect width="1200" height="300" fill="url(#skyG)"/>
+    <circle cx="880" cy="235" r="120" fill="url(#sunG)"/>
+    <g fill="#fff" opacity=".7"><circle cx="90" cy="40" r="1.2"/><circle cx="210" cy="70" r="1"/><circle cx="330" cy="30" r="1.4"/><circle cx="450" cy="62" r="1"/><circle cx="760" cy="28" r="1.2"/><circle cx="1010" cy="50" r="1"/><circle cx="1130" cy="24" r="1.3"/><circle cx="980" cy="90" r=".9"/></g>
+    <!-- خلفية المدينة -->
+    <g fill="#141a33" opacity=".85">
+      <rect x="0" y="215" width="60" height="85"/><rect x="70" y="200" width="45" height="100"/><rect x="130" y="225" width="80" height="75"/><rect x="230" y="190" width="40" height="110"/><rect x="290" y="210" width="70" height="90"/>
+      <rect x="380" y="205" width="55" height="95"/><rect x="450" y="185" width="35" height="115"/><rect x="700" y="205" width="60" height="95"/><rect x="780" y="195" width="45" height="105"/><rect x="840" y="215" width="90" height="85"/>
+      <rect x="950" y="200" width="50" height="100"/><rect x="1020" y="180" width="40" height="120"/><rect x="1080" y="210" width="70" height="90"/><rect x="1160" y="195" width="40" height="105"/>
+    </g>
+    <!-- برج المملكة -->
+    <g mask="url(#kcMask)"><path d="M548 300 L548 130 Q600 -20 652 130 L652 300 Z" fill="url(#cityG)"/><path d="M552 300 L552 135 Q600 0 648 135 L648 300 Z" fill="url(#win)" opacity=".8"/></g>
+    <rect x="560" y="115" width="80" height="4" fill="#ffd98a" opacity=".9"/><circle cx="600" cy="58" r="3" fill="#ff6b6b"/>
+    <!-- برج الفيصلية -->
+    <path d="M300 300 L330 120 L370 120 L400 300 Z" fill="url(#cityG)"/><path d="M304 300 L332 124 L368 124 L396 300 Z" fill="url(#win)" opacity=".7"/>
+    <circle cx="350" cy="112" r="16" fill="#e9c46a" opacity=".95"/><path d="M350 96 L350 70" stroke="#e9c46a" stroke-width="3"/>
+    <!-- أبراج أمامية -->
+    <g fill="url(#cityG)"><rect x="460" y="150" width="50" height="150"/><rect x="680" y="165" width="40" height="135"/><rect x="740" y="140" width="30" height="160"/><rect x="180" y="170" width="45" height="130"/><rect x="1060" y="150" width="60" height="150"/></g>
+    <g fill="url(#win)" opacity=".6"><rect x="463" y="154" width="44" height="146"/><rect x="683" y="169" width="34" height="131"/><rect x="743" y="144" width="24" height="156"/><rect x="183" y="174" width="39" height="126"/><rect x="1063" y="154" width="54" height="146"/></g>
+    <!-- نخيل -->
+    <g fill="#08090f"><path d="M40 300 L44 250 L48 300 Z"/><path d="M28 252 q16 -20 32 0 q-16 -8 -32 0 Z"/><path d="M30 244 q14 -22 28 -6 q-14 -2 -28 6 Z"/><path d="M1140 300 L1144 245 L1148 300 Z"/><path d="M1126 248 q18 -22 36 0 q-18 -8 -36 0 Z"/></g>
+    <rect x="0" y="292" width="1200" height="8" fill="#08090f"/>
+  </svg>
+  <div class="photo" id="heroPhoto" hidden></div>
   <div class="wrap">
     <div class="brand">
       <div>
@@ -239,6 +281,8 @@
     email: '',               // أو بريد بديل
     newDays: 45,
     ratingsApi: '../api/trend-riyadh-place',   // مسار دالة جلب تقييم قوقل (على Vercel)
+    googlePhoto: true,       // جلب صورة المكان من قوقل مع التقييم (طلب إضافي مدفوع لكل فتح)
+    heroImage: '',           // مثال: 'img/hero.jpg' — يحل مكان رسم الأفق
     favKey: 'trend_riyadh_favs_v1',
   };
 
@@ -250,6 +294,8 @@
   const audLabel = { men: 'للشباب', women: 'للبنات', family: 'للعوائل', all: 'للجميع' };
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const artStyle = p => { const img = p.image || (secMap[p.sec] && secMap[p.sec].image); return img ? ` style="background-image:url('${esc(img)}');background-size:cover;background-position:center"` : ''; };
+  const artIcon = p => (p.image || (secMap[p.sec] && secMap[p.sec].image)) ? '' : (secMap[p.sec] || { icon: '📍' }).icon;
   const subLabel = p => { const s = secMap[p.sec]; const x = s && s.subs.find(u => u.id === p.sub); return x ? x.label : ''; };
 
   const state = { view: 'home', sec: null, sub: 'all', audience: 'all', district: 'all', price: 'all', sort: 'trend', q: '' };
@@ -270,7 +316,7 @@
       p.demo ? '<span class="badge demo">مثال</span>' : '',
     ].join('');
     return `<article class="card" data-id="${esc(p.id)}" tabindex="0" role="button">
-      <div class="art ${esc(p.sec)}">${s.icon}
+      <div class="art ${esc(p.sec)}"${artStyle(p)}>${artIcon(p)}
         <div class="badges">${badges}</div>
         <button class="fav ${favs.has(p.id) ? 'on' : ''}" data-fav="${esc(p.id)}" aria-label="حفظ في المفضلة">${favs.has(p.id) ? '♥' : '♡'}</button>
       </div>
@@ -318,7 +364,7 @@
 
     if (home) {
       $('#totalCount').textContent = `${PLACES.length} مكان`;
-      $('#tiles').innerHTML = SECTIONS.map(s => `<button class="tile" data-sec="${s.id}"><span class="ic">${s.icon}</span><span class="lb">${s.label}</span><span class="ct">${PLACES.filter(p => p.sec === s.id).length} مكان</span></button>`).join('');
+      $('#tiles').innerHTML = SECTIONS.map(s => `<button class="tile${s.image ? ' has-img' : ''}" data-sec="${s.id}"${s.image ? ` style="background-image:url('${esc(s.image)}')"` : ''}><span class="ic">${s.icon}</span><span class="lb">${s.label}</span><span class="ct">${PLACES.filter(p => p.sec === s.id).length} مكان</span></button>`).join('');
       $('#trendRail').innerHTML = PLACES.filter(p => p.trend && !p.sponsored).sort((a,b) => (a.demo?1:0)-(b.demo?1:0)).map(card).join('');
       const fresh = PLACES.filter(p => isNew(p) && !p.sponsored).sort((a,b) => ((a.demo?1:0)-(b.demo?1:0)) || (b.addedAt||'').localeCompare(a.addedAt||'')).slice(0, 10);
       $('#newSec').hidden = !fresh.length; $('#newRail').innerHTML = fresh.map(card).join('');
@@ -393,8 +439,12 @@
     const fallback = `<span>التقييم وآراء الناس في</span><a class="btn" style="padding:8px 12px;font-size:.85rem" target="_blank" rel="noopener" href="${mapsUrl(p)}">خرائط قوقل ↗</a>`;
     if (!p.placeId) { box.className = 'grating'; box.innerHTML = fallback; return; }
     try {
-      const r = await fetch(`${CONFIG.ratingsApi}?placeId=${encodeURIComponent(p.placeId)}`);
+      const r = await fetch(`${CONFIG.ratingsApi}?placeId=${encodeURIComponent(p.placeId)}${CONFIG.googlePhoto && !p.image ? '&photo=1' : ''}`);
       const d = await r.json();
+      if (d.available && d.photo && d.photo.uri && $('#placeHero')) {
+        const h = $('#placeHero'); h.style.backgroundImage = `url('${d.photo.uri.replace(/'/g, '%27')}')`; h.style.backgroundSize = 'cover'; h.style.backgroundPosition = 'center'; h.textContent = '';
+        h.insertAdjacentHTML('afterend', `<div class="photo-credit">الصورة من Google${d.photo.author && d.photo.author.name ? ` · <a target="_blank" rel="noopener" href="${esc(d.photo.author.uri || '#')}">${esc(d.photo.author.name)}</a>` : ''}</div>`);
+      }
       if (!d.available || d.rating == null) { box.className = 'grating'; box.innerHTML = fallback; return; }
       box.className = 'grating';
       box.innerHTML = `<div class="big">${d.rating.toFixed(1)}</div><div><div class="stars">${stars(d.rating)}</div><div class="cnt">${(d.userRatingCount || 0).toLocaleString('ar-SA')} تقييم</div></div>
@@ -409,7 +459,7 @@
     const p = PLACES.find(x => x.id === id); if (!p) return;
     const s = secMap[p.sec] || { icon: '📍', label: p.sec };
     openSheet(`
-      <div class="hero art ${esc(p.sec)}">${s.icon}</div>
+      <div class="hero art ${esc(p.sec)}" id="placeHero"${artStyle(p)}>${artIcon(p)}</div>
       <h3>${esc(p.name)}${p.nameEn ? ` <span style="font-size:.8rem;color:var(--muted);font-weight:500;direction:ltr;unicode-bidi:isolate">${esc(p.nameEn)}</span>` : ''}</h3>
       <div class="sub"><a href="#" data-sec="${esc(p.sec)}" style="text-decoration:none">${s.icon} ${esc(s.label)}</a>${subLabel(p) ? ` › <a href="#" data-sec="${esc(p.sec)}" data-sub2="${esc(p.sub)}" style="text-decoration:none">${esc(subLabel(p))}</a>` : ''} · ${esc(distMap[p.district] || '')}${p.area ? ' — ' + esc(p.area) : ''} · <span class="price">${priceStr(p.price)}</span></div>
       <div class="tags" style="margin-bottom:12px">${p.sponsored ? '<span class="badge ad">إعلان</span>' : (p.trend ? '<span class="badge trend">🔥 ترند</span>' : '')}${isNew(p) ? '<span class="badge new">جديد</span>' : ''}${p.audience && p.audience !== 'all' ? `<span class="tag">${audLabel[p.audience]}</span>` : ''}${(p.tags||[]).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
@@ -482,6 +532,8 @@
   else if (h.get('view') && ['trend','fav','sections'].includes(h.get('view'))) go(h.get('view'));
   else nav();
   if (h.get('p')) setTimeout(() => openPlace(h.get('p')), 50);
+
+  if (CONFIG.heroImage) { const hp = $('#heroPhoto'); hp.style.backgroundImage = `url('${CONFIG.heroImage}')`; hp.hidden = false; }
 
   // ---------- PWA ----------
   let deferredPrompt = null;
