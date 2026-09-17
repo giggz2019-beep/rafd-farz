@@ -59,6 +59,11 @@ create table if not exists mazad_bids (
   created_at  timestamptz not null default now()
 );
 
+-- a sum sent from the site waits for the operator before it counts
+alter table mazad_bids add column if not exists approved    boolean not null default false;
+alter table mazad_bids add column if not exists approved_at timestamptz;
+create index if not exists mazad_bids_pending_idx on mazad_bids (listing_id, created_at) where not approved;
+
 create index if not exists mazad_bids_listing_idx  on mazad_bids (listing_id, created_at);
 create index if not exists mazad_listings_end_idx  on mazad_listings (status, end_at desc);
 create index if not exists mazad_listings_live_idx on mazad_listings (is_live) where is_live;
@@ -113,8 +118,9 @@ create policy mazad_listings_insert on mazad_listings
     and sold_price is null
   );
 
+-- the public only ever sees approved sums
 create policy mazad_bids_read on mazad_bids
-  for select to anon, authenticated using (true);
+  for select to anon, authenticated using (approved);
 
 -- no insert/update/delete policy on bids => only place_bid() can write them
 
@@ -161,9 +167,10 @@ begin
     return json_build_object('ok', false, 'error', 'expired');
   end if;
 
+  -- the bar to clear is the highest APPROVED sum
   select coalesce(max(amount), v_listing.start_price)
     into v_current
-    from mazad_bids where listing_id = p_listing;
+    from mazad_bids where listing_id = p_listing and approved;
 
   -- minimum step: 50 up to 1,000 — then 5% of the current price
   v_step := greatest(50, ceil(v_current * 0.05));
@@ -189,19 +196,17 @@ begin
     return json_build_object('ok', false, 'error', 'too_fast');
   end if;
 
-  insert into mazad_bids (listing_id, bidder_name, amount)
-  values (p_listing, p_name, p_amount);
-
-  -- anti-sniping
-  v_new_end := v_listing.end_at;
-  if v_listing.end_at - now() < interval '60 seconds' then
-    v_new_end := now() + interval '2 minutes';
-    update mazad_listings set end_at = v_new_end where id = p_listing;
+  -- at most three of one person's sums may be waiting at a time
+  if (select count(*) from mazad_bids
+       where listing_id = p_listing and bidder_name = p_name and not approved) >= 3 then
+    return json_build_object('ok', false, 'error', 'too_many_pending');
   end if;
 
-  return json_build_object(
-    'ok', true, 'current', p_amount, 'end_at', v_new_end
-  );
+  insert into mazad_bids (listing_id, bidder_name, amount, approved)
+  values (p_listing, p_name, p_amount, false);
+
+  -- no anti-sniping here: the clock moves when the operator approves
+  return json_build_object('ok', true, 'pending', true, 'amount', p_amount);
 end;
 $$;
 
@@ -380,3 +385,94 @@ as $$ select now() $$;
 
 revoke all on function mazad_now() from public;
 grant execute on function mazad_now() to anon, authenticated;
+
+-- ---------- the sums still waiting on the operator ----------
+
+create or replace function mazad_pending_bids(p_secret text)
+returns json
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare v_secret text;
+begin
+  select value into v_secret from mazad_config where key = 'admin_secret';
+  if v_secret is null or p_secret is null or p_secret <> v_secret then
+    return json_build_object('ok', false, 'error', 'forbidden');
+  end if;
+
+  return json_build_object('ok', true, 'bids', coalesce((
+    select json_agg(row_to_json(x) order by x.created_at)
+      from (
+        select b.id, b.listing_id, b.bidder_name, b.amount, b.created_at, l.phone, l.is_live
+          from mazad_bids b
+          join mazad_listings l on l.id = b.listing_id
+         where not b.approved and l.status = 'open'
+      ) x
+  ), '[]'::json));
+end;
+$$;
+
+revoke all on function mazad_pending_bids(text) from public;
+grant execute on function mazad_pending_bids(text) to anon, authenticated;
+
+-- ---------- approve / reject one sum ----------
+
+create or replace function mazad_bid_action(p_bid uuid, p_secret text, p_action text)
+returns json
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_secret  text;
+  v_bid     mazad_bids%rowtype;
+  v_listing mazad_listings%rowtype;
+  v_current numeric;
+  v_new_end timestamptz;
+begin
+  select value into v_secret from mazad_config where key = 'admin_secret';
+  if v_secret is null or p_secret is null or p_secret <> v_secret then
+    return json_build_object('ok', false, 'error', 'forbidden');
+  end if;
+
+  select * into v_bid from mazad_bids where id = p_bid for update;
+  if not found then return json_build_object('ok', false, 'error', 'not_found'); end if;
+
+  if p_action = 'reject' then
+    delete from mazad_bids where id = p_bid;
+    return json_build_object('ok', true);
+  end if;
+
+  if p_action <> 'approve' then
+    return json_build_object('ok', false, 'error', 'bad_action');
+  end if;
+  if v_bid.approved then return json_build_object('ok', true); end if;
+
+  select * into v_listing from mazad_listings where id = v_bid.listing_id for update;
+
+  select coalesce(max(amount), v_listing.start_price)
+    into v_current
+    from mazad_bids where listing_id = v_bid.listing_id and approved;
+
+  -- approving a sum that no longer beats the price would move it backwards
+  if v_bid.amount <= v_current then
+    return json_build_object('ok', false, 'error', 'below_current', 'current', v_current);
+  end if;
+
+  update mazad_bids set approved = true, approved_at = now() where id = p_bid;
+
+  -- the clock reacts to the approval, not to the shout
+  v_new_end := v_listing.end_at;
+  if v_listing.end_at is not null and v_listing.end_at - now() < interval '60 seconds' then
+    v_new_end := now() + interval '2 minutes';
+    update mazad_listings set end_at = v_new_end where id = v_listing.id;
+  end if;
+
+  return json_build_object('ok', true, 'amount', v_bid.amount, 'end_at', v_new_end);
+end;
+$$;
+
+revoke all on function mazad_bid_action(uuid, text, text) from public;
+grant execute on function mazad_bid_action(uuid, text, text) to anon, authenticated;
