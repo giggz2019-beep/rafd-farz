@@ -7,19 +7,19 @@
     },
     {
       "source": "/m",
-      "destination": "/mazad.html"
+      "destination": "/mazad"
     },
     {
       "source": "/mzad",
-      "destination": "/mazad.html"
+      "destination": "/mazad"
     },
     {
       "source": "/live",
-      "destination": "/mazad.html"
+      "destination": "/mazad"
     },
     {
       "source": "/control",
-      "destination": "/mazad.html"
+      "destination": "/mazad"
     }
   ],
   "headers": [
