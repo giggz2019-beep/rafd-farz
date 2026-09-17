@@ -26,8 +26,8 @@ create table if not exists mazad_listings (
   seller_name    text        not null,
   seller_contact text,                       -- whatsapp / phone to close the deal
   note           text,
-  end_at         timestamptz not null,
-  status         text        not null default 'open',   -- open | sold | cancelled
+  end_at         timestamptz,          -- null until the operator opens the bidding
+  status         text        not null default 'pending',   -- open | sold | cancelled
   created_at     timestamptz not null default now(),
 
   constraint mazad_phone_format    check (phone ~ '^05[0-9]{8}$'),
@@ -35,7 +35,7 @@ create table if not exists mazad_listings (
   constraint mazad_seller_len      check (char_length(seller_name) between 2 and 40),
   constraint mazad_contact_len     check (seller_contact is null or char_length(seller_contact) <= 40),
   constraint mazad_note_len        check (note is null or char_length(note) <= 200),
-  constraint mazad_status_values   check (status in ('open','sold','unsold','cancelled'))
+  constraint mazad_status_values   check (status in ('pending','open','sold','unsold','cancelled'))
 );
 
 -- live-broadcast mode: which number is on air right now
@@ -43,12 +43,13 @@ alter table mazad_listings add column if not exists is_live boolean not null def
 -- a number can be sold at a price agreed off the site (on the broadcast, over
 -- WhatsApp). Record that price rather than inventing bids to represent it.
 alter table mazad_listings add column if not exists sold_price numeric(12,2);
+alter table mazad_listings alter column end_at drop not null;
 alter table mazad_listings drop constraint if exists mazad_sold_price_range;
 alter table mazad_listings add  constraint mazad_sold_price_range
   check (sold_price is null or (sold_price >= 0 and sold_price <= 100000000));
 alter table mazad_listings drop constraint if exists mazad_status_values;
 alter table mazad_listings add  constraint mazad_status_values
-  check (status in ('open','sold','unsold','cancelled'));
+  check (status in ('pending','open','sold','unsold','cancelled'));
 
 create table if not exists mazad_bids (
   id          uuid primary key default gen_random_uuid(),
@@ -100,14 +101,16 @@ drop policy if exists mazad_bids_read       on mazad_bids;
 create policy mazad_listings_read on mazad_listings
   for select to anon, authenticated using (true);
 
--- anyone may list a number, but only as a fresh open auction
--- that ends between 5 minutes and 14 days from now
+-- A seller registering a number does NOT start an auction. The number joins
+-- the queue as 'pending' with no clock; only the operator opens the bidding
+-- (mazad_admin 'timer') and only the operator can put it on air.
 create policy mazad_listings_insert on mazad_listings
   for insert to anon, authenticated
   with check (
-    status = 'open'
-    and end_at > now() + interval '5 minutes'
-    and end_at < now() + interval '14 days'
+    status = 'pending'
+    and end_at is null
+    and is_live = false
+    and sold_price is null
   );
 
 create policy mazad_bids_read on mazad_bids
@@ -146,11 +149,15 @@ begin
     return json_build_object('ok', false, 'error', 'not_found');
   end if;
 
+  if v_listing.status = 'pending' then
+    return json_build_object('ok', false, 'error', 'not_started');
+  end if;
+
   if v_listing.status <> 'open' then
     return json_build_object('ok', false, 'error', 'closed');
   end if;
 
-  if v_listing.end_at <= now() then
+  if v_listing.end_at is null or v_listing.end_at <= now() then
     return json_build_object('ok', false, 'error', 'expired');
   end if;
 
@@ -251,17 +258,19 @@ begin
   elsif p_action = 'price' then
     update mazad_listings set sold_price = p_price where id = p_listing;
 
+  -- send a finished number back to the queue
   elsif p_action = 'open' then
     update mazad_listings
-       set status = 'open', sold_price = null,
-           end_at = greatest(end_at, now() + interval '10 minutes')
+       set status = 'pending', sold_price = null, end_at = null
      where id = p_listing;
 
   elsif p_action = 'extend' then
     update mazad_listings
-       set end_at = greatest(end_at, now()) + (coalesce(p_minutes, 5) || ' minutes')::interval
+       set end_at = greatest(coalesce(end_at, now()), now()) + (coalesce(p_minutes, 5) || ' minutes')::interval,
+           status = 'open'
      where id = p_listing;
 
+  -- THIS is what opens a queued number for bidding
   elsif p_action = 'timer' then
     update mazad_listings
        set status = 'open',
@@ -279,7 +288,9 @@ begin
     update mazad_listings set is_live = false where is_live;
     select id into v_next
       from mazad_listings
-     where status = 'open' and end_at > now() and id <> coalesce(p_listing, id)
+     where status in ('pending', 'open')
+       and (end_at is null or end_at > now())
+       and id <> coalesce(p_listing, id)
      order by created_at asc
      limit 1;
     if v_next is not null then

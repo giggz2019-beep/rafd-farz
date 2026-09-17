@@ -129,6 +129,7 @@ a { color: inherit; }
 .badge.sold   { background: #fdf0e6; color: #b5651d; }
 .badge.ended  { background: #f0f2f1; color: var(--muted); }
 .badge.unsold { background: #fdecea; color: #c0392b; }
+.badge.wait   { background: #eef2f7; color: #4a6b8a; }
 .badge.dot::before {
   content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
   background: currentColor; margin-inline-end: 5px; vertical-align: middle;
@@ -290,6 +291,7 @@ a { color: inherit; }
 .opbar.light button { background: #f2f6f4; color: var(--ink); border: 1px solid var(--line); }
 .opbar.light button.sold   { background: #12833f; border-color: #12833f; color: #fff; }
 .opbar.light button.unsold { background: #c0392b; border-color: #c0392b; color: #fff; }
+.opbar.light button.start  { background: #12833f; border-color: #12833f; color: #fff; }
 .opbar.light button.next   { background: linear-gradient(135deg,#f6dd9e,#d9a441); color: #2a1c02; border-color: transparent; }
 
 /* ---------- live broadcast screen ---------- */
@@ -376,6 +378,7 @@ a { color: inherit; }
 }
 .opbar button.sold   { background: #12833f; border-color: #12833f; }
 .opbar button.unsold { background: #c0392b; border-color: #c0392b; }
+.opbar button.start  { background: #12833f; border-color: #12833f; }
 .opbar button.next   { background: linear-gradient(135deg,#f6dd9e,#d9a441); color: #2a1c02; border-color: transparent; }
 .opbar button.add    { background: rgba(255,255,255,.22); }
 .opbar .lbl { font-size: .72rem; color: #bcd9c8; margin-bottom: 5px; }
@@ -389,6 +392,11 @@ a { color: inherit; }
 .live-banner .n { flex: 1; font-weight: 900; font-size: 1.15rem; direction: ltr; unicode-bidi: isolate; text-align: center; }
 .live-banner .go { background: var(--gold-500); color: #2a1c02; border-radius: 10px; padding: 7px 12px; font-size: .8rem; font-weight: 800; }
 
+.wait-note {
+  background: #eef2f7; color: #3c5872; border: 1px dashed #c3d3e3;
+  border-radius: 12px; padding: 10px 12px; margin-top: 12px;
+  font-size: .84rem; text-align: center; line-height: 1.7;
+}
 .fee {
   margin-top: 10px; padding: 8px 10px; border-radius: 10px; text-align: center;
   background: #fff8e9; border: 1px solid #f0dcb0; color: #7a4f05; font-size: .8rem;
@@ -426,9 +434,10 @@ a { color: inherit; }
   <section id="viewList">
     <div class="toolbar">
       <div class="filters">
-        <button class="filter on" data-filter="live">المزادات المفتوحة</button>
-        <button class="filter" data-filter="all">الكل</button>
+        <button class="filter on" data-filter="live">السوم المفتوح</button>
+        <button class="filter" data-filter="pending">بانتظار الدور</button>
         <button class="filter" data-filter="done">المنتهية</button>
+        <button class="filter" data-filter="all">الكل</button>
       </div>
     </div>
     <button class="btn btn-gold btn-block" id="btnAdd" style="margin-bottom:14px">➕ اعرض رقمك في المزاد</button>
@@ -517,6 +526,7 @@ function commissionOn(price) { return Math.round(Number(price || 0) * COMMISSION
 const COMMISSION_LABEL = (COMMISSION * 100).toString().replace(/\.0$/, '') + '%';
 
 function countdown(endAt) {
+  if (!endAt) return null;
   let ms = new Date(endAt).getTime() - nowMs();
   if (ms <= 0) return null;
   const s = Math.floor(ms / 1000);
@@ -537,9 +547,11 @@ function ago(ts) {
 
 /* state of a listing, derived — never trusted from a client write */
 function lotState(lot) {
+  if (lot.status === 'pending') return 'pending';   // in the queue, no clock yet
   if (lot.status === 'sold') return 'sold';
   if (lot.status === 'unsold') return 'unsold';
   if (lot.status === 'cancelled') return 'cancelled';
+  if (!lot.end_at) return 'pending';
   return new Date(lot.end_at).getTime() <= nowMs() ? 'ended' : 'live';
 }
 
@@ -549,7 +561,8 @@ function stampFor(st) {
   return STAMP[st] ? '<div class="stamp ' + st + '">' + STAMP[st] + '</div>' : '';
 }
 function badgeFor(st) {
-  if (st === 'live')   return '<span class="badge live dot">مفتوح</span>';
+  if (st === 'pending') return '<span class="badge wait">بانتظار الدور</span>';
+  if (st === 'live')   return '<span class="badge live dot">السوم مفتوح</span>';
   if (st === 'sold')   return '<span class="badge sold">تم البيع</span>';
   if (st === 'unsold') return '<span class="badge unsold">لم يتم البيع</span>';
   if (st === 'cancelled') return '<span class="badge ended">ملغي</span>';
@@ -634,15 +647,16 @@ const local = {
   async bids(id) { return this.read().bids.filter(b => b.listing_id === id).sort((a, b) => a.created_at.localeCompare(b.created_at)); },
   async createListing(body) {
     const db = this.read();
-    const row = { ...body, id: this.uid(), status: 'open', created_at: new Date().toISOString() };
+    const row = { ...body, id: this.uid(), status: body.status || 'pending', is_live: false, created_at: new Date().toISOString() };
     db.listings.push(row); this.write(db); return row;
   },
   async placeBid(id, name, amount) {
     const db = this.read();
     const lot = db.listings.find(l => l.id === id);
     if (!lot) return { ok: false, error: 'not_found' };
+    if (lot.status === 'pending') return { ok: false, error: 'not_started' };
     if (lot.status !== 'open') return { ok: false, error: 'closed' };
-    if (new Date(lot.end_at).getTime() <= nowMs()) return { ok: false, error: 'expired' };
+    if (!lot.end_at || new Date(lot.end_at).getTime() <= nowMs()) return { ok: false, error: 'expired' };
     const cur = db.bids.filter(b => b.listing_id === id).reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
     const min = cur + stepFor(cur);
     if (amount < min) return { ok: false, error: 'too_low', current: cur, min };
@@ -660,7 +674,8 @@ const local = {
     } else if (action === 'next') {
       db.listings.forEach(l => l.is_live = false);
       const nx = db.listings
-        .filter(l => l.status === 'open' && new Date(l.end_at).getTime() > nowMs() && l.id !== id)
+        .filter(l => ['pending', 'open'].includes(l.status) &&
+                     (!l.end_at || new Date(l.end_at).getTime() > nowMs()) && l.id !== id)
         .sort((a, b) => a.created_at.localeCompare(b.created_at))[0];
       if (nx) nx.is_live = true;
       this.write(db);
@@ -676,7 +691,7 @@ const local = {
     } else if (action === 'timer') {
       lot.status = 'open'; lot.end_at = new Date(nowMs() + (minutes || 1) * 60000).toISOString();
     } else if (action === 'open') {
-      lot.status = 'open'; lot.end_at = new Date(Math.max(new Date(lot.end_at).getTime(), nowMs() + 600000)).toISOString();
+      lot.status = 'pending'; lot.end_at = null; lot.sold_price = null;
     } else if (action === 'price') {
       lot.sold_price = price;
     } else {
@@ -794,13 +809,22 @@ function topBid(id, lot) {
 function renderList() {
   const host = $('#lots');
   let rows = cache.listings.slice();
-  if (cache.filter === 'live') rows = rows.filter(l => lotState(l) === 'live');
-  if (cache.filter === 'done') rows = rows.filter(l => lotState(l) !== 'live');
+  if (cache.filter === 'live')    rows = rows.filter(l => lotState(l) === 'live');
+  if (cache.filter === 'pending') rows = rows.filter(l => lotState(l) === 'pending');
+  if (cache.filter === 'done')    rows = rows.filter(l => ['sold', 'unsold', 'cancelled', 'ended'].includes(lotState(l)));
+  const rank = (l) => {
+    const st = lotState(l);
+    if (l.is_live) return 0;
+    if (st === 'live') return 1;
+    if (st === 'pending') return 2;
+    return 3;
+  };
   rows.sort((a, b) => {
-    if (!!a.is_live !== !!b.is_live) return a.is_live ? -1 : 1;
-    const sa = lotState(a) === 'live', sb = lotState(b) === 'live';
-    if (sa !== sb) return sa ? -1 : 1;
-    return sa ? new Date(a.end_at) - new Date(b.end_at) : new Date(b.created_at) - new Date(a.created_at);
+    const d = rank(a) - rank(b);
+    if (d) return d;
+    // the queue keeps its turn order; everything else is newest first
+    return rank(a) === 2 ? new Date(a.created_at) - new Date(b.created_at)
+                         : new Date(b.created_at) - new Date(a.created_at);
   });
 
   const onAir = cache.listings.find(l => l.is_live);
@@ -822,7 +846,8 @@ function renderList() {
 
   if (!rows.length) {
     host.innerHTML = banner + '<div class="empty"><div class="empty-emoji">📱</div>'
-      + (cache.filter === 'live' ? 'ما فيه مزادات مفتوحة الحين.<br>كن أول واحد يعرض رقمه.' : 'ما فيه شيء هنا بعد.')
+      + (cache.filter === 'live' ? 'ما فيه سوم مفتوح الحين.<br>سجّل رقمك وينتظر دوره.'
+         : cache.filter === 'pending' ? 'ما فيه أرقام بالانتظار.' : 'ما فيه شيء هنا بعد.')
       + '</div>';
     wireLiveBanner();
     return;
@@ -847,13 +872,15 @@ function renderList() {
             stampFor(st) +
           '</div>' +
           '<div class="lot-stats">' +
-            '<div class="stat"><div class="stat-k">' + (st === 'sold' ? 'بيع على' : 'السعر الحالي') + '</div>' +
+            '<div class="stat"><div class="stat-k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
               '<div class="stat-v price"><span class="num">' + money(finalPrice(lot, t)) + '</span> ر.س</div></div>' +
             '<div class="stat"><div class="stat-k">المزايدات</div><div class="stat-v"><span class="num">' + t.count + '</span></div></div>' +
             '<div class="stat"><div class="stat-k">' + (st === 'live' ? 'ينتهي خلال' : 'الحالة') + '</div>' +
               (st === 'live'
                 ? '<div class="stat-v time" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
-                : '<div class="stat-v over">' + (st === 'sold' ? 'مباع' : st === 'unsold' ? 'لم يُبَع' : 'مغلق') + '</div>') +
+                : '<div class="stat-v over">' +
+                  (st === 'sold' ? 'مباع' : st === 'unsold' ? 'لم يُبَع'
+                   : st === 'pending' ? 'ينتظر دوره' : 'مغلق') + '</div>') +
             '</div>' +
           '</div>' +
           '<div class="lot-foot">👤 ' + esc(lot.seller_name) + (t.name ? ' · أعلى مزايد: ' + esc(t.name) : '') + '</div>' +
@@ -879,7 +906,7 @@ function adminBar(lot) {
     + '<button data-a="sold">✔ تم البيع</button>'
     + '<button data-a="unsold">✖ لم يتم البيع</button>'
     + '<button data-a="extend">+5 دقائق</button>'
-    + '<button data-a="open">إعادة فتح</button>'
+    + '<button data-a="open">رجّعه للقائمة</button>'
     + '<button data-a="delete" class="del">حذف</button>'
     + '</div>');
   bar.addEventListener('click', async (e) => {
@@ -899,7 +926,8 @@ function adminBar(lot) {
    The operator bar underneath only appears in operator mode.          */
 function renderLive(lot, bids) {
   const host = $('#liveBody');
-  const open = cache.listings.filter(l => lotState(l) === 'live' && !l.is_live)
+  const open = cache.listings
+    .filter(l => ['pending', 'live'].includes(lotState(l)) && !l.is_live)
     .sort((a, b) => a.created_at.localeCompare(b.created_at));
   const liveId = lot ? lot.id : null;
   const doneCount = cache.listings
@@ -929,7 +957,7 @@ function renderLive(lot, bids) {
   host.innerHTML =
     '<div class="live">' +
       '<div class="live-head">' +
-        '<span class="live-dot">' + (st === 'live' ? 'على الهواء' : 'انتهى') + '</span>' +
+        '<span class="live-dot">' + (st === 'live' ? 'على الهواء' : st === 'pending' ? 'جاهز' : 'انتهى') + '</span>' +
         '<span class="live-seq">رقم <span class="num">' + (doneCount + 1) + '</span>' +
           (open.length ? ' · بالانتظار <span class="num">' + open.length + '</span>' : '') + '</span>' +
       '</div>' +
@@ -944,15 +972,18 @@ function renderLive(lot, bids) {
 
       (st === 'live'
         ? '<div class="live-clock' + (cd && cd.length <= 8 && cd < '00:01:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
+        : st === 'pending'
+        ? '<div class="live-clock over">جاهز — ينتظر بدء السوم</div>'
         : '<div class="live-clock over">' + (st === 'sold' ? 'مبروك للمشتري 🎉' : st === 'unsold' ? 'ما تم البيع' : 'انتهى الوقت') + '</div>') +
 
       '<div class="live-price">' +
-        '<div class="k">' + (st === 'sold' ? 'بيع على' : 'أعلى سوم') + '</div>' +
+        '<div class="k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'أعلى سوم') + '</div>' +
         '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +
         '<div class="who">' +
           (t.name ? esc(t.name)
            : st === 'sold' ? 'بيع مباشر — بدون مزايدات على الموقع'
-           : 'سعر البداية — ما زايد أحد') + '</div>' +
+           : st === 'pending' ? 'ابدأ المؤقت عشان يفتح السوم'
+           : 'ما زايد أحد بعد') + '</div>' +
       '</div>' +
 
       (last.length
@@ -988,7 +1019,8 @@ function renderControl(lot, bids) {
     return;
   }
 
-  const open = cache.listings.filter(l => lotState(l) === 'live' && !l.is_live)
+  const open = cache.listings
+    .filter(l => ['pending', 'live'].includes(lotState(l)) && !l.is_live)
     .sort((a, b) => a.created_at.localeCompare(b.created_at));
   const t = lot ? topBid(lot.id, lot) : null;
   const st = lot ? lotState(lot) : null;
@@ -1030,7 +1062,7 @@ function renderControl(lot, bids) {
   $('#ctlBar').appendChild(bar);
 
   $('#ctlQueue').innerHTML = open.length
-    ? '<div style="font-weight:700;margin-bottom:8px">الطابور (<span class="num">' + open.length + '</span>)</div>' +
+    ? '<div style="font-weight:700;margin-bottom:8px">قائمة الانتظار (<span class="num">' + open.length + '</span>)</div>' +
       open.map(l =>
         '<div class="ctl-q" data-q="' + esc(l.id) + '">' +
           '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
@@ -1046,7 +1078,7 @@ function renderControl(lot, bids) {
 
 function queueHtml(open) {
   if (!open.length) return '';
-  return '<div class="queue"><h3>الأرقام اللي بعده</h3>' +
+  return '<div class="queue"><h3>قائمة الانتظار</h3>' +
     open.slice(0, 6).map(l =>
       '<div class="q" data-q="' + esc(l.id) + '">' +
         '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
@@ -1084,10 +1116,12 @@ function opBar(lot) {
   const bar = el('<div class="opbar"></div>');
   if (lot) {
     bar.innerHTML =
-      '<div class="lbl">المؤقت</div>' +
+      '<div class="lbl">افتح السوم على الرقم</div>' +
       '<div class="row">' +
-        '<button data-a="timer" data-m="1">ابدأ دقيقة</button>' +
-        '<button data-a="timer" data-m="2">دقيقتين</button>' +
+        '<button class="start" data-a="timer" data-m="1">▶ ابدأ دقيقة</button>' +
+        '<button class="start" data-a="timer" data-m="2">▶ دقيقتين</button>' +
+      '</div>' +
+      '<div class="row">' +
         '<button data-a="extend" data-m="1">+ دقيقة</button>' +
         '<button data-a="extend" data-m="2">+ دقيقتين</button>' +
       '</div>' +
@@ -1242,21 +1276,27 @@ function renderLot(lot, bids, full) {
       '<div class="phone-plate plate-wrap"><div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
         (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') + stampFor(st) + '</div>' +
       '<div class="price-hero" style="margin-top:14px">' +
-        '<div class="k">' + (st === 'sold' ? 'بيع على' : 'السعر الحالي') + '</div>' +
+        '<div class="k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
         '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +
         '<div class="who">' +
           (t.name ? 'أعلى مزايد: ' + esc(t.name)
            : st === 'sold' ? 'بيع مباشر — بدون مزايدات على الموقع'
+           : st === 'pending' ? 'ما بدأ السوم بعد'
            : 'لا توجد مزايدات بعد — سعر البداية') + '</div>' +
       '</div>' +
       (st === 'live'
         ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
+        : st === 'pending'
+        ? '<div class="wait-note">رقمك مسجّل وينتظر دوره في البث.<br>' +
+          'ما يقدر أحد يزايد عليه إلا لما نفتح عليه السوم.</div>'
         : '') +
       '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
         ' · <span class="num">' + t.count + '</span> مزايدة</div>' +
-      '<div class="fee">عمولة الموقع ' + COMMISSION_LABEL + ' من السعي = ' +
-        '<b><span class="num">' + money(commissionOn(shown)) + '</span> ر.س</b>' +
-        '<span> — على ذمة البائع</span></div>' +
+      (st === 'pending'
+        ? '<div class="fee">عمولة الموقع ' + COMMISSION_LABEL + ' من سعر البيع — على ذمة البائع</div>'
+        : '<div class="fee">عمولة الموقع ' + COMMISSION_LABEL + ' من السعي = ' +
+          '<b><span class="num">' + money(commissionOn(shown)) + '</span> ر.س</b>' +
+          '<span> — على ذمة البائع</span></div>') +
       (lot.seller_contact
         ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
           esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع</a>'
@@ -1272,7 +1312,9 @@ function renderLot(lot, bids, full) {
 
   const feed = $('#feed');
   if (!bids.length) {
-    feed.innerHTML = '<div class="empty" style="padding:22px">ما زايد أحد بعد. كن أول واحد 👋</div>';
+    feed.innerHTML = '<div class="empty" style="padding:22px">' +
+      (st === 'pending' ? 'ينتظر دوره — يبدأ السوم عليه في البث ⏳'
+                        : 'ما زايد أحد بعد. كن أول واحد 👋') + '</div>';
   } else {
     const best = Math.max(...bids.map(b => +b.amount));
     feed.innerHTML = bids.map(b =>
@@ -1292,6 +1334,7 @@ function renderLot(lot, bids, full) {
     host.innerHTML = '<div class="bidbar"><div class="inner" style="text-align:center;color:var(--muted);font-size:.86rem">' +
       (st === 'sold' ? 'تم بيع هذا الرقم ✔'
        : st === 'unsold' ? 'انتهى المزاد ولم يتم البيع'
+       : st === 'pending' ? '⏳ ينتظر دوره — السوم ما بدأ عليه بعد'
        : 'انتهى المزاد على هذا الرقم') + '</div></div>';
     return;
   }
@@ -1346,6 +1389,7 @@ async function sendBid(id) {
       const m = {
         too_low: 'المبلغ أقل من المطلوب — أقل مزايدة ' + money(r.min || 0) + ' ر.س',
         too_fast: 'على مهلك ثانية وحدة 😄',
+        not_started: 'ما بدأ السوم على هذا الرقم بعد',
         closed: 'المزاد مقفل',
         expired: 'انتهى وقت المزاد',
         bad_name: 'اكتب اسم صحيح (حرفين على الأقل)',
@@ -1409,15 +1453,10 @@ function askAdmin() {
   if (admin.on) s.querySelector('#adOut').addEventListener('click', () => { admin.secret = ''; closeSheet(); toast('تم الخروج'); refresh(false); });
 }
 
-const DURATIONS = [
-  { k: '15 دقيقة', m: 15 }, { k: 'ساعة', m: 60 }, { k: '6 ساعات', m: 360 },
-  { k: '12 ساعة', m: 720 }, { k: '24 ساعة', m: 1440 }, { k: '3 أيام', m: 4320 }, { k: 'أسبوع', m: 10080 }
-];
-
 function askListing() {
   const s = sheet(
-    '<h2>اعرض رقمك في المزاد</h2>' +
-    '<p class="hint">الرقم يظهر للجميع مباشرة، والناس تبدأ تزايد عليه.</p>' +
+    '<h2>سجّل رقمك في المزاد</h2>' +
+    '<p class="hint">رقمك يدخل قائمة الانتظار، ويفتح عليه السوم لما يجي دوره في البث.</p>' +
     '<div id="lsErr"></div>' +
     '<div class="field ltr"><label>رقم الجوال المعروض</label>' +
       '<input id="lsPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX">' +
@@ -1429,18 +1468,16 @@ function askListing() {
       '<div class="field ltr"><label>سعر البداية (ر.س)</label>' +
         '<input id="lsPrice" type="number" inputmode="numeric" min="0" value="0"></div>' +
     '</div>' +
-    '<div class="field"><label>مدة المزاد</label><select id="lsDur">' +
-      DURATIONS.map((d) => '<option value="' + d.m + '"' + (d.m === 1440 ? ' selected' : '') + '>' + d.k + '</option>').join('') +
-    '</select></div>' +
+
     '<div class="row2">' +
       '<div class="field"><label>اسمك</label><input id="lsName" maxlength="40" placeholder="أبو فهد" value="' + esc(me.name) + '"></div>' +
       '<div class="field ltr"><label>جوال للتواصل</label><input id="lsContact" type="tel" inputmode="numeric" maxlength="14" placeholder="05XXXXXXXX"></div>' +
     '</div>' +
-    '<div class="field"><label>ملاحظة (اختياري)</label><input id="lsNote" maxlength="80" placeholder="مثال: رقم رباعي مميز"></div>' +
+    '<div class="field"><label>ملاحظة (اختياري)</label><input id="lsNote" maxlength="80" placeholder="مثال: أرقام متشابهة وسهلة الحفظ"></div>' +
     '<div class="fee-box">💰 عمولة الموقع <b>' + COMMISSION_LABEL + '</b> من سعر البيع (السعي)، <b>على ذمة البائع</b>.' +
       '<br>مثال: بيع بـ <span class="num">10,000</span> ر.س ← العمولة <span class="num">' + money(commissionOn(10000)) + '</span> ر.س.' +
       '<br>بنشرك للرقم أنت موافق على هذا.</div>' +
-    '<button class="btn btn-gold btn-block" id="lsSave">انشر المزاد — وأوافق على العمولة</button>'
+    '<button class="btn btn-gold btn-block" id="lsSave">سجّل رقمي — وأوافق على العمولة</button>'
   );
 
   s.querySelector('#lsSave').addEventListener('click', async () => {
@@ -1449,14 +1486,13 @@ function askListing() {
     const price   = Number(s.querySelector('#lsPrice').value || 0);
     const name    = s.querySelector('#lsName').value.trim();
     const contact = s.querySelector('#lsContact').value.replace(/\D/g, '');
-    const mins    = Number(s.querySelector('#lsDur').value);
 
     if (!/^05\d{8}$/.test(phone)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
     if (name.length < 2) return err('اكتب اسمك.');
     if (price < 0 || price > 100000000) return err('سعر البداية غير منطقي.');
     if (contact && !/^0?5\d{8}$/.test(contact)) return err('رقم التواصل غير صحيح.');
 
-    const btn = s.querySelector('#lsSave'); btn.disabled = true; btn.textContent = 'جاري النشر…';
+    const btn = s.querySelector('#lsSave'); btn.disabled = true; btn.textContent = 'جاري التسجيل…';
     try {
       const row = await store.createListing({
         phone,
@@ -1465,16 +1501,17 @@ function askListing() {
         seller_name: name,
         seller_contact: contact || null,
         note: s.querySelector('#lsNote').value.trim() || null,
-        end_at: new Date(nowMs() + mins * 60000).toISOString()
+        status: 'pending',      // queued — only the operator opens the bidding
+        end_at: null
       });
       if (!me.name) me.name = name;
       closeSheet();
-      toast('نُشر المزاد ✔');
+      toast('رقمك دخل القائمة ✔ — ينتظر دوره');
       location.hash = '#/n/' + encodeURIComponent(row.id);
     } catch (e) {
       console.error(e);
-      btn.disabled = false; btn.textContent = 'انشر المزاد';
-      err('تعذّر النشر. تأكد من الاتصال وحاول مرة ثانية.');
+      btn.disabled = false; btn.textContent = 'سجّل رقمي — وأوافق على العمولة';
+      err('تعذّر التسجيل. تأكد من الاتصال وحاول مرة ثانية.');
     }
   });
 }

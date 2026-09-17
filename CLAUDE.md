@@ -147,6 +147,13 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   share. `/control` is the operator's private panel (password-gated, on their own
   phone) and holds every button. Do not "helpfully" add operator controls back
   onto `/live`; the split is the point.
+- **Registering a number does not start an auction.** A seller's listing enters
+  the queue as `status='pending'` with `end_at` null and no clock. Only the
+  operator opens the bidding, with `mazad_admin('timer', minutes)`. The RLS
+  insert policy allows nothing else from the public — not `open`, not a clock,
+  not `is_live`, not a price — so a seller cannot start or broadcast their own
+  number. `place_bid` returns `not_started` on a queued number. This ordering is
+  the product: the operator runs the room, sellers only join the line.
 - **Live broadcast mode** (`#/live`, also served at `/live`). One number is "on
   air" at a time — `mazad_listings.is_live`, and only `mazad_admin` can set it,
   so a viewer cannot put their own number on screen. The broadcast screen shows
