@@ -98,7 +98,8 @@ A 30-minute practical assessment for AI Engineer candidates, plus an employer-on
 - Every failure path (no API key, model refusal, timeout, network error) degrades to the dashboard's **manual scoring** mode rather than erroring out.
 - Arabic report text is bidi-sensitive: score fragments like `15 / 20` must carry `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL reverses them to `20 / 15`.
 
-### Phone-number auction (`mazad.html`)
+### Phone-number auction (`mazad.html`) — «مزاد سوم»
+
 
 A standalone Arabic-only auction page for premium mobile numbers — anyone lists a
 number, everyone else bids in a chat-style feed. It is **not** part of the RAFD
@@ -154,6 +155,11 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   `https://afvgsubxuquzlkxyondf.supabase.co` (and its `wss://`). Pointing the
   page at a different Supabase project means editing that header too, or the
   browser blocks every request.
+- **Brand images** (`mazad-logo.png` 2048², `mazad-icon.png` 512², `mazad-og.png`
+  1200×630, `mazad-poster.png` 2160×2700) were designed as HTML using the repo's
+  own Thmanyah typeface and screenshotted at 2x — not drawn by an image model,
+  which mangles Arabic. Regenerate them the same way if the brand changes; the
+  page wires the icon and og:image to them.
 - Arabic is bidi-sensitive: every price, countdown and phone number carries
   `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL
   reverses the digits.
