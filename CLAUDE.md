@@ -140,6 +140,13 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   `update mazad_config set value = '…' where key = 'admin_secret';`
 - Operator mode: long-press the logo (or open `#/admin`) and enter the secret —
   adds تم البيع / +5 دقائق / إيقاف / إعادة فتح / حذف to every card.
+- **Commission**: `COMMISSION` (0.025 = 2.5% of the hammer price, على ذمة
+  البائع). One constant drives all three places it is shown — the publish sheet,
+  the live amount on the lot page, and the footer — so changing the rate is a
+  one-line edit. It is displayed only; the site takes no payment and settles
+  nothing, so nothing in the database depends on it.
+- **Short links**: `vercel.json` rewrites `/m` and `/mzad` to `mazad.html`, so
+  `rafd-digital.com/m` is the bio link. `/mazad` also works via `cleanUrls`.
 - The client's bid step (`stepFor`) mirrors `place_bid`'s rule exactly:
   `max(50, ceil(current * 5%))`. **Change both together or neither**, otherwise
   the quick-bid buttons offer amounts the database rejects.

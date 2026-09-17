@@ -4,6 +4,14 @@
     {
       "source": "/api/assess-candidate",
       "destination": "/api/read-document"
+    },
+    {
+      "source": "/m",
+      "destination": "/mazad.html"
+    },
+    {
+      "source": "/mzad",
+      "destination": "/mazad.html"
     }
   ],
   "headers": [

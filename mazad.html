@@ -246,6 +246,16 @@ a { color: inherit; }
 .adminbar button { font-size: .75rem; padding: 6px 10px; border-radius: 9px; border: 1px solid var(--line); background: #fff; font-weight: 700; }
 .adminbar .del { color: var(--danger); border-color: #f3c6c1; }
 
+.fee {
+  margin-top: 10px; padding: 8px 10px; border-radius: 10px; text-align: center;
+  background: #fff8e9; border: 1px solid #f0dcb0; color: #7a4f05; font-size: .8rem;
+}
+.fee b { color: #6a4304; }
+.fee span { opacity: .85; }
+.fee-box {
+  background: #fff8e9; border: 1px solid #f0dcb0; color: #7a4f05;
+  border-radius: 12px; padding: 11px 13px; font-size: .82rem; line-height: 1.8; margin-bottom: 12px;
+}
 .foot { text-align: center; font-size: .74rem; color: var(--muted); padding: 24px 10px 8px; line-height: 1.9; }
 .foot a { color: var(--green-700); font-weight: 700; }
 .hidden { display: none !important; }
@@ -289,6 +299,7 @@ a { color: inherit; }
   </section>
 
   <div class="foot">
+    عمولة الموقع <b id="footFee">2.5%</b> من سعر البيع (السعي) — على ذمة البائع.<br>
     الموقع وسيط عرض فقط. الاتفاق والتسليم والدفع بين البائع والمشتري مباشرة.<br>
     نقل ملكية الرقم يتم عبر الشركة المشغّلة وحسب أنظمتها.
   </div>
@@ -321,6 +332,7 @@ a { color: inherit; }
 const SUPABASE_URL      = 'https://afvgsubxuquzlkxyondf.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdmdzdWJ4dXF1emxreHlvbmRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NjE5NTMsImV4cCI6MjEwNTIzNzk1M30.LtmCBLoTHrKjSECjOBrOSottbJawytm70DDpH4TkgXE';
 
+const COMMISSION    = 0.025;   // 2.5% of the hammer price — على ذمة البائع
 const MIN_STEP      = 50;      // smallest raise, in SAR
 const STEP_PERCENT  = 0.05;    // or 5% of the current price, whichever is bigger
 const POLL_MS       = 2500;    // how often the page refreshes itself
@@ -346,6 +358,8 @@ function fmtPhone(p) {
 const CARRIERS = { stc: 'STC', mobily: 'موبايلي', zain: 'زين', other: 'أخرى' };
 
 function stepFor(current) { return Math.max(MIN_STEP, Math.ceil(current * STEP_PERCENT)); }
+function commissionOn(price) { return Math.round(Number(price || 0) * COMMISSION); }
+const COMMISSION_LABEL = (COMMISSION * 100).toString().replace(/\.0$/, '') + '%';
 
 function countdown(endAt) {
   let ms = new Date(endAt).getTime() - nowMs();
@@ -647,6 +661,9 @@ function renderLot(lot, bids, full) {
         : '') +
       '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
         ' · <span class="num">' + t.count + '</span> مزايدة</div>' +
+      '<div class="fee">عمولة الموقع ' + COMMISSION_LABEL + ' من السعي = ' +
+        '<b><span class="num">' + money(commissionOn(t.amount)) + '</span> ر.س</b>' +
+        '<span> — على ذمة البائع</span></div>' +
       (lot.seller_contact
         ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
           esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع</a>'
@@ -824,7 +841,10 @@ function askListing() {
       '<div class="field ltr"><label>جوال للتواصل</label><input id="lsContact" type="tel" inputmode="numeric" maxlength="14" placeholder="05XXXXXXXX"></div>' +
     '</div>' +
     '<div class="field"><label>ملاحظة (اختياري)</label><input id="lsNote" maxlength="80" placeholder="مثال: رقم رباعي مميز"></div>' +
-    '<button class="btn btn-gold btn-block" id="lsSave">انشر المزاد</button>'
+    '<div class="fee-box">💰 عمولة الموقع <b>' + COMMISSION_LABEL + '</b> من سعر البيع (السعي)، <b>على ذمة البائع</b>.' +
+      '<br>مثال: بيع بـ <span class="num">10,000</span> ر.س ← العمولة <span class="num">' + money(commissionOn(10000)) + '</span> ر.س.' +
+      '<br>بنشرك للرقم أنت موافق على هذا.</div>' +
+    '<button class="btn btn-gold btn-block" id="lsSave">انشر المزاد — وأوافق على العمولة</button>'
   );
 
   s.querySelector('#lsSave').addEventListener('click', async () => {
@@ -905,6 +925,7 @@ if (!REMOTE) {
   b.innerHTML = '<b>وضع تجريبي محلي.</b> البيانات محفوظة في هذا المتصفح فقط. لتشغيل المزاد للناس، اربط Supabase من أعلى ملف mazad.html.';
 }
 
+$('#footFee').textContent = COMMISSION_LABEL;
 paintName();
 window.addEventListener('hashchange', go);
 go();
