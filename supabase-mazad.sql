@@ -364,3 +364,19 @@ $$;
 
 revoke all on function mazad_create(text, text, text, numeric, text, text, text, int, boolean) from public;
 grant execute on function mazad_create(text, text, text, numeric, text, text, text, int, boolean) to anon, authenticated;
+
+-- ---------- server clock ----------
+-- Countdowns must not be computed from the viewer's device clock: one that is
+-- ten minutes slow shows a one-minute auction as eleven. The page calls this,
+-- measures the difference, and corrects every time it displays.
+
+create or replace function mazad_now()
+returns timestamptz
+language sql
+stable
+security definer
+set search_path = public
+as $$ select now() $$;
+
+revoke all on function mazad_now() from public;
+grant execute on function mazad_now() to anon, authenticated;
