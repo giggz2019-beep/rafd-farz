@@ -130,6 +130,7 @@ a { color: inherit; }
 .badge.ended  { background: #f0f2f1; color: var(--muted); }
 .badge.unsold { background: #fdecea; color: #c0392b; }
 .badge.wait   { background: #eef2f7; color: #4a6b8a; }
+.badge.air    { background: #ffe9e7; color: #c0392b; }
 .badge.dot::before {
   content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
   background: currentColor; margin-inline-end: 5px; vertical-align: middle;
@@ -203,6 +204,11 @@ a { color: inherit; }
 .quick button {
   border: 1px solid var(--line); background: #fff; border-radius: 10px;
   padding: 7px 12px; font-size: .82rem; font-weight: 700; white-space: nowrap; color: var(--green-700);
+}
+.bid-wait {
+  background: #fffaf0; border: 1px solid #f0dcb0; color: #7a4f05;
+  border-radius: 10px; padding: 7px 10px; margin-bottom: 8px;
+  font-size: .8rem; font-weight: 600; text-align: center;
 }
 .bidrow { display: flex; gap: 8px; }
 .bidrow input {
@@ -294,6 +300,19 @@ a { color: inherit; }
 .opbar.light button.unsold { background: #c0392b; border-color: #c0392b; color: #fff; }
 .opbar.light button.start  { background: #12833f; border-color: #12833f; color: #fff; }
 .opbar.light button.next   { background: linear-gradient(135deg,#f6dd9e,#d9a441); color: #2a1c02; border-color: transparent; }
+
+.pill { background: var(--danger); color: #fff; border-radius: 999px; padding: 1px 8px; font-size: .74rem; }
+.ctl-bid {
+  display: flex; align-items: center; gap: 8px; border: 1px solid #f0dcb0;
+  background: #fffaf0; border-radius: 12px; padding: 9px 11px; margin-bottom: 6px;
+}
+.ctl-bid .who { flex: 1; min-width: 0; }
+.ctl-bid .who b { display: block; font-size: .9rem; }
+.ctl-bid .who span { font-size: .7rem; color: var(--muted); }
+.ctl-bid .amt { font-weight: 900; font-size: 1.05rem; color: var(--green-700); }
+.ctl-bid button { border-radius: 10px; padding: 8px 12px; font-size: .95rem; font-weight: 900; }
+.ctl-bid button.yes { background: #12833f; color: #fff; }
+.ctl-bid button.no  { background: #fdecea; color: var(--danger); border: 1px solid #f3c6c1; }
 
 /* ---------- live broadcast screen ---------- */
 .live {
@@ -439,7 +458,7 @@ a { color: inherit; }
       <div class="filters">
         <button class="filter on" data-filter="live">السوم المفتوح</button>
         <button class="filter" data-filter="pending">بانتظار الدور</button>
-        <button class="filter" data-filter="done">المنتهية</button>
+        <button class="filter hidden" data-filter="done" id="fDone">المنتهية</button>
         <button class="filter" data-filter="all">الكل</button>
       </div>
     </div>
@@ -503,6 +522,9 @@ const COMMISSION    = 0.02;    // 2% of the hammer price — على ذمة ال�
 const MIN_STEP      = 50;      // smallest raise, in SAR
 const STEP_PERCENT  = 0.05;    // or 5% of the current price, whichever is bigger
 const POLL_MS       = 2500;    // how often the page refreshes itself
+/* Sale prices are not public yet. Flip to true once there is enough history
+   that a results archive helps sellers instead of exposing every deal. */
+const SHOW_FINISHED = false;
 
 /* ---------------------------------------------------------------- utils */
 const $  = (s, r = document) => r.querySelector(s);
@@ -590,6 +612,13 @@ function paintName() {
 /* --------------------------------------------------------------- store */
 const REMOTE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
+/* Sums this device sent that have not been approved yet. The site has no
+   accounts, so a pending bid is invisible to everyone but its sender —
+   remembered here so the bidder is not left wondering. */
+let myPending = (() => {
+  try { return JSON.parse(localStorage.getItem('mazad_pending') || '{}'); } catch { return {}; }
+})();
+
 const remote = {
   async req(path, opts = {}) {
     const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
@@ -634,6 +663,16 @@ const remote = {
       })
     });
   },
+  pendingBids(secret) {
+    return this.req('rpc/mazad_pending_bids', {
+      method: 'POST', body: JSON.stringify({ p_secret: secret })
+    });
+  },
+  bidAction(bidId, secret, action) {
+    return this.req('rpc/mazad_bid_action', {
+      method: 'POST', body: JSON.stringify({ p_bid: bidId, p_secret: secret, p_action: action })
+    });
+  },
   serverNow() {
     return this.req('rpc/mazad_now', { method: 'POST', body: '{}' });
   },
@@ -656,7 +695,7 @@ const local = {
   uid() { return 'x' + Math.random().toString(36).slice(2) + nowMs().toString(36); },
   async listings() { return this.read().listings.slice().sort((a, b) => b.created_at.localeCompare(a.created_at)); },
   async listing(id) { return this.read().listings.find(l => l.id === id) || null; },
-  async bids(id) { return this.read().bids.filter(b => b.listing_id === id).sort((a, b) => a.created_at.localeCompare(b.created_at)); },
+  async bids(id) { return this.read().bids.filter(b => b.listing_id === id && b.approved).sort((a, b) => a.created_at.localeCompare(b.created_at)); },
   async createListing(body) {
     const db = this.read();
     const row = { ...body, id: this.uid(), status: body.status || 'pending', is_live: false, created_at: new Date().toISOString() };
@@ -669,13 +708,14 @@ const local = {
     if (lot.status === 'pending') return { ok: false, error: 'not_started' };
     if (lot.status !== 'open') return { ok: false, error: 'closed' };
     if (!lot.end_at || new Date(lot.end_at).getTime() <= nowMs()) return { ok: false, error: 'expired' };
-    const cur = db.bids.filter(b => b.listing_id === id).reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
+    const cur = db.bids.filter(b => b.listing_id === id && b.approved)
+      .reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
     const min = cur + stepFor(cur);
     if (amount < min) return { ok: false, error: 'too_low', current: cur, min };
-    db.bids.push({ id: this.uid(), listing_id: id, bidder_name: name, amount, created_at: new Date().toISOString() });
-    if (new Date(lot.end_at).getTime() - nowMs() < 60000) lot.end_at = new Date(nowMs() + 120000).toISOString();
+    db.bids.push({ id: this.uid(), listing_id: id, bidder_name: name, amount,
+                   approved: false, created_at: new Date().toISOString() });
     this.write(db);
-    return { ok: true, current: amount, end_at: lot.end_at };
+    return { ok: true, pending: true, amount };
   },
   async admin(id, _secret, action, minutes, price) {
     const db = this.read();
@@ -717,6 +757,28 @@ const local = {
     }
     this.write(db);
     return { ok: true };
+  },
+  async pendingBids() {
+    const db = this.read();
+    const open = new Set(db.listings.filter(l => l.status === 'open').map(l => l.id));
+    return { ok: true, bids: db.bids.filter(b => !b.approved && open.has(b.listing_id))
+      .map(b => ({ ...b, phone: (db.listings.find(l => l.id === b.listing_id) || {}).phone })) };
+  },
+  async bidAction(bidId, _secret, action) {
+    const db = this.read();
+    const bid = db.bids.find(b => b.id === bidId);
+    if (!bid) return { ok: false, error: 'not_found' };
+    if (action === 'reject') { db.bids = db.bids.filter(b => b.id !== bidId); this.write(db); return { ok: true }; }
+    const lot = db.listings.find(l => l.id === bid.listing_id);
+    const cur = db.bids.filter(b => b.listing_id === bid.listing_id && b.approved)
+      .reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
+    if (+bid.amount <= cur) return { ok: false, error: 'below_current', current: cur };
+    bid.approved = true;
+    if (lot.end_at && new Date(lot.end_at).getTime() - nowMs() < 60000) {
+      lot.end_at = new Date(nowMs() + 120000).toISOString();
+    }
+    this.write(db);
+    return { ok: true, amount: bid.amount };
   },
   async operatorCreate(_secret, d) {
     const db = this.read();
@@ -811,6 +873,12 @@ async function refresh(full) {
       const lot = cache.listings.find(l => l.is_live);
       const bids = lot ? await store.bids(lot.id) : [];
       if (lot) cache.bids[lot.id] = bids;
+      if (route.name === 'control' && admin.on) {
+        try {
+          const r = await store.pendingBids(admin.secret);
+          cache.pending = (r && r.ok && r.bids) ? r.bids : [];
+        } catch { cache.pending = cache.pending || []; }
+      }
       if (route.name === 'live') renderLive(lot, bids); else renderControl(lot, bids);
       return;
     }
@@ -828,7 +896,7 @@ async function refresh(full) {
         rows.forEach(b => (cache.bids[b.listing_id] ||= []).push(b));
       } else if (!REMOTE) {
         const db = local.read(); cache.bids = {};
-        db.bids.forEach(b => (cache.bids[b.listing_id] ||= []).push(b));
+        db.bids.filter(b => b.approved).forEach(b => (cache.bids[b.listing_id] ||= []).push(b));
       }
       renderList();
     }
@@ -855,9 +923,16 @@ function topBid(id, lot) {
 function renderList() {
   const host = $('#lots');
   let rows = cache.listings.slice();
+
+  // the public does not get a record of what every number sold for
+  const finished = (l) => ['sold', 'unsold', 'cancelled', 'ended'].includes(lotState(l));
+  if (!SHOW_FINISHED && !admin.on) rows = rows.filter(l => !finished(l) || l.is_live);
+  const dTab = $('#fDone');
+  if (dTab) dTab.classList.toggle('hidden', !SHOW_FINISHED && !admin.on);
+
   if (cache.filter === 'live')    rows = rows.filter(l => lotState(l) === 'live');
   if (cache.filter === 'pending') rows = rows.filter(l => lotState(l) === 'pending');
-  if (cache.filter === 'done')    rows = rows.filter(l => ['sold', 'unsold', 'cancelled', 'ended'].includes(lotState(l)));
+  if (cache.filter === 'done')    rows = rows.filter(finished);
   const rank = (l) => {
     const st = lotState(l);
     if (l.is_live) return 0;
@@ -903,7 +978,7 @@ function renderList() {
   wireLiveBanner();
   rows.forEach(lot => {
     const st = lotState(lot), t = topBid(lot.id, lot), cd = countdown(lot.end_at);
-    const badge = badgeFor(st) + (lot.is_live ? '<span class="badge sold">🔴 على الهواء</span>' : '');
+    const badge = badgeFor(st) + (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '');
     const card = el(
       '<div class="card">' +
         '<button class="lot">' +
@@ -949,7 +1024,7 @@ function wireLiveBanner() {
 function adminBar(lot) {
   const bar = el('<div class="adminbar">'
     + '<button data-a="live">🔴 اعرضه بالبث</button>'
-    + '<button data-a="sold">✔ تم البيع</button>'
+    + '<button data-a="sold">' + (lot.status === 'sold' ? '✎ عدّل سعر البيع' : '✔ تم البيع') + '</button>'
     + '<button data-a="unsold">✖ لم يتم البيع</button>'
     + '<button data-a="extend">+5 دقائق</button>'
     + '<button data-a="open">رجّعه للقائمة</button>'
@@ -957,7 +1032,8 @@ function adminBar(lot) {
     + '</div>');
   bar.addEventListener('click', async (e) => {
     const a = e.target.dataset.a; if (!a) return;
-    if (a === 'delete' && !confirm('حذف هذا المزاد نهائياً؟')) return;
+    if (a === 'sold') { askSoldPrice(lot); return; }
+    if (a === 'delete' && !confirm('حذف الرقم ' + fmtPhone(lot.phone) + ' نهائياً؟')) return;
     const r = await opDo(lot.id, a);
     if (!r) return;
     if (a === 'live') { toast('صار على الهواء 🔴'); return; }
@@ -1100,7 +1176,10 @@ function renderControl(lot, bids) {
       '<div id="ctlBar"></div>' +
     '</div>' +
 
+    '<div class="card" id="ctlBids"></div>' +
     '<div class="card" id="ctlQueue"></div>';
+
+  renderPendingBids();
 
   // the operator bar lives here now, on a light card
   const bar = opBar(lot);
@@ -1130,6 +1209,56 @@ function renderControl(lot, bids) {
         return;
       }
       await opDo(id, 'live');
+    });
+  });
+}
+
+/* Sums shouted into the site wait here until the operator says yes. */
+function renderPendingBids() {
+  const host = $('#ctlBids');
+  if (!host) return;
+  const list = cache.pending || [];
+
+  if (!list.length) {
+    host.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.86rem">' +
+      'ما فيه سومات بانتظار موافقتك</div>';
+    return;
+  }
+
+  host.innerHTML =
+    '<div style="font-weight:700;margin-bottom:8px">سومات بانتظار موافقتك ' +
+      '<span class="pill">' + list.length + '</span></div>' +
+    list.map(b =>
+      '<div class="ctl-bid" data-b="' + esc(b.id) + '">' +
+        '<div class="who">' +
+          '<b>' + esc(b.bidder_name) + '</b>' +
+          '<span class="num">' + esc(fmtPhone(b.phone || '')) + '</span>' +
+        '</div>' +
+        '<div class="amt num">' + money(b.amount) + '</div>' +
+        '<button class="yes" data-a="approve">✔</button>' +
+        '<button class="no"  data-a="reject">✖</button>' +
+      '</div>').join('');
+
+  host.querySelectorAll('.ctl-bid button').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const row = btn.closest('.ctl-bid');
+      const id = row.dataset.b, act = btn.dataset.a;
+      row.style.opacity = '.5';
+      try {
+        const r = await store.bidAction(id, admin.secret, act);
+        if (r && r.ok === false) {
+          row.style.opacity = '1';
+          toast(r.error === 'below_current'
+            ? 'أقل من السعر الحالي (' + money(r.current) + ') — ما ينفع'
+            : r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة' : 'تعذّر التنفيذ');
+          return;
+        }
+        toast(act === 'approve' ? 'اعتمدت السومة ✔' : 'رفضت السومة');
+      } catch (e) {
+        row.style.opacity = '1'; console.error(e); toast('تعذّر الاتصال');
+      } finally {
+        refresh(false);
+      }
     });
   });
 }
@@ -1233,9 +1362,10 @@ function opBar(lot) {
    record that price as a sale price, rather than inventing bidders for it. */
 function askSoldPrice(lot) {
   const t = topBid(lot.id, lot);
-  const suggested = t.count ? t.amount : '';
+  const already = lot.status === 'sold' && lot.sold_price != null;
+  const suggested = already ? Number(lot.sold_price) : (t.count ? t.amount : '');
   const s2 = sheet(
-    '<h2>سعر البيع</h2>' +
+    '<h2>' + (already ? 'تعديل سعر البيع' : 'سعر البيع') + '</h2>' +
     '<p class="hint">الرقم <span class="num">' + esc(fmtPhone(lot.phone)) + '</span> — كم انباع؟</p>' +
     '<div id="spErr"></div>' +
     '<div class="field ltr"><label>المبلغ (ر.س)</label>' +
@@ -1244,7 +1374,8 @@ function askSoldPrice(lot) {
         (t.count ? 'أعلى مزايدة على الموقع: ' + money(t.amount) + ' ر.س.' : 'ما فيه مزايدات على الموقع — اكتب السعر اللي اتفقتوا عليه.') +
       '</div></div>' +
     '<div class="fee-box">عمولتك <b>' + COMMISSION_LABEL + '</b> = <b><span class="num" id="spFee">—</span> ر.س</b> على ذمة البائع.</div>' +
-    '<button class="btn btn-block" style="background:#12833f" id="spSave">✔ تأكيد البيع</button>'
+    '<button class="btn btn-block" style="background:#12833f" id="spSave">' +
+      (already ? '✎ احفظ السعر الجديد' : '✔ تأكيد البيع') + '</button>'
   );
 
   const input = s2.querySelector('#spPrice');
@@ -1260,8 +1391,8 @@ function askSoldPrice(lot) {
       return;
     }
     closeSheet();
-    await opDo(lot.id, 'sold', undefined, v);
-    toast('تم البيع على ' + money(v) + ' ر.س ✔');
+    await opDo(lot.id, already ? 'price' : 'sold', undefined, v);
+    toast((already ? 'تعدّل السعر إلى ' : 'تم البيع على ') + money(v) + ' ر.س ✔');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
@@ -1336,7 +1467,7 @@ function renderLot(lot, bids, full) {
   body.innerHTML =
     '<div class="card">' +
       '<div class="lot-top">' + badgeFor(st) +
-        (lot.is_live ? '<span class="badge sold">🔴 على الهواء</span>' : '') +
+        (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '') +
         '<span class="badge">' + esc(CARRIERS[lot.carrier] || 'رقم') + '</span>' +
         '<span style="flex:1"></span>' +
         '<button class="btn btn-ghost btn-sm" id="btnShare">مشاركة</button>' +
@@ -1382,7 +1513,7 @@ function renderLot(lot, bids, full) {
   if (!bids.length) {
     feed.innerHTML = '<div class="empty" style="padding:22px">' +
       (st === 'pending' ? 'ينتظر دوره — يبدأ السوم عليه في البث ⏳'
-                        : 'ما زايد أحد بعد. كن أول واحد 👋') + '</div>';
+                        : 'ما فيه سومات معتمدة بعد. السومات تظهر هنا بعد موافقة المشرف 👋') + '</div>';
   } else {
     const best = Math.max(...bids.map(b => +b.amount));
     feed.innerHTML = bids.map(b =>
@@ -1409,6 +1540,7 @@ function renderLot(lot, bids, full) {
   if (!host.firstElementChild) {
     host.innerHTML =
       '<div class="bidbar"><div class="inner">' +
+        '<div class="bid-wait hidden" id="bidWait"></div>' +
         '<div class="quick" id="quick"></div>' +
         '<div class="bidrow">' +
           '<input id="bidInput" type="number" inputmode="numeric" placeholder="اكتب مبلغك">' +
@@ -1418,6 +1550,21 @@ function renderLot(lot, bids, full) {
     $('#btnBid').addEventListener('click', () => sendBid(lot.id));
     $('#bidInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendBid(lot.id); });
   }
+  // has my waiting sum been approved? then stop showing it as waiting
+  const mine = myPending[lot.id];
+  if (mine != null && bids.some(b => b.bidder_name === me.name && Number(b.amount) === Number(mine))) {
+    delete myPending[lot.id];
+    try { localStorage.setItem('mazad_pending', JSON.stringify(myPending)); } catch {}
+  }
+  const waitLine = $('#bidWait');
+  if (waitLine) {
+    const v = myPending[lot.id];
+    waitLine.innerHTML = v != null
+      ? '⏳ سومتك <span class="num">' + money(v) + '</span> ر.س بانتظار موافقة المشرف'
+      : '';
+    waitLine.classList.toggle('hidden', v == null);
+  }
+
   $('#quick').innerHTML = [minNext, minNext + step, minNext + step * 4]
     .map(v => '<button data-v="' + v + '">' + money(v) + ' ر.س</button>').join('');
   $('#quick').onclick = (e) => {
@@ -1457,6 +1604,7 @@ async function sendBid(id) {
       const m = {
         too_low: 'المبلغ أقل من المطلوب — أقل مزايدة ' + money(r.min || 0) + ' ر.س',
         too_fast: 'على مهلك ثانية وحدة 😄',
+        too_many_pending: 'عندك سومات بانتظار الموافقة — استنَّ شوي',
         not_started: 'ما بدأ السوم على هذا الرقم بعد',
         closed: 'المزاد مقفل',
         expired: 'انتهى وقت المزاد',
@@ -1467,7 +1615,9 @@ async function sendBid(id) {
       toast(m);
     } else {
       input.value = '';
-      toast('تمت مزايدتك بـ ' + money(amount) + ' ر.س ✔');
+      myPending[id] = amount;
+      try { localStorage.setItem('mazad_pending', JSON.stringify(myPending)); } catch {}
+      toast('وصلت سومتك ' + money(amount) + ' ر.س — بانتظار موافقة المشرف');
     }
   } catch (e) {
     console.error(e); toast('تعذّر الاتصال — حاول مرة ثانية');
