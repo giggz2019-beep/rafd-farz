@@ -98,6 +98,93 @@ A 30-minute practical assessment for AI Engineer candidates, plus an employer-on
 - Every failure path (no API key, model refusal, timeout, network error) degrades to the dashboard's **manual scoring** mode rather than erroring out.
 - Arabic report text is bidi-sensitive: score fragments like `15 / 20` must carry `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL reverses them to `20 / 15`.
 
+### Phone-number auction (`mazad.html`) — «مزاد سوم»
+
+
+A standalone Arabic-only auction page for premium mobile numbers — anyone lists a
+number, everyone else bids in a chat-style feed. It is **not** part of the RAFD
+product: it does not use `i18n.js` or `style.css`, it is a single self-contained
+file, and nothing links to it. Share the URL (`/mazad`) directly.
+
+**It adds no serverless function on purpose.** `api/` is already at Vercel's
+12-function Hobby limit (see commit "Fix deployment: keep api/ within the
+12-function Hobby limit"), so the page talks to Supabase REST directly with the
+**anon** key and every rule lives in the database instead:
+
+| Concern | Where it is enforced |
+|---|---|
+| Bid must beat the current price by the step | `place_bid()` RPC (SECURITY DEFINER) |
+| Auction still open / not expired | `place_bid()` |
+| Anti-sniping (bid in last 60s → +2 min) | `place_bid()` |
+| Spam brake (same name, 3s) | `place_bid()` |
+| Phone format, price range, field lengths | CHECK constraints on `mazad_listings` |
+| Closing / deleting / extending a lot | `mazad_admin()` RPC + secret in `mazad_config` |
+
+`anon` is granted only `select, insert` on `mazad_listings` and `select` on
+`mazad_bids`. It has **no** UPDATE or DELETE grant and no access to
+`mazad_config` at all — so a crafted request cannot change a price, close an
+auction, or read the operator secret. Schema: `supabase-mazad.sql`.
+
+- **Already live.** Supabase project `mazad-arqam` (ref `afvgsubxuquzlkxyondf`,
+  region ap-south-1, free tier) holds the schema; its URL and public anon key
+  are hard-coded in the `SUPABASE_URL` / `SUPABASE_ANON_KEY` constants at the
+  top of the `<script>` block — the same convention as `TURNSTILE_SITE_KEY` in
+  `partner-login.html`. The anon key is meant to be public.
+- It is a **separate Supabase project from RAFD on purpose.** The listings table
+  is public-write by design, so it stays out of the project that holds applicant
+  data. Do not move these tables into the `Rafd` project.
+- **Both constants empty → وضع تجريبي**: the page falls back to `localStorage`
+  and runs with no database at all. Same degrade-instead-of-error convention
+  used elsewhere in this repo. Handy for screenshots and demos.
+- The operator secret lives in `mazad_config.admin_secret` and is **not** in the
+  repo. Rotate it with
+  `update mazad_config set value = '…' where key = 'admin_secret';`
+- Operator mode: long-press the logo (or open `#/admin`) and enter the secret —
+  adds تم البيع / +5 دقائق / إيقاف / إعادة فتح / حذف to every card.
+- **Two screens, deliberately separate.** `/live` is the display screen that goes
+  on the broadcast and carries **no controls at all**, even for the operator —
+  buttons on that page would be visible to every viewer watching the screen
+  share. `/control` is the operator's private panel (password-gated, on their own
+  phone) and holds every button. Do not "helpfully" add operator controls back
+  onto `/live`; the split is the point.
+- **Live broadcast mode** (`#/live`, also served at `/live`). One number is "on
+  air" at a time — `mazad_listings.is_live`, and only `mazad_admin` can set it,
+  so a viewer cannot put their own number on screen. The broadcast screen shows
+  that number, the clock, the top bid, the last six bids and the queue behind
+  it. The operator bar (operator mode only) runs the show: start a 1–2 minute
+  clock, add a minute, stamp **تم البيع** or **لم يتم البيع**, jump to the next
+  number, or register a walk-in seller's number on the spot.
+  - A result does **not** clear `is_live`. The number stays on screen wearing its
+    sticker until the operator presses التالي or puts another number on air.
+    Clearing it early was a real bug: the sticker vanished before viewers saw it.
+  - `mazad_create()` is the operator's fast listing. It is the only way to run a
+    lot shorter than the public 5-minute floor in the RLS insert policy, which is
+    why walk-in lots can be 1–2 minutes while public listings cannot.
+  - Statuses are `open | sold | unsold | cancelled`; `unsold` is «لم يتم البيع»,
+    the seller refusing the highest bid, and is distinct from simply expiring.
+- **Commission**: `COMMISSION` (0.02 = 2% of the hammer price, على ذمة
+  البائع). One constant drives all three places it is shown — the publish sheet,
+  the live amount on the lot page, and the footer — so changing the rate is a
+  one-line edit. It is displayed only; the site takes no payment and settles
+  nothing, so nothing in the database depends on it.
+- **Short links**: `vercel.json` rewrites `/m` and `/mzad` to `mazad.html`, so
+  `rafd-digital.com/m` is the bio link. `/mazad` also works via `cleanUrls`.
+- The client's bid step (`stepFor`) mirrors `place_bid`'s rule exactly:
+  `max(50, ceil(current * 5%))`. **Change both together or neither**, otherwise
+  the quick-bid buttons offer amounts the database rejects.
+- `vercel.json`'s CSP `connect-src` allowlists
+  `https://afvgsubxuquzlkxyondf.supabase.co` (and its `wss://`). Pointing the
+  page at a different Supabase project means editing that header too, or the
+  browser blocks every request.
+- **Brand images** (`mazad-logo.png` 2048², `mazad-icon.png` 512², `mazad-og.png`
+  1200×630, `mazad-poster.png` 2160×2700) were designed as HTML using the repo's
+  own Thmanyah typeface and screenshotted at 2x — not drawn by an image model,
+  which mangles Arabic. Regenerate them the same way if the brand changes; the
+  page wires the icon and og:image to them.
+- Arabic is bidi-sensitive: every price, countdown and phone number carries
+  `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL
+  reverses the digits.
+
 ## Operating standard (working style)
 
 Act as an executive-level assistant and thinking partner. Optimize for decision quality, speed, accuracy, and verifiable execution — not ceremony.
