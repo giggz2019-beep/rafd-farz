@@ -12,6 +12,10 @@
     {
       "source": "/mzad",
       "destination": "/mazad.html"
+    },
+    {
+      "source": "/live",
+      "destination": "/mazad.html"
     }
   ],
   "headers": [
