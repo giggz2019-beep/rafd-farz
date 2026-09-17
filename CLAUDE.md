@@ -169,6 +169,18 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     why walk-in lots can be 1–2 minutes while public listings cannot.
   - Statuses are `open | sold | unsold | cancelled`; `unsold` is «لم يتم البيع»,
     the seller refusing the highest bid, and is distinct from simply expiring.
+- **A queued number is masked at the source, not in the page.** The public reads
+  the `mazad_public` view, which returns `054•••••01` while a number is
+  `pending` and not on air, and which has no `seller_contact` column at all.
+  `anon` has **no SELECT privilege on `mazad_listings`** — so the full number
+  and the seller's contact never reach a browser, not even in the raw API. The
+  reason is commercial: a viewer who reads a queued number can call the seller
+  and cut the auction (and its commission) out.
+  - The operator reads real rows through `mazad_admin_list(secret)`.
+  - Because anon cannot SELECT the table, an insert cannot return the new row:
+    `createListing` generates the uuid client-side and sends
+    `Prefer: return=minimal`. Don't "fix" it back to `return=representation`.
+  - `fmtPhone` keeps `•` so a masked number still groups as `054 ••• ••01`.
 - **A sum does not count until the operator approves it.** `place_bid` inserts
   with `approved=false`, the RLS select policy on `mazad_bids` is `using
   (approved)`, and the price everywhere is computed from approved rows only — so

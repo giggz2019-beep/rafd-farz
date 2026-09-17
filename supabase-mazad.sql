@@ -89,8 +89,56 @@ revoke all on mazad_listings from anon, authenticated;
 revoke all on mazad_bids     from anon, authenticated;
 revoke all on mazad_config   from anon, authenticated;
 
-grant select, insert on mazad_listings to anon, authenticated;
-grant select         on mazad_bids     to anon, authenticated;
+-- the public reads the masked VIEW below, never the listings table itself
+grant insert on mazad_listings to anon, authenticated;
+grant select on mazad_bids     to anon, authenticated;
+
+-- ---------- what the public may read ----------
+-- A number waiting its turn must not be readable in full, or a viewer can take
+-- it and negotiate with the seller outside the auction. Masking it in the page
+-- is not enough — the full number would still travel to the browser. So the
+-- public reads this view, and seller_contact is absent from it entirely.
+
+create or replace view mazad_public as
+select
+  l.id,
+  case
+    when l.status = 'pending' and not l.is_live
+      then left(l.phone, 3) || '•••••' || right(l.phone, 2)
+    else l.phone
+  end                                      as phone,
+  (l.status = 'pending' and not l.is_live) as phone_masked,
+  l.carrier, l.start_price, l.seller_name, l.note,
+  l.end_at, l.status, l.is_live, l.sold_price, l.created_at
+from mazad_listings l;
+
+alter view mazad_public set (security_invoker = off);
+grant select on mazad_public to anon, authenticated;
+
+-- the operator gets the real rows, through the secret
+create or replace function mazad_admin_list(p_secret text)
+returns json
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare v_secret text;
+begin
+  select value into v_secret from mazad_config where key = 'admin_secret';
+  if v_secret is null or p_secret is null or p_secret <> v_secret then
+    return json_build_object('ok', false, 'error', 'forbidden');
+  end if;
+
+  return json_build_object('ok', true, 'listings', coalesce((
+    select json_agg(row_to_json(x) order by x.created_at desc)
+      from (select l.*, false as phone_masked from mazad_listings l limit 300) x
+  ), '[]'::json));
+end;
+$$;
+
+revoke all on function mazad_admin_list(text) from public;
+grant execute on function mazad_admin_list(text) to anon, authenticated;
 
 -- ---------- row level security ----------
 
@@ -103,6 +151,8 @@ drop policy if exists mazad_listings_read   on mazad_listings;
 drop policy if exists mazad_listings_insert on mazad_listings;
 drop policy if exists mazad_bids_read       on mazad_bids;
 
+-- kept for the view and the SECURITY DEFINER functions; anon has no SELECT
+-- privilege on this table at all (see the grants above)
 create policy mazad_listings_read on mazad_listings
   for select to anon, authenticated using (true);
 
