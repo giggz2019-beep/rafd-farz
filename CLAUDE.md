@@ -169,6 +169,13 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     why walk-in lots can be 1–2 minutes while public listings cannot.
   - Statuses are `open | sold | unsold | cancelled`; `unsold` is «لم يتم البيع»,
     the seller refusing the highest bid, and is distinct from simply expiring.
+- **Countdowns run on the server clock, never the device's.** `end_at` is written
+  by the database, so subtracting a device `Date.now()` from it shows the
+  device's error, not the time left: a phone ten minutes slow displayed a
+  one-minute auction as eleven. `syncClock()` calls the `mazad_now()` RPC at
+  boot, every five minutes and whenever the tab wakes, and `nowMs()` carries the
+  measured offset. Never reintroduce a bare `Date.now()` into a countdown, an
+  expiry check or a "قبل كذا دقيقة" label — use `nowMs()`.
 - Operator mode is kept in **localStorage**, so the password is typed once per
   browser rather than once per session. Anyone holding that unlocked device is
   an operator; "خروج من وضع المشرف" in the login sheet clears it.

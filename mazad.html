@@ -509,7 +509,13 @@ const $  = (s, r = document) => r.querySelector(s);
 const el = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content.firstElementChild; };
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const money = (n) => Number(n || 0).toLocaleString('en-US');
-const nowMs = () => Date.now();
+
+/* Every countdown is the gap between a timestamp the SERVER wrote and "now".
+   Taking "now" from the device is wrong: a phone whose clock is ten minutes
+   slow shows a one-minute auction as eleven. So measure the difference once,
+   keep it, and run every time calculation through it. */
+let clockSkew = 0;                       // server time minus this device's clock
+const nowMs = () => Date.now() + clockSkew;
 
 function toast(msg) {
   const host = $('#toastHost');
@@ -628,6 +634,9 @@ const remote = {
       })
     });
   },
+  serverNow() {
+    return this.req('rpc/mazad_now', { method: 'POST', body: '{}' });
+  },
   operatorCreate(secret, d) {
     return this.req('rpc/mazad_create', {
       method: 'POST',
@@ -725,6 +734,29 @@ const local = {
 };
 
 const store = REMOTE ? remote : local;
+
+async function syncClock() {
+  if (!REMOTE) return;
+  try {
+    const before = Date.now();
+    const iso = await remote.serverNow();
+    const after = Date.now();
+    const server = Date.parse(typeof iso === 'string' ? iso : String(iso));
+    if (!isNaN(server)) {
+      // the reply is already half a round trip old, so meet it in the middle
+      const skew = server - (before + (after - before) / 2);
+      if (Math.abs(skew - clockSkew) > 1500) {
+        clockSkew = skew;
+        if (Math.abs(skew) > 60000) {
+          console.warn('device clock is off by', Math.round(skew / 1000), 's — corrected');
+        }
+        refresh(false);
+      } else {
+        clockSkew = skew;
+      }
+    }
+  } catch (e) { console.warn('clock sync failed', e); }
+}
 
 /* ---------------------------------------------------------------- admin */
 /* Operator mode persists on this browser (localStorage, not sessionStorage) so
@@ -1599,10 +1631,14 @@ if (!REMOTE) {
 $('#footFee').textContent = COMMISSION_LABEL;
 paintName();
 window.addEventListener('hashchange', go);
+syncClock();
+setInterval(syncClock, 5 * 60 * 1000);
 go();
 pollTimer = setInterval(() => { if (!document.hidden) refresh(false); }, POLL_MS);
 tickTimer = setInterval(tick, 1000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(false); });
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) { syncClock(); refresh(false); }   // a sleeping device drifts
+});
 </script>
 </body>
 </html>
