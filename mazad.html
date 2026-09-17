@@ -284,6 +284,7 @@ a { color: inherit; }
 .ctl-q b { font-size: 1rem; }
 .ctl-q span { flex: 1; font-size: .78rem; color: var(--muted); }
 .ctl-q button { background: var(--green-600); color: #fff; border-radius: 9px; padding: 7px 13px; font-size: .78rem; font-weight: 800; }
+.ctl-q button.del { background: #fdecea; color: var(--danger); border: 1px solid #f3c6c1; padding: 7px 10px; }
 
 /* the operator bar on a light card */
 .opbar.light { border-top: none; padding-top: 0; }
@@ -381,6 +382,8 @@ a { color: inherit; }
 .opbar button.start  { background: #12833f; border-color: #12833f; }
 .opbar button.next   { background: linear-gradient(135deg,#f6dd9e,#d9a441); color: #2a1c02; border-color: transparent; }
 .opbar button.add    { background: rgba(255,255,255,.22); }
+.opbar button.danger { background: rgba(192,57,43,.22); border-color: rgba(192,57,43,.5); }
+.opbar.light button.danger { background: #fdecea; color: var(--danger); border-color: #f3c6c1; }
 .opbar .lbl { font-size: .72rem; color: #bcd9c8; margin-bottom: 5px; }
 
 .live-banner {
@@ -724,9 +727,20 @@ const local = {
 const store = REMOTE ? remote : local;
 
 /* ---------------------------------------------------------------- admin */
+/* Operator mode persists on this browser (localStorage, not sessionStorage) so
+   the password is typed once, not at every visit. Anyone with this unlocked
+   device is therefore an operator — "خروج من وضع المشرف" clears it. */
 const admin = {
-  get secret() { return sessionStorage.getItem('mazad_admin') || ''; },
-  set secret(v) { v ? sessionStorage.setItem('mazad_admin', v) : sessionStorage.removeItem('mazad_admin'); },
+  get secret() {
+    try { return localStorage.getItem('mazad_admin') || sessionStorage.getItem('mazad_admin') || ''; }
+    catch { return ''; }
+  },
+  set secret(v) {
+    try {
+      sessionStorage.removeItem('mazad_admin');
+      if (v) localStorage.setItem('mazad_admin', v); else localStorage.removeItem('mazad_admin');
+    } catch { /* private mode */ }
+  },
   get on() { return Boolean(this.secret); }
 };
 
@@ -1067,12 +1081,24 @@ function renderControl(lot, bids) {
         '<div class="ctl-q" data-q="' + esc(l.id) + '">' +
           '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
           '<span>' + esc(l.seller_name) + '</span>' +
-          '<button>اعرضه</button>' +
+          '<button data-a="live">اعرضه</button>' +
+          '<button class="del" data-a="delete" title="حذف">🗑</button>' +
         '</div>').join('')
     : '<div style="text-align:center;color:var(--muted);font-size:.86rem">ما فيه أرقام بالانتظار</div>';
 
   $('#ctlQueue').querySelectorAll('.ctl-q button').forEach(b => {
-    b.addEventListener('click', () => opDo(b.closest('.ctl-q').dataset.q, 'live'));
+    b.addEventListener('click', async () => {
+      const row = b.closest('.ctl-q');
+      const id = row.dataset.q;
+      if (b.dataset.a === 'delete') {
+        const num = row.querySelector('b').textContent.trim();
+        if (!confirm('حذف الرقم ' + num + ' نهائياً من المزاد؟')) return;
+        await opDo(id, 'delete');
+        toast('انحذف الرقم');
+        return;
+      }
+      await opDo(id, 'live');
+    });
   });
 }
 
@@ -1133,6 +1159,10 @@ function opBar(lot) {
       '<div class="row">' +
         '<button class="next" data-a="next">الرقم التالي ←</button>' +
         '<button class="add" data-a="quick">＋ سجّل رقم</button>' +
+      '</div>' +
+      '<div class="row">' +
+        '<button data-a="open">↩ رجّعه للقائمة</button>' +
+        '<button class="danger" data-a="delete">🗑 احذف الرقم</button>' +
       '</div>';
   } else {
     bar.innerHTML =
@@ -1152,6 +1182,12 @@ function opBar(lot) {
       return;
     }
     if (a === 'sold') { askSoldPrice(lot); return; }
+    if (a === 'delete') {
+      if (!confirm('حذف الرقم ' + fmtPhone(lot.phone) + ' نهائياً من المزاد؟')) return;
+      await opDo(lot.id, 'delete');
+      toast('انحذف الرقم');
+      return;
+    }
     if (a === 'unsold' && !confirm('تأكيد: لم يتم البيع؟')) return;
     await opDo(lot.id, a, m);
     // bring the number and its sticker back into view for the broadcast
@@ -1439,7 +1475,7 @@ function askName(then) {
 function askAdmin() {
   const s = sheet(
     '<h2>دخول المشرف</h2>' +
-    '<p class="hint">كلمة المرور المخزّنة في قاعدة البيانات (mazad_config.admin_secret).</p>' +
+    '<p class="hint">تُحفظ في هذا المتصفح، فما تحتاج تكتبها كل مرة.</p>' +
     '<div class="field"><input id="adInput" type="password" placeholder="كلمة المرور"></div>' +
     '<button class="btn btn-block" id="adSave">دخول</button>' +
     (admin.on ? '<button class="btn btn-ghost btn-block" style="margin-top:8px" id="adOut">خروج من وضع المشرف</button>' : '')

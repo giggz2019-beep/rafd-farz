@@ -169,6 +169,12 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     why walk-in lots can be 1–2 minutes while public listings cannot.
   - Statuses are `open | sold | unsold | cancelled`; `unsold` is «لم يتم البيع»,
     the seller refusing the highest bid, and is distinct from simply expiring.
+- Operator mode is kept in **localStorage**, so the password is typed once per
+  browser rather than once per session. Anyone holding that unlocked device is
+  an operator; "خروج من وضع المشرف" in the login sheet clears it.
+- Deleting a number is available from the control panel (a 🗑 on each queued row
+  and on the number currently on air), not only from the public list's admin
+  bar — the operator works from `/control` and never sees that bar.
 - **Commission**: `COMMISSION` (0.02 = 2% of the hammer price, على ذمة
   البائع). One constant drives all three places it is shown — the publish sheet,
   the live amount on the lot page, and the footer — so changing the rate is a
