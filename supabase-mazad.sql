@@ -40,6 +40,12 @@ create table if not exists mazad_listings (
 
 -- live-broadcast mode: which number is on air right now
 alter table mazad_listings add column if not exists is_live boolean not null default false;
+-- a number can be sold at a price agreed off the site (on the broadcast, over
+-- WhatsApp). Record that price rather than inventing bids to represent it.
+alter table mazad_listings add column if not exists sold_price numeric(12,2);
+alter table mazad_listings drop constraint if exists mazad_sold_price_range;
+alter table mazad_listings add  constraint mazad_sold_price_range
+  check (sold_price is null or (sold_price >= 0 and sold_price <= 100000000));
 alter table mazad_listings drop constraint if exists mazad_status_values;
 alter table mazad_listings add  constraint mazad_status_values
   check (status in ('open','sold','unsold','cancelled'));
@@ -197,14 +203,16 @@ grant execute on function place_bid(uuid, text, numeric) to anon, authenticated;
 
 
 -- ---------- operator actions ----------
--- p_action: sold | unsold | cancelled | open | extend | timer | live | unlive | next | delete
+-- p_action: sold | unsold | cancelled | open | extend | timer | price | live | unlive | next | delete
 drop function if exists mazad_admin(uuid, text, text);
+drop function if exists mazad_admin(uuid, text, text, int);
 
 create or replace function mazad_admin(
   p_listing uuid,
   p_secret  text,
   p_action  text,
-  p_minutes int default null
+  p_minutes int     default null,
+  p_price   numeric default null
 ) returns json
 language plpgsql
 security definer
@@ -213,6 +221,7 @@ as $$
 declare
   v_secret text;
   v_next   uuid;
+  v_final  numeric;
 begin
   select value into v_secret from mazad_config where key = 'admin_secret';
   if v_secret is null or p_secret is null or p_secret <> v_secret then
@@ -224,14 +233,27 @@ begin
 
   -- the result is stamped on the number, but it STAYS on air so the
   -- sticker is visible on the broadcast until the operator moves on
-  elsif p_action in ('sold', 'unsold', 'cancelled') then
-    update mazad_listings
-       set status = p_action
-     where id = p_listing;
+  elsif p_action = 'sold' then
+    if p_price is not null and (p_price < 0 or p_price > 100000000) then
+      return json_build_object('ok', false, 'error', 'bad_amount');
+    end if;
+    select coalesce(p_price,
+                    (select max(amount) from mazad_bids where listing_id = p_listing),
+                    l.start_price)
+      into v_final
+      from mazad_listings l where l.id = p_listing;
+    update mazad_listings set status = 'sold', sold_price = v_final where id = p_listing;
+    return json_build_object('ok', true, 'price', v_final);
+
+  elsif p_action in ('unsold', 'cancelled') then
+    update mazad_listings set status = p_action, sold_price = null where id = p_listing;
+
+  elsif p_action = 'price' then
+    update mazad_listings set sold_price = p_price where id = p_listing;
 
   elsif p_action = 'open' then
     update mazad_listings
-       set status = 'open',
+       set status = 'open', sold_price = null,
            end_at = greatest(end_at, now() + interval '10 minutes')
      where id = p_listing;
 
@@ -240,14 +262,12 @@ begin
        set end_at = greatest(end_at, now()) + (coalesce(p_minutes, 5) || ' minutes')::interval
      where id = p_listing;
 
-  -- start / restart the clock on the number that is on air
   elsif p_action = 'timer' then
     update mazad_listings
        set status = 'open',
            end_at = now() + (coalesce(p_minutes, 1) || ' minutes')::interval
      where id = p_listing;
 
-  -- put this number on air (only ever one at a time)
   elsif p_action = 'live' then
     update mazad_listings set is_live = false where is_live;
     update mazad_listings set is_live = true  where id = p_listing;
@@ -255,8 +275,6 @@ begin
   elsif p_action = 'unlive' then
     update mazad_listings set is_live = false where id = p_listing;
 
-  -- finish the current number and move to the one that has been
-  -- waiting longest; returns the id that went on air, if any
   elsif p_action = 'next' then
     update mazad_listings set is_live = false where is_live;
     select id into v_next
@@ -277,8 +295,8 @@ begin
 end;
 $$;
 
-revoke all on function mazad_admin(uuid, text, text, int) from public;
-grant execute on function mazad_admin(uuid, text, text, int) to anon, authenticated;
+revoke all on function mazad_admin(uuid, text, text, int, numeric) from public;
+grant execute on function mazad_admin(uuid, text, text, int, numeric) to anon, authenticated;
 
 -- ---------- operator fast listing ----------
 -- For the guest who shows up mid-broadcast: the operator types the

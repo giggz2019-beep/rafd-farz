@@ -603,10 +603,13 @@ const remote = {
       body: JSON.stringify({ p_listing: id, p_name: name, p_amount: amount })
     });
   },
-  admin(id, secret, action, minutes) {
+  admin(id, secret, action, minutes, price) {
     return this.req('rpc/mazad_admin', {
       method: 'POST',
-      body: JSON.stringify({ p_listing: id, p_secret: secret, p_action: action, p_minutes: minutes ?? null })
+      body: JSON.stringify({
+        p_listing: id, p_secret: secret, p_action: action,
+        p_minutes: minutes ?? null, p_price: price ?? null
+      })
     });
   },
   operatorCreate(secret, d) {
@@ -648,7 +651,7 @@ const local = {
     this.write(db);
     return { ok: true, current: amount, end_at: lot.end_at };
   },
-  async admin(id, _secret, action, minutes) {
+  async admin(id, _secret, action, minutes, price) {
     const db = this.read();
     const lot = db.listings.find(l => l.id === id);
     if (action === 'delete') {
@@ -674,8 +677,16 @@ const local = {
       lot.status = 'open'; lot.end_at = new Date(nowMs() + (minutes || 1) * 60000).toISOString();
     } else if (action === 'open') {
       lot.status = 'open'; lot.end_at = new Date(Math.max(new Date(lot.end_at).getTime(), nowMs() + 600000)).toISOString();
+    } else if (action === 'price') {
+      lot.sold_price = price;
     } else {
       lot.status = action;   // stays on air so the sticker shows on the broadcast
+      if (action === 'sold') {
+        const best = db.bids.filter(b => b.listing_id === id).reduce((m, b) => Math.max(m, +b.amount), 0);
+        lot.sold_price = price != null ? price : (best || +lot.start_price);
+      } else {
+        lot.sold_price = null;
+      }
     }
     this.write(db);
     return { ok: true };
@@ -766,6 +777,13 @@ async function refresh(full) {
   }
 }
 
+/* What the number actually went for: the recorded sale price when the
+   operator entered one, otherwise the highest real bid. Never invented. */
+function finalPrice(lot, t) {
+  if (lot.status === 'sold' && lot.sold_price != null) return Number(lot.sold_price);
+  return t.amount;
+}
+
 function topBid(id, lot) {
   const bids = cache.bids[id] || [];
   if (!bids.length) return { amount: Number(lot ? lot.start_price : 0), name: null, count: 0 };
@@ -829,7 +847,8 @@ function renderList() {
             stampFor(st) +
           '</div>' +
           '<div class="lot-stats">' +
-            '<div class="stat"><div class="stat-k">السعر الحالي</div><div class="stat-v price"><span class="num">' + money(t.amount) + '</span> ر.س</div></div>' +
+            '<div class="stat"><div class="stat-k">' + (st === 'sold' ? 'بيع على' : 'السعر الحالي') + '</div>' +
+              '<div class="stat-v price"><span class="num">' + money(finalPrice(lot, t)) + '</span> ر.س</div></div>' +
             '<div class="stat"><div class="stat-k">المزايدات</div><div class="stat-v"><span class="num">' + t.count + '</span></div></div>' +
             '<div class="stat"><div class="stat-k">' + (st === 'live' ? 'ينتهي خلال' : 'الحالة') + '</div>' +
               (st === 'live'
@@ -902,6 +921,7 @@ function renderLive(lot, bids) {
 
   const st = lotState(lot);
   const t = topBid(lot.id, lot);
+  const shown = finalPrice(lot, t);
   const cd = countdown(lot.end_at);
   const last = bids.slice(-6).reverse();
   const best = bids.length ? Math.max(...bids.map(b => +b.amount)) : null;
@@ -928,8 +948,11 @@ function renderLive(lot, bids) {
 
       '<div class="live-price">' +
         '<div class="k">' + (st === 'sold' ? 'بيع على' : 'أعلى سوم') + '</div>' +
-        '<div class="v"><span class="num">' + money(t.amount) + '</span> ر.س</div>' +
-        '<div class="who">' + (t.name ? esc(t.name) : 'سعر البداية — ما زايد أحد') + '</div>' +
+        '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +
+        '<div class="who">' +
+          (t.name ? esc(t.name)
+           : st === 'sold' ? 'بيع مباشر — بدون مزايدات على الموقع'
+           : 'سعر البداية — ما زايد أحد') + '</div>' +
       '</div>' +
 
       (last.length
@@ -984,12 +1007,14 @@ function renderControl(lot, bids) {
             '<div class="ctl-digits num">' + esc(fmtPhone(lot.phone)) + '</div>' +
             '<div class="ctl-row">' +
               '<span>' + badgeFor(st) + '</span>' +
-              '<span class="ctl-price num">' + money(t.amount) + ' ر.س</span>' +
+              '<span class="ctl-price num">' + money(finalPrice(lot, t)) + ' ر.س</span>' +
               (st === 'live'
                 ? '<span class="ctl-clock num" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</span>'
                 : '<span class="ctl-clock num">—</span>') +
             '</div>' +
-            '<div class="ctl-who">' + (t.name ? 'أعلى مزايد: ' + esc(t.name) : 'ما زايد أحد بعد') +
+            '<div class="ctl-who">' +
+              (t.name ? 'أعلى مزايد: ' + esc(t.name)
+               : st === 'sold' ? 'بيع مباشر' : 'ما زايد أحد بعد') +
               ' · البائع ' + esc(lot.seller_name) + '</div>' +
           '</div>'
         : '<div class="ctl-now"><div class="ctl-digits" style="font-size:1.1rem">ما فيه رقم على الهواء</div>' +
@@ -1040,9 +1065,9 @@ function wireQueue(open, current) {
 }
 
 /* one place for every operator action, so errors read the same */
-async function opDo(id, action, minutes) {
+async function opDo(id, action, minutes, price) {
   try {
-    const r = await store.admin(id, admin.secret, action, minutes);
+    const r = await store.admin(id, admin.secret, action, minutes, price);
     if (r && r.ok === false) {
       toast(r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة' : 'تعذّر التنفيذ');
       return null;
@@ -1092,12 +1117,51 @@ function opBar(lot) {
       if (r && !r.next) toast('ما فيه أرقام بالانتظار');
       return;
     }
-    if ((a === 'sold' || a === 'unsold') && !confirm(a === 'sold' ? 'تأكيد: تم بيع هذا الرقم؟' : 'تأكيد: لم يتم البيع؟')) return;
+    if (a === 'sold') { askSoldPrice(lot); return; }
+    if (a === 'unsold' && !confirm('تأكيد: لم يتم البيع؟')) return;
     await opDo(lot.id, a, m);
     // bring the number and its sticker back into view for the broadcast
-    if (a === 'sold' || a === 'unsold') window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (a === 'unsold') window.scrollTo({ top: 0, behavior: 'smooth' });
   });
   return bar;
+}
+
+/* Stamping تم البيع asks for the price it actually went for. A number can be
+   agreed on the broadcast or over WhatsApp with no bids on the site at all —
+   record that price as a sale price, rather than inventing bidders for it. */
+function askSoldPrice(lot) {
+  const t = topBid(lot.id, lot);
+  const suggested = t.count ? t.amount : '';
+  const s2 = sheet(
+    '<h2>سعر البيع</h2>' +
+    '<p class="hint">الرقم <span class="num">' + esc(fmtPhone(lot.phone)) + '</span> — كم انباع؟</p>' +
+    '<div id="spErr"></div>' +
+    '<div class="field ltr"><label>المبلغ (ر.س)</label>' +
+      '<input id="spPrice" type="number" inputmode="numeric" min="0" value="' + esc(suggested) + '" placeholder="مثال: 4500">' +
+      '<div class="sub">' +
+        (t.count ? 'أعلى مزايدة على الموقع: ' + money(t.amount) + ' ر.س.' : 'ما فيه مزايدات على الموقع — اكتب السعر اللي اتفقتوا عليه.') +
+      '</div></div>' +
+    '<div class="fee-box">عمولتك <b>' + COMMISSION_LABEL + '</b> = <b><span class="num" id="spFee">—</span> ر.س</b> على ذمة البائع.</div>' +
+    '<button class="btn btn-block" style="background:#12833f" id="spSave">✔ تأكيد البيع</button>'
+  );
+
+  const input = s2.querySelector('#spPrice');
+  const paintFee = () => { s2.querySelector('#spFee').textContent = money(commissionOn(Number(input.value || 0))); };
+  input.addEventListener('input', paintFee);
+  paintFee();
+  input.focus();
+
+  s2.querySelector('#spSave').addEventListener('click', async () => {
+    const v = Number(input.value);
+    if (!(v >= 0) || v > 100000000) {
+      s2.querySelector('#spErr').innerHTML = '<div class="err">اكتب مبلغ صحيح.</div>';
+      return;
+    }
+    closeSheet();
+    await opDo(lot.id, 'sold', undefined, v);
+    toast('تم البيع على ' + money(v) + ' ر.س ✔');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 }
 
 /* the walk-in guest: operator types the number and it goes on air now */
@@ -1159,6 +1223,7 @@ function askQuickAdd() {
 function renderLot(lot, bids, full) {
   const st = lotState(lot);
   const t = topBid(lot.id, lot);
+  const shown = finalPrice(lot, t);
   const step = stepFor(t.amount);
   const minNext = t.amount + step;
   const cd = countdown(lot.end_at);
@@ -1177,9 +1242,12 @@ function renderLot(lot, bids, full) {
       '<div class="phone-plate plate-wrap"><div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
         (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') + stampFor(st) + '</div>' +
       '<div class="price-hero" style="margin-top:14px">' +
-        '<div class="k">السعر الحالي</div>' +
-        '<div class="v"><span class="num">' + money(t.amount) + '</span> ر.س</div>' +
-        '<div class="who">' + (t.name ? 'أعلى مزايد: ' + esc(t.name) : 'لا توجد مزايدات بعد — سعر البداية') + '</div>' +
+        '<div class="k">' + (st === 'sold' ? 'بيع على' : 'السعر الحالي') + '</div>' +
+        '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +
+        '<div class="who">' +
+          (t.name ? 'أعلى مزايد: ' + esc(t.name)
+           : st === 'sold' ? 'بيع مباشر — بدون مزايدات على الموقع'
+           : 'لا توجد مزايدات بعد — سعر البداية') + '</div>' +
       '</div>' +
       (st === 'live'
         ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
@@ -1187,7 +1255,7 @@ function renderLot(lot, bids, full) {
       '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
         ' · <span class="num">' + t.count + '</span> مزايدة</div>' +
       '<div class="fee">عمولة الموقع ' + COMMISSION_LABEL + ' من السعي = ' +
-        '<b><span class="num">' + money(commissionOn(t.amount)) + '</span> ر.س</b>' +
+        '<b><span class="num">' + money(commissionOn(shown)) + '</span> ر.س</b>' +
         '<span> — على ذمة البائع</span></div>' +
       (lot.seller_contact
         ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
