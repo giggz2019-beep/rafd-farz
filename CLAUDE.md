@@ -98,6 +98,54 @@ A 30-minute practical assessment for AI Engineer candidates, plus an employer-on
 - Every failure path (no API key, model refusal, timeout, network error) degrades to the dashboard's **manual scoring** mode rather than erroring out.
 - Arabic report text is bidi-sensitive: score fragments like `15 / 20` must carry `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL reverses them to `20 / 15`.
 
+### Phone-number auction (`mazad.html`)
+
+A standalone Arabic-only auction page for premium mobile numbers — anyone lists a
+number, everyone else bids in a chat-style feed. It is **not** part of the RAFD
+product: it does not use `i18n.js` or `style.css`, it is a single self-contained
+file, and nothing links to it. Share the URL (`/mazad`) directly.
+
+**It adds no serverless function on purpose.** `api/` is already at Vercel's
+12-function Hobby limit (see commit "Fix deployment: keep api/ within the
+12-function Hobby limit"), so the page talks to Supabase REST directly with the
+**anon** key and every rule lives in the database instead:
+
+| Concern | Where it is enforced |
+|---|---|
+| Bid must beat the current price by the step | `place_bid()` RPC (SECURITY DEFINER) |
+| Auction still open / not expired | `place_bid()` |
+| Anti-sniping (bid in last 60s → +2 min) | `place_bid()` |
+| Spam brake (same name, 3s) | `place_bid()` |
+| Phone format, price range, field lengths | CHECK constraints on `mazad_listings` |
+| Closing / deleting / extending a lot | `mazad_admin()` RPC + secret in `mazad_config` |
+
+`anon` is granted only `select, insert` on `mazad_listings` and `select` on
+`mazad_bids`. It has **no** UPDATE or DELETE grant and no access to
+`mazad_config` at all — so a crafted request cannot change a price, close an
+auction, or read the operator secret. Schema: `supabase-mazad.sql`.
+
+- **Setup**: run `supabase-mazad.sql` in the Supabase SQL editor, change
+  `admin_secret` in `mazad_config`, then paste the project URL and the anon key
+  into the `SUPABASE_URL` / `SUPABASE_ANON_KEY` constants at the top of the
+  `<script>` block (same convention as `TURNSTILE_SITE_KEY` in
+  `partner-login.html`).
+- **Both constants empty → وضع تجريبي**: the page runs entirely on
+  `localStorage` so it can be demoed with no database. Same
+  degrade-instead-of-error convention used elsewhere in this repo.
+- Prefer a **separate** Supabase project for the auction. The table is
+  public-write by design; keeping it out of the project that holds applicant
+  data avoids widening that blast radius.
+- Operator mode: long-press the logo (or open `#/admin`) and enter the secret —
+  adds تم البيع / +5 دقائق / إيقاف / إعادة فتح / حذف to every card.
+- The client's bid step (`stepFor`) mirrors `place_bid`'s rule exactly:
+  `max(50, ceil(current * 5%))`. **Change both together or neither**, otherwise
+  the quick-bid buttons offer amounts the database rejects.
+- `vercel.json`'s CSP `connect-src` allowlists `https://*.supabase.co` and
+  `wss://*.supabase.co` so any Supabase project works without another edit.
+- Arabic is bidi-sensitive: every price, countdown and phone number carries
+  `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL
+  reverses the digits.
+
 ## Operating standard (working style)
 
 Act as an executive-level assistant and thinking partner. Optimize for decision quality, speed, accuracy, and verifiable execution — not ceremony.

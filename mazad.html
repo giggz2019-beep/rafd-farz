@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مزاد الأرقام — بيع واشترِ أرقام الجوال المميزة</title>
+<meta name="description" content="مزاد مباشر لأرقام الجوال المميزة. اعرض رقمك، والناس تزايد عليه لحظة بلحظة.">
+<meta name="theme-color" content="#0b5c37">
+<meta property="og:title" content="مزاد الأرقام">
+<meta property="og:description" content="اعرض رقمك المميز، والناس تزايد عليه مباشرة.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Medium.otf')  format('opentype'); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Bold.otf')    format('opentype'); font-weight: 700 900; font-display: swap; }
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green-900: #05301d;
+  --green-800: #073f27;
+  --green-700: #0b5c37;
+  --green-600: #0f7a49;
+  --green-500: #16a35f;
+  --gold-500:  #d9a441;
+  --gold-400:  #edc26b;
+  --ink:       #0d1512;
+  --muted:     #6b7b73;
+  --line:      #e3eae6;
+  --bg:        #f4f7f5;
+  --card:      #ffffff;
+  --danger:    #c0392b;
+  --radius:    16px;
+  --shadow:    0 2px 14px rgba(5, 48, 29, .08);
+  --shadow-lg: 0 14px 40px rgba(5, 48, 29, .18);
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'ThmanyahSans', 'Segoe UI', Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  min-height: 100dvh;
+  overflow-wrap: break-word;
+}
+button, input, select, textarea { font-family: inherit; font-size: 1rem; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+a { color: inherit; }
+
+/* numbers stay LTR inside RTL text */
+.num { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+
+/* ---------- layout ---------- */
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 14px 120px; }
+
+.topbar {
+  background: linear-gradient(135deg, var(--green-800), var(--green-600));
+  color: #fff;
+  padding: 14px 0 18px;
+  box-shadow: var(--shadow);
+  position: sticky; top: 0; z-index: 40;
+}
+.topbar .wrap { padding-bottom: 0; display: flex; align-items: center; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.brand-mark {
+  width: 40px; height: 40px; border-radius: 12px; flex: none;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+  color: var(--green-900); font-weight: 900; font-size: 1.15rem;
+  display: grid; place-items: center;
+}
+.brand-name { font-weight: 700; font-size: 1.1rem; line-height: 1.2; }
+.brand-sub  { font-size: .72rem; opacity: .8; }
+
+.chip-name {
+  background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.25);
+  color: #fff; padding: 7px 12px; border-radius: 999px;
+  font-size: .82rem; font-weight: 600; max-width: 140px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.chip-name:active { transform: scale(.97); }
+
+.banner {
+  margin: 10px 0 0; padding: 9px 12px; border-radius: 12px;
+  background: rgba(255,255,255,.12); font-size: .78rem; line-height: 1.5;
+}
+.banner b { color: var(--gold-400); }
+
+/* ---------- toolbar ---------- */
+.toolbar { display: flex; gap: 8px; align-items: center; margin: 16px 0 12px; }
+.filters { display: flex; gap: 6px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+.filters::-webkit-scrollbar { display: none; }
+.filter {
+  padding: 7px 14px; border-radius: 999px; background: #fff;
+  border: 1px solid var(--line); font-size: .84rem; font-weight: 600;
+  color: var(--muted); white-space: nowrap;
+}
+.filter.on { background: var(--green-700); border-color: var(--green-700); color: #fff; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 12px 18px; border-radius: 12px; font-weight: 700; font-size: .95rem;
+  background: var(--green-600); color: #fff; transition: transform .08s, filter .15s;
+}
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-gold  { background: linear-gradient(135deg, var(--gold-500), #c2892b); color: #2a1c02; }
+.btn-ghost { background: #fff; color: var(--green-700); border: 1px solid var(--line); }
+.btn-sm    { padding: 8px 12px; font-size: .82rem; border-radius: 10px; }
+.btn-block { width: 100%; }
+
+/* ---------- cards ---------- */
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 14px; margin-bottom: 12px;
+}
+.lot { display: block; width: 100%; text-align: right; }
+.lot-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.badge {
+  font-size: .7rem; font-weight: 700; padding: 4px 9px; border-radius: 999px;
+  background: #eef4f0; color: var(--green-700);
+}
+.badge.live   { background: #e7f7ee; color: var(--green-600); }
+.badge.sold   { background: #fdf0e6; color: #b5651d; }
+.badge.ended  { background: #f0f2f1; color: var(--muted); }
+.badge.dot::before {
+  content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; margin-inline-end: 5px; vertical-align: middle;
+  animation: pulse 1.4s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
+
+.phone-plate {
+  background: linear-gradient(135deg, var(--green-900), var(--green-700));
+  color: #fff; border-radius: 14px; padding: 14px 12px; text-align: center;
+  border: 2px solid var(--gold-500);
+}
+.phone-digits {
+  font-size: clamp(1.6rem, 7.5vw, 2.4rem); font-weight: 900; letter-spacing: .06em;
+  direction: ltr; unicode-bidi: isolate;
+}
+.phone-carrier { font-size: .72rem; opacity: .85; margin-top: 2px; }
+
+.lot-stats { display: flex; gap: 8px; margin-top: 12px; }
+.stat { flex: 1; background: #f7faf8; border: 1px solid var(--line); border-radius: 12px; padding: 8px 6px; text-align: center; }
+.stat-k { font-size: .68rem; color: var(--muted); }
+.stat-v { font-weight: 800; font-size: .98rem; }
+.stat-v.price { color: var(--green-600); }
+.stat-v.time  { color: #b5651d; }
+.stat-v.over  { color: var(--muted); }
+
+.lot-foot { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: .78rem; color: var(--muted); }
+
+.empty { text-align: center; padding: 48px 16px; color: var(--muted); }
+.empty-emoji { font-size: 2.4rem; }
+
+/* ---------- detail ---------- */
+.backlink { display: inline-flex; align-items: center; gap: 6px; margin: 14px 0 10px; font-size: .9rem; font-weight: 600; color: var(--green-700); }
+
+.price-hero { text-align: center; padding: 6px 0 2px; }
+.price-hero .k { font-size: .78rem; color: var(--muted); }
+.price-hero .v { font-size: clamp(1.8rem, 9vw, 2.6rem); font-weight: 900; color: var(--green-600); }
+.price-hero .who { font-size: .82rem; color: var(--muted); }
+
+.countdown {
+  text-align: center; font-weight: 900; font-size: 1.6rem; letter-spacing: .04em;
+  direction: ltr; unicode-bidi: isolate; color: var(--green-800);
+}
+.countdown.warn { color: var(--danger); animation: pulse 1s infinite; }
+
+/* chat feed */
+.feed { max-height: 46vh; overflow-y: auto; padding: 4px 2px; display: flex; flex-direction: column; gap: 8px; }
+.msg { display: flex; flex-direction: column; max-width: 84%; }
+/* RTL chat: my own bids sit on the left, everyone else's on the right */
+.msg.mine { align-self: flex-end; }
+.msg:not(.mine) { align-self: flex-start; }
+.msg.mine .msg-meta { text-align: left; }
+.msg-bubble {
+  background: #f1f5f3; border: 1px solid var(--line); border-radius: 14px;
+  padding: 8px 12px; font-weight: 700;
+}
+.msg.mine .msg-bubble { background: var(--green-600); border-color: var(--green-600); color: #fff; }
+.msg.top .msg-bubble  { background: #fff7e8; border-color: var(--gold-500); color: #7a4f05; }
+.msg.mine.top .msg-bubble { background: linear-gradient(135deg, var(--gold-500), #c2892b); color: #2a1c02; }
+.msg-meta { font-size: .68rem; color: var(--muted); padding: 0 6px; }
+.msg-amount { font-size: 1.05rem; }
+
+.bidbar {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 30;
+  background: rgba(255,255,255,.96); backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line); padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+}
+.bidbar .inner { max-width: 720px; margin: 0 auto; }
+.quick { display: flex; gap: 6px; margin-bottom: 8px; overflow-x: auto; scrollbar-width: none; }
+.quick::-webkit-scrollbar { display: none; }
+.quick button {
+  border: 1px solid var(--line); background: #fff; border-radius: 10px;
+  padding: 7px 12px; font-size: .82rem; font-weight: 700; white-space: nowrap; color: var(--green-700);
+}
+.bidrow { display: flex; gap: 8px; }
+.bidrow input {
+  flex: 1; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  background: #fff; font-weight: 700; direction: ltr; text-align: right;
+}
+.bidrow input:focus { outline: 2px solid var(--green-500); outline-offset: -1px; }
+
+/* ---------- forms / modal ---------- */
+.sheet-bg {
+  position: fixed; inset: 0; background: rgba(5,48,29,.45); z-index: 60;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.sheet {
+  background: #fff; width: 100%; max-width: 720px; max-height: 92dvh; overflow-y: auto;
+  border-radius: 20px 20px 0 0; padding: 18px 16px calc(24px + env(safe-area-inset-bottom));
+  box-shadow: var(--shadow-lg); animation: up .22s ease-out;
+}
+@keyframes up { from { transform: translateY(24px); opacity: .6 } to { transform: none; opacity: 1 } }
+.sheet h2 { font-size: 1.15rem; margin-bottom: 4px; }
+.sheet .hint { font-size: .8rem; color: var(--muted); margin-bottom: 14px; }
+
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: .82rem; font-weight: 700; margin-bottom: 5px; }
+.field input, .field select, .field textarea {
+  width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: #fbfdfc;
+}
+.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--green-500); outline-offset: -1px; background: #fff; }
+.field .sub { font-size: .72rem; color: var(--muted); margin-top: 4px; }
+.field.ltr input { direction: ltr; text-align: right; }
+.row2 { display: flex; gap: 10px; }
+.row2 > * { flex: 1; }
+
+.err { background: #fdecea; color: var(--danger); border-radius: 10px; padding: 9px 12px; font-size: .83rem; margin-bottom: 10px; }
+
+.toast {
+  position: fixed; inset-inline: 0; bottom: 96px; z-index: 90;
+  display: flex; justify-content: center; pointer-events: none;
+}
+.toast div {
+  background: var(--green-900); color: #fff; padding: 10px 18px; border-radius: 999px;
+  font-size: .86rem; font-weight: 600; box-shadow: var(--shadow-lg); max-width: 90%;
+}
+
+.adminbar { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.adminbar button { font-size: .75rem; padding: 6px 10px; border-radius: 9px; border: 1px solid var(--line); background: #fff; font-weight: 700; }
+.adminbar .del { color: var(--danger); border-color: #f3c6c1; }
+
+.foot { text-align: center; font-size: .74rem; color: var(--muted); padding: 24px 10px 8px; line-height: 1.9; }
+.foot a { color: var(--green-700); font-weight: 700; }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <div class="brand-mark" id="brandMark">مز</div>
+      <div>
+        <div class="brand-name">مزاد الأرقام</div>
+        <div class="brand-sub">أرقام جوال مميزة — مزايدة مباشرة</div>
+      </div>
+    </div>
+    <button class="chip-name" id="nameChip">اسمك؟</button>
+  </div>
+  <div class="wrap"><div class="banner hidden" id="modeBanner"></div></div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ list view ============ -->
+  <section id="viewList">
+    <div class="toolbar">
+      <div class="filters">
+        <button class="filter on" data-filter="live">المزادات المفتوحة</button>
+        <button class="filter" data-filter="all">الكل</button>
+        <button class="filter" data-filter="done">المنتهية</button>
+      </div>
+    </div>
+    <button class="btn btn-gold btn-block" id="btnAdd" style="margin-bottom:14px">➕ اعرض رقمك في المزاد</button>
+    <div id="lots"></div>
+  </section>
+
+  <!-- ============ detail view ============ -->
+  <section id="viewLot" class="hidden">
+    <button class="backlink" id="btnBack">→ رجوع لكل الأرقام</button>
+    <div id="lotBody"></div>
+  </section>
+
+  <div class="foot">
+    الموقع وسيط عرض فقط. الاتفاق والتسليم والدفع بين البائع والمشتري مباشرة.<br>
+    نقل ملكية الرقم يتم عبر الشركة المشغّلة وحسب أنظمتها.
+  </div>
+</main>
+
+<div id="bidbarHost"></div>
+<div id="sheetHost"></div>
+<div id="toastHost"></div>
+
+<script>
+/* =====================================================================
+   مزاد الأرقام — single-page auction, no build step, no backend function.
+   ---------------------------------------------------------------------
+   The page talks to Supabase REST directly with the PUBLIC anon key.
+   All the rules (bid must beat the price, auction still open, …) live in
+   the database — see supabase-mazad.sql. Nothing here is trusted.
+
+   SETUP (2 minutes):
+     1. Create a Supabase project  →  supabase.com
+     2. SQL editor  →  paste supabase-mazad.sql  →  Run
+     3. Settings → API  →  copy the URL and the "anon / public" key
+     4. Paste both below and redeploy.
+   Leave them empty and the site runs in وضع تجريبي (local demo, this
+   browser only) so you can try it before wiring the database.
+   ===================================================================== */
+
+const SUPABASE_URL      = '';   // e.g. 'https://abcdefgh.supabase.co'
+const SUPABASE_ANON_KEY = '';   // the "anon / public" key — safe to publish
+
+const MIN_STEP      = 50;      // smallest raise, in SAR
+const STEP_PERCENT  = 0.05;    // or 5% of the current price, whichever is bigger
+const POLL_MS       = 2500;    // how often the page refreshes itself
+
+/* ---------------------------------------------------------------- utils */
+const $  = (s, r = document) => r.querySelector(s);
+const el = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content.firstElementChild; };
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const money = (n) => Number(n || 0).toLocaleString('en-US');
+const nowMs = () => Date.now();
+
+function toast(msg) {
+  const host = $('#toastHost');
+  host.innerHTML = '<div class="toast"><div>' + esc(msg) + '</div></div>';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => host.innerHTML = '', 2600);
+}
+
+function fmtPhone(p) {
+  const d = String(p || '').replace(/\D/g, '');
+  return d.length === 10 ? d.slice(0,3) + ' ' + d.slice(3,6) + ' ' + d.slice(6) : d;
+}
+const CARRIERS = { stc: 'STC', mobily: 'موبايلي', zain: 'زين', other: 'أخرى' };
+
+function stepFor(current) { return Math.max(MIN_STEP, Math.ceil(current * STEP_PERCENT)); }
+
+function countdown(endAt) {
+  let ms = new Date(endAt).getTime() - nowMs();
+  if (ms <= 0) return null;
+  const s = Math.floor(ms / 1000);
+  const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600),
+        m = Math.floor(s % 3600 / 60), ss = s % 60;
+  const pad = (x) => String(x).padStart(2, '0');
+  return d > 0 ? d + ' ي ' + pad(h) + ':' + pad(m) + ':' + pad(ss)
+               : pad(h) + ':' + pad(m) + ':' + pad(ss);
+}
+
+function ago(ts) {
+  const s = Math.floor((nowMs() - new Date(ts).getTime()) / 1000);
+  if (s < 60) return 'الآن';
+  if (s < 3600) return 'قبل ' + Math.floor(s / 60) + ' د';
+  if (s < 86400) return 'قبل ' + Math.floor(s / 3600) + ' س';
+  return 'قبل ' + Math.floor(s / 86400) + ' ي';
+}
+
+/* state of a listing, derived — never trusted from a client write */
+function lotState(lot) {
+  if (lot.status === 'sold') return 'sold';
+  if (lot.status === 'cancelled') return 'cancelled';
+  return new Date(lot.end_at).getTime() <= nowMs() ? 'ended' : 'live';
+}
+
+/* ------------------------------------------------------------- identity */
+const me = {
+  get name() { return localStorage.getItem('mazad_name') || ''; },
+  set name(v) { localStorage.setItem('mazad_name', v); paintName(); }
+};
+function paintName() {
+  $('#nameChip').textContent = me.name ? '👤 ' + me.name : 'اسمك؟';
+}
+
+/* --------------------------------------------------------------- store */
+const REMOTE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+
+const remote = {
+  async req(path, opts = {}) {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+      ...opts,
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation',
+        ...(opts.headers || {})
+      }
+    });
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : null;
+    if (!res.ok) throw new Error((data && (data.message || data.hint)) || 'network');
+    return data;
+  },
+  listings() {
+    return this.req('mazad_listings?select=*&order=created_at.desc&limit=200');
+  },
+  listing(id) {
+    return this.req('mazad_listings?select=*&id=eq.' + encodeURIComponent(id)).then(r => r[0] || null);
+  },
+  bids(id) {
+    return this.req('mazad_bids?select=*&listing_id=eq.' + encodeURIComponent(id) + '&order=created_at.asc&limit=500');
+  },
+  createListing(body) {
+    return this.req('mazad_listings', { method: 'POST', body: JSON.stringify(body) }).then(r => r[0]);
+  },
+  placeBid(id, name, amount) {
+    return this.req('rpc/place_bid', {
+      method: 'POST',
+      body: JSON.stringify({ p_listing: id, p_name: name, p_amount: amount })
+    });
+  },
+  admin(id, secret, action) {
+    return this.req('rpc/mazad_admin', {
+      method: 'POST',
+      body: JSON.stringify({ p_listing: id, p_secret: secret, p_action: action })
+    });
+  }
+};
+
+/* local demo mode — same shape, localStorage instead of a database */
+const local = {
+  read() { try { return JSON.parse(localStorage.getItem('mazad_demo') || '{"listings":[],"bids":[]}'); } catch { return { listings: [], bids: [] }; } },
+  write(db) { localStorage.setItem('mazad_demo', JSON.stringify(db)); },
+  uid() { return 'x' + Math.random().toString(36).slice(2) + nowMs().toString(36); },
+  async listings() { return this.read().listings.slice().sort((a, b) => b.created_at.localeCompare(a.created_at)); },
+  async listing(id) { return this.read().listings.find(l => l.id === id) || null; },
+  async bids(id) { return this.read().bids.filter(b => b.listing_id === id).sort((a, b) => a.created_at.localeCompare(b.created_at)); },
+  async createListing(body) {
+    const db = this.read();
+    const row = { ...body, id: this.uid(), status: 'open', created_at: new Date().toISOString() };
+    db.listings.push(row); this.write(db); return row;
+  },
+  async placeBid(id, name, amount) {
+    const db = this.read();
+    const lot = db.listings.find(l => l.id === id);
+    if (!lot) return { ok: false, error: 'not_found' };
+    if (lot.status !== 'open') return { ok: false, error: 'closed' };
+    if (new Date(lot.end_at).getTime() <= nowMs()) return { ok: false, error: 'expired' };
+    const cur = db.bids.filter(b => b.listing_id === id).reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
+    const min = cur + stepFor(cur);
+    if (amount < min) return { ok: false, error: 'too_low', current: cur, min };
+    db.bids.push({ id: this.uid(), listing_id: id, bidder_name: name, amount, created_at: new Date().toISOString() });
+    if (new Date(lot.end_at).getTime() - nowMs() < 60000) lot.end_at = new Date(nowMs() + 120000).toISOString();
+    this.write(db);
+    return { ok: true, current: amount, end_at: lot.end_at };
+  },
+  async admin(id, _secret, action) {
+    const db = this.read();
+    if (action === 'delete') {
+      db.listings = db.listings.filter(l => l.id !== id);
+      db.bids = db.bids.filter(b => b.listing_id !== id);
+    } else {
+      const lot = db.listings.find(l => l.id === id);
+      if (!lot) return { ok: false, error: 'not_found' };
+      if (action === 'extend') lot.end_at = new Date(Math.max(new Date(lot.end_at).getTime(), nowMs()) + 300000).toISOString();
+      else if (action === 'open') { lot.status = 'open'; lot.end_at = new Date(Math.max(new Date(lot.end_at).getTime(), nowMs() + 600000)).toISOString(); }
+      else lot.status = action;
+    }
+    this.write(db);
+    return { ok: true };
+  }
+};
+
+const store = REMOTE ? remote : local;
+
+/* ---------------------------------------------------------------- admin */
+const admin = {
+  get secret() { return sessionStorage.getItem('mazad_admin') || ''; },
+  set secret(v) { v ? sessionStorage.setItem('mazad_admin', v) : sessionStorage.removeItem('mazad_admin'); },
+  get on() { return Boolean(this.secret); }
+};
+
+/* ---------------------------------------------------------------- views */
+let cache = { listings: [], bids: {}, filter: 'live' };
+let route = { name: 'list', id: null };
+let pollTimer = null, tickTimer = null;
+
+function parseRoute() {
+  const h = location.hash.replace(/^#\/?/, '');
+  if (h.startsWith('n/')) return { name: 'lot', id: decodeURIComponent(h.slice(2)) };
+  if (h === 'admin') return { name: 'admin', id: null };
+  return { name: 'list', id: null };
+}
+
+async function go() {
+  route = parseRoute();
+  if (route.name === 'admin') { location.hash = ''; askAdmin(); return; }
+  const isLot = route.name === 'lot';
+  $('#viewList').classList.toggle('hidden', isLot);
+  $('#viewLot').classList.toggle('hidden', !isLot);
+  $('#bidbarHost').innerHTML = '';
+  window.scrollTo(0, 0);
+  await refresh(true);
+}
+
+async function refresh(full) {
+  try {
+    if (route.name === 'lot') {
+      const [lot, bids] = await Promise.all([store.listing(route.id), store.bids(route.id)]);
+      if (!lot) { $('#lotBody').innerHTML = '<div class="empty"><div class="empty-emoji">🔍</div>هذا المزاد غير موجود أو تم حذفه.</div>'; return; }
+      cache.bids[lot.id] = bids;
+      renderLot(lot, bids, full);
+    } else {
+      cache.listings = await store.listings();
+      const ids = cache.listings.map(l => l.id);
+      if (REMOTE && ids.length) {
+        const rows = await remote.req('mazad_bids?select=listing_id,amount,bidder_name,created_at&order=amount.desc&limit=2000');
+        cache.bids = {};
+        rows.forEach(b => (cache.bids[b.listing_id] ||= []).push(b));
+      } else if (!REMOTE) {
+        const db = local.read(); cache.bids = {};
+        db.bids.forEach(b => (cache.bids[b.listing_id] ||= []).push(b));
+      }
+      renderList();
+    }
+  } catch (e) {
+    console.error(e);
+    if (full) toast('تعذّر تحميل البيانات — تحقق من الاتصال');
+  }
+}
+
+function topBid(id, lot) {
+  const bids = cache.bids[id] || [];
+  if (!bids.length) return { amount: Number(lot ? lot.start_price : 0), name: null, count: 0 };
+  const best = bids.reduce((a, b) => (+b.amount > +a.amount ? b : a));
+  return { amount: +best.amount, name: best.bidder_name, count: bids.length };
+}
+
+function renderList() {
+  const host = $('#lots');
+  let rows = cache.listings.slice();
+  if (cache.filter === 'live') rows = rows.filter(l => lotState(l) === 'live');
+  if (cache.filter === 'done') rows = rows.filter(l => lotState(l) !== 'live');
+  rows.sort((a, b) => {
+    const sa = lotState(a) === 'live', sb = lotState(b) === 'live';
+    if (sa !== sb) return sa ? -1 : 1;
+    return sa ? new Date(a.end_at) - new Date(b.end_at) : new Date(b.created_at) - new Date(a.created_at);
+  });
+
+  if (!rows.length) {
+    host.innerHTML = '<div class="empty"><div class="empty-emoji">📱</div>'
+      + (cache.filter === 'live' ? 'ما فيه مزادات مفتوحة الحين.<br>كن أول واحد يعرض رقمه.' : 'ما فيه شيء هنا بعد.')
+      + '</div>';
+    return;
+  }
+
+  host.innerHTML = '';
+  rows.forEach(lot => {
+    const st = lotState(lot), t = topBid(lot.id, lot), cd = countdown(lot.end_at);
+    const badge = st === 'live' ? '<span class="badge live dot">مفتوح</span>'
+                : st === 'sold' ? '<span class="badge sold">تم البيع</span>'
+                : st === 'cancelled' ? '<span class="badge ended">ملغي</span>'
+                : '<span class="badge ended">انتهى</span>';
+    const card = el(
+      '<div class="card">' +
+        '<button class="lot">' +
+          '<div class="lot-top">' + badge +
+            '<span class="badge">' + esc(CARRIERS[lot.carrier] || 'رقم') + '</span>' +
+            '<span style="flex:1"></span>' +
+            '<span style="font-size:.72rem;color:var(--muted)">' + esc(ago(lot.created_at)) + '</span>' +
+          '</div>' +
+          '<div class="phone-plate">' +
+            '<div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
+            (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') +
+          '</div>' +
+          '<div class="lot-stats">' +
+            '<div class="stat"><div class="stat-k">السعر الحالي</div><div class="stat-v price"><span class="num">' + money(t.amount) + '</span> ر.س</div></div>' +
+            '<div class="stat"><div class="stat-k">المزايدات</div><div class="stat-v"><span class="num">' + t.count + '</span></div></div>' +
+            '<div class="stat"><div class="stat-k">' + (st === 'live' ? 'ينتهي خلال' : 'الحالة') + '</div>' +
+              (st === 'live'
+                ? '<div class="stat-v time" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
+                : '<div class="stat-v over">' + (st === 'sold' ? 'مباع' : 'مغلق') + '</div>') +
+            '</div>' +
+          '</div>' +
+          '<div class="lot-foot">👤 ' + esc(lot.seller_name) + (t.name ? ' · أعلى مزايد: ' + esc(t.name) : '') + '</div>' +
+        '</button>' +
+      '</div>'
+    );
+    card.querySelector('.lot').addEventListener('click', () => { location.hash = '#/n/' + encodeURIComponent(lot.id); });
+    if (admin.on) card.appendChild(adminBar(lot));
+    host.appendChild(card);
+  });
+}
+
+function adminBar(lot) {
+  const bar = el('<div class="adminbar">'
+    + '<button data-a="sold">✔ تم البيع</button>'
+    + '<button data-a="extend">+5 دقائق</button>'
+    + '<button data-a="cancelled">إيقاف</button>'
+    + '<button data-a="open">إعادة فتح</button>'
+    + '<button data-a="delete" class="del">حذف</button>'
+    + '</div>');
+  bar.addEventListener('click', async (e) => {
+    const a = e.target.dataset.a; if (!a) return;
+    if (a === 'delete' && !confirm('حذف هذا المزاد نهائياً؟')) return;
+    try {
+      const r = await store.admin(lot.id, admin.secret, a);
+      if (r && r.ok === false) { toast(r.error === 'forbidden' ? 'كلمة المرور غير صحيحة' : 'تعذّر التنفيذ'); return; }
+      toast('تم');
+      if (a === 'delete' && route.name === 'lot') { location.hash = ''; return; }
+      refresh(false);
+    } catch { toast('تعذّر التنفيذ'); }
+  });
+  return bar;
+}
+
+function renderLot(lot, bids, full) {
+  const st = lotState(lot);
+  const t = topBid(lot.id, lot);
+  const step = stepFor(t.amount);
+  const minNext = t.amount + step;
+  const cd = countdown(lot.end_at);
+
+  const body = $('#lotBody');
+  const feedScrolled = (() => { const f = $('#feed'); return f ? f.scrollTop + f.clientHeight >= f.scrollHeight - 30 : true; })();
+
+  body.innerHTML =
+    '<div class="card">' +
+      '<div class="lot-top">' +
+        (st === 'live' ? '<span class="badge live dot">مزاد مفتوح</span>'
+         : st === 'sold' ? '<span class="badge sold">تم البيع</span>'
+         : '<span class="badge ended">' + (st === 'cancelled' ? 'ملغي' : 'انتهى') + '</span>') +
+        '<span class="badge">' + esc(CARRIERS[lot.carrier] || 'رقم') + '</span>' +
+        '<span style="flex:1"></span>' +
+        '<button class="btn btn-ghost btn-sm" id="btnShare">مشاركة</button>' +
+      '</div>' +
+      '<div class="phone-plate"><div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
+        (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') + '</div>' +
+      '<div class="price-hero" style="margin-top:14px">' +
+        '<div class="k">السعر الحالي</div>' +
+        '<div class="v"><span class="num">' + money(t.amount) + '</span> ر.س</div>' +
+        '<div class="who">' + (t.name ? 'أعلى مزايد: ' + esc(t.name) : 'لا توجد مزايدات بعد — سعر البداية') + '</div>' +
+      '</div>' +
+      (st === 'live'
+        ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
+        : '') +
+      '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
+        ' · <span class="num">' + t.count + '</span> مزايدة</div>' +
+      (lot.seller_contact
+        ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
+          esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع</a>'
+        : '') +
+    '</div>' +
+
+    '<div class="card">' +
+      '<div style="font-weight:700;margin-bottom:8px">المزايدات</div>' +
+      '<div class="feed" id="feed"></div>' +
+    '</div>';
+
+  if (admin.on) body.appendChild(adminBar(lot));
+
+  const feed = $('#feed');
+  if (!bids.length) {
+    feed.innerHTML = '<div class="empty" style="padding:22px">ما زايد أحد بعد. كن أول واحد 👋</div>';
+  } else {
+    const best = Math.max(...bids.map(b => +b.amount));
+    feed.innerHTML = bids.map(b =>
+      '<div class="msg' + (b.bidder_name === me.name ? ' mine' : '') + (+b.amount === best ? ' top' : '') + '">' +
+        '<div class="msg-bubble"><span class="msg-amount num">' + money(b.amount) + '</span> ر.س' +
+          (+b.amount === best ? ' 🏆' : '') + '</div>' +
+        '<div class="msg-meta">' + esc(b.bidder_name) + ' · ' + esc(ago(b.created_at)) + '</div>' +
+      '</div>').join('');
+    if (full || feedScrolled) feed.scrollTop = feed.scrollHeight;
+  }
+
+  $('#btnShare').addEventListener('click', () => share(lot));
+
+  /* bid bar */
+  const host = $('#bidbarHost');
+  if (st !== 'live') {
+    host.innerHTML = '<div class="bidbar"><div class="inner" style="text-align:center;color:var(--muted);font-size:.86rem">' +
+      (st === 'sold' ? 'تم بيع هذا الرقم ✔' : 'انتهى المزاد على هذا الرقم') + '</div></div>';
+    return;
+  }
+  if (!host.firstElementChild) {
+    host.innerHTML =
+      '<div class="bidbar"><div class="inner">' +
+        '<div class="quick" id="quick"></div>' +
+        '<div class="bidrow">' +
+          '<input id="bidInput" type="number" inputmode="numeric" placeholder="اكتب مبلغك">' +
+          '<button class="btn btn-gold" id="btnBid">زايد</button>' +
+        '</div>' +
+      '</div></div>';
+    $('#btnBid').addEventListener('click', () => sendBid(lot.id));
+    $('#bidInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendBid(lot.id); });
+  }
+  $('#quick').innerHTML = [minNext, minNext + step, minNext + step * 4]
+    .map(v => '<button data-v="' + v + '">' + money(v) + ' ر.س</button>').join('');
+  $('#quick').onclick = (e) => {
+    const v = e.target.dataset.v; if (!v) return;
+    $('#bidInput').value = v; sendBid(lot.id);
+  };
+  const input = $('#bidInput');
+  input.min = minNext;
+  input.placeholder = 'أقل مزايدة: ' + money(minNext);
+}
+
+function waLink(contact, phone) {
+  const d = String(contact).replace(/\D/g, '').replace(/^0/, '966');
+  const msg = encodeURIComponent('السلام عليكم، بخصوص الرقم ' + fmtPhone(phone) + ' المعروض في مزاد الأرقام');
+  return 'https://wa.me/' + d + '?text=' + msg;
+}
+
+async function share(lot) {
+  const url = location.origin + location.pathname + '#/n/' + encodeURIComponent(lot.id);
+  const data = { title: 'مزاد الأرقام', text: 'مزاد على الرقم ' + fmtPhone(lot.phone), url };
+  try {
+    if (navigator.share) { await navigator.share(data); return; }
+    await navigator.clipboard.writeText(url); toast('تم نسخ الرابط');
+  } catch { /* user cancelled */ }
+}
+
+async function sendBid(id) {
+  if (!me.name) { askName(() => sendBid(id)); return; }
+  const input = $('#bidInput');
+  const amount = Number(input.value);
+  if (!amount || amount <= 0) { toast('اكتب المبلغ'); return; }
+
+  const btn = $('#btnBid'); btn.disabled = true;
+  try {
+    const r = await store.placeBid(id, me.name, amount);
+    if (r && r.ok === false) {
+      const m = {
+        too_low: 'المبلغ أقل من المطلوب — أقل مزايدة ' + money(r.min || 0) + ' ر.س',
+        too_fast: 'على مهلك ثانية وحدة 😄',
+        closed: 'المزاد مقفل',
+        expired: 'انتهى وقت المزاد',
+        bad_name: 'اكتب اسم صحيح (حرفين على الأقل)',
+        bad_amount: 'مبلغ غير صحيح',
+        not_found: 'المزاد غير موجود'
+      }[r.error] || 'تعذّرت المزايدة';
+      toast(m);
+    } else {
+      input.value = '';
+      toast('تمت مزايدتك بـ ' + money(amount) + ' ر.س ✔');
+    }
+  } catch (e) {
+    console.error(e); toast('تعذّر الاتصال — حاول مرة ثانية');
+  } finally {
+    btn.disabled = false;
+    refresh(false);
+  }
+}
+
+/* ------------------------------------------------------------- sheets */
+function sheet(html) {
+  const host = $('#sheetHost');
+  host.innerHTML = '<div class="sheet-bg"><div class="sheet">' + html + '</div></div>';
+  host.querySelector('.sheet-bg').addEventListener('click', (e) => { if (e.target.classList.contains('sheet-bg')) closeSheet(); });
+  return host.querySelector('.sheet');
+}
+function closeSheet() { $('#sheetHost').innerHTML = ''; }
+
+function askName(then) {
+  const s = sheet(
+    '<h2>وش اسمك؟</h2>' +
+    '<p class="hint">يظهر اسمك عند كل مزايدة — زي الشات.</p>' +
+    '<div class="field"><input id="nmInput" maxlength="40" placeholder="مثال: أبو فهد" value="' + esc(me.name) + '"></div>' +
+    '<button class="btn btn-block" id="nmSave">حفظ</button>'
+  );
+  const input = s.querySelector('#nmInput');
+  input.focus();
+  const save = () => {
+    const v = input.value.trim();
+    if (v.length < 2) { toast('الاسم قصير'); return; }
+    me.name = v; closeSheet(); if (then) then(); else refresh(false);
+  };
+  s.querySelector('#nmSave').addEventListener('click', save);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+}
+
+function askAdmin() {
+  const s = sheet(
+    '<h2>دخول المشرف</h2>' +
+    '<p class="hint">كلمة المرور المخزّنة في قاعدة البيانات (mazad_config.admin_secret).</p>' +
+    '<div class="field"><input id="adInput" type="password" placeholder="كلمة المرور"></div>' +
+    '<button class="btn btn-block" id="adSave">دخول</button>' +
+    (admin.on ? '<button class="btn btn-ghost btn-block" style="margin-top:8px" id="adOut">خروج من وضع المشرف</button>' : '')
+  );
+  s.querySelector('#adSave').addEventListener('click', () => {
+    const v = s.querySelector('#adInput').value.trim();
+    if (!v) return;
+    admin.secret = v; closeSheet(); toast('وضع المشرف مفعّل'); refresh(false);
+  });
+  if (admin.on) s.querySelector('#adOut').addEventListener('click', () => { admin.secret = ''; closeSheet(); toast('تم الخروج'); refresh(false); });
+}
+
+const DURATIONS = [
+  { k: '15 دقيقة', m: 15 }, { k: 'ساعة', m: 60 }, { k: '6 ساعات', m: 360 },
+  { k: '12 ساعة', m: 720 }, { k: '24 ساعة', m: 1440 }, { k: '3 أيام', m: 4320 }, { k: 'أسبوع', m: 10080 }
+];
+
+function askListing() {
+  const s = sheet(
+    '<h2>اعرض رقمك في المزاد</h2>' +
+    '<p class="hint">الرقم يظهر للجميع مباشرة، والناس تبدأ تزايد عليه.</p>' +
+    '<div id="lsErr"></div>' +
+    '<div class="field ltr"><label>رقم الجوال المعروض</label>' +
+      '<input id="lsPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX">' +
+      '<div class="sub">يبدأ بـ 05 ويتكوّن من 10 أرقام.</div></div>' +
+    '<div class="row2">' +
+      '<div class="field"><label>الشركة</label><select id="lsCarrier">' +
+        '<option value="stc">STC</option><option value="mobily">موبايلي</option>' +
+        '<option value="zain">زين</option><option value="other">أخرى</option></select></div>' +
+      '<div class="field ltr"><label>سعر البداية (ر.س)</label>' +
+        '<input id="lsPrice" type="number" inputmode="numeric" min="0" value="0"></div>' +
+    '</div>' +
+    '<div class="field"><label>مدة المزاد</label><select id="lsDur">' +
+      DURATIONS.map((d) => '<option value="' + d.m + '"' + (d.m === 1440 ? ' selected' : '') + '>' + d.k + '</option>').join('') +
+    '</select></div>' +
+    '<div class="row2">' +
+      '<div class="field"><label>اسمك</label><input id="lsName" maxlength="40" placeholder="أبو فهد" value="' + esc(me.name) + '"></div>' +
+      '<div class="field ltr"><label>جوال للتواصل</label><input id="lsContact" type="tel" inputmode="numeric" maxlength="14" placeholder="05XXXXXXXX"></div>' +
+    '</div>' +
+    '<div class="field"><label>ملاحظة (اختياري)</label><input id="lsNote" maxlength="80" placeholder="مثال: رقم رباعي مميز"></div>' +
+    '<button class="btn btn-gold btn-block" id="lsSave">انشر المزاد</button>'
+  );
+
+  s.querySelector('#lsSave').addEventListener('click', async () => {
+    const err = (m) => { s.querySelector('#lsErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
+    const phone   = s.querySelector('#lsPhone').value.replace(/\D/g, '');
+    const price   = Number(s.querySelector('#lsPrice').value || 0);
+    const name    = s.querySelector('#lsName').value.trim();
+    const contact = s.querySelector('#lsContact').value.replace(/\D/g, '');
+    const mins    = Number(s.querySelector('#lsDur').value);
+
+    if (!/^05\d{8}$/.test(phone)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
+    if (name.length < 2) return err('اكتب اسمك.');
+    if (price < 0 || price > 100000000) return err('سعر البداية غير منطقي.');
+    if (contact && !/^0?5\d{8}$/.test(contact)) return err('رقم التواصل غير صحيح.');
+
+    const btn = s.querySelector('#lsSave'); btn.disabled = true; btn.textContent = 'جاري النشر…';
+    try {
+      const row = await store.createListing({
+        phone,
+        carrier: s.querySelector('#lsCarrier').value,
+        start_price: price,
+        seller_name: name,
+        seller_contact: contact || null,
+        note: s.querySelector('#lsNote').value.trim() || null,
+        end_at: new Date(nowMs() + mins * 60000).toISOString()
+      });
+      if (!me.name) me.name = name;
+      closeSheet();
+      toast('نُشر المزاد ✔');
+      location.hash = '#/n/' + encodeURIComponent(row.id);
+    } catch (e) {
+      console.error(e);
+      btn.disabled = false; btn.textContent = 'انشر المزاد';
+      err('تعذّر النشر. تأكد من الاتصال وحاول مرة ثانية.');
+    }
+  });
+}
+
+/* --------------------------------------------------------------- ticks */
+function tick() {
+  let expired = false;
+  document.querySelectorAll('[data-cd]').forEach(node => {
+    const cd = countdown(node.dataset.cd);
+    if (cd === null) {
+      node.textContent = 'انتهى';
+      node.classList.remove('warn');
+      node.removeAttribute('data-cd');
+      expired = true;
+    } else {
+      node.textContent = cd;
+    }
+  });
+  if (expired) refresh(false);
+}
+
+/* ---------------------------------------------------------------- boot */
+$('#nameChip').addEventListener('click', () => askName());
+$('#btnAdd').addEventListener('click', () => askListing());
+$('#btnBack').addEventListener('click', () => { location.hash = ''; });
+document.querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.filter').forEach(x => x.classList.toggle('on', x === b));
+  cache.filter = b.dataset.filter; renderList();
+}));
+
+/* long-press the logo → admin login */
+(() => {
+  let t = null;
+  const mark = $('#brandMark');
+  const start = () => { t = setTimeout(askAdmin, 900); };
+  const stop  = () => clearTimeout(t);
+  ['mousedown', 'touchstart'].forEach(e => mark.addEventListener(e, start, { passive: true }));
+  ['mouseup', 'mouseleave', 'touchend', 'touchcancel'].forEach(e => mark.addEventListener(e, stop, { passive: true }));
+})();
+
+if (!REMOTE) {
+  const b = $('#modeBanner');
+  b.classList.remove('hidden');
+  b.innerHTML = '<b>وضع تجريبي محلي.</b> البيانات محفوظة في هذا المتصفح فقط. لتشغيل المزاد للناس، اربط Supabase من أعلى ملف mazad.html.';
+}
+
+paintName();
+window.addEventListener('hashchange', go);
+go();
+pollTimer = setInterval(() => { if (!document.hidden) refresh(false); }, POLL_MS);
+tickTimer = setInterval(tick, 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(false); });
+</script>
+</body>
+</html>
