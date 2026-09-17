@@ -267,6 +267,31 @@ a { color: inherit; }
 .stamp.cancelled { color: #6b7b73; }
 .plate-wrap { position: relative; }
 
+/* ---------- private control panel ---------- */
+.ctl-top { display: flex; align-items: center; gap: 8px; margin: 14px 0 10px; }
+.ctl-top b { font-size: 1rem; }
+.ctl-top span { font-size: .76rem; color: var(--muted); }
+.ctl-top > div { flex: 1; }
+.ctl-now { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed var(--line); margin-bottom: 12px; }
+.ctl-now .k { font-size: .74rem; color: var(--muted); }
+.ctl-digits { font-size: clamp(1.5rem, 8vw, 2.1rem); font-weight: 900; letter-spacing: .04em; }
+.ctl-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.ctl-price { font-weight: 900; color: var(--green-600); font-size: 1.1rem; }
+.ctl-clock { font-weight: 900; color: #b5651d; font-size: 1.1rem; }
+.ctl-who { font-size: .78rem; color: var(--muted); margin-top: 6px; }
+.ctl-q { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 12px; padding: 9px 11px; margin-bottom: 6px; }
+.ctl-q b { font-size: 1rem; }
+.ctl-q span { flex: 1; font-size: .78rem; color: var(--muted); }
+.ctl-q button { background: var(--green-600); color: #fff; border-radius: 9px; padding: 7px 13px; font-size: .78rem; font-weight: 800; }
+
+/* the operator bar on a light card */
+.opbar.light { border-top: none; padding-top: 0; }
+.opbar.light .lbl { color: var(--muted); }
+.opbar.light button { background: #f2f6f4; color: var(--ink); border: 1px solid var(--line); }
+.opbar.light button.sold   { background: #12833f; border-color: #12833f; color: #fff; }
+.opbar.light button.unsold { background: #c0392b; border-color: #c0392b; color: #fff; }
+.opbar.light button.next   { background: linear-gradient(135deg,#f6dd9e,#d9a441); color: #2a1c02; border-color: transparent; }
+
 /* ---------- live broadcast screen ---------- */
 .live {
   background: radial-gradient(120% 90% at 50% 0%, #0f7a49, #073f27 48%, #04281a);
@@ -409,6 +434,12 @@ a { color: inherit; }
     <div id="lots"></div>
   </section>
 
+  <!-- ============ private control panel (operator only) ============ -->
+  <section id="viewControl" class="hidden">
+    <button class="backlink" id="btnBackCtl">→ رجوع لكل الأرقام</button>
+    <div id="controlBody"></div>
+  </section>
+
   <!-- ============ live broadcast view ============ -->
   <section id="viewLive" class="hidden">
     <button class="backlink" id="btnBackLive">→ رجوع لكل الأرقام</button>
@@ -422,7 +453,7 @@ a { color: inherit; }
   </section>
 
   <div class="foot">
-    عمولة الموقع <b id="footFee">2.5%</b> من سعر البيع (السعي) — على ذمة البائع.<br>
+    عمولة الموقع <b id="footFee">2%</b> من سعر البيع (السعي) — على ذمة البائع.<br>
     الموقع وسيط عرض فقط. الاتفاق والتسليم والدفع بين البائع والمشتري مباشرة.<br>
     نقل ملكية الرقم يتم عبر الشركة المشغّلة وحسب أنظمتها.
   </div>
@@ -455,7 +486,7 @@ a { color: inherit; }
 const SUPABASE_URL      = 'https://afvgsubxuquzlkxyondf.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdmdzdWJ4dXF1emxreHlvbmRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NjE5NTMsImV4cCI6MjEwNTIzNzk1M30.LtmCBLoTHrKjSECjOBrOSottbJawytm70DDpH4TkgXE';
 
-const COMMISSION    = 0.025;   // 2.5% of the hammer price — على ذمة البائع
+const COMMISSION    = 0.02;    // 2% of the hammer price — على ذمة البائع
 const MIN_STEP      = 50;      // smallest raise, in SAR
 const STEP_PERCENT  = 0.05;    // or 5% of the current price, whichever is bigger
 const POLL_MS       = 2500;    // how often the page refreshes itself
@@ -682,7 +713,9 @@ function parseRoute() {
   if (h.startsWith('n/')) return { name: 'lot', id: decodeURIComponent(h.slice(2)) };
   if (h === 'admin') return { name: 'admin', id: null };
   if (h === 'live') return { name: 'live', id: null };
+  if (h === 'control') return { name: 'control', id: null };
   if (!h && /\/live\/?$/.test(location.pathname)) return { name: 'live', id: null };
+  if (!h && /\/control\/?$/.test(location.pathname)) return { name: 'control', id: null };
   return { name: 'list', id: null };
 }
 
@@ -692,6 +725,7 @@ async function go() {
   $('#viewList').classList.toggle('hidden', route.name !== 'list');
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
   $('#viewLive').classList.toggle('hidden', route.name !== 'live');
+  $('#viewControl').classList.toggle('hidden', route.name !== 'control');
   $('#bidbarHost').innerHTML = '';
   window.scrollTo(0, 0);
   await refresh(true);
@@ -699,12 +733,12 @@ async function go() {
 
 async function refresh(full) {
   try {
-    if (route.name === 'live') {
+    if (route.name === 'live' || route.name === 'control') {
       cache.listings = await store.listings();
       const lot = cache.listings.find(l => l.is_live);
       const bids = lot ? await store.bids(lot.id) : [];
       if (lot) cache.bids[lot.id] = bids;
-      renderLive(lot, bids);
+      if (route.name === 'live') renderLive(lot, bids); else renderControl(lot, bids);
       return;
     }
     if (route.name === 'lot') {
@@ -752,14 +786,20 @@ function renderList() {
 
   const onAir = cache.listings.find(l => l.is_live);
 
-  const banner = onAir
-    ? '<button class="live-banner" id="goLive">' +
-        '<span class="live-dot">على الهواء</span>' +
-        '<span class="n">' + esc(fmtPhone(onAir.phone)) + '</span>' +
-        '<span class="go">تابع البث</span>' +
-      '</button>'
-    : (admin.on ? '<button class="live-banner" id="goLive"><span class="go">افتح شاشة البث</span>' +
-        '<span class="n" style="font-size:.9rem">وضع المشرف</span></button>' : '');
+  const banner =
+    (onAir
+      ? '<button class="live-banner" id="goLive">' +
+          '<span class="live-dot">على الهواء</span>' +
+          '<span class="n">' + esc(fmtPhone(onAir.phone)) + '</span>' +
+          '<span class="go">تابع البث</span>' +
+        '</button>'
+      : '') +
+    (admin.on
+      ? '<button class="live-banner" id="goControl" style="background:#0d3b26">' +
+          '<span class="go">لوحة التحكم</span>' +
+          '<span class="n" style="font-size:.86rem">تظهر لك وحدك</span>' +
+        '</button>'
+      : '');
 
   if (!rows.length) {
     host.innerHTML = banner + '<div class="empty"><div class="empty-emoji">📱</div>'
@@ -809,6 +849,8 @@ function renderList() {
 function wireLiveBanner() {
   const b = $('#goLive');
   if (b) b.addEventListener('click', () => { location.hash = '#/live'; });
+  const c = $('#goControl');
+  if (c) c.addEventListener('click', () => { location.hash = '#/control'; });
 }
 
 function adminBar(lot) {
@@ -825,7 +867,7 @@ function adminBar(lot) {
     if (a === 'delete' && !confirm('حذف هذا المزاد نهائياً؟')) return;
     const r = await opDo(lot.id, a);
     if (!r) return;
-    if (a === 'live') { location.hash = '#/live'; return; }
+    if (a === 'live') { toast('صار على الهواء 🔴'); return; }
     toast('تم');
     if (a === 'delete' && route.name === 'lot') location.hash = '';
   });
@@ -852,7 +894,6 @@ function renderLive(lot, bids) {
         queueHtml(open) +
       '</div>';
     wireQueue(open, null);
-    if (admin.on) host.firstElementChild.appendChild(opBar(null));
     return;
   }
 
@@ -901,7 +942,77 @@ function renderLive(lot, bids) {
     '</div>';
 
   wireQueue(open, lot);
-  if (admin.on) host.firstElementChild.appendChild(opBar(lot));
+}
+
+/* ===================== لوحة التحكم (لك وحدك) =====================
+   Never shown to viewers, and deliberately NOT part of the broadcast
+   screen: keep this on your phone, put #/live on the screen you share. */
+function renderControl(lot, bids) {
+  const host = $('#controlBody');
+
+  if (!admin.on) {
+    host.innerHTML =
+      '<div class="card" style="text-align:center">' +
+        '<div style="font-weight:800;margin-bottom:6px">لوحة التحكم</div>' +
+        '<div style="font-size:.86rem;color:var(--muted);margin-bottom:12px">تحتاج كلمة مرور المشرف.</div>' +
+        '<button class="btn btn-block" id="ctlLogin">دخول المشرف</button>' +
+      '</div>';
+    $('#ctlLogin').addEventListener('click', () => askAdmin());
+    return;
+  }
+
+  const open = cache.listings.filter(l => lotState(l) === 'live' && !l.is_live)
+    .sort((a, b) => a.created_at.localeCompare(b.created_at));
+  const t = lot ? topBid(lot.id, lot) : null;
+  const st = lot ? lotState(lot) : null;
+  const cd = lot ? countdown(lot.end_at) : null;
+
+  host.innerHTML =
+    '<div class="ctl-top">' +
+      '<div><b>لوحة التحكم</b><span> — تظهر لك فقط</span></div>' +
+      '<a class="btn btn-ghost btn-sm" href="#/live" target="_blank" rel="noopener">شاشة العرض ↗</a>' +
+    '</div>' +
+
+    '<div class="card">' +
+      (lot
+        ? '<div class="ctl-now">' +
+            '<div class="k">المعروض على الهواء</div>' +
+            '<div class="ctl-digits num">' + esc(fmtPhone(lot.phone)) + '</div>' +
+            '<div class="ctl-row">' +
+              '<span>' + badgeFor(st) + '</span>' +
+              '<span class="ctl-price num">' + money(t.amount) + ' ر.س</span>' +
+              (st === 'live'
+                ? '<span class="ctl-clock num" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</span>'
+                : '<span class="ctl-clock num">—</span>') +
+            '</div>' +
+            '<div class="ctl-who">' + (t.name ? 'أعلى مزايد: ' + esc(t.name) : 'ما زايد أحد بعد') +
+              ' · البائع ' + esc(lot.seller_name) + '</div>' +
+          '</div>'
+        : '<div class="ctl-now"><div class="ctl-digits" style="font-size:1.1rem">ما فيه رقم على الهواء</div>' +
+          '<div class="ctl-who">سجّل رقم أو اعرض واحد من الطابور تحت</div></div>') +
+      '<div id="ctlBar"></div>' +
+    '</div>' +
+
+    '<div class="card" id="ctlQueue"></div>';
+
+  // the operator bar lives here now, on a light card
+  const bar = opBar(lot);
+  bar.classList.add('light');
+  $('#ctlBar').appendChild(bar);
+
+  $('#ctlQueue').innerHTML = open.length
+    ? '<div style="font-weight:700;margin-bottom:8px">الطابور (<span class="num">' + open.length + '</span>)</div>' +
+      open.map(l =>
+        '<div class="ctl-q" data-q="' + esc(l.id) + '">' +
+          '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
+          '<span>' + esc(l.seller_name) + '</span>' +
+          '<button>اعرضه</button>' +
+        '</div>').join('')
+    : '<div style="text-align:center;color:var(--muted);font-size:.86rem">ما فيه أرقام بالانتظار</div>';
+
+  $('#ctlQueue').querySelectorAll('.ctl-q button').forEach(b => {
+    b.addEventListener('click', () => opDo(b.closest('.ctl-q').dataset.q, 'live'));
+  });
 }
 
 function queueHtml(open) {
@@ -911,7 +1022,7 @@ function queueHtml(open) {
       '<div class="q" data-q="' + esc(l.id) + '">' +
         '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
         '<span>' + esc(l.seller_name) + '</span>' +
-        (admin.on ? '<button>اعرضه</button>' : '') +
+        (admin.on && route.name === 'control' ? '<button>اعرضه</button>' : '') +
       '</div>').join('') + '</div>';
 }
 
@@ -1031,7 +1142,8 @@ function askQuickAdd() {
       }
       closeSheet();
       toast('بدأ السوم 🔴');
-      if (route.name !== 'live') location.hash = '#/live'; else refresh(true);
+      if (route.name === 'control' || route.name === 'live') refresh(true);
+      else location.hash = '#/control';
     } catch (e) {
       console.error(e);
       btn.disabled = false; btn.textContent = 'ابدأ السوم على الهواء 🔴';
@@ -1219,7 +1331,8 @@ function askAdmin() {
   s.querySelector('#adSave').addEventListener('click', () => {
     const v = s.querySelector('#adInput').value.trim();
     if (!v) return;
-    admin.secret = v; closeSheet(); toast('وضع المشرف مفعّل'); refresh(false);
+    admin.secret = v; closeSheet(); toast('وضع المشرف مفعّل');
+    if (route.name === 'control') refresh(true); else location.hash = '#/control';
   });
   if (admin.on) s.querySelector('#adOut').addEventListener('click', () => { admin.secret = ''; closeSheet(); toast('تم الخروج'); refresh(false); });
 }
@@ -1316,6 +1429,7 @@ $('#nameChip').addEventListener('click', () => askName());
 $('#btnAdd').addEventListener('click', () => askListing());
 $('#btnBack').addEventListener('click', () => { location.hash = ''; });
 $('#btnBackLive').addEventListener('click', () => { location.hash = ''; });
+$('#btnBackCtl').addEventListener('click', () => { location.hash = ''; });
 document.querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.filter').forEach(x => x.classList.toggle('on', x === b));
   cache.filter = b.dataset.filter; renderList();

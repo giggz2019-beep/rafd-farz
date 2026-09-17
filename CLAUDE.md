@@ -141,6 +141,12 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   `update mazad_config set value = '…' where key = 'admin_secret';`
 - Operator mode: long-press the logo (or open `#/admin`) and enter the secret —
   adds تم البيع / +5 دقائق / إيقاف / إعادة فتح / حذف to every card.
+- **Two screens, deliberately separate.** `/live` is the display screen that goes
+  on the broadcast and carries **no controls at all**, even for the operator —
+  buttons on that page would be visible to every viewer watching the screen
+  share. `/control` is the operator's private panel (password-gated, on their own
+  phone) and holds every button. Do not "helpfully" add operator controls back
+  onto `/live`; the split is the point.
 - **Live broadcast mode** (`#/live`, also served at `/live`). One number is "on
   air" at a time — `mazad_listings.is_live`, and only `mazad_admin` can set it,
   so a viewer cannot put their own number on screen. The broadcast screen shows
@@ -156,7 +162,7 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     why walk-in lots can be 1–2 minutes while public listings cannot.
   - Statuses are `open | sold | unsold | cancelled`; `unsold` is «لم يتم البيع»,
     the seller refusing the highest bid, and is distinct from simply expiring.
-- **Commission**: `COMMISSION` (0.025 = 2.5% of the hammer price, على ذمة
+- **Commission**: `COMMISSION` (0.02 = 2% of the hammer price, على ذمة
   البائع). One constant drives all three places it is shown — the publish sheet,
   the live amount on the lot page, and the footer — so changing the rate is a
   one-line edit. It is displayed only; the site takes no payment and settles
