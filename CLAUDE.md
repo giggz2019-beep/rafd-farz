@@ -124,24 +124,29 @@ file, and nothing links to it. Share the URL (`/mazad`) directly.
 `mazad_config` at all — so a crafted request cannot change a price, close an
 auction, or read the operator secret. Schema: `supabase-mazad.sql`.
 
-- **Setup**: run `supabase-mazad.sql` in the Supabase SQL editor, change
-  `admin_secret` in `mazad_config`, then paste the project URL and the anon key
-  into the `SUPABASE_URL` / `SUPABASE_ANON_KEY` constants at the top of the
-  `<script>` block (same convention as `TURNSTILE_SITE_KEY` in
-  `partner-login.html`).
-- **Both constants empty → وضع تجريبي**: the page runs entirely on
-  `localStorage` so it can be demoed with no database. Same
-  degrade-instead-of-error convention used elsewhere in this repo.
-- Prefer a **separate** Supabase project for the auction. The table is
-  public-write by design; keeping it out of the project that holds applicant
-  data avoids widening that blast radius.
+- **Already live.** Supabase project `mazad-arqam` (ref `afvgsubxuquzlkxyondf`,
+  region ap-south-1, free tier) holds the schema; its URL and public anon key
+  are hard-coded in the `SUPABASE_URL` / `SUPABASE_ANON_KEY` constants at the
+  top of the `<script>` block — the same convention as `TURNSTILE_SITE_KEY` in
+  `partner-login.html`. The anon key is meant to be public.
+- It is a **separate Supabase project from RAFD on purpose.** The listings table
+  is public-write by design, so it stays out of the project that holds applicant
+  data. Do not move these tables into the `Rafd` project.
+- **Both constants empty → وضع تجريبي**: the page falls back to `localStorage`
+  and runs with no database at all. Same degrade-instead-of-error convention
+  used elsewhere in this repo. Handy for screenshots and demos.
+- The operator secret lives in `mazad_config.admin_secret` and is **not** in the
+  repo. Rotate it with
+  `update mazad_config set value = '…' where key = 'admin_secret';`
 - Operator mode: long-press the logo (or open `#/admin`) and enter the secret —
   adds تم البيع / +5 دقائق / إيقاف / إعادة فتح / حذف to every card.
 - The client's bid step (`stepFor`) mirrors `place_bid`'s rule exactly:
   `max(50, ceil(current * 5%))`. **Change both together or neither**, otherwise
   the quick-bid buttons offer amounts the database rejects.
-- `vercel.json`'s CSP `connect-src` allowlists `https://*.supabase.co` and
-  `wss://*.supabase.co` so any Supabase project works without another edit.
+- `vercel.json`'s CSP `connect-src` allowlists
+  `https://afvgsubxuquzlkxyondf.supabase.co` (and its `wss://`). Pointing the
+  page at a different Supabase project means editing that header too, or the
+  browser blocks every request.
 - Arabic is bidi-sensitive: every price, countdown and phone number carries
   `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL
   reverses the digits.

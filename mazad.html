@@ -306,17 +306,20 @@ a { color: inherit; }
    All the rules (bid must beat the price, auction still open, …) live in
    the database — see supabase-mazad.sql. Nothing here is trusted.
 
-   SETUP (2 minutes):
-     1. Create a Supabase project  →  supabase.com
-     2. SQL editor  →  paste supabase-mazad.sql  →  Run
-     3. Settings → API  →  copy the URL and the "anon / public" key
-     4. Paste both below and redeploy.
-   Leave them empty and the site runs in وضع تجريبي (local demo, this
-   browser only) so you can try it before wiring the database.
+   The database is already set up (project "mazad-arqam", schema applied from
+   supabase-mazad.sql). Clearing the two constants below drops the page back
+   to وضع تجريبي — a local demo on localStorage, this browser only.
    ===================================================================== */
 
-const SUPABASE_URL      = '';   // e.g. 'https://abcdefgh.supabase.co'
-const SUPABASE_ANON_KEY = '';   // the "anon / public" key — safe to publish
+/* Supabase project "mazad-arqam" (ap-south-1) — its own project, deliberately
+   separate from the RAFD database. The key below is the PUBLIC anon key: it is
+   meant to ship in the page. It can only read listings/bids and create a
+   listing; it cannot change a price, close an auction, or read the operator
+   secret — see supabase-mazad.sql.
+   The project's modern publishable key works too, if the legacy key is ever
+   rotated out: sb_publishable_137ORWCtoU2UZEEEfr4NzQ_sxWFyuXl */
+const SUPABASE_URL      = 'https://afvgsubxuquzlkxyondf.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdmdzdWJ4dXF1emxreHlvbmRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NjE5NTMsImV4cCI6MjEwNTIzNzk1M30.LtmCBLoTHrKjSECjOBrOSottbJawytm70DDpH4TkgXE';
 
 const MIN_STEP      = 50;      // smallest raise, in SAR
 const STEP_PERCENT  = 0.05;    // or 5% of the current price, whichever is bigger
