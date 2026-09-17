@@ -527,6 +527,14 @@ const POLL_MS       = 2500;    // how often the page refreshes itself
 const SHOW_FINISHED = false;
 
 /* ---------------------------------------------------------------- utils */
+function uuid() {
+  try { if (crypto.randomUUID) return crypto.randomUUID(); } catch {}
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
 const $  = (s, r = document) => r.querySelector(s);
 const el = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content.firstElementChild; };
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -546,10 +554,13 @@ function toast(msg) {
   toast._t = setTimeout(() => host.innerHTML = '', 2600);
 }
 
+/* A queued number arrives masked as 054•••••01 — keep the mask characters so
+   it still groups like a phone number. */
 function fmtPhone(p) {
-  const d = String(p || '').replace(/\D/g, '');
+  const d = String(p || '').replace(/[^0-9•]/g, '');
   return d.length === 10 ? d.slice(0,3) + ' ' + d.slice(3,6) + ' ' + d.slice(6) : d;
 }
+const isMasked = (lot) => Boolean(lot && (lot.phone_masked || String(lot.phone || '').includes('•')));
 const CARRIERS = { stc: 'STC', mobily: 'موبايلي', zain: 'زين', other: 'أخرى' };
 
 function stepFor(current) { return Math.max(MIN_STEP, Math.ceil(current * STEP_PERCENT)); }
@@ -636,17 +647,41 @@ const remote = {
     if (!res.ok) throw new Error((data && (data.message || data.hint)) || 'network');
     return data;
   },
-  listings() {
-    return this.req('mazad_listings?select=*&order=created_at.desc&limit=200');
+  /* mazad_public masks a queued number and carries no seller contact at all,
+     so neither ever reaches a viewer's browser. The operator asks for the real
+     rows with the secret instead. */
+  async listings() {
+    if (admin.on) {
+      try {
+        const r = await this.req('rpc/mazad_admin_list', {
+          method: 'POST', body: JSON.stringify({ p_secret: admin.secret })
+        });
+        if (r && r.ok && r.listings) return r.listings;
+      } catch (e) { console.warn('admin list failed, falling back', e); }
+    }
+    return this.req('mazad_public?select=*&order=created_at.desc&limit=200');
   },
-  listing(id) {
-    return this.req('mazad_listings?select=*&id=eq.' + encodeURIComponent(id)).then(r => r[0] || null);
+  async listing(id) {
+    if (admin.on) {
+      const all = await this.listings();
+      const hit = all.find(l => l.id === id);
+      if (hit) return hit;
+    }
+    return this.req('mazad_public?select=*&id=eq.' + encodeURIComponent(id)).then(r => r[0] || null);
   },
   bids(id) {
     return this.req('mazad_bids?select=*&listing_id=eq.' + encodeURIComponent(id) + '&order=created_at.asc&limit=500');
   },
-  createListing(body) {
-    return this.req('mazad_listings', { method: 'POST', body: JSON.stringify(body) }).then(r => r[0]);
+  async createListing(body) {
+    // anon may INSERT but not SELECT the table, so ask for no row back and
+    // generate the id here instead
+    const id = uuid();
+    await this.req('mazad_listings', {
+      method: 'POST',
+      headers: { Prefer: 'return=minimal' },
+      body: JSON.stringify({ ...body, id })
+    });
+    return { ...body, id };
   },
   placeBid(id, name, amount) {
     return this.req('rpc/place_bid', {
@@ -978,7 +1013,9 @@ function renderList() {
   wireLiveBanner();
   rows.forEach(lot => {
     const st = lotState(lot), t = topBid(lot.id, lot), cd = countdown(lot.end_at);
-    const badge = badgeFor(st) + (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '');
+    const badge = badgeFor(st)
+      + (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '')
+      + (isMasked(lot) ? '<span class="badge wait">🔒 مخفي</span>' : '');
     const card = el(
       '<div class="card">' +
         '<button class="lot">' +
@@ -1486,7 +1523,8 @@ function renderLot(lot, bids, full) {
       (st === 'live'
         ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
         : st === 'pending'
-        ? '<div class="wait-note">رقمك مسجّل وينتظر دوره في البث.<br>' +
+        ? '<div class="wait-note">' +
+          (isMasked(lot) ? 'الرقم مخفي جزئياً لين يجي دوره — يظهر كامل لما يفتح عليه السوم.<br>' : '') +
           'ما يقدر أحد يزايد عليه إلا لما نفتح عليه السوم.</div>'
         : '') +
       '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
@@ -1496,9 +1534,9 @@ function renderLot(lot, bids, full) {
         : '<div class="fee">عمولة الموقع ' + COMMISSION_LABEL + ' من السعي = ' +
           '<b><span class="num">' + money(commissionOn(shown)) + '</span> ر.س</b>' +
           '<span> — على ذمة البائع</span></div>') +
-      (lot.seller_contact
+      (lot.seller_contact && admin.on
         ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
-          esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع</a>'
+          esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع (مشرف)</a>'
         : '') +
     '</div>' +
 
@@ -1678,7 +1716,8 @@ function askListing() {
     '<div id="lsErr"></div>' +
     '<div class="field ltr"><label>رقم الجوال المعروض</label>' +
       '<input id="lsPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX">' +
-      '<div class="sub">يبدأ بـ 05 ويتكوّن من 10 أرقام.</div></div>' +
+      '<div class="sub">يبدأ بـ 05 ويتكوّن من 10 أرقام. يظهر مخفي جزئياً ' +
+        '(<span class="num">054 ••• ••01</span>) لين يجي دوره في البث.</div></div>' +
     '<div class="row2">' +
       '<div class="field"><label>الشركة</label><select id="lsCarrier">' +
         '<option value="stc">STC</option><option value="mobily">موبايلي</option>' +
@@ -1689,7 +1728,8 @@ function askListing() {
 
     '<div class="row2">' +
       '<div class="field"><label>اسمك</label><input id="lsName" maxlength="40" placeholder="أبو فهد" value="' + esc(me.name) + '"></div>' +
-      '<div class="field ltr"><label>جوال للتواصل</label><input id="lsContact" type="tel" inputmode="numeric" maxlength="14" placeholder="05XXXXXXXX"></div>' +
+      '<div class="field ltr"><label>جوال للتواصل</label><input id="lsContact" type="tel" inputmode="numeric" maxlength="14" placeholder="05XXXXXXXX">' +
+        '<div class="sub">لإدارة المزاد فقط — ما يظهر لأحد.</div></div>' +
     '</div>' +
     '<div class="field"><label>ملاحظة (اختياري)</label><input id="lsNote" maxlength="80" placeholder="مثال: أرقام متشابهة وسهلة الحفظ"></div>' +
     '<div class="fee-box">💰 عمولة الموقع <b>' + COMMISSION_LABEL + '</b> من سعر البيع (السعي)، <b>على ذمة البائع</b>.' +
