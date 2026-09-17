@@ -3,14 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>مزاد الأرقام — بيع واشترِ أرقام الجوال المميزة</title>
-<meta name="description" content="مزاد مباشر لأرقام الجوال المميزة. اعرض رقمك، والناس تزايد عليه لحظة بلحظة.">
+<title>مزاد سوم | للأرقام المميزة</title>
+<meta name="description" content="مزاد سوم — مزاد مباشر للأرقام المميزة. اعرض رقمك، والناس تزايد عليه لحظة بلحظة.">
 <meta name="theme-color" content="#0b5c37">
-<meta property="og:title" content="مزاد الأرقام">
-<meta property="og:description" content="اعرض رقمك المميز، والناس تزايد عليه مباشرة.">
+<meta property="og:title" content="مزاد سوم | للأرقام المميزة">
+<meta property="og:description" content="اعرض رقمك المميز، والناس تزايد عليه مباشرة. أعلى سوم يكسب.">
+<meta property="og:image" content="/mazad-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="/mazad-og.png">
 <meta property="og:type" content="website">
-<link rel="icon" href="/favicon-32.png" sizes="32x32">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="/mazad-icon.png" sizes="512x512">
+<link rel="apple-touch-icon" href="/mazad-icon.png">
 <style>
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Medium.otf')  format('opentype'); font-weight: 500 600; font-display: swap; }
@@ -68,7 +71,7 @@ a { color: inherit; }
 .brand-mark {
   width: 40px; height: 40px; border-radius: 12px; flex: none;
   background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
-  color: var(--green-900); font-weight: 900; font-size: 1.15rem;
+  color: var(--green-900); font-weight: 900; font-size: .92rem;
   display: grid; place-items: center;
 }
 .brand-name { font-weight: 700; font-size: 1.1rem; line-height: 1.2; }
@@ -266,10 +269,10 @@ a { color: inherit; }
 <header class="topbar">
   <div class="wrap">
     <div class="brand">
-      <div class="brand-mark" id="brandMark">مز</div>
+      <div class="brand-mark" id="brandMark">سوم</div>
       <div>
-        <div class="brand-name">مزاد الأرقام</div>
-        <div class="brand-sub">أرقام جوال مميزة — مزايدة مباشرة</div>
+        <div class="brand-name">مزاد سوم</div>
+        <div class="brand-sub">للأرقام المميزة — مزايدة مباشرة</div>
       </div>
     </div>
     <button class="chip-name" id="nameChip">اسمك؟</button>
@@ -311,7 +314,7 @@ a { color: inherit; }
 
 <script>
 /* =====================================================================
-   مزاد الأرقام — single-page auction, no build step, no backend function.
+   مزاد سوم — single-page auction, no build step, no backend function.
    ---------------------------------------------------------------------
    The page talks to Supabase REST directly with the PUBLIC anon key.
    All the rules (bid must beat the price, auction still open, …) live in
@@ -731,7 +734,7 @@ function waLink(contact, phone) {
 
 async function share(lot) {
   const url = location.origin + location.pathname + '#/n/' + encodeURIComponent(lot.id);
-  const data = { title: 'مزاد الأرقام', text: 'مزاد على الرقم ' + fmtPhone(lot.phone), url };
+  const data = { title: 'مزاد سوم | للأرقام المميزة', text: 'مزاد على الرقم ' + fmtPhone(lot.phone) + ' — أعلى سوم يكسب', url };
   try {
     if (navigator.share) { await navigator.share(data); return; }
     await navigator.clipboard.writeText(url); toast('تم نسخ الرابط');
