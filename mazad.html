@@ -142,8 +142,8 @@ a { color: inherit; }
   border: 2px solid var(--gold-500);
 }
 .phone-digits {
-  font-size: clamp(1.6rem, 7.5vw, 2.4rem); font-weight: 900; letter-spacing: .06em;
-  direction: ltr; unicode-bidi: isolate;
+  font-size: clamp(1.35rem, 6.6vw, 2.4rem); font-weight: 900; letter-spacing: .04em;
+  direction: ltr; unicode-bidi: isolate; white-space: nowrap;
 }
 .phone-carrier { font-size: .72rem; opacity: .85; margin-top: 2px; }
 
@@ -274,7 +274,7 @@ a { color: inherit; }
 .ctl-top > div { flex: 1; }
 .ctl-now { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed var(--line); margin-bottom: 12px; }
 .ctl-now .k { font-size: .74rem; color: var(--muted); }
-.ctl-digits { font-size: clamp(1.5rem, 8vw, 2.1rem); font-weight: 900; letter-spacing: .04em; }
+.ctl-digits { font-size: clamp(1.3rem, 7vw, 2.1rem); font-weight: 900; letter-spacing: .03em; white-space: nowrap; }
 .ctl-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
 .ctl-price { font-weight: 900; color: var(--green-600); font-size: 1.1rem; }
 .ctl-clock { font-weight: 900; color: #b5651d; font-size: 1.1rem; }
@@ -314,8 +314,9 @@ a { color: inherit; }
   padding: 16px 10px; text-align: center; position: relative; overflow: hidden;
 }
 .live-digits {
-  font-size: clamp(2.1rem, 11vw, 4rem); font-weight: 900; letter-spacing: .05em;
+  font-size: clamp(1.5rem, 8vw, 3.4rem); font-weight: 900; letter-spacing: .03em;
   direction: ltr; unicode-bidi: isolate; line-height: 1.1;
+  white-space: nowrap;   /* 054 677 7501 must never break across two lines */
 }
 .live-note { font-size: .82rem; color: #3f6b52; }
 
@@ -881,7 +882,9 @@ function renderLive(lot, bids) {
   const host = $('#liveBody');
   const open = cache.listings.filter(l => lotState(l) === 'live' && !l.is_live)
     .sort((a, b) => a.created_at.localeCompare(b.created_at));
-  const doneCount = cache.listings.filter(l => ['sold', 'unsold'].includes(l.status)).length;
+  const liveId = lot ? lot.id : null;
+  const doneCount = cache.listings
+    .filter(l => ['sold', 'unsold'].includes(l.status) && l.id !== liveId).length;
 
   if (!lot) {
     host.innerHTML =
@@ -914,7 +917,8 @@ function renderLive(lot, bids) {
       '<div class="live-plate plate-wrap">' +
         '<div class="live-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
         '<div class="live-note">' + esc(CARRIERS[lot.carrier] || 'رقم مميز') +
-          (lot.note ? ' · ' + esc(lot.note) : '') + ' · البائع ' + esc(lot.seller_name) + '</div>' +
+          (lot.note ? ' · ' + esc(lot.note) : '') +
+          (lot.seller_name && lot.seller_name !== 'البائع' ? ' · البائع ' + esc(lot.seller_name) : '') + '</div>' +
         stampFor(st) +
       '</div>' +
 
