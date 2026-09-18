@@ -352,13 +352,24 @@ a { color: inherit; }
   display: flex; align-items: center; gap: 8px; border: 1px solid #f0dcb0;
   background: #fffaf0; border-radius: 12px; padding: 9px 11px; margin-bottom: 6px;
 }
-.ctl-bid .who { flex: 1; min-width: 0; }
+.ctl-bid .who { min-width: 84px; max-width: 110px; }
 .ctl-bid .who b { display: block; font-size: .9rem; }
 .ctl-bid .who span { font-size: .7rem; color: var(--muted); }
 .ctl-bid .amt { font-weight: 900; font-size: 1.05rem; color: var(--green-700); }
 .ctl-bid button { border-radius: 10px; padding: 8px 12px; font-size: .95rem; font-weight: 900; }
 .ctl-bid button.yes { background: #12833f; color: #fff; }
 .ctl-bid button.no  { background: #fdecea; color: var(--danger); border: 1px solid #f3c6c1; }
+.ctl-bid.ok   { border-color: #bfe3cd; background: #f3fbf6; }
+.ctl-bid.thin { border-color: #f0dcb0; background: #fffaf0; }
+.ctl-bid.low  { border-color: #f3c6c1; background: #fdf3f2; }
+.ctl-bid .cmp { flex: 1; min-width: 0; text-align: center; }
+.cmp-line { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
+.cmp-now { color: var(--muted); font-weight: 700; font-size: .92rem; }
+.cmp-arrow { color: var(--muted); font-size: .8rem; }
+.cmp-note { font-size: .7rem; color: var(--muted); margin-top: 2px; }
+.ctl-bid.ok  .cmp-note { color: #12833f; }
+.ctl-bid.low .cmp-note { color: var(--danger); }
+.ctl-bid button.yes[disabled] { opacity: .35; }
 .ctl-bid.done { background: #f4f9f6; border-color: var(--line); }
 .ctl-bid.done .amt { color: var(--green-600); }
 button.ctl-price { background: #eef7f1; border: 1px solid #cfe6d9; border-radius: 10px; padding: 4px 10px; }
@@ -1399,21 +1410,47 @@ function renderPendingBids() {
   host.innerHTML =
     '<div style="font-weight:700;margin-bottom:8px">سومات بانتظار موافقتك ' +
       '<span class="pill">' + list.length + '</span></div>' +
-    list.map(b =>
-      '<div class="ctl-bid" data-b="' + esc(b.id) + '">' +
+    list.map(b => {
+      // a sum only means something next to the price it is trying to beat
+      const cur = Number(b.current ?? 0);
+      const min = Number(b.min_next ?? 0);
+      const amt = Number(b.amount);
+      const beats = b.beats_current != null ? b.beats_current : amt > cur;
+      const enough = min ? amt >= min : beats;
+      const diff = amt - cur;
+      return '<div class="ctl-bid ' + (enough ? 'ok' : beats ? 'thin' : 'low') + '" data-b="' + esc(b.id) + '"' +
+               ' data-ok="' + (beats ? '1' : '0') + '">' +
         '<div class="who">' +
           '<b>' + esc(b.bidder_name) + '</b>' +
           '<span class="num">' + esc(fmtPhone(b.phone || '')) + '</span>' +
         '</div>' +
-        '<div class="amt num">' + money(b.amount) + '</div>' +
-        '<button class="yes" data-a="approve">✔</button>' +
+        '<div class="cmp">' +
+          '<div class="cmp-line">' +
+            '<span class="cmp-now num">' + money(cur) + '</span>' +
+            '<span class="cmp-arrow">←</span>' +
+            '<span class="amt num">' + money(amt) + '</span>' +
+          '</div>' +
+          '<div class="cmp-note">' +
+            (!beats
+              ? 'أقل من السعر بـ <span class="num">' + money(Math.abs(diff)) + '</span> — ما ترفع السوم'
+              : enough
+                ? 'أعلى بـ <span class="num">' + money(diff) + '</span> ✔'
+                : 'أعلى بـ <span class="num">' + money(diff) + '</span> — الحد الأدنى <span class="num">' + money(min) + '</span>') +
+          '</div>' +
+        '</div>' +
+        '<button class="yes" data-a="approve"' + (beats ? '' : ' disabled title="أقل من السعر الحالي"') + '>✔</button>' +
         '<button class="no"  data-a="reject">✖</button>' +
-      '</div>').join('');
+      '</div>';
+    }).join('');
 
   host.querySelectorAll('.ctl-bid button').forEach(btn => {
     btn.addEventListener('click', async () => {
       const row = btn.closest('.ctl-bid');
       const id = row.dataset.b, act = btn.dataset.a;
+      if (act === 'approve' && row.dataset.ok === '0') {
+        toast('هذي السومة أقل من السعر الحالي — ما ترفعه');
+        return;
+      }
       row.style.opacity = '.5';
       try {
         const r = await store.bidAction(id, admin.secret, act);
