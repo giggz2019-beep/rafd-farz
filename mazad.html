@@ -311,11 +311,15 @@ a { color: inherit; }
 .p-gloss    { fill: url(#gGloss); }
 .p-stick    { fill: url(#gWood); }
 .p-stick-hi { fill: rgba(255,255,255,.45); }
+
 .p-palm     { fill: url(#gSkin); }
-.p-finger   { fill: url(#gFinger); stroke: rgba(150,95,45,.45); stroke-width: 1.1; }
-.p-thumb    { fill: url(#gSkin); stroke: rgba(140,88,40,.55); stroke-width: 1.4; }
-.p-nail     { fill: rgba(255,255,255,.30); }
-.p-crease   { stroke: rgba(150,95,45,.28); stroke-width: 1.1; fill: none; stroke-linecap: round; }
+.p-palm-sh  { fill: rgba(120,72,32,.20); }
+.p-fg-body  { fill: url(#gFinger); stroke: rgba(132,80,36,.55); stroke-width: 1.2; }
+.p-fg-joint { stroke: rgba(132,80,36,.42); stroke-width: 1.3; fill: none; stroke-linecap: round; }
+.p-fg-knuck { fill: rgba(255,255,255,.28); }
+.p-nail     { fill: url(#gNail); stroke: rgba(132,80,36,.45); stroke-width: .9; }
+.p-thumb    { fill: url(#gFinger); stroke: rgba(132,80,36,.6); stroke-width: 1.3; }
+
 .p-amount {
   fill: #0d2a1c; font-family: inherit; font-weight: 900; font-size: 31px;
   text-anchor: middle; direction: ltr; unicode-bidi: isolate;
@@ -588,6 +592,10 @@ button.ctl-price:active { transform: scale(.97); }
   <linearGradient id="gFinger" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0" stop-color="#fadcbb"/><stop offset=".6" stop-color="#e5b78e"/>
     <stop offset="1" stop-color="#c58f5c"/>
+  </linearGradient>
+  <linearGradient id="gNail" x1="0" y1="0" x2="0.3" y2="1">
+    <stop offset="0" stop-color="#ffeede"/><stop offset=".6" stop-color="#f6d9bd"/>
+    <stop offset="1" stop-color="#e0b492"/>
   </linearGradient>
   <linearGradient id="gGloss" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0" stop-color="#ffffff" stop-opacity=".85"/>
@@ -1094,36 +1102,55 @@ function finalPrice(lot, t) {
 
 /* Every sum is drawn as an auction paddle raised by a hand, with the price
    written on it — the gesture people already know from a sale room. */
+/* Every sum is drawn as an auction paddle raised by a hand, with the price on
+   the board. The hand is a fist gripping the handle seen from the side: four
+   fingers curled round it, each with its own middle joint, knuckle and nail,
+   the thumb laid across them, and the heel of the palm behind. */
 function paddle(amount, variant) {
   const v = variant || '';
   const face = v.includes('top') ? 'url(#gBoardTop)' : v.includes('mine') ? 'url(#gBoardMine)' : 'url(#gBoard)';
+
+  // one finger: a curled segment with a knuckle at the back and a nail at the tip
+  const finger = (x, y, w, h, nail) =>
+    '<g class="p-fg">' +
+      '<rect class="p-fg-body" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (h / 2) + '"/>' +
+      '<path class="p-fg-joint" d="M' + (x + w * 0.42) + ' ' + (y + 2.5) + ' v' + (h - 5) + '"/>' +
+      '<ellipse class="p-fg-knuck" cx="' + (x + w - h * 0.42) + '" cy="' + (y + h * 0.46) + '" rx="' + (h * 0.40) + '" ry="' + (h * 0.34) + '"/>' +
+      (nail
+        ? '<rect class="p-nail" x="' + (x + 1.6) + '" y="' + (y + h * 0.20) + '" width="' + (h * 0.52) + '" height="' + (h * 0.60) + '" rx="' + (h * 0.24) + '"/>'
+        : '') +
+    '</g>';
+
   return (
     '<span class="paddle ' + v + '">' +
-      '<svg viewBox="0 0 120 176" aria-hidden="true">' +
-        // where it sits
-        '<ellipse class="p-shadow" cx="60" cy="168" rx="31" ry="5.5"/>' +
+      '<svg viewBox="0 0 122 180" aria-hidden="true">' +
+        '<ellipse class="p-shadow" cx="62" cy="173" rx="32" ry="5"/>' +
 
-        // the stick, running behind the fist
-        '<rect class="p-stick" x="52" y="62" width="15" height="74" rx="7.5"/>' +
-        '<rect class="p-stick-hi" x="55" y="66" width="3.6" height="66" rx="1.8"/>' +
+        // handle, running down behind the fist
+        '<rect class="p-stick" x="54" y="60" width="15" height="72" rx="7.5"/>' +
+        '<rect class="p-stick-hi" x="57" y="64" width="3.4" height="64" rx="1.7"/>' +
 
-        // the board: a darker slab behind the face gives it thickness
-        '<rect class="p-edge"  x="11" y="11" width="101" height="73" rx="15"/>' +
-        '<rect class="p-board" x="8"  y="5"  width="101" height="73" rx="15" fill="' + face + '"/>' +
-        '<rect class="p-gloss" x="16" y="11" width="85" height="27" rx="11"/>' +
-        '<text class="p-amount" x="58.5" y="52">' + esc(money(amount)) + '</text>' +
+        // board: a darker slab behind the face gives it thickness
+        '<rect class="p-edge"  x="12" y="11" width="101" height="73" rx="15"/>' +
+        '<rect class="p-board" x="9"  y="5"  width="101" height="73" rx="15" fill="' + face + '"/>' +
+        '<rect class="p-gloss" x="17" y="11" width="85" height="26" rx="11"/>' +
+        '<text class="p-amount" x="59.5" y="52">' + esc(money(amount)) + '</text>' +
 
-        // the fist: palm mass, four fingers wrapping the stick, thumb across
-        '<path class="p-palm" d="M30 112 h60 q11 0 11 12 v20 q0 15 -15 15 h-52 q-15 0 -15 -15 v-20 q0 -12 11 -12 z"/>' +
-        '<rect class="p-finger" x="27" y="108" width="66" height="13" rx="6.5"/>' +
-        '<rect class="p-finger" x="25" y="122" width="70" height="13" rx="6.5"/>' +
-        '<rect class="p-finger" x="27" y="136" width="66" height="13" rx="6.5"/>' +
-        '<rect class="p-finger" x="31" y="150" width="58" height="12" rx="6"/>' +
-        '<path class="p-crease" d="M33 118 h54 M31 132 h58 M33 146 h50"/>' +
-        // thumb: laid across the fingers so the shape reads as a fist, not a stack
-        '<g transform="rotate(-20 34 132)">' +
-          '<rect class="p-thumb" x="22" y="110" width="24" height="46" rx="12"/>' +
-          '<rect class="p-nail"  x="27" y="115" width="14" height="13" rx="6.5"/>' +
+        // heel of the palm, behind the fingers
+        '<path class="p-palm" d="M44 104 h42 q13 0 13 13 v34 q0 14 -14 14 h-40 q-13 0 -13 -13 v-35 q0 -13 12 -13 z"/>' +
+        '<path class="p-palm-sh" d="M86 106 q13 2 13 14 v33 q0 13 -13 14 z"/>' +
+
+        // index, middle, ring, little — curled round the handle, tips to the left
+        finger(23, 100, 70, 17, true) +
+        finger(21, 118, 74, 17, true) +
+        finger(24, 136, 69, 16, true) +
+        finger(29, 152, 61, 14, true) +
+
+        // thumb across the fingers
+        '<g transform="rotate(-24 33 133)">' +
+          '<rect class="p-thumb" x="20" y="108" width="26" height="50" rx="13"/>' +
+          '<path class="p-fg-joint" d="M33 120 v26"/>' +
+          '<rect class="p-nail" x="25" y="113" width="16" height="15" rx="7.5"/>' +
         '</g>' +
       '</svg>' +
     '</span>'
