@@ -182,8 +182,11 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     `Prefer: return=minimal`. Don't "fix" it back to `return=representation`.
   - `fmtPhone` keeps `•` so a masked number still groups as `054 ••• ••01`.
 - **A sum is drawn as a raised auction paddle** (`paddle(amount, variant)`): a
-  board with the price on it, a stick, and a hand gripping it — the gesture from
-  a sale room. Used in the feed on a number's page and on the broadcast screen.
+  glossy board with the price on it, a wooden stick, and a shaded fist with a
+  thumb laid across the fingers — the gesture from a sale room, with enough
+  depth to read as an object rather than an icon. The gradients live in one
+  hidden `<svg><defs>` near the top of `<body>`; every paddle references them by
+  id, so a screen full of paddles costs one set of gradients, not thirty. Used in the feed on a number's page and on the broadcast screen.
   The newest paddle animates in once, tracked by `lastSeenBid`, so the refresh
   loop does not replay the animation every 2.5 seconds.
 - **Bidding lives on the number's page, never on `/live`.** The on-air banner on
