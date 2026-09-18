@@ -200,6 +200,12 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   mistake, and reads through `mazad_bids_of(listing, secret)`.
 - **«رجّعه للقائمة» asks first**: `open` keeps the sums, `reset` deletes them and
   clears `is_live`. A number opened by mistake usually wants `reset`.
+- **A waiting sum is shown against the price it has to beat.** `mazad_pending_bids`
+  returns `current`, `min_next` and `beats_current` per row, and the panel prints
+  «7,000 ← 7,500 · أعلى بـ 500». Without that context the operator could not
+  judge anything: 1,050 on a number at 7,000 looked the same as 1,050 on a
+  number at 900. Rows are colour-coded (clears the step / above but under it /
+  below the price) and ✔ is disabled on a sum that cannot raise the price.
 - **A sum does not count until the operator approves it.** `place_bid` inserts
   with `approved=false`, the RLS select policy on `mazad_bids` is `using
   (approved)`, and the price everywhere is computed from approved rows only — so
