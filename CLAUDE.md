@@ -181,6 +181,11 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     `createListing` generates the uuid client-side and sends
     `Prefer: return=minimal`. Don't "fix" it back to `return=representation`.
   - `fmtPhone` keeps `•` so a masked number still groups as `054 ••• ••01`.
+- **A sum is drawn as a raised auction paddle** (`paddle(amount, variant)`): a
+  board with the price on it, a stick, and a hand gripping it — the gesture from
+  a sale room. Used in the feed on a number's page and on the broadcast screen.
+  The newest paddle animates in once, tracked by `lastSeenBid`, so the refresh
+  loop does not replay the animation every 2.5 seconds.
 - **Bidding lives on the number's page, never on `/live`.** The on-air banner on
   the list sends viewers to `#/n/<id>`, and every open card carries a
   «زايد على هذا الرقم» button. Sending viewers to the broadcast screen was a
@@ -222,8 +227,10 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
 - Deleting a number is available from the control panel (a 🗑 on each queued row
   and on the number currently on air), not only from the public list's admin
   bar — the operator works from `/control` and never sees that bar.
-- **Commission**: `COMMISSION` (0.02 = 2% of the hammer price, على ذمة
-  البائع). One constant drives all three places it is shown — the publish sheet,
+- **Commission**: flat `FEE_FLAT` (200 SAR), or `FEE_RATE` (2.5%) once the sale
+  passes `FEE_THRESHOLD` (20,000) — على ذمة البائع. The step at the threshold is
+  deliberate: 20,000 costs 200, 20,001 costs 500. `FEE_RULE` is the one sentence
+  every screen states it with, so the wording cannot drift between them. One constant drives all three places it is shown — the publish sheet,
   the live amount on the lot page, and the footer — so changing the rate is a
   one-line edit. It is displayed only; the site takes no payment and settles
   nothing, so nothing in the database depends on it.
