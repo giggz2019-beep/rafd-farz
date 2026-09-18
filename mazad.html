@@ -210,6 +210,10 @@ a { color: inherit; }
   border-radius: 10px; padding: 7px 10px; margin-bottom: 8px;
   font-size: .8rem; font-weight: 600; text-align: center;
 }
+.bid-now { text-align: center; font-size: .88rem; color: var(--muted); margin-bottom: 8px; }
+.bid-now b { color: var(--green-600); font-size: 1.15rem; }
+.bid-or { text-align: center; font-size: .75rem; color: var(--muted); margin: 9px 0 6px; }
+#btnQuick { font-size: 1.02rem; padding: 14px; }
 .bidrow { display: flex; gap: 8px; }
 .bidrow input {
   flex: 1; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
@@ -313,6 +317,10 @@ a { color: inherit; }
 .ctl-bid button { border-radius: 10px; padding: 8px 12px; font-size: .95rem; font-weight: 900; }
 .ctl-bid button.yes { background: #12833f; color: #fff; }
 .ctl-bid button.no  { background: #fdecea; color: var(--danger); border: 1px solid #f3c6c1; }
+.ctl-bid.done { background: #f4f9f6; border-color: var(--line); }
+.ctl-bid.done .amt { color: var(--green-600); }
+button.ctl-price { background: #eef7f1; border: 1px solid #cfe6d9; border-radius: 10px; padding: 4px 10px; }
+button.ctl-price:active { transform: scale(.97); }
 
 /* ---------- live broadcast screen ---------- */
 .live {
@@ -708,6 +716,17 @@ const remote = {
       method: 'POST', body: JSON.stringify({ p_bid: bidId, p_secret: secret, p_action: action })
     });
   },
+  manualBid(listing, secret, name, amount) {
+    return this.req('rpc/mazad_manual_bid', {
+      method: 'POST',
+      body: JSON.stringify({ p_listing: listing, p_secret: secret, p_name: name, p_amount: amount })
+    });
+  },
+  bidsOf(listing, secret) {
+    return this.req('rpc/mazad_bids_of', {
+      method: 'POST', body: JSON.stringify({ p_listing: listing, p_secret: secret })
+    });
+  },
   serverNow() {
     return this.req('rpc/mazad_now', { method: 'POST', body: '{}' });
   },
@@ -792,6 +811,23 @@ const local = {
     }
     this.write(db);
     return { ok: true };
+  },
+  async manualBid(listing, _secret, name, amount) {
+    const db = this.read();
+    const lot = db.listings.find(l => l.id === listing);
+    if (!lot) return { ok: false, error: 'not_found' };
+    const cur = db.bids.filter(b => b.listing_id === listing && b.approved)
+      .reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
+    if (amount <= cur) return { ok: false, error: 'below_current', current: cur };
+    db.bids.push({ id: this.uid(), listing_id: listing, bidder_name: name, amount,
+                   approved: true, created_at: new Date().toISOString() });
+    this.write(db);
+    return { ok: true, amount };
+  },
+  async bidsOf(listing) {
+    const db = this.read();
+    return { ok: true, bids: db.bids.filter(b => b.listing_id === listing)
+      .sort((a, b) => b.amount - a.amount) };
   },
   async pendingBids() {
     const db = this.read();
@@ -987,10 +1023,10 @@ function renderList() {
 
   const banner =
     (onAir
-      ? '<button class="live-banner" id="goLive">' +
+      ? '<button class="live-banner" id="goLive" data-lot="' + esc(onAir.id) + '">' +
           '<span class="live-dot">على الهواء</span>' +
           '<span class="n">' + esc(fmtPhone(onAir.phone)) + '</span>' +
-          '<span class="go">تابع البث</span>' +
+          '<span class="go">زايد الحين</span>' +
         '</button>'
       : '') +
     (admin.on
@@ -1046,6 +1082,11 @@ function renderList() {
       '</div>'
     );
     card.querySelector('.lot').addEventListener('click', () => { location.hash = '#/n/' + encodeURIComponent(lot.id); });
+    if (st === 'live') {
+      const go = el('<button class="btn btn-gold btn-block btn-sm" style="margin-top:10px">زايد على هذا الرقم</button>');
+      go.addEventListener('click', () => { location.hash = '#/n/' + encodeURIComponent(lot.id); });
+      card.appendChild(go);
+    }
     if (admin.on) card.appendChild(adminBar(lot));
     host.appendChild(card);
   });
@@ -1053,7 +1094,13 @@ function renderList() {
 
 function wireLiveBanner() {
   const b = $('#goLive');
-  if (b) b.addEventListener('click', () => { location.hash = '#/live'; });
+  // viewers go to the number's own page, where the bidding is. /live is the
+  // broadcast screen and has no bid box at all — sending them there was why
+  // "I opened it and could not bid".
+  if (b) b.addEventListener('click', () => {
+    const id = b.dataset.lot;
+    location.hash = id ? '#/n/' + encodeURIComponent(id) : '#/live';
+  });
   const c = $('#goControl');
   if (c) c.addEventListener('click', () => { location.hash = '#/control'; });
 }
@@ -1198,7 +1245,8 @@ function renderControl(lot, bids) {
             '<div class="ctl-digits num">' + esc(fmtPhone(lot.phone)) + '</div>' +
             '<div class="ctl-row">' +
               '<span>' + badgeFor(st) + '</span>' +
-              '<span class="ctl-price num">' + money(finalPrice(lot, t)) + ' ر.س</span>' +
+              '<button class="ctl-price num" id="ctlEditPrice" title="اضغط لتعديل السوم">' +
+                money(finalPrice(lot, t)) + ' ر.س ✎</button>' +
               (st === 'live'
                 ? '<span class="ctl-clock num" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</span>'
                 : '<span class="ctl-clock num">—</span>') +
@@ -1214,14 +1262,21 @@ function renderControl(lot, bids) {
     '</div>' +
 
     '<div class="card" id="ctlBids"></div>' +
+    (lot ? '<div class="card" id="ctlApproved"></div>' : '') +
     '<div class="card" id="ctlQueue"></div>';
 
   renderPendingBids();
+
+  // tapping the sum is how a guest's bid from the broadcast gets recorded
+  const priceBtn = $('#ctlEditPrice');
+  if (priceBtn && lot) priceBtn.addEventListener('click', () => askManualBid(lot));
 
   // the operator bar lives here now, on a light card
   const bar = opBar(lot);
   bar.classList.add('light');
   $('#ctlBar').appendChild(bar);
+
+  renderApprovedBids(lot);
 
   $('#ctlQueue').innerHTML = open.length
     ? '<div style="font-weight:700;margin-bottom:8px">قائمة الانتظار (<span class="num">' + open.length + '</span>)</div>' +
@@ -1300,6 +1355,124 @@ function renderPendingBids() {
   });
 }
 
+/* The operator records a sum shouted on the broadcast — from a guest on a
+   TikTok call, or over the phone. It counts at once: the operator is the one
+   entering it, there is nothing to approve. */
+function askManualBid(lot) {
+  const t = topBid(lot.id, lot);
+  const cur = finalPrice(lot, t);
+  const step = stepFor(cur);
+  const s2 = sheet(
+    '<h2>سجّل سومة</h2>' +
+    '<p class="hint">للي زايد بالبث أو بالتلفون — تُحتسب على طول بدون موافقة.</p>' +
+    '<div id="mbErr"></div>' +
+    '<div class="bid-now" style="margin-bottom:12px">السوم الحالي ' +
+      '<b><span class="num">' + money(cur) + '</span> ر.س</b></div>' +
+    '<div class="field"><label>اسم المزايد</label>' +
+      '<input id="mbName" maxlength="40" placeholder="مثال: أبو فهد"></div>' +
+    '<div class="field ltr"><label>المبلغ (ر.س)</label>' +
+      '<input id="mbAmount" type="number" inputmode="numeric" min="0" value="' + (cur + step) + '">' +
+      '<div class="sub">لازم يكون أعلى من <span class="num">' + money(cur) + '</span>.</div></div>' +
+    '<div class="row2" id="mbQuick"></div>' +
+    '<button class="btn btn-gold btn-block" id="mbSave" style="margin-top:10px">سجّل السومة</button>'
+  );
+
+  s2.querySelector('#mbQuick').innerHTML = [cur + step, cur + step * 2, cur + step * 5]
+    .map(v => '<button class="btn btn-ghost btn-sm" data-v="' + v + '">' + money(v) + '</button>').join('');
+  s2.querySelector('#mbQuick').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    s2.querySelector('#mbAmount').value = b.dataset.v;
+  });
+
+  const save = async () => {
+    const err = (m) => { s2.querySelector('#mbErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
+    const name = s2.querySelector('#mbName').value.trim();
+    const amount = Number(s2.querySelector('#mbAmount').value);
+    if (name.length < 2) return err('اكتب اسم المزايد.');
+    if (!(amount > 0)) return err('اكتب مبلغ صحيح.');
+
+    const btn = s2.querySelector('#mbSave'); btn.disabled = true; btn.textContent = 'جاري…';
+    try {
+      const r = await store.manualBid(lot.id, admin.secret, name, amount);
+      if (r && r.ok === false) {
+        btn.disabled = false; btn.textContent = 'سجّل السومة';
+        return err(r.error === 'below_current'
+          ? 'المبلغ لازم يكون أعلى من ' + money(r.current) + ' ر.س. لو تبي تنزّل السوم، احذف السومة الأعلى أول.'
+          : r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة' : 'تعذّر التسجيل');
+      }
+      closeSheet();
+      toast('انسجّلت سومة ' + esc(name) + ' بـ ' + money(amount) + ' ر.س ✔');
+      refresh(false);
+    } catch (e) {
+      console.error(e); btn.disabled = false; btn.textContent = 'سجّل السومة';
+      err('تعذّر الاتصال.');
+    }
+  };
+  s2.querySelector('#mbSave').addEventListener('click', save);
+  s2.querySelector('#mbAmount').addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+  s2.querySelector('#mbName').focus();
+}
+
+/* The sums already counted on the number on air, each removable — this is how
+   an approval given by mistake is taken back, and the only way to bring the
+   price down. */
+async function renderApprovedBids(lot) {
+  const host = $('#ctlApproved');
+  if (!host || !lot) return;
+  host.innerHTML = '<div style="color:var(--muted);font-size:.84rem">…</div>';
+  let list = [];
+  try {
+    const r = await store.bidsOf(lot.id, admin.secret);
+    list = (r && r.ok && r.bids ? r.bids : []).filter(b => b.approved);
+  } catch { /* leave it empty */ }
+
+  host.innerHTML =
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+      '<div style="flex:1;font-weight:700">السومات المحتسبة</div>' +
+      '<button class="btn btn-ghost btn-sm" id="ctlAddBid">＋ سجّل سومة</button>' +
+    '</div>' +
+    (list.length
+      ? list.map((b, i) =>
+          '<div class="ctl-bid done" data-b="' + esc(b.id) + '">' +
+            '<div class="who"><b>' + esc(b.bidder_name) + '</b>' +
+              '<span>' + (i === 0 ? 'أعلى سومة' : esc(ago(b.created_at))) + '</span></div>' +
+            '<div class="amt num">' + money(b.amount) + '</div>' +
+            '<button class="no" data-a="reject" title="احذف">✖</button>' +
+          '</div>').join('')
+      : '<div style="text-align:center;color:var(--muted);font-size:.86rem">ما فيه سومات محتسبة</div>');
+
+  $('#ctlAddBid').addEventListener('click', () => askManualBid(lot));
+  host.querySelectorAll('.ctl-bid.done button').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const row = btn.closest('.ctl-bid');
+      if (!confirm('حذف سومة ' + row.querySelector('b').textContent + '؟ السعر بينزل.')) return;
+      try {
+        const r = await store.bidAction(row.dataset.b, admin.secret, 'reject');
+        if (r && r.ok === false) { toast('تعذّر الحذف'); return; }
+        toast('انحذفت السومة');
+      } catch { toast('تعذّر الاتصال'); }
+      refresh(false);
+    });
+  });
+}
+
+/* Put a number back in the queue — with or without the sums already on it. */
+function askRequeue(lot) {
+  const s2 = sheet(
+    '<h2>رجّعه لقائمة الانتظار</h2>' +
+    '<p class="hint">الرقم <span class="num">' + esc(fmtPhone(lot.phone)) + '</span> يرجع بدون مؤقت، ' +
+      'وما أحد يقدر يزايد عليه لين تفتحه من جديد.</p>' +
+    '<button class="btn btn-block" id="rqClear" style="background:#c0392b">رجّعه وامسح كل السومات</button>' +
+    '<button class="btn btn-ghost btn-block" id="rqKeep" style="margin-top:8px">رجّعه واحتفظ بالسومات</button>'
+  );
+  s2.querySelector('#rqClear').addEventListener('click', async () => {
+    closeSheet(); await opDo(lot.id, 'reset'); toast('رجع للقائمة — بدون سومات');
+  });
+  s2.querySelector('#rqKeep').addEventListener('click', async () => {
+    closeSheet(); await opDo(lot.id, 'open'); toast('رجع للقائمة — السومات محفوظة');
+  });
+}
+
 function queueHtml(open) {
   if (!open.length) return '';
   return '<div class="queue"><h3>قائمة الانتظار</h3>' +
@@ -1349,6 +1522,10 @@ function opBar(lot) {
         '<button data-a="extend" data-m="1">+ دقيقة</button>' +
         '<button data-a="extend" data-m="2">+ دقيقتين</button>' +
       '</div>' +
+      '<div class="lbl">السومات</div>' +
+      '<div class="row">' +
+        '<button class="add" data-a="manual">＋ سجّل سومة من البث</button>' +
+      '</div>' +
       '<div class="lbl">نتيجة الرقم</div>' +
       '<div class="row">' +
         '<button class="sold" data-a="sold">✔ تم البيع</button>' +
@@ -1374,6 +1551,8 @@ function opBar(lot) {
     const b = e.target.closest('button'); if (!b) return;
     const a = b.dataset.a, m = b.dataset.m ? Number(b.dataset.m) : undefined;
     if (a === 'quick') { askQuickAdd(); return; }
+    if (a === 'open' && lot) { askRequeue(lot); return; }
+    if (a === 'manual' && lot) { askManualBid(lot); return; }
     if (a === 'next') {
       const r = await opDo(lot ? lot.id : null, 'next');
       if (r && !r.next) toast('ما فيه أرقام بالانتظار');
@@ -1579,14 +1758,20 @@ function renderLot(lot, bids, full) {
     host.innerHTML =
       '<div class="bidbar"><div class="inner">' +
         '<div class="bid-wait hidden" id="bidWait"></div>' +
-        '<div class="quick" id="quick"></div>' +
+        '<div class="bid-now">وصل السوم إلى <b><span class="num" id="bidNow">—</span> ر.س</b></div>' +
+        '<button class="btn btn-gold btn-block" id="btnQuick">زايد</button>' +
+        '<div class="bid-or">أو اكتب مبلغك</div>' +
         '<div class="bidrow">' +
-          '<input id="bidInput" type="number" inputmode="numeric" placeholder="اكتب مبلغك">' +
-          '<button class="btn btn-gold" id="btnBid">زايد</button>' +
+          '<input id="bidInput" type="number" inputmode="numeric" placeholder="مبلغك">' +
+          '<button class="btn" id="btnBid">إرسال</button>' +
         '</div>' +
       '</div></div>';
     $('#btnBid').addEventListener('click', () => sendBid(lot.id));
     $('#bidInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendBid(lot.id); });
+    $('#btnQuick').addEventListener('click', () => {
+      $('#bidInput').value = $('#btnQuick').dataset.v || '';
+      sendBid(lot.id);
+    });
   }
   // has my waiting sum been approved? then stop showing it as waiting
   const mine = myPending[lot.id];
@@ -1603,15 +1788,14 @@ function renderLot(lot, bids, full) {
     waitLine.classList.toggle('hidden', v == null);
   }
 
-  $('#quick').innerHTML = [minNext, minNext + step, minNext + step * 4]
-    .map(v => '<button data-v="' + v + '">' + money(v) + ' ر.س</button>').join('');
-  $('#quick').onclick = (e) => {
-    const v = e.target.dataset.v; if (!v) return;
-    $('#bidInput').value = v; sendBid(lot.id);
-  };
+  $('#bidNow').textContent = money(shown);
+  const quick = $('#btnQuick');
+  quick.dataset.v = minNext;
+  quick.innerHTML = 'زايد بـ <span class="num">' + money(step) + '</span> ر.س ← ' +
+                    '<span class="num">' + money(minNext) + '</span>';
   const input = $('#bidInput');
   input.min = minNext;
-  input.placeholder = 'أقل مزايدة: ' + money(minNext);
+  input.placeholder = 'أقل مبلغ ' + money(minNext);
 }
 
 function waLink(contact, phone) {
