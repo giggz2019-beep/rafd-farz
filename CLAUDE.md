@@ -181,6 +181,20 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     `createListing` generates the uuid client-side and sends
     `Prefer: return=minimal`. Don't "fix" it back to `return=representation`.
   - `fmtPhone` keeps `•` so a masked number still groups as `054 ••• ••01`.
+- **Bidding lives on the number's page, never on `/live`.** The on-air banner on
+  the list sends viewers to `#/n/<id>`, and every open card carries a
+  «زايد على هذا الرقم» button. Sending viewers to the broadcast screen was a
+  real dead end: it has no bid box by design, so people opened it and found
+  nothing to press.
+- **The operator can record a sum for someone who never opens the site** (a
+  guest on a TikTok call, a phone caller): `mazad_manual_bid(listing, secret,
+  name, amount)` inserts it already approved. Tapping the price on the control
+  panel opens that same sheet. The price is always the highest approved sum, so
+  a manual sum must beat it; to bring the price **down**, remove the higher sum
+  from «السومات المحتسبة» — that list is the undo for an approval given by
+  mistake, and reads through `mazad_bids_of(listing, secret)`.
+- **«رجّعه للقائمة» asks first**: `open` keeps the sums, `reset` deletes them and
+  clears `is_live`. A number opened by mistake usually wants `reset`.
 - **A sum does not count until the operator approves it.** `place_bid` inserts
   with `approved=false`, the RLS select policy on `mazad_bids` is `using
   (approved)`, and the price everywhere is computed from approved rows only — so
