@@ -331,6 +331,15 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   `https://afvgsubxuquzlkxyondf.supabase.co` (and its `wss://`). Pointing the
   page at a different Supabase project means editing that header too, or the
   browser blocks every request.
+- **The stylesheet is one block, and a broken rule fails silently.** Deleting
+  a CSS rule by searching for its selector will match that selector *inside* a
+  longer one — removing `.ctl-price {` found it inside `button.ctl-price {` and
+  left an orphan `button`, which fused onto the next rule and turned `.live`
+  into `button.live`. The broadcast card lost its green, the page still
+  "worked", and nothing failed. `test-css.js` now reads the parsed
+  `document.styleSheets` back and asserts that the looks which matter — the
+  broadcast gradient, its white text, the operator warning's amber — actually
+  reach their elements at three widths.
 - **Brand images** (`mazad-logo.png` 2048², `mazad-icon.png` 512², `mazad-og.png`
   1200×630, `mazad-poster.png` 2160×2700) were designed as HTML using the repo's
   own Thmanyah typeface and screenshotted at 2x — not drawn by an image model,
