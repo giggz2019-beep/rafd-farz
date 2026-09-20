@@ -438,6 +438,17 @@ a { color: inherit; }
 }
 .live-cta b { color: var(--gold-400); direction: ltr; unicode-bidi: isolate; display: inline-block; }
 
+/* The commission has to be readable on the broadcast without anyone
+   scrolling — it only lived in the page footer, under the fold, so on camera
+   it was never seen at all. */
+.live-fee {
+  margin-top: 10px; text-align: center; line-height: 1.75;
+  background: rgba(217,164,65,.14); border: 1.5px solid rgba(217,164,65,.6);
+  border-radius: 14px; padding: 10px 12px;
+  font-size: .9rem; font-weight: 700; color: #fbeccd;
+}
+.live-fee b { color: var(--gold-400); font-weight: 900; }
+
 .live-empty { text-align: center; padding: 26px 10px; }
 .live-empty .t { font-size: 1.2rem; font-weight: 800; }
 .live-empty .s { font-size: .86rem; color: #bcd9c8; margin-top: 4px; }
@@ -495,28 +506,21 @@ a { color: inherit; }
 /* only where there is genuinely room beside the stage — never on a phone,
    where it would end up in shot */
 @media (min-width: 900px) {
-  .live-split { flex-direction: row; align-items: flex-start; }
-  /* Break out to the whole viewport so the strip can sit hard against the far
-     edge rather than crowding the stage. Without the break-out the strip ate
-     the page's 720px and the broadcast squeezed to ~340px. */
-  /* The page is RTL, so a block wider than its container is placed from the
-     RIGHT edge and margin-left is dropped as over-constrained. Breaking out
-     has to pull on margin-RIGHT, or the whole split slides off to the left. */
-  .live-split.with-ops {
-    width: 100vw; margin-right: calc(-50vw + 50%); margin-left: 0;
-    box-sizing: border-box; padding-right: 10px;
-  }
-  /* the stage keeps its own width and centres in what is left, so the camera
-     frames the same thing whether or not the strip is open */
-  .live-split.with-ops .live-stage {
-    max-width: 720px; margin: 0 auto; padding: 0 14px;
-  }
+  /* The strip is a FIXED rail on the right edge, not a column in the flow.
+     Two reasons. A 100vw break-out is a pixel or two wider than the client
+     area once a scrollbar exists, which gave the page a horizontal scrollbar
+     and shifted the stage. And a column in the flow could only be as tall as
+     the page, so its own scroll never reached the last queued number —
+     top/bottom pin it to the viewport instead, and it scrolls to its end. */
   .live-split.with-ops .live-ops {
-    display: block; flex: none; width: 268px; margin-top: 0;
-    padding-left: 12px;
+    display: block; position: fixed; top: 68px; bottom: 8px; right: 8px;
+    width: 268px; margin: 0; z-index: 30;
+    padding-left: 12px; padding-right: 2px;
     border-left: 3px dashed var(--gold-500);
-    max-height: calc(100vh - 70px); overflow-y: auto;
+    overflow-y: auto; overscroll-behavior: contain;
   }
+  /* the rail is out of the flow, so the page is nudged clear of it by hand */
+  body.ops-open { padding-right: 292px; }
 }
 /* The strip is only 268px, so anything laid out in a row there gets squeezed
    until the words break a letter per line. Stack instead. */
@@ -1179,6 +1183,7 @@ async function go() {
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
   $('#viewLive').classList.toggle('hidden', route.name !== 'live');
   $('#bidbarHost').innerHTML = '';
+  if (route.name !== 'live') document.body.classList.remove('ops-open');
   paintName();
   if (route.name !== 'live') $('#opsPeek').classList.remove('on');
   window.scrollTo(0, 0);
@@ -1439,6 +1444,7 @@ function renderLive(lot, bids) {
         '<div class="live-empty"><div class="t">جاهزون للرقم القادم</div>' +
           '<div class="s">اعرض رقمك من الموقع وبيجي دورك</div></div>' +
         '<div class="live-cta">للمشاركة والمزايدة<br><b>rafd-digital.com/m</b></div>' +
+        '<div class="live-fee">💰 العمولة <b>' + esc(FEE_RULE) + '</b> — على ذمة البائع</div>' +
         queueHtml(open) +
       '</div>';
     wireQueue(open, null);
@@ -1501,9 +1507,8 @@ function renderLive(lot, bids) {
             '</div>').join('') + '</div>'
         : '') +
 
-      '<div class="live-cta">زايد من الموقع<br><b>rafd-digital.com/m</b>' +
-        '<br><span style="font-size:.78rem">العمولة على ذمة البائع</span>' +
-      '</div>' +
+      '<div class="live-cta">زايد من الموقع<br><b>rafd-digital.com/m</b></div>' +
+      '<div class="live-fee">💰 العمولة <b>' + esc(FEE_RULE) + '</b> — على ذمة البائع</div>' +
 
       queueHtml(open) +
     '</div>';
@@ -1529,6 +1534,7 @@ function renderLiveOps(lot) {
 
   const on = admin.on && !opsFolded;
   split.classList.toggle('with-ops', on);
+  document.body.classList.toggle('ops-open', on);
   $('#opsPeek').classList.toggle('on', admin.on && opsFolded && route.name === 'live');
   if (!on) { host.innerHTML = ''; screenSig.ops = ''; return; }
 

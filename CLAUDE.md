@@ -157,12 +157,16 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   outside the camera frame.
   - The split container is `direction: ltr` on purpose so the stage lands on
     the left, where the camera points; each child switches back to `rtl`.
-  - **Above 900px** it sits beside the stage, pinned to the viewport edge.
-    `.live-split.with-ops` breaks out of the 720px `.wrap` to the full
-    viewport — and it must pull on **`margin-right`**, not `margin-left`: the
-    page is RTL, so a block wider than its container is placed from the right
-    edge and `margin-left` is dropped as over-constrained. Getting that wrong
-    slid the whole split off the left of the screen.
+  - **Above 900px it is `position: fixed`** against the right edge, pinned
+    `top`/`bottom` to the viewport, and `body.ops-open` pads the page clear of
+    it. It is deliberately **not** a column in the flow, for two reasons found
+    the hard way: a `100vw` break-out is a pixel or two wider than the client
+    area once a scrollbar exists, which gave the page a horizontal scrollbar
+    and shifted the stage sideways; and a column in the flow can only be as
+    tall as the page, so its own scroll never reached the last queued number.
+    (If it is ever put back in the flow on an RTL page, a block wider than its
+    container is placed from the right edge and `margin-left` is dropped as
+    over-constrained — it has to pull on `margin-right`.)
   - **Below 900px** it stacks below the stage rather than hiding. A phone is
     not the screen being filmed, and hiding it there would leave a phone
     operator with no controls at all now that `/control` is gone.
@@ -329,6 +333,9 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   `tick()` updates `[data-cd]` text in place every second, so the clock runs
   without a repaint. Anything new that changes on its own must go into the
   signature, or it will not appear until something else does.
+- **The commission is stated on the broadcast card itself** (`.live-fee`),
+  not only in the page footer. The footer is below the fold, so on camera the
+  rule was never actually seen — and it is the one thing a seller agrees to.
 - **Commission**: flat `FEE_FLAT` (200 SAR), or `FEE_RATE` (2.5%) once the sale
   passes `FEE_THRESHOLD` (20,000) — على ذمة البائع. The step at the threshold is
   deliberate: 20,000 costs 200, 20,001 costs 500. `FEE_RULE` is the one sentence
