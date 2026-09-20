@@ -286,7 +286,7 @@ a { color: inherit; }
   padding: 8px 12px; background: #fff;
 }
 .bid-row.top { border-color: var(--gold-500); background: #fffaf0; }
-.bid-row .paddle { width: 46px; flex: none; }
+.bid-row .paddle { width: 92px; flex: none; }
 .bid-who { flex: 1; min-width: 0; }
 .bid-who b { display: block; font-size: .9rem; }
 .bid-who span { font-size: .72rem; color: var(--muted); }
@@ -295,40 +295,38 @@ a { color: inherit; }
 
 /* the same paddles, big, on the broadcast screen */
 .live-paddles { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
-.lp { width: 62px; text-align: center; }
-.lp.top { width: 78px; }
+.lp { width: 110px; text-align: center; }
+.lp.top { width: 140px; }
 .lp-name { font-size: .7rem; color: #dff0e6; margin-top: 4px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; }
 .lp.top .lp-name { color: var(--gold-400); font-weight: 700; }
 
 /* ---------- the raised paddle ---------- */
-.paddle { display: inline-block; line-height: 0; }
-.paddle svg { width: 100%; height: auto; overflow: visible; }
-
-.p-shadow   { fill: rgba(0,0,0,.22); }
-.p-edge     { fill: rgba(0,0,0,.30); }
-.p-board    { stroke: rgba(0,0,0,.18); stroke-width: 1.5; }
-.p-gloss    { fill: url(#gGloss); }
-.p-stick    { fill: url(#gWood); }
-.p-stick-hi { fill: rgba(255,255,255,.45); }
-
-.p-palm     { fill: url(#gSkin); }
-.p-palm-sh  { fill: rgba(120,72,32,.20); }
-.p-fg-body  { fill: url(#gFinger); stroke: rgba(132,80,36,.55); stroke-width: 1.2; }
-.p-fg-joint { stroke: rgba(132,80,36,.42); stroke-width: 1.3; fill: none; stroke-linecap: round; }
-.p-fg-knuck { fill: rgba(255,255,255,.28); }
-.p-nail     { fill: url(#gNail); stroke: rgba(132,80,36,.45); stroke-width: .9; }
-.p-thumb    { fill: url(#gFinger); stroke: rgba(132,80,36,.6); stroke-width: 1.3; }
-
-.p-amount {
-  fill: #0d2a1c; font-family: inherit; font-weight: 900; font-size: 31px;
-  text-anchor: middle; direction: ltr; unicode-bidi: isolate;
+/* The hand and board are the supplied artwork (mazad-paddle.png), used WHOLE —
+   the full arm, nothing cropped, only the transparency checkerboard removed.
+   Only the number is ours. The board sits at 28.95% / 19.85% of the frame, is
+   51.52% of its width and leans -7.2deg — all measured off the file, so the
+   number sits square on the board. Re-measure all four if the art changes. */
+.paddle { position: relative; display: inline-block; line-height: 0;
+  container-type: inline-size; }
+.paddle img { width: 100%; height: auto; display: block; }
+.paddle .p-amt {
+  position: absolute; left: 28.95%; top: 19.85%; width: 46%;
+  transform: translate(-50%, -50%) rotate(-7.2deg);
+  text-align: center; line-height: 1; white-space: nowrap;
+  font-weight: 900; color: #1d2a24; letter-spacing: -.02em;
+  font-size: 11px;                       /* fallback: no container queries */
 }
-.paddle.top  .p-amount { fill: #4a3208; }
-.paddle.mine .p-amount { fill: #fff; }
-.paddle.mine .p-board  { stroke: rgba(0,0,0,.35); }
-
+/* the board is a fixed share of the paddle, so the number is sized against the
+   paddle itself — one rule instead of a size per screen — and shrinks as the
+   sum gets longer so 1,250,000 still fits on the same board */
+@supports (font-size: 1cqw) {
+  .paddle .p-amt { font-size: calc(var(--fs, 13.6) * 1cqw); }
+}
+.paddle.top  .p-amt { color: #7a5205; }
+.paddle.mine .p-amt { color: #0b6b3a; }
 .paddle.raise { animation: raise .5s cubic-bezier(.2,.9,.3,1.35); transform-origin: 50% 100%; }
+
 @keyframes raise {
   from { transform: translateY(30px) rotate(-7deg); opacity: 0 }
   60%  { transform: translateY(-3px) rotate(2deg);  opacity: 1 }
@@ -378,6 +376,9 @@ a { color: inherit; }
 .ctl-bid.thin { border-color: #f0dcb0; background: #fffaf0; }
 .ctl-bid.low  { border-color: #f3c6c1; background: #fdf3f2; }
 .ctl-bid .cmp { flex: 1; min-width: 0; text-align: center; }
+.ctl-bid .who .wa { display: inline-block; font-size: .76rem; color: #0b6b3a;
+  font-weight: 700; text-decoration: none; direction: ltr; unicode-bidi: isolate; }
+.ctl-bid .who .sub-muted { font-size: .74rem; color: var(--muted); }
 .cmp-line { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
 .cmp-now { color: var(--muted); font-weight: 700; font-size: .92rem; }
 .cmp-arrow { color: var(--muted); font-size: .8rem; }
@@ -495,6 +496,20 @@ button.ctl-price:active { transform: scale(.97); }
   border-radius: 12px; padding: 10px 12px; margin-top: 12px;
   font-size: .84rem; text-align: center; line-height: 1.7;
 }
+.auto-note {
+  background: #fff3d6; color: #7a4f05; border: 1px solid #f0d79a;
+  border-radius: 12px; padding: 9px 12px; margin-top: 12px;
+  font-size: .84rem; text-align: center; line-height: 1.7; font-weight: 700;
+}
+.live-auto {
+  margin: 8px auto 0; max-width: 520px; text-align: center;
+  font-size: 1rem; font-weight: 800; color: #f6cf7a;
+}
+.ctl-auto {
+  margin-top: 6px; font-size: .8rem; color: #7a4f05;
+  background: #fff8e9; border: 1px solid #f0dcb0; border-radius: 10px;
+  padding: 5px 9px; display: inline-block;
+}
 .fee {
   margin-top: 10px; padding: 8px 10px; border-radius: 10px; text-align: center;
   background: #fff8e9; border: 1px solid #f0dcb0; color: #7a4f05; font-size: .8rem;
@@ -567,41 +582,6 @@ button.ctl-price:active { transform: scale(.97); }
   </div>
 </main>
 
-<!-- shared paint for the paddles; defined once, referenced by every copy -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <linearGradient id="gBoard" x1="0" y1="0" x2="0.35" y2="1">
-    <stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#f4f7f5"/>
-    <stop offset="1" stop-color="#dfe7e2"/>
-  </linearGradient>
-  <linearGradient id="gBoardTop" x1="0" y1="0" x2="0.35" y2="1">
-    <stop offset="0" stop-color="#fdeec2"/><stop offset=".5" stop-color="#f0cd82"/>
-    <stop offset="1" stop-color="#d0a145"/>
-  </linearGradient>
-  <linearGradient id="gBoardMine" x1="0" y1="0" x2="0.35" y2="1">
-    <stop offset="0" stop-color="#2fa86c"/><stop offset=".55" stop-color="#128350"/>
-    <stop offset="1" stop-color="#075233"/>
-  </linearGradient>
-  <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#a5711f"/><stop offset=".3" stop-color="#d8a64a"/>
-    <stop offset=".55" stop-color="#c08c36"/><stop offset="1" stop-color="#8a5c17"/>
-  </linearGradient>
-  <linearGradient id="gSkin" x1="0" y1="0" x2="0.4" y2="1">
-    <stop offset="0" stop-color="#f7d3ae"/><stop offset=".5" stop-color="#e8b98d"/>
-    <stop offset="1" stop-color="#c8935f"/>
-  </linearGradient>
-  <linearGradient id="gFinger" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#fadcbb"/><stop offset=".6" stop-color="#e5b78e"/>
-    <stop offset="1" stop-color="#c58f5c"/>
-  </linearGradient>
-  <linearGradient id="gNail" x1="0" y1="0" x2="0.3" y2="1">
-    <stop offset="0" stop-color="#ffeede"/><stop offset=".6" stop-color="#f6d9bd"/>
-    <stop offset="1" stop-color="#e0b492"/>
-  </linearGradient>
-  <linearGradient id="gGloss" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#ffffff" stop-opacity=".85"/>
-    <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-  </linearGradient>
-</defs></svg>
 
 <div id="bidbarHost"></div>
 <div id="sheetHost"></div>
@@ -737,8 +717,12 @@ function badgeFor(st) {
 
 /* ------------------------------------------------------------- identity */
 const me = {
-  get name() { return localStorage.getItem('mazad_name') || ''; },
-  set name(v) { localStorage.setItem('mazad_name', v); paintName(); }
+  get name()  { return localStorage.getItem('mazad_name')  || ''; },
+  set name(v) { localStorage.setItem('mazad_name', v); paintName(); },
+  // a winning bid is worthless if the seller cannot reach the bidder, so the
+  // number is asked for once and kept in this browser like the name
+  get phone()  { return localStorage.getItem('mazad_phone') || ''; },
+  set phone(v) { localStorage.setItem('mazad_phone', v); }
 };
 function paintName() {
   $('#nameChip').textContent = me.name ? '👤 ' + me.name : 'اسمك؟';
@@ -794,7 +778,9 @@ const remote = {
     return this.req('mazad_public?select=*&id=eq.' + encodeURIComponent(id)).then(r => r[0] || null);
   },
   bids(id) {
-    return this.req('mazad_bids?select=*&listing_id=eq.' + encodeURIComponent(id) + '&order=created_at.asc&limit=500');
+    // never '*': anon has no SELECT on bidder_phone, and asking for it fails
+    return this.req('mazad_bids?select=id,listing_id,bidder_name,amount,approved,created_at' +
+      '&listing_id=eq.' + encodeURIComponent(id) + '&order=created_at.asc&limit=500');
   },
   async createListing(body) {
     // anon may INSERT but not SELECT the table, so ask for no row back and
@@ -807,10 +793,10 @@ const remote = {
     });
     return { ...body, id };
   },
-  placeBid(id, name, amount) {
+  placeBid(id, name, amount, phone) {
     return this.req('rpc/place_bid', {
       method: 'POST',
-      body: JSON.stringify({ p_listing: id, p_name: name, p_amount: amount })
+      body: JSON.stringify({ p_listing: id, p_name: name, p_amount: amount, p_phone: phone })
     });
   },
   admin(id, secret, action, minutes, price) {
@@ -871,10 +857,11 @@ const local = {
     const row = { ...body, id: this.uid(), status: body.status || 'pending', is_live: false, created_at: new Date().toISOString() };
     db.listings.push(row); this.write(db); return row;
   },
-  async placeBid(id, name, amount) {
+  async placeBid(id, name, amount, phone) {
     const db = this.read();
     const lot = db.listings.find(l => l.id === id);
     if (!lot) return { ok: false, error: 'not_found' };
+    if (!/^05\d{8}$/.test(String(phone || ''))) return { ok: false, error: 'bad_phone' };
     if (lot.status === 'pending') return { ok: false, error: 'not_started' };
     if (lot.status !== 'open') return { ok: false, error: 'closed' };
     if (!lot.end_at || new Date(lot.end_at).getTime() <= nowMs()) return { ok: false, error: 'expired' };
@@ -882,8 +869,8 @@ const local = {
       .reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
     const min = cur + stepFor(cur);
     if (amount < min) return { ok: false, error: 'too_low', current: cur, min };
-    db.bids.push({ id: this.uid(), listing_id: id, bidder_name: name, amount,
-                   approved: false, created_at: new Date().toISOString() });
+    db.bids.push({ id: this.uid(), listing_id: id, bidder_name: name, bidder_phone: phone,
+                   amount, approved: false, created_at: new Date().toISOString() });
     this.write(db);
     return { ok: true, pending: true, amount };
   },
@@ -916,10 +903,22 @@ const local = {
       lot.status = 'pending'; lot.end_at = null; lot.sold_price = null;
     } else if (action === 'price') {
       lot.sold_price = price;
+    } else if (action === 'auto') {
+      if (price != null && !(price > +lot.start_price)) {
+        return { ok: false, error: 'bad_amount', start: +lot.start_price };
+      }
+      lot.auto_sell_price = price;
+      if (price != null) {
+        const best = db.bids.filter(b => b.listing_id === id && b.approved)
+          .reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
+        const auto = this.tryAuto(lot, best);
+        this.write(db);
+        return { ok: true, auto_sold: auto };
+      }
     } else {
       lot.status = action;   // stays on air so the sticker shows on the broadcast
       if (action === 'sold') {
-        const best = db.bids.filter(b => b.listing_id === id).reduce((m, b) => Math.max(m, +b.amount), 0);
+        const best = db.bids.filter(b => b.listing_id === id && b.approved).reduce((m, b) => Math.max(m, +b.amount), 0);
         lot.sold_price = price != null ? price : (best || +lot.start_price);
       } else {
         lot.sold_price = null;
@@ -928,17 +927,32 @@ const local = {
     this.write(db);
     return { ok: true };
   },
+  // mirrors mazad_try_auto_sell(): a counted sum that reaches the seller's
+  // limit closes the lot, and the number stays on air wearing its sticker
+  tryAuto(lot, amount) {
+    if (lot.auto_sell_price == null) return false;
+    if (!['open', 'pending'].includes(lot.status)) return false;
+    if (!(Number(amount) >= Number(lot.auto_sell_price))) return false;
+    lot.status = 'sold';
+    lot.sold_price = Number(amount);
+    lot.end_at = new Date(nowMs()).toISOString();
+    return true;
+  },
   async manualBid(listing, _secret, name, amount) {
     const db = this.read();
     const lot = db.listings.find(l => l.id === listing);
     if (!lot) return { ok: false, error: 'not_found' };
+    if (!['open', 'pending'].includes(lot.status)) {
+      return { ok: false, error: 'finished', status: lot.status };
+    }
     const cur = db.bids.filter(b => b.listing_id === listing && b.approved)
       .reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
     if (amount <= cur) return { ok: false, error: 'below_current', current: cur };
     db.bids.push({ id: this.uid(), listing_id: listing, bidder_name: name, amount,
                    approved: true, created_at: new Date().toISOString() });
+    const auto = this.tryAuto(lot, amount);
     this.write(db);
-    return { ok: true, amount };
+    return { ok: true, amount, auto_sold: auto };
   },
   async bidsOf(listing) {
     const db = this.read();
@@ -957,15 +971,19 @@ const local = {
     if (!bid) return { ok: false, error: 'not_found' };
     if (action === 'reject') { db.bids = db.bids.filter(b => b.id !== bidId); this.write(db); return { ok: true }; }
     const lot = db.listings.find(l => l.id === bid.listing_id);
+    if (!['open', 'pending'].includes(lot.status)) {
+      return { ok: false, error: 'finished', status: lot.status };
+    }
     const cur = db.bids.filter(b => b.listing_id === bid.listing_id && b.approved)
       .reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
     if (+bid.amount <= cur) return { ok: false, error: 'below_current', current: cur };
     bid.approved = true;
-    if (lot.end_at && new Date(lot.end_at).getTime() - nowMs() < 60000) {
+    const auto = this.tryAuto(lot, bid.amount);
+    if (!auto && lot.end_at && new Date(lot.end_at).getTime() - nowMs() < 60000) {
       lot.end_at = new Date(nowMs() + 120000).toISOString();
     }
     this.write(db);
-    return { ok: true, amount: bid.amount };
+    return { ok: true, amount: bid.amount, auto_sold: auto };
   },
   async operatorCreate(_secret, d) {
     const db = this.read();
@@ -974,6 +992,7 @@ const local = {
       id: this.uid(), phone: d.phone, carrier: d.carrier || null,
       start_price: d.start_price, seller_name: d.seller_name,
       seller_contact: d.seller_contact || null, note: d.note || null,
+      auto_sell_price: d.auto_sell_price ?? null,
       end_at: new Date(nowMs() + d.minutes * 60000).toISOString(),
       status: 'open', is_live: true, created_at: new Date().toISOString()
     };
@@ -1041,8 +1060,18 @@ function parseRoute() {
   return { name: 'list', id: null };
 }
 
+/* The page refreshes itself every 2.5s. Rebuilding a whole screen's innerHTML
+   that often makes it jump under the reader's thumb — heights change, the
+   scroll position slips. Nothing on these screens moves on its own except the
+   countdown, and tick() updates that in place through [data-cd], so each
+   screen rebuilds only when something it shows has actually changed. Clearing
+   the signatures on navigation forces the first paint of a screen. */
+let screenSig = { control: '', live: '', lot: '', approved: '' };
+const sigOfBids = bs => (bs || []).map(b => b.id + ':' + b.amount).join(',');
+
 async function go() {
   route = parseRoute();
+  screenSig = { control: '', live: '', lot: '', approved: '' };
   if (route.name === 'admin') { location.hash = ''; askAdmin(); return; }
   $('#viewList').classList.toggle('hidden', route.name !== 'list');
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
@@ -1100,59 +1129,21 @@ function finalPrice(lot, t) {
   return t.amount;
 }
 
-/* Every sum is drawn as an auction paddle raised by a hand, with the price
-   written on it — the gesture people already know from a sale room. */
-/* Every sum is drawn as an auction paddle raised by a hand, with the price on
-   the board. The hand is a fist gripping the handle seen from the side: four
-   fingers curled round it, each with its own middle joint, knuckle and nail,
-   the thumb laid across them, and the heel of the palm behind. */
+/* Every sum is drawn on the raised paddle. The hand and the board are a
+   supplied illustration (mazad-paddle.png) — nothing here draws them. All this
+   does is lay the number on the board: the board sits at 36.0% / 20.3% of the
+   frame, is 64.1% of its width, and leans -7.2deg, all measured off the file
+   itself, so the text sits square on the board rather than floating over it.
+   Re-measure these four numbers if the artwork is ever replaced. */
 function paddle(amount, variant) {
-  const v = variant || '';
-  const face = v.includes('top') ? 'url(#gBoardTop)' : v.includes('mine') ? 'url(#gBoardMine)' : 'url(#gBoard)';
-
-  // one finger: a curled segment with a knuckle at the back and a nail at the tip
-  const finger = (x, y, w, h, nail) =>
-    '<g class="p-fg">' +
-      '<rect class="p-fg-body" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (h / 2) + '"/>' +
-      '<path class="p-fg-joint" d="M' + (x + w * 0.42) + ' ' + (y + 2.5) + ' v' + (h - 5) + '"/>' +
-      '<ellipse class="p-fg-knuck" cx="' + (x + w - h * 0.42) + '" cy="' + (y + h * 0.46) + '" rx="' + (h * 0.40) + '" ry="' + (h * 0.34) + '"/>' +
-      (nail
-        ? '<rect class="p-nail" x="' + (x + 1.6) + '" y="' + (y + h * 0.20) + '" width="' + (h * 0.52) + '" height="' + (h * 0.60) + '" rx="' + (h * 0.24) + '"/>'
-        : '') +
-    '</g>';
-
+  const label = money(amount);
+  // sized against the board, which is 51.52% of this frame: 13.6cqw is as
+  // large as it looks right, and long sums step down so they still fit
+  const fs = Math.min(13.6, 70.7 / Math.max(label.length, 1)).toFixed(2);
   return (
-    '<span class="paddle ' + v + '">' +
-      '<svg viewBox="0 0 122 180" aria-hidden="true">' +
-        '<ellipse class="p-shadow" cx="62" cy="173" rx="32" ry="5"/>' +
-
-        // handle, running down behind the fist
-        '<rect class="p-stick" x="54" y="60" width="15" height="72" rx="7.5"/>' +
-        '<rect class="p-stick-hi" x="57" y="64" width="3.4" height="64" rx="1.7"/>' +
-
-        // board: a darker slab behind the face gives it thickness
-        '<rect class="p-edge"  x="12" y="11" width="101" height="73" rx="15"/>' +
-        '<rect class="p-board" x="9"  y="5"  width="101" height="73" rx="15" fill="' + face + '"/>' +
-        '<rect class="p-gloss" x="17" y="11" width="85" height="26" rx="11"/>' +
-        '<text class="p-amount" x="59.5" y="52">' + esc(money(amount)) + '</text>' +
-
-        // heel of the palm, behind the fingers
-        '<path class="p-palm" d="M44 104 h42 q13 0 13 13 v34 q0 14 -14 14 h-40 q-13 0 -13 -13 v-35 q0 -13 12 -13 z"/>' +
-        '<path class="p-palm-sh" d="M86 106 q13 2 13 14 v33 q0 13 -13 14 z"/>' +
-
-        // index, middle, ring, little — curled round the handle, tips to the left
-        finger(23, 100, 70, 17, true) +
-        finger(21, 118, 74, 17, true) +
-        finger(24, 136, 69, 16, true) +
-        finger(29, 152, 61, 14, true) +
-
-        // thumb across the fingers
-        '<g transform="rotate(-24 33 133)">' +
-          '<rect class="p-thumb" x="20" y="108" width="26" height="50" rx="13"/>' +
-          '<path class="p-fg-joint" d="M33 120 v26"/>' +
-          '<rect class="p-nail" x="25" y="113" width="16" height="15" rx="7.5"/>' +
-        '</g>' +
-      '</svg>' +
+    '<span class="paddle ' + (variant || '') + '" style="--fs:' + fs + '">' +
+      '<img src="mazad-paddle.png" alt="" loading="lazy" decoding="async">' +
+      '<span class="p-amt num">' + esc(label) + '</span>' +
     '</span>'
   );
 }
@@ -1235,7 +1226,6 @@ function renderList() {
           '</div>' +
           '<div class="phone-plate plate-wrap">' +
             '<div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
-            (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') +
             stampFor(st) +
           '</div>' +
           '<div class="lot-stats">' +
@@ -1313,6 +1303,9 @@ function renderLive(lot, bids) {
     .filter(l => ['sold', 'unsold'].includes(l.status) && l.id !== liveId).length;
 
   if (!lot) {
+    const emptySig = 'empty:' + doneCount + ':' + open.map(l => l.id).join(',');
+    if (emptySig === screenSig.live && host.firstElementChild) return;
+    screenSig.live = emptySig;
     host.innerHTML =
       '<div class="live">' +
         '<div class="live-head"><span class="live-dot">البث</span>' +
@@ -1333,6 +1326,14 @@ function renderLive(lot, bids) {
   const last = bids.slice(-6).reverse();
   const best = bids.length ? Math.max(...bids.map(b => +b.amount)) : null;
 
+  const sig = JSON.stringify([
+    lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
+    lot.seller_name, lot.end_at, st, doneCount,
+    sigOfBids(bids), open.map(l => l.id).join(',')
+  ]);
+  if (sig === screenSig.live && host.firstElementChild) return;
+  screenSig.live = sig;
+
   host.innerHTML =
     '<div class="live">' +
       '<div class="live-head">' +
@@ -1344,7 +1345,6 @@ function renderLive(lot, bids) {
       '<div class="live-plate plate-wrap">' +
         '<div class="live-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
         '<div class="live-note">' + esc(CARRIERS[lot.carrier] || 'رقم مميز') +
-          (lot.note ? ' · ' + esc(lot.note) : '') +
           (lot.seller_name && lot.seller_name !== 'البائع' ? ' · البائع ' + esc(lot.seller_name) : '') + '</div>' +
         stampFor(st) +
       '</div>' +
@@ -1364,6 +1364,8 @@ function renderLive(lot, bids) {
            : st === 'pending' ? 'ابدأ المؤقت عشان يفتح السوم'
            : 'ما زايد أحد بعد') + '</div>' +
       '</div>' +
+
+      (autoLine(lot, shown, st) ? '<div class="live-auto">' + autoLine(lot, shown, st) + '</div>' : '') +
 
       (last.length
         ? '<div class="live-paddles">' + last.map(b =>
@@ -1390,6 +1392,8 @@ function renderControl(lot, bids) {
   const host = $('#controlBody');
 
   if (!admin.on) {
+    if (screenSig.control === 'locked') return;
+    screenSig.control = 'locked';
     host.innerHTML =
       '<div class="card" style="text-align:center">' +
         '<div style="font-weight:800;margin-bottom:6px">لوحة التحكم</div>' +
@@ -1406,6 +1410,16 @@ function renderControl(lot, bids) {
   const t = lot ? topBid(lot.id, lot) : null;
   const st = lot ? lotState(lot) : null;
   const cd = lot ? countdown(lot.end_at) : null;
+
+  const sig = JSON.stringify([
+    lot ? [lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
+           lot.seller_name, lot.end_at, st] : null,
+    sigOfBids(bids),
+    sigOfBids(cache.pending),
+    open.map(l => l.id + ':' + l.phone + ':' + l.seller_name).join(',')
+  ]);
+  if (sig === screenSig.control && host.firstElementChild) return;
+  screenSig.control = sig;
 
   host.innerHTML =
     '<div class="ctl-top">' +
@@ -1430,6 +1444,10 @@ function renderControl(lot, bids) {
               (t.name ? 'أعلى مزايد: ' + esc(t.name)
                : st === 'sold' ? 'بيع مباشر' : 'ما زايد أحد بعد') +
               ' · البائع ' + esc(lot.seller_name) + '</div>' +
+            (lot.auto_sell_price
+              ? '<div class="ctl-auto">⚡ بيع مباشر عند <span class="num">' +
+                money(lot.auto_sell_price) + '</span> ر.س</div>'
+              : '') +
           '</div>'
         : '<div class="ctl-now"><div class="ctl-digits" style="font-size:1.1rem">ما فيه رقم على الهواء</div>' +
           '<div class="ctl-who">سجّل رقم أو اعرض واحد من الطابور تحت</div></div>') +
@@ -1507,7 +1525,12 @@ function renderPendingBids() {
                ' data-ok="' + (beats ? '1' : '0') + '">' +
         '<div class="who">' +
           '<b>' + esc(b.bidder_name) + '</b>' +
-          '<span class="num">' + esc(fmtPhone(b.phone || '')) + '</span>' +
+          (b.bidder_phone
+            ? '<a class="wa" href="' + esc(waLink(b.bidder_phone, b.phone || '')) + '"' +
+              ' target="_blank" rel="noopener" title="واتساب المزايد">💬 <span class="num">' +
+              esc(fmtPhone(b.bidder_phone)) + '</span></a>'
+            : '<span class="sub-muted">بدون جوال</span>') +
+          '<span class="num">على ' + esc(fmtPhone(b.phone || '')) + '</span>' +
         '</div>' +
         '<div class="cmp">' +
           '<div class="cmp-line">' +
@@ -1543,10 +1566,13 @@ function renderPendingBids() {
           row.style.opacity = '1';
           toast(r.error === 'below_current'
             ? 'أقل من السعر الحالي (' + money(r.current) + ') — ما ينفع'
+            : r.error === 'finished' ? 'انتهى المزاد على هذا الرقم'
             : r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة' : 'تعذّر التنفيذ');
           return;
         }
-        toast(act === 'approve' ? 'اعتمدت السومة ✔' : 'رفضت السومة');
+        toast(act === 'reject' ? 'رفضت السومة'
+              : r && r.auto_sold ? 'اعتمدت السومة — وانباع الرقم تلقائياً ⚡'
+              : 'اعتمدت السومة ✔');
       } catch (e) {
         row.style.opacity = '1'; console.error(e); toast('تعذّر الاتصال');
       } finally {
@@ -1599,10 +1625,13 @@ function askManualBid(lot) {
         btn.disabled = false; btn.textContent = 'سجّل السومة';
         return err(r.error === 'below_current'
           ? 'المبلغ لازم يكون أعلى من ' + money(r.current) + ' ر.س. لو تبي تنزّل السوم، احذف السومة الأعلى أول.'
+          : r.error === 'finished' ? 'انتهى المزاد على هذا الرقم — رجّعه للقائمة أول.'
           : r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة' : 'تعذّر التسجيل');
       }
       closeSheet();
-      toast('انسجّلت سومة ' + esc(name) + ' بـ ' + money(amount) + ' ر.س ✔');
+      toast(r && r.auto_sold
+        ? 'انباع الرقم على ' + money(amount) + ' ر.س ⚡ (وصل سعر البيع المباشر)'
+        : 'انسجّلت سومة ' + esc(name) + ' بـ ' + money(amount) + ' ر.س ✔');
       refresh(false);
     } catch (e) {
       console.error(e); btn.disabled = false; btn.textContent = 'سجّل السومة';
@@ -1620,12 +1649,20 @@ function askManualBid(lot) {
 async function renderApprovedBids(lot) {
   const host = $('#ctlApproved');
   if (!host || !lot) return;
-  host.innerHTML = '<div style="color:var(--muted);font-size:.84rem">…</div>';
+  // only show the spinner on an empty card — wiping a filled one and refilling
+  // it a moment later is half of what made this page jump
+  if (!host.firstElementChild) {
+    host.innerHTML = '<div style="color:var(--muted);font-size:.84rem">…</div>';
+  }
   let list = [];
   try {
     const r = await store.bidsOf(lot.id, admin.secret);
     list = (r && r.ok && r.bids ? r.bids : []).filter(b => b.approved);
   } catch { /* leave it empty */ }
+
+  const sig = lot.id + '|' + sigOfBids(list);
+  if (sig === screenSig.approved && host.firstElementChild) return;
+  screenSig.approved = sig;
 
   host.innerHTML =
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
@@ -1636,6 +1673,11 @@ async function renderApprovedBids(lot) {
       ? list.map((b, i) =>
           '<div class="ctl-bid done" data-b="' + esc(b.id) + '">' +
             '<div class="who"><b>' + esc(b.bidder_name) + '</b>' +
+              (b.bidder_phone
+                ? '<a class="wa" href="' + esc(waLink(b.bidder_phone, lot.phone)) + '"' +
+                  ' target="_blank" rel="noopener">💬 <span class="num">' +
+                  esc(fmtPhone(b.bidder_phone)) + '</span></a>'
+                : '') +
               '<span>' + (i === 0 ? 'أعلى سومة' : esc(ago(b.created_at))) + '</span></div>' +
             '<div class="amt num">' + money(b.amount) + '</div>' +
             '<button class="no" data-a="reject" title="احذف">✖</button>' +
@@ -1727,6 +1769,11 @@ function opBar(lot) {
       '<div class="row">' +
         '<button class="add" data-a="manual">＋ سجّل سومة من البث</button>' +
       '</div>' +
+      '<div class="row">' +
+        '<button data-a="auto">⚡ ' +
+          (lot.auto_sell_price ? 'سعر البيع المباشر: ' + money(lot.auto_sell_price) : 'حدّد سعر بيع مباشر') +
+        '</button>' +
+      '</div>' +
       '<div class="lbl">نتيجة الرقم</div>' +
       '<div class="row">' +
         '<button class="sold" data-a="sold">✔ تم البيع</button>' +
@@ -1754,6 +1801,7 @@ function opBar(lot) {
     if (a === 'quick') { askQuickAdd(); return; }
     if (a === 'open' && lot) { askRequeue(lot); return; }
     if (a === 'manual' && lot) { askManualBid(lot); return; }
+    if (a === 'auto'   && lot) { askAutoPrice(lot); return; }
     if (a === 'next') {
       const r = await opDo(lot ? lot.id : null, 'next');
       if (r && !r.next) toast('ما فيه أرقام بالانتظار');
@@ -1815,6 +1863,62 @@ function askSoldPrice(lot) {
   });
 }
 
+/* The seller's limit, set or cleared by the operator. A limit at or under the
+   sum the lot already reached closes it immediately — the RPC says so with
+   auto_sold, so the toast tells the truth either way. */
+function askAutoPrice(lot) {
+  const t = topBid(lot.id, lot);
+  const cur = finalPrice(lot, t);
+  const has = lot.auto_sell_price != null;
+  const s2 = sheet(
+    '<h2>سعر البيع المباشر</h2>' +
+    '<p class="hint">الرقم <span class="num">' + esc(fmtPhone(lot.phone)) + '</span> — ' +
+      'لو وصل السوم لهذا المبلغ ينباع تلقائياً وينتهي المزاد عليه.</p>' +
+    '<div id="apErr"></div>' +
+    '<div class="bid-now" style="margin-bottom:12px">السوم الحالي ' +
+      '<b><span class="num">' + money(cur) + '</span> ر.س</b></div>' +
+    '<div class="field ltr"><label>المبلغ (ر.س)</label>' +
+      '<input id="apPrice" type="number" inputmode="numeric" min="0" value="' +
+        esc(has ? Number(lot.auto_sell_price) : '') + '" placeholder="مثال: 15000">' +
+      '<div class="sub">لازم يكون أعلى من سعر البداية (<span class="num">' +
+        money(lot.start_price) + '</span>). ولو حطيته أقل من السوم الحالي، ينباع الرقم على طول.</div></div>' +
+    '<button class="btn btn-gold btn-block" id="apSave">احفظ</button>' +
+    (has ? '<button class="btn btn-ghost btn-block" style="margin-top:8px" id="apClear">شيل سعر البيع المباشر</button>' : '')
+  );
+
+  const apply = async (v) => {
+    try {
+      const r = await store.admin(lot.id, admin.secret, 'auto', null, v);
+      if (r && r.ok === false) {
+        s2.querySelector('#apErr').innerHTML = '<div class="err">' +
+          (r.error === 'bad_amount'
+            ? 'لازم يكون أعلى من سعر البداية (' + money(r.start) + ' ر.س).'
+            : r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة' : 'تعذّر الحفظ') + '</div>';
+        return;
+      }
+      closeSheet();
+      toast(v == null ? 'انشال سعر البيع المباشر'
+            : r && r.auto_sold ? 'انباع الرقم على ' + money(cur) + ' ر.س ⚡'
+            : 'سعر البيع المباشر: ' + money(v) + ' ر.س ✔');
+      refresh(false);
+    } catch (e) {
+      console.error(e);
+      s2.querySelector('#apErr').innerHTML = '<div class="err">تعذّر الاتصال.</div>';
+    }
+  };
+
+  s2.querySelector('#apSave').addEventListener('click', () => {
+    const v = Number(s2.querySelector('#apPrice').value);
+    if (!(v > 0) || v > 100000000) {
+      s2.querySelector('#apErr').innerHTML = '<div class="err">اكتب مبلغ صحيح.</div>';
+      return;
+    }
+    apply(v);
+  });
+  if (has) s2.querySelector('#apClear').addEventListener('click', () => apply(null));
+  s2.querySelector('#apPrice').focus();
+}
+
 /* the walk-in guest: operator types the number and it goes on air now */
 function askQuickAdd() {
   const s2 = sheet(
@@ -1836,6 +1940,9 @@ function askQuickAdd() {
         '<option value="zain">زين</option><option value="other">أخرى</option></select></div>' +
     '</div>' +
     '<div class="field ltr"><label>جوال البائع للتواصل (اختياري)</label><input id="qkContact" type="tel" inputmode="numeric" maxlength="14" placeholder="05XXXXXXXX"></div>' +
+    '<div class="field ltr"><label>سعر البيع المباشر (اختياري)</label>' +
+      '<input id="qkAuto" type="number" inputmode="numeric" min="0" placeholder="اتركه فاضي">' +
+      '<div class="sub">لو وصل السوم له ينباع الرقم تلقائياً.</div></div>' +
     '<button class="btn btn-gold btn-block" id="qkSave">ابدأ السوم على الهواء 🔴</button>'
   );
 
@@ -1844,13 +1951,17 @@ function askQuickAdd() {
     const phone   = s2.querySelector('#qkPhone').value.replace(/\D/g, '');
     const contact = s2.querySelector('#qkContact').value.replace(/\D/g, '');
     if (!/^05\d{8}$/.test(phone)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
+    const start = Number(s2.querySelector('#qkPrice').value || 0);
+    const autoRaw = s2.querySelector('#qkAuto').value.trim();
+    const auto = autoRaw === '' ? null : Number(autoRaw);
+    if (auto !== null && !(auto > start)) return err('سعر البيع المباشر لازم يكون أعلى من سعر البداية.');
 
     const btn = s2.querySelector('#qkSave'); btn.disabled = true; btn.textContent = 'جاري…';
     try {
       const r = await store.operatorCreate(admin.secret, {
         phone,
         carrier: s2.querySelector('#qkCarrier').value,
-        start_price: Number(s2.querySelector('#qkPrice').value || 0),
+        start_price: start,
         seller_name: s2.querySelector('#qkName').value.trim() || 'البائع',
         seller_contact: contact || null,
         minutes: Number(s2.querySelector('#qkMin').value)
@@ -1858,6 +1969,10 @@ function askQuickAdd() {
       if (r && r.ok === false) {
         btn.disabled = false; btn.textContent = 'ابدأ السوم على الهواء 🔴';
         return err(r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة' : 'تعذّر التسجيل');
+      }
+      // the create RPC carries no limit, so set it on the row we just made
+      if (auto !== null && r && r.id) {
+        try { await store.admin(r.id, admin.secret, 'auto', null, auto); } catch (e2) { console.error(e2); }
       }
       closeSheet();
       toast('بدأ السوم 🔴');
@@ -1871,6 +1986,15 @@ function askQuickAdd() {
   });
 }
 
+/* The seller's optional limit, stated the same way everywhere it shows. */
+function autoLine(lot, shown, st) {
+  const a = Number(lot.auto_sell_price || 0);
+  if (!a || !['live', 'pending'].includes(st)) return '';
+  const left = a - Number(shown || 0);
+  return '⚡ بيع مباشر عند <span class="num">' + money(a) + '</span> ر.س' +
+    (st === 'live' && left > 0 ? ' — باقي <span class="num">' + money(left) + '</span>' : '');
+}
+
 function renderLot(lot, bids, full) {
   const st = lotState(lot);
   const t = topBid(lot.id, lot);
@@ -1879,81 +2003,91 @@ function renderLot(lot, bids, full) {
   const minNext = t.amount + step;
   const cd = countdown(lot.end_at);
 
-  const body = $('#lotBody');
-  const feedScrolled = (() => { const f = $('#feed'); return f ? f.scrollTop + f.clientHeight >= f.scrollHeight - 30 : true; })();
+  // the page re-reads itself every 2.5s; only rebuild when something changed,
+  // otherwise the card jumps under the reader's thumb (the clock keeps ticking
+  // on its own through tick() and [data-cd])
+  const sig = JSON.stringify([lot.id, lot.phone, lot.status, lot.sold_price,
+    lot.auto_sell_price, lot.seller_name, lot.end_at, lot.is_live,
+    st, admin.on, sigOfBids(bids)]);
+  if (full || sig !== screenSig.lot || !$('#lotBody').firstElementChild) {
+    screenSig.lot = sig;
+    const body = $('#lotBody');
+    const feedScrolled = (() => { const f = $('#feed'); return f ? f.scrollTop + f.clientHeight >= f.scrollHeight - 30 : true; })();
 
-  body.innerHTML =
-    '<div class="card">' +
-      '<div class="lot-top">' + badgeFor(st) +
-        (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '') +
-        '<span class="badge">' + esc(CARRIERS[lot.carrier] || 'رقم') + '</span>' +
-        '<span style="flex:1"></span>' +
-        '<button class="btn btn-ghost btn-sm" id="btnShare">مشاركة</button>' +
-      '</div>' +
-      '<div class="phone-plate plate-wrap"><div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
-        (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') + stampFor(st) + '</div>' +
-      '<div class="price-hero" style="margin-top:14px">' +
-        '<div class="k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
-        '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +
-        '<div class="who">' +
-          (t.name ? 'أعلى مزايد: ' + esc(t.name)
-           : st === 'sold' ? 'بيع مباشر — بدون مزايدات على الموقع'
-           : st === 'pending' ? 'ما بدأ السوم بعد'
-           : 'لا توجد مزايدات بعد — سعر البداية') + '</div>' +
-      '</div>' +
-      (st === 'live'
-        ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
-        : st === 'pending'
-        ? '<div class="wait-note">' +
-          (isMasked(lot) ? 'الرقم مخفي جزئياً لين يجي دوره — يظهر كامل لما يفتح عليه السوم.<br>' : '') +
-          'ما يقدر أحد يزايد عليه إلا لما نفتح عليه السوم.</div>'
-        : '') +
-      '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
-        ' · <span class="num">' + t.count + '</span> مزايدة</div>' +
-      (st === 'pending'
-        ? '<div class="fee">عمولة الموقع ' + esc(FEE_RULE) + ' — على ذمة البائع</div>'
-        : '<div class="fee">عمولة الموقع = ' +
-          '<b><span class="num">' + money(commissionOn(shown)) + '</span> ر.س</b>' +
-          '<span> — على ذمة البائع</span></div>') +
-      (lot.seller_contact && admin.on
-        ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
-          esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع (مشرف)</a>'
-        : '') +
-    '</div>' +
-
-    '<div class="card">' +
-      '<div style="font-weight:700;margin-bottom:8px">المزايدات</div>' +
-      '<div class="feed" id="feed"></div>' +
-    '</div>';
-
-  if (admin.on) body.appendChild(adminBar(lot));
-
-  const feed = $('#feed');
-  if (!bids.length) {
-    feed.innerHTML = '<div class="empty" style="padding:22px">' +
-      (st === 'pending' ? 'ينتظر دوره — يبدأ السوم عليه في البث ⏳'
-                        : 'ما فيه سومات معتمدة بعد. السومات تظهر هنا بعد موافقة المشرف 👋') + '</div>';
-  } else {
-    const best = Math.max(...bids.map(b => +b.amount));
-    const newest = bids[bids.length - 1];
-    const fresh = newest && newest.id !== lastSeenBid;
-    if (newest) lastSeenBid = newest.id;
-    feed.innerHTML = bids.slice().reverse().map(b => {
-      const isTop = +b.amount === best, isMine = b.bidder_name === me.name;
-      return '<div class="bid-row' + (isTop ? ' top' : '') + '">' +
-        paddle(b.amount, (isTop ? 'top ' : '') + (isMine ? 'mine ' : '') +
-                         (fresh && b.id === newest.id ? 'raise' : '')) +
-        '<div class="bid-who">' +
-          '<b>' + esc(b.bidder_name) + (isTop ? ' 🏆' : '') + '</b>' +
-          '<span>' + esc(ago(b.created_at)) + (isTop ? ' · أعلى سومة' : '') + '</span>' +
+    body.innerHTML =
+      '<div class="card">' +
+        '<div class="lot-top">' + badgeFor(st) +
+          (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '') +
+          '<span class="badge">' + esc(CARRIERS[lot.carrier] || 'رقم') + '</span>' +
+          '<span style="flex:1"></span>' +
+          '<button class="btn btn-ghost btn-sm" id="btnShare">مشاركة</button>' +
         '</div>' +
-        '<div class="bid-amt num">' + money(b.amount) + ' ر.س</div>' +
-      '</div>';
-    }).join('');
-    if (full || feedScrolled) feed.scrollTop = 0;
-  }
+        '<div class="phone-plate plate-wrap"><div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
+          stampFor(st) + '</div>' +
+        '<div class="price-hero" style="margin-top:14px">' +
+          '<div class="k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
+          '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +
+          '<div class="who">' +
+            (t.name ? 'أعلى مزايد: ' + esc(t.name)
+             : st === 'sold' ? 'بيع مباشر — بدون مزايدات على الموقع'
+             : st === 'pending' ? 'ما بدأ السوم بعد'
+             : 'لا توجد مزايدات بعد — سعر البداية') + '</div>' +
+        '</div>' +
+        (st === 'live'
+          ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
+          : st === 'pending'
+          ? '<div class="wait-note">' +
+            (isMasked(lot) ? 'الرقم مخفي جزئياً لين يجي دوره — يظهر كامل لما يفتح عليه السوم.<br>' : '') +
+            'ما يقدر أحد يزايد عليه إلا لما نفتح عليه السوم.</div>'
+          : '') +
+        (autoLine(lot, shown, st) ? '<div class="auto-note">' + autoLine(lot, shown, st) + '</div>' : '') +
+        '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
+          ' · <span class="num">' + t.count + '</span> مزايدة</div>' +
+        (st === 'pending'
+          ? '<div class="fee">عمولة الموقع ' + esc(FEE_RULE) + ' — على ذمة البائع</div>'
+          : '<div class="fee">عمولة الموقع = ' +
+            '<b><span class="num">' + money(commissionOn(shown)) + '</span> ر.س</b>' +
+            '<span> — على ذمة البائع</span></div>') +
+        (lot.seller_contact && admin.on
+          ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
+            esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع (مشرف)</a>'
+          : '') +
+      '</div>' +
 
-  $('#btnShare').addEventListener('click', () => share(lot));
+      '<div class="card">' +
+        '<div style="font-weight:700;margin-bottom:8px">المزايدات</div>' +
+        '<div class="feed" id="feed"></div>' +
+      '</div>';
+
+    if (admin.on) body.appendChild(adminBar(lot));
+
+    const feed = $('#feed');
+    if (!bids.length) {
+      feed.innerHTML = '<div class="empty" style="padding:22px">' +
+        (st === 'pending' ? 'ينتظر دوره — يبدأ السوم عليه في البث ⏳'
+                          : 'ما فيه سومات معتمدة بعد. السومات تظهر هنا بعد موافقة المشرف 👋') + '</div>';
+    } else {
+      const best = Math.max(...bids.map(b => +b.amount));
+      const newest = bids[bids.length - 1];
+      const fresh = newest && newest.id !== lastSeenBid;
+      if (newest) lastSeenBid = newest.id;
+      feed.innerHTML = bids.slice().reverse().map(b => {
+        const isTop = +b.amount === best, isMine = b.bidder_name === me.name;
+        return '<div class="bid-row' + (isTop ? ' top' : '') + '">' +
+          paddle(b.amount, (isTop ? 'top ' : '') + (isMine ? 'mine ' : '') +
+                           (fresh && b.id === newest.id ? 'raise' : '')) +
+          '<div class="bid-who">' +
+            '<b>' + esc(b.bidder_name) + (isTop ? ' 🏆' : '') + '</b>' +
+            '<span>' + esc(ago(b.created_at)) + (isTop ? ' · أعلى سومة' : '') + '</span>' +
+          '</div>' +
+          '<div class="bid-amt num">' + money(b.amount) + ' ر.س</div>' +
+        '</div>';
+      }).join('');
+      if (full || feedScrolled) feed.scrollTop = 0;
+    }
+
+    $('#btnShare').addEventListener('click', () => share(lot));
+  }
 
   /* bid bar */
   const host = $('#bidbarHost');
@@ -2025,14 +2159,15 @@ async function share(lot) {
 }
 
 async function sendBid(id) {
-  if (!me.name) { askName(() => sendBid(id)); return; }
+  // both, not just the name: a sum we cannot follow up on is no use to the seller
+  if (!me.name || !/^05\d{8}$/.test(me.phone)) { askName(() => sendBid(id)); return; }
   const input = $('#bidInput');
   const amount = Number(input.value);
   if (!amount || amount <= 0) { toast('اكتب المبلغ'); return; }
 
   const btn = $('#btnBid'); btn.disabled = true;
   try {
-    const r = await store.placeBid(id, me.name, amount);
+    const r = await store.placeBid(id, me.name, amount, me.phone);
     if (r && r.ok === false) {
       const m = {
         too_low: 'المبلغ أقل من المطلوب — أقل مزايدة ' + money(r.min || 0) + ' ر.س',
@@ -2042,6 +2177,7 @@ async function sendBid(id) {
         closed: 'المزاد مقفل',
         expired: 'انتهى وقت المزاد',
         bad_name: 'اكتب اسم صحيح (حرفين على الأقل)',
+        bad_phone: 'اكتب رقم جوال صحيح يبدأ بـ 05',
         bad_amount: 'مبلغ غير صحيح',
         not_found: 'المزاد غير موجود'
       }[r.error] || 'تعذّرت المزايدة';
@@ -2071,20 +2207,31 @@ function closeSheet() { $('#sheetHost').innerHTML = ''; }
 
 function askName(then) {
   const s = sheet(
-    '<h2>وش اسمك؟</h2>' +
-    '<p class="hint">يظهر اسمك عند كل مزايدة — زي الشات.</p>' +
-    '<div class="field"><input id="nmInput" maxlength="40" placeholder="مثال: أبو فهد" value="' + esc(me.name) + '"></div>' +
+    '<h2>بياناتك للمزايدة</h2>' +
+    '<p class="hint">اسمك يظهر مع كل سومة. جوالك ما يظهر لأحد — يوصل للمشرف فقط ' +
+      'عشان يتواصل معك إذا ربحت.</p>' +
+    '<div id="nmErr"></div>' +
+    '<div class="field"><label>اسمك</label>' +
+      '<input id="nmInput" maxlength="40" placeholder="مثال: أبو فهد" value="' + esc(me.name) + '"></div>' +
+    '<div class="field ltr"><label>جوالك</label>' +
+      '<input id="nmPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX" value="' + esc(me.phone) + '">' +
+      '<div class="sub">يبدأ بـ 05 ويتكوّن من 10 أرقام. سرّي — ما يظهر في المزايدات.</div></div>' +
     '<button class="btn btn-block" id="nmSave">حفظ</button>'
   );
   const input = s.querySelector('#nmInput');
   input.focus();
   const save = () => {
+    const err = (m) => { s.querySelector('#nmErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
     const v = input.value.trim();
-    if (v.length < 2) { toast('الاسم قصير'); return; }
+    const ph = s.querySelector('#nmPhone').value.replace(/\D/g, '');
+    if (v.length < 2) return err('الاسم قصير.');
+    if (!/^05\d{8}$/.test(ph)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
+    me.phone = ph;
     me.name = v; closeSheet(); if (then) then(); else refresh(false);
   };
   s.querySelector('#nmSave').addEventListener('click', save);
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') s.querySelector('#nmPhone').focus(); });
+  s.querySelector('#nmPhone').addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
 }
 
 function askAdmin() {
@@ -2126,7 +2273,10 @@ function askListing() {
       '<div class="field ltr"><label>جوال للتواصل</label><input id="lsContact" type="tel" inputmode="numeric" maxlength="14" placeholder="05XXXXXXXX">' +
         '<div class="sub">لإدارة المزاد فقط — ما يظهر لأحد.</div></div>' +
     '</div>' +
-    '<div class="field"><label>ملاحظة (اختياري)</label><input id="lsNote" maxlength="80" placeholder="مثال: أرقام متشابهة وسهلة الحفظ"></div>' +
+    '<div class="field ltr"><label>سعر البيع المباشر (اختياري)</label>' +
+      '<input id="lsAuto" type="number" inputmode="numeric" min="0" placeholder="اتركه فاضي لو ما تبي">' +
+      '<div class="sub">لو وصل السوم لهذا المبلغ ينباع رقمك على طول وينتهي المزاد عليه — بدون ما تنتظر نهاية الوقت. ' +
+        'لازم يكون أعلى من سعر البداية.</div></div>' +
     '<div class="fee-box">💰 عمولة الموقع <b>' + esc(FEE_RULE) + '</b>، <b>على ذمة البائع</b>.' +
       '<br>بيع بـ <span class="num">10,000</span> ← <span class="num">' + money(commissionOn(10000)) + '</span> ر.س' +
       ' · بيع بـ <span class="num">30,000</span> ← <span class="num">' + money(commissionOn(30000)) + '</span> ر.س.' +
@@ -2145,6 +2295,10 @@ function askListing() {
     if (name.length < 2) return err('اكتب اسمك.');
     if (price < 0 || price > 100000000) return err('سعر البداية غير منطقي.');
     if (contact && !/^0?5\d{8}$/.test(contact)) return err('رقم التواصل غير صحيح.');
+    const autoRaw = s.querySelector('#lsAuto').value.trim();
+    const auto = autoRaw === '' ? null : Number(autoRaw);
+    if (auto !== null && !(auto > price)) return err('سعر البيع المباشر لازم يكون أعلى من سعر البداية.');
+    if (auto !== null && auto > 100000000) return err('سعر البيع المباشر غير منطقي.');
 
     const btn = s.querySelector('#lsSave'); btn.disabled = true; btn.textContent = 'جاري التسجيل…';
     try {
@@ -2154,7 +2308,7 @@ function askListing() {
         start_price: price,
         seller_name: name,
         seller_contact: contact || null,
-        note: s.querySelector('#lsNote').value.trim() || null,
+        auto_sell_price: auto,  // optional: the sum that closes the lot by itself
         status: 'pending',      // queued — only the operator opens the bidding
         end_at: null
       });
