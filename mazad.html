@@ -1084,8 +1084,18 @@ function parseRoute() {
   return { name: 'list', id: null };
 }
 
+/* The page refreshes itself every 2.5s. Rebuilding a whole screen's innerHTML
+   that often makes it jump under the reader's thumb — heights change, the
+   scroll position slips. Nothing on these screens moves on its own except the
+   countdown, and tick() updates that in place through [data-cd], so each
+   screen rebuilds only when something it shows has actually changed. Clearing
+   the signatures on navigation forces the first paint of a screen. */
+let screenSig = { control: '', live: '', lot: '', approved: '' };
+const sigOfBids = bs => (bs || []).map(b => b.id + ':' + b.amount).join(',');
+
 async function go() {
   route = parseRoute();
+  screenSig = { control: '', live: '', lot: '', approved: '' };
   if (route.name === 'admin') { location.hash = ''; askAdmin(); return; }
   $('#viewList').classList.toggle('hidden', route.name !== 'list');
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
@@ -1358,6 +1368,9 @@ function renderLive(lot, bids) {
     .filter(l => ['sold', 'unsold'].includes(l.status) && l.id !== liveId).length;
 
   if (!lot) {
+    const emptySig = 'empty:' + doneCount + ':' + open.map(l => l.id).join(',');
+    if (emptySig === screenSig.live && host.firstElementChild) return;
+    screenSig.live = emptySig;
     host.innerHTML =
       '<div class="live">' +
         '<div class="live-head"><span class="live-dot">البث</span>' +
@@ -1377,6 +1390,14 @@ function renderLive(lot, bids) {
   const cd = countdown(lot.end_at);
   const last = bids.slice(-6).reverse();
   const best = bids.length ? Math.max(...bids.map(b => +b.amount)) : null;
+
+  const sig = JSON.stringify([
+    lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
+    lot.seller_name, lot.note, lot.end_at, st, doneCount,
+    sigOfBids(bids), open.map(l => l.id).join(',')
+  ]);
+  if (sig === screenSig.live && host.firstElementChild) return;
+  screenSig.live = sig;
 
   host.innerHTML =
     '<div class="live">' +
@@ -1437,6 +1458,8 @@ function renderControl(lot, bids) {
   const host = $('#controlBody');
 
   if (!admin.on) {
+    if (screenSig.control === 'locked') return;
+    screenSig.control = 'locked';
     host.innerHTML =
       '<div class="card" style="text-align:center">' +
         '<div style="font-weight:800;margin-bottom:6px">لوحة التحكم</div>' +
@@ -1453,6 +1476,16 @@ function renderControl(lot, bids) {
   const t = lot ? topBid(lot.id, lot) : null;
   const st = lot ? lotState(lot) : null;
   const cd = lot ? countdown(lot.end_at) : null;
+
+  const sig = JSON.stringify([
+    lot ? [lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
+           lot.seller_name, lot.end_at, st] : null,
+    sigOfBids(bids),
+    sigOfBids(cache.pending),
+    open.map(l => l.id + ':' + l.phone + ':' + l.seller_name).join(',')
+  ]);
+  if (sig === screenSig.control && host.firstElementChild) return;
+  screenSig.control = sig;
 
   host.innerHTML =
     '<div class="ctl-top">' +
@@ -1677,12 +1710,20 @@ function askManualBid(lot) {
 async function renderApprovedBids(lot) {
   const host = $('#ctlApproved');
   if (!host || !lot) return;
-  host.innerHTML = '<div style="color:var(--muted);font-size:.84rem">…</div>';
+  // only show the spinner on an empty card — wiping a filled one and refilling
+  // it a moment later is half of what made this page jump
+  if (!host.firstElementChild) {
+    host.innerHTML = '<div style="color:var(--muted);font-size:.84rem">…</div>';
+  }
   let list = [];
   try {
     const r = await store.bidsOf(lot.id, admin.secret);
     list = (r && r.ok && r.bids ? r.bids : []).filter(b => b.approved);
   } catch { /* leave it empty */ }
+
+  const sig = lot.id + '|' + sigOfBids(list);
+  if (sig === screenSig.approved && host.firstElementChild) return;
+  screenSig.approved = sig;
 
   host.innerHTML =
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
@@ -2018,82 +2059,91 @@ function renderLot(lot, bids, full) {
   const minNext = t.amount + step;
   const cd = countdown(lot.end_at);
 
-  const body = $('#lotBody');
-  const feedScrolled = (() => { const f = $('#feed'); return f ? f.scrollTop + f.clientHeight >= f.scrollHeight - 30 : true; })();
+  // the page re-reads itself every 2.5s; only rebuild when something changed,
+  // otherwise the card jumps under the reader's thumb (the clock keeps ticking
+  // on its own through tick() and [data-cd])
+  const sig = JSON.stringify([lot.id, lot.phone, lot.status, lot.sold_price,
+    lot.auto_sell_price, lot.seller_name, lot.note, lot.end_at, lot.is_live,
+    st, admin.on, sigOfBids(bids)]);
+  if (full || sig !== screenSig.lot || !$('#lotBody').firstElementChild) {
+    screenSig.lot = sig;
+    const body = $('#lotBody');
+    const feedScrolled = (() => { const f = $('#feed'); return f ? f.scrollTop + f.clientHeight >= f.scrollHeight - 30 : true; })();
 
-  body.innerHTML =
-    '<div class="card">' +
-      '<div class="lot-top">' + badgeFor(st) +
-        (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '') +
-        '<span class="badge">' + esc(CARRIERS[lot.carrier] || 'رقم') + '</span>' +
-        '<span style="flex:1"></span>' +
-        '<button class="btn btn-ghost btn-sm" id="btnShare">مشاركة</button>' +
-      '</div>' +
-      '<div class="phone-plate plate-wrap"><div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
-        (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') + stampFor(st) + '</div>' +
-      '<div class="price-hero" style="margin-top:14px">' +
-        '<div class="k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
-        '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +
-        '<div class="who">' +
-          (t.name ? 'أعلى مزايد: ' + esc(t.name)
-           : st === 'sold' ? 'بيع مباشر — بدون مزايدات على الموقع'
-           : st === 'pending' ? 'ما بدأ السوم بعد'
-           : 'لا توجد مزايدات بعد — سعر البداية') + '</div>' +
-      '</div>' +
-      (st === 'live'
-        ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
-        : st === 'pending'
-        ? '<div class="wait-note">' +
-          (isMasked(lot) ? 'الرقم مخفي جزئياً لين يجي دوره — يظهر كامل لما يفتح عليه السوم.<br>' : '') +
-          'ما يقدر أحد يزايد عليه إلا لما نفتح عليه السوم.</div>'
-        : '') +
-      (autoLine(lot, shown, st) ? '<div class="auto-note">' + autoLine(lot, shown, st) + '</div>' : '') +
-      '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
-        ' · <span class="num">' + t.count + '</span> مزايدة</div>' +
-      (st === 'pending'
-        ? '<div class="fee">عمولة الموقع ' + esc(FEE_RULE) + ' — على ذمة البائع</div>'
-        : '<div class="fee">عمولة الموقع = ' +
-          '<b><span class="num">' + money(commissionOn(shown)) + '</span> ر.س</b>' +
-          '<span> — على ذمة البائع</span></div>') +
-      (lot.seller_contact && admin.on
-        ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
-          esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع (مشرف)</a>'
-        : '') +
-    '</div>' +
-
-    '<div class="card">' +
-      '<div style="font-weight:700;margin-bottom:8px">المزايدات</div>' +
-      '<div class="feed" id="feed"></div>' +
-    '</div>';
-
-  if (admin.on) body.appendChild(adminBar(lot));
-
-  const feed = $('#feed');
-  if (!bids.length) {
-    feed.innerHTML = '<div class="empty" style="padding:22px">' +
-      (st === 'pending' ? 'ينتظر دوره — يبدأ السوم عليه في البث ⏳'
-                        : 'ما فيه سومات معتمدة بعد. السومات تظهر هنا بعد موافقة المشرف 👋') + '</div>';
-  } else {
-    const best = Math.max(...bids.map(b => +b.amount));
-    const newest = bids[bids.length - 1];
-    const fresh = newest && newest.id !== lastSeenBid;
-    if (newest) lastSeenBid = newest.id;
-    feed.innerHTML = bids.slice().reverse().map(b => {
-      const isTop = +b.amount === best, isMine = b.bidder_name === me.name;
-      return '<div class="bid-row' + (isTop ? ' top' : '') + '">' +
-        paddle(b.amount, (isTop ? 'top ' : '') + (isMine ? 'mine ' : '') +
-                         (fresh && b.id === newest.id ? 'raise' : '')) +
-        '<div class="bid-who">' +
-          '<b>' + esc(b.bidder_name) + (isTop ? ' 🏆' : '') + '</b>' +
-          '<span>' + esc(ago(b.created_at)) + (isTop ? ' · أعلى سومة' : '') + '</span>' +
+    body.innerHTML =
+      '<div class="card">' +
+        '<div class="lot-top">' + badgeFor(st) +
+          (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '') +
+          '<span class="badge">' + esc(CARRIERS[lot.carrier] || 'رقم') + '</span>' +
+          '<span style="flex:1"></span>' +
+          '<button class="btn btn-ghost btn-sm" id="btnShare">مشاركة</button>' +
         '</div>' +
-        '<div class="bid-amt num">' + money(b.amount) + ' ر.س</div>' +
-      '</div>';
-    }).join('');
-    if (full || feedScrolled) feed.scrollTop = 0;
-  }
+        '<div class="phone-plate plate-wrap"><div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
+          (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') + stampFor(st) + '</div>' +
+        '<div class="price-hero" style="margin-top:14px">' +
+          '<div class="k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
+          '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +
+          '<div class="who">' +
+            (t.name ? 'أعلى مزايد: ' + esc(t.name)
+             : st === 'sold' ? 'بيع مباشر — بدون مزايدات على الموقع'
+             : st === 'pending' ? 'ما بدأ السوم بعد'
+             : 'لا توجد مزايدات بعد — سعر البداية') + '</div>' +
+        '</div>' +
+        (st === 'live'
+          ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
+          : st === 'pending'
+          ? '<div class="wait-note">' +
+            (isMasked(lot) ? 'الرقم مخفي جزئياً لين يجي دوره — يظهر كامل لما يفتح عليه السوم.<br>' : '') +
+            'ما يقدر أحد يزايد عليه إلا لما نفتح عليه السوم.</div>'
+          : '') +
+        (autoLine(lot, shown, st) ? '<div class="auto-note">' + autoLine(lot, shown, st) + '</div>' : '') +
+        '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
+          ' · <span class="num">' + t.count + '</span> مزايدة</div>' +
+        (st === 'pending'
+          ? '<div class="fee">عمولة الموقع ' + esc(FEE_RULE) + ' — على ذمة البائع</div>'
+          : '<div class="fee">عمولة الموقع = ' +
+            '<b><span class="num">' + money(commissionOn(shown)) + '</span> ر.س</b>' +
+            '<span> — على ذمة البائع</span></div>') +
+        (lot.seller_contact && admin.on
+          ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
+            esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع (مشرف)</a>'
+          : '') +
+      '</div>' +
 
-  $('#btnShare').addEventListener('click', () => share(lot));
+      '<div class="card">' +
+        '<div style="font-weight:700;margin-bottom:8px">المزايدات</div>' +
+        '<div class="feed" id="feed"></div>' +
+      '</div>';
+
+    if (admin.on) body.appendChild(adminBar(lot));
+
+    const feed = $('#feed');
+    if (!bids.length) {
+      feed.innerHTML = '<div class="empty" style="padding:22px">' +
+        (st === 'pending' ? 'ينتظر دوره — يبدأ السوم عليه في البث ⏳'
+                          : 'ما فيه سومات معتمدة بعد. السومات تظهر هنا بعد موافقة المشرف 👋') + '</div>';
+    } else {
+      const best = Math.max(...bids.map(b => +b.amount));
+      const newest = bids[bids.length - 1];
+      const fresh = newest && newest.id !== lastSeenBid;
+      if (newest) lastSeenBid = newest.id;
+      feed.innerHTML = bids.slice().reverse().map(b => {
+        const isTop = +b.amount === best, isMine = b.bidder_name === me.name;
+        return '<div class="bid-row' + (isTop ? ' top' : '') + '">' +
+          paddle(b.amount, (isTop ? 'top ' : '') + (isMine ? 'mine ' : '') +
+                           (fresh && b.id === newest.id ? 'raise' : '')) +
+          '<div class="bid-who">' +
+            '<b>' + esc(b.bidder_name) + (isTop ? ' 🏆' : '') + '</b>' +
+            '<span>' + esc(ago(b.created_at)) + (isTop ? ' · أعلى سومة' : '') + '</span>' +
+          '</div>' +
+          '<div class="bid-amt num">' + money(b.amount) + ' ر.س</div>' +
+        '</div>';
+      }).join('');
+      if (full || feedScrolled) feed.scrollTop = 0;
+    }
+
+    $('#btnShare').addEventListener('click', () => share(lot));
+  }
 
   /* bid bar */
   const host = $('#bidbarHost');

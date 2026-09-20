@@ -261,6 +261,17 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   `CREATE OR REPLACE VIEW` cannot insert a column in the middle of the list
   (`ERROR 42P16`), and the re-create must re-`grant select … to anon,
   authenticated` or every public read breaks.
+- **A screen repaints only when its data changed.** The page re-reads itself
+  every `POLL_MS` (2.5s). Rebuilding a whole screen's `innerHTML` that often
+  made it jump under the operator's thumb — worst on `/control`, where
+  `renderApprovedBids` also blanked its card to `…` and refilled it a moment
+  later, changing the height twice per poll. `renderControl`, `renderLive`,
+  `renderLot` and `renderApprovedBids` now each compare a signature of
+  everything they draw (`screenSig`, cleared on navigation) and return early
+  when it matches. The countdown is deliberately **not** in the signature:
+  `tick()` updates `[data-cd]` text in place every second, so the clock runs
+  without a repaint. Anything new that changes on its own must go into the
+  signature, or it will not appear until something else does.
 - **Commission**: flat `FEE_FLAT` (200 SAR), or `FEE_RATE` (2.5%) once the sale
   passes `FEE_THRESHOLD` (20,000) — على ذمة البائع. The step at the threshold is
   deliberate: 20,000 costs 200, 20,001 costs 500. `FEE_RULE` is the one sentence
