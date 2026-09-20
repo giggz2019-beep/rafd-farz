@@ -1,6 +1,7 @@
 -- ============================================================
---  مزاد الأرقام  —  Phone-number auction (mazad.html)
---  Run this ONCE in the Supabase SQL editor.
+--  مزاد سوم  —  لوحات · جوالات · سيارات  (mazad.html)
+--  Run this in the Supabase SQL editor. It is idempotent: running it
+--  again on a database that already has it is a no-op.
 --
 --  Design notes
 --  ------------
@@ -8,12 +9,26 @@
 --    (no serverless function — api/ is already at Vercel's
 --    12-function Hobby limit).
 --  * Therefore NOTHING is trusted from the client:
---      - listings  : anon may INSERT (validated by CHECKs) + SELECT
---      - bids      : anon may SELECT only. Bids are placed through
---                    the place_bid() RPC, which enforces the rules.
---      - no UPDATE / DELETE is granted to anon at all.
---  * Closing / deleting a listing goes through mazad_admin(),
---    which checks a secret stored in mazad_config (unreadable by anon).
+--      - listings  : anon may INSERT (validated by CHECKs) and has NO
+--                    select at all — the public reads the masked
+--                    mazad_public view, which has no seller_contact.
+--      - bids      : anon may SELECT named columns only (never
+--                    bidder_phone). Sums are placed through place_bid(),
+--                    and do not count until the operator approves them.
+--      - no UPDATE / DELETE is granted to anon on anything.
+--  * Closing / deleting a lot goes through mazad_admin(), which checks a
+--    secret stored in mazad_config (unreadable by anon).
+--
+--  Two traps this file exists to keep shut — both are Supabase defaults
+--  that hand anon more than you granted, and both were live once:
+--    1. mazad_public is auto-updatable and runs as its owner, so an
+--       UPDATE privilege on it is an UPDATE on mazad_listings with RLS
+--       bypassed. Default privileges grant ALL on a new view, so the
+--       revoke after each re-create is what closes it.
+--    2. PostgreSQL grants EXECUTE on a new function to PUBLIC, and
+--       Supabase grants it to anon and authenticated explicitly. An
+--       internal SECURITY DEFINER helper is only internal once it is
+--       revoked from all three by name.
 -- ============================================================
 
 -- ---------- tables ----------
@@ -58,6 +73,99 @@ alter table mazad_listings drop constraint if exists mazad_auto_sell_range;
 alter table mazad_listings add  constraint mazad_auto_sell_range
   check (auto_sell_price is null
          or (auto_sell_price > start_price and auto_sell_price <= 100000000));
+
+-- ---------- three sections on one engine: لوحات · جوالات · سيارات ----------
+-- A lot is a phone number, a car plate, or a car. One table, one bidding
+-- engine, one broadcast screen — item_type says which, and a single CHECK
+-- says which columns each kind must and must not carry, so a half-filled row
+-- cannot exist. Existing rows are phones, which is why the default is 'phone'.
+alter table mazad_listings add column if not exists item_type     text not null default 'phone';
+alter table mazad_listings add column if not exists plate_letters text;
+alter table mazad_listings add column if not exists plate_digits  text;
+alter table mazad_listings add column if not exists plate_emblem  text;
+alter table mazad_listings add column if not exists car_make      text;
+alter table mazad_listings add column if not exists car_model     text;
+alter table mazad_listings add column if not exists car_year      int;
+alter table mazad_listings add column if not exists car_photo     text;
+
+-- phone is no longer required — it is null on a plate and on a car, so the
+-- old column-level format CHECK has to go; mazad_item_shape carries it now.
+alter table mazad_listings alter column phone drop not null;
+alter table mazad_listings drop constraint if exists mazad_phone_format;
+
+alter table mazad_listings drop constraint if exists mazad_item_type;
+alter table mazad_listings add  constraint mazad_item_type
+  check (item_type in ('phone','plate','car'));
+
+-- Saudi plates carry three letters from a fixed 17-letter set (the ones that
+-- have a Latin twin) and one to four digits. The letters are normalised before
+-- they land (أ/إ/آ → ا, ى → ي, ة → ه) by the trigger below, so a seller typing
+-- إ ب ح is not rejected for it.
+alter table mazad_listings drop constraint if exists mazad_item_shape;
+alter table mazad_listings add  constraint mazad_item_shape check (
+     (item_type = 'phone'
+       and phone ~ '^05[0-9]{8}$'
+       and plate_letters is null and plate_digits is null
+       and car_make is null and car_model is null and car_year is null)
+  or (item_type = 'plate'
+       and plate_letters ~ '^[ابحدرسصطعقكلمنهوي]{3}$'
+       and plate_digits  ~ '^[0-9]{1,4}$'
+       and phone is null
+       and car_make is null and car_model is null and car_year is null)
+  or (item_type = 'car'
+       and char_length(btrim(car_make))  between 2 and 30
+       and char_length(btrim(car_model)) between 1 and 30
+       and car_year between 1970 and 2100
+       and phone is null
+       and plate_letters is null and plate_digits is null)
+);
+
+-- The emblem is the owner's own artwork, keyed by name. These five names are
+-- his: سيفين ونخلة ملون / سيفين ونخلة أسود / شعار الرؤية 2030 / مداين صالح /
+-- الدرعية. The page draws mazad-emb-<key>.png, so renaming a key here means
+-- renaming the file too.
+alter table mazad_listings drop constraint if exists mazad_emblem_on_plate_only;
+alter table mazad_listings add  constraint mazad_emblem_on_plate_only
+  check (plate_emblem is null or item_type = 'plate');
+alter table mazad_listings drop constraint if exists mazad_plate_emblem_values;
+alter table mazad_listings add  constraint mazad_plate_emblem_values
+  check (plate_emblem is null
+         or plate_emblem in ('none','swords','swords_black','vision','hegra','diriyah'));
+
+-- a car photo is a path inside the mazad-cars bucket, never a URL: the page
+-- builds the public URL from it, so a crafted row cannot point the <img> at
+-- someone else's host.
+alter table mazad_listings drop constraint if exists mazad_photo_on_car_only;
+alter table mazad_listings add  constraint mazad_photo_on_car_only
+  check (car_photo is null or item_type = 'car');
+alter table mazad_listings drop constraint if exists mazad_photo_path;
+alter table mazad_listings add  constraint mazad_photo_path
+  check (car_photo is null or car_photo ~ '^[a-z0-9-]+/[a-zA-Z0-9._-]{1,80}$');
+
+create index if not exists mazad_listings_kind_idx on mazad_listings (item_type, created_at desc);
+
+-- ---------- plate letters are normalised at the source ----------
+-- Not in the page: the page is one of several ways a row can arrive (the
+-- operator's quick-add, a future import), and the CHECK above rejects أ/ى/ة
+-- outright. Normalising in a BEFORE trigger means every path gets it.
+create or replace function mazad_norm_plate(p text)
+returns text language sql immutable as $$
+  select translate(btrim(coalesce(p, '')), 'أإآىة', 'ااايه')
+$$;
+
+create or replace function mazad_norm_row()
+returns trigger language plpgsql as $$
+begin
+  if new.plate_letters is not null then
+    new.plate_letters := mazad_norm_plate(new.plate_letters);
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists mazad_norm_before on mazad_listings;
+create trigger mazad_norm_before
+  before insert or update on mazad_listings
+  for each row execute function mazad_norm_row();
 
 create table if not exists mazad_bids (
   id          uuid primary key default gen_random_uuid(),
@@ -123,17 +231,37 @@ drop view if exists mazad_public;
 create view mazad_public as
 select
   l.id,
+  l.item_type,
   case
+    when l.item_type <> 'phone' then null
     when l.status = 'pending' and not l.is_live
       then left(l.phone, 3) || '•••••' || right(l.phone, 2)
     else l.phone
   end                                      as phone,
-  (l.status = 'pending' and not l.is_live) as phone_masked,
+  l.plate_letters,                         -- the letters are never the secret
+  case
+    when l.item_type <> 'plate' then null
+    when l.status = 'pending' and not l.is_live
+      then repeat('•', char_length(l.plate_digits))
+    else l.plate_digits
+  end                                      as plate_digits,
+  l.plate_emblem,
+  l.car_make, l.car_model, l.car_year, l.car_photo,
+  (l.item_type <> 'car' and l.status = 'pending' and not l.is_live) as phone_masked,
   l.carrier, l.start_price, l.seller_name, l.note,
   l.end_at, l.status, l.is_live, l.sold_price, l.auto_sell_price, l.created_at
 from mazad_listings l;
 
 alter view mazad_public set (security_invoker = off);
+
+-- READ-ONLY, and the revoke is the important half. This view is
+-- auto-updatable and runs as its owner, so a write privilege on it is a write
+-- on mazad_listings with RLS bypassed. Supabase's default privileges grant ALL
+-- on every new table and view in public to anon/authenticated, so each
+-- re-create of this view silently handed the anon key UPDATE/DELETE/INSERT on
+-- the listings — a price, a status or a whole lot could be changed with
+-- nothing but the public key. Never drop the revoke.
+revoke all on mazad_public from anon, authenticated, public;
 grant select on mazad_public to anon, authenticated;
 
 -- the operator gets the real rows, through the secret
@@ -427,7 +555,13 @@ begin
 end;
 $$;
 
-revoke all on function mazad_try_auto_sell(uuid, numeric) from public;
+-- Internal only. Revoking FROM PUBLIC is not enough on Supabase: its default
+-- privileges hand anon and authenticated an EXPLICIT execute grant on every new
+-- function, which a revoke from public does not touch. Left as it was, the anon
+-- key could POST /rest/v1/rpc/mazad_try_auto_sell and stamp any lot carrying an
+-- auto-sell limit as sold, at any amount, with no secret and no approved sum.
+-- The internal callers below are SECURITY DEFINER, so they still reach it.
+revoke all on function mazad_try_auto_sell(uuid, numeric) from public, anon, authenticated;
 
 -- ---------- operator fast listing ----------
 -- For the guest who shows up mid-broadcast: the operator types the
@@ -717,3 +851,205 @@ $$;
 
 revoke all on function mazad_bids_of(uuid, text) from public;
 grant execute on function mazad_bids_of(uuid, text) to anon, authenticated;
+
+-- ---------- operator fast listing: a plate ----------
+-- Same job as mazad_create, for a لوحة. Separate functions rather than one
+-- with a kind argument: each kind validates different fields, and a defaulted
+-- argument added later would create an overload, not a replacement.
+create or replace function mazad_create_plate(
+  p_secret  text,
+  p_letters text,
+  p_digits  text,
+  p_start   numeric,
+  p_seller  text,
+  p_contact text,
+  p_minutes int     default 2,
+  p_live    boolean default true,
+  p_auto    numeric default null,
+  p_emblem  text    default null
+) returns json
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_secret text;
+  v_id     uuid;
+  v_start  numeric;
+begin
+  select value into v_secret from mazad_config where key = 'admin_secret';
+  if v_secret is null or p_secret is null or p_secret <> v_secret then
+    return json_build_object('ok', false, 'error', 'forbidden');
+  end if;
+
+  p_letters := mazad_norm_plate(p_letters);
+  p_digits  := btrim(coalesce(p_digits, ''));
+  p_emblem  := nullif(btrim(coalesce(p_emblem, '')), '');
+
+  if p_letters !~ '^[ابحدرسصطعقكلمنهوي]{3}$' then
+    return json_build_object('ok', false, 'error', 'bad_letters');
+  end if;
+  if p_digits !~ '^[0-9]{1,4}$' then
+    return json_build_object('ok', false, 'error', 'bad_digits');
+  end if;
+  if p_emblem is not null
+     and p_emblem not in ('none','swords','swords_black','vision','hegra','diriyah') then
+    return json_build_object('ok', false, 'error', 'bad_emblem');
+  end if;
+
+  v_start := coalesce(p_start, 0);
+  if p_auto is not null and (p_auto <= v_start or p_auto > 100000000) then
+    return json_build_object('ok', false, 'error', 'bad_auto');
+  end if;
+
+  insert into mazad_listings (item_type, plate_letters, plate_digits, plate_emblem, phone,
+                              start_price, seller_name, seller_contact,
+                              end_at, status, auto_sell_price)
+  values ('plate', p_letters, p_digits, coalesce(p_emblem, 'swords'), null,
+          v_start,
+          coalesce(nullif(btrim(p_seller), ''), 'البائع'),
+          nullif(p_contact, ''),
+          now() + (greatest(coalesce(p_minutes, 2), 1) || ' minutes')::interval,
+          'open', p_auto)
+  returning id into v_id;
+
+  if p_live then
+    update mazad_listings set is_live = false where is_live and id <> v_id;
+    update mazad_listings set is_live = true  where id = v_id;
+  end if;
+
+  return json_build_object('ok', true, 'id', v_id);
+end;
+$$;
+
+grant execute on function
+  mazad_create_plate(text, text, text, numeric, text, text, int, boolean, numeric, text)
+  to anon, authenticated;
+
+-- ---------- operator fast listing: a car ----------
+create or replace function mazad_create_car(
+  p_secret  text,
+  p_make    text,
+  p_model   text,
+  p_year    int,
+  p_start   numeric,
+  p_seller  text,
+  p_contact text,
+  p_minutes int     default 2,
+  p_live    boolean default true,
+  p_auto    numeric default null,
+  p_photo   text    default null
+) returns json
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_secret text;
+  v_id     uuid;
+  v_start  numeric;
+begin
+  select value into v_secret from mazad_config where key = 'admin_secret';
+  if v_secret is null or p_secret is null or p_secret <> v_secret then
+    return json_build_object('ok', false, 'error', 'forbidden');
+  end if;
+
+  p_make  := btrim(coalesce(p_make, ''));
+  p_model := btrim(coalesce(p_model, ''));
+  p_photo := nullif(btrim(coalesce(p_photo, '')), '');
+
+  if char_length(p_make) < 2 or char_length(p_make) > 30 then
+    return json_build_object('ok', false, 'error', 'bad_make');
+  end if;
+  if char_length(p_model) < 1 or char_length(p_model) > 30 then
+    return json_build_object('ok', false, 'error', 'bad_model');
+  end if;
+  if p_year is null or p_year < 1970 or p_year > 2100 then
+    return json_build_object('ok', false, 'error', 'bad_year');
+  end if;
+  -- a path in the bucket, never a URL
+  if p_photo is not null and p_photo !~ '^[a-z0-9-]+/[a-zA-Z0-9._-]{1,80}$' then
+    return json_build_object('ok', false, 'error', 'bad_photo');
+  end if;
+
+  v_start := coalesce(p_start, 0);
+  if p_auto is not null and (p_auto <= v_start or p_auto > 100000000) then
+    return json_build_object('ok', false, 'error', 'bad_auto');
+  end if;
+
+  insert into mazad_listings (item_type, car_make, car_model, car_year, car_photo, phone,
+                              start_price, seller_name, seller_contact,
+                              end_at, status, auto_sell_price)
+  values ('car', p_make, p_model, p_year, p_photo, null,
+          v_start,
+          coalesce(nullif(btrim(p_seller), ''), 'البائع'),
+          nullif(p_contact, ''),
+          now() + (greatest(coalesce(p_minutes, 2), 1) || ' minutes')::interval,
+          'open', p_auto)
+  returning id into v_id;
+
+  if p_live then
+    update mazad_listings set is_live = false where is_live and id <> v_id;
+    update mazad_listings set is_live = true  where id = v_id;
+  end if;
+
+  return json_build_object('ok', true, 'id', v_id);
+end;
+$$;
+
+grant execute on function
+  mazad_create_car(text, text, text, int, numeric, text, text, int, boolean, numeric, text)
+  to anon, authenticated;
+
+-- ---------- the emblem on a plate already listed ----------
+-- The seller is asked which emblem his plate carries; if he answers late, or
+-- answers wrong, the operator fixes it from the control panel.
+create or replace function mazad_set_emblem(p_listing uuid, p_secret text, p_emblem text)
+returns json
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare v_secret text; v_type text;
+begin
+  select value into v_secret from mazad_config where key = 'admin_secret';
+  if v_secret is null or p_secret is null or p_secret <> v_secret then
+    return json_build_object('ok', false, 'error', 'forbidden');
+  end if;
+  if p_emblem not in ('none','swords','swords_black','vision','hegra','diriyah') then
+    return json_build_object('ok', false, 'error', 'bad_emblem');
+  end if;
+  select item_type into v_type from mazad_listings where id = p_listing;
+  if v_type is null then return json_build_object('ok', false, 'error', 'not_found'); end if;
+  if v_type <> 'plate' then return json_build_object('ok', false, 'error', 'not_a_plate'); end if;
+
+  update mazad_listings set plate_emblem = p_emblem where id = p_listing;
+  return json_build_object('ok', true, 'emblem', p_emblem);
+end;
+$$;
+
+grant execute on function mazad_set_emblem(uuid, text, text) to anon, authenticated;
+
+-- ---------- the car photo bucket ----------
+-- A car is judged on its photo, so the seller uploads one before the lot is
+-- created and the row stores the PATH. The bucket is insert-only on purpose:
+-- anon may add a file and everyone may read it, but nothing anon can send
+-- replaces or deletes one. The size and mime limits are enforced by the
+-- bucket, not by the page, so a crafted upload cannot get past them.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('mazad-cars', 'mazad-cars', true, 3145728,
+        array['image/jpeg','image/png','image/webp'])
+on conflict (id) do update
+  set public             = excluded.public,
+      file_size_limit    = excluded.file_size_limit,
+      allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists mazad_cars_read   on storage.objects;
+drop policy if exists mazad_cars_insert on storage.objects;
+
+create policy mazad_cars_read on storage.objects
+  for select to anon, authenticated using (bucket_id = 'mazad-cars');
+
+create policy mazad_cars_insert on storage.objects
+  for insert to anon, authenticated with check (bucket_id = 'mazad-cars');
+-- no update/delete policy => an uploaded photo cannot be swapped or removed
