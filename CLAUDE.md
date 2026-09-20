@@ -237,6 +237,30 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
 - Deleting a number is available from the control panel (a 🗑 on each queued row
   and on the number currently on air), not only from the public list's admin
   bar — the operator works from `/control` and never sees that bar.
+- **An optional auto-sell price closes a lot without the clock.** The seller
+  names a sum in the publish sheet (`auto_sell_price`, optional); when a
+  **counted** sum reaches it, `mazad_try_auto_sell()` stamps the lot `sold` at
+  that amount and stops the clock. It fires from `mazad_bid_action` (on
+  approve) and `mazad_manual_bid`, **never from `place_bid`** — an unapproved
+  sum must not be able to close a lot. Both return `auto_sold` so the operator's
+  toast says what actually happened. The number stays on air wearing its
+  sticker, same as any other result.
+  - A CHECK enforces `auto_sell_price > start_price`; `mazad_admin('auto', …)`
+    sets or clears it later (a null price clears), and a limit set at or below
+    what the lot already reached closes it on the spot.
+  - `mazad_create()` carries no limit — the operator's quick-add sets one with a
+    follow-up `mazad_admin('auto')` call. Adding a parameter would mean dropping
+    and recreating the function.
+  - A finished lot now refuses further sums (`error: 'finished'`) in both
+    `mazad_manual_bid` and `mazad_bid_action`. Without that an auto-sold lot
+    could still collect a higher sum and «السومات المحتسبة» would contradict
+    the sale price on the same card.
+  - `autoLine()` is the one place the wording lives, so the lot page, the
+    broadcast screen and the control panel cannot drift apart.
+- **Adding a column to `mazad_public` means dropping the view first.**
+  `CREATE OR REPLACE VIEW` cannot insert a column in the middle of the list
+  (`ERROR 42P16`), and the re-create must re-`grant select … to anon,
+  authenticated` or every public read breaks.
 - **Commission**: flat `FEE_FLAT` (200 SAR), or `FEE_RATE` (2.5%) once the sale
   passes `FEE_THRESHOLD` (20,000) — على ذمة البائع. The step at the threshold is
   deliberate: 20,000 costs 200, 20,001 costs 500. `FEE_RULE` is the one sentence
