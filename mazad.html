@@ -1215,7 +1215,6 @@ function renderList() {
           '</div>' +
           '<div class="phone-plate plate-wrap">' +
             '<div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
-            (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') +
             stampFor(st) +
           '</div>' +
           '<div class="lot-stats">' +
@@ -1318,7 +1317,7 @@ function renderLive(lot, bids) {
 
   const sig = JSON.stringify([
     lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
-    lot.seller_name, lot.note, lot.end_at, st, doneCount,
+    lot.seller_name, lot.end_at, st, doneCount,
     sigOfBids(bids), open.map(l => l.id).join(',')
   ]);
   if (sig === screenSig.live && host.firstElementChild) return;
@@ -1335,7 +1334,6 @@ function renderLive(lot, bids) {
       '<div class="live-plate plate-wrap">' +
         '<div class="live-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
         '<div class="live-note">' + esc(CARRIERS[lot.carrier] || 'رقم مميز') +
-          (lot.note ? ' · ' + esc(lot.note) : '') +
           (lot.seller_name && lot.seller_name !== 'البائع' ? ' · البائع ' + esc(lot.seller_name) : '') + '</div>' +
         stampFor(st) +
       '</div>' +
@@ -1988,7 +1986,7 @@ function renderLot(lot, bids, full) {
   // otherwise the card jumps under the reader's thumb (the clock keeps ticking
   // on its own through tick() and [data-cd])
   const sig = JSON.stringify([lot.id, lot.phone, lot.status, lot.sold_price,
-    lot.auto_sell_price, lot.seller_name, lot.note, lot.end_at, lot.is_live,
+    lot.auto_sell_price, lot.seller_name, lot.end_at, lot.is_live,
     st, admin.on, sigOfBids(bids)]);
   if (full || sig !== screenSig.lot || !$('#lotBody').firstElementChild) {
     screenSig.lot = sig;
@@ -2004,7 +2002,7 @@ function renderLot(lot, bids, full) {
           '<button class="btn btn-ghost btn-sm" id="btnShare">مشاركة</button>' +
         '</div>' +
         '<div class="phone-plate plate-wrap"><div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
-          (lot.note ? '<div class="phone-carrier">' + esc(lot.note) + '</div>' : '') + stampFor(st) + '</div>' +
+          stampFor(st) + '</div>' +
         '<div class="price-hero" style="margin-top:14px">' +
           '<div class="k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
           '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +
@@ -2241,7 +2239,6 @@ function askListing() {
       '<div class="field ltr"><label>جوال للتواصل</label><input id="lsContact" type="tel" inputmode="numeric" maxlength="14" placeholder="05XXXXXXXX">' +
         '<div class="sub">لإدارة المزاد فقط — ما يظهر لأحد.</div></div>' +
     '</div>' +
-    '<div class="field"><label>ملاحظة (اختياري)</label><input id="lsNote" maxlength="80" placeholder="مثال: أرقام متشابهة وسهلة الحفظ"></div>' +
     '<div class="field ltr"><label>سعر البيع المباشر (اختياري)</label>' +
       '<input id="lsAuto" type="number" inputmode="numeric" min="0" placeholder="اتركه فاضي لو ما تبي">' +
       '<div class="sub">لو وصل السوم لهذا المبلغ ينباع رقمك على طول وينتهي المزاد عليه — بدون ما تنتظر نهاية الوقت. ' +
@@ -2277,7 +2274,6 @@ function askListing() {
         start_price: price,
         seller_name: name,
         seller_contact: contact || null,
-        note: s.querySelector('#lsNote').value.trim() || null,
         auto_sell_price: auto,  // optional: the sum that closes the lot by itself
         status: 'pending',      // queued — only the operator opens the bidding
         end_at: null
