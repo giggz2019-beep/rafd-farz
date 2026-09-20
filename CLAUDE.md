@@ -180,6 +180,20 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     and **each keeps its own repaint signature keyed by host id**. Both are
     called every poll from `renderLiveOps`, so without those guards they
     rebuilt themselves twenty-four times a minute and the strip jumped.
+- **The operator's own screen is the leak the masking never covered.**
+  `mazad_public` masks a queued number for the public, but `mazad_admin_list`
+  hands the operator the real one — and his screen is the one being filmed, so
+  the queue at the bottom of the stage was broadcasting full numbers to every
+  viewer. `stagePhone()` re-applies the view's own masking rule to anything
+  drawn on the **stage**, whoever is logged in; only `#liveOps` shows a queued
+  number in full. A number that is on air is shown in full, because that is
+  the point of putting it on air.
+- **`/live` and `/control` are paths, so clearing the hash does not leave
+  them.** `goList()` rewrites the path to `/m` in that case and only falls
+  back to clearing the hash when the page is served at its own URL. Every
+  "back" affordance goes through it.
+- **The name chip is the bidder's identity and is hidden on `/live`** —
+  the operator does not bid from there, and it is on camera.
 - **A queued number is masked at the source, not in the page.** The public reads
   the `mazad_public` view, which returns `054•••••01` while a number is
   `pending` and not on air, and which has no `seller_contact` column at all.

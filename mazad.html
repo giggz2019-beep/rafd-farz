@@ -732,6 +732,17 @@ function fmtPhone(p) {
   return d.length === 10 ? d.slice(0,3) + ' ' + d.slice(3,6) + ' ' + d.slice(6) : d;
 }
 const isMasked = (lot) => Boolean(lot && (lot.phone_masked || String(lot.phone || '').includes('•')));
+
+/* What a number may look like ON THE STAGE — the part the camera sees.
+   mazad_public masks a queued number for the public, but mazad_admin_list
+   hands the operator the real one, and he is the one whose screen is filmed.
+   So mask it here too, by the same rule the view uses, and let only his own
+   strip show it in full. A number that is on air is meant to be seen. */
+function stagePhone(lot) {
+  const raw = String((lot && lot.phone) || '');
+  if (!lot || lot.is_live || lot.status !== 'pending' || raw.includes('•')) return raw;
+  return raw.length >= 5 ? raw.slice(0, 3) + '•••••' + raw.slice(-2) : raw;
+}
 const CARRIERS = { stc: 'STC', mobily: 'موبايلي', zain: 'زين', other: 'أخرى' };
 
 function stepFor(current) { return Math.max(MIN_STEP, Math.ceil(current * STEP_PERCENT)); }
@@ -798,7 +809,11 @@ const me = {
   set phone(v) { localStorage.setItem('mazad_phone', v); }
 };
 function paintName() {
-  $('#nameChip').textContent = me.name ? '👤 ' + me.name : 'اسمك؟';
+  // The chip is the bidder's identity. The operator's screen is not a place to
+  // bid from, and it is on camera — so it has no business showing there.
+  const chip = $('#nameChip');
+  chip.classList.toggle('hidden', route && route.name === 'live');
+  chip.textContent = me.name ? '👤 ' + me.name : 'اسمك؟';
 }
 
 /* --------------------------------------------------------------- store */
@@ -1145,6 +1160,17 @@ let screenSig = { control: '', live: '', lot: '', ops: '' };
 let opsFolded = (() => { try { return localStorage.getItem('mazad_ops_folded') === '1'; } catch { return false; } })();
 const sigOfBids = bs => (bs || []).map(b => b.id + ':' + b.amount).join(',');
 
+/* /live and /control are their own paths, so clearing the hash leaves you
+   exactly where you were. Leaving them means changing the path. */
+function goList() {
+  if (/\/(live|control)\/?$/.test(location.pathname)) {
+    location.href = location.pathname.replace(/\/(live|control)\/?$/, '/m');
+    return;
+  }
+  if (location.hash) { location.hash = ''; return; }
+  go();
+}
+
 async function go() {
   route = parseRoute();
   screenSig = { control: '', live: '', lot: '', ops: '' };
@@ -1153,6 +1179,7 @@ async function go() {
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
   $('#viewLive').classList.toggle('hidden', route.name !== 'live');
   $('#bidbarHost').innerHTML = '';
+  paintName();
   if (route.name !== 'live') $('#opsPeek').classList.remove('on');
   window.scrollTo(0, 0);
   await refresh(true);
@@ -1361,7 +1388,7 @@ function adminBar(lot) {
     if (!r) return;
     if (a === 'live') { toast('صار على الهواء 🔴'); return; }
     toast('تم');
-    if (a === 'delete' && route.name === 'lot') location.hash = '';
+    if (a === 'delete' && route.name === 'lot') goList();
   });
   return bar;
 }
@@ -1389,7 +1416,7 @@ function renderLive(lot, bids) {
         '<button class="btn btn-gold btn-block" id="liveToList">روح لصفحة المزاد</button>' +
         '<button class="btn btn-ghost btn-block" style="margin-top:8px" id="liveLogin">دخول المشرف</button>' +
       '</div>';
-    $('#liveToList').addEventListener('click', () => { location.hash = ''; });
+    $('#liveToList').addEventListener('click', () => goList());
     $('#liveLogin').addEventListener('click', () => askAdmin());
     return;
   }
@@ -1795,7 +1822,7 @@ function queueHtml(open) {
   return '<div class="queue"><h3>قائمة الانتظار</h3>' +
     open.slice(0, 6).map(l =>
       '<div class="q" data-q="' + esc(l.id) + '">' +
-        '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
+        '<b class="num">' + esc(fmtPhone(stagePhone(l))) + '</b>' +
         '<span>' + esc(l.seller_name) + '</span>' +
         (admin.on && route.name === 'live' ? '<button>اعرضه</button>' : '') +
       '</div>').join('') + '</div>';
@@ -2418,8 +2445,8 @@ function tick() {
 /* ---------------------------------------------------------------- boot */
 $('#nameChip').addEventListener('click', () => askName());
 $('#btnAdd').addEventListener('click', () => askListing());
-$('#btnBack').addEventListener('click', () => { location.hash = ''; });
-$('#btnBackLive').addEventListener('click', () => { location.hash = ''; });
+$('#btnBack').addEventListener('click', () => goList());
+$('#btnBackLive').addEventListener('click', () => goList());
 $('#opsPeek').addEventListener('click', () => {
   opsFolded = false;
   try { localStorage.setItem('mazad_ops_folded', '0'); } catch {}
