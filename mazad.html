@@ -465,70 +465,63 @@ a { color: inherit; }
 }
 .live-fee b { color: var(--gold-400); font-weight: 900; }
 
-/* ---------- the Saudi car plate, drawn rather than pictured ----------
-   Three cells left to right: digits, country, letters — the real layout. The
-   Latin row is the Arabic order reversed, which is how the plate reads. */
-.seg {
-  display: flex; gap: 6px; background: #f3edee; border-radius: 12px;
-  padding: 4px; margin-bottom: 12px;
-}
-.seg button {
-  flex: 1; border: 0; border-radius: 9px; padding: 10px 6px; cursor: pointer;
-  background: transparent; color: var(--muted); font-weight: 800; font-size: .88rem;
-}
-.seg button.on { background: var(--wine-700); color: #fff; box-shadow: var(--shadow); }
-.plate-preview { margin: 4px 0 12px; }
-.plate-picks { display: flex; gap: 6px; direction: rtl; }
-.plate-picks select {
-  flex: 1; text-align: center; font-size: 1.15rem; font-weight: 800; padding: 10px 4px;
-}
-
-.filters.kinds { margin-bottom: 8px; width: 100%; flex: none; }
-.filters.kinds .filter.on { background: var(--wine-700); color: #fff; border-color: var(--wine-700); }
-
+/* ---------- the Saudi car plate ----------
+   Proportioned from the owner's reference rather than guessed: the plate is
+   595x117 there, so 5.09:1, and the only full-height rules in it are the two
+   borders and the one before the KSA strip. There is NO divider in the middle
+   — what looked like one when measuring was the palm trunk of the emblem.
+   Content sits at 2.7–21.5% (digits), 45–58% (emblem) and 75–91% (letters),
+   with the KSA strip taking the last 6.5%. */
 .carplate {
-  direction: ltr; display: flex; align-items: stretch;
-  background: #fff; color: #10100f; border: 2px solid #1c1c1a;
-  border-radius: 9px; overflow: hidden; margin: 0 auto;
-  width: min(100%, 330px); box-shadow: 0 3px 10px rgba(0,0,0,.18);
+  position: relative; direction: ltr;
+  aspect-ratio: 5.09 / 1;
+  background: #fff; color: #10100f; border: 2px solid #15151a;
+  border-radius: 10px; overflow: hidden; margin: 0 auto;
+  width: min(100%, 380px);
+  box-shadow: 0 3px 10px rgba(0,0,0,.18);
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  container-type: inline-size;
 }
-.cp-cell { display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 7px 4px; min-width: 0; }
-.cp-num, .cp-let { flex: 1; }
-.cp-country {
-  flex: none; width: 74px; border-inline: 2px solid #1c1c1a;
-  background: #fbfbf9; gap: 1px;
+/* Each block is pinned to the centre it has on the reference plate, rather
+   than left to flex to distribute — flex put the emblem and the letters about
+   six per cent too far left, because the blocks are not the widths flex
+   assumes. Centres measured off the image: 12.1%, 51.5%, 82.9%. */
+.cp-num, .cp-emblem, .cp-let {
+  position: absolute; top: 50%; transform: translate(-50%, -50%);
 }
-.cp-ar { font-size: 1.45rem; font-weight: 800; line-height: 1.05; letter-spacing: .06em;
+.cp-num    { left: 12.1%; }
+.cp-emblem { left: 51.5%; height: 74%; display: flex; align-items: center; justify-content: center; }
+.cp-let    { left: 82.9%; }
+.cp-num, .cp-let { display: flex; flex-direction: column; align-items: center; line-height: 1.02; }
+.cp-emblem img { max-width: 100%; max-height: 100%; object-fit: contain; display: block;
+  width: 13cqw; }
+
+.cp-ar { font-size: 7.2cqw; font-weight: 800; letter-spacing: .02em;
   direction: rtl; white-space: nowrap; }
-.cp-en { font-size: 1.15rem; font-weight: 800; line-height: 1.05; letter-spacing: .1em;
-  white-space: nowrap; }
-.cp-ksa-ar { font-size: .6rem; font-weight: 700; direction: rtl; }
-.cp-ksa-en { font-size: .6rem; font-weight: 800; letter-spacing: .08em; }
-.cp-emblem { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
-.cp-emblem img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.cp-en { font-size: 6.4cqw; font-weight: 800; letter-spacing: 0; white-space: nowrap; }
+/* the letters are already joined with spaces, so any letter-spacing on top of
+   that doubles the gap — it made the block half again as wide as the
+   reference's 15.5% */
+.cp-let .cp-ar { font-size: 5.0cqw; }
+.cp-let .cp-en { font-size: 4.4cqw; }
+
+/* the strip is lifted whole out of the reference, border included */
+.cp-ksa {
+  position: absolute; top: 0; right: 0; height: 100%; width: auto;
+  object-fit: contain; border-left: 2px solid #15151a; padding: 0 .4cqw;
+}
+
+/* on the broadcast it is the hero */
+.carplate.big { width: min(100%, 620px); border-width: 3px; border-radius: 14px; }
 
 /* a car lot: no plate to draw, so the name itself is the object */
-.carcard {
-  text-align: center; line-height: 1.25;
-}
+.carcard { text-align: center; line-height: 1.25; }
 .carcard .cc-make  { font-size: 1.5rem; font-weight: 900; }
 .carcard .cc-model { font-size: 1.05rem; font-weight: 700; opacity: .92; }
 .carcard .cc-year  { font-size: .95rem; font-weight: 800; opacity: .8; margin-top: 2px; }
 .carcard.big .cc-make  { font-size: clamp(2rem, 7vw, 3.2rem); }
 .carcard.big .cc-model { font-size: clamp(1.1rem, 4vw, 1.8rem); }
 .carcard.big .cc-year  { font-size: clamp(1rem, 3vw, 1.4rem); }
-
-/* on the broadcast it is the hero, so everything steps up */
-.carplate.big { width: min(100%, 560px); border-width: 3px; border-radius: 13px; }
-.carplate.big .cp-cell     { padding: 12px 6px; }
-.carplate.big .cp-country  { width: 116px; }
-.carplate.big .cp-ar       { font-size: clamp(1.9rem, 6.5vw, 3.1rem); }
-.carplate.big .cp-en       { font-size: clamp(1.5rem, 5vw, 2.4rem); }
-.carplate.big .cp-ksa-ar,
-.carplate.big .cp-ksa-en   { font-size: .82rem; }
-.carplate.big .cp-emblem   { width: 46px; height: 46px; }
 
 .live-empty { text-align: center; padding: 26px 10px; }
 .live-empty .t { font-size: 1.2rem; font-weight: 800; }
@@ -921,22 +914,20 @@ function itemPlate(lot, size) {
   const letters = normPlate(lot.plate_letters);
   const digits  = String(lot.plate_digits || '');
   const masked  = digits.includes('•');
-  const emblem  = lot.plate_emblem || 'swords';
   return (
     '<div class="carplate ' + (big ? 'big' : '') + '">' +
-      '<div class="cp-cell cp-num">' +
-        '<div class="cp-ar">' + esc(masked ? digits : toArabicDigits(digits)) + '</div>' +
-        '<div class="cp-en">' + esc(digits) + '</div>' +
+      '<div class="cp-main">' +
+        '<div class="cp-num">' +
+          '<div class="cp-ar">' + esc(masked ? digits : toArabicDigits(digits)) + '</div>' +
+          '<div class="cp-en">' + esc(digits) + '</div>' +
+        '</div>' +
+        '<div class="cp-emblem">' + emblemSvg(lot.plate_emblem || 'swords') + '</div>' +
+        '<div class="cp-let">' +
+          '<div class="cp-ar">' + esc(letters.split('').join(' ')) + '</div>' +
+          '<div class="cp-en">' + esc(plateLatin(letters)) + '</div>' +
+        '</div>' +
       '</div>' +
-      '<div class="cp-cell cp-country">' +
-        '<div class="cp-ksa-ar">السعودية</div>' +
-        '<div class="cp-emblem">' + emblemSvg(emblem) + '</div>' +
-        '<div class="cp-ksa-en">KSA</div>' +
-      '</div>' +
-      '<div class="cp-cell cp-let">' +
-        '<div class="cp-ar">' + esc(letters.split('').join(' ')) + '</div>' +
-        '<div class="cp-en">' + esc(plateLatin(letters)) + '</div>' +
-      '</div>' +
+      '<img class="cp-ksa" src="mazad-plate-ksa.png" alt="KSA" loading="lazy" decoding="async">' +
     '</div>'
   );
 }
