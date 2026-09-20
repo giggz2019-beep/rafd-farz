@@ -491,6 +491,63 @@ button.ctl-price:active { transform: scale(.97); }
 .live-banner .n { flex: 1; font-weight: 900; font-size: 1.15rem; direction: ltr; unicode-bidi: isolate; text-align: center; }
 .live-banner .go { background: var(--gold-500); color: #2a1c02; border-radius: 10px; padding: 7px 12px; font-size: .8rem; font-weight: 800; }
 
+/* ---------- the broadcast screen and the operator's strip ---------- */
+/* Laid out left-to-right on purpose: the stage is on the LEFT, where the
+   camera points, and the strip is on the PHYSICAL RIGHT, outside the frame.
+   Each child switches back to RTL for its own text. */
+.live-split { direction: ltr; display: flex; align-items: flex-start; gap: 0; }
+.live-split > * { direction: rtl; }
+.live-stage { flex: 1; min-width: 0; }
+.live-ops   { display: none; }
+
+/* only where there is genuinely room beside the stage — never on a phone,
+   where it would end up in shot */
+@media (min-width: 900px) {
+  .live-split.with-ops .live-ops {
+    display: block; flex: none; width: 340px;
+    margin-left: 14px; padding-left: 14px;
+    border-left: 3px dashed var(--gold-500);
+    max-height: calc(100vh - 70px); overflow-y: auto;
+  }
+  /* the strip must not eat the stage: the page is 720px wide, so break out of
+     that wrapper by exactly what the strip and its gutter take. Without this
+     the broadcast squeezed to ~340px and the number ran off its own plate. */
+  .live-split.with-ops {
+    width: calc(100% + 357px); max-width: calc(100vw - 28px);
+    margin-left: -357px;
+  }
+  .live-split.with-ops .live-stage { max-width: 720px; margin-left: auto; }
+}
+.ops-warn {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff3d6; border: 1px solid #f0d79a; color: #7a4f05;
+  border-radius: 10px; padding: 7px 10px; font-size: .76rem; font-weight: 700;
+  margin-bottom: 10px; line-height: 1.5;
+}
+.ops-fold {
+  margin-inline-start: auto; border: 0; background: #f0d79a; color: #5a3a04;
+  border-radius: 7px; width: 22px; height: 22px; flex: none; cursor: pointer;
+  font-weight: 900;
+}
+.ops-card {
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px; margin-bottom: 10px;
+}
+.ops-card:empty { display: none; }
+.ops-h     { font-weight: 700; margin-bottom: 8px; font-size: .9rem; }
+.ops-empty { text-align: center; color: var(--muted); font-size: .84rem; }
+
+/* the way back once it is folded away, pinned to the far edge so it stays
+   out of shot */
+.ops-peek {
+  position: fixed; top: 50%; right: 0; transform: translateY(-50%);
+  z-index: 40; display: none; border: 0; cursor: pointer;
+  background: var(--gold-500); color: #2a1c02; font-weight: 900;
+  padding: 14px 6px; border-radius: 10px 0 0 10px; writing-mode: vertical-rl;
+  font-size: .74rem; letter-spacing: .04em;
+}
+.ops-peek.on { display: block; }
+
 .wait-note {
   background: #eef2f7; color: #3c5872; border: 1px dashed #c3d3e3;
   border-radius: 12px; padding: 10px 12px; margin-top: 12px;
@@ -564,9 +621,15 @@ button.ctl-price:active { transform: scale(.97); }
   </section>
 
   <!-- ============ live broadcast view ============ -->
+  <!-- The operator films this screen with a phone. His strip sits to the
+       PHYSICAL RIGHT so he can keep it outside the camera frame; everything
+       left of the dashed edge is what the viewers see. -->
   <section id="viewLive" class="hidden">
     <button class="backlink" id="btnBackLive">→ رجوع لكل الأرقام</button>
-    <div id="liveBody"></div>
+    <div class="live-split" id="liveSplit">
+      <div id="liveBody" class="live-stage"></div>
+      <aside id="liveOps" class="live-ops"></aside>
+    </div>
   </section>
 
   <!-- ============ detail view ============ -->
@@ -583,6 +646,7 @@ button.ctl-price:active { transform: scale(.97); }
 </main>
 
 
+<button class="ops-peek" id="opsPeek" title="افتح لوحتك">لوحتي ◀</button>
 <div id="bidbarHost"></div>
 <div id="sheetHost"></div>
 <div id="toastHost"></div>
@@ -1066,18 +1130,20 @@ function parseRoute() {
    countdown, and tick() updates that in place through [data-cd], so each
    screen rebuilds only when something it shows has actually changed. Clearing
    the signatures on navigation forces the first paint of a screen. */
-let screenSig = { control: '', live: '', lot: '', approved: '' };
+let screenSig = { control: '', live: '', lot: '', ops: '' };
+let opsFolded = (() => { try { return localStorage.getItem('mazad_ops_folded') === '1'; } catch { return false; } })();
 const sigOfBids = bs => (bs || []).map(b => b.id + ':' + b.amount).join(',');
 
 async function go() {
   route = parseRoute();
-  screenSig = { control: '', live: '', lot: '', approved: '' };
+  screenSig = { control: '', live: '', lot: '', ops: '' };
   if (route.name === 'admin') { location.hash = ''; askAdmin(); return; }
   $('#viewList').classList.toggle('hidden', route.name !== 'list');
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
   $('#viewLive').classList.toggle('hidden', route.name !== 'live');
   $('#viewControl').classList.toggle('hidden', route.name !== 'control');
   $('#bidbarHost').innerHTML = '';
+  if (route.name !== 'live') $('#opsPeek').classList.remove('on');
   window.scrollTo(0, 0);
   await refresh(true);
 }
@@ -1089,7 +1155,7 @@ async function refresh(full) {
       const lot = cache.listings.find(l => l.is_live);
       const bids = lot ? await store.bids(lot.id) : [];
       if (lot) cache.bids[lot.id] = bids;
-      if (route.name === 'control' && admin.on) {
+      if (admin.on) {   // both screens carry the operator's strip now
         try {
           const r = await store.pendingBids(admin.secret);
           cache.pending = (r && r.ok && r.bids) ? r.bids : [];
@@ -1383,6 +1449,86 @@ function renderLive(lot, bids) {
     '</div>';
 
   wireQueue(open, lot);
+  renderLiveOps(lot);
+}
+
+/* ---------------- the operator's strip, beside the broadcast ----------------
+   He films this screen with a phone and has no second device, so stepping away
+   to /control would drop the broadcast. The strip therefore rides along on the
+   PHYSICAL RIGHT of the same page, past a dashed edge he keeps outside the
+   camera frame. It is his own browser — a viewer loading /live is not in
+   operator mode and never gets this markup at all.
+
+   It shows real numbers in full and the bidders' mobiles, which is exactly
+   what the public view masks, so it only ever appears when there is room for
+   it beside the stage (a phone gets nothing) and it can be folded away. */
+function renderLiveOps(lot) {
+  const host  = $('#liveOps');
+  const split = $('#liveSplit');
+  if (!host || !split) return;
+
+  const on = admin.on && !opsFolded;
+  split.classList.toggle('with-ops', on);
+  $('#opsPeek').classList.toggle('on', admin.on && opsFolded && route.name === 'live');
+  if (!on) { host.innerHTML = ''; screenSig.ops = ''; return; }
+
+  const open = cache.listings
+    .filter(l => ['pending', 'live'].includes(lotState(l)) && !l.is_live)
+    .sort((a, b) => a.created_at.localeCompare(b.created_at));
+
+  const sig = JSON.stringify([
+    lot ? [lot.id, lot.status, lot.end_at, lot.auto_sell_price] : null,
+    sigOfBids(cache.pending),
+    open.map(l => l.id + ':' + l.phone).join(',')
+  ]);
+  if (sig !== screenSig.ops || !host.firstElementChild) {
+    screenSig.ops = sig;
+    host.innerHTML =
+      '<div class="ops-warn">🎥 هذا الجزء لك وحدك — لا تدخله في إطار الكاميرا' +
+        '<button class="ops-fold" title="اطوِ اللوحة">✕</button></div>' +
+      '<div class="ops-card" id="opsBar"></div>' +
+      '<div class="ops-card" id="opsPending"></div>' +
+      '<div class="ops-card" id="opsApproved"></div>' +
+      '<div class="ops-card" id="opsQueue"></div>';
+
+    host.querySelector('.ops-fold').addEventListener('click', () => {
+      opsFolded = true;
+      try { localStorage.setItem('mazad_ops_folded', '1'); } catch {}
+      renderLiveOps(lot);
+    });
+
+    const bar = opBar(lot);
+    bar.classList.add('light');
+    $('#opsBar').appendChild(bar);
+
+    $('#opsQueue').innerHTML = open.length
+      ? '<div class="ops-h">قائمة الانتظار (<span class="num">' + open.length + '</span>)</div>' +
+        open.map(l =>
+          '<div class="ctl-q" data-q="' + esc(l.id) + '">' +
+            '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
+            '<span>' + esc(l.seller_name) + '</span>' +
+            '<button data-a="live">اعرضه</button>' +
+            '<button class="del" data-a="delete" title="حذف">🗑</button>' +
+          '</div>').join('')
+      : '<div class="ops-empty">ما فيه أرقام بالانتظار</div>';
+
+    $('#opsQueue').querySelectorAll('.ctl-q button').forEach(b => {
+      b.addEventListener('click', async () => {
+        const row = b.closest('.ctl-q');
+        if (b.dataset.a === 'delete') {
+          if (!confirm('حذف الرقم ' + row.querySelector('b').textContent.trim() + ' نهائياً من المزاد؟')) return;
+          await opDo(row.dataset.q, 'delete');
+          toast('انحذف الرقم');
+          return;
+        }
+        await opDo(row.dataset.q, 'live');
+      });
+    });
+  }
+
+  renderPendingBids($('#opsPending'));
+  if (lot) renderApprovedBids(lot, $('#opsApproved'));
+  else { $('#opsApproved').innerHTML = ''; }
 }
 
 /* ===================== لوحة التحكم (لك وحدك) =====================
@@ -1499,8 +1645,8 @@ function renderControl(lot, bids) {
 }
 
 /* Sums shouted into the site wait here until the operator says yes. */
-function renderPendingBids() {
-  const host = $('#ctlBids');
+function renderPendingBids(host) {
+  host = host || $('#ctlBids');
   if (!host) return;
   const list = cache.pending || [];
 
@@ -1646,8 +1792,8 @@ function askManualBid(lot) {
 /* The sums already counted on the number on air, each removable — this is how
    an approval given by mistake is taken back, and the only way to bring the
    price down. */
-async function renderApprovedBids(lot) {
-  const host = $('#ctlApproved');
+async function renderApprovedBids(lot, host) {
+  host = host || $('#ctlApproved');
   if (!host || !lot) return;
   // only show the spinner on an empty card — wiping a filled one and refilling
   // it a moment later is half of what made this page jump
@@ -1660,14 +1806,15 @@ async function renderApprovedBids(lot) {
     list = (r && r.ok && r.bids ? r.bids : []).filter(b => b.approved);
   } catch { /* leave it empty */ }
 
+  const key = 'approved:' + (host.id || 'x');
   const sig = lot.id + '|' + sigOfBids(list);
-  if (sig === screenSig.approved && host.firstElementChild) return;
-  screenSig.approved = sig;
+  if (sig === screenSig[key] && host.firstElementChild) return;
+  screenSig[key] = sig;
 
   host.innerHTML =
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
       '<div style="flex:1;font-weight:700">السومات المحتسبة</div>' +
-      '<button class="btn btn-ghost btn-sm" id="ctlAddBid">＋ سجّل سومة</button>' +
+      '<button class="btn btn-ghost btn-sm add-bid">＋ سجّل سومة</button>' +
     '</div>' +
     (list.length
       ? list.map((b, i) =>
@@ -1684,7 +1831,7 @@ async function renderApprovedBids(lot) {
           '</div>').join('')
       : '<div style="text-align:center;color:var(--muted);font-size:.86rem">ما فيه سومات محتسبة</div>');
 
-  $('#ctlAddBid').addEventListener('click', () => askManualBid(lot));
+  host.querySelector('.add-bid').addEventListener('click', () => askManualBid(lot));
   host.querySelectorAll('.ctl-bid.done button').forEach(btn => {
     btn.addEventListener('click', async () => {
       const row = btn.closest('.ctl-bid');
@@ -2346,6 +2493,14 @@ $('#nameChip').addEventListener('click', () => askName());
 $('#btnAdd').addEventListener('click', () => askListing());
 $('#btnBack').addEventListener('click', () => { location.hash = ''; });
 $('#btnBackLive').addEventListener('click', () => { location.hash = ''; });
+$('#opsPeek').addEventListener('click', () => {
+  opsFolded = false;
+  try { localStorage.setItem('mazad_ops_folded', '0'); } catch {}
+  // renderLive returns early when its data is unchanged, and unfolding is not
+  // data — so clear the signature or the strip never comes back
+  screenSig.live = ''; screenSig.ops = '';
+  refresh(false);
+});
 $('#btnBackCtl').addEventListener('click', () => { location.hash = ''; });
 document.querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.filter').forEach(x => x.classList.toggle('on', x === b));

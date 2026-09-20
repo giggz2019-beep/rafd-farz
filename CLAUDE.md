@@ -141,12 +141,31 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   `update mazad_config set value = '…' where key = 'admin_secret';`
 - Operator mode: long-press the logo (or open `#/admin`) and enter the secret —
   adds تم البيع / +5 دقائق / إيقاف / إعادة فتح / حذف to every card.
-- **Two screens, deliberately separate.** `/live` is the display screen that goes
-  on the broadcast and carries **no controls at all**, even for the operator —
-  buttons on that page would be visible to every viewer watching the screen
-  share. `/control` is the operator's private panel (password-gated, on their own
-  phone) and holds every button. Do not "helpfully" add operator controls back
-  onto `/live`; the split is the point.
+- **Two screens, and a third arrangement for a one-device operator.**
+  `/control` is the operator's private panel (password-gated) and holds every
+  button. `/live` is the display screen. The **stage** on `/live` still carries
+  no controls — do not put buttons inside the green card.
+  - The operator films the laptop screen with his only phone, so leaving
+    `/live` would drop the broadcast. His controls therefore ride alongside the
+    stage in `#liveOps`, a strip on the **physical right** of the same page,
+    past a dashed gold edge he keeps outside the camera frame. The split
+    container is `direction: ltr` on purpose so the stage lands on the left,
+    where the camera points; each child switches back to `rtl`.
+  - It renders **only** when `admin.on`, so a viewer loading `/live` never
+    receives the markup, and **only above 900px**, because on a phone it would
+    end up in shot. `.ops-fold` folds it away and `#opsPeek` (pinned to the
+    far edge, outside the frame) brings it back. Unfolding must clear
+    `screenSig.live` / `screenSig.ops`, or the early-return keeps it hidden.
+  - `.live-split.with-ops` breaks out of the 720px `.wrap` by exactly the
+    strip's width plus its gutter. Without that the stage squeezed to ~340px
+    and the number ran off its own plate.
+  - **The strip shows what the public view masks**: queued numbers in full and
+    the bidders' mobiles. Its safety is the camera framing, nothing more — so
+    keep the dashed edge, the warning line and the fold button.
+  - `renderPendingBids(host)` and `renderApprovedBids(lot, host)` take a host
+    so both screens share one implementation; the approved card keys its
+    repaint signature by host id, and uses a class rather than an id for its
+    button, since the same card now exists on two screens.
 - **Registering a number does not start an auction.** A seller's listing enters
   the queue as `status='pending'` with `end_at` null and no clock. Only the
   operator opens the bidding, with `mazad_admin('timer', minutes)`. The RLS
