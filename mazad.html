@@ -286,7 +286,7 @@ a { color: inherit; }
   padding: 8px 12px; background: #fff;
 }
 .bid-row.top { border-color: var(--gold-500); background: #fffaf0; }
-.bid-row .paddle { width: 92px; flex: none; }
+.bid-row .paddle { width: 74px; flex: none; }
 .bid-who { flex: 1; min-width: 0; }
 .bid-who b { display: block; font-size: .9rem; }
 .bid-who span { font-size: .72rem; color: var(--muted); }
@@ -295,23 +295,24 @@ a { color: inherit; }
 
 /* the same paddles, big, on the broadcast screen */
 .live-paddles { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
-.lp { width: 110px; text-align: center; }
-.lp.top { width: 140px; }
+.lp { width: 88px; text-align: center; }
+.lp.top { width: 112px; }
 .lp-name { font-size: .7rem; color: #dff0e6; margin-top: 4px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; }
 .lp.top .lp-name { color: var(--gold-400); font-weight: 700; }
 
 /* ---------- the raised paddle ---------- */
-/* The hand and board are the supplied artwork (mazad-paddle.png), used WHOLE —
-   the full arm, nothing cropped, only the transparency checkerboard removed.
-   Only the number is ours. The board sits at 28.95% / 19.85% of the frame, is
-   51.52% of its width and leans -7.2deg — all measured off the file, so the
-   number sits square on the board. Re-measure all four if the art changes. */
+/* The hand and board are the supplied artwork (mazad-paddle.png). Only the
+   number is ours — nothing here draws a hand. The art is framed to the board,
+   the fist and a short forearm, which is the framing the owner chose. The
+   board sits at 36.02% / 20.30% of that frame, is 64.10% of its width and
+   leans -7.2deg — all measured off the file, so the number sits square on the
+   board. Re-measure all four if the art or its framing changes. */
 .paddle { position: relative; display: inline-block; line-height: 0;
   container-type: inline-size; }
 .paddle img { width: 100%; height: auto; display: block; }
 .paddle .p-amt {
-  position: absolute; left: 28.95%; top: 19.85%; width: 46%;
+  position: absolute; left: 36.02%; top: 20.30%; width: 58%;
   transform: translate(-50%, -50%) rotate(-7.2deg);
   text-align: center; line-height: 1; white-space: nowrap;
   font-weight: 900; color: #1d2a24; letter-spacing: -.02em;
@@ -321,7 +322,7 @@ a { color: inherit; }
    paddle itself — one rule instead of a size per screen — and shrinks as the
    sum gets longer so 1,250,000 still fits on the same board */
 @supports (font-size: 1cqw) {
-  .paddle .p-amt { font-size: calc(var(--fs, 13.6) * 1cqw); }
+  .paddle .p-amt { font-size: calc(var(--fs, 17) * 1cqw); }
 }
 .paddle.top  .p-amt { color: #7a5205; }
 .paddle.mine .p-amt { color: #0b6b3a; }
@@ -334,17 +335,6 @@ a { color: inherit; }
 }
 
 /* ---------- private control panel ---------- */
-.ctl-top { display: flex; align-items: center; gap: 8px; margin: 14px 0 10px; }
-.ctl-top b { font-size: 1rem; }
-.ctl-top span { font-size: .76rem; color: var(--muted); }
-.ctl-top > div { flex: 1; }
-.ctl-now { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed var(--line); margin-bottom: 12px; }
-.ctl-now .k { font-size: .74rem; color: var(--muted); }
-.ctl-digits { font-size: clamp(1.3rem, 7vw, 2.1rem); font-weight: 900; letter-spacing: .03em; white-space: nowrap; }
-.ctl-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
-.ctl-price { font-weight: 900; color: var(--green-600); font-size: 1.1rem; }
-.ctl-clock { font-weight: 900; color: #b5651d; font-size: 1.1rem; }
-.ctl-who { font-size: .78rem; color: var(--muted); margin-top: 6px; }
 .ctl-q { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 12px; padding: 9px 11px; margin-bottom: 6px; }
 .ctl-q b { font-size: 1rem; }
 .ctl-q span { flex: 1; font-size: .78rem; color: var(--muted); }
@@ -388,10 +378,7 @@ a { color: inherit; }
 .ctl-bid button.yes[disabled] { opacity: .35; }
 .ctl-bid.done { background: #f4f9f6; border-color: var(--line); }
 .ctl-bid.done .amt { color: var(--green-600); }
-button.ctl-price { background: #eef7f1; border: 1px solid #cfe6d9; border-radius: 10px; padding: 4px 10px; }
-button.ctl-price:active { transform: scale(.97); }
-
-/* ---------- live broadcast screen ---------- */
+button/* ---------- live broadcast screen ---------- */
 .live {
   background: radial-gradient(120% 90% at 50% 0%, #0f7a49, #073f27 48%, #04281a);
   border-radius: 20px; padding: 16px 14px 20px; color: #fff; margin-top: 14px;
@@ -495,29 +482,62 @@ button.ctl-price:active { transform: scale(.97); }
 /* Laid out left-to-right on purpose: the stage is on the LEFT, where the
    camera points, and the strip is on the PHYSICAL RIGHT, outside the frame.
    Each child switches back to RTL for its own text. */
-.live-split { direction: ltr; display: flex; align-items: flex-start; gap: 0; }
+.live-split { direction: ltr; display: flex; flex-direction: column; }
 .live-split > * { direction: rtl; }
 .live-stage { flex: 1; min-width: 0; }
-.live-ops   { display: none; }
+/* Narrow screen — a phone. It is not the screen being filmed (the camera
+   points at the laptop), so the controls are not hidden here, they simply sit
+   below the stage. Hiding them would leave a phone operator with no controls
+   at all now that /control folds into this screen. */
+.live-ops { display: none; }
+.live-split.with-ops .live-ops { display: block; margin-top: 14px; }
 
 /* only where there is genuinely room beside the stage — never on a phone,
    where it would end up in shot */
 @media (min-width: 900px) {
+  .live-split { flex-direction: row; align-items: flex-start; }
+  /* Break out to the whole viewport so the strip can sit hard against the far
+     edge rather than crowding the stage. Without the break-out the strip ate
+     the page's 720px and the broadcast squeezed to ~340px. */
+  /* The page is RTL, so a block wider than its container is placed from the
+     RIGHT edge and margin-left is dropped as over-constrained. Breaking out
+     has to pull on margin-RIGHT, or the whole split slides off to the left. */
+  .live-split.with-ops {
+    width: 100vw; margin-right: calc(-50vw + 50%); margin-left: 0;
+    box-sizing: border-box; padding-right: 10px;
+  }
+  /* the stage keeps its own width and centres in what is left, so the camera
+     frames the same thing whether or not the strip is open */
+  .live-split.with-ops .live-stage {
+    max-width: 720px; margin: 0 auto; padding: 0 14px;
+  }
   .live-split.with-ops .live-ops {
-    display: block; flex: none; width: 340px;
-    margin-left: 14px; padding-left: 14px;
+    display: block; flex: none; width: 268px; margin-top: 0;
+    padding-left: 12px;
     border-left: 3px dashed var(--gold-500);
     max-height: calc(100vh - 70px); overflow-y: auto;
   }
-  /* the strip must not eat the stage: the page is 720px wide, so break out of
-     that wrapper by exactly what the strip and its gutter take. Without this
-     the broadcast squeezed to ~340px and the number ran off its own plate. */
-  .live-split.with-ops {
-    width: calc(100% + 357px); max-width: calc(100vw - 28px);
-    margin-left: -357px;
-  }
-  .live-split.with-ops .live-stage { max-width: 720px; margin-left: auto; }
 }
+/* The strip is only 268px, so anything laid out in a row there gets squeezed
+   until the words break a letter per line. Stack instead. */
+.live-ops .opbar .row button { min-width: 0; }
+.live-ops .ops-card { padding: 8px; }
+.live-ops .ctl-bid {
+  display: grid; grid-template-columns: 1fr auto auto;
+  grid-template-areas: "who who who" "cmp yes no";
+  gap: 6px 8px; align-items: center;
+}
+.live-ops .ctl-bid .who { grid-area: who; min-width: 0; max-width: none;
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.live-ops .ctl-bid .cmp { grid-area: cmp; text-align: right; }
+.live-ops .ctl-bid .cmp-line { justify-content: flex-start; }
+.live-ops .ctl-bid button.yes { grid-area: yes; }
+.live-ops .ctl-bid button.no  { grid-area: no; }
+.live-ops .ctl-bid.done {
+  grid-template-columns: 1fr auto; grid-template-areas: "who who" "amt no";
+}
+.live-ops .ctl-bid.done .amt { grid-area: amt; text-align: right; }
+.live-ops .ctl-q { flex-wrap: wrap; }
 .ops-warn {
   display: flex; align-items: center; gap: 8px;
   background: #fff3d6; border: 1px solid #f0d79a; color: #7a4f05;
@@ -561,11 +581,6 @@ button.ctl-price:active { transform: scale(.97); }
 .live-auto {
   margin: 8px auto 0; max-width: 520px; text-align: center;
   font-size: 1rem; font-weight: 800; color: #f6cf7a;
-}
-.ctl-auto {
-  margin-top: 6px; font-size: .8rem; color: #7a4f05;
-  background: #fff8e9; border: 1px solid #f0dcb0; border-radius: 10px;
-  padding: 5px 9px; display: inline-block;
 }
 .fee {
   margin-top: 10px; padding: 8px 10px; border-radius: 10px; text-align: center;
@@ -612,12 +627,6 @@ button.ctl-price:active { transform: scale(.97); }
     </div>
     <button class="btn btn-gold btn-block" id="btnAdd" style="margin-bottom:14px">➕ اعرض رقمك في المزاد</button>
     <div id="lots"></div>
-  </section>
-
-  <!-- ============ private control panel (operator only) ============ -->
-  <section id="viewControl" class="hidden">
-    <button class="backlink" id="btnBackCtl">→ رجوع لكل الأرقام</button>
-    <div id="controlBody"></div>
   </section>
 
   <!-- ============ live broadcast view ============ -->
@@ -1118,9 +1127,11 @@ function parseRoute() {
   if (h.startsWith('n/')) return { name: 'lot', id: decodeURIComponent(h.slice(2)) };
   if (h === 'admin') return { name: 'admin', id: null };
   if (h === 'live') return { name: 'live', id: null };
-  if (h === 'control') return { name: 'control', id: null };
+  // one operator screen now: /control is kept only so an old link still lands
+  // somewhere sensible
+  if (h === 'control') return { name: 'live', id: null };
   if (!h && /\/live\/?$/.test(location.pathname)) return { name: 'live', id: null };
-  if (!h && /\/control\/?$/.test(location.pathname)) return { name: 'control', id: null };
+  if (!h && /\/control\/?$/.test(location.pathname)) return { name: 'live', id: null };
   return { name: 'list', id: null };
 }
 
@@ -1141,7 +1152,6 @@ async function go() {
   $('#viewList').classList.toggle('hidden', route.name !== 'list');
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
   $('#viewLive').classList.toggle('hidden', route.name !== 'live');
-  $('#viewControl').classList.toggle('hidden', route.name !== 'control');
   $('#bidbarHost').innerHTML = '';
   if (route.name !== 'live') $('#opsPeek').classList.remove('on');
   window.scrollTo(0, 0);
@@ -1150,7 +1160,7 @@ async function go() {
 
 async function refresh(full) {
   try {
-    if (route.name === 'live' || route.name === 'control') {
+    if (route.name === 'live') {
       cache.listings = await store.listings();
       const lot = cache.listings.find(l => l.is_live);
       const bids = lot ? await store.bids(lot.id) : [];
@@ -1161,7 +1171,7 @@ async function refresh(full) {
           cache.pending = (r && r.ok && r.bids) ? r.bids : [];
         } catch { cache.pending = cache.pending || []; }
       }
-      if (route.name === 'live') renderLive(lot, bids); else renderControl(lot, bids);
+      renderLive(lot, bids);
       return;
     }
     if (route.name === 'lot') {
@@ -1203,9 +1213,9 @@ function finalPrice(lot, t) {
    Re-measure these four numbers if the artwork is ever replaced. */
 function paddle(amount, variant) {
   const label = money(amount);
-  // sized against the board, which is 51.52% of this frame: 13.6cqw is as
-  // large as it looks right, and long sums step down so they still fit
-  const fs = Math.min(13.6, 70.7 / Math.max(label.length, 1)).toFixed(2);
+  // sized against the board, which is 64.10% of this frame: 17cqw is as large
+  // as it looks right, and long sums step down so they still fit
+  const fs = Math.min(17, 88 / Math.max(label.length, 1)).toFixed(2);
   return (
     '<span class="paddle ' + (variant || '') + '" style="--fs:' + fs + '">' +
       '<img src="mazad-paddle.png" alt="" loading="lazy" decoding="async">' +
@@ -1331,7 +1341,7 @@ function wireLiveBanner() {
     location.hash = id ? '#/n/' + encodeURIComponent(id) : '#/live';
   });
   const c = $('#goControl');
-  if (c) c.addEventListener('click', () => { location.hash = '#/control'; });
+  if (c) c.addEventListener('click', () => { location.hash = '#/live'; });
 }
 
 function adminBar(lot) {
@@ -1361,6 +1371,29 @@ function adminBar(lot) {
    The operator bar underneath only appears in operator mode.          */
 function renderLive(lot, bids) {
   const host = $('#liveBody');
+
+  // This screen is the operator's: it is what goes on camera and it carries
+  // his controls. A viewer has no use for it — there is no bid box here by
+  // design — so send them to the page they can actually act on.
+  if (!admin.on) {
+    $('#liveSplit').classList.remove('with-ops');
+    $('#opsPeek').classList.remove('on');
+    if (screenSig.live === 'locked') return;
+    screenSig.live = 'locked';
+    host.innerHTML =
+      '<div class="card" style="text-align:center">' +
+        '<div style="font-size:1.6rem;margin-bottom:6px">📺</div>' +
+        '<div style="font-weight:800;margin-bottom:6px">شاشة البث</div>' +
+        '<div style="font-size:.88rem;color:var(--muted);margin-bottom:14px">' +
+          'هذي الشاشة للمشرف. للمزايدة وعرض رقمك، افتح صفحة المزاد.</div>' +
+        '<button class="btn btn-gold btn-block" id="liveToList">روح لصفحة المزاد</button>' +
+        '<button class="btn btn-ghost btn-block" style="margin-top:8px" id="liveLogin">دخول المشرف</button>' +
+      '</div>';
+    $('#liveToList').addEventListener('click', () => { location.hash = ''; });
+    $('#liveLogin').addEventListener('click', () => askAdmin());
+    return;
+  }
+
   const open = cache.listings
     .filter(l => ['pending', 'live'].includes(lotState(l)) && !l.is_live)
     .sort((a, b) => a.created_at.localeCompare(b.created_at));
@@ -1531,124 +1564,19 @@ function renderLiveOps(lot) {
   else { $('#opsApproved').innerHTML = ''; }
 }
 
-/* ===================== لوحة التحكم (لك وحدك) =====================
-   Never shown to viewers, and deliberately NOT part of the broadcast
-   screen: keep this on your phone, put #/live on the screen you share. */
-function renderControl(lot, bids) {
-  const host = $('#controlBody');
-
-  if (!admin.on) {
-    if (screenSig.control === 'locked') return;
-    screenSig.control = 'locked';
-    host.innerHTML =
-      '<div class="card" style="text-align:center">' +
-        '<div style="font-weight:800;margin-bottom:6px">لوحة التحكم</div>' +
-        '<div style="font-size:.86rem;color:var(--muted);margin-bottom:12px">تحتاج كلمة مرور المشرف.</div>' +
-        '<button class="btn btn-block" id="ctlLogin">دخول المشرف</button>' +
-      '</div>';
-    $('#ctlLogin').addEventListener('click', () => askAdmin());
-    return;
-  }
-
-  const open = cache.listings
-    .filter(l => ['pending', 'live'].includes(lotState(l)) && !l.is_live)
-    .sort((a, b) => a.created_at.localeCompare(b.created_at));
-  const t = lot ? topBid(lot.id, lot) : null;
-  const st = lot ? lotState(lot) : null;
-  const cd = lot ? countdown(lot.end_at) : null;
-
-  const sig = JSON.stringify([
-    lot ? [lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
-           lot.seller_name, lot.end_at, st] : null,
-    sigOfBids(bids),
-    sigOfBids(cache.pending),
-    open.map(l => l.id + ':' + l.phone + ':' + l.seller_name).join(',')
-  ]);
-  if (sig === screenSig.control && host.firstElementChild) return;
-  screenSig.control = sig;
-
-  host.innerHTML =
-    '<div class="ctl-top">' +
-      '<div><b>لوحة التحكم</b><span> — تظهر لك فقط</span></div>' +
-      '<a class="btn btn-ghost btn-sm" href="#/live" target="_blank" rel="noopener">شاشة العرض ↗</a>' +
-    '</div>' +
-
-    '<div class="card">' +
-      (lot
-        ? '<div class="ctl-now">' +
-            '<div class="k">المعروض على الهواء</div>' +
-            '<div class="ctl-digits num">' + esc(fmtPhone(lot.phone)) + '</div>' +
-            '<div class="ctl-row">' +
-              '<span>' + badgeFor(st) + '</span>' +
-              '<button class="ctl-price num" id="ctlEditPrice" title="اضغط لتعديل السوم">' +
-                money(finalPrice(lot, t)) + ' ر.س ✎</button>' +
-              (st === 'live'
-                ? '<span class="ctl-clock num" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</span>'
-                : '<span class="ctl-clock num">—</span>') +
-            '</div>' +
-            '<div class="ctl-who">' +
-              (t.name ? 'أعلى مزايد: ' + esc(t.name)
-               : st === 'sold' ? 'بيع مباشر' : 'ما زايد أحد بعد') +
-              ' · البائع ' + esc(lot.seller_name) + '</div>' +
-            (lot.auto_sell_price
-              ? '<div class="ctl-auto">⚡ بيع مباشر عند <span class="num">' +
-                money(lot.auto_sell_price) + '</span> ر.س</div>'
-              : '') +
-          '</div>'
-        : '<div class="ctl-now"><div class="ctl-digits" style="font-size:1.1rem">ما فيه رقم على الهواء</div>' +
-          '<div class="ctl-who">سجّل رقم أو اعرض واحد من الطابور تحت</div></div>') +
-      '<div id="ctlBar"></div>' +
-    '</div>' +
-
-    '<div class="card" id="ctlBids"></div>' +
-    (lot ? '<div class="card" id="ctlApproved"></div>' : '') +
-    '<div class="card" id="ctlQueue"></div>';
-
-  renderPendingBids();
-
-  // tapping the sum is how a guest's bid from the broadcast gets recorded
-  const priceBtn = $('#ctlEditPrice');
-  if (priceBtn && lot) priceBtn.addEventListener('click', () => askManualBid(lot));
-
-  // the operator bar lives here now, on a light card
-  const bar = opBar(lot);
-  bar.classList.add('light');
-  $('#ctlBar').appendChild(bar);
-
-  renderApprovedBids(lot);
-
-  $('#ctlQueue').innerHTML = open.length
-    ? '<div style="font-weight:700;margin-bottom:8px">قائمة الانتظار (<span class="num">' + open.length + '</span>)</div>' +
-      open.map(l =>
-        '<div class="ctl-q" data-q="' + esc(l.id) + '">' +
-          '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
-          '<span>' + esc(l.seller_name) + '</span>' +
-          '<button data-a="live">اعرضه</button>' +
-          '<button class="del" data-a="delete" title="حذف">🗑</button>' +
-        '</div>').join('')
-    : '<div style="text-align:center;color:var(--muted);font-size:.86rem">ما فيه أرقام بالانتظار</div>';
-
-  $('#ctlQueue').querySelectorAll('.ctl-q button').forEach(b => {
-    b.addEventListener('click', async () => {
-      const row = b.closest('.ctl-q');
-      const id = row.dataset.q;
-      if (b.dataset.a === 'delete') {
-        const num = row.querySelector('b').textContent.trim();
-        if (!confirm('حذف الرقم ' + num + ' نهائياً من المزاد؟')) return;
-        await opDo(id, 'delete');
-        toast('انحذف الرقم');
-        return;
-      }
-      await opDo(id, 'live');
-    });
-  });
-}
-
 /* Sums shouted into the site wait here until the operator says yes. */
 function renderPendingBids(host) {
-  host = host || $('#ctlBids');
   if (!host) return;
   const list = cache.pending || [];
+
+  // Same rule as every other card: repaint only when the data changed. On the
+  // old control screen this ran inside a guarded render; on the strip it is
+  // called every poll, so without this it rebuilt itself under the operator's
+  // thumb twenty-four times a minute.
+  const key = 'pending:' + (host.id || 'x');
+  const sig = list.map(b => b.id + ':' + b.amount + ':' + b.current).join(',');
+  if (sig === screenSig[key] && host.firstElementChild) return;
+  screenSig[key] = sig;
 
   if (!list.length) {
     host.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.86rem">' +
@@ -1793,7 +1721,6 @@ function askManualBid(lot) {
    an approval given by mistake is taken back, and the only way to bring the
    price down. */
 async function renderApprovedBids(lot, host) {
-  host = host || $('#ctlApproved');
   if (!host || !lot) return;
   // only show the spinner on an empty card — wiping a filled one and refilling
   // it a moment later is half of what made this page jump
@@ -1870,7 +1797,7 @@ function queueHtml(open) {
       '<div class="q" data-q="' + esc(l.id) + '">' +
         '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
         '<span>' + esc(l.seller_name) + '</span>' +
-        (admin.on && route.name === 'control' ? '<button>اعرضه</button>' : '') +
+        (admin.on && route.name === 'live' ? '<button>اعرضه</button>' : '') +
       '</div>').join('') + '</div>';
 }
 
@@ -2123,8 +2050,8 @@ function askQuickAdd() {
       }
       closeSheet();
       toast('بدأ السوم 🔴');
-      if (route.name === 'control' || route.name === 'live') refresh(true);
-      else location.hash = '#/control';
+      if (route.name === 'live') refresh(true);
+      else location.hash = '#/live';
     } catch (e) {
       console.error(e);
       btn.disabled = false; btn.textContent = 'ابدأ السوم على الهواء 🔴';
@@ -2393,7 +2320,7 @@ function askAdmin() {
     const v = s.querySelector('#adInput').value.trim();
     if (!v) return;
     admin.secret = v; closeSheet(); toast('وضع المشرف مفعّل');
-    if (route.name === 'control') refresh(true); else location.hash = '#/control';
+    if (route.name === 'live') refresh(true); else location.hash = '#/live';
   });
   if (admin.on) s.querySelector('#adOut').addEventListener('click', () => { admin.secret = ''; closeSheet(); toast('تم الخروج'); refresh(false); });
 }
@@ -2501,7 +2428,6 @@ $('#opsPeek').addEventListener('click', () => {
   screenSig.live = ''; screenSig.ops = '';
   refresh(false);
 });
-$('#btnBackCtl').addEventListener('click', () => { location.hash = ''; });
 document.querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.filter').forEach(x => x.classList.toggle('on', x === b));
   cache.filter = b.dataset.filter; renderList();

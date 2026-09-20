@@ -141,53 +141,45 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   `update mazad_config set value = '…' where key = 'admin_secret';`
 - Operator mode: long-press the logo (or open `#/admin`) and enter the secret —
   adds تم البيع / +5 دقائق / إيقاف / إعادة فتح / حذف to every card.
-- **Two screens, and a third arrangement for a one-device operator.**
-  `/control` is the operator's private panel (password-gated) and holds every
-  button. `/live` is the display screen. The **stage** on `/live` still carries
-  no controls — do not put buttons inside the green card.
-  - The operator films the laptop screen with his only phone, so leaving
-    `/live` would drop the broadcast. His controls therefore ride alongside the
-    stage in `#liveOps`, a strip on the **physical right** of the same page,
-    past a dashed gold edge he keeps outside the camera frame. The split
-    container is `direction: ltr` on purpose so the stage lands on the left,
-    where the camera points; each child switches back to `rtl`.
-  - It renders **only** when `admin.on`, so a viewer loading `/live` never
-    receives the markup, and **only above 900px**, because on a phone it would
-    end up in shot. `.ops-fold` folds it away and `#opsPeek` (pinned to the
-    far edge, outside the frame) brings it back. Unfolding must clear
-    `screenSig.live` / `screenSig.ops`, or the early-return keeps it hidden.
-  - `.live-split.with-ops` breaks out of the 720px `.wrap` by exactly the
-    strip's width plus its gutter. Without that the stage squeezed to ~340px
-    and the number ran off its own plate.
+- **Two links, not three.** `/m` (and `/mazad`, `/mzad`) is the public page:
+  register a number, watch the queue, bid. `/live` is the operator's — it is
+  what goes on camera **and** it carries his controls. `/control` still parses,
+  but only so an old link redirects into `/live`; there is no separate control
+  screen and no `#viewControl` any more.
+  - `/live` is gated on operator mode. A viewer who lands there gets a card
+    pointing them at the public page — it has no bid box by design, so sending
+    them on is the fix for a real dead end, not a courtesy.
+  - The **stage** carries no controls: never put buttons inside the green card.
+    The operator's controls live in `#liveOps` beside it.
+- **The operator's strip (`#liveOps`).** He films the laptop with his only
+  phone, so leaving `/live` would drop the broadcast. The strip therefore rides
+  on the **physical right** of the same page, past a dashed gold edge he keeps
+  outside the camera frame.
+  - The split container is `direction: ltr` on purpose so the stage lands on
+    the left, where the camera points; each child switches back to `rtl`.
+  - **Above 900px** it sits beside the stage, pinned to the viewport edge.
+    `.live-split.with-ops` breaks out of the 720px `.wrap` to the full
+    viewport — and it must pull on **`margin-right`**, not `margin-left`: the
+    page is RTL, so a block wider than its container is placed from the right
+    edge and `margin-left` is dropped as over-constrained. Getting that wrong
+    slid the whole split off the left of the screen.
+  - **Below 900px** it stacks below the stage rather than hiding. A phone is
+    not the screen being filmed, and hiding it there would leave a phone
+    operator with no controls at all now that `/control` is gone.
+  - It renders **only** when `admin.on`, so a viewer never receives the markup.
+    `.ops-fold` folds it away; `#opsPeek`, pinned to the far edge, brings it
+    back — and unfolding must clear `screenSig.live` / `screenSig.ops`, or the
+    early-return keeps it hidden.
+  - At 268px wide, anything laid out in a row gets squeezed until Arabic words
+    break one letter per line. `.live-ops .ctl-bid` is re-laid as a grid for
+    that reason.
   - **The strip shows what the public view masks**: queued numbers in full and
-    the bidders' mobiles. Its safety is the camera framing, nothing more — so
-    keep the dashed edge, the warning line and the fold button.
+    the bidders' mobiles. Its only protection is the camera framing — so keep
+    the dashed edge, the warning line and the fold button.
   - `renderPendingBids(host)` and `renderApprovedBids(lot, host)` take a host
-    so both screens share one implementation; the approved card keys its
-    repaint signature by host id, and uses a class rather than an id for its
-    button, since the same card now exists on two screens.
-- **Registering a number does not start an auction.** A seller's listing enters
-  the queue as `status='pending'` with `end_at` null and no clock. Only the
-  operator opens the bidding, with `mazad_admin('timer', minutes)`. The RLS
-  insert policy allows nothing else from the public — not `open`, not a clock,
-  not `is_live`, not a price — so a seller cannot start or broadcast their own
-  number. `place_bid` returns `not_started` on a queued number. This ordering is
-  the product: the operator runs the room, sellers only join the line.
-- **Live broadcast mode** (`#/live`, also served at `/live`). One number is "on
-  air" at a time — `mazad_listings.is_live`, and only `mazad_admin` can set it,
-  so a viewer cannot put their own number on screen. The broadcast screen shows
-  that number, the clock, the top bid, the last six bids and the queue behind
-  it. The operator bar (operator mode only) runs the show: start a 1–2 minute
-  clock, add a minute, stamp **تم البيع** or **لم يتم البيع**, jump to the next
-  number, or register a walk-in seller's number on the spot.
-  - A result does **not** clear `is_live`. The number stays on screen wearing its
-    sticker until the operator presses التالي or puts another number on air.
-    Clearing it early was a real bug: the sticker vanished before viewers saw it.
-  - `mazad_create()` is the operator's fast listing. It is the only way to run a
-    lot shorter than the public 5-minute floor in the RLS insert policy, which is
-    why walk-in lots can be 1–2 minutes while public listings cannot.
-  - Statuses are `open | sold | unsold | cancelled`; `unsold` is «لم يتم البيع»,
-    the seller refusing the highest bid, and is distinct from simply expiring.
+    and **each keeps its own repaint signature keyed by host id**. Both are
+    called every poll from `renderLiveOps`, so without those guards they
+    rebuilt themselves twenty-four times a minute and the strip jumped.
 - **A queued number is masked at the source, not in the page.** The public reads
   the `mazad_public` view, which returns `054•••••01` while a number is
   `pending` and not on air, and which has no `seller_contact` column at all.
