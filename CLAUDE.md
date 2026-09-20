@@ -120,10 +120,40 @@ file, and nothing links to it. Share the URL (`/mazad`) directly.
 | Phone format, price range, field lengths | CHECK constraints on `mazad_listings` |
 | Closing / deleting / extending a lot | `mazad_admin()` RPC + secret in `mazad_config` |
 
-`anon` is granted only `select, insert` on `mazad_listings` and `select` on
-`mazad_bids`. It has **no** UPDATE or DELETE grant and no access to
-`mazad_config` at all — so a crafted request cannot change a price, close an
-auction, or read the operator secret. Schema: `supabase-mazad.sql`.
+`anon` is granted only `insert` on `mazad_listings` (it reads the masked
+`mazad_public` view instead) and a column-by-column `select` on `mazad_bids`.
+It has **no** UPDATE or DELETE grant and no access to `mazad_config` at all —
+so a crafted request cannot change a price, close an auction, or read the
+operator secret. Schema: `supabase-mazad.sql`, which is idempotent: run it
+again and it is a no-op.
+
+**Supabase's defaults hand `anon` more than you granted — twice this has been
+a live hole, and the schema file now closes both by name:**
+
+- **A view is auto-updatable, and `mazad_public` runs as its owner**
+  (`security_invoker = off`), so a write privilege on it is a write on
+  `mazad_listings` with RLS bypassed. `alter default privileges … grant all on
+  tables to anon` means every `drop view` / `create view` — and this view has
+  to be dropped to re-order a column — silently re-granted
+  `UPDATE/DELETE/INSERT/TRUNCATE`. Anyone with the public key could have
+  `PATCH`ed a start price, a status or a `sold_price`, or `DELETE`d a lot.
+  So the re-create is always followed by
+  `revoke all on mazad_public from anon, authenticated, public;` **then**
+  `grant select`. Never keep the grant without the revoke.
+- **`revoke … from public` does not revoke from `anon`.** PostgreSQL grants
+  `EXECUTE` on a new function to `PUBLIC`, and Supabase grants it to `anon`
+  and `authenticated` explicitly on top. `mazad_try_auto_sell` was documented
+  as internal and revoked from `public` only — so `POST
+  /rest/v1/rpc/mazad_try_auto_sell` with the anon key could stamp any lot
+  carrying an auto-sell limit as `sold`, at any amount, with no secret and no
+  approved sum. An internal SECURITY DEFINER helper must be revoked from
+  `public, anon, authenticated` by name. Its internal callers are SECURITY
+  DEFINER themselves, so they still reach it.
+
+Check both after any schema change:
+`select has_table_privilege('anon','public.mazad_public','UPDATE')` and
+`has_function_privilege('anon','public.mazad_try_auto_sell(uuid,numeric)','EXECUTE')`
+must both be false.
 
 - **Already live.** Supabase project `mazad-arqam` (ref `afvgsubxuquzlkxyondf`,
   region ap-south-1, free tier) holds the schema; its URL and public anon key
@@ -247,6 +277,15 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   connected blob so the plate's own border lines are dropped, then white to
   transparent with a slightly soft edge. `plate_emblem` is constrained to the
   known keys and to `item_type = 'plate'`.
+  - **The keys are the owner's own names for the emblems**, and the label in
+    `EMBLEMS` is what he calls each one when he asks a seller: `swords`
+    (سيفين ونخلة ملون), `swords_black` (سيفين ونخلة أسود), `vision`
+    (شعار الرؤية 2030), `hegra` (مداين صالح), `diriyah` (الدرعية), plus
+    `none`. Renaming a key means renaming `mazad-emb-<key>.png`, the CHECK on
+    `plate_emblem`, the value list inside `mazad_create_plate` and
+    `mazad_set_emblem`, **and** the existing rows — the page builds the image
+    filename straight from the key, so a mismatch is a broken image, not an
+    error.
 - **Adding a defaulted argument to an existing function creates an OVERLOAD.**
   It has bitten this schema three times now — `place_bid`, `mazad_create`, and
   `mazad_create_plate` when `p_emblem` was added. A call naming only the
