@@ -465,6 +465,27 @@ a { color: inherit; }
 }
 .live-fee b { color: var(--gold-400); font-weight: 900; }
 
+/* ---------- the publish / quick-add forms ---------- */
+.seg {
+  display: flex; gap: 6px; background: #f3edee; border-radius: 12px;
+  padding: 4px; margin-bottom: 12px;
+}
+.seg button {
+  flex: 1; border: 0; border-radius: 9px; padding: 10px 4px; cursor: pointer;
+  background: transparent; color: var(--muted); font-weight: 800; font-size: .85rem;
+}
+.seg button.on { background: var(--wine-700); color: #fff; box-shadow: var(--shadow); }
+.plate-picks { display: flex; gap: 6px; direction: rtl; }
+.plate-picks select {
+  flex: 1; text-align: center; font-size: 1.15rem; font-weight: 800; padding: 10px 4px;
+}
+.plate-preview { margin: 4px 0 12px; }
+.photo-prev:empty { display: none; }
+.photo-prev img {
+  display: block; width: 100%; max-height: 180px; object-fit: cover;
+  border-radius: 12px; border: 1.5px solid var(--line); margin-bottom: 10px;
+}
+
 /* ---------- the Saudi car plate ----------
    Proportioned from the owner's reference rather than guessed: the plate is
    595x117 there, so 5.09:1, and the only full-height rules in it are the two
@@ -514,8 +535,15 @@ a { color: inherit; }
 /* on the broadcast it is the hero */
 .carplate.big { width: min(100%, 620px); border-width: 3px; border-radius: 14px; }
 
-/* a car lot: no plate to draw, so the name itself is the object */
+/* A car lot. With a photo the picture is the object and the name sits under
+   it; without one the name is all there is. */
 .carcard { text-align: center; line-height: 1.25; }
+.carcard .cc-photo {
+  display: block; width: 100%; max-height: 210px; object-fit: cover;
+  border-radius: 12px; border: 2px solid var(--gold-500); margin-bottom: 8px;
+  background: #0000000d;
+}
+.carcard.big .cc-photo { max-height: 42vh; border-width: 3px; border-radius: 16px; }
 .carcard .cc-make  { font-size: 1.5rem; font-weight: 900; }
 .carcard .cc-model { font-size: 1.05rem; font-weight: 700; opacity: .92; }
 .carcard .cc-year  { font-size: .95rem; font-weight: 800; opacity: .8; margin-top: 2px; }
@@ -779,12 +807,21 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
    for more than 20,000. Note the step at the threshold — 20,000 costs 200,
    20,001 costs 500 — that is the rule as set, not a rounding artefact. */
 const CONTACT_PHONE = '0558184381';   // the operator's own line, shown publicly
-const FEE_FLAT      = 200;
-const FEE_THRESHOLD = 20000;
-const FEE_RATE      = 0.025;
+/* Commission, per section — على ذمة البائع. A section with `rate` charges the
+   flat fee up to `threshold` and the rate above it; a section with only
+   `flat` charges that and nothing more, whatever the sale.
+   Displayed only: the site takes no payment and settles nothing, so nothing
+   in the database depends on any of this. */
+const FEES = {
+  plate: { flat: 250 },                                  // ثابت، مهما كان السعر
+  car:   { flat: 500 },                                  // ثابت، مهما كان السعر
+  phone: { flat: 200, threshold: 20000, rate: 0.025 }
+};
+const FEE_DEFAULT = 'phone';
 const MIN_STEP      = 50;      // smallest raise, in SAR
 const STEP_PERCENT  = 0.05;    // or 5% of the current price, whichever is bigger
-const POLL_MS       = 2500;    // how often the page refreshes itself
+const POLL_MS       = 2500;
+const BUCKET        = 'mazad-cars';   // Storage bucket holding car photos    // how often the page refreshes itself
 /* Sale prices are not public yet. Flip to true once there is enough history
    that a results archive helps sellers instead of exposing every deal. */
 const SHOW_FINISHED = false;
@@ -897,11 +934,16 @@ function itemPlate(lot, size) {
   const big = size === 'live';
 
   if (IS_CAR(lot)) {
+    const photo = carPhotoUrl(lot);
     return (
       '<div class="carcard ' + (big ? 'big' : '') + '">' +
-        '<div class="cc-make">' + esc(lot.car_make || '') + '</div>' +
-        '<div class="cc-model">' + esc(lot.car_model || '') + '</div>' +
-        '<div class="cc-year num">' + esc(lot.car_year || '') + '</div>' +
+        (photo ? '<img class="cc-photo" src="' + esc(photo) + '" alt="" ' +
+                 'loading="lazy" decoding="async">' : '') +
+        '<div class="cc-name">' +
+          '<div class="cc-make">' + esc(lot.car_make || '') + '</div>' +
+          '<div class="cc-model">' + esc(lot.car_model || '') + '</div>' +
+          '<div class="cc-year num">' + esc(lot.car_year || '') + '</div>' +
+        '</div>' +
       '</div>'
     );
   }
@@ -957,14 +999,27 @@ function stageItem(lot) {
 const CARRIERS = { stc: 'STC', mobily: 'موبايلي', zain: 'زين', other: 'أخرى' };
 
 function stepFor(current) { return Math.max(MIN_STEP, Math.ceil(current * STEP_PERCENT)); }
-function commissionOn(price) {
-  const p = Number(price || 0);
-  return p > FEE_THRESHOLD ? Math.round(p * FEE_RATE) : FEE_FLAT;
+function feeOf(kind) { return FEES[kind] || FEES[FEE_DEFAULT]; }
+
+function commissionOn(price, kind) {
+  const f = feeOf(kind), p = Number(price || 0);
+  if (!f.rate) return f.flat;                       // flat, whatever it sells for
+  return p > f.threshold ? Math.round(p * f.rate) : f.flat;
 }
-const FEE_RATE_LABEL = (FEE_RATE * 100).toString().replace(/\.0$/, '') + '%';
-/* one sentence, used everywhere the rule is stated */
-const FEE_RULE = money(FEE_FLAT) + ' ر.س، وإذا زاد سعر البيع عن ' +
-                 money(FEE_THRESHOLD) + ' ر.س تكون ' + FEE_RATE_LABEL;
+
+/* One sentence per section, so the rule cannot be worded two ways on two
+   screens. Everything that states the commission reads this. */
+function feeRule(kind) {
+  const f = feeOf(kind);
+  if (!f.rate) return money(f.flat) + ' ر.س ثابتة';
+  const pct = (f.rate * 100).toString().replace(/\.0$/, '') + '%';
+  return money(f.flat) + ' ر.س، وإذا زاد سعر البيع عن ' +
+         money(f.threshold) + ' ر.س تكون ' + pct;
+}
+const kindOf = (lot) => (lot && lot.item_type) || 'phone';
+const carPhotoUrl = (lot) => (lot && lot.car_photo && REMOTE)
+  ? SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/' + lot.car_photo
+  : (lot && lot.car_photo) || '';
 
 function countdown(endAt) {
   if (!endAt) return null;
@@ -1131,6 +1186,25 @@ const remote = {
   serverNow() {
     return this.req('rpc/mazad_now', { method: 'POST', body: '{}' });
   },
+  /* A car photo goes to Storage, not into the table — the row keeps only the
+     path. The bucket caps size and mime type server-side, because a seller has
+     no account and the bucket has to accept anonymous uploads. */
+  async uploadCarPhoto(file) {
+    const ext = ({ 'image/jpeg':'jpg', 'image/png':'png', 'image/webp':'webp' })[file.type];
+    if (!ext) throw new Error('bad_type');
+    const path = 'cars/' + uuid() + '.' + ext;
+    const res = await fetch(SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + path, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+                 'Content-Type': file.type, 'x-upsert': 'false' },
+      body: file
+    });
+    if (!res.ok) {
+      const t = await res.text().catch(() => '');
+      throw new Error('upload ' + res.status + ' ' + t.slice(0, 120));
+    }
+    return path;
+  },
   operatorCreate(secret, d) {
     // two functions rather than one with more arguments: a defaulted extra
     // parameter on mazad_create would be an overload, and a call naming only
@@ -1152,7 +1226,8 @@ const remote = {
         body: JSON.stringify({
           p_secret: secret, p_make: d.car_make, p_model: d.car_model, p_year: d.car_year,
           p_start: d.start_price, p_seller: d.seller_name,
-          p_contact: d.seller_contact || null, p_minutes: d.minutes, p_live: true
+          p_contact: d.seller_contact || null, p_minutes: d.minutes, p_live: true,
+          p_photo: d.car_photo || null
         })
       });
     }
@@ -1321,6 +1396,7 @@ const local = {
       car_make:  d.item_type === 'car' ? d.car_make  : null,
       car_model: d.item_type === 'car' ? d.car_model : null,
       car_year:  d.item_type === 'car' ? d.car_year  : null,
+      car_photo: d.item_type === 'car' ? (d.car_photo || null) : null,
       phone: d.item_type === 'phone' ? d.phone : null, carrier: d.carrier || null,
       start_price: d.start_price, seller_name: d.seller_name,
       seller_contact: d.seller_contact || null, note: d.note || null,
@@ -1700,7 +1776,7 @@ function renderLive(lot, bids) {
         '<div class="live-cta">للمشاركة والمزايدة<br><b>rafd-digital.com/m</b>' +
           '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
         '</div>' +
-        '<div class="live-fee">💰 العمولة <b>' + esc(FEE_RULE) + '</b> — على ذمة البائع</div>' +
+        '<div class="live-fee">💰 العمولة <b>' + esc(feeRule(kindOf(lot))) + '</b> — على ذمة البائع</div>' +
         queueHtml(open) +
       '</div>';
     wireQueue(open, null);
@@ -1766,7 +1842,7 @@ function renderLive(lot, bids) {
       '<div class="live-cta">زايد من الموقع<br><b>rafd-digital.com/m</b>' +
         '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
       '</div>' +
-      '<div class="live-fee">💰 العمولة <b>' + esc(FEE_RULE) + '</b> — على ذمة البائع</div>' +
+      '<div class="live-fee">💰 العمولة <b>' + esc(feeRule(kindOf(lot))) + '</b> — على ذمة البائع</div>' +
 
       queueHtml(open) +
     '</div>';
@@ -2208,13 +2284,14 @@ function askSoldPrice(lot) {
         (t.count ? 'أعلى مزايدة على الموقع: ' + money(t.amount) + ' ر.س.' : 'ما فيه مزايدات على الموقع — اكتب السعر اللي اتفقتوا عليه.') +
       '</div></div>' +
     '<div class="fee-box">عمولتك = <b><span class="num" id="spFee">—</span> ر.س</b> على ذمة البائع.' +
-      '<br><span style="font-size:.78rem">' + esc(FEE_RULE) + '</span></div>' +
+      '<br><span style="font-size:.78rem">' + esc(feeRule(kindOf(lot))) + '</span></div>' +
     '<button class="btn btn-block" style="background:var(--ok-600)" id="spSave">' +
       (already ? '✎ احفظ السعر الجديد' : '✔ تأكيد البيع') + '</button>'
   );
 
   const input = s2.querySelector('#spPrice');
-  const paintFee = () => { s2.querySelector('#spFee').textContent = money(commissionOn(Number(input.value || 0))); };
+  const paintFee = () => { s2.querySelector('#spFee').textContent =
+    money(commissionOn(Number(input.value || 0), kindOf(lot))); };
   input.addEventListener('input', paintFee);
   paintFee();
   input.focus();
@@ -2322,6 +2399,10 @@ function askQuickAdd() {
       '</div>' +
       '<div class="field ltr"><label>سنة الصنع</label>' +
         '<input id="qkYear" type="number" inputmode="numeric" min="1970" max="2100" placeholder="2022"></div>' +
+      '<div class="field"><label>صورة السيارة (اختياري)</label>' +
+        '<input id="qkPhoto" type="file" accept="image/jpeg,image/png,image/webp">' +
+        '<div class="sub">صورة وحدة، حتى 3 ميجا. تظهر مع السيارة في القائمة وعلى البث.</div></div>' +
+      '<div id="qkPhotoPrev" class="photo-prev"></div>' +
     '</div>' +
     '<div data-qfor="phone" class="hidden">' +
       '<div class="field ltr"><label>رقم الجوال</label>' +
@@ -2365,6 +2446,7 @@ function askQuickAdd() {
   ['#qkL1','#qkL2','#qkL3','#qkDigits'].forEach(i =>
     s2.querySelector(i).addEventListener('input', qPaint));
   s2.querySelector('#qkEmblem').addEventListener('change', qPaint);
+  wirePhotoPick(s2, '#qkPhoto', '#qkPhotoPrev');
 
   s2.querySelector('#qkSave').addEventListener('click', async () => {
     const err = (m) => { s2.querySelector('#qkErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
@@ -2392,13 +2474,24 @@ function askQuickAdd() {
 
     const btn = s2.querySelector('#qkSave'); btn.disabled = true; btn.textContent = 'جاري…';
     try {
+      let photo = null;
+      const pf = qkind === 'car' && s2.querySelector('#qkPhoto').files[0];
+      if (pf) {
+        btn.textContent = 'جاري رفع الصورة…';
+        try { photo = await store.uploadCarPhoto(pf); }
+        catch (e2) {
+          console.error(e2);
+          btn.disabled = false; btn.textContent = 'ابدأ السوم على الهواء 🔴';
+          return err('تعذّر رفع الصورة. جرّب وحدة أصغر أو اتركها.');
+        }
+      }
       const r = await store.operatorCreate(admin.secret, {
         item_type: qkind,
         phone: qkind === 'phone' ? phone : null,
         carrier: qkind === 'phone' ? s2.querySelector('#qkCarrier').value : null,
         plate_letters: letters, plate_digits: digits,
         plate_emblem: s2.querySelector('#qkEmblem').value,
-        car_make: make, car_model: model, car_year: year,
+        car_make: make, car_model: model, car_year: year, car_photo: photo,
         start_price: start,
         seller_name: s2.querySelector('#qkName').value.trim() || 'البائع',
         seller_contact: contact || null,
@@ -2484,9 +2577,9 @@ function renderLot(lot, bids, full) {
         '<div class="lot-foot" style="justify-content:center">👤 البائع: ' + esc(lot.seller_name) +
           ' · <span class="num">' + t.count + '</span> مزايدة</div>' +
         (st === 'pending'
-          ? '<div class="fee">عمولة الموقع ' + esc(FEE_RULE) + ' — على ذمة البائع</div>'
+          ? '<div class="fee">عمولة الموقع ' + esc(feeRule(kindOf(lot))) + ' — على ذمة البائع</div>'
           : '<div class="fee">عمولة الموقع = ' +
-            '<b><span class="num">' + money(commissionOn(shown)) + '</span> ر.س</b>' +
+            '<b><span class="num">' + money(commissionOn(shown, kindOf(lot))) + '</span> ر.س</b>' +
             '<span> — على ذمة البائع</span></div>') +
         (lot.seller_contact && admin.on
           ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
@@ -2637,6 +2730,25 @@ async function sendBid(id) {
 }
 
 /* ------------------------------------------------------------- sheets */
+/* Show the seller the picture he picked before anything is uploaded — the
+   file is only sent when he saves, so a wrong pick costs nothing. */
+function wirePhotoPick(root, inputSel, prevSel) {
+  const input = root.querySelector(inputSel), prev = root.querySelector(prevSel);
+  if (!input || !prev) return;
+  input.addEventListener('change', () => {
+    const f = input.files && input.files[0];
+    prev.innerHTML = '';
+    if (!f) return;
+    if (f.size > 3 * 1024 * 1024) {
+      prev.innerHTML = '<div class="err">الصورة أكبر من 3 ميجا — اختر وحدة أصغر.</div>';
+      input.value = ''; return;
+    }
+    const url = URL.createObjectURL(f);
+    prev.innerHTML = '<img src="' + url + '" alt="">';
+    prev.querySelector('img').addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
+  });
+}
+
 function sheet(html) {
   const host = $('#sheetHost');
   host.innerHTML = '<div class="sheet-bg"><div class="sheet">' + html + '</div></div>';
@@ -2734,6 +2846,10 @@ function askListing() {
       '</div>' +
       '<div class="field ltr"><label>سنة الصنع</label>' +
         '<input id="lsYear" type="number" inputmode="numeric" min="1970" max="2100" placeholder="2022"></div>' +
+      '<div class="field"><label>صورة السيارة (اختياري)</label>' +
+        '<input id="lsPhoto" type="file" accept="image/jpeg,image/png,image/webp">' +
+        '<div class="sub">صورة وحدة، حتى 3 ميجا. تظهر مع السيارة في القائمة وعلى البث.</div></div>' +
+      '<div id="lsPhotoPrev" class="photo-prev"></div>' +
     '</div>' +
 
     // ---- a phone number
@@ -2759,16 +2875,26 @@ function askListing() {
       '<input id="lsAuto" type="number" inputmode="numeric" min="0" placeholder="اتركه فاضي لو ما تبي">' +
       '<div class="sub">لو وصل السوم لهذا المبلغ ينباع رقمك على طول وينتهي المزاد عليه — بدون ما تنتظر نهاية الوقت. ' +
         'لازم يكون أعلى من سعر البداية.</div></div>' +
-    '<div class="fee-box">💰 عمولة الموقع <b>' + esc(FEE_RULE) + '</b>، <b>على ذمة البائع</b>.' +
-      '<br>بيع بـ <span class="num">10,000</span> ← <span class="num">' + money(commissionOn(10000)) + '</span> ر.س' +
-      ' · بيع بـ <span class="num">30,000</span> ← <span class="num">' + money(commissionOn(30000)) + '</span> ر.س.' +
-      '<br>بعرضك أنت موافق على هذا.</div>' +
+    '<div class="fee-box" id="lsFee"></div>' +
     '<button class="btn btn-gold btn-block" id="lsSave">اعرضه — وأوافق على العمولة</button>'
   );
 
   let kind = 'plate';
+  // the commission differs per section, so the box has to follow the picker —
+  // a seller must see the rule he is actually agreeing to
+  const paintFee = () => {
+    const f = feeOf(kind);
+    s.querySelector('#lsFee').innerHTML =
+      '💰 عمولة الموقع <b>' + esc(feeRule(kind)) + '</b>، <b>على ذمة البائع</b>.' +
+      (f.rate
+        ? '<br>بيع بـ <span class="num">10,000</span> ← <span class="num">' + money(commissionOn(10000, kind)) + '</span> ر.س' +
+          ' · بيع بـ <span class="num">30,000</span> ← <span class="num">' + money(commissionOn(30000, kind)) + '</span> ر.س.'
+        : '<br>نفس المبلغ سواء باع بـ <span class="num">5,000</span> أو <span class="num">500,000</span>.') +
+      '<br>بعرضك أنت موافق على هذا.';
+  };
   const show = () => {
     s.querySelectorAll('[data-for]').forEach(n => n.classList.toggle('hidden', n.dataset.for !== kind));
+    paintFee();
     s.querySelectorAll('#lsType button').forEach(b => b.classList.toggle('on', b.dataset.t === kind));
   };
   s.querySelector('#lsType').addEventListener('click', (e) => {
@@ -2789,6 +2915,7 @@ function askListing() {
   };
   ['#lsL1','#lsL2','#lsL3','#lsDigits','#lsEmblem'].forEach(i =>
     s.querySelector(i).addEventListener('input', paintPreview));
+  wirePhotoPick(s, '#lsPhoto', '#lsPhotoPrev');
   s.querySelector('#lsEmblem').addEventListener('change', paintPreview);
   paintPreview();
 
@@ -2826,6 +2953,18 @@ function askListing() {
 
     const btn = s.querySelector('#lsSave'); btn.disabled = true; btn.textContent = 'جاري التسجيل…';
     try {
+      // upload first: if the picture fails there is no half-made listing
+      let photo = null;
+      const pf = kind === 'car' && s.querySelector('#lsPhoto').files[0];
+      if (pf) {
+        btn.textContent = 'جاري رفع الصورة…';
+        try { photo = await store.uploadCarPhoto(pf); }
+        catch (e2) {
+          console.error(e2);
+          btn.disabled = false; btn.textContent = 'اعرضه — وأوافق على العمولة';
+          return err('تعذّر رفع الصورة. جرّب صورة أصغر أو اتركها فاضية.');
+        }
+      }
       const row = await store.createListing({
         // the database refuses a row that carries both, so send only the one
         item_type: kind,
@@ -2837,6 +2976,7 @@ function askListing() {
         car_make:      kind === 'car' ? make  : null,
         car_model:     kind === 'car' ? model : null,
         car_year:      kind === 'car' ? year  : null,
+        car_photo:     kind === 'car' ? photo : null,
         start_price: price,
         seller_name: name,
         seller_contact: contact || null,
@@ -2913,7 +3053,9 @@ if (!REMOTE) {
   b.innerHTML = '<b>وضع تجريبي محلي.</b> البيانات محفوظة في هذا المتصفح فقط. لتشغيل المزاد للناس، اربط Supabase من أعلى ملف mazad.html.';
 }
 
-$('#footFee').textContent = FEE_RULE;
+$('#footFee').innerHTML = ['plate','car','phone']
+  .map(k => KIND_LABEL[k].replace(/^\S+\s/, '') + ' ' + feeRule(k))
+  .join(' · ');
 (() => {
   const a = $('#footTel');
   a.textContent = fmtPhone(CONTACT_PHONE);

@@ -390,13 +390,36 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
 - **The commission is stated on the broadcast card itself** (`.live-fee`),
   not only in the page footer. The footer is below the fold, so on camera the
   rule was never actually seen — and it is the one thing a seller agrees to.
-- **Commission**: flat `FEE_FLAT` (200 SAR), or `FEE_RATE` (2.5%) once the sale
-  passes `FEE_THRESHOLD` (20,000) — على ذمة البائع. The step at the threshold is
-  deliberate: 20,000 costs 200, 20,001 costs 500. `FEE_RULE` is the one sentence
-  every screen states it with, so the wording cannot drift between them. One constant drives all three places it is shown — the publish sheet,
-  the live amount on the lot page, and the footer — so changing the rate is a
-  one-line edit. It is displayed only; the site takes no payment and settles
-  nothing, so nothing in the database depends on it.
+- **Commission is per section** — `FEES` near the top of the script:
+  | section | rule |
+  |---|---|
+  | 🚗 لوحات | **250 flat**, whatever it sells for |
+  | 🚙 سيارات | **500 flat**, whatever it sells for |
+  | 📱 جوالات | 200, or 2.5% once the sale passes 20,000 |
+  A section with a `rate` charges the flat fee up to `threshold` and the rate
+  above it; a section with only `flat` charges that and nothing more. So the
+  same 30,000 sale costs 250, 500 or 750 depending on where it was listed.
+  - `feeRule(kind)` is the one sentence every screen states it with and
+    `commissionOn(price, kind)` the one sum, so the wording and the number
+    cannot drift. **Every call site must pass the kind** — `kindOf(lot)` —
+    or it silently quotes the phone rule.
+  - The publish sheet repaints its fee box when the seller changes section:
+    he has to see the rule he is agreeing to, not the one for another tab.
+  - The footer states all three, since it is not about one lot.
+  - Displayed only. The site takes no payment and settles nothing, so nothing
+    in the database depends on any of it — changing a rate is a one-line edit.
+- **A car may carry one photo**, because a car is the one kind you cannot
+  judge from its name. It goes to the `mazad-cars` Storage bucket and the row
+  keeps only the **path**; `carPhotoUrl()` turns that into a URL.
+  - The bucket is public to read and writable by `anon`, because a seller has
+    no account — so the limits are enforced **server-side on the bucket**:
+    3 MB and `image/jpeg|png|webp` only. The page checks the size too, but
+    only to fail fast; the bucket is what actually holds.
+  - `insert` only: no update and no delete policy, so nobody can overwrite or
+    remove a photo — including their own after the operator has seen it.
+  - A CHECK pins `car_photo` to `item_type = 'car'` and to a safe path shape.
+  - The upload happens **before** the row is created, so a failed picture
+    never leaves a half-made listing behind.
 - **Short links**: `vercel.json` rewrites `/m` and `/mzad` to `mazad.html`, so
   `rafd-digital.com/m` is the bio link. `/mazad` also works via `cleanUrls`.
 - The client's bid step (`stepFor`) mirrors `place_bid`'s rule exactly:
