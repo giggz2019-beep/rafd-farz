@@ -198,6 +198,42 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   "back" affordance goes through it.
 - **The name chip is the bidder's identity and is hidden on `/live`** —
   the operator does not bid from there, and it is on camera.
+- **Three sections on one engine: لوحات، جوالات، سيارات.** The auction never
+  cared what it was selling — bids, the clock, approval, anti-sniping, the
+  auto-sell price and the commission are identical for all three. Everything
+  that differs lives in one block near the top of the script (`IS_PLATE`,
+  `IS_CAR`, `itemLabel`, `itemWord`, `itemPlate`, `stageItem`). A fourth kind
+  means touching that block and the two forms, nothing else.
+  - `mazad_listings.item_type` is `phone | plate | car`, and a single
+    `mazad_item_shape` CHECK enforces that a row carries **only** its own
+    fields — a plate with a phone, or a car with plate letters, is refused.
+  - A Saudi plate is three letters and one to four digits. The letters are
+    stored in one spelling: `mazad_norm_plate()` folds أ إ آ ى ة, a BEFORE
+    trigger applies it to every insert, and the client's `normPlate()` does the
+    same thing so the two can never disagree. Plain **ا** and **ي** are
+    canonical — the first version rejected ا outright and every real plate
+    failed.
+  - `PLATE_LATIN` maps the seventeen letters to their fixed Latin equivalents,
+    and the Latin row is the Arabic order **reversed** (س ق م reads Z G S).
+    Verified against real plates, not guessed.
+  - **A car is never masked.** Hiding the make and model tells a viewer
+    nothing, and unlike a phone number a car is not a way to reach the seller.
+    A plate hides its **digits** while queued — that is showmanship, not the
+    commission protection the phone masking exists for.
+  - The section chips are remembered in `localStorage` (`mazad_kind`), so a
+    returning visitor lands where he was.
+- **The plate emblems are the owner's own images, not drawings.**
+  `mazad-emb-<key>.png` were cut out of the reference he supplied. **Do not
+  redraw them as SVG — that was tried and rejected.** To add one, cut it from
+  a real plate the same way: crop the middle cell, keep only the largest
+  connected blob so the plate's own border lines are dropped, then white to
+  transparent with a slightly soft edge. `plate_emblem` is constrained to the
+  known keys and to `item_type = 'plate'`.
+- **Adding a defaulted argument to an existing function creates an OVERLOAD.**
+  It has bitten this schema three times now — `place_bid`, `mazad_create`, and
+  `mazad_create_plate` when `p_emblem` was added. A call naming only the
+  original arguments matches both and Postgres refuses it as ambiguous, so the
+  older signature must be **dropped**, not left beside it.
 - **A queued number is masked at the source, not in the page.** The public reads
   the `mazad_public` view, which returns `054•••••01` while a number is
   `pending` and not on air, and which has no `seller_contact` column at all.

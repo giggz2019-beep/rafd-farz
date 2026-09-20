@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>مزاد سوم | للأرقام المميزة</title>
-<meta name="description" content="مزاد سوم — مزاد مباشر للأرقام المميزة. اعرض رقمك، والناس تزايد عليه لحظة بلحظة.">
+<title>مزاد سوم | لوحات وأرقام وسيارات</title>
+<meta name="description" content="مزاد سوم — مزاد مباشر للوحات المميزة وأرقام الجوال والسيارات. اعرض، والناس تزايد لحظة بلحظة.">
 <meta name="theme-color" content="#5d172b">
-<meta property="og:title" content="مزاد سوم | للأرقام المميزة">
+<meta property="og:title" content="مزاد سوم | لوحات وأرقام وسيارات">
 <meta property="og:description" content="اعرض رقمك المميز، والناس تزايد عليه مباشرة. أعلى سوم يكسب.">
 <meta property="og:image" content="/mazad-og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -97,8 +97,12 @@ a { color: inherit; }
 .banner b { color: var(--gold-400); }
 
 /* ---------- toolbar ---------- */
-.toolbar { display: flex; gap: 8px; align-items: center; margin: 16px 0 12px; }
-.filters { display: flex; gap: 6px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+/* two rows now — the section, then how far along — so each gets its own line
+   rather than sharing one and cutting the last chip off */
+.toolbar { display: flex; flex-direction: column; gap: 8px; align-items: stretch; margin: 16px 0 12px; }
+.filters { display: flex; gap: 6px; flex: 1; overflow-x: auto; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; }
+.filter { flex: none; }   /* never squeeze a chip until its label wraps */
 .filters::-webkit-scrollbar { display: none; }
 .filter {
   padding: 7px 14px; border-radius: 999px; background: #fff;
@@ -136,6 +140,7 @@ a { color: inherit; }
 .badge.unsold { background: #fdecea; color: #c0392b; }
 .badge.wait   { background: #eef2f7; color: #4a6b8a; }
 .badge.air    { background: #ffe9e7; color: #c0392b; }
+.badge.hid    { background: #f3edee; color: var(--wine-600); }
 .badge.dot::before {
   content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
   background: currentColor; margin-inline-end: 5px; vertical-align: middle;
@@ -460,6 +465,71 @@ a { color: inherit; }
 }
 .live-fee b { color: var(--gold-400); font-weight: 900; }
 
+/* ---------- the Saudi car plate, drawn rather than pictured ----------
+   Three cells left to right: digits, country, letters — the real layout. The
+   Latin row is the Arabic order reversed, which is how the plate reads. */
+.seg {
+  display: flex; gap: 6px; background: #f3edee; border-radius: 12px;
+  padding: 4px; margin-bottom: 12px;
+}
+.seg button {
+  flex: 1; border: 0; border-radius: 9px; padding: 10px 6px; cursor: pointer;
+  background: transparent; color: var(--muted); font-weight: 800; font-size: .88rem;
+}
+.seg button.on { background: var(--wine-700); color: #fff; box-shadow: var(--shadow); }
+.plate-preview { margin: 4px 0 12px; }
+.plate-picks { display: flex; gap: 6px; direction: rtl; }
+.plate-picks select {
+  flex: 1; text-align: center; font-size: 1.15rem; font-weight: 800; padding: 10px 4px;
+}
+
+.filters.kinds { margin-bottom: 8px; width: 100%; flex: none; }
+.filters.kinds .filter.on { background: var(--wine-700); color: #fff; border-color: var(--wine-700); }
+
+.carplate {
+  direction: ltr; display: flex; align-items: stretch;
+  background: #fff; color: #10100f; border: 2px solid #1c1c1a;
+  border-radius: 9px; overflow: hidden; margin: 0 auto;
+  width: min(100%, 330px); box-shadow: 0 3px 10px rgba(0,0,0,.18);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+.cp-cell { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 7px 4px; min-width: 0; }
+.cp-num, .cp-let { flex: 1; }
+.cp-country {
+  flex: none; width: 74px; border-inline: 2px solid #1c1c1a;
+  background: #fbfbf9; gap: 1px;
+}
+.cp-ar { font-size: 1.45rem; font-weight: 800; line-height: 1.05; letter-spacing: .06em;
+  direction: rtl; white-space: nowrap; }
+.cp-en { font-size: 1.15rem; font-weight: 800; line-height: 1.05; letter-spacing: .1em;
+  white-space: nowrap; }
+.cp-ksa-ar { font-size: .6rem; font-weight: 700; direction: rtl; }
+.cp-ksa-en { font-size: .6rem; font-weight: 800; letter-spacing: .08em; }
+.cp-emblem { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+.cp-emblem img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+
+/* a car lot: no plate to draw, so the name itself is the object */
+.carcard {
+  text-align: center; line-height: 1.25;
+}
+.carcard .cc-make  { font-size: 1.5rem; font-weight: 900; }
+.carcard .cc-model { font-size: 1.05rem; font-weight: 700; opacity: .92; }
+.carcard .cc-year  { font-size: .95rem; font-weight: 800; opacity: .8; margin-top: 2px; }
+.carcard.big .cc-make  { font-size: clamp(2rem, 7vw, 3.2rem); }
+.carcard.big .cc-model { font-size: clamp(1.1rem, 4vw, 1.8rem); }
+.carcard.big .cc-year  { font-size: clamp(1rem, 3vw, 1.4rem); }
+
+/* on the broadcast it is the hero, so everything steps up */
+.carplate.big { width: min(100%, 560px); border-width: 3px; border-radius: 13px; }
+.carplate.big .cp-cell     { padding: 12px 6px; }
+.carplate.big .cp-country  { width: 116px; }
+.carplate.big .cp-ar       { font-size: clamp(1.9rem, 6.5vw, 3.1rem); }
+.carplate.big .cp-en       { font-size: clamp(1.5rem, 5vw, 2.4rem); }
+.carplate.big .cp-ksa-ar,
+.carplate.big .cp-ksa-en   { font-size: .82rem; }
+.carplate.big .cp-emblem   { width: 46px; height: 46px; }
+
 .live-empty { text-align: center; padding: 26px 10px; }
 .live-empty .t { font-size: 1.2rem; font-weight: 800; }
 .live-empty .s { font-size: .86rem; color: #e3c3cc; margin-top: 4px; }
@@ -626,7 +696,7 @@ a { color: inherit; }
       <div class="brand-mark" id="brandMark">سوم</div>
       <div>
         <div class="brand-name">مزاد سوم</div>
-        <div class="brand-sub">للأرقام المميزة — مزايدة مباشرة</div>
+        <div class="brand-sub">لوحات وأرقام وسيارات — مزايدة مباشرة</div>
       </div>
     </div>
     <button class="chip-name" id="nameChip">اسمك؟</button>
@@ -639,6 +709,12 @@ a { color: inherit; }
   <!-- ============ list view ============ -->
   <section id="viewList">
     <div class="toolbar">
+      <div class="filters kinds" id="kindRow">
+        <button class="filter on" data-kind="all">الكل</button>
+        <button class="filter" data-kind="plate">🚗 لوحات</button>
+        <button class="filter" data-kind="phone">📱 جوالات</button>
+        <button class="filter" data-kind="car">🚙 سيارات</button>
+      </div>
       <div class="filters">
         <button class="filter on" data-filter="live">السوم المفتوح</button>
         <button class="filter" data-filter="pending">بانتظار الدور</button>
@@ -646,7 +722,7 @@ a { color: inherit; }
         <button class="filter" data-filter="all">الكل</button>
       </div>
     </div>
-    <button class="btn btn-gold btn-block" id="btnAdd" style="margin-bottom:14px">➕ اعرض رقمك في المزاد</button>
+    <button class="btn btn-gold btn-block" id="btnAdd" style="margin-bottom:14px">➕ اعرض في المزاد</button>
     <div id="lots"></div>
   </section>
 
@@ -755,17 +831,137 @@ function fmtPhone(p) {
   const d = String(p || '').replace(/[^0-9•]/g, '');
   return d.length === 10 ? d.slice(0,3) + ' ' + d.slice(3,6) + ' ' + d.slice(6) : d;
 }
-const isMasked = (lot) => Boolean(lot && (lot.phone_masked || String(lot.phone || '').includes('•')));
+const isMasked = (lot) => Boolean(lot && (lot.phone_masked ||
+  String(lot.phone || '').includes('•') || String(lot.plate_digits || '').includes('•')));
+
+/* ===================== ما الذي يُباع =====================
+   The auction engine never cared what the lot is — bids, the clock, approval,
+   the auto-sell price and the commission are identical either way. Everything
+   that DOES differ is here, so a new kind of item means touching this block
+   and nothing else. */
+const IS_PLATE = (lot) => lot && lot.item_type === 'plate';
+
+/* The seventeen letters Saudi plates use, and their fixed Latin equivalents.
+   Verified against real plates: س ق م reads Z G S, and ب ي ا reads A V B —
+   the Latin runs left-to-right, so it is the Arabic order reversed. */
+const PLATE_LATIN = { 'ا':'A','ب':'B','ح':'J','د':'D','ر':'R','س':'S','ص':'X',
+                      'ط':'T','ع':'E','ق':'G','ك':'K','ل':'L','م':'Z','ن':'N',
+                      'ه':'H','و':'U','ي':'V' };
+const PLATE_LETTERS = Object.keys(PLATE_LATIN);
+// people type أ إ آ ى ة as often as the plate spellings; the database
+// normalises the same way, so the two can never disagree
+const normPlate = (t) => String(t || '').trim()
+  .replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه');
+const toArabicDigits = (t) => String(t || '').replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+const plateLatin = (letters) => normPlate(letters).split('')
+  .map(c => PLATE_LATIN[c] || c).reverse().join(' ');
+
+/* The mark in the middle of a plate. Saudi plates carry different ones, so
+   the seller is asked which his has and the plate on screen matches the plate
+   in his hand.
+
+   These are the owner's own images, cut out of the reference he supplied —
+   NOT drawings. An earlier version drew them as SVG and was rejected. Do not
+   redraw them: if a mark is ever added, cut it from a real plate the same way
+   (crop, keep the largest connected blob so the plate's border lines are
+   dropped, white to transparent) and save it as mazad-emb-<key>.png. */
+const EMBLEMS = {
+  swords:       'النخلة والسيفان',
+  swords_black: 'النخلة والسيفان (أسود)',
+  vision:       'الرؤية',
+  heritage:     'تراث — مبنى',
+  rock:         'تراث — جبل',
+  none:         'بدون شعار'
+};
+
+function emblemSvg(kind) {
+  if (!kind || kind === 'none' || !EMBLEMS[kind]) return '';
+  return '<img src="mazad-emb-' + kind + '.png" alt="" loading="lazy" decoding="async">';
+}
+
+/* One line naming the lot, for a confirm box, a share text or a sheet title. */
+const IS_CAR = (lot) => lot && lot.item_type === 'car';
+
+function itemLabel(lot) {
+  if (!lot) return '';
+  if (IS_CAR(lot))   return [lot.car_make, lot.car_model, lot.car_year].filter(Boolean).join(' ');
+  if (IS_PLATE(lot)) return normPlate(lot.plate_letters).split('').join(' ') + ' ' + (lot.plate_digits || '');
+  return fmtPhone(lot.phone);
+}
+const itemWord  = (lot) => IS_CAR(lot) ? 'السيارة' : IS_PLATE(lot) ? 'اللوحة' : 'الرقم';
+const itemWordN = (lot) => IS_CAR(lot) ? 'سيارتك' : IS_PLATE(lot) ? 'لوحتك' : 'رقمك';
+const KIND_LABEL = { plate: '🚗 لوحات', phone: '📱 جوالات', car: '🚙 سيارات' };
+/* the chip on a card says what the lot is; for a phone the carrier is more
+   useful than the word "رقم", since every lot in that section is one */
+const kindBadge = (lot) => IS_CAR(lot) ? 'سيارة'
+  : IS_PLATE(lot) ? 'لوحة'
+  : (CARRIERS[lot.carrier] || 'رقم');
+
+/* The lot drawn as the thing itself: a phone plate, or a Saudi car plate with
+   its three cells — digits, country, letters — in that order left to right,
+   exactly as the real plate is laid out. */
+function itemPlate(lot, size) {
+  const big = size === 'live';
+
+  if (IS_CAR(lot)) {
+    return (
+      '<div class="carcard ' + (big ? 'big' : '') + '">' +
+        '<div class="cc-make">' + esc(lot.car_make || '') + '</div>' +
+        '<div class="cc-model">' + esc(lot.car_model || '') + '</div>' +
+        '<div class="cc-year num">' + esc(lot.car_year || '') + '</div>' +
+      '</div>'
+    );
+  }
+
+  if (!IS_PLATE(lot)) {
+    return '<div class="' + (big ? 'live-digits' : 'phone-digits') + '">' +
+      esc(fmtPhone(lot.phone)) + '</div>';
+  }
+
+  const letters = normPlate(lot.plate_letters);
+  const digits  = String(lot.plate_digits || '');
+  const masked  = digits.includes('•');
+  const emblem  = lot.plate_emblem || 'swords';
+  return (
+    '<div class="carplate ' + (big ? 'big' : '') + '">' +
+      '<div class="cp-cell cp-num">' +
+        '<div class="cp-ar">' + esc(masked ? digits : toArabicDigits(digits)) + '</div>' +
+        '<div class="cp-en">' + esc(digits) + '</div>' +
+      '</div>' +
+      '<div class="cp-cell cp-country">' +
+        '<div class="cp-ksa-ar">السعودية</div>' +
+        '<div class="cp-emblem">' + emblemSvg(emblem) + '</div>' +
+        '<div class="cp-ksa-en">KSA</div>' +
+      '</div>' +
+      '<div class="cp-cell cp-let">' +
+        '<div class="cp-ar">' + esc(letters.split('').join(' ')) + '</div>' +
+        '<div class="cp-en">' + esc(plateLatin(letters)) + '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
 
 /* What a number may look like ON THE STAGE — the part the camera sees.
    mazad_public masks a queued number for the public, but mazad_admin_list
    hands the operator the real one, and he is the one whose screen is filmed.
    So mask it here too, by the same rule the view uses, and let only his own
    strip show it in full. A number that is on air is meant to be seen. */
-function stagePhone(lot) {
-  const raw = String((lot && lot.phone) || '');
-  if (!lot || lot.is_live || lot.status !== 'pending' || raw.includes('•')) return raw;
-  return raw.length >= 5 ? raw.slice(0, 3) + '•••••' + raw.slice(-2) : raw;
+function stageItem(lot) {
+  if (!lot) return '';
+  // a car is never masked: hiding the make and model tells a viewer nothing,
+  // and unlike a phone number a car is not a way to reach the seller
+  if (IS_CAR(lot)) return itemLabel(lot);
+  const hide = !lot.is_live && lot.status === 'pending';
+  if (IS_PLATE(lot)) {
+    const d = String(lot.plate_digits || '');
+    // the digits are what makes a plate worth bidding on, so they are what is
+    // held back — same rule the mazad_public view applies
+    return normPlate(lot.plate_letters).split('').join(' ') + ' ' +
+           (hide && !d.includes('•') ? '•'.repeat(d.length) : d);
+  }
+  const raw = String(lot.phone || '');
+  if (lot.is_live || lot.status !== 'pending' || raw.includes('•')) return fmtPhone(raw);
+  return raw.length >= 5 ? fmtPhone(raw.slice(0, 3) + '•••••' + raw.slice(-2)) : fmtPhone(raw);
 }
 const CARRIERS = { stc: 'STC', mobily: 'موبايلي', zain: 'زين', other: 'أخرى' };
 
@@ -945,6 +1141,30 @@ const remote = {
     return this.req('rpc/mazad_now', { method: 'POST', body: '{}' });
   },
   operatorCreate(secret, d) {
+    // two functions rather than one with more arguments: a defaulted extra
+    // parameter on mazad_create would be an overload, and a call naming only
+    // the original arguments would match both and be refused as ambiguous
+    if (d.item_type === 'plate') {
+      return this.req('rpc/mazad_create_plate', {
+        method: 'POST',
+        body: JSON.stringify({
+          p_secret: secret, p_letters: d.plate_letters, p_digits: d.plate_digits,
+          p_start: d.start_price, p_seller: d.seller_name,
+          p_contact: d.seller_contact || null, p_minutes: d.minutes, p_live: true,
+          p_emblem: d.plate_emblem || null
+        })
+      });
+    }
+    if (d.item_type === 'car') {
+      return this.req('rpc/mazad_create_car', {
+        method: 'POST',
+        body: JSON.stringify({
+          p_secret: secret, p_make: d.car_make, p_model: d.car_model, p_year: d.car_year,
+          p_start: d.start_price, p_seller: d.seller_name,
+          p_contact: d.seller_contact || null, p_minutes: d.minutes, p_live: true
+        })
+      });
+    }
     return this.req('rpc/mazad_create', {
       method: 'POST',
       body: JSON.stringify({
@@ -966,7 +1186,8 @@ const local = {
   async bids(id) { return this.read().bids.filter(b => b.listing_id === id && b.approved).sort((a, b) => a.created_at.localeCompare(b.created_at)); },
   async createListing(body) {
     const db = this.read();
-    const row = { ...body, id: this.uid(), status: body.status || 'pending', is_live: false, created_at: new Date().toISOString() };
+    const row = { ...body, id: this.uid(), item_type: body.item_type || 'phone',
+                  status: body.status || 'pending', is_live: false, created_at: new Date().toISOString() };
     db.listings.push(row); this.write(db); return row;
   },
   async placeBid(id, name, amount, phone) {
@@ -1101,7 +1322,15 @@ const local = {
     const db = this.read();
     db.listings.forEach(l => l.is_live = false);
     const row = {
-      id: this.uid(), phone: d.phone, carrier: d.carrier || null,
+      id: this.uid(),
+      item_type: d.item_type || 'phone',
+      plate_letters: d.item_type === 'plate' ? d.plate_letters : null,
+      plate_digits:  d.item_type === 'plate' ? d.plate_digits  : null,
+      plate_emblem:  d.item_type === 'plate' ? (d.plate_emblem || 'swords') : null,
+      car_make:  d.item_type === 'car' ? d.car_make  : null,
+      car_model: d.item_type === 'car' ? d.car_model : null,
+      car_year:  d.item_type === 'car' ? d.car_year  : null,
+      phone: d.item_type === 'phone' ? d.phone : null, carrier: d.carrier || null,
       start_price: d.start_price, seller_name: d.seller_name,
       seller_contact: d.seller_contact || null, note: d.note || null,
       auto_sell_price: d.auto_sell_price ?? null,
@@ -1157,7 +1386,12 @@ const admin = {
 };
 
 /* ---------------------------------------------------------------- views */
-let cache = { listings: [], bids: {}, filter: 'live' };
+let cache = {
+  listings: [], bids: {}, filter: 'live',
+  // the section the viewer last chose, kept so a returning visitor lands on
+  // the one he actually cares about
+  kind: (() => { try { return localStorage.getItem('mazad_kind') || 'all'; } catch { return 'all'; } })()
+};
 let route = { name: 'list', id: null };
 let pollTimer = null, tickTimer = null;
 
@@ -1293,6 +1527,11 @@ function renderList() {
   const dTab = $('#fDone');
   if (dTab) dTab.classList.toggle('hidden', !SHOW_FINISHED && !admin.on);
 
+  // the section comes first: a viewer picks what he is here for, then how far
+  // along it is
+  if (cache.kind && cache.kind !== 'all') {
+    rows = rows.filter(l => (l.item_type || 'phone') === cache.kind);
+  }
   if (cache.filter === 'live')    rows = rows.filter(l => lotState(l) === 'live');
   if (cache.filter === 'pending') rows = rows.filter(l => lotState(l) === 'pending');
   if (cache.filter === 'done')    rows = rows.filter(finished);
@@ -1317,7 +1556,7 @@ function renderList() {
     (onAir
       ? '<button class="live-banner" id="goLive" data-lot="' + esc(onAir.id) + '">' +
           '<span class="live-dot">على الهواء</span>' +
-          '<span class="n">' + esc(fmtPhone(onAir.phone)) + '</span>' +
+          '<span class="n">' + esc(itemLabel(onAir)) + '</span>' +
           '<span class="go">زايد الحين</span>' +
         '</button>'
       : '') +
@@ -1330,8 +1569,10 @@ function renderList() {
 
   if (!rows.length) {
     host.innerHTML = banner + '<div class="empty"><div class="empty-emoji">📱</div>'
-      + (cache.filter === 'live' ? 'ما فيه سوم مفتوح الحين.<br>سجّل رقمك وينتظر دوره.'
-         : cache.filter === 'pending' ? 'ما فيه أرقام بالانتظار.' : 'ما فيه شيء هنا بعد.')
+      + (cache.kind && cache.kind !== 'all'
+         ? 'ما فيه ' + (KIND_LABEL[cache.kind] || '').replace(/^\S+\s/, '') + ' هنا الحين.<br>اعرض واحد ويدخل القائمة.'
+         : cache.filter === 'live' ? 'ما فيه سوم مفتوح الحين.<br>اعرض واحد وينتظر دوره.'
+         : cache.filter === 'pending' ? 'ما فيه شي بالانتظار.' : 'ما فيه شيء هنا بعد.')
       + '</div>';
     wireLiveBanner();
     return;
@@ -1343,17 +1584,19 @@ function renderList() {
     const st = lotState(lot), t = topBid(lot.id, lot), cd = countdown(lot.end_at);
     const badge = badgeFor(st)
       + (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '')
-      + (isMasked(lot) ? '<span class="badge wait">🔒 مخفي</span>' : '');
+      // its own class: .badge.wait already means "بانتظار الدور", and one class
+      // carrying two meanings is how a selector ends up matching the wrong badge
+      + (isMasked(lot) ? '<span class="badge hid">🔒 مخفي</span>' : '');
     const card = el(
       '<div class="card">' +
         '<button class="lot">' +
           '<div class="lot-top">' + badge +
-            '<span class="badge">' + esc(CARRIERS[lot.carrier] || 'رقم') + '</span>' +
+            '<span class="badge">' + esc(kindBadge(lot)) + '</span>' +
             '<span style="flex:1"></span>' +
             '<span style="font-size:.72rem;color:var(--muted)">' + esc(ago(lot.created_at)) + '</span>' +
           '</div>' +
           '<div class="phone-plate plate-wrap">' +
-            '<div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
+            itemPlate(lot) +
             stampFor(st) +
           '</div>' +
           '<div class="lot-stats">' +
@@ -1374,7 +1617,7 @@ function renderList() {
     );
     card.querySelector('.lot').addEventListener('click', () => { location.hash = '#/n/' + encodeURIComponent(lot.id); });
     if (st === 'live') {
-      const go = el('<button class="btn btn-gold btn-block btn-sm" style="margin-top:10px">زايد على هذا الرقم</button>');
+      const go = el('<button class="btn btn-gold btn-block btn-sm" style="margin-top:10px">زايد على ' + itemWord(lot) + '</button>');
       go.addEventListener('click', () => { location.hash = '#/n/' + encodeURIComponent(lot.id); });
       card.appendChild(go);
     }
@@ -1408,7 +1651,7 @@ function adminBar(lot) {
   bar.addEventListener('click', async (e) => {
     const a = e.target.dataset.a; if (!a) return;
     if (a === 'sold') { askSoldPrice(lot); return; }
-    if (a === 'delete' && !confirm('حذف الرقم ' + fmtPhone(lot.phone) + ' نهائياً؟')) return;
+    if (a === 'delete' && !confirm('حذف ' + itemWord(lot) + ' ' + itemLabel(lot) + ' نهائياً؟')) return;
     const r = await opDo(lot.id, a);
     if (!r) return;
     if (a === 'live') { toast('صار على الهواء 🔴'); return; }
@@ -1461,7 +1704,7 @@ function renderLive(lot, bids) {
       '<div class="live">' +
         '<div class="live-head"><span class="live-dot">البث</span>' +
           '<span class="live-seq">تم الانتهاء من <span class="num">' + doneCount + '</span> رقم</span></div>' +
-        '<div class="live-empty"><div class="t">جاهزون للرقم القادم</div>' +
+        '<div class="live-empty"><div class="t">جاهزون للي بعده</div>' +
           '<div class="s">اعرض رقمك من الموقع وبيجي دورك</div></div>' +
         '<div class="live-cta">للمشاركة والمزايدة<br><b>rafd-digital.com/m</b>' +
           '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
@@ -1497,7 +1740,7 @@ function renderLive(lot, bids) {
       '</div>' +
 
       '<div class="live-plate plate-wrap">' +
-        '<div class="live-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
+        itemPlate(lot, 'live') +
         '<div class="live-note">' + esc(CARRIERS[lot.carrier] || 'رقم مميز') +
           (lot.seller_name && lot.seller_name !== 'البائع' ? ' · البائع ' + esc(lot.seller_name) : '') + '</div>' +
         stampFor(st) +
@@ -1595,7 +1838,7 @@ function renderLiveOps(lot) {
       ? '<div class="ops-h">قائمة الانتظار (<span class="num">' + open.length + '</span>)</div>' +
         open.map(l =>
           '<div class="ctl-q" data-q="' + esc(l.id) + '">' +
-            '<b class="num">' + esc(fmtPhone(l.phone)) + '</b>' +
+            '<b class="num">' + esc(itemLabel(l)) + '</b>' +
             '<span>' + esc(l.seller_name) + '</span>' +
             '<button data-a="live">اعرضه</button>' +
             '<button class="del" data-a="delete" title="حذف">🗑</button>' +
@@ -1606,7 +1849,7 @@ function renderLiveOps(lot) {
       b.addEventListener('click', async () => {
         const row = b.closest('.ctl-q');
         if (b.dataset.a === 'delete') {
-          if (!confirm('حذف الرقم ' + row.querySelector('b').textContent.trim() + ' نهائياً من المزاد؟')) return;
+          if (!confirm('حذف ' + row.querySelector('b').textContent.trim() + ' نهائياً من المزاد؟')) return;
           await opDo(row.dataset.q, 'delete');
           toast('انحذف الرقم');
           return;
@@ -1657,11 +1900,15 @@ function renderPendingBids(host) {
         '<div class="who">' +
           '<b>' + esc(b.bidder_name) + '</b>' +
           (b.bidder_phone
-            ? '<a class="wa" href="' + esc(waLink(b.bidder_phone, b.phone || '')) + '"' +
+            ? '<a class="wa" href="' + esc(waLink(b.bidder_phone, b.plate_letters
+                ? normPlate(b.plate_letters).split('').join(' ') + ' ' + (b.plate_digits || '')
+                : fmtPhone(b.phone || ''))) + '"' +
               ' target="_blank" rel="noopener" title="واتساب المزايد">💬 <span class="num">' +
               esc(fmtPhone(b.bidder_phone)) + '</span></a>'
             : '<span class="sub-muted">بدون جوال</span>') +
-          '<span class="num">على ' + esc(fmtPhone(b.phone || '')) + '</span>' +
+          '<span class="num">على ' + esc(b.plate_letters
+            ? normPlate(b.plate_letters).split('').join(' ') + ' ' + (b.plate_digits || '')
+            : fmtPhone(b.phone || '')) + '</span>' +
         '</div>' +
         '<div class="cmp">' +
           '<div class="cmp-line">' +
@@ -1805,7 +2052,7 @@ async function renderApprovedBids(lot, host) {
           '<div class="ctl-bid done" data-b="' + esc(b.id) + '">' +
             '<div class="who"><b>' + esc(b.bidder_name) + '</b>' +
               (b.bidder_phone
-                ? '<a class="wa" href="' + esc(waLink(b.bidder_phone, lot.phone)) + '"' +
+                ? '<a class="wa" href="' + esc(waLink(b.bidder_phone, itemLabel(lot))) + '"' +
                   ' target="_blank" rel="noopener">💬 <span class="num">' +
                   esc(fmtPhone(b.bidder_phone)) + '</span></a>'
                 : '') +
@@ -1834,7 +2081,7 @@ async function renderApprovedBids(lot, host) {
 function askRequeue(lot) {
   const s2 = sheet(
     '<h2>رجّعه لقائمة الانتظار</h2>' +
-    '<p class="hint">الرقم <span class="num">' + esc(fmtPhone(lot.phone)) + '</span> يرجع بدون مؤقت، ' +
+    '<p class="hint">' + itemWord(lot) + ' <span class="num">' + esc(itemLabel(lot)) + '</span> يرجع بدون مؤقت، ' +
       'وما أحد يقدر يزايد عليه لين تفتحه من جديد.</p>' +
     '<button class="btn btn-block" id="rqClear" style="background:#c0392b">رجّعه وامسح كل السومات</button>' +
     '<button class="btn btn-ghost btn-block" id="rqKeep" style="margin-top:8px">رجّعه واحتفظ بالسومات</button>'
@@ -1852,7 +2099,7 @@ function queueHtml(open) {
   return '<div class="queue"><h3>قائمة الانتظار</h3>' +
     open.slice(0, 6).map(l =>
       '<div class="q" data-q="' + esc(l.id) + '">' +
-        '<b class="num">' + esc(fmtPhone(stagePhone(l))) + '</b>' +
+        '<b class="num">' + esc(stageItem(l)) + '</b>' +
         '<span>' + esc(l.seller_name) + '</span>' +
         (admin.on && route.name === 'live' ? '<button>اعرضه</button>' : '') +
       '</div>').join('') + '</div>';
@@ -1887,7 +2134,7 @@ function opBar(lot) {
   const bar = el('<div class="opbar"></div>');
   if (lot) {
     bar.innerHTML =
-      '<div class="lbl">افتح السوم على الرقم</div>' +
+      '<div class="lbl">افتح السوم</div>' +
       '<div class="row">' +
         '<button class="start" data-a="timer" data-m="1">▶ ابدأ دقيقة</button>' +
         '<button class="start" data-a="timer" data-m="2">▶ دقيقتين</button>' +
@@ -1905,25 +2152,25 @@ function opBar(lot) {
           (lot.auto_sell_price ? 'سعر البيع المباشر: ' + money(lot.auto_sell_price) : 'حدّد سعر بيع مباشر') +
         '</button>' +
       '</div>' +
-      '<div class="lbl">نتيجة الرقم</div>' +
+      '<div class="lbl">النتيجة</div>' +
       '<div class="row">' +
         '<button class="sold" data-a="sold">✔ تم البيع</button>' +
         '<button class="unsold" data-a="unsold">✖ لم يتم البيع</button>' +
       '</div>' +
       '<div class="row">' +
-        '<button class="next" data-a="next">الرقم التالي ←</button>' +
-        '<button class="add" data-a="quick">＋ سجّل رقم</button>' +
+        '<button class="next" data-a="next">التالي ←</button>' +
+        '<button class="add" data-a="quick">＋ سجّل جديد</button>' +
       '</div>' +
       '<div class="row">' +
         '<button data-a="open">↩ رجّعه للقائمة</button>' +
-        '<button class="danger" data-a="delete">🗑 احذف الرقم</button>' +
+        '<button class="danger" data-a="delete">🗑 احذف</button>' +
       '</div>';
   } else {
     bar.innerHTML =
       '<div class="lbl">وضع المشرف</div>' +
-      '<div class="row"><button class="add" data-a="quick">＋ سجّل رقم وابدأ السوم</button></div>' +
+      '<div class="row"><button class="add" data-a="quick">＋ سجّل وابدأ السوم</button></div>' +
       (cache.listings.some(l => lotState(l) === 'live')
-        ? '<div class="row"><button class="next" data-a="next">اعرض أول رقم بالانتظار</button></div>' : '');
+        ? '<div class="row"><button class="next" data-a="next">اعرض أول واحد بالانتظار</button></div>' : '');
   }
 
   bar.addEventListener('click', async (e) => {
@@ -1935,12 +2182,12 @@ function opBar(lot) {
     if (a === 'auto'   && lot) { askAutoPrice(lot); return; }
     if (a === 'next') {
       const r = await opDo(lot ? lot.id : null, 'next');
-      if (r && !r.next) toast('ما فيه أرقام بالانتظار');
+      if (r && !r.next) toast('ما فيه شي بالانتظار');
       return;
     }
     if (a === 'sold') { askSoldPrice(lot); return; }
     if (a === 'delete') {
-      if (!confirm('حذف الرقم ' + fmtPhone(lot.phone) + ' نهائياً من المزاد؟')) return;
+      if (!confirm('حذف ' + itemWord(lot) + ' ' + itemLabel(lot) + ' نهائياً من المزاد؟')) return;
       await opDo(lot.id, 'delete');
       toast('انحذف الرقم');
       return;
@@ -1962,7 +2209,7 @@ function askSoldPrice(lot) {
   const suggested = already ? Number(lot.sold_price) : (t.count ? t.amount : '');
   const s2 = sheet(
     '<h2>' + (already ? 'تعديل سعر البيع' : 'سعر البيع') + '</h2>' +
-    '<p class="hint">الرقم <span class="num">' + esc(fmtPhone(lot.phone)) + '</span> — كم انباع؟</p>' +
+    '<p class="hint">' + itemWord(lot) + ' <span class="num">' + esc(itemLabel(lot)) + '</span> — كم انباع؟</p>' +
     '<div id="spErr"></div>' +
     '<div class="field ltr"><label>المبلغ (ر.س)</label>' +
       '<input id="spPrice" type="number" inputmode="numeric" min="0" value="' + esc(suggested) + '" placeholder="مثال: 4500">' +
@@ -2003,7 +2250,7 @@ function askAutoPrice(lot) {
   const has = lot.auto_sell_price != null;
   const s2 = sheet(
     '<h2>سعر البيع المباشر</h2>' +
-    '<p class="hint">الرقم <span class="num">' + esc(fmtPhone(lot.phone)) + '</span> — ' +
+    '<p class="hint">' + itemWord(lot) + ' <span class="num">' + esc(itemLabel(lot)) + '</span> — ' +
       'لو وصل السوم لهذا المبلغ ينباع تلقائياً وينتهي المزاد عليه.</p>' +
     '<div id="apErr"></div>' +
     '<div class="bid-now" style="margin-bottom:12px">السوم الحالي ' +
@@ -2052,12 +2299,43 @@ function askAutoPrice(lot) {
 
 /* the walk-in guest: operator types the number and it goes on air now */
 function askQuickAdd() {
+  const letterOpts = PLATE_LETTERS.map(c => '<option value="' + c + '">' + c + '</option>').join('');
   const s2 = sheet(
-    '<h2>سجّل رقم وابدأ السوم</h2>' +
-    '<p class="hint">للي يطلع معك بالبث — الرقم ينعرض على الهواء مباشرة.</p>' +
+    '<h2>سجّل وابدأ السوم</h2>' +
+    '<p class="hint">للي يطلع معك بالبث — ينعرض على الهواء مباشرة.</p>' +
     '<div id="qkErr"></div>' +
-    '<div class="field ltr"><label>رقم الجوال</label>' +
-      '<input id="qkPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX"></div>' +
+    '<div class="seg" id="qkType">' +
+      '<button class="on" data-t="plate">🚗 لوحة</button>' +
+      '<button data-t="phone">📱 رقم</button>' +
+      '<button data-t="car">🚙 سيارة</button>' +
+    '</div>' +
+    '<div data-qfor="plate">' +
+      '<div class="field"><label>حروف اللوحة</label>' +
+        '<div class="plate-picks">' +
+          '<select id="qkL1">' + letterOpts + '</select>' +
+          '<select id="qkL2">' + letterOpts + '</select>' +
+          '<select id="qkL3">' + letterOpts + '</select>' +
+        '</div></div>' +
+      '<div class="field ltr"><label>أرقام اللوحة</label>' +
+        '<input id="qkDigits" type="tel" inputmode="numeric" maxlength="4" placeholder="900"></div>' +
+      '<div class="field"><label>شعار اللوحة</label>' +
+        '<select id="qkEmblem">' + Object.keys(EMBLEMS).map(k =>
+          '<option value="' + k + '">' + EMBLEMS[k] + '</option>').join('') + '</select>' +
+        '<div class="sub">اسأله: وش شعار لوحتك؟</div></div>' +
+      '<div id="qkPreview" class="plate-preview"></div>' +
+    '</div>' +
+    '<div data-qfor="car" class="hidden">' +
+      '<div class="row2">' +
+        '<div class="field"><label>الماركة</label><input id="qkMake" maxlength="30" placeholder="تويوتا"></div>' +
+        '<div class="field"><label>الموديل</label><input id="qkModel" maxlength="30" placeholder="لاندكروزر"></div>' +
+      '</div>' +
+      '<div class="field ltr"><label>سنة الصنع</label>' +
+        '<input id="qkYear" type="number" inputmode="numeric" min="1970" max="2100" placeholder="2022"></div>' +
+    '</div>' +
+    '<div data-qfor="phone" class="hidden">' +
+      '<div class="field ltr"><label>رقم الجوال</label>' +
+        '<input id="qkPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX"></div>' +
+    '</div>' +
     '<div class="row2">' +
       '<div class="field ltr"><label>سعر البداية</label><input id="qkPrice" type="number" inputmode="numeric" min="0" value="0"></div>' +
       '<div class="field"><label>مدة السوم</label><select id="qkMin">' +
@@ -2066,7 +2344,7 @@ function askQuickAdd() {
     '</div>' +
     '<div class="row2">' +
       '<div class="field"><label>اسم البائع</label><input id="qkName" maxlength="40" placeholder="أبو فهد"></div>' +
-      '<div class="field"><label>الشركة</label><select id="qkCarrier">' +
+      '<div class="field" data-qfor="phone"><label>الشركة</label><select id="qkCarrier">' +
         '<option value="stc">STC</option><option value="mobily">موبايلي</option>' +
         '<option value="zain">زين</option><option value="other">أخرى</option></select></div>' +
     '</div>' +
@@ -2077,11 +2355,45 @@ function askQuickAdd() {
     '<button class="btn btn-gold btn-block" id="qkSave">ابدأ السوم على الهواء 🔴</button>'
   );
 
+  let qkind = 'plate';
+  const qshow = () => {
+    s2.querySelectorAll('[data-qfor]').forEach(n => n.classList.toggle('hidden', n.dataset.qfor !== qkind));
+    s2.querySelectorAll('#qkType button').forEach(b => b.classList.toggle('on', b.dataset.t === qkind));
+  };
+  s2.querySelector('#qkType').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return; qkind = b.dataset.t; qshow();
+  });
+  qshow();
+  const qPaint = () => {
+    const l = ['#qkL1','#qkL2','#qkL3'].map(i => s2.querySelector(i).value).join('');
+    const d = s2.querySelector('#qkDigits').value.replace(/\D/g, '');
+    s2.querySelector('#qkPreview').innerHTML = d
+      ? itemPlate({ item_type: 'plate', plate_letters: l, plate_digits: d,
+                    plate_emblem: s2.querySelector('#qkEmblem').value }) : '';
+  };
+  ['#qkL1','#qkL2','#qkL3','#qkDigits'].forEach(i =>
+    s2.querySelector(i).addEventListener('input', qPaint));
+  s2.querySelector('#qkEmblem').addEventListener('change', qPaint);
+
   s2.querySelector('#qkSave').addEventListener('click', async () => {
     const err = (m) => { s2.querySelector('#qkErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
     const phone   = s2.querySelector('#qkPhone').value.replace(/\D/g, '');
     const contact = s2.querySelector('#qkContact').value.replace(/\D/g, '');
-    if (!/^05\d{8}$/.test(phone)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
+    const letters = normPlate(['#qkL1','#qkL2','#qkL3'].map(i => s2.querySelector(i).value).join(''));
+    const digits  = s2.querySelector('#qkDigits').value.replace(/\D/g, '');
+    const make  = s2.querySelector('#qkMake').value.trim();
+    const model = s2.querySelector('#qkModel').value.trim();
+    const year  = Number(s2.querySelector('#qkYear').value || 0);
+    if (qkind === 'phone') {
+      if (!/^05\d{8}$/.test(phone)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
+    } else if (qkind === 'plate') {
+      if (letters.length !== 3) return err('اختر حروف اللوحة الثلاثة.');
+      if (!/^\d{1,4}$/.test(digits)) return err('أرقام اللوحة من رقم إلى أربعة.');
+    } else {
+      if (make.length < 2)  return err('اكتب ماركة السيارة.');
+      if (model.length < 1) return err('اكتب موديل السيارة.');
+      if (!(year >= 1970 && year <= 2100)) return err('اكتب سنة صنع صحيحة.');
+    }
     const start = Number(s2.querySelector('#qkPrice').value || 0);
     const autoRaw = s2.querySelector('#qkAuto').value.trim();
     const auto = autoRaw === '' ? null : Number(autoRaw);
@@ -2090,8 +2402,12 @@ function askQuickAdd() {
     const btn = s2.querySelector('#qkSave'); btn.disabled = true; btn.textContent = 'جاري…';
     try {
       const r = await store.operatorCreate(admin.secret, {
-        phone,
-        carrier: s2.querySelector('#qkCarrier').value,
+        item_type: qkind,
+        phone: qkind === 'phone' ? phone : null,
+        carrier: qkind === 'phone' ? s2.querySelector('#qkCarrier').value : null,
+        plate_letters: letters, plate_digits: digits,
+        plate_emblem: s2.querySelector('#qkEmblem').value,
+        car_make: make, car_model: model, car_year: year,
         start_price: start,
         seller_name: s2.querySelector('#qkName').value.trim() || 'البائع',
         seller_contact: contact || null,
@@ -2149,11 +2465,11 @@ function renderLot(lot, bids, full) {
       '<div class="card">' +
         '<div class="lot-top">' + badgeFor(st) +
           (lot.is_live ? '<span class="badge air">🔴 على الهواء</span>' : '') +
-          '<span class="badge">' + esc(CARRIERS[lot.carrier] || 'رقم') + '</span>' +
+          '<span class="badge">' + esc(kindBadge(lot)) + '</span>' +
           '<span style="flex:1"></span>' +
           '<button class="btn btn-ghost btn-sm" id="btnShare">مشاركة</button>' +
         '</div>' +
-        '<div class="phone-plate plate-wrap"><div class="phone-digits">' + esc(fmtPhone(lot.phone)) + '</div>' +
+        '<div class="phone-plate plate-wrap">' + itemPlate(lot) +
           stampFor(st) + '</div>' +
         '<div class="price-hero" style="margin-top:14px">' +
           '<div class="k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
@@ -2168,7 +2484,9 @@ function renderLot(lot, bids, full) {
           ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
           : st === 'pending'
           ? '<div class="wait-note">' +
-            (isMasked(lot) ? 'الرقم مخفي جزئياً لين يجي دوره — يظهر كامل لما يفتح عليه السوم.<br>' : '') +
+            (isMasked(lot) ? (IS_PLATE(lot)
+                ? 'أرقام اللوحة مخفية لين يجي دورها — تظهر كاملة لما يفتح عليها السوم.<br>'
+                : 'الرقم مخفي جزئياً لين يجي دوره — يظهر كامل لما يفتح عليه السوم.<br>') : '') +
             'ما يقدر أحد يزايد عليه إلا لما نفتح عليه السوم.</div>'
           : '') +
         (autoLine(lot, shown, st) ? '<div class="auto-note">' + autoLine(lot, shown, st) + '</div>' : '') +
@@ -2181,7 +2499,7 @@ function renderLot(lot, bids, full) {
             '<span> — على ذمة البائع</span></div>') +
         (lot.seller_contact && admin.on
           ? '<a class="btn btn-ghost btn-block" style="margin-top:10px" target="_blank" rel="noopener" href="' +
-            esc(waLink(lot.seller_contact, lot.phone)) + '">💬 تواصل مع البائع (مشرف)</a>'
+            esc(waLink(lot.seller_contact, itemLabel(lot))) + '">💬 تواصل مع البائع (مشرف)</a>'
           : '') +
       '</div>' +
 
@@ -2276,13 +2594,13 @@ function renderLot(lot, bids, full) {
 
 function waLink(contact, phone) {
   const d = String(contact).replace(/\D/g, '').replace(/^0/, '966');
-  const msg = encodeURIComponent('السلام عليكم، بخصوص الرقم ' + fmtPhone(phone) + ' المعروض في مزاد الأرقام');
+  const msg = encodeURIComponent('السلام عليكم، بخصوص ' + phone + ' المعروض في مزاد سوم');
   return 'https://wa.me/' + d + '?text=' + msg;
 }
 
 async function share(lot) {
   const url = location.origin + location.pathname + '#/n/' + encodeURIComponent(lot.id);
-  const data = { title: 'مزاد سوم | للأرقام المميزة', text: 'مزاد على الرقم ' + fmtPhone(lot.phone) + ' — أعلى سوم يكسب', url };
+  const data = { title: 'مزاد سوم', text: 'مزاد على ' + itemWord(lot) + ' ' + itemLabel(lot) + ' — أعلى سوم يكسب', url };
   try {
     if (navigator.share) { await navigator.share(data); return; }
     await navigator.clipboard.writeText(url); toast('تم نسخ الرابط');
@@ -2383,21 +2701,63 @@ function askAdmin() {
 }
 
 function askListing() {
+  const letterOpts = PLATE_LETTERS.map(c => '<option value="' + c + '">' + c + '</option>').join('');
   const s = sheet(
-    '<h2>سجّل رقمك في المزاد</h2>' +
-    '<p class="hint">رقمك يدخل قائمة الانتظار، ويفتح عليه السوم لما يجي دوره في البث.</p>' +
+    '<h2>اعرض في المزاد</h2>' +
+    '<p class="hint">يدخل قائمة الانتظار، ويفتح عليه السوم لما يجي دوره في البث.</p>' +
     '<div id="lsErr"></div>' +
-    '<div class="field ltr"><label>رقم الجوال المعروض</label>' +
-      '<input id="lsPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX">' +
-      '<div class="sub">يبدأ بـ 05 ويتكوّن من 10 أرقام. يظهر مخفي جزئياً ' +
-        '(<span class="num">054 ••• ••01</span>) لين يجي دوره في البث.</div></div>' +
-    '<div class="row2">' +
+
+    '<div class="seg" id="lsType">' +
+      '<button class="on" data-t="plate">🚗 لوحة</button>' +
+      '<button data-t="phone">📱 رقم</button>' +
+      '<button data-t="car">🚙 سيارة</button>' +
+    '</div>' +
+
+    // ---- a car plate: three letters and up to four digits
+    '<div data-for="plate">' +
+      '<div class="field"><label>حروف اللوحة</label>' +
+        '<div class="plate-picks">' +
+          '<select id="lsL1">' + letterOpts + '</select>' +
+          '<select id="lsL2">' + letterOpts + '</select>' +
+          '<select id="lsL3">' + letterOpts + '</select>' +
+        '</div>' +
+        '<div class="sub">بالترتيب اللي على اللوحة، من اليمين لليسار.</div></div>' +
+      '<div class="field ltr"><label>أرقام اللوحة</label>' +
+        '<input id="lsDigits" type="tel" inputmode="numeric" maxlength="4" placeholder="900">' +
+        '<div class="sub">من رقم إلى أربعة. تظهر مخفية (<span class="num">•••</span>) لين توصل دورها في البث.</div></div>' +
+      '<div class="field"><label>شعار اللوحة</label>' +
+        '<select id="lsEmblem">' + Object.keys(EMBLEMS).map(k =>
+          '<option value="' + k + '">' + EMBLEMS[k] + '</option>').join('') + '</select>' +
+        '<div class="sub">اللي في نص اللوحة — اسأل البائع وش شعار لوحته.</div></div>' +
+
+      '<div id="lsPreview" class="plate-preview"></div>' +
+    '</div>' +
+
+    // ---- a car
+    '<div data-for="car" class="hidden">' +
+      '<div class="row2">' +
+        '<div class="field"><label>الماركة</label>' +
+          '<input id="lsMake" maxlength="30" placeholder="تويوتا"></div>' +
+        '<div class="field"><label>الموديل</label>' +
+          '<input id="lsModel" maxlength="30" placeholder="لاندكروزر"></div>' +
+      '</div>' +
+      '<div class="field ltr"><label>سنة الصنع</label>' +
+        '<input id="lsYear" type="number" inputmode="numeric" min="1970" max="2100" placeholder="2022"></div>' +
+    '</div>' +
+
+    // ---- a phone number
+    '<div data-for="phone" class="hidden">' +
+      '<div class="field ltr"><label>رقم الجوال المعروض</label>' +
+        '<input id="lsPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX">' +
+        '<div class="sub">يبدأ بـ 05 ويتكوّن من 10 أرقام. يظهر مخفي جزئياً ' +
+          '(<span class="num">054 ••• ••01</span>) لين يجي دوره في البث.</div></div>' +
       '<div class="field"><label>الشركة</label><select id="lsCarrier">' +
         '<option value="stc">STC</option><option value="mobily">موبايلي</option>' +
         '<option value="zain">زين</option><option value="other">أخرى</option></select></div>' +
-      '<div class="field ltr"><label>سعر البداية (ر.س)</label>' +
-        '<input id="lsPrice" type="number" inputmode="numeric" min="0" value="0"></div>' +
     '</div>' +
+
+    '<div class="field ltr"><label>سعر البداية (ر.س)</label>' +
+      '<input id="lsPrice" type="number" inputmode="numeric" min="0" value="0"></div>' +
 
     '<div class="row2">' +
       '<div class="field"><label>اسمك</label><input id="lsName" maxlength="40" placeholder="أبو فهد" value="' + esc(me.name) + '"></div>' +
@@ -2411,9 +2771,35 @@ function askListing() {
     '<div class="fee-box">💰 عمولة الموقع <b>' + esc(FEE_RULE) + '</b>، <b>على ذمة البائع</b>.' +
       '<br>بيع بـ <span class="num">10,000</span> ← <span class="num">' + money(commissionOn(10000)) + '</span> ر.س' +
       ' · بيع بـ <span class="num">30,000</span> ← <span class="num">' + money(commissionOn(30000)) + '</span> ر.س.' +
-      '<br>بنشرك للرقم أنت موافق على هذا.</div>' +
-    '<button class="btn btn-gold btn-block" id="lsSave">سجّل رقمي — وأوافق على العمولة</button>'
+      '<br>بعرضك أنت موافق على هذا.</div>' +
+    '<button class="btn btn-gold btn-block" id="lsSave">اعرضه — وأوافق على العمولة</button>'
   );
+
+  let kind = 'plate';
+  const show = () => {
+    s.querySelectorAll('[data-for]').forEach(n => n.classList.toggle('hidden', n.dataset.for !== kind));
+    s.querySelectorAll('#lsType button').forEach(b => b.classList.toggle('on', b.dataset.t === kind));
+  };
+  s.querySelector('#lsType').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    kind = b.dataset.t; show();
+  });
+  show();
+
+  // the seller sees the plate he is actually listing, drawn the way the
+  // broadcast will draw it — the cheapest way to stop a wrong letter
+  const paintPreview = () => {
+    const letters = ['#lsL1','#lsL2','#lsL3'].map(i => s.querySelector(i).value).join('');
+    const digits  = s.querySelector('#lsDigits').value.replace(/\D/g, '');
+    s.querySelector('#lsPreview').innerHTML = digits
+      ? itemPlate({ item_type: 'plate', plate_letters: letters, plate_digits: digits,
+                    plate_emblem: s.querySelector('#lsEmblem').value })
+      : '<div class="sub" style="text-align:center">اكتب أرقام اللوحة عشان تشوفها</div>';
+  };
+  ['#lsL1','#lsL2','#lsL3','#lsDigits','#lsEmblem'].forEach(i =>
+    s.querySelector(i).addEventListener('input', paintPreview));
+  s.querySelector('#lsEmblem').addEventListener('change', paintPreview);
+  paintPreview();
 
   s.querySelector('#lsSave').addEventListener('click', async () => {
     const err = (m) => { s.querySelector('#lsErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
@@ -2422,7 +2808,23 @@ function askListing() {
     const name    = s.querySelector('#lsName').value.trim();
     const contact = s.querySelector('#lsContact').value.replace(/\D/g, '');
 
-    if (!/^05\d{8}$/.test(phone)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
+    const letters = normPlate(['#lsL1','#lsL2','#lsL3'].map(i => s.querySelector(i).value).join(''));
+    const digits  = s.querySelector('#lsDigits').value.replace(/\D/g, '');
+
+    const make  = s.querySelector('#lsMake').value.trim();
+    const model = s.querySelector('#lsModel').value.trim();
+    const year  = Number(s.querySelector('#lsYear').value || 0);
+
+    if (kind === 'phone') {
+      if (!/^05\d{8}$/.test(phone)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
+    } else if (kind === 'plate') {
+      if (letters.length !== 3) return err('اختر حروف اللوحة الثلاثة.');
+      if (!/^\d{1,4}$/.test(digits)) return err('أرقام اللوحة من رقم إلى أربعة.');
+    } else {
+      if (make.length < 2)  return err('اكتب ماركة السيارة.');
+      if (model.length < 1) return err('اكتب موديل السيارة.');
+      if (!(year >= 1970 && year <= 2100)) return err('اكتب سنة صنع صحيحة.');
+    }
     if (name.length < 2) return err('اكتب اسمك.');
     if (price < 0 || price > 100000000) return err('سعر البداية غير منطقي.');
     if (contact && !/^0?5\d{8}$/.test(contact)) return err('رقم التواصل غير صحيح.');
@@ -2434,8 +2836,16 @@ function askListing() {
     const btn = s.querySelector('#lsSave'); btn.disabled = true; btn.textContent = 'جاري التسجيل…';
     try {
       const row = await store.createListing({
-        phone,
-        carrier: s.querySelector('#lsCarrier').value,
+        // the database refuses a row that carries both, so send only the one
+        item_type: kind,
+        phone:         kind === 'phone' ? phone : null,
+        carrier:       kind === 'phone' ? s.querySelector('#lsCarrier').value : null,
+        plate_letters: kind === 'plate' ? letters : null,
+        plate_digits:  kind === 'plate' ? digits  : null,
+        plate_emblem:  kind === 'plate' ? s.querySelector('#lsEmblem').value : null,
+        car_make:      kind === 'car' ? make  : null,
+        car_model:     kind === 'car' ? model : null,
+        car_year:      kind === 'car' ? year  : null,
         start_price: price,
         seller_name: name,
         seller_contact: contact || null,
@@ -2445,11 +2855,11 @@ function askListing() {
       });
       if (!me.name) me.name = name;
       closeSheet();
-      toast('رقمك دخل القائمة ✔ — ينتظر دوره');
+      toast({ plate: 'لوحتك', car: 'سيارتك', phone: 'رقمك' }[kind] + ' دخل القائمة ✔ — ينتظر دوره');
       location.hash = '#/n/' + encodeURIComponent(row.id);
     } catch (e) {
       console.error(e);
-      btn.disabled = false; btn.textContent = 'سجّل رقمي — وأوافق على العمولة';
+      btn.disabled = false; btn.textContent = 'اعرضه — وأوافق على العمولة';
       err('تعذّر التسجيل. تأكد من الاتصال وحاول مرة ثانية.');
     }
   });
@@ -2485,7 +2895,13 @@ $('#opsPeek').addEventListener('click', () => {
   screenSig.live = ''; screenSig.ops = '';
   refresh(false);
 });
-document.querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
+$('#kindRow').querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
+  $('#kindRow').querySelectorAll('.filter').forEach(x => x.classList.toggle('on', x === b));
+  cache.kind = b.dataset.kind;
+  try { localStorage.setItem('mazad_kind', cache.kind); } catch {}
+  renderList();
+}));
+document.querySelectorAll('.filter[data-filter]').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.filter').forEach(x => x.classList.toggle('on', x === b));
   cache.filter = b.dataset.filter; renderList();
 }));
@@ -2514,6 +2930,11 @@ $('#footFee').textContent = FEE_RULE;
   a.target = '_blank'; a.rel = 'noopener';
 })();
 paintName();
+(() => {   // put the section chips back on the section this browser last used
+  const row = $('#kindRow');
+  if (row) row.querySelectorAll('.filter').forEach(b =>
+    b.classList.toggle('on', b.dataset.kind === cache.kind));
+})();
 window.addEventListener('hashchange', go);
 syncClock();
 setInterval(syncClock, 5 * 60 * 1000);
