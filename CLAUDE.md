@@ -181,15 +181,29 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     `createListing` generates the uuid client-side and sends
     `Prefer: return=minimal`. Don't "fix" it back to `return=representation`.
   - `fmtPhone` keeps `•` so a masked number still groups as `054 ••• ••01`.
-- **A sum is drawn as a raised auction paddle** (`paddle(amount, variant)`): a
-  glossy board with the price on it, a wooden handle, and a fist gripping it:
-  four curled fingers each with a middle joint, a knuckle highlight and a nail,
-  the thumb laid across them, and the heel of the palm behind — the gesture from a sale room, with enough
-  depth to read as an object rather than an icon. The gradients live in one
-  hidden `<svg><defs>` near the top of `<body>`; every paddle references them by
-  id, so a screen full of paddles costs one set of gradients, not thirty. Used in the feed on a number's page and on the broadcast screen.
-  The newest paddle animates in once, tracked by `lastSeenBid`, so the refresh
-  loop does not replay the animation every 2.5 seconds.
+- **A sum is shown on a raised paddle, and the paddle is supplied artwork.**
+  `mazad-paddle.png` (a hand holding a blank sign) was provided by the owner.
+  **Nothing in the code draws a hand or a board — do not "improve" it, redraw
+  it, or swap it for SVG.** `paddle(amount, variant)` emits that one `<img>`
+  plus a `<span class="p-amt">` laid on the board, so a screen full of paddles
+  costs one cached image.
+  - The board's geometry is measured off the file and hard-coded in the CSS:
+    centre **36.02% / 20.30%** of the frame, width **64.10%**, lean
+    **-7.2deg**. Replacing the artwork means re-measuring all four, or the
+    number will float off the board.
+  - The number is sized in `cqw` against the paddle itself (`--fs`, set by
+    `paddle()` as `min(17, 88 / label.length)`), so one rule covers the feed
+    and the broadcast screen and a seven-digit sum still fits the same board.
+    A px `font-size` sits before it as the fallback for no container queries.
+  - The board is white in the supplied art and stays white: `top` and `mine`
+    change only the **text** colour, since recolouring it would be redrawing it.
+  - The source file was a JPEG with the transparency checkerboard baked into
+    the pixels. It was cut out by flood-filling neutral light pixels inward
+    from the border — the board's white interior is sealed behind its black
+    outline, so it survives — then cropped to the board, fist and a short
+    forearm. Keep `mazad-paddle.png`; there is no vector original.
+  - The newest paddle animates in once, tracked by `lastSeenBid`, so the
+    refresh loop does not replay the animation every 2.5 seconds.
 - **Bidding lives on the number's page, never on `/live`.** The on-air banner on
   the list sends viewers to `#/n/<id>`, and every open card carries a
   «زايد على هذا الرقم» button. Sending viewers to the broadcast screen was a
