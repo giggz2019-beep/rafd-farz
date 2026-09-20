@@ -361,11 +361,34 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   `document.styleSheets` back and asserts that the looks which matter — the
   broadcast gradient, its white text, the operator warning's amber — actually
   reach their elements at three widths.
+- **The palette is عنابي وذهبي — burgundy and gold — and green means one
+  thing only.** `--wine-900…500` are the brand surfaces; `--ok-600`/`--ok-700`
+  are the *only* greens left, and they mean success (تم البيع, an approved
+  sum). Never use green for a surface again, or the two read as the same
+  thing.
+  - **Burgundy IS dark red, so a red signal on it disappears.** The «على
+    الهواء» badge was `#ff3b30` and became gold with a red pulsing dot; the
+    expired clock was pale red and became warm cream. Anything new that must
+    be *noticed* on the card has to be gold, cream or green — never red.
+  - Light greys tinted green (`#bcd9c8`, `#eaf5ee`, `#dff0e6`) were warmed to
+    match. The green-tinted ones that remain sit on **white** cards and mean
+    success, so they stay.
+  - `test-wine.js` computes WCAG contrast for every signal on the card in all
+    four states, compositing translucent backgrounds over the burgundy and
+    skipping gradient-clipped text (whose computed colour is transparent — it
+    asserts the gradient instead). A palette swap is exactly where signals die
+    silently, so check it by computation, not by eye.
+- **The operator's own number is `CONTACT_PHONE`**, shown on the broadcast
+  card (so a viewer watching the stream can call) and as a WhatsApp link in
+  the public footer. One constant, so the two can never disagree.
 - **Brand images** (`mazad-logo.png` 2048², `mazad-icon.png` 512², `mazad-og.png`
   1200×630, `mazad-poster.png` 2160×2700) were designed as HTML using the repo's
   own Thmanyah typeface and screenshotted at 2x — not drawn by an image model,
   which mangles Arabic. Regenerate them the same way if the brand changes; the
-  page wires the icon and og:image to them.
+  page wires the icon and og:image to them. They were regenerated for the
+  burgundy palette from the same source, applying the identical colour map the
+  stylesheet uses — leaving them green would have shown a green favicon and a
+  green link preview on a burgundy site.
 - Arabic is bidi-sensitive: every price, countdown and phone number carries
   `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL
   reverses the digits.

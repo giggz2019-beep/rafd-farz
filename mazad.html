@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>مزاد سوم | للأرقام المميزة</title>
 <meta name="description" content="مزاد سوم — مزاد مباشر للأرقام المميزة. اعرض رقمك، والناس تزايد عليه لحظة بلحظة.">
-<meta name="theme-color" content="#0b5c37">
+<meta name="theme-color" content="#5d172b">
 <meta property="og:title" content="مزاد سوم | للأرقام المميزة">
 <meta property="og:description" content="اعرض رقمك المميز، والناس تزايد عليه مباشرة. أعلى سوم يكسب.">
 <meta property="og:image" content="/mazad-og.png">
@@ -22,22 +22,27 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --green-900: #05301d;
-  --green-800: #073f27;
-  --green-700: #0b5c37;
-  --green-600: #0f7a49;
-  --green-500: #16a35f;
+  /* عنابي وذهبي — the brand. Green is kept ONLY as a success signal
+     (تم البيع, an approved sum), never as a surface, so the two never read
+     as the same thing. */
+  --wine-900:  #2a0812;
+  --wine-800:  #43101f;
+  --wine-700:  #5d172b;
+  --wine-600:  #7b1f38;
+  --wine-500:  #9c2b48;
   --gold-500:  #d9a441;
   --gold-400:  #edc26b;
-  --ink:       #0d1512;
-  --muted:     #6b7b73;
-  --line:      #e3eae6;
-  --bg:        #f4f7f5;
+  --ok-700:    var(--ok-700);
+  --ok-600:    var(--ok-600);
+  --ink:       #170d11;
+  --muted:     #7b6b70;
+  --line:      #ece2e5;
+  --bg:        #f8f5f6;
   --card:      #ffffff;
   --danger:    #c0392b;
   --radius:    16px;
-  --shadow:    0 2px 14px rgba(5, 48, 29, .08);
-  --shadow-lg: 0 14px 40px rgba(5, 48, 29, .18);
+  --shadow:    0 2px 14px rgba(42, 8, 18, .08);
+  --shadow-lg: 0 14px 40px rgba(42, 8, 18, .20);
 }
 
 html { -webkit-text-size-adjust: 100%; }
@@ -60,7 +65,7 @@ a { color: inherit; }
 .wrap { max-width: 720px; margin: 0 auto; padding: 0 14px 120px; }
 
 .topbar {
-  background: linear-gradient(135deg, var(--green-800), var(--green-600));
+  background: linear-gradient(135deg, var(--wine-800), var(--wine-600));
   color: #fff;
   padding: 14px 0 18px;
   box-shadow: var(--shadow);
@@ -71,7 +76,7 @@ a { color: inherit; }
 .brand-mark {
   width: 40px; height: 40px; border-radius: 12px; flex: none;
   background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
-  color: var(--green-900); font-weight: 900; font-size: .92rem;
+  color: var(--wine-900); font-weight: 900; font-size: .92rem;
   display: grid; place-items: center;
 }
 .brand-name { font-weight: 700; font-size: 1.1rem; line-height: 1.2; }
@@ -100,17 +105,17 @@ a { color: inherit; }
   border: 1px solid var(--line); font-size: .84rem; font-weight: 600;
   color: var(--muted); white-space: nowrap;
 }
-.filter.on { background: var(--green-700); border-color: var(--green-700); color: #fff; }
+.filter.on { background: var(--wine-700); border-color: var(--wine-700); color: #fff; }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   padding: 12px 18px; border-radius: 12px; font-weight: 700; font-size: .95rem;
-  background: var(--green-600); color: #fff; transition: transform .08s, filter .15s;
+  background: var(--wine-600); color: #fff; transition: transform .08s, filter .15s;
 }
 .btn:active { transform: scale(.98); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 .btn-gold  { background: linear-gradient(135deg, var(--gold-500), #c2892b); color: #2a1c02; }
-.btn-ghost { background: #fff; color: var(--green-700); border: 1px solid var(--line); }
+.btn-ghost { background: #fff; color: var(--wine-700); border: 1px solid var(--line); }
 .btn-sm    { padding: 8px 12px; font-size: .82rem; border-radius: 10px; }
 .btn-block { width: 100%; }
 
@@ -123,9 +128,9 @@ a { color: inherit; }
 .lot-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .badge {
   font-size: .7rem; font-weight: 700; padding: 4px 9px; border-radius: 999px;
-  background: #eef4f0; color: var(--green-700);
+  background: #eef4f0; color: var(--wine-700);
 }
-.badge.live   { background: #e7f7ee; color: var(--green-600); }
+.badge.live   { background: #e7f7ee; color: var(--wine-600); }
 .badge.sold   { background: #fdf0e6; color: #b5651d; }
 .badge.ended  { background: #f0f2f1; color: var(--muted); }
 .badge.unsold { background: #fdecea; color: #c0392b; }
@@ -139,7 +144,7 @@ a { color: inherit; }
 @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
 
 .phone-plate {
-  background: linear-gradient(135deg, var(--green-900), var(--green-700));
+  background: linear-gradient(135deg, var(--wine-900), var(--wine-700));
   color: #fff; border-radius: 14px; padding: 14px 12px; text-align: center;
   border: 2px solid var(--gold-500);
 }
@@ -153,7 +158,7 @@ a { color: inherit; }
 .stat { flex: 1; background: #f7faf8; border: 1px solid var(--line); border-radius: 12px; padding: 8px 6px; text-align: center; }
 .stat-k { font-size: .68rem; color: var(--muted); }
 .stat-v { font-weight: 800; font-size: .98rem; }
-.stat-v.price { color: var(--green-600); }
+.stat-v.price { color: var(--wine-600); }
 .stat-v.time  { color: #b5651d; }
 .stat-v.over  { color: var(--muted); }
 
@@ -163,16 +168,16 @@ a { color: inherit; }
 .empty-emoji { font-size: 2.4rem; }
 
 /* ---------- detail ---------- */
-.backlink { display: inline-flex; align-items: center; gap: 6px; margin: 14px 0 10px; font-size: .9rem; font-weight: 600; color: var(--green-700); }
+.backlink { display: inline-flex; align-items: center; gap: 6px; margin: 14px 0 10px; font-size: .9rem; font-weight: 600; color: var(--wine-700); }
 
 .price-hero { text-align: center; padding: 6px 0 2px; }
 .price-hero .k { font-size: .78rem; color: var(--muted); }
-.price-hero .v { font-size: clamp(1.8rem, 9vw, 2.6rem); font-weight: 900; color: var(--green-600); }
+.price-hero .v { font-size: clamp(1.8rem, 9vw, 2.6rem); font-weight: 900; color: var(--wine-600); }
 .price-hero .who { font-size: .82rem; color: var(--muted); }
 
 .countdown {
   text-align: center; font-weight: 900; font-size: 1.6rem; letter-spacing: .04em;
-  direction: ltr; unicode-bidi: isolate; color: var(--green-800);
+  direction: ltr; unicode-bidi: isolate; color: var(--wine-800);
 }
 .countdown.warn { color: var(--danger); animation: pulse 1s infinite; }
 
@@ -188,7 +193,7 @@ a { color: inherit; }
   background: #f1f5f3; border: 1px solid var(--line); border-radius: 14px;
   padding: 8px 12px; font-weight: 700;
 }
-.msg.mine .msg-bubble { background: var(--green-600); border-color: var(--green-600); color: #fff; }
+.msg.mine .msg-bubble { background: var(--wine-600); border-color: var(--wine-600); color: #fff; }
 .msg.top .msg-bubble  { background: #fff7e8; border-color: var(--gold-500); color: #7a4f05; }
 .msg.mine.top .msg-bubble { background: linear-gradient(135deg, var(--gold-500), #c2892b); color: #2a1c02; }
 .msg-meta { font-size: .68rem; color: var(--muted); padding: 0 6px; }
@@ -204,7 +209,7 @@ a { color: inherit; }
 .quick::-webkit-scrollbar { display: none; }
 .quick button {
   border: 1px solid var(--line); background: #fff; border-radius: 10px;
-  padding: 7px 12px; font-size: .82rem; font-weight: 700; white-space: nowrap; color: var(--green-700);
+  padding: 7px 12px; font-size: .82rem; font-weight: 700; white-space: nowrap; color: var(--wine-700);
 }
 .bid-wait {
   background: #fffaf0; border: 1px solid #f0dcb0; color: #7a4f05;
@@ -212,7 +217,7 @@ a { color: inherit; }
   font-size: .8rem; font-weight: 600; text-align: center;
 }
 .bid-now { text-align: center; font-size: .88rem; color: var(--muted); margin-bottom: 8px; }
-.bid-now b { color: var(--green-600); font-size: 1.15rem; }
+.bid-now b { color: var(--wine-600); font-size: 1.15rem; }
 .bid-or { text-align: center; font-size: .75rem; color: var(--muted); margin: 9px 0 6px; }
 #btnQuick { font-size: 1.02rem; padding: 14px; }
 .bidrow { display: flex; gap: 8px; }
@@ -220,7 +225,7 @@ a { color: inherit; }
   flex: 1; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
   background: #fff; font-weight: 700; direction: ltr; text-align: right;
 }
-.bidrow input:focus { outline: 2px solid var(--green-500); outline-offset: -1px; }
+.bidrow input:focus { outline: 2px solid var(--wine-500); outline-offset: -1px; }
 
 /* ---------- forms / modal ---------- */
 .sheet-bg {
@@ -241,7 +246,7 @@ a { color: inherit; }
 .field input, .field select, .field textarea {
   width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: #fbfdfc;
 }
-.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--green-500); outline-offset: -1px; background: #fff; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--wine-500); outline-offset: -1px; background: #fff; }
 .field .sub { font-size: .72rem; color: var(--muted); margin-top: 4px; }
 .field.ltr input { direction: ltr; text-align: right; }
 .row2 { display: flex; gap: 10px; }
@@ -254,7 +259,7 @@ a { color: inherit; }
   display: flex; justify-content: center; pointer-events: none;
 }
 .toast div {
-  background: var(--green-900); color: #fff; padding: 10px 18px; border-radius: 999px;
+  background: var(--wine-900); color: #fff; padding: 10px 18px; border-radius: 999px;
   font-size: .86rem; font-weight: 600; box-shadow: var(--shadow-lg); max-width: 90%;
 }
 
@@ -274,7 +279,7 @@ a { color: inherit; }
 }
 .live-plate .stamp { font-size: 1.5rem; padding: 5px 20px; border-width: 4px; margin-top: 12px; }
 .phone-plate .stamp { background: #fff; }
-.stamp.sold      { color: #12833f; }
+.stamp.sold      { color: var(--ok-600); }
 .stamp.unsold    { color: #c0392b; }
 .stamp.cancelled { color: #6b7b73; }
 .plate-wrap { position: relative; }
@@ -290,14 +295,14 @@ a { color: inherit; }
 .bid-who { flex: 1; min-width: 0; }
 .bid-who b { display: block; font-size: .9rem; }
 .bid-who span { font-size: .72rem; color: var(--muted); }
-.bid-amt { font-weight: 900; font-size: 1.05rem; color: var(--green-600); }
+.bid-amt { font-weight: 900; font-size: 1.05rem; color: var(--wine-600); }
 .bid-row.top .bid-amt { color: #a9741d; }
 
 /* the same paddles, big, on the broadcast screen */
 .live-paddles { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
 .lp { width: 88px; text-align: center; }
 .lp.top { width: 112px; }
-.lp-name { font-size: .7rem; color: #dff0e6; margin-top: 4px; white-space: nowrap;
+.lp-name { font-size: .7rem; color: #f0dde2; margin-top: 4px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; }
 .lp.top .lp-name { color: var(--gold-400); font-weight: 700; }
 
@@ -325,7 +330,7 @@ a { color: inherit; }
   .paddle .p-amt { font-size: calc(var(--fs, 17) * 1cqw); }
 }
 .paddle.top  .p-amt { color: #7a5205; }
-.paddle.mine .p-amt { color: #0b6b3a; }
+.paddle.mine .p-amt { color: var(--ok-700); }
 .paddle.raise { animation: raise .5s cubic-bezier(.2,.9,.3,1.35); transform-origin: 50% 100%; }
 
 @keyframes raise {
@@ -338,16 +343,16 @@ a { color: inherit; }
 .ctl-q { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 12px; padding: 9px 11px; margin-bottom: 6px; }
 .ctl-q b { font-size: 1rem; }
 .ctl-q span { flex: 1; font-size: .78rem; color: var(--muted); }
-.ctl-q button { background: var(--green-600); color: #fff; border-radius: 9px; padding: 7px 13px; font-size: .78rem; font-weight: 800; }
+.ctl-q button { background: var(--wine-600); color: #fff; border-radius: 9px; padding: 7px 13px; font-size: .78rem; font-weight: 800; }
 .ctl-q button.del { background: #fdecea; color: var(--danger); border: 1px solid #f3c6c1; padding: 7px 10px; }
 
 /* the operator bar on a light card */
 .opbar.light { border-top: none; padding-top: 0; }
 .opbar.light .lbl { color: var(--muted); }
 .opbar.light button { background: #f2f6f4; color: var(--ink); border: 1px solid var(--line); }
-.opbar.light button.sold   { background: #12833f; border-color: #12833f; color: #fff; }
+.opbar.light button.sold   { background: var(--ok-600); border-color: var(--ok-600); color: #fff; }
 .opbar.light button.unsold { background: #c0392b; border-color: #c0392b; color: #fff; }
-.opbar.light button.start  { background: #12833f; border-color: #12833f; color: #fff; }
+.opbar.light button.start  { background: var(--ok-600); border-color: var(--ok-600); color: #fff; }
 .opbar.light button.next   { background: linear-gradient(135deg,#f6dd9e,#d9a441); color: #2a1c02; border-color: transparent; }
 
 .pill { background: var(--danger); color: #fff; border-radius: 999px; padding: 1px 8px; font-size: .74rem; }
@@ -358,45 +363,45 @@ a { color: inherit; }
 .ctl-bid .who { min-width: 84px; max-width: 110px; }
 .ctl-bid .who b { display: block; font-size: .9rem; }
 .ctl-bid .who span { font-size: .7rem; color: var(--muted); }
-.ctl-bid .amt { font-weight: 900; font-size: 1.05rem; color: var(--green-700); }
+.ctl-bid .amt { font-weight: 900; font-size: 1.05rem; color: var(--wine-700); }
 .ctl-bid button { border-radius: 10px; padding: 8px 12px; font-size: .95rem; font-weight: 900; }
-.ctl-bid button.yes { background: #12833f; color: #fff; }
+.ctl-bid button.yes { background: var(--ok-600); color: #fff; }
 .ctl-bid button.no  { background: #fdecea; color: var(--danger); border: 1px solid #f3c6c1; }
 .ctl-bid.ok   { border-color: #bfe3cd; background: #f3fbf6; }
 .ctl-bid.thin { border-color: #f0dcb0; background: #fffaf0; }
 .ctl-bid.low  { border-color: #f3c6c1; background: #fdf3f2; }
 .ctl-bid .cmp { flex: 1; min-width: 0; text-align: center; }
-.ctl-bid .who .wa { display: inline-block; font-size: .76rem; color: #0b6b3a;
+.ctl-bid .who .wa { display: inline-block; font-size: .76rem; color: var(--ok-700);
   font-weight: 700; text-decoration: none; direction: ltr; unicode-bidi: isolate; }
 .ctl-bid .who .sub-muted { font-size: .74rem; color: var(--muted); }
 .cmp-line { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
 .cmp-now { color: var(--muted); font-weight: 700; font-size: .92rem; }
 .cmp-arrow { color: var(--muted); font-size: .8rem; }
 .cmp-note { font-size: .7rem; color: var(--muted); margin-top: 2px; }
-.ctl-bid.ok  .cmp-note { color: #12833f; }
+.ctl-bid.ok  .cmp-note { color: var(--ok-600); }
 .ctl-bid.low .cmp-note { color: var(--danger); }
 .ctl-bid button.yes[disabled] { opacity: .35; }
 .ctl-bid.done { background: #f4f9f6; border-color: var(--line); }
-.ctl-bid.done .amt { color: var(--green-600); }
+.ctl-bid.done .amt { color: var(--wine-600); }
 /* ---------- live broadcast screen ---------- */
 .live {
-  background: radial-gradient(120% 90% at 50% 0%, #0f7a49, #073f27 48%, #04281a);
+  background: radial-gradient(120% 90% at 50% 0%, #7b1f38, #43101f 48%, #2a0812);
   border-radius: 20px; padding: 16px 14px 20px; color: #fff; margin-top: 14px;
   border: 2px solid rgba(217,164,65,.45); box-shadow: var(--shadow-lg);
 }
 .live-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .live-dot {
-  background: #ff3b30; color: #fff; font-size: .75rem; font-weight: 800;
+  background: var(--gold-500); color: #3a1208; font-size: .75rem; font-weight: 800;
   padding: 4px 11px; border-radius: 999px;
 }
 .live-dot::before {
   content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-  background: #fff; margin-inline-end: 6px; vertical-align: middle; animation: pulse 1.1s infinite;
+  background: #c0392b; margin-inline-end: 6px; vertical-align: middle; animation: pulse 1.1s infinite;
 }
 .live-seq { font-size: .78rem; color: #cfe6d9; }
 
 .live-plate {
-  background: #fff; color: #0b2a1b; border-radius: 16px; border: 3px solid var(--gold-500);
+  background: #fff; color: #2d0a14; border-radius: 16px; border: 3px solid var(--gold-500);
   padding: 16px 10px; text-align: center; position: relative; overflow: hidden;
 }
 .live-digits {
@@ -412,17 +417,17 @@ a { color: inherit; }
   margin: 10px 0 2px; color: #fff; text-shadow: 0 4px 18px rgba(0,0,0,.35);
 }
 .live-clock.warn { color: #ffd166; }
-.live-clock.over { color: #ffb3ad; font-size: clamp(1.6rem, 8vw, 3rem); }
+.live-clock.over { color: #f3d9c2; font-size: clamp(1.6rem, 8vw, 3rem); }
 
 .live-price { text-align: center; }
-.live-price .k { font-size: .82rem; color: #bcd9c8; }
+.live-price .k { font-size: .82rem; color: #e3c3cc; }
 .live-price .v {
   font-size: clamp(2rem, 11vw, 3.4rem); font-weight: 900;
   background: linear-gradient(160deg,#f6dd9e,#e2b45c 45%,#c98f2b);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   direction: ltr; unicode-bidi: isolate;
 }
-.live-price .who { font-size: 1rem; font-weight: 700; color: #eaf5ee; }
+.live-price .who { font-size: 1rem; font-weight: 700; color: #f7e9ec; }
 
 .live-bids { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
 .live-bids span {
@@ -434,13 +439,19 @@ a { color: inherit; }
 .live-cta {
   margin-top: 14px; text-align: center; background: rgba(255,255,255,.1);
   border: 1px dashed rgba(217,164,65,.55); border-radius: 14px; padding: 10px;
-  font-size: .86rem; color: #eaf5ee;
+  font-size: .86rem; color: #f7e9ec;
 }
 .live-cta b { color: var(--gold-400); direction: ltr; unicode-bidi: isolate; display: inline-block; }
 
 /* The commission has to be readable on the broadcast without anyone
    scrolling — it only lived in the page footer, under the fold, so on camera
    it was never seen at all. */
+.live-tel {
+  margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(217,164,65,.45);
+  font-size: .86rem; color: #f3e3d0;
+}
+.live-tel b { color: var(--gold-400); font-weight: 900; font-size: 1rem; }
+
 .live-fee {
   margin-top: 10px; text-align: center; line-height: 1.75;
   background: rgba(217,164,65,.14); border: 1.5px solid rgba(217,164,65,.6);
@@ -451,10 +462,10 @@ a { color: inherit; }
 
 .live-empty { text-align: center; padding: 26px 10px; }
 .live-empty .t { font-size: 1.2rem; font-weight: 800; }
-.live-empty .s { font-size: .86rem; color: #bcd9c8; margin-top: 4px; }
+.live-empty .s { font-size: .86rem; color: #e3c3cc; margin-top: 4px; }
 
 .queue { margin-top: 14px; }
-.queue h3 { font-size: .84rem; color: #bcd9c8; margin-bottom: 7px; font-weight: 700; }
+.queue h3 { font-size: .84rem; color: #e3c3cc; margin-bottom: 7px; font-weight: 700; }
 .queue .q {
   display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.14); border-radius: 12px; padding: 9px 11px; margin-bottom: 6px;
@@ -471,18 +482,18 @@ a { color: inherit; }
   font-size: .84rem; font-weight: 800; background: rgba(255,255,255,.14);
   color: #fff; border: 1px solid rgba(255,255,255,.2);
 }
-.opbar button.sold   { background: #12833f; border-color: #12833f; }
+.opbar button.sold   { background: var(--ok-600); border-color: var(--ok-600); }
 .opbar button.unsold { background: #c0392b; border-color: #c0392b; }
-.opbar button.start  { background: #12833f; border-color: #12833f; }
+.opbar button.start  { background: var(--ok-600); border-color: var(--ok-600); }
 .opbar button.next   { background: linear-gradient(135deg,#f6dd9e,#d9a441); color: #2a1c02; border-color: transparent; }
 .opbar button.add    { background: rgba(255,255,255,.22); }
 .opbar button.danger { background: rgba(192,57,43,.22); border-color: rgba(192,57,43,.5); }
 .opbar.light button.danger { background: #fdecea; color: var(--danger); border-color: #f3c6c1; }
-.opbar .lbl { font-size: .72rem; color: #bcd9c8; margin-bottom: 5px; }
+.opbar .lbl { font-size: .72rem; color: #e3c3cc; margin-bottom: 5px; }
 
 .live-banner {
   display: flex; align-items: center; gap: 10px; width: 100%; text-align: right;
-  background: linear-gradient(135deg, var(--green-800), var(--green-600));
+  background: linear-gradient(135deg, var(--wine-800), var(--wine-600));
   color: #fff; border-radius: 16px; padding: 12px 14px; margin-bottom: 12px;
   box-shadow: var(--shadow); border: 1px solid rgba(217,164,65,.45);
 }
@@ -596,8 +607,14 @@ a { color: inherit; }
   background: #fff8e9; border: 1px solid #f0dcb0; color: #7a4f05;
   border-radius: 12px; padding: 11px 13px; font-size: .82rem; line-height: 1.8; margin-bottom: 12px;
 }
+.foot-tel {
+  display: inline-block; margin-bottom: 10px; padding: 8px 14px;
+  background: #fff; border: 1.5px solid var(--gold-500); border-radius: 999px;
+  font-size: .86rem; font-weight: 700; color: var(--wine-700);
+}
+.foot-tel a { color: var(--wine-600); font-weight: 900; text-decoration: none; font-size: .95rem; }
 .foot { text-align: center; font-size: .74rem; color: var(--muted); padding: 24px 10px 8px; line-height: 1.9; }
-.foot a { color: var(--green-700); font-weight: 700; }
+.foot a { color: var(--wine-700); font-weight: 700; }
 .hidden { display: none !important; }
 </style>
 </head>
@@ -652,6 +669,8 @@ a { color: inherit; }
   </section>
 
   <div class="foot">
+    <div class="foot-tel">📞 للتواصل والاستفسار
+      <a id="footTel" class="num" href="#">—</a></div>
     عمولة الموقع <b id="footFee">—</b> — على ذمة البائع.<br>
     الموقع وسيط عرض فقط. الاتفاق والتسليم والدفع بين البائع والمشتري مباشرة.<br>
     نقل ملكية الرقم يتم عبر الشركة المشغّلة وحسب أنظمتها.
@@ -690,6 +709,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 /* Commission, على ذمة البائع: a flat 200 SAR, but 2.5% once the number sells
    for more than 20,000. Note the step at the threshold — 20,000 costs 200,
    20,001 costs 500 — that is the rule as set, not a rounding artefact. */
+const CONTACT_PHONE = '0558184381';   // the operator's own line, shown publicly
 const FEE_FLAT      = 200;
 const FEE_THRESHOLD = 20000;
 const FEE_RATE      = 0.025;
@@ -1302,7 +1322,7 @@ function renderList() {
         '</button>'
       : '') +
     (admin.on
-      ? '<button class="live-banner" id="goControl" style="background:#0d3b26">' +
+      ? '<button class="live-banner" id="goControl" style="background:#48121f">' +
           '<span class="go">لوحة التحكم</span>' +
           '<span class="n" style="font-size:.86rem">تظهر لك وحدك</span>' +
         '</button>'
@@ -1443,7 +1463,9 @@ function renderLive(lot, bids) {
           '<span class="live-seq">تم الانتهاء من <span class="num">' + doneCount + '</span> رقم</span></div>' +
         '<div class="live-empty"><div class="t">جاهزون للرقم القادم</div>' +
           '<div class="s">اعرض رقمك من الموقع وبيجي دورك</div></div>' +
-        '<div class="live-cta">للمشاركة والمزايدة<br><b>rafd-digital.com/m</b></div>' +
+        '<div class="live-cta">للمشاركة والمزايدة<br><b>rafd-digital.com/m</b>' +
+          '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
+        '</div>' +
         '<div class="live-fee">💰 العمولة <b>' + esc(FEE_RULE) + '</b> — على ذمة البائع</div>' +
         queueHtml(open) +
       '</div>';
@@ -1507,7 +1529,9 @@ function renderLive(lot, bids) {
             '</div>').join('') + '</div>'
         : '') +
 
-      '<div class="live-cta">زايد من الموقع<br><b>rafd-digital.com/m</b></div>' +
+      '<div class="live-cta">زايد من الموقع<br><b>rafd-digital.com/m</b>' +
+        '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
+      '</div>' +
       '<div class="live-fee">💰 العمولة <b>' + esc(FEE_RULE) + '</b> — على ذمة البائع</div>' +
 
       queueHtml(open) +
@@ -1947,7 +1971,7 @@ function askSoldPrice(lot) {
       '</div></div>' +
     '<div class="fee-box">عمولتك = <b><span class="num" id="spFee">—</span> ر.س</b> على ذمة البائع.' +
       '<br><span style="font-size:.78rem">' + esc(FEE_RULE) + '</span></div>' +
-    '<button class="btn btn-block" style="background:#12833f" id="spSave">' +
+    '<button class="btn btn-block" style="background:var(--ok-600)" id="spSave">' +
       (already ? '✎ احفظ السعر الجديد' : '✔ تأكيد البيع') + '</button>'
   );
 
@@ -2483,6 +2507,12 @@ if (!REMOTE) {
 }
 
 $('#footFee').textContent = FEE_RULE;
+(() => {
+  const a = $('#footTel');
+  a.textContent = fmtPhone(CONTACT_PHONE);
+  a.href = 'https://wa.me/' + CONTACT_PHONE.replace(/\D/g, '').replace(/^0/, '966');
+  a.target = '_blank'; a.rel = 'noopener';
+})();
 paintName();
 window.addEventListener('hashchange', go);
 syncClock();
