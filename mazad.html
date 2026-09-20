@@ -286,7 +286,7 @@ a { color: inherit; }
   padding: 8px 12px; background: #fff;
 }
 .bid-row.top { border-color: var(--gold-500); background: #fffaf0; }
-.bid-row .paddle { width: 74px; flex: none; }
+.bid-row .paddle { width: 92px; flex: none; }
 .bid-who { flex: 1; min-width: 0; }
 .bid-who b { display: block; font-size: .9rem; }
 .bid-who span { font-size: .72rem; color: var(--muted); }
@@ -295,22 +295,23 @@ a { color: inherit; }
 
 /* the same paddles, big, on the broadcast screen */
 .live-paddles { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
-.lp { width: 88px; text-align: center; }
-.lp.top { width: 112px; }
+.lp { width: 110px; text-align: center; }
+.lp.top { width: 140px; }
 .lp-name { font-size: .7rem; color: #dff0e6; margin-top: 4px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; }
 .lp.top .lp-name { color: var(--gold-400); font-weight: 700; }
 
 /* ---------- the raised paddle ---------- */
-/* The hand and board are the supplied artwork (mazad-paddle.png); only the
-   number is ours. The board sits at 36.02% / 20.30% of the frame, is 64.10%
-   of its width and leans -7.2deg — all measured off the file, so the number
-   sits square on the board. Re-measure all four if the artwork changes. */
+/* The hand and board are the supplied artwork (mazad-paddle.png), used WHOLE —
+   the full arm, nothing cropped, only the transparency checkerboard removed.
+   Only the number is ours. The board sits at 28.95% / 19.85% of the frame, is
+   51.52% of its width and leans -7.2deg — all measured off the file, so the
+   number sits square on the board. Re-measure all four if the art changes. */
 .paddle { position: relative; display: inline-block; line-height: 0;
   container-type: inline-size; }
 .paddle img { width: 100%; height: auto; display: block; }
 .paddle .p-amt {
-  position: absolute; left: 36.02%; top: 20.30%; width: 58%;
+  position: absolute; left: 28.95%; top: 19.85%; width: 46%;
   transform: translate(-50%, -50%) rotate(-7.2deg);
   text-align: center; line-height: 1; white-space: nowrap;
   font-weight: 900; color: #1d2a24; letter-spacing: -.02em;
@@ -320,7 +321,7 @@ a { color: inherit; }
    paddle itself — one rule instead of a size per screen — and shrinks as the
    sum gets longer so 1,250,000 still fits on the same board */
 @supports (font-size: 1cqw) {
-  .paddle .p-amt { font-size: calc(var(--fs, 17) * 1cqw); }
+  .paddle .p-amt { font-size: calc(var(--fs, 13.6) * 1cqw); }
 }
 .paddle.top  .p-amt { color: #7a5205; }
 .paddle.mine .p-amt { color: #0b6b3a; }
@@ -375,6 +376,9 @@ a { color: inherit; }
 .ctl-bid.thin { border-color: #f0dcb0; background: #fffaf0; }
 .ctl-bid.low  { border-color: #f3c6c1; background: #fdf3f2; }
 .ctl-bid .cmp { flex: 1; min-width: 0; text-align: center; }
+.ctl-bid .who .wa { display: inline-block; font-size: .76rem; color: #0b6b3a;
+  font-weight: 700; text-decoration: none; direction: ltr; unicode-bidi: isolate; }
+.ctl-bid .who .sub-muted { font-size: .74rem; color: var(--muted); }
 .cmp-line { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
 .cmp-now { color: var(--muted); font-weight: 700; font-size: .92rem; }
 .cmp-arrow { color: var(--muted); font-size: .8rem; }
@@ -713,8 +717,12 @@ function badgeFor(st) {
 
 /* ------------------------------------------------------------- identity */
 const me = {
-  get name() { return localStorage.getItem('mazad_name') || ''; },
-  set name(v) { localStorage.setItem('mazad_name', v); paintName(); }
+  get name()  { return localStorage.getItem('mazad_name')  || ''; },
+  set name(v) { localStorage.setItem('mazad_name', v); paintName(); },
+  // a winning bid is worthless if the seller cannot reach the bidder, so the
+  // number is asked for once and kept in this browser like the name
+  get phone()  { return localStorage.getItem('mazad_phone') || ''; },
+  set phone(v) { localStorage.setItem('mazad_phone', v); }
 };
 function paintName() {
   $('#nameChip').textContent = me.name ? '👤 ' + me.name : 'اسمك؟';
@@ -770,7 +778,9 @@ const remote = {
     return this.req('mazad_public?select=*&id=eq.' + encodeURIComponent(id)).then(r => r[0] || null);
   },
   bids(id) {
-    return this.req('mazad_bids?select=*&listing_id=eq.' + encodeURIComponent(id) + '&order=created_at.asc&limit=500');
+    // never '*': anon has no SELECT on bidder_phone, and asking for it fails
+    return this.req('mazad_bids?select=id,listing_id,bidder_name,amount,approved,created_at' +
+      '&listing_id=eq.' + encodeURIComponent(id) + '&order=created_at.asc&limit=500');
   },
   async createListing(body) {
     // anon may INSERT but not SELECT the table, so ask for no row back and
@@ -783,10 +793,10 @@ const remote = {
     });
     return { ...body, id };
   },
-  placeBid(id, name, amount) {
+  placeBid(id, name, amount, phone) {
     return this.req('rpc/place_bid', {
       method: 'POST',
-      body: JSON.stringify({ p_listing: id, p_name: name, p_amount: amount })
+      body: JSON.stringify({ p_listing: id, p_name: name, p_amount: amount, p_phone: phone })
     });
   },
   admin(id, secret, action, minutes, price) {
@@ -847,10 +857,11 @@ const local = {
     const row = { ...body, id: this.uid(), status: body.status || 'pending', is_live: false, created_at: new Date().toISOString() };
     db.listings.push(row); this.write(db); return row;
   },
-  async placeBid(id, name, amount) {
+  async placeBid(id, name, amount, phone) {
     const db = this.read();
     const lot = db.listings.find(l => l.id === id);
     if (!lot) return { ok: false, error: 'not_found' };
+    if (!/^05\d{8}$/.test(String(phone || ''))) return { ok: false, error: 'bad_phone' };
     if (lot.status === 'pending') return { ok: false, error: 'not_started' };
     if (lot.status !== 'open') return { ok: false, error: 'closed' };
     if (!lot.end_at || new Date(lot.end_at).getTime() <= nowMs()) return { ok: false, error: 'expired' };
@@ -858,8 +869,8 @@ const local = {
       .reduce((m, b) => Math.max(m, +b.amount), +lot.start_price);
     const min = cur + stepFor(cur);
     if (amount < min) return { ok: false, error: 'too_low', current: cur, min };
-    db.bids.push({ id: this.uid(), listing_id: id, bidder_name: name, amount,
-                   approved: false, created_at: new Date().toISOString() });
+    db.bids.push({ id: this.uid(), listing_id: id, bidder_name: name, bidder_phone: phone,
+                   amount, approved: false, created_at: new Date().toISOString() });
     this.write(db);
     return { ok: true, pending: true, amount };
   },
@@ -1126,9 +1137,9 @@ function finalPrice(lot, t) {
    Re-measure these four numbers if the artwork is ever replaced. */
 function paddle(amount, variant) {
   const label = money(amount);
-  // the board holds about 88 container-percent of glyphs; 17 is as large as it
-  // looks right, so short sums stay big and long ones step down to fit
-  const fs = Math.min(17, 88 / Math.max(label.length, 1)).toFixed(2);
+  // sized against the board, which is 51.52% of this frame: 13.6cqw is as
+  // large as it looks right, and long sums step down so they still fit
+  const fs = Math.min(13.6, 70.7 / Math.max(label.length, 1)).toFixed(2);
   return (
     '<span class="paddle ' + (variant || '') + '" style="--fs:' + fs + '">' +
       '<img src="mazad-paddle.png" alt="" loading="lazy" decoding="async">' +
@@ -1514,7 +1525,12 @@ function renderPendingBids() {
                ' data-ok="' + (beats ? '1' : '0') + '">' +
         '<div class="who">' +
           '<b>' + esc(b.bidder_name) + '</b>' +
-          '<span class="num">' + esc(fmtPhone(b.phone || '')) + '</span>' +
+          (b.bidder_phone
+            ? '<a class="wa" href="' + esc(waLink(b.bidder_phone, b.phone || '')) + '"' +
+              ' target="_blank" rel="noopener" title="واتساب المزايد">💬 <span class="num">' +
+              esc(fmtPhone(b.bidder_phone)) + '</span></a>'
+            : '<span class="sub-muted">بدون جوال</span>') +
+          '<span class="num">على ' + esc(fmtPhone(b.phone || '')) + '</span>' +
         '</div>' +
         '<div class="cmp">' +
           '<div class="cmp-line">' +
@@ -1657,6 +1673,11 @@ async function renderApprovedBids(lot) {
       ? list.map((b, i) =>
           '<div class="ctl-bid done" data-b="' + esc(b.id) + '">' +
             '<div class="who"><b>' + esc(b.bidder_name) + '</b>' +
+              (b.bidder_phone
+                ? '<a class="wa" href="' + esc(waLink(b.bidder_phone, lot.phone)) + '"' +
+                  ' target="_blank" rel="noopener">💬 <span class="num">' +
+                  esc(fmtPhone(b.bidder_phone)) + '</span></a>'
+                : '') +
               '<span>' + (i === 0 ? 'أعلى سومة' : esc(ago(b.created_at))) + '</span></div>' +
             '<div class="amt num">' + money(b.amount) + '</div>' +
             '<button class="no" data-a="reject" title="احذف">✖</button>' +
@@ -2138,14 +2159,15 @@ async function share(lot) {
 }
 
 async function sendBid(id) {
-  if (!me.name) { askName(() => sendBid(id)); return; }
+  // both, not just the name: a sum we cannot follow up on is no use to the seller
+  if (!me.name || !/^05\d{8}$/.test(me.phone)) { askName(() => sendBid(id)); return; }
   const input = $('#bidInput');
   const amount = Number(input.value);
   if (!amount || amount <= 0) { toast('اكتب المبلغ'); return; }
 
   const btn = $('#btnBid'); btn.disabled = true;
   try {
-    const r = await store.placeBid(id, me.name, amount);
+    const r = await store.placeBid(id, me.name, amount, me.phone);
     if (r && r.ok === false) {
       const m = {
         too_low: 'المبلغ أقل من المطلوب — أقل مزايدة ' + money(r.min || 0) + ' ر.س',
@@ -2155,6 +2177,7 @@ async function sendBid(id) {
         closed: 'المزاد مقفل',
         expired: 'انتهى وقت المزاد',
         bad_name: 'اكتب اسم صحيح (حرفين على الأقل)',
+        bad_phone: 'اكتب رقم جوال صحيح يبدأ بـ 05',
         bad_amount: 'مبلغ غير صحيح',
         not_found: 'المزاد غير موجود'
       }[r.error] || 'تعذّرت المزايدة';
@@ -2184,20 +2207,31 @@ function closeSheet() { $('#sheetHost').innerHTML = ''; }
 
 function askName(then) {
   const s = sheet(
-    '<h2>وش اسمك؟</h2>' +
-    '<p class="hint">يظهر اسمك عند كل مزايدة — زي الشات.</p>' +
-    '<div class="field"><input id="nmInput" maxlength="40" placeholder="مثال: أبو فهد" value="' + esc(me.name) + '"></div>' +
+    '<h2>بياناتك للمزايدة</h2>' +
+    '<p class="hint">اسمك يظهر مع كل سومة. جوالك ما يظهر لأحد — يوصل للمشرف فقط ' +
+      'عشان يتواصل معك إذا ربحت.</p>' +
+    '<div id="nmErr"></div>' +
+    '<div class="field"><label>اسمك</label>' +
+      '<input id="nmInput" maxlength="40" placeholder="مثال: أبو فهد" value="' + esc(me.name) + '"></div>' +
+    '<div class="field ltr"><label>جوالك</label>' +
+      '<input id="nmPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX" value="' + esc(me.phone) + '">' +
+      '<div class="sub">يبدأ بـ 05 ويتكوّن من 10 أرقام. سرّي — ما يظهر في المزايدات.</div></div>' +
     '<button class="btn btn-block" id="nmSave">حفظ</button>'
   );
   const input = s.querySelector('#nmInput');
   input.focus();
   const save = () => {
+    const err = (m) => { s.querySelector('#nmErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
     const v = input.value.trim();
-    if (v.length < 2) { toast('الاسم قصير'); return; }
+    const ph = s.querySelector('#nmPhone').value.replace(/\D/g, '');
+    if (v.length < 2) return err('الاسم قصير.');
+    if (!/^05\d{8}$/.test(ph)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
+    me.phone = ph;
     me.name = v; closeSheet(); if (then) then(); else refresh(false);
   };
   s.querySelector('#nmSave').addEventListener('click', save);
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') s.querySelector('#nmPhone').focus(); });
+  s.querySelector('#nmPhone').addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
 }
 
 function askAdmin() {

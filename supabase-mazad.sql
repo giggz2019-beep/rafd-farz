@@ -67,6 +67,14 @@ create table if not exists mazad_bids (
   created_at  timestamptz not null default now()
 );
 
+-- a winning bidder has to be reachable, so a sum carries his number. It is
+-- OPERATOR-ONLY: anon is granted select on the other columns by name, never
+-- this one, so the public feed cannot carry it even by asking for '*'.
+alter table mazad_bids add column if not exists bidder_phone text;
+alter table mazad_bids drop constraint if exists mazad_bidder_phone_format;
+alter table mazad_bids add  constraint mazad_bidder_phone_format
+  check (bidder_phone is null or bidder_phone ~ '^05[0-9]{8}$');
+
 -- a sum sent from the site waits for the operator before it counts
 alter table mazad_bids add column if not exists approved    boolean not null default false;
 alter table mazad_bids add column if not exists approved_at timestamptz;
@@ -99,7 +107,9 @@ revoke all on mazad_config   from anon, authenticated;
 
 -- the public reads the masked VIEW below, never the listings table itself
 grant insert on mazad_listings to anon, authenticated;
-grant select on mazad_bids     to anon, authenticated;
+-- column by column, so bidder_phone is never readable from a browser
+grant select (id, listing_id, bidder_name, amount, approved, created_at)
+  on mazad_bids to anon, authenticated;
 
 -- ---------- what the public may read ----------
 -- A number waiting its turn must not be readable in full, or a viewer can take
@@ -190,50 +200,51 @@ create policy mazad_bids_read on mazad_bids
 -- current price by at least p_min_step, name is sane, and applies
 -- anti-sniping (a bid in the last 60s pushes the end 2 minutes out).
 
+-- The 3-argument version has to be dropped, not replaced: adding a defaulted
+-- fourth argument creates an overload, and a call naming only the first three
+-- would match both and be refused as ambiguous.
+drop function if exists place_bid(uuid, text, numeric);
+
 create or replace function place_bid(
   p_listing uuid,
   p_name    text,
-  p_amount  numeric
+  p_amount  numeric,
+  p_phone   text default null
 ) returns json
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  v_listing  mazad_listings%rowtype;
-  v_current  numeric;
-  v_step     numeric;
-  v_new_end  timestamptz;
+  v_listing mazad_listings%rowtype;
+  v_current numeric;
+  v_step    numeric;
 begin
-  p_name := btrim(coalesce(p_name, ''));
+  p_name  := btrim(coalesce(p_name, ''));
+  p_phone := nullif(regexp_replace(coalesce(p_phone, ''), '\D', '', 'g'), '');
 
   if char_length(p_name) < 2 or char_length(p_name) > 40 then
     return json_build_object('ok', false, 'error', 'bad_name');
   end if;
 
+  -- a sum we cannot follow up on is no use to the seller
+  if p_phone is null or p_phone !~ '^05[0-9]{8}$' then
+    return json_build_object('ok', false, 'error', 'bad_phone');
+  end if;
+
   select * into v_listing from mazad_listings where id = p_listing for update;
-  if not found then
-    return json_build_object('ok', false, 'error', 'not_found');
-  end if;
-
-  if v_listing.status = 'pending' then
-    return json_build_object('ok', false, 'error', 'not_started');
-  end if;
-
-  if v_listing.status <> 'open' then
-    return json_build_object('ok', false, 'error', 'closed');
-  end if;
-
+  if not found then return json_build_object('ok', false, 'error', 'not_found'); end if;
+  if v_listing.status = 'pending' then return json_build_object('ok', false, 'error', 'not_started'); end if;
+  if v_listing.status <> 'open' then return json_build_object('ok', false, 'error', 'closed'); end if;
   if v_listing.end_at is null or v_listing.end_at <= now() then
     return json_build_object('ok', false, 'error', 'expired');
   end if;
 
-  -- the bar to clear is the highest APPROVED sum
+  -- the bar to clear is the highest APPROVED bid
   select coalesce(max(amount), v_listing.start_price)
     into v_current
     from mazad_bids where listing_id = p_listing and approved;
 
-  -- minimum step: 50 up to 1,000 — then 5% of the current price
   v_step := greatest(50, ceil(v_current * 0.05));
 
   if p_amount is null or p_amount <= 0 or p_amount > 100000000 then
@@ -241,39 +252,32 @@ begin
   end if;
 
   if p_amount < v_current + v_step then
-    return json_build_object(
-      'ok', false, 'error', 'too_low',
-      'current', v_current, 'min', v_current + v_step
-    );
+    return json_build_object('ok', false, 'error', 'too_low',
+                             'current', v_current, 'min', v_current + v_step);
   end if;
 
-  -- one bid per name per 3 seconds (cheap spam brake)
-  if exists (
-    select 1 from mazad_bids
-     where listing_id = p_listing
-       and bidder_name = p_name
-       and created_at > now() - interval '3 seconds'
-  ) then
+  if exists (select 1 from mazad_bids
+              where listing_id = p_listing and bidder_name = p_name
+                and created_at > now() - interval '3 seconds') then
     return json_build_object('ok', false, 'error', 'too_fast');
   end if;
 
-  -- at most three of one person's sums may be waiting at a time
+  -- at most three of one person's bids may be waiting at a time
   if (select count(*) from mazad_bids
        where listing_id = p_listing and bidder_name = p_name and not approved) >= 3 then
     return json_build_object('ok', false, 'error', 'too_many_pending');
   end if;
 
-  insert into mazad_bids (listing_id, bidder_name, amount, approved)
-  values (p_listing, p_name, p_amount, false);
+  insert into mazad_bids (listing_id, bidder_name, bidder_phone, amount, approved)
+  values (p_listing, p_name, p_phone, p_amount, false);
 
   -- no anti-sniping here: the clock moves when the operator approves
   return json_build_object('ok', true, 'pending', true, 'amount', p_amount);
 end;
 $$;
 
-revoke all on function place_bid(uuid, text, numeric) from public;
-grant execute on function place_bid(uuid, text, numeric) to anon, authenticated;
-
+revoke all on function place_bid(uuid, text, numeric, text) from public;
+grant execute on function place_bid(uuid, text, numeric, text) to anon, authenticated;
 
 -- ---------- operator actions ----------
 -- p_action: sold | unsold | cancelled | open | extend | timer | price | auto
@@ -521,7 +525,7 @@ begin
     select json_agg(row_to_json(x) order by x.is_live desc, x.amount desc, x.created_at)
       from (
         select
-          b.id, b.listing_id, b.bidder_name, b.amount, b.created_at,
+          b.id, b.listing_id, b.bidder_name, b.bidder_phone, b.amount, b.created_at,
           l.phone, l.is_live,
           cur.price                                       as current,
           cur.price + greatest(50, ceil(cur.price * 0.05)) as min_next,
@@ -705,7 +709,7 @@ begin
 
   return json_build_object('ok', true, 'bids', coalesce((
     select json_agg(row_to_json(x) order by x.amount desc)
-      from (select id, bidder_name, amount, approved, created_at
+      from (select id, bidder_name, bidder_phone, amount, approved, created_at
               from mazad_bids where listing_id = p_listing) x
   ), '[]'::json));
 end;

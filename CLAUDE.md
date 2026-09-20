@@ -187,14 +187,19 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
   it, or swap it for SVG.** `paddle(amount, variant)` emits that one `<img>`
   plus a `<span class="p-amt">` laid on the board, so a screen full of paddles
   costs one cached image.
+  - It is used **whole** — the full arm, nothing cropped. Only the
+    transparency checkerboard was removed. An earlier version cropped the arm
+    to make the board a bigger share of the frame; that was rejected. Do not
+    crop it again — widen the slot instead.
   - The board's geometry is measured off the file and hard-coded in the CSS:
-    centre **36.02% / 20.30%** of the frame, width **64.10%**, lean
+    centre **28.95% / 19.85%** of the frame, width **51.52%**, lean
     **-7.2deg**. Replacing the artwork means re-measuring all four, or the
     number will float off the board.
   - The number is sized in `cqw` against the paddle itself (`--fs`, set by
-    `paddle()` as `min(17, 88 / label.length)`), so one rule covers the feed
-    and the broadcast screen and a seven-digit sum still fits the same board.
-    A px `font-size` sits before it as the fallback for no container queries.
+    `paddle()` as `min(13.6, 70.7 / label.length)` — both derived from the
+    board's 51.52% share), so one rule covers the feed and the broadcast
+    screen and a seven-digit sum still fits the same board. A px `font-size`
+    sits before it as the fallback for no container queries.
   - The board is white in the supplied art and stays white: `top` and `mine`
     change only the **text** colour, since recolouring it would be redrawing it.
   - The source file was a JPEG with the transparency checkerboard baked into
@@ -204,6 +209,19 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     forearm. Keep `mazad-paddle.png`; there is no vector original.
   - The newest paddle animates in once, tracked by `lastSeenBid`, so the
     refresh loop does not replay the animation every 2.5 seconds.
+- **A bidder gives a name and a mobile number, and the number is
+  operator-only.** `place_bid` refuses anything that is not `05XXXXXXXX`: a
+  sum nobody can follow up on is no use to the seller. The number is stored in
+  `mazad_bids.bidder_phone`, and **`anon`'s SELECT on `mazad_bids` is granted
+  column by column, deliberately leaving that one out** — so the public feed
+  cannot carry it even by asking for `*`. This is why `remote.bids()` lists its
+  columns explicitly; `select=*` is refused outright. The operator reads it
+  through `mazad_pending_bids` / `mazad_bids_of` (SECURITY DEFINER) and each
+  row is a WhatsApp link. Both are kept in `localStorage`, so a returning
+  bidder is asked once.
+  - Adding `p_phone` meant **dropping** the 3-argument `place_bid`, not
+    replacing it: a defaulted fourth argument creates an overload, and a call
+    naming only the first three matches both and is refused as ambiguous.
 - **Bidding lives on the number's page, never on `/live`.** The on-air banner on
   the list sends viewers to `#/n/<id>`, and every open card carries a
   «زايد على هذا الرقم» button. Sending viewers to the broadcast screen was a
