@@ -222,6 +222,24 @@ auction, or read the operator secret. Schema: `supabase-mazad.sql`.
     commission protection the phone masking exists for.
   - The section chips are remembered in `localStorage` (`mazad_kind`), so a
     returning visitor lands where he was.
+- **The plate is proportioned from the owner's reference, not designed.**
+  Measured off that image: the plate is 595×117, so **5.09:1**, and the only
+  full-height rules in it are the two borders and the one before the KSA
+  strip. **There is no divider in the middle** — what read as one when
+  measuring was the palm trunk of the emblem, which is why it only appeared on
+  the two plates carrying that emblem.
+  - Each block is pinned to its measured centre — digits **12.1%**, emblem
+    **51.5%**, letters **82.9%** — rather than left to flex. Flex put the
+    emblem and the letters about six points too far left, because the blocks
+    are not the widths it assumes.
+  - The letters are joined with spaces already, so `letter-spacing` on top of
+    that doubled the gap and made the block half again as wide as the
+    reference's 15.5%.
+  - The KSA strip is the reference's own strip, lifted whole
+    (`mazad-plate-ksa.png`), border included.
+  - `test-plate-shape.js` checks the rendered plate against those measured
+    percentages within 2.5 points, at both sizes. If the reference ever
+    changes, re-measure and move the numbers together.
 - **The plate emblems are the owner's own images, not drawings.**
   `mazad-emb-<key>.png` were cut out of the reference he supplied. **Do not
   redraw them as SVG — that was tried and rejected.** To add one, cut it from
