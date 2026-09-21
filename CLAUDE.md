@@ -419,6 +419,12 @@ must both be false.
       box — «اقلب الكيبورد انجليزي يرفض». The box flashes now.
     - **The last letter carries on into the digits** (`wireLetterBoxes`'s
       `nextField`), rather than stopping dead and waiting to be tapped.
+    - **And the digits carry on into the emblem** (`wirePlateDigits`) — but
+      only at **four**, the one length that is unambiguously a whole plate.
+      A premium plate is a short one, and jumping after «9» would take the
+      keyboard away mid-number, on camera; **Enter** finishes a short plate
+      instead. `advanceTo()` refuses a target that is not on screen, so a
+      نقل plate — whose emblem row is hidden — keeps the focus where it is.
     - A letter jumps to the next box; backspace in an empty box steps back.
     - **No `maxlength="1"`.** A box that already holds a letter refuses the
       next keystroke outright, so he taps it, types, and nothing happens — on

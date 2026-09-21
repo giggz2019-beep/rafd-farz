@@ -1599,6 +1599,32 @@ function wireLetterBoxes(root, prefix, onChange, nextField) {
   });
   return read;
 }
+/* Focus something further down the form, but only if it is actually on screen:
+   a نقل plate hides the emblem row, and stealing the focus into a hidden
+   control would leave the keyboard pointed at nothing — on camera. */
+function advanceTo(root, sel) {
+  const n = typeof sel === 'string' ? root.querySelector(sel) : sel;
+  if (!n || !n.offsetParent) return false;
+  n.focus(); if (n.select) n.select();
+  return true;
+}
+/* The digits box is the other half of «ينتقل تلقائي»: four digits is a full
+   plate, so it carries on to the emblem by itself; a shorter plate is finished
+   with Enter, because the page cannot know that 90 is not about to become 900. */
+function wirePlateDigits(root, sel, onChange, nextField) {
+  const box = typeof sel === 'string' ? root.querySelector(sel) : sel;
+  if (!box) return () => '';
+  const read = () => box.value.replace(/\D/g, '').slice(0, 4);
+  box.addEventListener('input', () => {
+    box.value = read();
+    if (onChange) onChange(box.value);
+    if (box.value.length === 4 && nextField) advanceTo(root, nextField);
+  });
+  box.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && nextField) { e.preventDefault(); advanceTo(root, nextField); }
+  });
+  return read;
+}
 // people type أ إ آ ى ة as often as the plate spellings; the database
 // normalises the same way, so the two can never disagree
 const normPlate = (t) => String(t || '').trim()
@@ -3113,10 +3139,8 @@ function renderItemEditor(lot, host) {
     // stage follows the keystroke
     wireLetterBoxes(host, 'ed', (letters) =>
       pushEdit(lot, { plate_letters: letters }), '#edDigits');
-    host.querySelector('#edDigits').addEventListener('input', (e) => {
-      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
-      pushEdit(lot, { plate_digits: e.target.value });
-    });
+    wirePlateDigits(host, '#edDigits',
+      (digits) => pushEdit(lot, { plate_digits: digits }), '#edEmb button.on');
     host.querySelector('#edKind').addEventListener('click', async (e) => {
       const b = e.target.closest('button'); if (!b) return;
       host.querySelectorAll('#edKind button').forEach(x => x.classList.toggle('on', x === b));
@@ -3871,7 +3895,7 @@ function askQuickAdd() {
     qkKind = b.dataset.pk; qPaint();
   });
   const readQkLetters = wireLetterBoxes(s2, 'qk', () => qPaint(), '#qkDigits');
-  s2.querySelector('#qkDigits').addEventListener('input', qPaint);
+  wirePlateDigits(s2, '#qkDigits', qPaint, '#qkEmblem');
   s2.querySelector('#qkEmblem').addEventListener('change', qPaint);
   wirePhotoPick(s2, '#qkPhoto', '#qkPhotoPrev');
 
@@ -4448,8 +4472,8 @@ function askListing() {
     lsKind = b.dataset.pk; paintPreview();
   });
   const readLsLetters = wireLetterBoxes(s, 'ls', () => paintPreview(), '#lsDigits');
-  ['#lsDigits','#lsEmblem'].forEach(i =>
-    s.querySelector(i).addEventListener('input', paintPreview));
+  wirePlateDigits(s, '#lsDigits', paintPreview, '#lsEmblem');
+  s.querySelector('#lsEmblem').addEventListener('input', paintPreview);
   wirePhotoPick(s, '#lsPhoto', '#lsPhotoPrev');
   s.querySelector('#lsEmblem').addEventListener('change', paintPreview);
   paintPreview();
