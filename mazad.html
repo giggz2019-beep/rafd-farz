@@ -216,8 +216,13 @@ a { color: inherit; }
 #lots { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
   gap: 10px; align-items: start; }
 #lots > .card { margin-bottom: 0; }
-/* the banner is the whole width — it is the one thing that is on air */
-#lots > .live-banner { grid-column: 1 / -1; }
+/* ---------- only CARDS are columns; everything else spans the row ----------
+   The banner was given the span by name, and the empty state was not — so
+   «ما فيه لوحات هنا» landed in the first 158px cell, which on an RTL page is
+   the far right, and read as a stray note in the corner of an empty screen.
+   Written as "not a card" rather than by name, so the next thing added to
+   this list cannot repeat it. */
+#lots > :not(.card) { grid-column: 1 / -1; }
 @media (max-width: 329px) { #lots { grid-template-columns: 1fr; } }
 /* at two across a card has half the room, so it spends less of it on padding */
 @media (max-width: 560px) {
@@ -277,7 +282,8 @@ a { color: inherit; }
 
 .lot-foot { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: .78rem; color: var(--muted); }
 
-.empty { text-align: center; padding: 48px 16px; color: var(--muted); }
+.empty { text-align: center; padding: 48px 16px; color: var(--muted);
+  max-width: 340px; margin: 0 auto; line-height: 1.9; }
 .empty-emoji { font-size: 2.4rem; }
 
 /* ---------- detail ---------- */
@@ -2620,7 +2626,11 @@ function renderList() {
       : '');
 
   if (!rows.length) {
-    host.innerHTML = banner + '<div class="empty"><div class="empty-emoji">📱</div>'
+    /* the icon follows the SECTION — it was hard-coded to the phone one, so
+       an empty سيارات list showed a mobile. Same class of slip as «رقم مميز»
+       under a plate: a section names and draws itself. */
+    host.innerHTML = banner + '<div class="empty"><div class="empty-emoji">' +
+      (KIND_ICON[cache.kind] || '🔍') + '</div>'
       + (cache.kind && cache.kind !== 'all'
          ? 'ما فيه ' + (KIND_NAME[cache.kind] || '') + ' هنا الحين.<br>اعرض واحد ويدخل القائمة.'
          : cache.filter === 'live' ? 'ما فيه سوم مفتوح الحين.<br>اعرض واحد وينتظر دوره.'
