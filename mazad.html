@@ -309,15 +309,35 @@ a { color: inherit; }
 /* ---------- sold / unsold stamp ---------- */
 /* pressed under the number, never over it — on a broadcast the viewer
    has to read the number and the result at the same time */
+/* ---------- the result, stamped across the plate ----------
+   A round seal over the middle of the plate, the way a stamp actually lands:
+   a double ring, turned a few degrees, translucent so the plate reads through
+   it. It used to be a small rectangle sitting UNDER the plate — too small to
+   read on a stream, and it did not look like a result at all. */
+.plate-stamp { position: relative; display: block; container-type: inline-size; }
 .stamp {
-  display: inline-block; margin-top: 9px; transform: rotate(-3deg);
-  border: 3px solid currentColor; border-radius: 10px;
-  padding: 3px 14px; font-weight: 900; font-size: 1.05rem;
-  letter-spacing: .02em; white-space: nowrap; pointer-events: none;
-  background: rgba(255,255,255,.96); box-shadow: 0 4px 14px rgba(0,0,0,.18);
+  position: absolute; inset: 0; margin: auto;
+  /* the plate is 5.09:1, so 172% of its height is about a THIRD of its width
+     — the seal lands across the middle of the plate, not on the emblem */
+  height: 172%; aspect-ratio: 1; border-radius: 50%;
+  display: grid; place-items: center; pointer-events: none;
+  transform: rotate(-11deg);
+  border: 1.1cqw solid currentColor;
+  /* opaque enough that the emblem behind it does not fight the words */
+  background: rgba(255,255,255,.88);
+  box-shadow: 0 6px 22px rgba(0,0,0,.22);
 }
-.live-plate .stamp { font-size: 1.5rem; padding: 5px 20px; border-width: 4px; margin-top: 12px; }
-.phone-plate .stamp { background: #fff; }
+/* a stamp has two rings */
+.stamp::before {
+  content: ''; position: absolute; inset: 8%;
+  border: .35cqw solid currentColor; border-radius: 50%; opacity: .85;
+}
+.stamp span {
+  display: grid; justify-items: center; line-height: 1.04;
+  font-weight: 900; letter-spacing: -.01em; white-space: nowrap;
+}
+.stamp b { display: block; font-size: 6.4cqw; }
+.stamp.cancelled b { font-size: 7.6cqw; }
 .stamp.sold      { color: var(--ok-600); }
 .stamp.unsold    { color: #c0392b; }
 .stamp.cancelled { color: #6b7b73; }
@@ -1428,9 +1448,35 @@ function lotState(lot) {
 }
 
 /* the sticker that goes on a finished number */
-const STAMP = { sold: 'تم البيع ✔', unsold: 'لم يتم البيع', cancelled: 'ملغي' };
+/* A result is stamped across the plate like a seal, not labelled under it —
+   it has to read from across the room on a stream. Two words to a line so the
+   circle is filled rather than a wide word in a round hole. */
+const STAMP = {
+  sold:      ['تم', 'البيع'],
+  unsold:    ['لم يتم', 'البيع'],
+  cancelled: ['ملغي']
+};
 function stampFor(st) {
-  return STAMP[st] ? '<div class="stamp ' + st + '">' + STAMP[st] + '</div>' : '';
+  if (!STAMP[st]) return '';
+  return '<div class="stamp ' + st + '"><span>' +
+    STAMP[st].map(w => '<b>' + esc(w) + '</b>').join('') + '</span></div>';
+}
+/* the plate and its stamp, so the seal is centred on the PLATE rather than on
+   whatever else shares the card with it */
+const plateStamped = (lot, size, st) =>
+  '<div class="plate-stamp">' + itemPlate(lot, size) + stampFor(st) + '</div>';
+
+/* ONE TAP. He has just called the sale out loud on air, so a dialog after
+   that asks him to make a decision he has already made — and a native
+   confirm() lands at the top of the screen, on camera. The price is asked for
+   only when the site does not already know it: with counted sums it IS the
+   top sum. Tapping تم البيع again re-opens the sheet to edit the price. */
+async function markSold(lot) {
+  const top = topBid(lot.id, lot);
+  if (lot.status === 'sold' || !top.count) { askSoldPrice(lot); return; }
+  await opDo(lot.id, 'sold', undefined, top.amount);
+  toast('تم البيع على ' + money(top.amount) + ' ر.س ✔');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function badgeFor(st) {
   if (st === 'pending') return '<span class="badge wait">بانتظار الدور</span>';
@@ -2181,10 +2227,7 @@ function renderList() {
             '<span style="flex:1"></span>' +
             '<span style="font-size:.72rem;color:var(--muted)">' + esc(ago(lot.created_at)) + '</span>' +
           '</div>' +
-          '<div class="phone-plate plate-wrap">' +
-            itemPlate(lot) +
-            stampFor(st) +
-          '</div>' +
+          '<div class="phone-plate plate-wrap">' + plateStamped(lot, '', st) + '</div>' +
           '<div class="lot-stats">' +
             '<div class="stat"><div class="stat-k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
               '<div class="stat-v price"><span class="num">' + money(finalPrice(lot, t)) + '</span> ر.س</div></div>' +
@@ -2236,7 +2279,7 @@ function adminBar(lot) {
     + '</div>');
   bar.addEventListener('click', async (e) => {
     const a = e.target.dataset.a; if (!a) return;
-    if (a === 'sold') { askSoldPrice(lot); return; }
+    if (a === 'sold') { await markSold(lot); return; }
     if (a === 'delete' && !confirm('حذف ' + itemWord(lot) + ' ' + itemLabel(lot) + ' نهائياً؟')) return;
     const r = await opDo(lot.id, a);
     if (!r) return;
@@ -2338,10 +2381,9 @@ function renderLive(lot, bids) {
       '</div>' +
 
       '<div class="live-plate plate-wrap">' +
-        itemPlate(lot, 'live') +
+        plateStamped(lot, 'live', st) +
         '<div class="live-note">' + esc(CARRIERS[lot.carrier] || 'رقم مميز') +
           (lot.seller_name && lot.seller_name !== 'البائع' ? ' · البائع ' + esc(lot.seller_name) : '') + '</div>' +
-        stampFor(st) +
       '</div>' +
 
       (st === 'live'
@@ -3073,14 +3115,13 @@ function opBar(lot) {
       await opDo(q[0].id, 'live');
       return;
     }
-    if (a === 'sold') { askSoldPrice(lot); return; }
+    if (a === 'sold') { await markSold(lot); return; }
     if (a === 'delete') {
       if (!confirm('حذف ' + itemWord(lot) + ' ' + itemLabel(lot) + ' نهائياً من المزاد؟')) return;
       await opDo(lot.id, 'delete');
       toast('انحذف الرقم');
       return;
     }
-    if (a === 'unsold' && !confirm('تأكيد: لم يتم البيع؟')) return;
     await opDo(lot.id, a, m);
     // bring the number and its sticker back into view for the broadcast
     if (a === 'unsold') window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3384,8 +3425,7 @@ function renderLot(lot, bids, full) {
           '<span style="flex:1"></span>' +
           '<button class="btn btn-ghost btn-sm" id="btnShare">مشاركة</button>' +
         '</div>' +
-        '<div class="phone-plate plate-wrap">' + itemPlate(lot) +
-          stampFor(st) + '</div>' +
+        '<div class="phone-plate plate-wrap">' + plateStamped(lot, '', st) + '</div>' +
         '<div class="price-hero" style="margin-top:14px">' +
           '<div class="k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
           '<div class="v"><span class="num">' + money(shown) + '</span> ر.س</div>' +

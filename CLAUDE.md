@@ -449,6 +449,21 @@ must both be false.
   flex container — not `cqw` (`.live` is not a container, so `cqw` would fall
   back to the viewport and change with the window instead of the card) and not
   a fixed `10px`.
+- **Calling the result is ONE tap.** He has just said it out loud on air, so a
+  dialog afterwards asks him to make a decision he has already made — and a
+  native `confirm()` lands at the top of the screen, **on camera**. «لم يتم
+  البيع» records straight away, and «تم البيع» stamps the lot at the top
+  counted sum. The price sheet opens only when the site cannot know the
+  number: no counted sums, or he is editing a sale already recorded (tapping
+  تم البيع again). `markSold()` is the one place that decides, so the two
+  op-bars cannot drift apart. Deleting still asks — that one is irreversible.
+- **The result is a round seal stamped across the plate**, not a label under
+  it: a double ring turned ~11°, about a third of the plate's width, centred
+  on the **plate** (which is why `plateStamped()` wraps the plate and the
+  stamp together — `.plate-wrap` also holds the seller note, so centring on it
+  sat low). The fill is opaque enough to read over the emblem behind it.
+  `STAMP` breaks each result into two short words so the circle is filled
+  rather than a wide word in a round hole.
 - **The broadcast card is the whole statement; the footer under it is not.**
   The card already carries the contact number and the commission, so on
   `/live` the footer repeated both **on camera**, plus a «من نحن» link nobody
