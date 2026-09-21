@@ -606,6 +606,9 @@ a { color: inherit; }
   display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
   padding-bottom: 8px; border-bottom: 1.5px solid rgba(125,151,96,.5);
 }
+/* a held clock reads as held at a glance — amber, not the running white */
+.live-clock.held, .countdown.held, .stat-v.time.held { color: var(--gold-400); }
+.stat-v.time.held { color: #9a6b12; }
 .live-dot {
   background: var(--gold-500); color: #3a1208; font-size: .75rem; font-weight: 800;
   padding: 4px 11px; border-radius: 999px;
@@ -791,6 +794,14 @@ a { color: inherit; }
 }
 /* typed, not picked — so it has to read like a plate cell and take one glyph */
 .plate-picks .letterbox { text-transform: uppercase; caret-color: var(--wine-600); }
+/* a key a plate cannot carry is refused OUT LOUD — silence reads as broken */
+.plate-picks .letterbox.bad { animation: refuse .45s ease; }
+@keyframes refuse {
+  0%,100% { transform: translateX(0); border-color: var(--line); }
+  15% { transform: translateX(-4px); border-color: var(--danger); }
+  45% { transform: translateX(4px);  border-color: var(--danger); }
+  75% { transform: translateX(-2px); border-color: var(--danger); }
+}
 .plate-picks .letterbox:focus {
   outline: 2px solid var(--wine-500); outline-offset: -1px; background: #fffdf7;
 }
@@ -843,7 +854,12 @@ a { color: inherit; }
    half of the plate that is read out loud, and a gap beside the emblem is the
    one thing he keeps pointing at. Three letters put the block at 66.5–90.5%,
    still clear of the KSA rule at 93.9. */
-.cp-let    { left: 78.5%; }
+/* Three 10.2cqw slots is 30.6cqw, and this centre puts the block at
+   62.0–92.6%. The zone it has to live in is only 33.7% wide — from the
+   emblem's right edge at 60.2 to the KSA rule at 93.9 — so the slot width and
+   this centre are solved together against those two walls. Widen one and the
+   block touches the emblem; that is what a first pass at 11cqw did. */
+.cp-let    { left: 77.3%; }
 .cp-num, .cp-let { display: flex; flex-direction: column; align-items: center; line-height: 1.04; }
 .cp-emblem img { max-width: 100%; max-height: 100%; object-fit: contain; display: block;
   width: 17.8cqw; }
@@ -870,6 +886,26 @@ a { color: inherit; }
 .cp-ar > span, .cp-en > span {
   display: inline-block; width: 8cqw; text-align: center;
 }
+/* ---------- the LETTERS need a wider slot than the digits ----------
+   Measured, at one font size, in the plate's own face: the ten Arabic-Indic
+   digits are all exactly 61.05 wide, while the seventeen plate letters run
+   from ا at 34.3 to س at 138 — a **4x** spread. One slot width cannot serve
+   both, and the digits' 8cqw slot left س overflowing it by 21px with only
+   1.8px between one letter and the next, while the digits sat 18px apart.
+   That is «تلزق لي الحروف في بعض»: the digits breathed and the letters were
+   jammed together on the same plate.
+
+   So the letter row gets its own slot, as wide as the gap between the emblem
+   (ends 60.2%) and the KSA rule (93.9%) allows — three of them fill it — and
+   its own slightly smaller size. Nothing touches now. */
+.cp-let .cp-ar > span, .cp-let .cp-en > span { width: 10.2cqw; }
+.cp-let .cp-ar { font-size: 7.6cqw; }
+.cp-let .cp-en { font-size: 6.9cqw; }
+/* Two letters are wide enough that even the wider slot cannot hold them with
+   a gap worth the name. They are condensed a little — measured, and only
+   these two: every other letter is drawn at its natural width. */
+.cp-ar > span.wide  { transform: scaleX(.84); }
+.cp-ar > span.wider { transform: scaleX(.80); }
 .cp-ar { font-size: 8.3cqw; direction: rtl; }
 /* Arabic-Indic digits are written LEFT to right — ٩٧٨ sits over 978 in the
    same order. Only the letters read right to left, so the rtl above belongs
@@ -1487,6 +1523,13 @@ const PLATE_GLYPH = { 'ه': '\u0647\u0640' };
    keyboard or LAD on an English one without switching. */
 const PLATE_FROM_LATIN = Object.fromEntries(
   Object.entries(PLATE_LATIN).map(([ar, en]) => [en, ar]));
+/* ---------- the letter a person reaches for, not just the official code ----
+   The official Latin code for م is Z, for ق is G, for و is U and for ي is V —
+   that is what is printed on the plate. But nobody types Z when they mean م.
+   They type M, and it was silently refused: no letter, no error, nothing —
+   «اقلب الكيبورد انجليزي يرفض». M, Q, W and Y are not codes for any other
+   letter, so accepting them costs nothing and collides with nothing. */
+Object.assign(PLATE_FROM_LATIN, { 'M': 'م', 'Q': 'ق', 'W': 'و', 'Y': 'ي' });
 
 /* one typed character -> the canonical Arabic plate letter, or '' */
 function plateLetterOf(ch) {
@@ -1512,10 +1555,16 @@ function letterBoxes(prefix, letters) {
 /* Typing a letter moves to the next box; backspace in an empty box moves
    back. Anything that is not one of the seventeen is simply not accepted —
    silently, because a plate cannot carry it. */
-function wireLetterBoxes(root, prefix, onChange) {
+function wireLetterBoxes(root, prefix, onChange, nextField) {
   const ids = [1, 2, 3].map(i => '#' + prefix + 'L' + i);
   const boxes = ids.map(i => root.querySelector(i));
   const read = () => boxes.map(b => b.value).join('');
+  /* A key a plate cannot carry used to vanish without a word, which is
+     indistinguishable from the box being broken. It flashes now. */
+  const refuse = (box) => {
+    box.classList.remove('bad'); void box.offsetWidth; box.classList.add('bad');
+    setTimeout(() => box.classList.remove('bad'), 450);
+  };
   boxes.forEach((box, i) => {
     // Selecting on focus, plus taking the character at the caret, is what
     // makes typing OVER a letter work. maxlength="1" cannot do it: a box that
@@ -1527,7 +1576,16 @@ function wireLetterBoxes(root, prefix, onChange) {
       const typed = box.value.length > 1 ? box.value[Math.max(0, pos - 1)] : box.value;
       const v = plateLetterOf(typed);
       box.value = v;
-      if (v && boxes[i + 1]) boxes[i + 1].focus();
+      if (!v && typed) refuse(box);
+      /* «اسجل الحروف ينتقل ع خانة الارقام ما هو لازم اضغط انا» — the last
+         letter carries on into the digits instead of stopping dead. */
+      if (v) {
+        if (boxes[i + 1]) boxes[i + 1].focus();
+        else if (nextField) {
+          const n = typeof nextField === 'string' ? root.querySelector(nextField) : nextField;
+          if (n) { n.focus(); if (n.select) n.select(); }
+        }
+      }
       if (onChange) onChange(read());
     });
     box.addEventListener('keydown', (e) => {
@@ -1538,6 +1596,32 @@ function wireLetterBoxes(root, prefix, onChange) {
         if (onChange) onChange(read());
       }
     });
+  });
+  return read;
+}
+/* Focus something further down the form, but only if it is actually on screen:
+   a نقل plate hides the emblem row, and stealing the focus into a hidden
+   control would leave the keyboard pointed at nothing — on camera. */
+function advanceTo(root, sel) {
+  const n = typeof sel === 'string' ? root.querySelector(sel) : sel;
+  if (!n || !n.offsetParent) return false;
+  n.focus(); if (n.select) n.select();
+  return true;
+}
+/* The digits box is the other half of «ينتقل تلقائي»: four digits is a full
+   plate, so it carries on to the emblem by itself; a shorter plate is finished
+   with Enter, because the page cannot know that 90 is not about to become 900. */
+function wirePlateDigits(root, sel, onChange, nextField) {
+  const box = typeof sel === 'string' ? root.querySelector(sel) : sel;
+  if (!box) return () => '';
+  const read = () => box.value.replace(/\D/g, '').slice(0, 4);
+  box.addEventListener('input', () => {
+    box.value = read();
+    if (onChange) onChange(box.value);
+    if (box.value.length === 4 && nextField) advanceTo(root, nextField);
+  });
+  box.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && nextField) { e.preventDefault(); advanceTo(root, nextField); }
   });
   return read;
 }
@@ -1568,8 +1652,13 @@ const plateText = (letters, digits) =>
   normPlate(letters).split('').map(c => PLATE_GLYPH[c] || c).join(' ') +
   (digits ? ' ' + digits : '');
 
+/* Measured widths, in the plate's own face at one size: س 138 and ص 134.5
+   against ا at 34.3. Those two are the only letters wide enough to crowd the
+   slot, so they are the only ones condensed. */
+const PLATE_WIDE = { 'س': 'wider', 'ص': 'wide' };
 const plateCells = (str) => String(str || '').split('')
-  .map(c => '<span>' + esc(PLATE_GLYPH[c] || c) + '</span>').join('');
+  .map(c => '<span' + (PLATE_WIDE[c] ? ' class="' + PLATE_WIDE[c] + '"' : '') + '>' +
+            esc(PLATE_GLYPH[c] || c) + '</span>').join('');
 const plateArabic = (letters) => normPlate(letters);
 
 /* ---------- the plate's own type ----------
@@ -1830,7 +1919,33 @@ function ago(ts) {
 }
 
 /* state of a listing, derived — never trusted from a client write */
+/* ---------- a held clock ----------
+   `end_at` is an absolute instant, so a countdown cannot be "stopped" — it is
+   held by banking what is left (`paused_ms`) and clearing `end_at`. A lot is
+   paused exactly when that bank is not null. Everything that reads the clock
+   has to know, or a held lot looks finished or looks queued. */
+const isPaused = (lot) => Boolean(lot && lot.paused_ms != null);
+/* the banked time, drawn frozen and in the same shape a running clock has */
+function pausedLabel(lot) {
+  const s = Math.max(0, Math.floor((lot.paused_ms || 0) / 1000));
+  const pad = (x) => String(x).padStart(2, '0');
+  return pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60);
+}
+/* One place decides what a clock says and whether tick() should keep moving
+   it: a paused node carries no data-cd, so the ticker leaves it alone. */
+function clockCell(lot, cls, cd) {
+  if (isPaused(lot)) {
+    return '<div class="' + cls + ' held" title="العداد موقوف">⏸ ' +
+      esc(pausedLabel(lot)) + '</div>';
+  }
+  const warn = cd && cd.length <= 8 && cd < '00:01:00' ? ' warn' : '';
+  return '<div class="' + cls + warn + '" data-cd="' + esc(lot.end_at) + '">' +
+    esc(cd || '00:00:00') + '</div>';
+}
+
 function lotState(lot) {
+  // held, not finished and not queued — the sums still stand and it is open
+  if (isPaused(lot) && lot.status === 'open') return 'live';
   if (lot.status === 'pending') return 'pending';   // in the queue, no clock yet
   if (lot.status === 'sold') return 'sold';
   if (lot.status === 'unsold') return 'unsold';
@@ -2672,7 +2787,7 @@ function renderList() {
               '<div class="stat-v price"><span class="num">' + money(finalPrice(lot, t)) + '</span> ر.س</div></div>' +
             '<div class="stat"><div class="stat-k">' + (st === 'live' ? 'ينتهي خلال' : 'الحالة') + '</div>' +
               (st === 'live'
-                ? '<div class="stat-v time" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
+                ? clockCell(lot, 'stat-v time', cd)
                 : '<div class="stat-v over">' +
                   (st === 'sold' ? 'مباع' : st === 'unsold' ? 'لم يُبَع'
                    : st === 'pending' ? 'ينتظر دوره' : 'مغلق') + '</div>') +
@@ -2802,7 +2917,7 @@ function renderLive(lot, bids) {
     // the signature: without it the stage keeps the old plate on camera
     lot.plate_letters, lot.plate_digits, lot.plate_emblem, lot.plate_kind,
     lot.car_make, lot.car_model, lot.car_year, lot.car_photo,
-    lot.seller_name, lot.end_at, st, doneCount, kind,
+    lot.seller_name, lot.end_at, lot.paused_ms, st, doneCount, kind,
     sigOfBids(bids), open.map(l => l.id).join(',')
   ]);
   if (sig === screenSig.live && host.firstElementChild) return;
@@ -2835,7 +2950,7 @@ function renderLive(lot, bids) {
       '</div>' +
 
       (st === 'live'
-        ? '<div class="live-clock' + (cd && cd.length <= 8 && cd < '00:01:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
+        ? clockCell(lot, 'live-clock', cd)
         : st === 'pending'
         ? '<div class="live-clock over">جاهز — ينتظر بدء السوم</div>'
         : '<div class="live-clock over">' + (st === 'sold' ? 'مبروك للمشتري 🎉' : st === 'unsold' ? 'ما تم البيع' : 'انتهى الوقت') + '</div>') +
@@ -3023,11 +3138,9 @@ function renderItemEditor(lot, host) {
     // typed, not picked: he changes a letter in front of the customer and the
     // stage follows the keystroke
     wireLetterBoxes(host, 'ed', (letters) =>
-      pushEdit(lot, { plate_letters: letters }));
-    host.querySelector('#edDigits').addEventListener('input', (e) => {
-      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
-      pushEdit(lot, { plate_digits: e.target.value });
-    });
+      pushEdit(lot, { plate_letters: letters }), '#edDigits');
+    wirePlateDigits(host, '#edDigits',
+      (digits) => pushEdit(lot, { plate_digits: digits }), '#edEmb button.on');
     host.querySelector('#edKind').addEventListener('click', async (e) => {
       const b = e.target.closest('button'); if (!b) return;
       host.querySelectorAll('#edKind button').forEach(x => x.classList.toggle('on', x === b));
@@ -3517,6 +3630,17 @@ function opBar(lot) {
         '<button data-a="extend" data-m="1">+ دقيقة</button>' +
         '<button data-a="extend" data-m="2">+ دقيقتين</button>' +
       '</div>' +
+      /* «ابي اوقف المزاد وارجع السومة مثل من البداية — ما فيه خيار يصفر
+         العداد او توقيف مؤقت». Hold freezes the clock where it stands and
+         keeps every sum; reset puts the clock back to the top without
+         touching the sums either. Neither is «رجّعه للقائمة», which is the
+         one that can throw the sums away. */
+      '<div class="row">' +
+        (isPaused(lot)
+          ? '<button class="start" data-a="resume">▶ كمّل العدّاد</button>'
+          : '<button data-a="pause">⏸ وقف العدّاد</button>') +
+        '<button data-a="timer" data-m="1">↺ صفّر العدّاد</button>' +
+      '</div>' +
       '<div class="lbl">السومات</div>' +
       '<div class="row">' +
         '<button class="add" data-a="manual">＋ سجّل سومة من البث</button>' +
@@ -3576,6 +3700,9 @@ function opBar(lot) {
       return;
     }
     await opDo(lot.id, a, m);
+    if (a === 'pause')  toast('وقفنا العدّاد ⏸ — السومات محفوظة');
+    if (a === 'resume') toast('كمّل العدّاد ▶');
+    if (a === 'timer')  toast('صفّرنا العدّاد ↺');
     // bring the number and its sticker back into view for the broadcast
     if (a === 'unsold') window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -3767,8 +3894,8 @@ function askQuickAdd() {
     s2.querySelectorAll('#qkKind button').forEach(x => x.classList.toggle('on', x === b));
     qkKind = b.dataset.pk; qPaint();
   });
-  const readQkLetters = wireLetterBoxes(s2, 'qk', () => qPaint());
-  s2.querySelector('#qkDigits').addEventListener('input', qPaint);
+  const readQkLetters = wireLetterBoxes(s2, 'qk', () => qPaint(), '#qkDigits');
+  wirePlateDigits(s2, '#qkDigits', qPaint, '#qkEmblem');
   s2.querySelector('#qkEmblem').addEventListener('change', qPaint);
   wirePhotoPick(s2, '#qkPhoto', '#qkPhotoPrev');
 
@@ -3863,7 +3990,7 @@ function renderLot(lot, bids, full) {
   // otherwise the card jumps under the reader's thumb (the clock keeps ticking
   // on its own through tick() and [data-cd])
   const sig = JSON.stringify([lot.id, lot.phone, lot.status, lot.sold_price,
-    lot.auto_sell_price, lot.seller_name, lot.end_at, lot.is_live,
+    lot.auto_sell_price, lot.seller_name, lot.end_at, lot.paused_ms, lot.is_live,
     st, admin.on, sigOfBids(bids)]);
   if (full || sig !== screenSig.lot || !$('#lotBody').firstElementChild) {
     screenSig.lot = sig;
@@ -3889,7 +4016,7 @@ function renderLot(lot, bids, full) {
              : 'لا توجد مزايدات بعد — سعر البداية') + '</div>' +
         '</div>' +
         (st === 'live'
-          ? '<div class="countdown' + (cd && cd.length <= 8 && cd < '00:05:00' ? ' warn' : '') + '" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
+          ? clockCell(lot, 'countdown', cd)
           : st === 'pending'
           ? '<div class="wait-note">' +
             (isMasked(lot) ? (IS_PLATE(lot)
@@ -4344,9 +4471,9 @@ function askListing() {
     s.querySelectorAll('#lsKind button').forEach(x => x.classList.toggle('on', x === b));
     lsKind = b.dataset.pk; paintPreview();
   });
-  const readLsLetters = wireLetterBoxes(s, 'ls', () => paintPreview());
-  ['#lsDigits','#lsEmblem'].forEach(i =>
-    s.querySelector(i).addEventListener('input', paintPreview));
+  const readLsLetters = wireLetterBoxes(s, 'ls', () => paintPreview(), '#lsDigits');
+  wirePlateDigits(s, '#lsDigits', paintPreview, '#lsEmblem');
+  s.querySelector('#lsEmblem').addEventListener('input', paintPreview);
   wirePhotoPick(s, '#lsPhoto', '#lsPhotoPrev');
   s.querySelector('#lsEmblem').addEventListener('change', paintPreview);
   paintPreview();

@@ -210,6 +210,17 @@ alter table mazad_bids drop constraint if exists mazad_bidder_city_len;
 alter table mazad_bids add  constraint mazad_bidder_city_len
   check (bidder_city is null or char_length(bidder_city) between 2 and 40);
 
+-- ---------- pausing the clock ----------
+-- end_at is an ABSOLUTE instant, so there is nothing to "stop": the only way
+-- to hold a countdown is to bank what is left of it and clear end_at, then
+-- hand it back on resume. paused_ms is that bank, and a row is paused exactly
+-- when it is not null — so a paused lot is `status='open'` with no end_at,
+-- which every expiry check already reads as "not expired yet".
+alter table mazad_listings add column if not exists paused_ms integer;
+alter table mazad_listings drop constraint if exists mazad_paused_ms_sane;
+alter table mazad_listings add  constraint mazad_paused_ms_sane
+  check (paused_ms is null or (paused_ms >= 0 and paused_ms <= 86400000));
+
 -- a sum sent from the site waits for the operator before it counts
 alter table mazad_bids add column if not exists approved    boolean not null default false;
 alter table mazad_bids add column if not exists approved_at timestamptz;
@@ -286,7 +297,8 @@ select
   l.car_make, l.car_model, l.car_year, l.car_photo,
   (l.item_type <> 'car' and l.status = 'pending' and not l.is_live) as phone_masked,
   l.carrier, l.start_price, l.seller_name, l.note,
-  l.end_at, l.status, l.is_live, l.sold_price, l.auto_sell_price, l.created_at
+  l.end_at, l.status, l.is_live, l.sold_price, l.auto_sell_price, l.paused_ms,
+  l.created_at
 from mazad_listings l;
 
 alter view mazad_public set (security_invoker = off);
@@ -455,7 +467,7 @@ grant execute on function place_bid(uuid, text, numeric, text, text) to anon, au
 
 -- ---------- operator actions ----------
 -- p_action: sold | unsold | cancelled | open | extend | timer | price | auto
---         | live | unlive | next | delete
+--         | live | unlive | next | delete | pause | resume
 drop function if exists mazad_admin(uuid, text, text);
 drop function if exists mazad_admin(uuid, text, text, int);
 
@@ -539,8 +551,23 @@ begin
   elsif p_action = 'timer' then
     update mazad_listings
        set status = 'open',
-           end_at = now() + (coalesce(p_minutes, 1) || ' minutes')::interval
+           end_at = now() + (coalesce(p_minutes, 1) || ' minutes')::interval,
+           paused_ms = null                      -- a fresh clock is never paused
      where id = p_listing;
+
+  -- «ابي اوقف المزاد... مثل توقيف مؤقت لعداد السومة»
+  elsif p_action = 'pause' then
+    update mazad_listings
+       set paused_ms = greatest(0, floor(extract(epoch from (end_at - now())) * 1000))::int,
+           end_at = null
+     where id = p_listing and end_at is not null and paused_ms is null;
+
+  elsif p_action = 'resume' then
+    update mazad_listings
+       set end_at = now() + (paused_ms || ' milliseconds')::interval,
+           paused_ms = null,
+           status = 'open'
+     where id = p_listing and paused_ms is not null;
 
   elsif p_action = 'live' then
     update mazad_listings set is_live = false where is_live;
