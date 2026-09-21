@@ -503,13 +503,35 @@ must both be false.
   number: no counted sums, or he is editing a sale already recorded (tapping
   تم البيع again). `markSold()` is the one place that decides, so the two
   op-bars cannot drift apart. Deleting still asks — that one is irreversible.
-- **The result is a round seal stamped across the plate**, not a label under
-  it: a double ring turned ~11°, about a third of the plate's width, centred
-  on the **plate** (which is why `plateStamped()` wraps the plate and the
-  stamp together — `.plate-wrap` also holds the seller note, so centring on it
-  sat low). The fill is opaque enough to read over the emblem behind it.
-  `STAMP` breaks each result into two short words so the circle is filled
-  rather than a wide word in a round hole.
+- **The result is the owner's own stamp artwork**, `mazad-stamp-<result>.png`:
+  a double ring with stars and a banner cut through it at an angle for the
+  words. **Nothing in the code draws a ring, a star or a banner — do not
+  "improve" it, redraw it, or swap it for SVG** («نسخ لصق العلامة اللي ارسلتها
+  لاتغيرها»). It is stamped across the **plate** (which is why
+  `plateStamped()` wraps the plate and the stamp together — `.plate-wrap` also
+  holds the seller note, so centring on that sat low).
+  - **The three files are ONE shape in three inks.** They are byte-identical
+    in their alpha channel; only the RGB differs, which is the single change
+    he asked for («بس غير اللون عند البيع اخضر»). To re-colour, replace RGB
+    and keep **every** alpha value, or the anti-aliased edges of his artwork
+    are lost. `test-stampart.js` hashes the alpha of all three and fails if
+    they ever drift apart, or if any file gains a second ink.
+  - **The banner's interior is TRANSPARENT in his file**, not white — over a
+    plate it would show the plate through the words. So `.st-band` lays a
+    white rectangle *under* the image at the banner's measured position, and
+    his outline draws over its edges.
+  - Geometry measured off the 360×360 file by ink, and **all four move
+    together if the artwork is ever replaced**: angle **-15.03°**, banner
+    height **17.9%**, centre **50.5% / 52.2%**, length **85%**.
+  - `STAMP` is one line per result, not two stacked words — a banner takes a
+    line. The type is capped by the banner's **height**: over ~13.5cqw the
+    tall letters clip however short the word is.
+  - **The inks are measured, not picked by eye.** `#07803e` and `#e00000`
+    both land at **5.04:1** on the banner's white, so the two results read at
+    identical strength on a stream. A brighter green was tried first and came
+    in at 3.49 — fine on a monitor, not through a phone camera. That green's
+    hue is 147, the same blue-green family as `--ok-600`, so green still means
+    exactly one thing on this site.
 - **The broadcast card is the whole statement; the footer under it is not.**
   The card already carries the contact number and the commission, so on
   `/live` the footer repeated both **on camera**, plus a «من نحن» link nobody
