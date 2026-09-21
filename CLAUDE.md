@@ -823,6 +823,20 @@ must both be false.
   colour.
 - **The palette is عنابي، ذهبي وزيتي — burgundy, gold and olive — and green
   means one thing only.**
+  - **The olive has to be on the MAIN page, not only the broadcast.** Three
+    passes were spent tuning the card before anyone noticed the page a visitor
+    actually lands on had none: its single olive stop sat at **-10%**, off the
+    canvas, so the header rendered as plain burgundy («الصفحة الرئيسية ليش
+    كلها عنابي ما فيها ولا لون زيتي»). It now carries the colour in four
+    places — the top bar's gradient and its bottom rule, the olive discs
+    behind the «طلب» and «مزايدة» icons (`#doorSell` keeps gold, since it is
+    the one to press), the stat boxes' wash and the footer's rule.
+    `test-home.js` checks each by **hue**, and that the gradient's first stop
+    is on the canvas at all — a negative stop is invisible and silent.
+  - `body.on-air` drops the top bar's rule as well as the footer: that rule is
+    page chrome and the broadcast is not a page. It also bought back the 2px
+    that pushed the commission one pixel below the fold on a 760px laptop —
+    the card's height budget there is that tight.
   - **Olive (`--olive-900…600`) is a BAND at the foot of the card, and the
     only question is how far up it climbs.** Three passes on this: it began at
     78%, which put olive across the whole lower half and stopped the card
