@@ -228,6 +228,65 @@ must both be false.
   "back" affordance goes through it.
 - **The name chip is the bidder's identity and is hidden on `/live`** —
   the operator does not bid from there, and it is on camera.
+- **The broadcast runs ONE section at a time.** A plates night is a plates
+  night: mixing a phone into the queue behind a plate, and quoting the phone
+  commission under a car, is not a smaller version of three auctions — it is a
+  muddle nobody can follow, least of all on camera. `/live` therefore has a
+  section (`liveKind`, remembered in `localStorage`):
+  - whatever is **on air** sets it (`liveSection(lot)`), and when nothing is on
+    air the operator picks it from the chips at the top of his strip. The chips
+    are disabled while a lot is on air — switching under it would show the
+    wrong queue beside the right plate.
+  - the queue (`queueOf(kind)`), the commission line, the heading and «التالي»
+    all obey it. `mazad_admin('next')` takes whatever is **oldest**, which on a
+    plates night hands him a phone, so the page picks the next lot within the
+    section itself and puts it on air by id.
+  - the empty card used to call `feeRule(kindOf(lot))` with no lot at all,
+    which fell through to the phone default: a queue of cars under «العمولة 200
+    وإذا زاد عن 20,000 تكون 2.5%». Any fee shown anywhere takes an explicit
+    kind.
+- **The strip renders when NOTHING is on air too.** `renderLive`'s empty-state
+  branch used to `return` before `renderLiveOps`, so the one screen where he
+  most needs the controls — nothing on air, pick the section, put the next one
+  up — had no controls at all.
+- **A sheet must never open over the broadcast.** He films this screen with his
+  only device. `sheet()` is a fixed full-screen modal, so «سجّل سومة من البث»,
+  «تم البيع» and the rest landed on camera, covered the auction and showed
+  every viewer a sum being typed in by hand. While `route.name === 'live'` and
+  the strip is open, `sheet()` adds `.in-ops`: above 900px the backdrop shrinks
+  to the strip's 292px, goes transparent (nothing dims the stage) and the panel
+  rises inside the dashed edge. Below 900px nothing is being filmed, so the
+  ordinary centred sheet stays. **Never make an operator action a centred modal
+  on `/live`.**
+- **Correcting the lot that is on air, from the strip.** He reads the plate off
+  the seller's paper on camera and gets a letter wrong, or the seller corrects
+  him mid-call; re-listing would throw away the sums and the clock. So
+  `#opsItem` edits the identity in place — plate letters and digits, the
+  emblem, a phone, a car's make/model/year — and `mazad_set_item()` saves it,
+  with null meaning "leave this field alone".
+  - **Paint first, save second.** The camera is on the stage, so a keystroke
+    repaints it immediately (`pushEdit` assigns onto the lot and clears
+    `screenSig.live`); the database follows 400ms later. A half-typed value
+    paints but is not sent — `EDIT_OK` holds it back and the strip says
+    «ناقص — ما انحفظ بعد».
+  - **`liveEdit` holds the local value against the poll.** The page re-reads
+    itself every 2.5s; without the overlay the poll lands between two
+    keystrokes and puts the old plate back on camera. It is re-applied to
+    every fetch until the server echoes it back, or 15s pass.
+  - **The editor card is rebuilt only when the LOT changes**, never when its
+    values do — while he is typing, the inputs are the truth and a rebuild
+    would take the focus out from under him. Its signature is id + kind +
+    status and nothing else.
+  - The emblem is saved by `mazad_set_emblem`, not `mazad_set_item`, so it has
+    no `EDIT_OK` rule: a key with no rule is painted only.
+  - A finished lot refuses the edit (`error: 'finished'`) — what it sold as
+    must not change under it.
+- **A premium plate is a SHORT one.** «ا ب 1» is what gets auctioned; «ا ب ح
+  1234» is what comes on an ordinary car. The letters CHECK demanded exactly
+  three, which refused precisely the plates worth listing — it is `{1,3}` now,
+  in `mazad_item_shape`, in `mazad_create_plate`, in `mazad_set_item` and in
+  the page's own validation. Each letter box carries a blank first option and
+  the letters are joined in order, so a blank in the middle collapses.
 - **Three sections on one engine: لوحات، جوالات، سيارات.** The auction never
   cared what it was selling — bids, the clock, approval, anti-sniping, the
   auto-sell price and the commission are identical for all three. Everything
@@ -303,6 +362,14 @@ must both be false.
     `createListing` generates the uuid client-side and sends
     `Prefer: return=minimal`. Don't "fix" it back to `return=representation`.
   - `fmtPhone` keeps `•` so a masked number still groups as `054 ••• ••01`.
+- **A paddle drawn without a width is invisible.** `.paddle` carries
+  `container-type: inline-size`, which contains its own inline size — so a
+  shrink-to-fit paddle has nothing to shrink to and collapses to **0×0**. The
+  feed sets `width: 74px` and works; the broadcast set nothing, so the hand was
+  simply not there on the one screen that is filmed, and no test failed because
+  the image itself had loaded. `.lp .paddle { width: 100% }` fixes it, and
+  `test-art.js` now asserts the rendered **box**, not just the load. Anywhere
+  new a paddle is drawn must give it a width.
 - **A sum is shown on a raised paddle, and the paddle is supplied artwork.**
   `mazad-paddle.png` (a hand holding a blank sign) was provided by the owner.
   **Nothing in the code draws a hand or a board — do not "improve" it, redraw
@@ -477,11 +544,26 @@ must both be false.
   `document.styleSheets` back and asserts that the looks which matter — the
   broadcast gradient, its white text, the operator warning's amber — actually
   reach their elements at three widths.
-- **The palette is عنابي وذهبي — burgundy and gold — and green means one
-  thing only.** `--wine-900…500` are the brand surfaces; `--ok-600`/`--ok-700`
+- **A CSS variable defined as itself is invalid, and fails in silence.**
+  `--ok-700: var(--ok-700)` and `--ok-600: var(--ok-600)` — left behind by the
+  burgundy migration — made every success green on the site resolve to
+  **transparent**: the تم البيع stamp, the ✔ on an approved sum and the confirm
+  button all lost their colour and nothing errored. `test-wine.js` now paints
+  every brand token onto a probe element and asserts it resolves to a real
+  colour.
+- **The palette is عنابي، ذهبي وزيتي — burgundy, gold and olive — and green
+  means one thing only.**
+  - **Olive (`--olive-900…600`) is the third brand colour**, for surfaces: the
+    top bar sinks into it and the broadcast card fades to it at the bottom,
+    which is what reads as فخم on camera. It is deep and desaturated and
+    **yellow-green** (~88°), while the success green is saturated and
+    **blue-green** (~150°). That hue gap is what keeps them from reading as the
+    same thing — not RGB distance, which calls the two 59 apart whether the gap
+    is hue or lightness — and `test-wine.js` asserts the hue gap. `--wine-900…500` are the brand surfaces; `--ok-600`/`--ok-700`
   are the *only* greens left, and they mean success (تم البيع, an approved
   sum). Never use green for a surface again, or the two read as the same
   thing.
+  - `--ok-700` / `--ok-600` remain the **only** greens that mean success.
   - **Burgundy IS dark red, so a red signal on it disappears.** The «على
     الهواء» badge was `#ff3b30` and became gold with a red pulsing dot; the
     expired clock was pale red and became warm cream. Anything new that must

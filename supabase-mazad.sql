@@ -97,10 +97,13 @@ alter table mazad_listings drop constraint if exists mazad_item_type;
 alter table mazad_listings add  constraint mazad_item_type
   check (item_type in ('phone','plate','car'));
 
--- Saudi plates carry three letters from a fixed 17-letter set (the ones that
--- have a Latin twin) and one to four digits. The letters are normalised before
--- they land (أ/إ/آ → ا, ى → ي, ة → ه) by the trigger below, so a seller typing
--- إ ب ح is not rejected for it.
+-- Saudi plates carry up to three letters from a fixed 17-letter set (the ones
+-- that have a Latin twin) and one to four digits. The letters are normalised
+-- before they land (أ/إ/آ → ا, ى → ي, ة → ه) by the trigger below, so a seller
+-- typing إ ب ح is not rejected for it.
+-- ONE to three, not exactly three: a premium plate is usually a SHORT one —
+-- «ا ب 1» is what gets auctioned, «ا ب ح 1234» is what comes on an ordinary
+-- car — so demanding three refused exactly the plates worth listing.
 alter table mazad_listings drop constraint if exists mazad_item_shape;
 alter table mazad_listings add  constraint mazad_item_shape check (
      (item_type = 'phone'
@@ -108,7 +111,7 @@ alter table mazad_listings add  constraint mazad_item_shape check (
        and plate_letters is null and plate_digits is null
        and car_make is null and car_model is null and car_year is null)
   or (item_type = 'plate'
-       and plate_letters ~ '^[ابحدرسصطعقكلمنهوي]{3}$'
+       and plate_letters ~ '^[ابحدرسصطعقكلمنهوي]{1,3}$'
        and plate_digits  ~ '^[0-9]{1,4}$'
        and phone is null
        and car_make is null and car_model is null and car_year is null)
@@ -886,7 +889,7 @@ begin
   p_digits  := btrim(coalesce(p_digits, ''));
   p_emblem  := nullif(btrim(coalesce(p_emblem, '')), '');
 
-  if p_letters !~ '^[ابحدرسصطعقكلمنهوي]{3}$' then
+  if p_letters !~ '^[ابحدرسصطعقكلمنهوي]{1,3}$' then
     return json_build_object('ok', false, 'error', 'bad_letters');
   end if;
   if p_digits !~ '^[0-9]{1,4}$' then
@@ -1029,6 +1032,113 @@ end;
 $$;
 
 grant execute on function mazad_set_emblem(uuid, text, text) to anon, authenticated;
+
+-- ---------- correcting what is on air, while it is on air ----------
+-- The operator reads the plate off the seller's paper on camera and gets a
+-- letter wrong, or the seller corrects him mid-call. Re-listing would throw
+-- away the sums and the clock, so the identity itself is editable in place.
+-- Null means "leave this field alone", so the page can send one box at a time
+-- as it is typed. A finished lot is refused: what it sold as must not change
+-- under it.
+create or replace function mazad_set_item(
+  p_listing uuid,
+  p_secret  text,
+  p_letters text default null,
+  p_digits  text default null,
+  p_phone   text default null,
+  p_make    text default null,
+  p_model   text default null,
+  p_year    int  default null
+) returns json
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_secret text;
+  v_row    mazad_listings%rowtype;
+  v_bids   int;
+begin
+  select value into v_secret from mazad_config where key = 'admin_secret';
+  if v_secret is null or p_secret is null or p_secret <> v_secret then
+    return json_build_object('ok', false, 'error', 'forbidden');
+  end if;
+
+  select * into v_row from mazad_listings where id = p_listing;
+  if not found then return json_build_object('ok', false, 'error', 'not_found'); end if;
+  if v_row.status in ('sold','unsold','cancelled') then
+    return json_build_object('ok', false, 'error', 'finished');
+  end if;
+
+  if v_row.item_type = 'plate' then
+    if p_letters is not null then
+      p_letters := mazad_norm_plate(p_letters);
+      if p_letters !~ '^[ابحدرسصطعقكلمنهوي]{1,3}$' then
+        return json_build_object('ok', false, 'error', 'bad_letters');
+      end if;
+      update mazad_listings set plate_letters = p_letters where id = p_listing;
+    end if;
+    if p_digits is not null then
+      p_digits := btrim(p_digits);
+      if p_digits !~ '^[0-9]{1,4}$' then
+        return json_build_object('ok', false, 'error', 'bad_digits');
+      end if;
+      update mazad_listings set plate_digits = p_digits where id = p_listing;
+    end if;
+
+  elsif v_row.item_type = 'phone' then
+    if p_phone is not null then
+      p_phone := btrim(p_phone);
+      if p_phone !~ '^05[0-9]{8}$' then
+        return json_build_object('ok', false, 'error', 'bad_phone');
+      end if;
+      update mazad_listings set phone = p_phone where id = p_listing;
+    end if;
+
+  else  -- car
+    if p_make is not null then
+      p_make := btrim(p_make);
+      if char_length(p_make) < 2 or char_length(p_make) > 30 then
+        return json_build_object('ok', false, 'error', 'bad_make');
+      end if;
+      update mazad_listings set car_make = p_make where id = p_listing;
+    end if;
+    if p_model is not null then
+      p_model := btrim(p_model);
+      if char_length(p_model) < 1 or char_length(p_model) > 30 then
+        return json_build_object('ok', false, 'error', 'bad_model');
+      end if;
+      update mazad_listings set car_model = p_model where id = p_listing;
+    end if;
+    if p_year is not null then
+      if p_year < 1970 or p_year > 2100 then
+        return json_build_object('ok', false, 'error', 'bad_year');
+      end if;
+      update mazad_listings set car_year = p_year where id = p_listing;
+    end if;
+  end if;
+
+  select * into v_row from mazad_listings where id = p_listing;
+  select count(*) into v_bids from mazad_bids where listing_id = p_listing and approved;
+
+  -- the page warns him when he has just renamed something people already
+  -- bid on, so the count comes back with the new identity
+  return json_build_object(
+    'ok', true,
+    'item_type',     v_row.item_type,
+    'plate_letters', v_row.plate_letters,
+    'plate_digits',  v_row.plate_digits,
+    'phone',         v_row.phone,
+    'car_make',      v_row.car_make,
+    'car_model',     v_row.car_model,
+    'car_year',      v_row.car_year,
+    'approved_bids', v_bids
+  );
+end;
+$$;
+
+grant execute on function mazad_set_item(uuid, text, text, text, text, text, text, int)
+  to anon, authenticated;
 
 -- ---------- the car photo bucket ----------
 -- A car is judged on its photo, so the seller uploads one before the lot is

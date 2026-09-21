@@ -32,8 +32,20 @@
   --wine-500:  #9c2b48;
   --gold-500:  #d9a441;
   --gold-400:  #edc26b;
-  --ok-700:    var(--ok-700);
-  --ok-600:    var(--ok-600);
+  /* زيتي — the third brand colour. Deep and desaturated, so it reads as a
+     dark surface beside the burgundy, never as the success green: the
+     stamp on a sold lot is --ok-600, which is bright and saturated. The two
+     must not converge, or "تم البيع" stops meaning anything. */
+  --olive-900: #1d2416;
+  --olive-800: #2c3722;
+  --olive-700: #3e4d2f;
+  --olive-600: #55683f;
+  /* Success, and only success. These two were written as var(--ok-700) /
+     var(--ok-600) — a variable defined as itself, which is invalid, so every
+     green on the site resolved to TRANSPARENT: the تم البيع stamp, the ✔ on
+     an approved sum and the confirm button all lost their colour silently. */
+  --ok-700:    #14603a;
+  --ok-600:    #1f7a4d;
   --ink:       #170d11;
   --muted:     #7b6b70;
   --line:      #ece2e5;
@@ -65,7 +77,7 @@ a { color: inherit; }
 .wrap { max-width: 720px; margin: 0 auto; padding: 0 14px 120px; }
 
 .topbar {
-  background: linear-gradient(135deg, var(--wine-800), var(--wine-600));
+  background: linear-gradient(135deg, var(--olive-900) -10%, var(--wine-800) 38%, var(--wine-600));
   color: #fff;
   padding: 14px 0 18px;
   box-shadow: var(--shadow);
@@ -237,6 +249,28 @@ a { color: inherit; }
   position: fixed; inset: 0; background: rgba(5,48,29,.45); z-index: 60;
   display: flex; align-items: flex-end; justify-content: center;
 }
+/* ---------- a sheet on the broadcast screen opens IN THE STRIP ----------
+   He films this screen with his only device. A centred modal here lands on
+   camera, covers the auction, and tells every viewer that a number is being
+   typed in by hand. So while he is on /live with the strip open, his sheets
+   rise inside the strip instead — past the dashed edge, where the camera is
+   not pointing, and the stage behind them never dims.
+   Only above 900px, because that is where the strip rides alongside; on a
+   phone the strip is stacked below and nothing is being filmed. */
+@media (min-width: 900px) {
+  .sheet-bg.in-ops {
+    inset: 0 0 0 auto; width: 292px; background: transparent;
+    align-items: stretch; pointer-events: none;
+  }
+  .sheet-bg.in-ops .sheet {
+    pointer-events: auto; max-width: none; max-height: 100dvh;
+    border-radius: 14px 0 0 14px; padding: 14px 12px 18px;
+    border: 2px dashed var(--gold-500); border-right: 0; animation: none;
+  }
+  .sheet-bg.in-ops .sheet h2 { font-size: 1rem; }
+  .sheet-bg.in-ops .sheet .hint { font-size: .74rem; margin-bottom: 10px; }
+  .sheet-bg.in-ops .row2 { grid-template-columns: 1fr; }
+}
 .sheet {
   background: #fff; width: 100%; max-width: 720px; max-height: 92dvh; overflow-y: auto;
   border-radius: 20px 20px 0 0; padding: 18px 16px calc(24px + env(safe-area-inset-bottom));
@@ -307,6 +341,12 @@ a { color: inherit; }
 .live-paddles { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
 .lp { width: 88px; text-align: center; }
 .lp.top { width: 112px; }
+/* .paddle carries container-type: inline-size, which contains its own inline
+   size — so a shrink-to-fit .paddle has NO width to shrink to and collapses to
+   0x0. The feed sets width: 74px and works; the broadcast never set one, so
+   every paddle on camera was invisible and nothing failed. Any new place a
+   paddle is drawn must give it a width. */
+.lp .paddle { width: 100%; }
 .lp-name { font-size: .7rem; color: #f0dde2; margin-top: 4px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; }
 .lp.top .lp-name { color: var(--gold-400); font-weight: 700; }
@@ -390,7 +430,11 @@ a { color: inherit; }
 .ctl-bid.done .amt { color: var(--wine-600); }
 /* ---------- live broadcast screen ---------- */
 .live {
-  background: radial-gradient(120% 90% at 50% 0%, #7b1f38, #43101f 48%, #2a0812);
+  /* burgundy at the top where the plate sits, sinking into olive at the
+     bottom corners — the depth is what reads as فخم on camera */
+  background:
+    radial-gradient(120% 90% at 50% 0%, #7b1f38, rgba(67,16,31,.96) 48%, rgba(29,36,22,0) 100%),
+    linear-gradient(160deg, var(--wine-900) 30%, var(--olive-900));
   border-radius: 20px; padding: 16px 14px 20px; color: #fff; margin-top: 14px;
   border: 2px solid rgba(217,164,65,.45); box-shadow: var(--shadow-lg);
 }
@@ -662,6 +706,38 @@ a { color: inherit; }
 .ops-card:empty { display: none; }
 .ops-h     { font-weight: 700; margin-bottom: 8px; font-size: .9rem; }
 .ops-empty { text-align: center; color: var(--muted); font-size: .84rem; }
+.ops-sub   { font-weight: 500; font-size: .74rem; color: var(--muted); }
+
+/* ---------- correcting the lot while it is on air ----------
+   He reads the plate off the seller's paper on camera and gets a letter
+   wrong, or the seller corrects him mid-call. Re-listing would drop the sums
+   and the clock, so the identity is edited here and the stage — the part the
+   camera sees — repaints on the keystroke. Sized for the 268px strip. */
+.ed-plate { display: grid; gap: 8px; margin-bottom: 10px; }
+.ed-plate .plate-picks select { font-size: 1rem; padding: 8px 2px; }
+.ed-plate input {
+  width: 100%; text-align: center; font-size: 1.05rem; font-weight: 800;
+  letter-spacing: .12em; direction: ltr;
+}
+.ed-emb {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+}
+.ed-emb button {
+  border: 1.5px solid var(--line); background: #fff; border-radius: 9px;
+  padding: 5px 2px 3px; cursor: pointer; display: grid; gap: 2px;
+  justify-items: center; font-size: .6rem; font-weight: 700; color: var(--muted);
+  line-height: 1.25; min-width: 0;
+}
+.ed-emb button img { width: 30px; height: 30px; object-fit: contain; }
+.ed-emb button .none { width: 30px; height: 30px; display: grid; place-items: center;
+  font-size: 1rem; color: var(--line); }
+.ed-emb button.on { border-color: var(--gold-500); background: #fff9e8; color: var(--ink); }
+.ed-err { color: #a3241c; font-size: .74rem; font-weight: 700; margin-top: 6px; }
+.ed-err:empty { display: none; }
+.ops-seg { margin-bottom: 10px; }
+.ops-seg button { font-size: .74rem; padding: 8px 2px; }
+.ops-seg.locked button:not(.on) { opacity: .45; }
+.ed-done { color: var(--muted); font-size: .82rem; text-align: center; }
 
 /* the way back once it is folded away, pinned to the far edge so it stays
    out of shot */
@@ -878,6 +954,14 @@ const PLATE_LATIN = { 'ا':'A','ب':'B','ح':'J','د':'D','ر':'R','س':'S','ص'
                       'ط':'T','ع':'E','ق':'G','ك':'K','ل':'L','م':'Z','ن':'N',
                       'ه':'H','و':'U','ي':'V' };
 const PLATE_LETTERS = Object.keys(PLATE_LATIN);
+
+/* A plate may carry one, two or three letters, and the short ones are the
+   valuable ones — «ا ب 1» is what gets auctioned, «ا ب ح 1234» is what comes
+   on an ordinary car. So every box carries a blank, and the letters are
+   joined in order: a blank in the middle simply collapses. */
+const letterOptions = (sel) => '<option value="">—</option>' +
+  PLATE_LETTERS.map(c => '<option value="' + c + '"' +
+    (c === sel ? ' selected' : '') + '>' + c + '</option>').join('');
 // people type أ إ آ ى ة as often as the plate spellings; the database
 // normalises the same way, so the two can never disagree
 const normPlate = (t) => String(t || '').trim()
@@ -914,11 +998,20 @@ const IS_CAR = (lot) => lot && lot.item_type === 'car';
 
 function itemLabel(lot) {
   if (!lot) return '';
-  if (IS_CAR(lot))   return [lot.car_make, lot.car_model, lot.car_year].filter(Boolean).join(' ');
+  if (IS_CAR(lot)) {
+    // a seller who typed the make into the model box too should not have it
+    // read back to him twice on the broadcast
+    const make = String(lot.car_make || '').trim();
+    const model = String(lot.car_model || '').trim();
+    return [make, model === make ? '' : model, lot.car_year].filter(Boolean).join(' ');
+  }
   if (IS_PLATE(lot)) return normPlate(lot.plate_letters).split('').join(' ') + ' ' + (lot.plate_digits || '');
   return fmtPhone(lot.phone);
 }
 const itemWord  = (lot) => IS_CAR(lot) ? 'السيارة' : IS_PLATE(lot) ? 'اللوحة' : 'الرقم';
+/* a section names itself: "3 لوحات", not "3 رقم" */
+const kindCount = (k) => k === 'plate' ? 'لوحة' : k === 'car' ? 'سيارة' : 'رقم';
+const kindNoun  = (k) => k === 'plate' ? 'لوحتك' : k === 'car' ? 'سيارتك' : 'رقمك';
 const itemWordN = (lot) => IS_CAR(lot) ? 'سيارتك' : IS_PLATE(lot) ? 'لوحتك' : 'رقمك';
 const KIND_LABEL = { plate: '🚗 لوحات', phone: '📱 جوالات', car: '🚙 سيارات' };
 /* the chip on a card says what the lot is; for a phone the carrier is more
@@ -941,7 +1034,8 @@ function itemPlate(lot, size) {
                  'loading="lazy" decoding="async">' : '') +
         '<div class="cc-name">' +
           '<div class="cc-make">' + esc(lot.car_make || '') + '</div>' +
-          '<div class="cc-model">' + esc(lot.car_model || '') + '</div>' +
+          (String(lot.car_model || '').trim() === String(lot.car_make || '').trim() ? ''
+            : '<div class="cc-model">' + esc(lot.car_model || '') + '</div>') +
           '<div class="cc-year num">' + esc(lot.car_year || '') + '</div>' +
         '</div>' +
       '</div>'
@@ -1178,6 +1272,29 @@ const remote = {
       body: JSON.stringify({ p_listing: listing, p_secret: secret, p_name: name, p_amount: amount })
     });
   },
+  /* Correcting the lot that is ON AIR, without re-listing it: re-listing
+     would drop the sums and the clock. Null means "leave this field alone",
+     so the page can send one box at a time as the operator types. */
+  setItem(listing, secret, fields) {
+    return this.req('rpc/mazad_set_item', {
+      method: 'POST',
+      body: JSON.stringify({
+        p_listing: listing, p_secret: secret,
+        p_letters: fields.plate_letters ?? null,
+        p_digits:  fields.plate_digits  ?? null,
+        p_phone:   fields.phone         ?? null,
+        p_make:    fields.car_make      ?? null,
+        p_model:   fields.car_model     ?? null,
+        p_year:    fields.car_year      ?? null
+      })
+    });
+  },
+  setEmblem(listing, secret, emblem) {
+    return this.req('rpc/mazad_set_emblem', {
+      method: 'POST',
+      body: JSON.stringify({ p_listing: listing, p_secret: secret, p_emblem: emblem })
+    });
+  },
   bidsOf(listing, secret) {
     return this.req('rpc/mazad_bids_of', {
       method: 'POST', body: JSON.stringify({ p_listing: listing, p_secret: secret })
@@ -1384,6 +1501,40 @@ const local = {
     this.write(db);
     return { ok: true, amount: bid.amount, auto_sold: auto };
   },
+  async setItem(listing, _secret, fields) {
+    const db = this.read();
+    const lot = db.listings.find(l => l.id === listing);
+    if (!lot) return { ok: false, error: 'not_found' };
+    if (['sold','unsold','cancelled'].includes(lot.status)) return { ok: false, error: 'finished' };
+    if (lot.item_type === 'plate') {
+      if (fields.plate_letters != null) {
+        const v = normPlate(fields.plate_letters);
+        if (!new RegExp('^[' + PLATE_LETTERS.join('') + ']{1,3}$').test(v)) return { ok: false, error: 'bad_letters' };
+        lot.plate_letters = v;
+      }
+      if (fields.plate_digits != null) {
+        if (!/^\d{1,4}$/.test(fields.plate_digits)) return { ok: false, error: 'bad_digits' };
+        lot.plate_digits = fields.plate_digits;
+      }
+    } else if (lot.item_type === 'car') {
+      if (fields.car_make  != null) lot.car_make  = fields.car_make;
+      if (fields.car_model != null) lot.car_model = fields.car_model;
+      if (fields.car_year  != null) lot.car_year  = fields.car_year;
+    } else if (fields.phone != null) {
+      if (!/^05\d{8}$/.test(fields.phone)) return { ok: false, error: 'bad_phone' };
+      lot.phone = fields.phone;
+    }
+    this.write(db);
+    return { ok: true, ...lot };
+  },
+  async setEmblem(listing, _secret, emblem) {
+    const db = this.read();
+    const lot = db.listings.find(l => l.id === listing);
+    if (!lot) return { ok: false, error: 'not_found' };
+    if (lot.item_type !== 'plate') return { ok: false, error: 'not_a_plate' };
+    lot.plate_emblem = emblem; this.write(db);
+    return { ok: true, emblem };
+  },
   async operatorCreate(_secret, d) {
     const db = this.read();
     db.listings.forEach(l => l.is_live = false);
@@ -1481,8 +1632,52 @@ function parseRoute() {
    countdown, and tick() updates that in place through [data-cd], so each
    screen rebuilds only when something it shows has actually changed. Clearing
    the signatures on navigation forces the first paint of a screen. */
-let screenSig = { control: '', live: '', lot: '', ops: '' };
+let screenSig = { control: '', live: '', lot: '', ops: '', item: '' };
+
+/* The page re-reads itself every 2.5s, and the operator edits the lot that is
+   ON AIR while he types. Without this the poll lands between two keystrokes
+   and puts the old plate back on camera. So an edit is held locally and
+   re-applied to every fetch until the server echoes it back (or 15s pass,
+   which means the save failed and the truth is the server's). */
+let liveEdit = null;
+function applyLiveEdit(list) {
+  if (!liveEdit) return list;
+  if (nowMs() - liveEdit.at > 15000) { liveEdit = null; return list; }
+  const lot = (list || []).find(l => l.id === liveEdit.id);
+  if (!lot) { liveEdit = null; return list; }
+  const landed = Object.keys(liveEdit.fields)
+    .every(k => String(lot[k] ?? '') === String(liveEdit.fields[k] ?? ''));
+  if (landed) { liveEdit = null; return list; }
+  Object.assign(lot, liveEdit.fields);
+  return list;
+}
 let opsFolded = (() => { try { return localStorage.getItem('mazad_ops_folded') === '1'; } catch { return false; } })();
+
+/* ---------- the broadcast runs ONE section at a time ----------
+   A plates night is a plates night. Mixing a phone into the queue behind a
+   plate, and quoting the phone commission under a car, is not a smaller
+   version of three auctions — it is a muddle nobody can follow, least of all
+   on camera. So /live has a section: whatever is on air sets it, and when
+   nothing is on air the operator picks it from his strip. The queue, the
+   commission line and التالي all obey it. */
+let liveKind = (() => { try { return localStorage.getItem('mazad_live_kind') || 'plate'; } catch { return 'plate'; } })();
+function setLiveKind(k) {
+  if (liveKind === k) return;
+  liveKind = k;
+  try { localStorage.setItem('mazad_live_kind', k); } catch {}
+  screenSig.live = ''; screenSig.ops = ''; screenSig.item = '';
+  refresh(false);
+}
+/* what is on air decides the section; otherwise his own choice stands */
+function liveSection(lot) {
+  if (!lot) return liveKind;
+  const k = kindOf(lot);
+  if (k !== liveKind) { liveKind = k; try { localStorage.setItem('mazad_live_kind', k); } catch {} }
+  return k;
+}
+const queueOf = (kind) => cache.listings
+  .filter(l => ['pending', 'live'].includes(lotState(l)) && !l.is_live && kindOf(l) === kind)
+  .sort((a, b) => a.created_at.localeCompare(b.created_at));
 const sigOfBids = bs => (bs || []).map(b => b.id + ':' + b.amount).join(',');
 
 /* /live and /control are their own paths, so clearing the hash leaves you
@@ -1498,7 +1693,7 @@ function goList() {
 
 async function go() {
   route = parseRoute();
-  screenSig = { control: '', live: '', lot: '', ops: '' };
+  screenSig = { control: '', live: '', lot: '', ops: '', item: '' };
   if (route.name === 'admin') { location.hash = ''; askAdmin(); return; }
   $('#viewList').classList.toggle('hidden', route.name !== 'list');
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
@@ -1514,7 +1709,7 @@ async function go() {
 async function refresh(full) {
   try {
     if (route.name === 'live') {
-      cache.listings = await store.listings();
+      cache.listings = applyLiveEdit(await store.listings());
       const lot = cache.listings.find(l => l.is_live);
       const bids = lot ? await store.bids(lot.id) : [];
       if (lot) cache.bids[lot.id] = bids;
@@ -1756,30 +1951,35 @@ function renderLive(lot, bids) {
     return;
   }
 
-  const open = cache.listings
-    .filter(l => ['pending', 'live'].includes(lotState(l)) && !l.is_live)
-    .sort((a, b) => a.created_at.localeCompare(b.created_at));
+  const kind = liveSection(lot);
+  const open = queueOf(kind);
   const liveId = lot ? lot.id : null;
   const doneCount = cache.listings
-    .filter(l => ['sold', 'unsold'].includes(l.status) && l.id !== liveId).length;
+    .filter(l => ['sold', 'unsold'].includes(l.status) && kindOf(l) === kind && l.id !== liveId).length;
 
   if (!lot) {
-    const emptySig = 'empty:' + doneCount + ':' + open.map(l => l.id).join(',');
+    const emptySig = 'empty:' + kind + ':' + doneCount + ':' + open.map(l => l.id).join(',');
     if (emptySig === screenSig.live && host.firstElementChild) return;
     screenSig.live = emptySig;
     host.innerHTML =
       '<div class="live">' +
-        '<div class="live-head"><span class="live-dot">البث</span>' +
-          '<span class="live-seq">تم الانتهاء من <span class="num">' + doneCount + '</span> رقم</span></div>' +
+        '<div class="live-head"><span class="live-dot">' + esc(KIND_LABEL[kind]) + '</span>' +
+          '<span class="live-seq">تم الانتهاء من <span class="num">' + doneCount + '</span> ' +
+            esc(kindCount(kind)) + '</span></div>' +
         '<div class="live-empty"><div class="t">جاهزون للي بعده</div>' +
-          '<div class="s">اعرض رقمك من الموقع وبيجي دورك</div></div>' +
+          '<div class="s">اعرض ' + esc(kindNoun(kind)) + ' من الموقع وبيجي دورك</div></div>' +
         '<div class="live-cta">للمشاركة والمزايدة<br><b>rafd-digital.com/m</b>' +
           '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
         '</div>' +
-        '<div class="live-fee">💰 العمولة <b>' + esc(feeRule(kindOf(lot))) + '</b> — على ذمة البائع</div>' +
+        '<div class="live-fee">💰 عمولة ' + esc(KIND_LABEL[kind].replace(/^\S+\s/, '')) +
+          ' <b>' + esc(feeRule(kind)) + '</b> — على ذمة البائع</div>' +
         queueHtml(open) +
       '</div>';
     wireQueue(open, null);
+    // the strip is needed MOST here: nothing is on air, so this is where he
+    // picks the section and puts the next one up. Returning without it left
+    // him staring at an empty card with no controls at all.
+    renderLiveOps(null);
     return;
   }
 
@@ -1792,7 +1992,11 @@ function renderLive(lot, bids) {
 
   const sig = JSON.stringify([
     lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
-    lot.seller_name, lot.end_at, st, doneCount,
+    // the identity itself is editable from the strip now, so it belongs in
+    // the signature: without it the stage keeps the old plate on camera
+    lot.plate_letters, lot.plate_digits, lot.plate_emblem,
+    lot.car_make, lot.car_model, lot.car_year, lot.car_photo,
+    lot.seller_name, lot.end_at, st, doneCount, kind,
     sigOfBids(bids), open.map(l => l.id).join(',')
   ]);
   if (sig === screenSig.live && host.firstElementChild) return;
@@ -1872,24 +2076,38 @@ function renderLiveOps(lot) {
   $('#opsPeek').classList.toggle('on', admin.on && opsFolded && route.name === 'live');
   if (!on) { host.innerHTML = ''; screenSig.ops = ''; return; }
 
-  const open = cache.listings
-    .filter(l => ['pending', 'live'].includes(lotState(l)) && !l.is_live)
-    .sort((a, b) => a.created_at.localeCompare(b.created_at));
+  const kind = liveSection(lot);
+  const open = queueOf(kind);
 
   const sig = JSON.stringify([
     lot ? [lot.id, lot.status, lot.end_at, lot.auto_sell_price] : null,
-    sigOfBids(cache.pending),
-    open.map(l => l.id + ':' + l.phone).join(',')
+    kind, sigOfBids(cache.pending),
+    open.map(l => l.id + ':' + itemLabel(l)).join(',')
   ]);
   if (sig !== screenSig.ops || !host.firstElementChild) {
     screenSig.ops = sig;
     host.innerHTML =
       '<div class="ops-warn">🎥 هذا الجزء لك وحدك — لا تدخله في إطار الكاميرا' +
         '<button class="ops-fold" title="اطوِ اللوحة">✕</button></div>' +
+      '<div class="seg ops-seg" id="opsKind">' +
+        Object.keys(KIND_LABEL).map(k =>
+          '<button' + (k === kind ? ' class="on"' : '') + ' data-k="' + k + '">' +
+            esc(KIND_LABEL[k]) + '</button>').join('') +
+      '</div>' +
+      '<div class="ops-card" id="opsItem"></div>' +
       '<div class="ops-card" id="opsBar"></div>' +
       '<div class="ops-card" id="opsPending"></div>' +
       '<div class="ops-card" id="opsApproved"></div>' +
       '<div class="ops-card" id="opsQueue"></div>';
+
+    // the section is his to choose only while nothing is on air — what IS on
+    // air owns the screen, and switching under it would show the wrong queue
+    host.querySelector('#opsKind').addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (lot) { toast('السكشن يتبع اللي على الهواء — اضغط «التالي» أو رجّعه للقائمة'); return; }
+      setLiveKind(b.dataset.k);
+    });
+    if (lot) host.querySelector('#opsKind').classList.add('locked');
 
     host.querySelector('.ops-fold').addEventListener('click', () => {
       opsFolded = true;
@@ -1910,7 +2128,7 @@ function renderLiveOps(lot) {
             '<button data-a="live">اعرضه</button>' +
             '<button class="del" data-a="delete" title="حذف">🗑</button>' +
           '</div>').join('')
-      : '<div class="ops-empty">ما فيه أرقام بالانتظار</div>';
+      : '<div class="ops-empty">ما فيه ' + esc(kindCount(kind)) + ' بالانتظار</div>';
 
     $('#opsQueue').querySelectorAll('.ctl-q button').forEach(b => {
       b.addEventListener('click', async () => {
@@ -1926,9 +2144,177 @@ function renderLiveOps(lot) {
     });
   }
 
+  renderItemEditor(lot, $('#opsItem'));
   renderPendingBids($('#opsPending'));
   if (lot) renderApprovedBids(lot, $('#opsApproved'));
   else { $('#opsApproved').innerHTML = ''; }
+}
+
+/* ---------- correcting the lot that is ON AIR, from the strip ----------
+   He reads the plate off the seller's paper on camera and gets a letter
+   wrong, or the seller corrects him while they are talking. Re-listing would
+   throw away the sums and the clock, so the identity is edited in place:
+   every keystroke repaints the stage — the part the camera sees — and the
+   save follows a moment later.
+
+   The card is rebuilt only when the LOT changes, never when its values do:
+   while he is typing, the inputs are the truth and a rebuild would take the
+   focus out from under him. That is also why the signature carries the id,
+   the kind and the status and nothing else. */
+function renderItemEditor(lot, host) {
+  if (!host) return;
+  if (!lot) { host.innerHTML = ''; screenSig.item = ''; return; }
+
+  const kind = kindOf(lot);
+  const sig  = lot.id + ':' + kind + ':' + lot.status;
+  if (sig === screenSig.item && host.firstElementChild) return;
+  screenSig.item = sig;
+
+  const head = '<div class="ops-h">✎ تعديل المعروض ' +
+    '<span class="ops-sub">— يتغيّر على الشاشة فوراً</span></div>';
+
+  // what a lot sold for must not change under it
+  if (['sold', 'unsold', 'cancelled'].includes(lot.status)) {
+    host.innerHTML = head + '<div class="ed-done">انتهى — ما عاد يتعدّل</div>';
+    return;
+  }
+
+  if (kind === 'plate') {
+    const L = normPlate(lot.plate_letters || '').split('');
+    host.innerHTML = head +
+      '<div class="ed-plate">' +
+        '<div class="plate-picks">' +
+          '<select id="edL1">' + letterOptions(L[0]) + '</select>' +
+          '<select id="edL2">' + letterOptions(L[1]) + '</select>' +
+          '<select id="edL3">' + letterOptions(L[2]) + '</select>' +
+        '</div>' +
+        '<input id="edDigits" type="tel" inputmode="numeric" maxlength="4" ' +
+          'value="' + esc(lot.plate_digits || '') + '" placeholder="900">' +
+      '</div>' +
+      '<div class="ed-emb" id="edEmb">' +
+        Object.keys(EMBLEMS).map(k =>
+          '<button data-e="' + k + '"' +
+            ((lot.plate_emblem || 'swords') === k ? ' class="on"' : '') + '>' +
+            (k === 'none' ? '<span class="none">—</span>'
+                          : '<img src="mazad-emb-' + k + '.png" alt="" loading="lazy">') +
+            '<span>' + esc(EMBLEMS[k]) + '</span>' +
+          '</button>').join('') +
+      '</div>' +
+      '<div class="ed-err" id="edErr"></div>';
+
+    const letters = () => ['#edL1', '#edL2', '#edL3']
+      .map(i => host.querySelector(i).value).join('');
+    ['#edL1', '#edL2', '#edL3'].forEach(i =>
+      host.querySelector(i).addEventListener('change', () =>
+        pushEdit(lot, { plate_letters: letters() }, true)));
+    host.querySelector('#edDigits').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+      pushEdit(lot, { plate_digits: e.target.value });
+    });
+    host.querySelector('#edEmb').addEventListener('click', async (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      host.querySelectorAll('#edEmb button').forEach(x => x.classList.toggle('on', x === b));
+      await pushEmblem(lot, b.dataset.e);
+    });
+    return;
+  }
+
+  if (kind === 'car') {
+    host.innerHTML = head +
+      '<div class="ed-plate">' +
+        '<input id="edMake"  maxlength="30" value="' + esc(lot.car_make || '')  + '" placeholder="الماركة" style="letter-spacing:0;direction:rtl">' +
+        '<input id="edModel" maxlength="30" value="' + esc(lot.car_model || '') + '" placeholder="الموديل" style="letter-spacing:0;direction:rtl">' +
+        '<input id="edYear" type="tel" inputmode="numeric" maxlength="4" value="' + esc(lot.car_year || '') + '" placeholder="2021">' +
+      '</div>' +
+      '<div class="ed-err" id="edErr"></div>';
+    host.querySelector('#edMake').addEventListener('input', (e) =>
+      pushEdit(lot, { car_make: e.target.value.trim() }));
+    host.querySelector('#edModel').addEventListener('input', (e) =>
+      pushEdit(lot, { car_model: e.target.value.trim() }));
+    host.querySelector('#edYear').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+      pushEdit(lot, { car_year: Number(e.target.value) || null });
+    });
+    return;
+  }
+
+  host.innerHTML = head +
+    '<div class="ed-plate">' +
+      '<input id="edPhone" type="tel" inputmode="numeric" maxlength="10" ' +
+        'value="' + esc(lot.phone || '') + '" placeholder="05xxxxxxxx">' +
+    '</div>' +
+    '<div class="ed-err" id="edErr"></div>';
+  host.querySelector('#edPhone').addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+    pushEdit(lot, { phone: e.target.value });
+  });
+}
+
+/* Paint first, save second. The camera is on the stage, so the keystroke has
+   to land there immediately; the database can be 400ms behind. A value that
+   is still half-typed (one digit of four) paints but is not sent — the server
+   would only refuse it. */
+let editTimer = null;
+const EDIT_OK = {
+  plate_letters: v => new RegExp('^[' + PLATE_LETTERS.join('') + ']{1,3}$').test(normPlate(v)),
+  plate_digits:  v => /^\d{1,4}$/.test(String(v || '')),
+  phone:         v => /^05\d{8}$/.test(String(v || '')),
+  car_make:      v => String(v || '').trim().length >= 2,
+  car_model:     v => String(v || '').trim().length >= 1,
+  car_year:      v => Number(v) >= 1970 && Number(v) <= 2100
+};
+
+function editErr(msg) {
+  const box = $('#edErr'); if (box) box.textContent = msg || '';
+}
+
+function pushEdit(lot, fields, immediate) {
+  Object.assign(lot, fields);
+  liveEdit = {
+    id: lot.id,
+    fields: { ...(liveEdit && liveEdit.id === lot.id ? liveEdit.fields : {}), ...fields },
+    at: nowMs()
+  };
+  screenSig.live = '';
+  renderLive(lot, cache.bids[lot.id] || []);
+
+  // a key with no rule here is painted only and saved by its own call —
+  // plate_emblem goes through mazad_set_emblem, not mazad_set_item
+  const sendable = {};
+  let holding = false;
+  Object.keys(fields).forEach(k => {
+    if (!EDIT_OK[k]) return;
+    if (EDIT_OK[k](fields[k])) sendable[k] = fields[k]; else holding = true;
+  });
+  editErr(holding ? 'ناقص — ما انحفظ بعد' : '');
+  if (!Object.keys(sendable).length) return;
+
+  clearTimeout(editTimer);
+  const save = async () => {
+    try {
+      const r = await store.setItem(lot.id, admin.secret, sendable);
+      if (r && r.ok === false) {
+        editErr(r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة'
+              : r.error === 'finished'  ? 'انتهى — ما عاد يتعدّل' : 'ما انحفظ');
+        liveEdit = null; refresh(false);
+        return;
+      }
+      editErr('');
+      if (r && r.approved_bids > 0) toast('انتبه: عليه ' + r.approved_bids + ' سومة محتسبة');
+    } catch (e) { console.error(e); editErr('تعذّر الاتصال'); }
+  };
+  if (immediate) save(); else editTimer = setTimeout(save, 400);
+}
+
+async function pushEmblem(lot, emblem) {
+  pushEdit(lot, { plate_emblem: emblem });
+  try {
+    const r = await store.setEmblem(lot.id, admin.secret, emblem);
+    if (r && r.ok === false) {
+      editErr(r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة' : 'ما انحفظ الشعار');
+      liveEdit = null; refresh(false);
+    }
+  } catch (e) { console.error(e); editErr('تعذّر الاتصال'); }
 }
 
 /* Sums shouted into the site wait here until the operator says yes. */
@@ -2236,8 +2622,9 @@ function opBar(lot) {
     bar.innerHTML =
       '<div class="lbl">وضع المشرف</div>' +
       '<div class="row"><button class="add" data-a="quick">＋ سجّل وابدأ السوم</button></div>' +
-      (cache.listings.some(l => lotState(l) === 'live')
-        ? '<div class="row"><button class="next" data-a="next">اعرض أول واحد بالانتظار</button></div>' : '');
+      (queueOf(liveKind).length
+        ? '<div class="row"><button class="next" data-a="next">اعرض أول ' +
+            esc(kindCount(liveKind)) + ' بالانتظار</button></div>' : '');
   }
 
   bar.addEventListener('click', async (e) => {
@@ -2248,8 +2635,16 @@ function opBar(lot) {
     if (a === 'manual' && lot) { askManualBid(lot); return; }
     if (a === 'auto'   && lot) { askAutoPrice(lot); return; }
     if (a === 'next') {
-      const r = await opDo(lot ? lot.id : null, 'next');
-      if (r && !r.next) toast('ما فيه شي بالانتظار');
+      // mazad_admin('next') takes whatever is oldest, which on a plates night
+      // hands him a phone. Pick within the section instead and put that one
+      // on air by id; the database does the same is_live swap either way.
+      const q = queueOf(liveSection(lot));
+      if (!q.length) {
+        if (lot) await opDo(lot.id, 'unlive');
+        toast('ما فيه ' + kindCount(liveSection(lot)) + ' بالانتظار');
+        return;
+      }
+      await opDo(q[0].id, 'live');
       return;
     }
     if (a === 'sold') { askSoldPrice(lot); return; }
@@ -2367,7 +2762,7 @@ function askAutoPrice(lot) {
 
 /* the walk-in guest: operator types the number and it goes on air now */
 function askQuickAdd() {
-  const letterOpts = PLATE_LETTERS.map(c => '<option value="' + c + '">' + c + '</option>').join('');
+  const letterOpts = letterOptions();
   const s2 = sheet(
     '<h2>سجّل وابدأ السوم</h2>' +
     '<p class="hint">للي يطلع معك بالبث — ينعرض على الهواء مباشرة.</p>' +
@@ -2460,7 +2855,7 @@ function askQuickAdd() {
     if (qkind === 'phone') {
       if (!/^05\d{8}$/.test(phone)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
     } else if (qkind === 'plate') {
-      if (letters.length !== 3) return err('اختر حروف اللوحة الثلاثة.');
+      if (!letters.length) return err('اختر حرف اللوحة — من حرف إلى ثلاثة.');
       if (!/^\d{1,4}$/.test(digits)) return err('أرقام اللوحة من رقم إلى أربعة.');
     } else {
       if (make.length < 2)  return err('اكتب ماركة السيارة.');
@@ -2751,7 +3146,11 @@ function wirePhotoPick(root, inputSel, prevSel) {
 
 function sheet(html) {
   const host = $('#sheetHost');
-  host.innerHTML = '<div class="sheet-bg"><div class="sheet">' + html + '</div></div>';
+  // on the broadcast screen the operator's sheets belong in his strip, not
+  // over the auction — see .sheet-bg.in-ops
+  const inOps = route.name === 'live' && admin.on && !opsFolded;
+  host.innerHTML = '<div class="sheet-bg' + (inOps ? ' in-ops' : '') + '">' +
+    '<div class="sheet">' + html + '</div></div>';
   host.querySelector('.sheet-bg').addEventListener('click', (e) => { if (e.target.classList.contains('sheet-bg')) closeSheet(); });
   return host.querySelector('.sheet');
 }
@@ -2804,7 +3203,7 @@ function askAdmin() {
 }
 
 function askListing() {
-  const letterOpts = PLATE_LETTERS.map(c => '<option value="' + c + '">' + c + '</option>').join('');
+  const letterOpts = letterOptions();
   const s = sheet(
     '<h2>اعرض في المزاد</h2>' +
     '<p class="hint">يدخل قائمة الانتظار، ويفتح عليه السوم لما يجي دوره في البث.</p>' +
@@ -2936,7 +3335,7 @@ function askListing() {
     if (kind === 'phone') {
       if (!/^05\d{8}$/.test(phone)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
     } else if (kind === 'plate') {
-      if (letters.length !== 3) return err('اختر حروف اللوحة الثلاثة.');
+      if (!letters.length) return err('اختر حرف اللوحة — من حرف إلى ثلاثة.');
       if (!/^\d{1,4}$/.test(digits)) return err('أرقام اللوحة من رقم إلى أربعة.');
     } else {
       if (make.length < 2)  return err('اكتب ماركة السيارة.');
