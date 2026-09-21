@@ -346,36 +346,57 @@ must both be false.
       next keystroke outright, so he taps it, types, and nothing happens — on
       camera. Instead the box selects on focus and the handler takes the
       character at the caret, so typing over a letter replaces it.
-  - **On the plate the letters are the same height as the digits**, the way a
-    real plate carries them. They were drawn at 70% (5.0/4.4cqw against
-    7.2/6.4) because they were joined with literal **spaces**, which fixed the
-    gap at one space's width and pushed the block out of its cell at any
-    larger size. They are separated by a **zero-width non-joiner** now — which
-    keeps the Arabic from joining into a word at no width at all — and the gap
-    is `letter-spacing` in CSS, with the same amount padded back on the
-    opposite side because letter-spacing also lands after the last glyph.
-    `plateArabic()` and `plateLatin()` are the two places that emit them.
-    Changing the size means re-checking the clearance to the emblem and the
-    KSA strip; `test-letters.js` asserts both.
+  - **The characters are SPREAD across the plate, not parked on it.** Each one
+    is its own element (`plateCells()`) inside a fixed-width zone laid out
+    `justify-content: space-between`, so one digit or four fill the same area
+    the way they do on the road — and the Arabic letters can never join into a
+    word, because separate elements do not connect.
+    - Two earlier attempts failed for the same underlying reason: joining the
+      letters with literal **spaces** fixed the gap at one space's width
+      (which forced them to be drawn at 70% of the digits' size), and
+      `letter-spacing` only sets a gap between glyphs — neither can make three
+      characters fill a zone. The result both times was a ~13%-wide block
+      bunched against the KSA strip with the middle of the plate empty.
+    - The zones come from measuring a photograph of a real plate by ink
+      column: digits **10.0–31.6%**, emblem **42.5–60.3%**, letters
+      **70.3–90.9%**, KSA rule at **93.9%**, and the two rows together fill
+      **84%** of the plate's height. `test-plate-shape.js` holds all of them
+      to 2.5 points and also asserts that neither block is a sliver.
+    - **Arabic-Indic digits are written LEFT to right** — ٩٧٨ sits over 978 in
+      the same order. Only the letters read right to left, so `direction: rtl`
+      belongs to `.cp-let`, never to `.cp-num`.
+    - A single character has nothing to spread against, so `.one` centres it.
   - **A car is never masked.** Hiding the make and model tells a viewer
     nothing, and unlike a phone number a car is not a way to reach the seller.
     A plate hides its **digits** while queued — that is showmanship, not the
     commission protection the phone masking exists for.
   - The section chips are remembered in `localStorage` (`mazad_kind`), so a
     returning visitor lands where he was.
+- **A plate carries its TYPE, and the type changes the whole plate.**
+  `plate_kind` is `private` خصوصي | `transport` نقل | `small` صغيرة, switched
+  from the strip on air (`mazad_set_plate_kind`) or chosen in either publish
+  form. Measured off the owner's reference images:
+  | type | ratio | cells |
+  |---|---|---|
+  | خصوصي | 5.09:1 | one row of content, emblem centred, KSA strip at the edge |
+  | نقل | 4.24:1 | three bordered cells, **blue** middle `rgb(60,104,165)` at 46.4–60.7%, side cells split in two rows |
+  | صغيرة | 3.46:1 | three bordered cells, light middle at 44.3–62.0%, **Latin only** |
+  خصوصي keeps the pinned-zone layout below; the other two are their own
+  markup (`.cp3`), because they are different plates, not a restyled خصوصي.
+  Only خصوصي has an emblem cell of its own, so the emblem picker hides for the
+  other two. `mazad_create_plate` carries no type argument — adding one would
+  mean dropping and recreating it — so the quick-add sets it with a follow-up
+  call, the same way it sets an auto-sell limit.
 - **The plate is proportioned from the owner's reference, not designed.**
   Measured off that image: the plate is 595×117, so **5.09:1**, and the only
   full-height rules in it are the two borders and the one before the KSA
   strip. **There is no divider in the middle** — what read as one when
   measuring was the palm trunk of the emblem, which is why it only appeared on
   the two plates carrying that emblem.
-  - Each block is pinned to its measured centre — digits **12.1%**, emblem
-    **51.5%**, letters **82.9%** — rather than left to flex. Flex put the
-    emblem and the letters about six points too far left, because the blocks
-    are not the widths it assumes.
-  - The letters are joined with spaces already, so `letter-spacing` on top of
-    that doubled the gap and made the block half again as wide as the
-    reference's 15.5%.
+  - Each block is pinned to its measured centre — digits **20.8%**, emblem
+    **51.4%**, letters **80.6%** — and given a fixed **width** (24% / 22%)
+    rather than left to shrink to fit. Shrink-to-fit is what left the middle
+    of the plate empty.
   - The KSA strip is the reference's own strip, lifted whole
     (`mazad-plate-ksa.png`), border included.
   - `test-plate-shape.js` checks the rendered plate against those measured
@@ -422,6 +443,16 @@ must both be false.
   the image itself had loaded. `.lp .paddle { width: 100% }` fixes it, and
   `test-art.js` now asserts the rendered **box**, not just the load. Anywhere
   new a paddle is drawn must give it a width.
+- **The paddle artwork is a hand on a FOREARM, so the row needs room.** At six
+  across, each arm ran under the next fist and the row read as one smear. The
+  broadcast shows the newest **four**, and the gap is a **percentage** of the
+  flex container — not `cqw` (`.live` is not a container, so `cqw` would fall
+  back to the viewport and change with the window instead of the card) and not
+  a fixed `10px`.
+- **The broadcast card is the whole statement; the footer under it is not.**
+  The card already carries the contact number and the commission, so on
+  `/live` the footer repeated both **on camera**, plus a «من نحن» link nobody
+  watching a stream will click. `body.on-air` hides it.
 - **A sum is shown on a raised paddle, and the paddle is supplied artwork.**
   `mazad-paddle.png` (a hand holding a blank sign) was provided by the owner.
   **Nothing in the code draws a hand or a board — do not "improve" it, redraw
