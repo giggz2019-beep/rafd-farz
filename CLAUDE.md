@@ -228,6 +228,33 @@ must both be false.
   "back" affordance goes through it.
 - **The name chip is the bidder's identity and is hidden on `/live`** —
   the operator does not bid from there, and it is on camera.
+- **`KINDS_SHOWN` is the one place that says which sections the site offers.**
+  جوالات is switched off for now — the plates are where the money is, and a
+  third section nobody is running only dilutes the other two. Put `'phone'`
+  back in that array and everything returns: the list chips, both publish
+  forms, the footer's commission line, the brand line and the operator's strip
+  all read it, and nothing about a phone lot was removed.
+  - **Switching a section off deletes nothing and strands nobody.** The lots
+    are hidden from the *public list* only: the operator still sees them
+    (`renderList` skips the filter when `admin.on`) because he has to finish
+    what is already queued, and a direct link still opens one, so a seller who
+    listed yesterday is not cut off. The broadcast, the lot page, the bidding
+    and the fee rules for that section all still work.
+  - A stored choice naming a switched-off section falls back — `cache.kind` to
+    `الكل`, `liveKind` to the first live section — or the viewer lands on an
+    empty list he cannot get out of.
+  - The operator's chips show the live sections **plus whatever is on air**,
+    even if its section is off; otherwise he cannot see the lot he is running.
+  - Wording that assumed a phones-only site went with it: «رجوع لكل الأرقام» →
+    «رجوع للمزاد», and «نقل ملكية الرقم عبر الشركة المشغّلة» → «نقل الملكية عبر
+    الجهة المختصة».
+- **«من نحن» (`#/about`) states only what the site actually does.** Every claim
+  on it has a mechanism behind it in `mazad.html` or `supabase-mazad.sql` —
+  which is why it does **not** promise a search, filters, or any verification
+  of ownership: none of those exist. The commission is printed through
+  `feeRule()` and the sections through `KINDS_SHOWN`, so the page cannot quote
+  a rate the site has stopped charging or describe a section that is switched
+  off. `test-about.js` asserts each of those, including the absences.
 - **The broadcast runs ONE section at a time.** A plates night is a plates
   night: mixing a phone into the queue behind a plate, and quoting the phone
   commission under a car, is not a smaller version of three auctions — it is a
