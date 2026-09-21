@@ -100,11 +100,20 @@ a { color: inherit; }
 /* ---------- layout ---------- */
 .wrap { max-width: 720px; margin: 0 auto; padding: 0 14px 120px; }
 
+/* ---------- the olive has to be on the MAIN page too ----------
+   «الصفحة الرئيسية ليش كلها عنابي ما فيها ولا لون زيتي» — and he was right:
+   every olive pass so far had been spent on the broadcast card. Here the one
+   olive stop sat at **-10%**, which is off the canvas entirely, so the header
+   rendered as plain burgundy and nothing else on the page carried it at all.
+   The stop starts at 0 now and the olive reaches a fifth of the way in, so
+   the bar actually reads burgundy-into-olive the way the card does. */
 .topbar {
-  background: linear-gradient(135deg, var(--olive-900) -10%, var(--wine-800) 38%, var(--wine-600));
+  background: linear-gradient(115deg, var(--olive-800) 0%, var(--olive-900) 12%,
+                                      var(--wine-900) 34%, var(--wine-700) 68%, var(--wine-600));
   color: #fff;
   padding: 14px 0 18px;
   box-shadow: var(--shadow);
+  border-bottom: 2px solid var(--olive-700);
   position: sticky; top: 0; z-index: 40;
 }
 .topbar .wrap { padding-bottom: 0; display: flex; align-items: center; gap: 10px; }
@@ -143,12 +152,20 @@ a { color: inherit; }
   background: linear-gradient(170deg, #fff, #fbf7f3);
   border: 1px solid var(--line); box-shadow: var(--shadow);
 }
-.door-i { font-size: 1.5rem; line-height: 1.1; }
+.door-i {
+  font-size: 1.5rem; line-height: 1;
+  /* the icon sits in an olive disc — small, repeated three times across the
+     top of the page, which is what makes the colour register as the site's */
+  width: 42px; height: 42px; display: grid; place-items: center; margin-bottom: 2px;
+  border-radius: 50%; background: rgba(62,77,47,.1);
+  border: 1.5px solid rgba(62,77,47,.3);
+}
 .door-t { font-size: 1rem; font-weight: 900; color: var(--wine-700); }
 .door-s { font-size: .66rem; color: var(--muted); line-height: 1.45; }
 .door:active { transform: scale(.97); }
 /* the one that lists a lot is the one he wants pressed */
 #doorSell { border-color: var(--gold-500); background: linear-gradient(170deg, #fffaf0, #fdf1dc); }
+#doorSell .door-i { background: rgba(217,164,65,.18); border-color: rgba(217,164,65,.55); }
 
 /* ---------- toolbar ---------- */
 /* two rows now — the section, then how far along — so each gets its own line
@@ -249,7 +266,9 @@ a { color: inherit; }
 .phone-carrier { font-size: .72rem; opacity: .85; margin-top: 2px; }
 
 .lot-stats { display: flex; gap: 8px; margin-top: 12px; }
-.stat { flex: 1; background: #f7faf8; border: 1px solid var(--line); border-radius: 12px; padding: 8px 6px; text-align: center; }
+/* a faint olive wash — the same hue as the header, at a tenth of the weight,
+   so the cards belong to the same site rather than being plain white boxes */
+.stat { flex: 1; background: #f7f8f3; border: 1px solid #e4e6dc; border-radius: 12px; padding: 8px 6px; text-align: center; }
 .stat-k { font-size: .68rem; color: var(--muted); }
 .stat-v { font-weight: 800; font-size: .98rem; }
 .stat-v.price { color: var(--wine-600); }
@@ -1110,6 +1129,10 @@ a { color: inherit; }
    the footer under it said both again, on camera, along with a «من نحن» link
    nobody watching a stream is going to click. One screen, one statement. */
 body.on-air .foot { display: none; }
+/* ...and the top bar's rule is page chrome, which the broadcast is not. It
+   also bought back the 2px that pushed the commission one pixel below the
+   fold on a 760px laptop — the card's budget there is that tight. */
+body.on-air .topbar { border-bottom: 0; }
 .foot-links { margin-bottom: 10px; }
 .foot-links a { color: var(--wine-600); font-weight: 700; text-decoration: none; }
 
@@ -1159,7 +1182,9 @@ body.on-air .foot { display: none; }
   font-size: .86rem; font-weight: 700; color: var(--wine-700);
 }
 .foot-tel a { color: var(--wine-600); font-weight: 900; text-decoration: none; font-size: .95rem; }
-.foot { text-align: center; font-size: .74rem; color: var(--muted); padding: 24px 10px 8px; line-height: 1.9; }
+.foot { text-align: center; font-size: .74rem; color: var(--muted);
+  padding: 24px 10px 8px; line-height: 1.9;
+  border-top: 2px solid rgba(62,77,47,.22); margin-top: 22px; }
 .foot a { color: var(--wine-700); font-weight: 700; }
 /* ---------- «من نحن» is a BUTTON, not a line of text ----------
    «ياليت تخليها وسط ايقونه واضحه لضغط، كذا يحسبونها فقط شكل» — as a bare
