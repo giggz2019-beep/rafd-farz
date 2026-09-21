@@ -454,15 +454,20 @@ a { color: inherit; }
 .ctl-bid.done .amt { color: var(--wine-600); }
 /* ---------- live broadcast screen ---------- */
 .live {
-  /* burgundy at the top where the plate sits, sinking into olive at the
-     bottom corners — the depth is what reads as فخم on camera */
+  /* Burgundy at the top where the plate sits, sinking visibly into olive
+     across the lower half — the two colours together are what reads as فخم
+     on camera. It was there before but so faint that it read as plain
+     burgundy; the olive has to be seen to be a brand colour. */
   background:
-    radial-gradient(120% 90% at 50% 0%, #7b1f38, rgba(67,16,31,.96) 48%, rgba(29,36,22,0) 100%),
-    linear-gradient(160deg, var(--wine-900) 30%, var(--olive-900));
+    radial-gradient(115% 72% at 50% 0%, #7b1f38, rgba(67,16,31,.94) 42%, rgba(67,16,31,0) 72%),
+    linear-gradient(168deg, var(--wine-900) 18%, var(--olive-800) 78%, var(--olive-900));
   border-radius: 20px; padding: 16px 14px 20px; color: #fff; margin-top: 14px;
   border: 2px solid rgba(217,164,65,.45); box-shadow: var(--shadow-lg);
 }
-.live-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.live-head {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  padding-bottom: 8px; border-bottom: 1.5px solid rgba(125,151,96,.45);
+}
 .live-dot {
   background: var(--gold-500); color: #3a1208; font-size: .75rem; font-weight: 800;
   padding: 4px 11px; border-radius: 999px;
@@ -509,12 +514,34 @@ a { color: inherit; }
 }
 .live-bids span.top { background: rgba(217,164,65,.9); color: #2a1c02; border-color: transparent; }
 
-.live-cta {
-  margin-top: 14px; text-align: center; background: rgba(255,255,255,.1);
-  border: 1px dashed rgba(217,164,65,.55); border-radius: 14px; padding: 10px;
-  font-size: .86rem; color: #f7e9ec;
+/* ---------- the foot of the broadcast card ----------
+   The site, the number and the commission, in ONE olive-framed bar. They were
+   two stacked blocks and fell below the fold on a 900px screen — on the one
+   screen that is filmed. The olive is the third brand colour doing real work
+   here: it separates this bar from the burgundy card without using gold,
+   which the price and the clock already own. */
+.live-bar {
+  margin-top: 12px; display: grid; gap: 6px; text-align: center;
+  background: linear-gradient(160deg, rgba(85,104,63,.72), rgba(29,36,22,.82));
+  border: 2px solid #6d8450;
+  border-radius: 16px; padding: 10px 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
-.live-cta b { color: var(--gold-400); direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.live-bar .lb-site { font-size: .84rem; color: #eae6dd; }
+.live-bar .lb-site b { color: var(--gold-400); direction: ltr; unicode-bidi: isolate;
+  display: inline-block; font-size: .95rem; }
+/* the number sits in its own olive frame inside the bar */
+.live-bar .lb-tel {
+  justify-self: center; border: 2px solid #7e9760;
+  background: rgba(29,36,22,.66); border-radius: 999px;
+  padding: 4px 14px; font-size: .84rem; color: #eae6dd;
+}
+.live-bar .lb-tel b { color: var(--gold-400); font-weight: 900; font-size: 1.02rem; }
+.live-bar .lb-fee {
+  font-size: .84rem; font-weight: 700; color: #f2e7cf; line-height: 1.6;
+  border-top: 1px dashed rgba(234,230,221,.28); padding-top: 7px;
+}
+.live-bar .lb-fee b { color: var(--gold-400); font-weight: 900; }
 
 /* The commission has to be readable on the broadcast without anyone
    scrolling — it only lived in the page footer, under the fold, so on camera
@@ -525,13 +552,55 @@ a { color: inherit; }
 }
 .live-tel b { color: var(--gold-400); font-weight: 900; font-size: 1rem; }
 
-.live-fee {
-  margin-top: 10px; text-align: center; line-height: 1.75;
-  background: rgba(217,164,65,.14); border: 1.5px solid rgba(217,164,65,.6);
-  border-radius: 14px; padding: 10px 12px;
-  font-size: .9rem; font-weight: 700; color: #fbeccd;
+/* ---------- the stage fits the screen it is filmed on ----------
+   A broadcast screen that has to be scrolled is a broken broadcast screen:
+   whatever is below the fold is simply not on camera. The type that can
+   shrink is sized against the viewport HEIGHT (dvh) rather than its width, so
+   the whole card lands inside a 800px-tall window and still fills a 1080. */
+@media (min-width: 900px) {
+  .live-clock      { font-size: clamp(2.2rem, 7.4dvh, 5rem); margin: 6px 0 2px; }
+  .live-clock.over { font-size: clamp(1.5rem, 4.4dvh, 3rem); }
+  .live-price .v   { font-size: clamp(1.9rem, 6.2dvh, 3.4rem); line-height: 1.12; }
+  .live-paddles    { margin-top: 8px; }
+  .live .lp        { width: clamp(50px, 8.2dvh, 88px); }
+  .live .lp.top    { width: clamp(64px, 10.4dvh, 112px); }
+  .live-plate      { margin-bottom: 4px; }
+  .carplate.big    { width: min(100%, 620px, 66dvh); }
+  /* the site and the number share a line where there is room for them */
+  .live-bar        { grid-template-columns: 1fr auto; align-items: center; }
+  .live-bar .lb-fee { grid-column: 1 / -1; }
 }
-.live-fee b { color: var(--gold-400); font-weight: 900; }
+/* A laptop leaves about 760–800px once the browser chrome is taken out, and
+   the card still has to END above the fold: everything below it is off
+   camera, and what fell off was the number to call and the commission — the
+   two things a seller actually agrees to. Every value here is a squeeze on
+   something that can afford it; the plate, the clock and the price are not
+   touched beyond what dvh already does. */
+@media (min-width: 900px) and (max-height: 880px) {
+  .live            { padding: 10px 12px 12px; }
+  .live-head       { margin-bottom: 8px; padding-bottom: 6px; }
+  .live-plate      { margin-bottom: 0; }
+  .live-note       { margin-top: 4px; }
+  .carplate.big    { width: min(100%, 620px, 60dvh); }
+  .live-clock      { font-size: clamp(2rem, 6.6dvh, 5rem); margin: 4px 0 0; }
+  .live-price .k   { font-size: .72rem; }
+  .live-price .who { font-size: .86rem; }
+  .live-auto       { margin-top: 4px; font-size: .78rem; }
+  .live-paddles    { margin-top: 6px; }
+  .live .lp        { width: clamp(44px, 7.4dvh, 88px); }
+  .live .lp.top    { width: clamp(56px, 9.4dvh, 112px); }
+  .lp-name         { font-size: .62rem; margin-top: 2px; }
+  .live-bar        { margin-top: 8px; padding: 7px 10px; gap: 3px; }
+  .live-bar .lb-fee { padding-top: 4px; font-size: .8rem; }
+  .live-bar .lb-site { font-size: .8rem; }
+}
+@media (min-width: 900px) and (max-height: 790px) {
+  .carplate.big  { width: min(100%, 620px, 56dvh); }
+  .live-paddles  { margin-top: 4px; }
+  .live .lp      { width: clamp(40px, 6.6dvh, 88px); }
+  .live .lp.top  { width: clamp(52px, 8.4dvh, 112px); }
+  .live-bar      { margin-top: 6px; }
+}
 
 /* ---------- the publish / quick-add forms ---------- */
 .seg {
@@ -1461,6 +1530,20 @@ function stampFor(st) {
   return '<div class="stamp ' + st + '"><span>' +
     STAMP[st].map(w => '<b>' + esc(w) + '</b>').join('') + '</span></div>';
 }
+/* ---------- the one bar at the foot of the broadcast ----------
+   The site, the number and the commission used to be two stacked blocks, and
+   on a 900px screen they fell BELOW the fold — on the one screen that is
+   filmed, so the two things a seller has to see were never on camera. One
+   compact bar, framed in olive, and the card is sized to fit the viewport. */
+function liveBar(kind) {
+  return '<div class="live-bar">' +
+    '<div class="lb-site">زايد من الموقع <b>rafd-digital.com/m</b></div>' +
+    '<div class="lb-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
+    '<div class="lb-fee">💰 عمولة ' + esc(KIND_LABEL[kind].replace(/^\S+\s/, '')) +
+      ' <b>' + esc(feeRule(kind)) + '</b> — على ذمة البائع</div>' +
+  '</div>';
+}
+
 /* the plate and its stamp, so the seal is centred on the PLATE rather than on
    whatever else shares the card with it */
 const plateStamped = (lot, size, st) =>
@@ -2335,11 +2418,7 @@ function renderLive(lot, bids) {
             esc(kindCount(kind)) + '</span></div>' +
         '<div class="live-empty"><div class="t">جاهزون للي بعده</div>' +
           '<div class="s">اعرض ' + esc(kindNoun(kind)) + ' من الموقع وبيجي دورك</div></div>' +
-        '<div class="live-cta">للمشاركة والمزايدة<br><b>rafd-digital.com/m</b>' +
-          '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
-        '</div>' +
-        '<div class="live-fee">💰 عمولة ' + esc(KIND_LABEL[kind].replace(/^\S+\s/, '')) +
-          ' <b>' + esc(feeRule(kind)) + '</b> — على ذمة البائع</div>' +
+        liveBar(kind) +
         queueHtml(open) +
       '</div>';
     wireQueue(open, null);
@@ -2412,10 +2491,7 @@ function renderLive(lot, bids) {
             '</div>').join('') + '</div>'
         : '') +
 
-      '<div class="live-cta">زايد من الموقع<br><b>rafd-digital.com/m</b>' +
-        '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
-      '</div>' +
-      '<div class="live-fee">💰 العمولة <b>' + esc(feeRule(kindOf(lot))) + '</b> — على ذمة البائع</div>' +
+      liveBar(kindOf(lot)) +
 
       queueHtml(open) +
     '</div>';
