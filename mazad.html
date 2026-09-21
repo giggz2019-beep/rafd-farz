@@ -321,6 +321,11 @@ a { color: inherit; }
      — the seal lands across the middle of the plate, not on the emblem */
   height: 172%; aspect-ratio: 1; border-radius: 50%;
   display: grid; place-items: center; pointer-events: none;
+  /* the words are sized against the CIRCLE, not against the plate — on a
+     wide plate a cqw of plate is a third of a cqw of seal, and «لم يتم» ran
+     out past the ring. Making the seal its own container is what lets one
+     font-size hold for every plate size and every result. */
+  container-type: inline-size;
   transform: rotate(-11deg);
   border: 1.1cqw solid currentColor;
   /* opaque enough that the emblem behind it does not fight the words */
@@ -333,11 +338,21 @@ a { color: inherit; }
   border: .35cqw solid currentColor; border-radius: 50%; opacity: .85;
 }
 .stamp span {
-  display: grid; justify-items: center; line-height: 1.04;
-  font-weight: 900; letter-spacing: -.01em; white-space: nowrap;
+  display: grid; justify-items: center; line-height: 1.06;
+  font-weight: 900; letter-spacing: -.02em; white-space: nowrap;
+  /* the inner ring sits 8% in, and a horizontal line across a circle is
+     shorter than its diameter — so the words get the safe chord, not the
+     whole width, and nothing can reach the ring */
+  max-width: 88cqw;
 }
-.stamp b { display: block; font-size: 6.4cqw; }
-.stamp.cancelled b { font-size: 7.6cqw; }
+/* Sized against the seal, and MEASURED — the sizes below put the widest line
+   of each result at about 46% of the drawn ring, which leaves the words clear
+   of the inner ring at the 11° the seal is turned. «لم يتم» is the longest
+   word either seal carries, so it takes its own size rather than dragging
+   the others down with it. Re-measure if a result's wording changes. */
+.stamp b { display: block; font-size: 28cqw; }
+.stamp.unsold b:first-child { font-size: 20cqw; }
+.stamp.cancelled b { font-size: 24cqw; }
 .stamp.sold      { color: var(--ok-600); }
 .stamp.unsold    { color: #c0392b; }
 .stamp.cancelled { color: #6b7b73; }
@@ -666,10 +681,14 @@ a { color: inherit; }
    letters bunched against the KSA strip and the middle of the plate sat
    empty. A plate is not a line of text with a lot of margin — the characters
    are laid out ACROSS it. */
-.cp-num    { left: 20.8%; width: 24%; }
+.cp-num    { left: 20.8%; }
 .cp-emblem { left: 51.4%; height: 84%; display: flex; align-items: center; justify-content: center; }
-.cp-let    { left: 80.6%; width: 22%; }
-.cp-num, .cp-let { display: flex; flex-direction: column; align-items: stretch; line-height: 1.04; }
+/* closer to the emblem than the measured 80.6% centre: the letters are the
+   half of the plate that is read out loud, and a gap beside the emblem is the
+   one thing he keeps pointing at. Three letters put the block at 66.5–90.5%,
+   still clear of the KSA rule at 93.9. */
+.cp-let    { left: 78.5%; }
+.cp-num, .cp-let { display: flex; flex-direction: column; align-items: center; line-height: 1.04; }
 .cp-emblem img { max-width: 100%; max-height: 100%; object-fit: contain; display: block;
   width: 17.8cqw; }
 
@@ -680,17 +699,32 @@ a { color: inherit; }
    zone and space-between, one digit or four both fill the same area, the way
    they do on the road. */
 .cp-ar, .cp-en {
-  display: flex; justify-content: space-between; width: 100%;
-  font-weight: 800; white-space: nowrap;
+  display: flex; justify-content: center; white-space: nowrap;
+  font-weight: 800;
+}
+/* ---------- a plate is MONOSPACED, and that is the whole trick ----------
+   Every character on a real plate sits in a slot of the same width, which is
+   why a ه and a ا are the same distance apart as two digits, and why the
+   Arabic row lines up over the Latin one. space-between across a fixed zone
+   got three characters right and everything else wrong: two characters were
+   thrown into opposite corners of the zone — «الرقمين كل واحد بزاويه» — and
+   four overflowed. A fixed slot per character gives three the measured 24%
+   of the plate, two a natural pair, and four an honestly wider block, the
+   way it comes on the road. */
+.cp-ar > span, .cp-en > span {
+  display: inline-block; width: 8cqw; text-align: center;
 }
 .cp-ar { font-size: 8.3cqw; direction: rtl; }
 /* Arabic-Indic digits are written LEFT to right — ٩٧٨ sits over 978 in the
    same order. Only the letters read right to left, so the rtl above belongs
    to .cp-let alone. */
 .cp-num .cp-ar { direction: ltr; }
-.cp-en { font-size: 7.6cqw; }
-/* a single character has nothing to spread against, so it is centred */
-.cp-ar.one, .cp-en.one { justify-content: center; }
+/* The Latin row on a real plate is a plain, medium-weight, slightly narrow
+   face — not the heavy one the Arabic row carries. At 800 it read as a
+   different, bolder plate than the reference. */
+.cp-en { font-size: 7.2cqw; font-weight: 600; }
+/* every row is centred now, so .one needs nothing of its own — the class is
+   still emitted because the three-cell plates below use it */
 
 /* ---------- نقل and صغيرة: three cells, country in the middle ----------
    Every number below is measured off the owner's reference images, the same
@@ -719,14 +753,18 @@ a { color: inherit; }
 /* on نقل the side cells are split in two by a rule; on صغيرة they are not */
 .cp3 .c3-r {
   flex: 1 1 0; width: 100%; display: flex; align-items: center;
-  justify-content: space-between; padding: 0 6%;
+  justify-content: center; padding: 0 4%;
   font-weight: 800; line-height: 1; white-space: nowrap; direction: ltr;
 }
 .cp3 .c3-r.c3-rtl { direction: rtl; }
-.cp3 .c3-r.one { justify-content: center; }
+/* monospaced slots here too, for the same reason as on خصوصي above */
+.cp3 .c3-r > span { display: inline-block; text-align: center; }
 .k-transport .c3-lat { border-top: .5cqw solid #15151a; }
-.k-transport .c3-r      { font-size: 7.4cqw; }
-.k-small     .c3-solo   { font-size: 11.5cqw; letter-spacing: .1em; }
+.k-transport .c3-r        { font-size: 7.4cqw; }
+.k-transport .c3-r > span { width: 8.4cqw; }
+.k-transport .c3-lat      { font-weight: 600; }
+.k-small     .c3-solo     { font-size: 11.5cqw; font-weight: 600; }
+.k-small     .c3-solo > span { width: 13cqw; }
 
 /* the country cell: نقل is the blue one — that is what names it on sight */
 .cp3 .c3-ksa { gap: .3cqw; padding: .6cqw .2cqw; }
@@ -1178,6 +1216,18 @@ const PLATE_LATIN = { 'ا':'A','ب':'B','ح':'J','د':'D','ر':'R','س':'S','ص'
                       'ه':'H','و':'U','ي':'V' };
 const PLATE_LETTERS = Object.keys(PLATE_LATIN);
 
+/* ---------- ه is drawn هـ, or it reads as a ٥ ----------
+   Standing on its own the letter is a bare circle, which beside a row of
+   Arabic-Indic digits is simply the number five: «حرف الهاء وراه كنه رقم
+   خمسه». A real plate draws it in its initial form, with the tail — هـ — and
+   so does every plate the owner sent. A tatweel after it is a joining
+   character, so the font shapes the ه as initial and the pair renders as one
+   letter with its tail; it is not a second character and it is not a hack
+   around the font, it is the form the letter takes on a plate.
+   Only what is DRAWN changes: the stored letter, the CHECK constraint, the
+   Latin map and everything the operator types stay a plain ه. */
+const PLATE_GLYPH = { 'ه': '\u0647\u0640' };
+
 /* A plate may carry one, two or three letters, and the short ones are the
    valuable ones — «ا ب 1» is what gets auctioned, «ا ب ح 1234» is what comes
    on an ordinary car. So the second and third boxes may be left empty, and
@@ -1264,7 +1314,7 @@ const plateLatin = (letters) => normPlate(letters).split('')
    Arabic letters can never join into a word: separate elements do not
    connect, so no zero-width joiner is needed. */
 const plateCells = (str) => String(str || '').split('')
-  .map(c => '<span>' + esc(c) + '</span>').join('');
+  .map(c => '<span>' + esc(PLATE_GLYPH[c] || c) + '</span>').join('');
 const plateArabic = (letters) => normPlate(letters);
 
 /* ---------- the plate's own type ----------
