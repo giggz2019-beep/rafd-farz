@@ -226,8 +226,13 @@ must both be false.
   them.** `goList()` rewrites the path to `/m` in that case and only falls
   back to clearing the hash when the page is served at its own URL. Every
   "back" affordance goes through it.
-- **The name chip is the bidder's identity and is hidden on `/live`** —
-  the operator does not bid from there, and it is on camera.
+- **The name chip is a BADGE, not a second door.** An «اسمك؟» button at the
+  top beside a «مزايدة» door was the same job twice («انت مكرر مرتين... وهي
+  نفسها»). The door owns registration: tap it, give the three details once,
+  and land on whatever is on air with the bid box in front of you. The chip
+  renders **only once `me.name` exists**, to show who you are and let you
+  change it — and never on `/live`, where the operator does not bid and the
+  screen is on camera.
 - **`KINDS_SHOWN` is the one place that says which sections the site offers.**
   جوالات is switched off for now — the plates are where the money is, and a
   third section nobody is running only dilutes the other two. Put `'phone'`
@@ -402,8 +407,15 @@ must both be false.
     - A single character has nothing to spread against, so `.one` centres it.
   - **A car is never masked.** Hiding the make and model tells a viewer
     nothing, and unlike a phone number a car is not a way to reach the seller.
-    A plate hides its **digits** while queued — that is showmanship, not the
-    commission protection the phone masking exists for.
+  - **A queued plate hides its LETTERS and shows its DIGITS.** It was the
+    other way round, which gave away the half that identifies a plate: «ا ب ح»
+    alone is on half the cars in the street, but the letters of a *short*
+    plate are enough to go and find the seller and cut the auction — and its
+    commission — out. The digits are the part worth showing, because they are
+    what draws a bidder in; the letters land when it goes on air. The rule
+    lives in `mazad_public`, and `stageItem()` re-applies it to the operator's
+    own screen because that is the screen being filmed. `isMasked()` still
+    checks **both** fields so a row written before the flip reads correctly.
   - The section chips are remembered in `localStorage` (`mazad_kind`), so a
     returning visitor lands where he was.
 - **A plate carries its TYPE, and the type changes the whole plate.**
@@ -530,6 +542,19 @@ must both be false.
     forearm. Keep `mazad-paddle.png`; there is no vector original.
   - The newest paddle animates in once, tracked by `lastSeenBid`, so the
     refresh loop does not replay the animation every 2.5 seconds.
+- **The typeface is Thmanyah, and the SETTINGS are half of it.** The family
+  and all three faces were always loading — the live site serves the real OTF
+  — but the page had none of what `style.css` wraps around it, and every line
+  changes how Arabic draws: `font-synthesis: none` (without it a weight the
+  family lacks is FAKED by smearing the outline, which is what made 800/900
+  read as a different, mushier font), `'calt'`/`'liga'`/`'kern'` for the
+  contextual joins, and antialiasing. **`'ss01'` and `'salt'` are deliberately
+  NOT set here**, though `style.css` sets them: rendered side by side they
+  extend the tails of final letters — «عرضـــ», «بيـــن» — which suits a
+  2.4rem marketing headline and looks ragged at the 0.78rem this page is
+  mostly made of. Turn them on only if the whole page is re-typeset for them.
+  `.carplate` keeps `system-ui` on purpose — a real plate is a plain
+  grotesque, not a brand face.
 - **The main page has three doors: عرض / طلب / مزايدة.** They replace the
   single «اعرض في المزاد» button, which only ever covered one of the three.
   عرض opens the publish sheet, مزايدة goes to whatever is on air (or filters
@@ -559,6 +584,12 @@ must both be false.
   hides it: the card already carries the number and the commission, so on
   camera the footer repeated both plus a «من نحن» link nobody watching a
   stream will click.
+- **«من نحن» is a button, not a line of text.** As a bare underlined line
+  under a bright green button it read as that button's caption and nobody
+  pressed it («كذا يحسبونها فقط شكل»). It is the same shape and width as the
+  WhatsApp button so the two read as a pair of pressable things, and burgundy
+  rather than green, because green on this page means success and this is not
+  that.
 - **The contact is one green WhatsApp button**, centred, «اضغط هنا للتواصل
   واتس» with the number under it. In the site's burgundy it read as one more
   link on a page of burgundy links. That `#25D366` is the **only** green on
@@ -752,9 +783,14 @@ must both be false.
   colour.
 - **The palette is عنابي، ذهبي وزيتي — burgundy, gold and olive — and green
   means one thing only.**
-  - **Olive (`--olive-900…600`) is the third brand colour**, for surfaces: the
-    top bar sinks into it and the broadcast card fades to it at the bottom,
-    which is what reads as فخم on camera. It is deep and desaturated and
+  - **Olive (`--olive-900…600`) is an ACCENT, not a surface.** The first
+    version sank the whole lower half of the broadcast card into olive and
+    made the bar a solid olive block — at which point the card stopped reading
+    as burgundy at all («الزيتي كبرته مرره — ابيه لمسات خفيفه ما يخفي جمالية
+    العنابي»). It now lands only on edges: the head rule, the bar's frame and
+    the phone pill, plus a hint in the last few per cent of the gradient. The
+    bar itself is dark burgundy. `test-fold.js` asserts **both** halves — the
+    three accents are olive by hue, and the bar's own fill is not. It is deep and desaturated and
     **yellow-green** (~88°), while the success green is saturated and
     **blue-green** (~150°). That hue gap is what keeps them from reading as the
     same thing — not RGB distance, which calls the two 59 apart whether the gap
