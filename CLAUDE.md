@@ -308,6 +308,40 @@ must both be false.
     no `EDIT_OK` rule: a key with no rule is painted only.
   - A finished lot refuses the edit (`error: 'finished'`) — what it sold as
     must not change under it.
+- **A plate is MONOSPACED, and that is the whole trick.** Every character sits
+  in a slot of the same width (`.cp-ar > span`, `.cp-en > span`, 8cqw), which
+  is why a ه and a ا stand the same distance apart as two digits and why the
+  Arabic row lines up over the Latin one. `space-between` across a fixed zone
+  got three characters right and everything else wrong: **two were thrown into
+  opposite corners** of the zone — «الرقمين كل واحد بزاويه» — and four
+  overflowed it. With slots, three fill the measured 24% of the plate, two
+  stand as a pair and four are honestly wider, the way they come on the road.
+  The نقل and صغيرة plates use the same rule with their own slot widths.
+- **ه is drawn هـ, or it reads as a ٥.** Standing on its own the letter is a
+  bare circle, which beside a row of Arabic-Indic digits is simply the number
+  five. A real plate draws it in its initial form, with the tail, and so does
+  every reference the owner sent. `PLATE_GLYPH` maps `ه` to `ه` + tatweel for
+  **drawing only** — a tatweel is a joining character, so the font shapes the
+  ه as initial. The stored letter, the CHECK constraint, `PLATE_LATIN` and
+  everything he types stay a plain ه. A new letter needing a plate-specific
+  form goes in that same map, nowhere else.
+- **The letter block sits at 78.5%, not the measured 80.6%.** Deliberately
+  nearer the emblem than the reference photograph, because the gap beside it
+  is the thing the owner kept pointing at («انت تبعد الحروف مره عن الشعار»).
+  Three letters land at 66.3–90.1%: clear of the emblem's right edge at 60.3
+  and of the KSA rule at 93.9. `test-plate-shape.js` records both the number
+  and the reason.
+- **Only the Arabic row is heavy.** `.cp-en` is 600 weight at 7.2cqw against
+  the Arabic row's 800 at 8.3cqw — on a real plate the Latin is a plain
+  medium face, and at 800 it read as a different, bolder plate.
+- **The seal's words are sized against the SEAL, not the plate.** `.stamp`
+  carries its own `container-type: inline-size`, so one font-size holds at
+  every plate size; sized in units of the plate they ran straight out through
+  the ring on a wide one. The sizes are **measured**: each result's longest
+  line lands at about 46% of the drawn ring, which clears the inner ring at
+  the 11° the seal is turned. «لم يتم» is the longest word either seal
+  carries and takes its own size. Re-measure if a result's wording changes;
+  `test-result.js` holds every line under 58% and at least one over 38%.
 - **A premium plate is a SHORT one.** «ا ب 1» is what gets auctioned; «ا ب ح
   1234» is what comes on an ordinary car. The letters CHECK demanded exactly
   three, which refused precisely the plates worth listing — it is `{1,3}` now,
@@ -496,6 +530,57 @@ must both be false.
     forearm. Keep `mazad-paddle.png`; there is no vector original.
   - The newest paddle animates in once, tracked by `lastSeenBid`, so the
     refresh loop does not replay the animation every 2.5 seconds.
+- **The main page has three doors: عرض / طلب / مزايدة.** They replace the
+  single «اعرض في المزاد» button, which only ever covered one of the three.
+  عرض opens the publish sheet, مزايدة goes to whatever is on air (or filters
+  the list to the open sums when nothing is), and **طلب is a WhatsApp message
+  to the operator**, not a table: there is no wanted-list schema, and a button
+  that needs a migration before it does anything is a dead button. It collects
+  the same three things a bid does and writes the message for him.
+- **The list is TWO PLATES ACROSS.** `#lots` is a grid at
+  `minmax(158px, 1fr)` with a 10px gutter — measured, not picked: `.wrap`
+  gives 402px of content at a 430px phone and 332px at a 360px one, so two
+  columns clear both, and a 360px phone is most of them. The live banner
+  spans `1 / -1`. Below 560px the card spends less on padding, and it shows
+  **two** stats rather than three — three labels wrapped to three lines each
+  in a card half the width, so the bid count moved onto the foot line.
+- **The section chips are CENTRED and are the bigger row.** On an RTL page a
+  flex row starts at the right, so both rows sat in the corner with the line
+  empty beside them («فوق ليه محاذاه كله يمين»). They wrap rather than scroll
+  away, because a chip that has to be scrolled to is a chip nobody presses.
+- **`KIND_ICON` and `KIND_NAME` are kept apart**, and `KIND_LABEL` is built
+  from them. Half the page wants the name on its own — «عمولة لوحات 250», «ما
+  فيه سيارات هنا» — and stripping the icon back off with `/^\S+\s/` meant a
+  section name could never be more than one word. It also let لوحات and
+  سيارات both carry a car emoji, which is exactly what he could not tell
+  apart. `test-about.js` asserts the two live sections do not share an icon.
+- **The footer list is the main page's, never the broadcast's.**
+  `body.on-air` (set for the whole `/live` route, not just when a lot is up)
+  hides it: the card already carries the number and the commission, so on
+  camera the footer repeated both plus a «من نحن» link nobody watching a
+  stream will click.
+- **The contact is one green WhatsApp button**, centred, «اضغط هنا للتواصل
+  واتس» with the number under it. In the site's burgundy it read as one more
+  link on a page of burgundy links. That `#25D366` is the **only** green on
+  the page that does not mean success, and it is deliberate — a viewer
+  recognises it before he reads it.
+- **A bidder gives a name, a mobile number AND a location.** The handover is
+  physical — the plate changes hands and the transfer happens at a particular
+  counter — so where he is decides how it happens and what it costs.
+  `bidder_city` is **operator-only for the same reason as `bidder_phone`**:
+  left out of anon's column-by-column SELECT on `mazad_bids`, so the public
+  feed cannot carry it even by asking for `*`, and drawn only inside
+  `#liveOps`. All three are kept in `localStorage`, so a returning bidder is
+  asked once.
+  - Adding `p_city` meant **dropping** `place_bid(uuid,text,numeric,text)`,
+    not defaulting a fifth argument — that is the third time this has bitten
+    the same function.
+  - **The page and the schema deploy separately**, so `remote.placeBid` sends
+    the city, and on PostgREST's `PGRST202` («could not find the function …
+    in the schema cache») falls back to the four-argument call. The city is
+    lost until he runs `supabase-mazad.sql`; the auction is not. Same
+    degrade-instead-of-error convention as the empty Supabase constants.
+    `test-home.js` drives that exact 404.
 - **A bidder gives a name and a mobile number, and the number is
   operator-only.** `place_bid` refuses anything that is not `05XXXXXXXX`: a
   sum nobody can follow up on is no use to the seller. The number is stored in
@@ -597,12 +682,28 @@ must both be false.
 - **Commission is per section** — `FEES` near the top of the script:
   | section | rule |
   |---|---|
-  | 🚗 لوحات | **250 flat**, whatever it sells for |
-  | 🚙 سيارات | **500 flat**, whatever it sells for |
+  | 🔖 لوحات | **250 flat**, whatever it sells for |
+  | 🚙 سيارات | **500**, or **1%** once the sale passes **50,000** |
   | 📱 جوالات | 200, or 2.5% once the sale passes 20,000 |
   A section with a `rate` charges the flat fee up to `threshold` and the rate
   above it; a section with only `flat` charges that and nothing more. So the
   same 30,000 sale costs 250, 500 or 750 depending on where it was listed.
+  - **لوحات is flat deliberately** — the owner set 250 and meant it, whatever
+    a plate goes for. Don't "improve" it into a rate.
+  - **سيارات is not**, because a flat fee is the one that stops making sense
+    as the sale grows: 500 on a 200,000 car is a quarter of a per-mille for
+    the same night's work as a 30,000 one.
+  - **The car threshold is picked so `threshold × rate === flat`** — 50,000 ×
+    1% is exactly 500 — so the fee does **not jump** at the crossover: a car
+    at 49,999 and one at 50,001 pay the same 500. Moving either number means
+    moving the other, or a seller two riyals over the line suddenly pays more.
+    `test-sections.js` asserts the crossover is flat. (The phone rule *does*
+    jump there — 20,000 × 2.5% is 500 against its 200 flat — but that section
+    is switched off and its numbers are the owner's, so it stands as it is.)
+  - **The publish form's worked sums straddle the threshold**, derived from it
+    rather than hard-coded. They were 10,000 and 30,000, both under the car
+    threshold, so the box printed «500 · 500» and a seller never saw the rate
+    at all — the half of the rule he most needs before he agrees to it.
   - `feeRule(kind)` is the one sentence every screen states it with and
     `commissionOn(price, kind)` the one sum, so the wording and the number
     cannot drift. **Every call site must pass the kind** — `kindOf(lot)` —

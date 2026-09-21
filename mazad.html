@@ -108,19 +108,42 @@ a { color: inherit; }
 }
 .banner b { color: var(--gold-400); }
 
+/* ---------- the three doors ---------- */
+/* «ابي تضيف بالصفحه الرئيسيه اعلى الصفحه 3 ايقونات: عرض / طلب / مزايده».
+   They replace the single «اعرض في المزاد» button, which only ever covered
+   one of the three, and left the other two with nowhere to start. */
+.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0 4px; }
+.door {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 13px 6px 11px; border-radius: 16px; text-align: center;
+  background: linear-gradient(170deg, #fff, #fbf7f3);
+  border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.door-i { font-size: 1.5rem; line-height: 1.1; }
+.door-t { font-size: 1rem; font-weight: 900; color: var(--wine-700); }
+.door-s { font-size: .66rem; color: var(--muted); line-height: 1.45; }
+.door:active { transform: scale(.97); }
+/* the one that lists a lot is the one he wants pressed */
+#doorSell { border-color: var(--gold-500); background: linear-gradient(170deg, #fffaf0, #fdf1dc); }
+
 /* ---------- toolbar ---------- */
 /* two rows now — the section, then how far along — so each gets its own line
    rather than sharing one and cutting the last chip off */
 .toolbar { display: flex; flex-direction: column; gap: 8px; align-items: stretch; margin: 16px 0 12px; }
-.filters { display: flex; gap: 6px; flex: 1; overflow-x: auto; scrollbar-width: none;
-  -webkit-overflow-scrolling: touch; }
+/* CENTRED, not packed against the right edge. On an RTL page a flex row
+   starts at the right, so both rows sat in the corner with the rest of the
+   line empty — «فوق ليه محاذاه كله يمين». They are the first thing a visitor
+   uses, so they are centred and they wrap rather than scroll away. */
+.filters { display: flex; gap: 8px; flex: 1; flex-wrap: wrap;
+  justify-content: center; }
 .filter { flex: none; }   /* never squeeze a chip until its label wraps */
-.filters::-webkit-scrollbar { display: none; }
 .filter {
-  padding: 7px 14px; border-radius: 999px; background: #fff;
-  border: 1px solid var(--line); font-size: .84rem; font-weight: 600;
+  padding: 9px 18px; border-radius: 999px; background: #fff;
+  border: 1px solid var(--line); font-size: .92rem; font-weight: 700;
   color: var(--muted); white-space: nowrap;
 }
+/* the section row is the bigger of the two — it is the choice that matters */
+.filters.kinds .filter { padding: 11px 22px; font-size: 1rem; }
 .filter.on { background: var(--wine-700); border-color: var(--wine-700); color: #fff; }
 
 .btn {
@@ -139,6 +162,36 @@ a { color: inherit; }
 .card {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
   box-shadow: var(--shadow); padding: 14px; margin-bottom: 12px;
+}
+/* ---------- the list is TWO PLATES ACROSS ----------
+   «الوحات تصغرها شوي — تكون لوحتين جنب بعض». One plate to a row made each
+   one enormous and the queue three screens long; a plate is recognisable at
+   half that. A grid rather than a fixed pair, so a phone gets two, a laptop
+   gets four, and a very narrow phone still gets one legible card instead of
+   two unreadable ones. */
+/* 158px is measured, not picked: .wrap gives 402px of content at a 430px
+   phone and 332px at a 360px one, so two columns and a 10px gutter clear it
+   at both — which is the point, since a 360px phone is most of them. */
+#lots { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+  gap: 10px; align-items: start; }
+#lots > .card { margin-bottom: 0; }
+/* the banner is the whole width — it is the one thing that is on air */
+#lots > .live-banner { grid-column: 1 / -1; }
+@media (max-width: 329px) { #lots { grid-template-columns: 1fr; } }
+/* at two across a card has half the room, so it spends less of it on padding */
+@media (max-width: 560px) {
+  #lots > .card { padding: 8px; }
+  #lots .lot-top { gap: 5px; margin-bottom: 7px; }
+  #lots .badge { font-size: .62rem; padding: 3px 7px; }
+  #lots .phone-plate { padding: 7px 5px; }
+  #lots .lot-foot { font-size: .68rem; }
+  #lots .btn-sm { padding: 7px 8px; font-size: .74rem; }
+  #lots .lot-stats { gap: 5px; margin-top: 9px; }
+  #lots .stat { padding: 6px 4px; }
+  #lots .stat-k { font-size: .6rem; white-space: nowrap; }
+  #lots .stat-v { font-size: .84rem; white-space: nowrap; }
+  /* «على الهواء» is two words and wrapped the badge row in half a card */
+  #lots .badge.air { font-size: .58rem; padding: 3px 6px; }
 }
 .lot { display: block; width: 100%; text-align: right; }
 .lot-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
@@ -321,6 +374,11 @@ a { color: inherit; }
      — the seal lands across the middle of the plate, not on the emblem */
   height: 172%; aspect-ratio: 1; border-radius: 50%;
   display: grid; place-items: center; pointer-events: none;
+  /* the words are sized against the CIRCLE, not against the plate — on a
+     wide plate a cqw of plate is a third of a cqw of seal, and «لم يتم» ran
+     out past the ring. Making the seal its own container is what lets one
+     font-size hold for every plate size and every result. */
+  container-type: inline-size;
   transform: rotate(-11deg);
   border: 1.1cqw solid currentColor;
   /* opaque enough that the emblem behind it does not fight the words */
@@ -333,11 +391,21 @@ a { color: inherit; }
   border: .35cqw solid currentColor; border-radius: 50%; opacity: .85;
 }
 .stamp span {
-  display: grid; justify-items: center; line-height: 1.04;
-  font-weight: 900; letter-spacing: -.01em; white-space: nowrap;
+  display: grid; justify-items: center; line-height: 1.06;
+  font-weight: 900; letter-spacing: -.02em; white-space: nowrap;
+  /* the inner ring sits 8% in, and a horizontal line across a circle is
+     shorter than its diameter — so the words get the safe chord, not the
+     whole width, and nothing can reach the ring */
+  max-width: 88cqw;
 }
-.stamp b { display: block; font-size: 6.4cqw; }
-.stamp.cancelled b { font-size: 7.6cqw; }
+/* Sized against the seal, and MEASURED — the sizes below put the widest line
+   of each result at about 46% of the drawn ring, which leaves the words clear
+   of the inner ring at the 11° the seal is turned. «لم يتم» is the longest
+   word either seal carries, so it takes its own size rather than dragging
+   the others down with it. Re-measure if a result's wording changes. */
+.stamp b { display: block; font-size: 28cqw; }
+.stamp.unsold b:first-child { font-size: 20cqw; }
+.stamp.cancelled b { font-size: 24cqw; }
 .stamp.sold      { color: var(--ok-600); }
 .stamp.unsold    { color: #c0392b; }
 .stamp.cancelled { color: #6b7b73; }
@@ -454,15 +522,20 @@ a { color: inherit; }
 .ctl-bid.done .amt { color: var(--wine-600); }
 /* ---------- live broadcast screen ---------- */
 .live {
-  /* burgundy at the top where the plate sits, sinking into olive at the
-     bottom corners — the depth is what reads as فخم on camera */
+  /* Burgundy at the top where the plate sits, sinking visibly into olive
+     across the lower half — the two colours together are what reads as فخم
+     on camera. It was there before but so faint that it read as plain
+     burgundy; the olive has to be seen to be a brand colour. */
   background:
-    radial-gradient(120% 90% at 50% 0%, #7b1f38, rgba(67,16,31,.96) 48%, rgba(29,36,22,0) 100%),
-    linear-gradient(160deg, var(--wine-900) 30%, var(--olive-900));
+    radial-gradient(115% 72% at 50% 0%, #7b1f38, rgba(67,16,31,.94) 42%, rgba(67,16,31,0) 72%),
+    linear-gradient(168deg, var(--wine-900) 18%, var(--olive-800) 78%, var(--olive-900));
   border-radius: 20px; padding: 16px 14px 20px; color: #fff; margin-top: 14px;
   border: 2px solid rgba(217,164,65,.45); box-shadow: var(--shadow-lg);
 }
-.live-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.live-head {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  padding-bottom: 8px; border-bottom: 1.5px solid rgba(125,151,96,.45);
+}
 .live-dot {
   background: var(--gold-500); color: #3a1208; font-size: .75rem; font-weight: 800;
   padding: 4px 11px; border-radius: 999px;
@@ -509,12 +582,34 @@ a { color: inherit; }
 }
 .live-bids span.top { background: rgba(217,164,65,.9); color: #2a1c02; border-color: transparent; }
 
-.live-cta {
-  margin-top: 14px; text-align: center; background: rgba(255,255,255,.1);
-  border: 1px dashed rgba(217,164,65,.55); border-radius: 14px; padding: 10px;
-  font-size: .86rem; color: #f7e9ec;
+/* ---------- the foot of the broadcast card ----------
+   The site, the number and the commission, in ONE olive-framed bar. They were
+   two stacked blocks and fell below the fold on a 900px screen — on the one
+   screen that is filmed. The olive is the third brand colour doing real work
+   here: it separates this bar from the burgundy card without using gold,
+   which the price and the clock already own. */
+.live-bar {
+  margin-top: 12px; display: grid; gap: 6px; text-align: center;
+  background: linear-gradient(160deg, rgba(85,104,63,.72), rgba(29,36,22,.82));
+  border: 2px solid #6d8450;
+  border-radius: 16px; padding: 10px 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
-.live-cta b { color: var(--gold-400); direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.live-bar .lb-site { font-size: .84rem; color: #eae6dd; }
+.live-bar .lb-site b { color: var(--gold-400); direction: ltr; unicode-bidi: isolate;
+  display: inline-block; font-size: .95rem; }
+/* the number sits in its own olive frame inside the bar */
+.live-bar .lb-tel {
+  justify-self: center; border: 2px solid #7e9760;
+  background: rgba(29,36,22,.66); border-radius: 999px;
+  padding: 4px 14px; font-size: .84rem; color: #eae6dd;
+}
+.live-bar .lb-tel b { color: var(--gold-400); font-weight: 900; font-size: 1.02rem; }
+.live-bar .lb-fee {
+  font-size: .84rem; font-weight: 700; color: #f2e7cf; line-height: 1.6;
+  border-top: 1px dashed rgba(234,230,221,.28); padding-top: 7px;
+}
+.live-bar .lb-fee b { color: var(--gold-400); font-weight: 900; }
 
 /* The commission has to be readable on the broadcast without anyone
    scrolling — it only lived in the page footer, under the fold, so on camera
@@ -525,13 +620,55 @@ a { color: inherit; }
 }
 .live-tel b { color: var(--gold-400); font-weight: 900; font-size: 1rem; }
 
-.live-fee {
-  margin-top: 10px; text-align: center; line-height: 1.75;
-  background: rgba(217,164,65,.14); border: 1.5px solid rgba(217,164,65,.6);
-  border-radius: 14px; padding: 10px 12px;
-  font-size: .9rem; font-weight: 700; color: #fbeccd;
+/* ---------- the stage fits the screen it is filmed on ----------
+   A broadcast screen that has to be scrolled is a broken broadcast screen:
+   whatever is below the fold is simply not on camera. The type that can
+   shrink is sized against the viewport HEIGHT (dvh) rather than its width, so
+   the whole card lands inside a 800px-tall window and still fills a 1080. */
+@media (min-width: 900px) {
+  .live-clock      { font-size: clamp(2.2rem, 7.4dvh, 5rem); margin: 6px 0 2px; }
+  .live-clock.over { font-size: clamp(1.5rem, 4.4dvh, 3rem); }
+  .live-price .v   { font-size: clamp(1.9rem, 6.2dvh, 3.4rem); line-height: 1.12; }
+  .live-paddles    { margin-top: 8px; }
+  .live .lp        { width: clamp(50px, 8.2dvh, 88px); }
+  .live .lp.top    { width: clamp(64px, 10.4dvh, 112px); }
+  .live-plate      { margin-bottom: 4px; }
+  .carplate.big    { width: min(100%, 620px, 66dvh); }
+  /* the site and the number share a line where there is room for them */
+  .live-bar        { grid-template-columns: 1fr auto; align-items: center; }
+  .live-bar .lb-fee { grid-column: 1 / -1; }
 }
-.live-fee b { color: var(--gold-400); font-weight: 900; }
+/* A laptop leaves about 760–800px once the browser chrome is taken out, and
+   the card still has to END above the fold: everything below it is off
+   camera, and what fell off was the number to call and the commission — the
+   two things a seller actually agrees to. Every value here is a squeeze on
+   something that can afford it; the plate, the clock and the price are not
+   touched beyond what dvh already does. */
+@media (min-width: 900px) and (max-height: 880px) {
+  .live            { padding: 10px 12px 12px; }
+  .live-head       { margin-bottom: 8px; padding-bottom: 6px; }
+  .live-plate      { margin-bottom: 0; }
+  .live-note       { margin-top: 4px; }
+  .carplate.big    { width: min(100%, 620px, 60dvh); }
+  .live-clock      { font-size: clamp(2rem, 6.6dvh, 5rem); margin: 4px 0 0; }
+  .live-price .k   { font-size: .72rem; }
+  .live-price .who { font-size: .86rem; }
+  .live-auto       { margin-top: 4px; font-size: .78rem; }
+  .live-paddles    { margin-top: 6px; }
+  .live .lp        { width: clamp(44px, 7.4dvh, 88px); }
+  .live .lp.top    { width: clamp(56px, 9.4dvh, 112px); }
+  .lp-name         { font-size: .62rem; margin-top: 2px; }
+  .live-bar        { margin-top: 8px; padding: 7px 10px; gap: 3px; }
+  .live-bar .lb-fee { padding-top: 4px; font-size: .8rem; }
+  .live-bar .lb-site { font-size: .8rem; }
+}
+@media (min-width: 900px) and (max-height: 790px) {
+  .carplate.big  { width: min(100%, 620px, 56dvh); }
+  .live-paddles  { margin-top: 4px; }
+  .live .lp      { width: clamp(40px, 6.6dvh, 88px); }
+  .live .lp.top  { width: clamp(52px, 8.4dvh, 112px); }
+  .live-bar      { margin-top: 6px; }
+}
 
 /* ---------- the publish / quick-add forms ---------- */
 .seg {
@@ -597,10 +734,14 @@ a { color: inherit; }
    letters bunched against the KSA strip and the middle of the plate sat
    empty. A plate is not a line of text with a lot of margin — the characters
    are laid out ACROSS it. */
-.cp-num    { left: 20.8%; width: 24%; }
+.cp-num    { left: 20.8%; }
 .cp-emblem { left: 51.4%; height: 84%; display: flex; align-items: center; justify-content: center; }
-.cp-let    { left: 80.6%; width: 22%; }
-.cp-num, .cp-let { display: flex; flex-direction: column; align-items: stretch; line-height: 1.04; }
+/* closer to the emblem than the measured 80.6% centre: the letters are the
+   half of the plate that is read out loud, and a gap beside the emblem is the
+   one thing he keeps pointing at. Three letters put the block at 66.5–90.5%,
+   still clear of the KSA rule at 93.9. */
+.cp-let    { left: 78.5%; }
+.cp-num, .cp-let { display: flex; flex-direction: column; align-items: center; line-height: 1.04; }
 .cp-emblem img { max-width: 100%; max-height: 100%; object-fit: contain; display: block;
   width: 17.8cqw; }
 
@@ -611,17 +752,32 @@ a { color: inherit; }
    zone and space-between, one digit or four both fill the same area, the way
    they do on the road. */
 .cp-ar, .cp-en {
-  display: flex; justify-content: space-between; width: 100%;
-  font-weight: 800; white-space: nowrap;
+  display: flex; justify-content: center; white-space: nowrap;
+  font-weight: 800;
+}
+/* ---------- a plate is MONOSPACED, and that is the whole trick ----------
+   Every character on a real plate sits in a slot of the same width, which is
+   why a ه and a ا are the same distance apart as two digits, and why the
+   Arabic row lines up over the Latin one. space-between across a fixed zone
+   got three characters right and everything else wrong: two characters were
+   thrown into opposite corners of the zone — «الرقمين كل واحد بزاويه» — and
+   four overflowed. A fixed slot per character gives three the measured 24%
+   of the plate, two a natural pair, and four an honestly wider block, the
+   way it comes on the road. */
+.cp-ar > span, .cp-en > span {
+  display: inline-block; width: 8cqw; text-align: center;
 }
 .cp-ar { font-size: 8.3cqw; direction: rtl; }
 /* Arabic-Indic digits are written LEFT to right — ٩٧٨ sits over 978 in the
    same order. Only the letters read right to left, so the rtl above belongs
    to .cp-let alone. */
 .cp-num .cp-ar { direction: ltr; }
-.cp-en { font-size: 7.6cqw; }
-/* a single character has nothing to spread against, so it is centred */
-.cp-ar.one, .cp-en.one { justify-content: center; }
+/* The Latin row on a real plate is a plain, medium-weight, slightly narrow
+   face — not the heavy one the Arabic row carries. At 800 it read as a
+   different, bolder plate than the reference. */
+.cp-en { font-size: 7.2cqw; font-weight: 600; }
+/* every row is centred now, so .one needs nothing of its own — the class is
+   still emitted because the three-cell plates below use it */
 
 /* ---------- نقل and صغيرة: three cells, country in the middle ----------
    Every number below is measured off the owner's reference images, the same
@@ -650,14 +806,18 @@ a { color: inherit; }
 /* on نقل the side cells are split in two by a rule; on صغيرة they are not */
 .cp3 .c3-r {
   flex: 1 1 0; width: 100%; display: flex; align-items: center;
-  justify-content: space-between; padding: 0 6%;
+  justify-content: center; padding: 0 4%;
   font-weight: 800; line-height: 1; white-space: nowrap; direction: ltr;
 }
 .cp3 .c3-r.c3-rtl { direction: rtl; }
-.cp3 .c3-r.one { justify-content: center; }
+/* monospaced slots here too, for the same reason as on خصوصي above */
+.cp3 .c3-r > span { display: inline-block; text-align: center; }
 .k-transport .c3-lat { border-top: .5cqw solid #15151a; }
-.k-transport .c3-r      { font-size: 7.4cqw; }
-.k-small     .c3-solo   { font-size: 11.5cqw; letter-spacing: .1em; }
+.k-transport .c3-r        { font-size: 7.4cqw; }
+.k-transport .c3-r > span { width: 8.4cqw; }
+.k-transport .c3-lat      { font-weight: 600; }
+.k-small     .c3-solo     { font-size: 11.5cqw; font-weight: 600; }
+.k-small     .c3-solo > span { width: 13cqw; }
 
 /* the country cell: نقل is the blue one — that is what names it on sight */
 .cp3 .c3-ksa { gap: .3cqw; padding: .6cqw .2cqw; }
@@ -932,6 +1092,26 @@ body.on-air .foot { display: none; }
 .foot-tel a { color: var(--wine-600); font-weight: 900; text-decoration: none; font-size: .95rem; }
 .foot { text-align: center; font-size: .74rem; color: var(--muted); padding: 24px 10px 8px; line-height: 1.9; }
 .foot a { color: var(--wine-700); font-weight: 700; }
+/* ---------- the one way to reach him ----------
+   «وز الواتس ياليت يكون بالنص وبلون اخضر يمثل هوية الواتس». It carried the
+   site's own burgundy, so on a page of burgundy buttons it read as one more
+   link. WhatsApp's own green is the only green on this page that is not the
+   success green, and it is the whole point of the button — a viewer
+   recognises it before he reads it. */
+.wa-btn {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  margin: 0 auto 14px; max-width: 340px; padding: 13px 18px;
+  border-radius: 14px; background: #25D366; color: #08331b !important;
+  font-size: .96rem; font-weight: 800; line-height: 1.3;
+  box-shadow: 0 4px 14px rgba(37,211,102,.32);
+}
+.wa-btn { text-decoration: none; }
+.wa-btn .wa-mark { font-size: 1.4rem; line-height: 1; flex: none; }
+/* the label and the number are one block beside the mark, so a narrow phone
+   breaks between them instead of splitting the number itself */
+.wa-btn .wa-txt { display: block; text-align: center; }
+.wa-btn b { display: block; font-weight: 900; font-size: 1.02rem;
+  letter-spacing: .02em; }
 .hidden { display: none !important; }
 </style>
 </head>
@@ -955,6 +1135,25 @@ body.on-air .foot { display: none; }
 
   <!-- ============ list view ============ -->
   <section id="viewList">
+    <!-- The three things anyone arrives here to do. Everything else on this
+         page is the queue; these are the doors into it. -->
+    <div class="doors">
+      <button class="door" id="doorSell">
+        <span class="door-i">📤</span>
+        <span class="door-t">عرض</span>
+        <span class="door-s">عندك لوحة وتبي تعرضها</span>
+      </button>
+      <button class="door" id="doorWant">
+        <span class="door-i">🔎</span>
+        <span class="door-t">طلب</span>
+        <span class="door-s">تدوّر لوحة معيّنة</span>
+      </button>
+      <button class="door" id="doorBid">
+        <span class="door-i">✋</span>
+        <span class="door-t">مزايدة</span>
+        <span class="door-s">تبي تزايد على المفتوح</span>
+      </button>
+    </div>
     <div class="toolbar">
       <!-- built from KINDS_SHOWN, so switching a section on or off is one
            line in the script instead of four places in the markup -->
@@ -963,10 +1162,9 @@ body.on-air .foot { display: none; }
         <button class="filter on" data-filter="live">السوم المفتوح</button>
         <button class="filter" data-filter="pending">بانتظار الدور</button>
         <button class="filter hidden" data-filter="done" id="fDone">المنتهية</button>
-        <button class="filter" data-filter="all">الكل</button>
+        <button class="filter" data-filter="all">كل الحالات</button>
       </div>
     </div>
-    <button class="btn btn-gold btn-block" id="btnAdd" style="margin-bottom:14px">➕ اعرض في المزاد</button>
     <div id="lots"></div>
   </section>
 
@@ -995,9 +1193,12 @@ body.on-air .foot { display: none; }
   </section>
 
   <div class="foot">
+    <a class="wa-btn" id="footTel" href="#" target="_blank" rel="noopener">
+      <span class="wa-mark" aria-hidden="true">💬</span>
+      <span class="wa-txt">اضغط هنا للتواصل واتس
+        <b class="num" id="footTelNum">—</b></span>
+    </a>
     <div class="foot-links"><a href="#/about">من نحن وكيف يشتغل المزاد ›</a></div>
-    <div class="foot-tel">📞 للتواصل والاستفسار
-      <a id="footTel" class="num" href="#">—</a></div>
     عمولة الموقع <b id="footFee">—</b> — على ذمة البائع.<br>
     الموقع وسيط عرض فقط. الاتفاق والتسليم والدفع بين البائع والمشتري مباشرة.<br>
     نقل الملكية يتم عبر الجهة المختصة وحسب أنظمتها.
@@ -1042,9 +1243,21 @@ const CONTACT_PHONE = '0558184381';   // the operator's own line, shown publicly
    `flat` charges that and nothing more, whatever the sale.
    Displayed only: the site takes no payment and settles nothing, so nothing
    in the database depends on any of this. */
+/* A flat fee on a car is the one that stops making sense as the sale grows:
+   500 on a 200,000 car is a quarter of a per-mille, for the same night's work
+   as a 30,000 one. So the car rule gains a rate above a threshold, the way
+   the phone rule always had one.
+
+   The threshold is chosen so that threshold × rate === flat — 50,000 × 1% is
+   exactly 500 — which means the fee does NOT jump at the crossover: a car at
+   49,999 and one at 50,001 pay the same 500. (The phone rule does jump there,
+   20,000 × 2.5% being 500 against its 200 flat; that section is switched off,
+   and its numbers are his, so it is left as it stands.)
+
+   لوحات stays flat at 250 because he set it that way on purpose. */
 const FEES = {
   plate: { flat: 250 },                                  // ثابت، مهما كان السعر
-  car:   { flat: 500 },                                  // ثابت، مهما كان السعر
+  car:   { flat: 500, threshold: 50000, rate: 0.01 },    // 500، و1% فوق 50,000
   phone: { flat: 200, threshold: 20000, rate: 0.025 }
 };
 const FEE_DEFAULT = 'phone';
@@ -1108,6 +1321,18 @@ const PLATE_LATIN = { 'ا':'A','ب':'B','ح':'J','د':'D','ر':'R','س':'S','ص'
                       'ط':'T','ع':'E','ق':'G','ك':'K','ل':'L','م':'Z','ن':'N',
                       'ه':'H','و':'U','ي':'V' };
 const PLATE_LETTERS = Object.keys(PLATE_LATIN);
+
+/* ---------- ه is drawn هـ, or it reads as a ٥ ----------
+   Standing on its own the letter is a bare circle, which beside a row of
+   Arabic-Indic digits is simply the number five: «حرف الهاء وراه كنه رقم
+   خمسه». A real plate draws it in its initial form, with the tail — هـ — and
+   so does every plate the owner sent. A tatweel after it is a joining
+   character, so the font shapes the ه as initial and the pair renders as one
+   letter with its tail; it is not a second character and it is not a hack
+   around the font, it is the form the letter takes on a plate.
+   Only what is DRAWN changes: the stored letter, the CHECK constraint, the
+   Latin map and everything the operator types stay a plain ه. */
+const PLATE_GLYPH = { 'ه': '\u0647\u0640' };
 
 /* A plate may carry one, two or three letters, and the short ones are the
    valuable ones — «ا ب 1» is what gets auctioned, «ا ب ح 1234» is what comes
@@ -1195,7 +1420,7 @@ const plateLatin = (letters) => normPlate(letters).split('')
    Arabic letters can never join into a word: separate elements do not
    connect, so no zero-width joiner is needed. */
 const plateCells = (str) => String(str || '').split('')
-  .map(c => '<span>' + esc(c) + '</span>').join('');
+  .map(c => '<span>' + esc(PLATE_GLYPH[c] || c) + '</span>').join('');
 const plateArabic = (letters) => normPlate(letters);
 
 /* ---------- the plate's own type ----------
@@ -1258,7 +1483,16 @@ const itemWord  = (lot) => IS_CAR(lot) ? 'السيارة' : IS_PLATE(lot) ? 'ا�
 const kindCount = (k) => k === 'plate' ? 'لوحة' : k === 'car' ? 'سيارة' : 'رقم';
 const kindNoun  = (k) => k === 'plate' ? 'لوحتك' : k === 'car' ? 'سيارتك' : 'رقمك';
 const itemWordN = (lot) => IS_CAR(lot) ? 'سيارتك' : IS_PLATE(lot) ? 'لوحتك' : 'رقمك';
-const KIND_LABEL = { plate: '🚗 لوحات', phone: '📱 جوالات', car: '🚙 سيارات' };
+/* The icon and the name are kept APART, because half the page wants the
+   name on its own — «عمولة لوحات 250», «ما فيه سيارات هنا» — and stripping
+   the icon back off with a regex meant the name could never be more than one
+   word. It also put two car icons side by side on the only two sections that
+   are running, which is exactly what he could not tell apart:
+   «وضح مسمياتها». */
+const KIND_ICON = { plate: '🔖', phone: '📱', car: '🚙' };
+const KIND_NAME = { plate: 'لوحات', phone: 'جوالات', car: 'سيارات' };
+const KIND_LABEL = Object.fromEntries(Object.keys(KIND_NAME)
+  .map(k => [k, KIND_ICON[k] + ' ' + KIND_NAME[k]]));
 
 /* ---------- which sections the site OFFERS ----------
    جوالات is switched off for now: the plates are where the money is, and a
@@ -1275,7 +1509,7 @@ const KINDS_SHOWN = ['plate', 'car'];
 const kindShown = (k) => KINDS_SHOWN.includes(k);
 /* the stored choice may name a section that is switched off now */
 const firstShownKind = (k) => kindShown(k) ? k : KINDS_SHOWN[0];
-const kindWords = () => KINDS_SHOWN.map(k => KIND_LABEL[k].replace(/^\S+\s/, '')).join(' و');
+const kindWords = () => KINDS_SHOWN.map(k => KIND_NAME[k]).join(' و');
 /* the singular, for the publish form's own chips */
 const SEG_LABEL = { plate: '🚗 لوحة', phone: '📱 رقم', car: '🚙 سيارة' };
 /* the chip on a card says what the lot is; for a phone the carrier is more
@@ -1461,6 +1695,20 @@ function stampFor(st) {
   return '<div class="stamp ' + st + '"><span>' +
     STAMP[st].map(w => '<b>' + esc(w) + '</b>').join('') + '</span></div>';
 }
+/* ---------- the one bar at the foot of the broadcast ----------
+   The site, the number and the commission used to be two stacked blocks, and
+   on a 900px screen they fell BELOW the fold — on the one screen that is
+   filmed, so the two things a seller has to see were never on camera. One
+   compact bar, framed in olive, and the card is sized to fit the viewport. */
+function liveBar(kind) {
+  return '<div class="live-bar">' +
+    '<div class="lb-site">زايد من الموقع <b>rafd-digital.com/m</b></div>' +
+    '<div class="lb-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
+    '<div class="lb-fee">💰 عمولة ' + esc(KIND_NAME[kind] || '') +
+      ' <b>' + esc(feeRule(kind)) + '</b> — على ذمة البائع</div>' +
+  '</div>';
+}
+
 /* the plate and its stamp, so the seal is centred on the PLATE rather than on
    whatever else shares the card with it */
 const plateStamped = (lot, size, st) =>
@@ -1494,7 +1742,12 @@ const me = {
   // a winning bid is worthless if the seller cannot reach the bidder, so the
   // number is asked for once and kept in this browser like the name
   get phone()  { return localStorage.getItem('mazad_phone') || ''; },
-  set phone(v) { localStorage.setItem('mazad_phone', v); }
+  set phone(v) { localStorage.setItem('mazad_phone', v); },
+  /* «مطلوب منه اسمه ورقم جواله وموقعه عند طلب مزايده والا الشراء» — the
+     handover is physical, so where the bidder is decides how it happens and
+     what it costs. Asked once, kept like the name and the number. */
+  get city()  { return localStorage.getItem('mazad_city') || ''; },
+  set city(v) { localStorage.setItem('mazad_city', v); }
 };
 function paintName() {
   // The chip is the bidder's identity. The operator's screen is not a place to
@@ -1569,11 +1822,27 @@ const remote = {
     });
     return { ...body, id };
   },
-  placeBid(id, name, amount, phone) {
-    return this.req('rpc/place_bid', {
-      method: 'POST',
-      body: JSON.stringify({ p_listing: id, p_name: name, p_amount: amount, p_phone: phone })
-    });
+  /* The schema gained p_city, and a five-argument place_bid REPLACES the
+     four-argument one (a defaulted extra argument would be an overload, and a
+     call naming only the first four would then be ambiguous). That means the
+     page and the database change together — but they are deployed separately,
+     so between a deploy and him running supabase-mazad.sql the new call finds
+     no such function. PostgREST answers PGRST202 for that, and the whole site
+     would be «ما تقدر تزايد» in the meantime. So: send the city, and on that
+     one error fall back to the old call. The city is lost until the schema
+     catches up; the auction is not. Same degrade-instead-of-error convention
+     as the empty Supabase constants. */
+  async placeBid(id, name, amount, phone, city) {
+    const post = (body) => this.req('rpc/place_bid', {
+      method: 'POST', body: JSON.stringify(body) });
+    try {
+      return await post({ p_listing: id, p_name: name, p_amount: amount,
+                          p_phone: phone, p_city: city });
+    } catch (e) {
+      if (!/PGRST202|could not find|schema cache/i.test(String(e && e.message))) throw e;
+      console.warn('place_bid has no p_city yet — run supabase-mazad.sql', e);
+      return post({ p_listing: id, p_name: name, p_amount: amount, p_phone: phone });
+    }
   },
   admin(id, secret, action, minutes, price) {
     return this.req('rpc/mazad_admin', {
@@ -1715,11 +1984,12 @@ const local = {
                   status: body.status || 'pending', is_live: false, created_at: new Date().toISOString() };
     db.listings.push(row); this.write(db); return row;
   },
-  async placeBid(id, name, amount, phone) {
+  async placeBid(id, name, amount, phone, city) {
     const db = this.read();
     const lot = db.listings.find(l => l.id === id);
     if (!lot) return { ok: false, error: 'not_found' };
     if (!/^05\d{8}$/.test(String(phone || ''))) return { ok: false, error: 'bad_phone' };
+    if (String(city || '').trim().length < 2) return { ok: false, error: 'bad_city' };
     if (lot.status === 'pending') return { ok: false, error: 'not_started' };
     if (lot.status !== 'open') return { ok: false, error: 'closed' };
     if (!lot.end_at || new Date(lot.end_at).getTime() <= nowMs()) return { ok: false, error: 'expired' };
@@ -1728,6 +1998,7 @@ const local = {
     const min = cur + stepFor(cur);
     if (amount < min) return { ok: false, error: 'too_low', current: cur, min };
     db.bids.push({ id: this.uid(), listing_id: id, bidder_name: name, bidder_phone: phone,
+                   bidder_city: String(city || '').trim(),
                    amount, approved: false, created_at: new Date().toISOString() });
     this.write(db);
     return { ok: true, pending: true, amount };
@@ -2202,7 +2473,7 @@ function renderList() {
   if (!rows.length) {
     host.innerHTML = banner + '<div class="empty"><div class="empty-emoji">📱</div>'
       + (cache.kind && cache.kind !== 'all'
-         ? 'ما فيه ' + (KIND_LABEL[cache.kind] || '').replace(/^\S+\s/, '') + ' هنا الحين.<br>اعرض واحد ويدخل القائمة.'
+         ? 'ما فيه ' + (KIND_NAME[cache.kind] || '') + ' هنا الحين.<br>اعرض واحد ويدخل القائمة.'
          : cache.filter === 'live' ? 'ما فيه سوم مفتوح الحين.<br>اعرض واحد وينتظر دوره.'
          : cache.filter === 'pending' ? 'ما فيه شي بالانتظار.' : 'ما فيه شيء هنا بعد.')
       + '</div>';
@@ -2231,7 +2502,6 @@ function renderList() {
           '<div class="lot-stats">' +
             '<div class="stat"><div class="stat-k">' + (st === 'sold' ? 'بيع على' : st === 'pending' ? 'سعر البداية' : 'السعر الحالي') + '</div>' +
               '<div class="stat-v price"><span class="num">' + money(finalPrice(lot, t)) + '</span> ر.س</div></div>' +
-            '<div class="stat"><div class="stat-k">المزايدات</div><div class="stat-v"><span class="num">' + t.count + '</span></div></div>' +
             '<div class="stat"><div class="stat-k">' + (st === 'live' ? 'ينتهي خلال' : 'الحالة') + '</div>' +
               (st === 'live'
                 ? '<div class="stat-v time" data-cd="' + esc(lot.end_at) + '">' + esc(cd || '00:00:00') + '</div>'
@@ -2240,7 +2510,9 @@ function renderList() {
                    : st === 'pending' ? 'ينتظر دوره' : 'مغلق') + '</div>') +
             '</div>' +
           '</div>' +
-          '<div class="lot-foot">👤 ' + esc(lot.seller_name) + (t.name ? ' · أعلى مزايد: ' + esc(t.name) : '') + '</div>' +
+          '<div class="lot-foot">👤 ' + esc(lot.seller_name) +
+            ' · <span class="num">' + t.count + '</span> سومة' +
+            (t.name ? ' · أعلى: ' + esc(t.name) : '') + '</div>' +
         '</button>' +
       '</div>'
     );
@@ -2335,11 +2607,7 @@ function renderLive(lot, bids) {
             esc(kindCount(kind)) + '</span></div>' +
         '<div class="live-empty"><div class="t">جاهزون للي بعده</div>' +
           '<div class="s">اعرض ' + esc(kindNoun(kind)) + ' من الموقع وبيجي دورك</div></div>' +
-        '<div class="live-cta">للمشاركة والمزايدة<br><b>rafd-digital.com/m</b>' +
-          '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
-        '</div>' +
-        '<div class="live-fee">💰 عمولة ' + esc(KIND_LABEL[kind].replace(/^\S+\s/, '')) +
-          ' <b>' + esc(feeRule(kind)) + '</b> — على ذمة البائع</div>' +
+        liveBar(kind) +
         queueHtml(open) +
       '</div>';
     wireQueue(open, null);
@@ -2412,10 +2680,7 @@ function renderLive(lot, bids) {
             '</div>').join('') + '</div>'
         : '') +
 
-      '<div class="live-cta">زايد من الموقع<br><b>rafd-digital.com/m</b>' +
-        '<div class="live-tel">📞 للتواصل <b class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</b></div>' +
-      '</div>' +
-      '<div class="live-fee">💰 العمولة <b>' + esc(feeRule(kindOf(lot))) + '</b> — على ذمة البائع</div>' +
+      liveBar(kindOf(lot)) +
 
       queueHtml(open) +
     '</div>';
@@ -2709,6 +2974,12 @@ async function pushEmblem(lot, emblem) {
 }
 
 /* Sums shouted into the site wait here until the operator says yes. */
+/* Where the bidder is, for the operator only. It never reaches a viewer: the
+   column is left out of anon's column-by-column SELECT on mazad_bids, the
+   same way bidder_phone is, and it is drawn only inside #liveOps. */
+const bidderCity = (b) => b && b.bidder_city
+  ? '<span class="sub-muted">📍 ' + esc(b.bidder_city) + '</span>' : '';
+
 function renderPendingBids(host) {
   if (!host) return;
   const list = cache.pending || [];
@@ -2718,7 +2989,7 @@ function renderPendingBids(host) {
   // called every poll, so without this it rebuilt itself under the operator's
   // thumb twenty-four times a minute.
   const key = 'pending:' + (host.id || 'x');
-  const sig = list.map(b => b.id + ':' + b.amount + ':' + b.current).join(',');
+  const sig = list.map(b => b.id + ':' + b.amount + ':' + b.current + ':' + (b.bidder_city || '')).join(',');
   if (sig === screenSig[key] && host.firstElementChild) return;
   screenSig[key] = sig;
 
@@ -2750,6 +3021,7 @@ function renderPendingBids(host) {
               ' target="_blank" rel="noopener" title="واتساب المزايد">💬 <span class="num">' +
               esc(fmtPhone(b.bidder_phone)) + '</span></a>'
             : '<span class="sub-muted">بدون جوال</span>') +
+          bidderCity(b) +
           '<span class="num">على ' + esc(b.plate_letters
             ? normPlate(b.plate_letters).split('').join(' ') + ' ' + (b.plate_digits || '')
             : fmtPhone(b.phone || '')) + '</span>' +
@@ -2900,6 +3172,7 @@ async function renderApprovedBids(lot, host) {
                   ' target="_blank" rel="noopener">💬 <span class="num">' +
                   esc(fmtPhone(b.bidder_phone)) + '</span></a>'
                 : '') +
+              bidderCity(b) +
               '<span>' + (i === 0 ? 'أعلى سومة' : esc(ago(b.created_at))) + '</span></div>' +
             '<div class="amt num">' + money(b.amount) + '</div>' +
             '<button class="no" data-a="reject" title="احذف">✖</button>' +
@@ -3563,15 +3836,16 @@ async function share(lot) {
 }
 
 async function sendBid(id) {
-  // both, not just the name: a sum we cannot follow up on is no use to the seller
-  if (!me.name || !/^05\d{8}$/.test(me.phone)) { askName(() => sendBid(id)); return; }
+  // all three, not just the name: a sum we cannot follow up on, or cannot
+  // arrange a handover for, is no use to the seller
+  if (!me.name || !/^05\d{8}$/.test(me.phone) || !me.city) { askName(() => sendBid(id)); return; }
   const input = $('#bidInput');
   const amount = Number(input.value);
   if (!amount || amount <= 0) { toast('اكتب المبلغ'); return; }
 
   const btn = $('#btnBid'); btn.disabled = true;
   try {
-    const r = await store.placeBid(id, me.name, amount, me.phone);
+    const r = await store.placeBid(id, me.name, amount, me.phone, me.city);
     if (r && r.ok === false) {
       const m = {
         too_low: 'المبلغ أقل من المطلوب — أقل مزايدة ' + money(r.min || 0) + ' ر.س',
@@ -3582,6 +3856,7 @@ async function sendBid(id) {
         expired: 'انتهى وقت المزاد',
         bad_name: 'اكتب اسم صحيح (حرفين على الأقل)',
         bad_phone: 'اكتب رقم جوال صحيح يبدأ بـ 05',
+        bad_city: 'اكتب موقعك — المدينة تكفي',
         bad_amount: 'مبلغ غير صحيح',
         not_found: 'المزاد غير موجود'
       }[r.error] || 'تعذّرت المزايدة';
@@ -3635,14 +3910,17 @@ function closeSheet() { $('#sheetHost').innerHTML = ''; }
 function askName(then) {
   const s = sheet(
     '<h2>بياناتك للمزايدة</h2>' +
-    '<p class="hint">اسمك يظهر مع كل سومة. جوالك ما يظهر لأحد — يوصل للمشرف فقط ' +
-      'عشان يتواصل معك إذا ربحت.</p>' +
+    '<p class="hint">اسمك يظهر مع كل سومة. جوالك وموقعك ما يظهرون لأحد — ' +
+      'يوصلون للمشرف فقط عشان يتواصل معك إذا ربحت.</p>' +
     '<div id="nmErr"></div>' +
     '<div class="field"><label>اسمك</label>' +
       '<input id="nmInput" maxlength="40" placeholder="مثال: أبو فهد" value="' + esc(me.name) + '"></div>' +
     '<div class="field ltr"><label>جوالك</label>' +
       '<input id="nmPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX" value="' + esc(me.phone) + '">' +
       '<div class="sub">يبدأ بـ 05 ويتكوّن من 10 أرقام. سرّي — ما يظهر في المزايدات.</div></div>' +
+    '<div class="field"><label>موقعك</label>' +
+      '<input id="nmCity" maxlength="40" placeholder="مثال: الرياض" value="' + esc(me.city) + '">' +
+      '<div class="sub">المدينة تكفي — عشان يُعرف كيف يتم التسليم ونقل الملكية.</div></div>' +
     '<button class="btn btn-block" id="nmSave">حفظ</button>'
   );
   const input = s.querySelector('#nmInput');
@@ -3651,14 +3929,69 @@ function askName(then) {
     const err = (m) => { s.querySelector('#nmErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
     const v = input.value.trim();
     const ph = s.querySelector('#nmPhone').value.replace(/\D/g, '');
+    const ct = s.querySelector('#nmCity').value.trim();
     if (v.length < 2) return err('الاسم قصير.');
     if (!/^05\d{8}$/.test(ph)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
-    me.phone = ph;
+    if (ct.length < 2) return err('اكتب موقعك — المدينة تكفي.');
+    me.phone = ph; me.city = ct;
     me.name = v; closeSheet(); if (then) then(); else refresh(false);
   };
   s.querySelector('#nmSave').addEventListener('click', save);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') s.querySelector('#nmPhone').focus(); });
-  s.querySelector('#nmPhone').addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+  s.querySelector('#nmPhone').addEventListener('keydown', (e) => { if (e.key === 'Enter') s.querySelector('#nmCity').focus(); });
+  s.querySelector('#nmCity').addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+}
+
+/* ---------- «طلب»: a viewer who is after one particular plate ----------
+   The site has no wanted-list table and adding one would mean a schema he has
+   to run before the button does anything, so this goes where a request
+   actually gets answered today: a WhatsApp message to the operator, written
+   for him. He is the one who knows what is coming in, and he is already the
+   only contact on the page.
+
+   It asks for the same three things a bid asks for — الاسم، الجوال، الموقع —
+   because a request he cannot answer is no more use to him than a sum he
+   cannot follow up. They are kept in this browser, so a viewer who has
+   already bid is not asked twice. */
+function askWanted() {
+  const s = sheet(
+    '<h2>اطلب لوحة معيّنة</h2>' +
+    '<p class="hint">اكتب اللي تدوّره ونوصله للمشرف مباشرة على واتساب. إذا دخلت ' +
+      'لوحة تشبه طلبك يتواصل معك.</p>' +
+    '<div id="wtErr"></div>' +
+    '<div class="field"><label>اللوحة أو الرقم اللي تدوّره</label>' +
+      '<input id="wtWhat" maxlength="60" placeholder="مثال: أ ب 1 خصوصي، أو ثلاثي"></div>' +
+    '<div class="field"><label>اسمك</label>' +
+      '<input id="wtName" maxlength="40" placeholder="مثال: أبو فهد" value="' + esc(me.name) + '"></div>' +
+    '<div class="field ltr"><label>جوالك</label>' +
+      '<input id="wtPhone" type="tel" inputmode="numeric" maxlength="10" ' +
+        'placeholder="05XXXXXXXX" value="' + esc(me.phone) + '"></div>' +
+    '<div class="field"><label>موقعك</label>' +
+      '<input id="wtCity" maxlength="40" placeholder="مثال: الرياض" value="' + esc(me.city) + '">' +
+      '<div class="sub">المدينة تكفي — عشان يعرف كيف يتم التسليم.</div></div>' +
+    '<button class="btn btn-block" id="wtSend">أرسل الطلب على واتساب</button>'
+  );
+  s.querySelector('#wtWhat').focus();
+  s.querySelector('#wtSend').addEventListener('click', () => {
+    const err = (m) => { s.querySelector('#wtErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
+    const what = s.querySelector('#wtWhat').value.trim();
+    const name = s.querySelector('#wtName').value.trim();
+    const ph   = s.querySelector('#wtPhone').value.replace(/\D/g, '');
+    const city = s.querySelector('#wtCity').value.trim();
+    if (what.length < 2) return err('اكتب اللي تدوّره.');
+    if (name.length < 2) return err('الاسم قصير.');
+    if (!/^05\d{8}$/.test(ph)) return err('رقم الجوال لازم يبدأ بـ 05 ويكون 10 أرقام.');
+    if (city.length < 2) return err('اكتب موقعك — المدينة تكفي.');
+    me.name = name; me.phone = ph; me.city = city;
+    const msg = 'طلب لوحة من مزاد سوم\n' +
+      'المطلوب: ' + what + '\n' +
+      'الاسم: ' + name + '\n' +
+      'الجوال: ' + ph + '\n' +
+      'الموقع: ' + city;
+    const d = CONTACT_PHONE.replace(/\D/g, '').replace(/^0/, '966');
+    closeSheet();
+    window.open('https://wa.me/' + d + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+  });
 }
 
 function askAdmin() {
@@ -3764,9 +4097,16 @@ function askListing() {
     const f = feeOf(kind);
     s.querySelector('#lsFee').innerHTML =
       '💰 عمولة الموقع <b>' + esc(feeRule(kind)) + '</b>، <b>على ذمة البائع</b>.' +
+      /* The two worked sums STRADDLE the threshold, derived from it rather
+         than hard-coded: 10,000 and 30,000 were both under the car threshold,
+         so the example printed «500 · 500» and a seller reading it never saw
+         the rate at all — which is the half of the rule he most needs to see
+         before he agrees to it. */
       (f.rate
-        ? '<br>بيع بـ <span class="num">10,000</span> ← <span class="num">' + money(commissionOn(10000, kind)) + '</span> ر.س' +
-          ' · بيع بـ <span class="num">30,000</span> ← <span class="num">' + money(commissionOn(30000, kind)) + '</span> ر.س.'
+        ? '<br>بيع بـ <span class="num">' + money(Math.round(f.threshold / 2)) + '</span> ← <span class="num">' +
+            money(commissionOn(Math.round(f.threshold / 2), kind)) + '</span> ر.س' +
+          ' · بيع بـ <span class="num">' + money(f.threshold * 3) + '</span> ← <span class="num">' +
+            money(commissionOn(f.threshold * 3, kind)) + '</span> ر.س.'
         : '<br>نفس المبلغ سواء باع بـ <span class="num">5,000</span> أو <span class="num">500,000</span>.') +
       '<br>بعرضك أنت موافق على هذا.';
   };
@@ -3904,7 +4244,17 @@ function tick() {
 
 /* ---------------------------------------------------------------- boot */
 $('#nameChip').addEventListener('click', () => askName());
-$('#btnAdd').addEventListener('click', () => askListing());
+/* ---------- the three doors ---------- */
+$('#doorSell').addEventListener('click', () => askListing());
+$('#doorWant').addEventListener('click', () => askWanted());
+$('#doorBid').addEventListener('click', () => {
+  // whatever is on air is where the bidding is; otherwise the open sums
+  const air = cache.listings.find(l => l.is_live && (admin.on || kindShown(kindOf(l))));
+  if (air) { location.hash = '#/n/' + encodeURIComponent(air.id); return; }
+  const open = document.querySelector('.filter[data-filter="live"]');
+  if (open) open.click();
+  $('#lots').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 $('#btnBack').addEventListener('click', () => goList());
 $('#btnBackLive').addEventListener('click', () => goList());
 $('#opsPeek').addEventListener('click', () => {
@@ -3918,7 +4268,7 @@ $('#opsPeek').addEventListener('click', () => {
 $('#btnBackAbout').addEventListener('click', () => goList());
 
 $('#kindRow').innerHTML =
-  '<button class="filter" data-kind="all">الكل</button>' +
+  '<button class="filter" data-kind="all">🏷️ الكل</button>' +
   KINDS_SHOWN.map(k => '<button class="filter" data-kind="' + k + '">' +
     esc(KIND_LABEL[k]) + '</button>').join('');
 $('#kindRow').querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
@@ -3949,13 +4299,11 @@ if (!REMOTE) {
 }
 
 $('#footFee').innerHTML = KINDS_SHOWN
-  .map(k => KIND_LABEL[k].replace(/^\S+\s/, '') + ' ' + feeRule(k))
+  .map(k => KIND_NAME[k] + ' ' + feeRule(k))
   .join(' · ');
 (() => {
-  const a = $('#footTel');
-  a.textContent = fmtPhone(CONTACT_PHONE);
-  a.href = 'https://wa.me/' + CONTACT_PHONE.replace(/\D/g, '').replace(/^0/, '966');
-  a.target = '_blank'; a.rel = 'noopener';
+  $('#footTelNum').textContent = fmtPhone(CONTACT_PHONE);
+  $('#footTel').href = 'https://wa.me/' + CONTACT_PHONE.replace(/\D/g, '').replace(/^0/, '966');
 })();
 $('#brandSub').textContent = kindWords() + ' — مزايدة مباشرة';
 paintName();

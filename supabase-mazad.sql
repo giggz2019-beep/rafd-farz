@@ -200,6 +200,16 @@ alter table mazad_bids drop constraint if exists mazad_bidder_phone_format;
 alter table mazad_bids add  constraint mazad_bidder_phone_format
   check (bidder_phone is null or bidder_phone ~ '^05[0-9]{8}$');
 
+-- Where the bidder is. The handover is physical — the plate changes hands and
+-- the ownership transfer happens at a particular counter — so the seller has
+-- to know the city before he agrees. OPERATOR-ONLY for the same reason as the
+-- number above: it is not in the anon column grant, so the public feed cannot
+-- carry it even by asking for '*'.
+alter table mazad_bids add column if not exists bidder_city text;
+alter table mazad_bids drop constraint if exists mazad_bidder_city_len;
+alter table mazad_bids add  constraint mazad_bidder_city_len
+  check (bidder_city is null or char_length(bidder_city) between 2 and 40);
+
 -- a sum sent from the site waits for the operator before it counts
 alter table mazad_bids add column if not exists approved    boolean not null default false;
 alter table mazad_bids add column if not exists approved_at timestamptz;
@@ -346,16 +356,19 @@ create policy mazad_bids_read on mazad_bids
 -- current price by at least p_min_step, name is sane, and applies
 -- anti-sniping (a bid in the last 60s pushes the end 2 minutes out).
 
--- The 3-argument version has to be dropped, not replaced: adding a defaulted
--- fourth argument creates an overload, and a call naming only the first three
--- would match both and be refused as ambiguous.
+-- Every earlier signature has to be DROPPED, not left beside the new one:
+-- a defaulted extra argument creates an OVERLOAD, and a call naming only the
+-- older arguments matches both and is refused as ambiguous. This has now
+-- bitten place_bid twice — once for p_phone, once for p_city.
 drop function if exists place_bid(uuid, text, numeric);
+drop function if exists place_bid(uuid, text, numeric, text);
 
 create or replace function place_bid(
   p_listing uuid,
   p_name    text,
   p_amount  numeric,
-  p_phone   text default null
+  p_phone   text default null,
+  p_city    text default null
 ) returns json
 language plpgsql
 security definer
@@ -368,6 +381,7 @@ declare
 begin
   p_name  := btrim(coalesce(p_name, ''));
   p_phone := nullif(regexp_replace(coalesce(p_phone, ''), '\D', '', 'g'), '');
+  p_city  := nullif(btrim(coalesce(p_city, '')), '');
 
   if char_length(p_name) < 2 or char_length(p_name) > 40 then
     return json_build_object('ok', false, 'error', 'bad_name');
@@ -376,6 +390,11 @@ begin
   -- a sum we cannot follow up on is no use to the seller
   if p_phone is null or p_phone !~ '^05[0-9]{8}$' then
     return json_build_object('ok', false, 'error', 'bad_phone');
+  end if;
+
+  -- and one we cannot arrange a handover for is no better
+  if p_city is null or char_length(p_city) > 40 then
+    return json_build_object('ok', false, 'error', 'bad_city');
   end if;
 
   select * into v_listing from mazad_listings where id = p_listing for update;
@@ -414,16 +433,16 @@ begin
     return json_build_object('ok', false, 'error', 'too_many_pending');
   end if;
 
-  insert into mazad_bids (listing_id, bidder_name, bidder_phone, amount, approved)
-  values (p_listing, p_name, p_phone, p_amount, false);
+  insert into mazad_bids (listing_id, bidder_name, bidder_phone, bidder_city, amount, approved)
+  values (p_listing, p_name, p_phone, p_city, p_amount, false);
 
   -- no anti-sniping here: the clock moves when the operator approves
   return json_build_object('ok', true, 'pending', true, 'amount', p_amount);
 end;
 $$;
 
-revoke all on function place_bid(uuid, text, numeric, text) from public;
-grant execute on function place_bid(uuid, text, numeric, text) to anon, authenticated;
+revoke all on function place_bid(uuid, text, numeric, text, text) from public;
+grant execute on function place_bid(uuid, text, numeric, text, text) to anon, authenticated;
 
 -- ---------- operator actions ----------
 -- p_action: sold | unsold | cancelled | open | extend | timer | price | auto
@@ -677,7 +696,8 @@ begin
     select json_agg(row_to_json(x) order by x.is_live desc, x.amount desc, x.created_at)
       from (
         select
-          b.id, b.listing_id, b.bidder_name, b.bidder_phone, b.amount, b.created_at,
+          b.id, b.listing_id, b.bidder_name, b.bidder_phone, b.bidder_city,
+          b.amount, b.created_at,
           l.phone, l.is_live,
           cur.price                                       as current,
           cur.price + greatest(50, ceil(cur.price * 0.05)) as min_next,
@@ -861,7 +881,7 @@ begin
 
   return json_build_object('ok', true, 'bids', coalesce((
     select json_agg(row_to_json(x) order by x.amount desc)
-      from (select id, bidder_name, bidder_phone, amount, approved, created_at
+      from (select id, bidder_name, bidder_phone, bidder_city, amount, approved, created_at
               from mazad_bids where listing_id = p_listing) x
   ), '[]'::json));
 end;
