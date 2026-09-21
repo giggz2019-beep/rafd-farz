@@ -520,8 +520,15 @@ a { color: inherit; }
 }
 .seg button.on { background: var(--wine-700); color: #fff; box-shadow: var(--shadow); }
 .plate-picks { display: flex; gap: 6px; direction: rtl; }
-.plate-picks select {
+.plate-picks select,
+.plate-picks .letterbox {
   flex: 1; text-align: center; font-size: 1.15rem; font-weight: 800; padding: 10px 4px;
+  min-width: 0;
+}
+/* typed, not picked — so it has to read like a plate cell and take one glyph */
+.plate-picks .letterbox { text-transform: uppercase; caret-color: var(--wine-600); }
+.plate-picks .letterbox:focus {
+  outline: 2px solid var(--wine-500); outline-offset: -1px; background: #fffdf7;
 }
 .plate-preview { margin: 4px 0 12px; }
 .photo-prev:empty { display: none; }
@@ -564,11 +571,14 @@ a { color: inherit; }
 .cp-ar { font-size: 7.2cqw; font-weight: 800; letter-spacing: .02em;
   direction: rtl; white-space: nowrap; }
 .cp-en { font-size: 6.4cqw; font-weight: 800; letter-spacing: 0; white-space: nowrap; }
-/* the letters are already joined with spaces, so any letter-spacing on top of
-   that doubles the gap — it made the block half again as wide as the
-   reference's 15.5% */
-.cp-let .cp-ar { font-size: 5.0cqw; }
-.cp-let .cp-en { font-size: 4.4cqw; }
+/* On a real plate the letters are the same height as the digits. They used to
+   be drawn at 5.0/4.4cqw — about 70% — because they were joined with literal
+   spaces and a bigger size pushed the block out of its cell. The letters are
+   separated by a zero-width non-joiner now, so the gap is set here and the
+   size can match. letter-spacing also lands after the LAST glyph, so the same
+   amount is padded back on the other side to keep the block centred. */
+.cp-let .cp-ar { font-size: 7.2cqw; letter-spacing: .17em; padding-inline-start: .17em; }
+.cp-let .cp-en { font-size: 6.4cqw; letter-spacing: .17em; padding-inline-start: .17em; }
 
 /* the strip is lifted whole out of the reference, border included */
 .cp-ksa {
@@ -957,18 +967,86 @@ const PLATE_LETTERS = Object.keys(PLATE_LATIN);
 
 /* A plate may carry one, two or three letters, and the short ones are the
    valuable ones — «ا ب 1» is what gets auctioned, «ا ب ح 1234» is what comes
-   on an ordinary car. So every box carries a blank, and the letters are
-   joined in order: a blank in the middle simply collapses. */
-const letterOptions = (sel) => '<option value="">—</option>' +
-  PLATE_LETTERS.map(c => '<option value="' + c + '"' +
-    (c === sel ? ' selected' : '') + '>' + c + '</option>').join('');
+   on an ordinary car. So the second and third boxes may be left empty, and
+   the letters are joined in order: a gap in the middle simply collapses.
+
+   They are TYPED, not picked from a list. A list means hunting through
+   seventeen options three times for every plate, and on a phone it hides the
+   keyboard he already has open. The boxes take the letter from either
+   alphabet — د or D, both land as د — so he can type ل ا د on an Arabic
+   keyboard or LAD on an English one without switching. */
+const PLATE_FROM_LATIN = Object.fromEntries(
+  Object.entries(PLATE_LATIN).map(([ar, en]) => [en, ar]));
+
+/* one typed character -> the canonical Arabic plate letter, or '' */
+function plateLetterOf(ch) {
+  const c = normPlate(String(ch || '').slice(-1));
+  if (!c) return '';
+  if (PLATE_LATIN[c]) return c;                       // already a plate letter
+  const up = c.toUpperCase();
+  return PLATE_FROM_LATIN[up] || '';                  // D -> د
+}
+
+/* the three boxes, as markup. `letters` pre-fills them. */
+function letterBoxes(prefix, letters) {
+  const L = normPlate(letters || '').split('');
+  return '<div class="plate-picks">' +
+    [0, 1, 2].map(i =>
+      '<input id="' + prefix + 'L' + (i + 1) + '" class="letterbox" ' +
+        'autocomplete="off" autocapitalize="characters" ' +
+        'spellcheck="false" value="' + esc(L[i] || '') + '" ' +
+        'aria-label="الحرف ' + (i + 1) + '">').join('') +
+    '</div>';
+}
+
+/* Typing a letter moves to the next box; backspace in an empty box moves
+   back. Anything that is not one of the seventeen is simply not accepted —
+   silently, because a plate cannot carry it. */
+function wireLetterBoxes(root, prefix, onChange) {
+  const ids = [1, 2, 3].map(i => '#' + prefix + 'L' + i);
+  const boxes = ids.map(i => root.querySelector(i));
+  const read = () => boxes.map(b => b.value).join('');
+  boxes.forEach((box, i) => {
+    // Selecting on focus, plus taking the character at the caret, is what
+    // makes typing OVER a letter work. maxlength="1" cannot do it: a box that
+    // already holds one refuses the next keystroke outright, so he taps it,
+    // types, and nothing happens — on camera.
+    box.addEventListener('focus', () => box.select());
+    box.addEventListener('input', () => {
+      const pos = box.selectionStart;
+      const typed = box.value.length > 1 ? box.value[Math.max(0, pos - 1)] : box.value;
+      const v = plateLetterOf(typed);
+      box.value = v;
+      if (v && boxes[i + 1]) boxes[i + 1].focus();
+      if (onChange) onChange(read());
+    });
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !box.value && boxes[i - 1]) {
+        boxes[i - 1].focus();
+        boxes[i - 1].value = '';
+        e.preventDefault();
+        if (onChange) onChange(read());
+      }
+    });
+  });
+  return read;
+}
 // people type أ إ آ ى ة as often as the plate spellings; the database
 // normalises the same way, so the two can never disagree
 const normPlate = (t) => String(t || '').trim()
   .replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه');
 const toArabicDigits = (t) => String(t || '').replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 const plateLatin = (letters) => normPlate(letters).split('')
-  .map(c => PLATE_LATIN[c] || c).reverse().join(' ');
+  .map(c => PLATE_LATIN[c] || c).reverse().join('');
+
+/* On the plate the three Arabic letters stand APART — they are letters, not a
+   word, and must not join into one shape. Joining them with a space does that
+   but also fixes the gap at one space's width, which forced the letters to be
+   drawn small to keep the block inside its cell. A zero-width non-joiner
+   breaks the connection at no width at all, so the gap is set in CSS
+   (letter-spacing) and the letters can be as tall as the digits, the way they
+   are on a real plate. */
+const plateArabic = (letters) => normPlate(letters).split('').join('\u200C');
 
 /* The mark in the middle of a plate. Saudi plates carry different ones, so
    the seller is asked which his has and the plate on screen matches the plate
@@ -1059,7 +1137,7 @@ function itemPlate(lot, size) {
         '</div>' +
         '<div class="cp-emblem">' + emblemSvg(lot.plate_emblem || 'swords') + '</div>' +
         '<div class="cp-let">' +
-          '<div class="cp-ar">' + esc(letters.split('').join(' ')) + '</div>' +
+          '<div class="cp-ar">' + esc(plateArabic(letters)) + '</div>' +
           '<div class="cp-en">' + esc(plateLatin(letters)) + '</div>' +
         '</div>' +
       '</div>' +
@@ -2180,14 +2258,10 @@ function renderItemEditor(lot, host) {
   }
 
   if (kind === 'plate') {
-    const L = normPlate(lot.plate_letters || '').split('');
+    const L = normPlate(lot.plate_letters || '').split('');   // pre-fills the boxes
     host.innerHTML = head +
       '<div class="ed-plate">' +
-        '<div class="plate-picks">' +
-          '<select id="edL1">' + letterOptions(L[0]) + '</select>' +
-          '<select id="edL2">' + letterOptions(L[1]) + '</select>' +
-          '<select id="edL3">' + letterOptions(L[2]) + '</select>' +
-        '</div>' +
+        letterBoxes('ed', L.join('')) +
         '<input id="edDigits" type="tel" inputmode="numeric" maxlength="4" ' +
           'value="' + esc(lot.plate_digits || '') + '" placeholder="900">' +
       '</div>' +
@@ -2202,11 +2276,10 @@ function renderItemEditor(lot, host) {
       '</div>' +
       '<div class="ed-err" id="edErr"></div>';
 
-    const letters = () => ['#edL1', '#edL2', '#edL3']
-      .map(i => host.querySelector(i).value).join('');
-    ['#edL1', '#edL2', '#edL3'].forEach(i =>
-      host.querySelector(i).addEventListener('change', () =>
-        pushEdit(lot, { plate_letters: letters() }, true)));
+    // typed, not picked: he changes a letter in front of the customer and the
+    // stage follows the keystroke
+    wireLetterBoxes(host, 'ed', (letters) =>
+      pushEdit(lot, { plate_letters: letters }));
     host.querySelector('#edDigits').addEventListener('input', (e) => {
       e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
       pushEdit(lot, { plate_digits: e.target.value });
@@ -2762,7 +2835,6 @@ function askAutoPrice(lot) {
 
 /* the walk-in guest: operator types the number and it goes on air now */
 function askQuickAdd() {
-  const letterOpts = letterOptions();
   const s2 = sheet(
     '<h2>سجّل وابدأ السوم</h2>' +
     '<p class="hint">للي يطلع معك بالبث — ينعرض على الهواء مباشرة.</p>' +
@@ -2774,11 +2846,8 @@ function askQuickAdd() {
     '</div>' +
     '<div data-qfor="plate">' +
       '<div class="field"><label>حروف اللوحة</label>' +
-        '<div class="plate-picks">' +
-          '<select id="qkL1">' + letterOpts + '</select>' +
-          '<select id="qkL2">' + letterOpts + '</select>' +
-          '<select id="qkL3">' + letterOpts + '</select>' +
-        '</div></div>' +
+        letterBoxes('qk', '') +
+        '<div class="sub">بالعربي أو بالإنجليزي — د أو D.</div></div>' +
       '<div class="field ltr"><label>أرقام اللوحة</label>' +
         '<input id="qkDigits" type="tel" inputmode="numeric" maxlength="4" placeholder="900"></div>' +
       '<div class="field"><label>شعار اللوحة</label>' +
@@ -2832,14 +2901,14 @@ function askQuickAdd() {
   });
   qshow();
   const qPaint = () => {
-    const l = ['#qkL1','#qkL2','#qkL3'].map(i => s2.querySelector(i).value).join('');
+    const l = readQkLetters();
     const d = s2.querySelector('#qkDigits').value.replace(/\D/g, '');
     s2.querySelector('#qkPreview').innerHTML = d
       ? itemPlate({ item_type: 'plate', plate_letters: l, plate_digits: d,
                     plate_emblem: s2.querySelector('#qkEmblem').value }) : '';
   };
-  ['#qkL1','#qkL2','#qkL3','#qkDigits'].forEach(i =>
-    s2.querySelector(i).addEventListener('input', qPaint));
+  const readQkLetters = wireLetterBoxes(s2, 'qk', () => qPaint());
+  s2.querySelector('#qkDigits').addEventListener('input', qPaint);
   s2.querySelector('#qkEmblem').addEventListener('change', qPaint);
   wirePhotoPick(s2, '#qkPhoto', '#qkPhotoPrev');
 
@@ -2847,7 +2916,7 @@ function askQuickAdd() {
     const err = (m) => { s2.querySelector('#qkErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
     const phone   = s2.querySelector('#qkPhone').value.replace(/\D/g, '');
     const contact = s2.querySelector('#qkContact').value.replace(/\D/g, '');
-    const letters = normPlate(['#qkL1','#qkL2','#qkL3'].map(i => s2.querySelector(i).value).join(''));
+    const letters = normPlate(readQkLetters());
     const digits  = s2.querySelector('#qkDigits').value.replace(/\D/g, '');
     const make  = s2.querySelector('#qkMake').value.trim();
     const model = s2.querySelector('#qkModel').value.trim();
@@ -3203,7 +3272,6 @@ function askAdmin() {
 }
 
 function askListing() {
-  const letterOpts = letterOptions();
   const s = sheet(
     '<h2>اعرض في المزاد</h2>' +
     '<p class="hint">يدخل قائمة الانتظار، ويفتح عليه السوم لما يجي دوره في البث.</p>' +
@@ -3218,12 +3286,10 @@ function askListing() {
     // ---- a car plate: three letters and up to four digits
     '<div data-for="plate">' +
       '<div class="field"><label>حروف اللوحة</label>' +
-        '<div class="plate-picks">' +
-          '<select id="lsL1">' + letterOpts + '</select>' +
-          '<select id="lsL2">' + letterOpts + '</select>' +
-          '<select id="lsL3">' + letterOpts + '</select>' +
-        '</div>' +
-        '<div class="sub">بالترتيب اللي على اللوحة، من اليمين لليسار.</div></div>' +
+        letterBoxes('ls', '') +
+        '<div class="sub">اكتبها بالعربي أو بالإنجليزي — <b>د</b> أو <b>D</b>، ' +
+          'نفس الشي. بالترتيب اللي على اللوحة، من اليمين لليسار. ' +
+          'من حرف إلى ثلاثة.</div></div>' +
       '<div class="field ltr"><label>أرقام اللوحة</label>' +
         '<input id="lsDigits" type="tel" inputmode="numeric" maxlength="4" placeholder="900">' +
         '<div class="sub">من رقم إلى أربعة. تظهر مخفية (<span class="num">•••</span>) لين توصل دورها في البث.</div></div>' +
@@ -3305,14 +3371,15 @@ function askListing() {
   // the seller sees the plate he is actually listing, drawn the way the
   // broadcast will draw it — the cheapest way to stop a wrong letter
   const paintPreview = () => {
-    const letters = ['#lsL1','#lsL2','#lsL3'].map(i => s.querySelector(i).value).join('');
+    const letters = readLsLetters();
     const digits  = s.querySelector('#lsDigits').value.replace(/\D/g, '');
     s.querySelector('#lsPreview').innerHTML = digits
       ? itemPlate({ item_type: 'plate', plate_letters: letters, plate_digits: digits,
                     plate_emblem: s.querySelector('#lsEmblem').value })
       : '<div class="sub" style="text-align:center">اكتب أرقام اللوحة عشان تشوفها</div>';
   };
-  ['#lsL1','#lsL2','#lsL3','#lsDigits','#lsEmblem'].forEach(i =>
+  const readLsLetters = wireLetterBoxes(s, 'ls', () => paintPreview());
+  ['#lsDigits','#lsEmblem'].forEach(i =>
     s.querySelector(i).addEventListener('input', paintPreview));
   wirePhotoPick(s, '#lsPhoto', '#lsPhotoPrev');
   s.querySelector('#lsEmblem').addEventListener('change', paintPreview);
@@ -3325,7 +3392,7 @@ function askListing() {
     const name    = s.querySelector('#lsName').value.trim();
     const contact = s.querySelector('#lsContact').value.replace(/\D/g, '');
 
-    const letters = normPlate(['#lsL1','#lsL2','#lsL3'].map(i => s.querySelector(i).value).join(''));
+    const letters = normPlate(readLsLetters());
     const digits  = s.querySelector('#lsDigits').value.replace(/\D/g, '');
 
     const make  = s.querySelector('#lsMake').value.trim();
