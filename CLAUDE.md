@@ -281,6 +281,18 @@ must both be false.
   branch used to `return` before `renderLiveOps`, so the one screen where he
   most needs the controls — nothing on air, pick the section, put the next one
   up — had no controls at all.
+- **Every sheet carries its OWN way out, and `sheet()` supplies it.** Tapping
+  the backdrop used to be the only way to close one. That works on the public
+  page, where the backdrop is the rest of the screen — and it is a **dead end**
+  on `/live`, because `.in-ops` shrinks the backdrop to the strip's width and
+  the sheet then fills it: measured at **0% of the backdrop left to tap**. On
+  the one screen he is filming, a sheet opened by mistake could not be closed
+  at all («فتحت هذا القسم بالغلط... ما فيه سهم رجوع وهذا خطأ كبير، حط للكل»).
+  The arrow is emitted by `sheet()` itself rather than by each caller, so a
+  sheet added later cannot forget it, and Escape is bound once on the document.
+  Three ways out: the arrow, Escape, and the backdrop where one exists.
+  `test-escape.js` opens every sheet a person can reach — the operator's in the
+  strip and all three doors — and leaves each one by the arrow.
 - **A sheet must never open over the broadcast.** He films this screen with his
   only device. `sheet()` is a fixed full-screen modal, so «سجّل سومة من البث»,
   «تم البيع» and the rest landed on camera, covered the auction and showed

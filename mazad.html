@@ -379,6 +379,15 @@ a { color: inherit; }
   box-shadow: var(--shadow-lg); animation: up .22s ease-out;
 }
 @keyframes up { from { transform: translateY(24px); opacity: .6 } to { transform: none; opacity: 1 } }
+/* the arrow sits above the heading and is full-height-tappable — he reaches
+   for it with a thumb, on camera, without looking */
+.sheet-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: -4px 0 10px -8px; padding: 8px 10px; border-radius: 10px;
+  font-size: .9rem; font-weight: 700; color: var(--wine-700);
+  background: #f6f1f2;
+}
+.sheet-back:active { transform: scale(.97); }
 .sheet h2 { font-size: 1.15rem; margin-bottom: 4px; }
 .sheet .hint { font-size: .8rem; color: var(--muted); margin-bottom: 14px; }
 
@@ -4066,17 +4075,41 @@ function wirePhotoPick(root, inputSel, prevSel) {
   });
 }
 
+/* ---------- EVERY sheet carries its own way out ----------
+   «فتحت هذا القسم حق السومة بالغلط، أبي أرجع للقائمة ما أقدر، ما فيه سهم
+   رجوع — حط للكل».
+
+   Tapping the backdrop closed a sheet, and that was the ONLY way out. It
+   works on the public page, where the backdrop is the rest of the screen —
+   and it is a dead end on `/live`, because `.in-ops` shrinks the backdrop to
+   the strip's own width and the sheet then fills it, so there is nothing left
+   to tap. On the one screen he is filming, a sheet opened by mistake could
+   not be closed at all.
+
+   So the way out belongs to `sheet()` itself, not to each caller: every sheet
+   gets the arrow, and a sheet added later cannot forget it. Three ways out
+   now — the arrow, Escape, and the backdrop where there is one. */
 function sheet(html) {
   const host = $('#sheetHost');
   // on the broadcast screen the operator's sheets belong in his strip, not
   // over the auction — see .sheet-bg.in-ops
   const inOps = route.name === 'live' && admin.on && !opsFolded;
   host.innerHTML = '<div class="sheet-bg' + (inOps ? ' in-ops' : '') + '">' +
-    '<div class="sheet">' + html + '</div></div>';
+    '<div class="sheet">' +
+      '<button type="button" class="sheet-back" aria-label="رجوع">' +
+        '<span aria-hidden="true">→</span> رجوع</button>' +
+      html +
+    '</div></div>';
   host.querySelector('.sheet-bg').addEventListener('click', (e) => { if (e.target.classList.contains('sheet-bg')) closeSheet(); });
+  host.querySelector('.sheet-back').addEventListener('click', closeSheet);
   return host.querySelector('.sheet');
 }
 function closeSheet() { $('#sheetHost').innerHTML = ''; }
+/* Escape is the third way out, and the one a laptop reaches for first. It is
+   bound once on the document rather than per sheet, so it cannot be missed. */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && $('#sheetHost').firstElementChild) closeSheet();
+});
 
 function askName(then) {
   const s = sheet(
