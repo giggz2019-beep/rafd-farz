@@ -707,9 +707,27 @@ must both be false.
   `tick()` updates `[data-cd]` text in place every second, so the clock runs
   without a repaint. Anything new that changes on its own must go into the
   signature, or it will not appear until something else does.
-- **The commission is stated on the broadcast card itself** (`.live-fee`),
-  not only in the page footer. The footer is below the fold, so on camera the
-  rule was never actually seen — and it is the one thing a seller agrees to.
+- **The commission is stated on the broadcast card itself** (`.live-bar
+  .lb-fee`), not only in the page footer. The footer is below the fold, so on
+  camera the rule was never actually seen — and it is the one thing a seller
+  agrees to. It is also set **large** (0.95rem, and 0.9 even on the shortest
+  screen): it is read off a phone pointed at a laptop, so it is the last place
+  to save a tenth of a rem. **The short-screen tiers give up the bar's
+  PADDING, never its type** — shrinking the fee there would shrink it on
+  exactly the laptop he films. The height comes out of the plate and the
+  paddles, which can afford it, and `test-fold.js` holds both ends: the
+  commission stays above the fold at 760/800/900/1080 **and** never drops
+  below 14px.
+- **The card names the auction: «مزاد سوم» in `.live-brand`.** A viewer
+  arrives mid-stream with no tab title and no address bar, so the card is the
+  only thing that can say whose auction this is — the topbar carries the brand
+  but the camera frames the card, not the browser.
+- **A kind names itself, and «مميز» has to agree with it.** The note under the
+  plate read «رقم مميز» because it fell through to `CARRIERS`, which is the
+  phone section's own label — the same class of bug as the commission quoting
+  the phone rule under a car. `kindPremium(k)` exists because لوحة and سيارة
+  are feminine and رقم is not, so the phrase cannot be built by gluing a
+  suffix onto `kindCount()`.
 - **Commission is per section** — `FEES` near the top of the script:
   | section | rule |
   |---|---|
@@ -783,14 +801,16 @@ must both be false.
   colour.
 - **The palette is عنابي، ذهبي وزيتي — burgundy, gold and olive — and green
   means one thing only.**
-  - **Olive (`--olive-900…600`) is an ACCENT, not a surface.** The first
-    version sank the whole lower half of the broadcast card into olive and
-    made the bar a solid olive block — at which point the card stopped reading
-    as burgundy at all («الزيتي كبرته مرره — ابيه لمسات خفيفه ما يخفي جمالية
-    العنابي»). It now lands only on edges: the head rule, the bar's frame and
-    the phone pill, plus a hint in the last few per cent of the gradient. The
-    bar itself is dark burgundy. `test-fold.js` asserts **both** halves — the
-    three accents are olive by hue, and the bar's own fill is not. It is deep and desaturated and
+  - **Olive (`--olive-900…600`) is a BAND at the foot of the card, and the
+    only question is how far up it climbs.** Three passes on this: it began at
+    78%, which put olive across the whole lower half and stopped the card
+    reading as burgundy («كبرته مرره»); removing it went too far the other way
+    («لاتخفي الزيتي خليه مثل ماهو... بس صغر فيه شوي»). It now holds burgundy
+    to 62% and is unmistakably olive by **88%**, closing on `--olive-900`.
+    **That 88% is the one knob** — lower it and the olive climbs, raise it and
+    it retreats to a hairline. The bar, the head rule and the phone pill carry
+    it too. `test-fold.js` pins the stop position rather than the colour's
+    presence, which is the thing that has actually been argued about. It is deep and desaturated and
     **yellow-green** (~88°), while the success green is saturated and
     **blue-green** (~150°). That hue gap is what keeps them from reading as the
     same thing — not RGB distance, which calls the two 59 apart whether the gap
