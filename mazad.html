@@ -383,56 +383,63 @@ a { color: inherit; }
 .adminbar button { font-size: .75rem; padding: 6px 10px; border-radius: 9px; border: 1px solid var(--line); background: #fff; font-weight: 700; }
 .adminbar .del { color: var(--danger); border-color: #f3c6c1; }
 
-/* ---------- sold / unsold stamp ---------- */
-/* pressed under the number, never over it — on a broadcast the viewer
-   has to read the number and the result at the same time */
-/* ---------- the result, stamped across the plate ----------
-   A round seal over the middle of the plate, the way a stamp actually lands:
-   a double ring, turned a few degrees, translucent so the plate reads through
-   it. It used to be a small rectangle sitting UNDER the plate — too small to
-   read on a stream, and it did not look like a result at all. */
+/* ---------- the result is the owner's own stamp artwork ----------
+   `mazad-stamp-*.png` is a mark he supplied: a double ring with stars, and a
+   banner cut through it at an angle for the words. **Nothing here draws a
+   ring, a star or a banner — do not "improve" it, redraw it or swap it for
+   SVG.** The three files are the SAME image byte for byte in their alpha
+   channel; only the ink colour differs, which is the one change he asked for
+   («بس غير اللون عند البيع اخضر»). Re-colour by replacing RGB and keeping
+   every alpha value, or the anti-aliased edges of his artwork are lost.
+
+   The banner's interior is TRANSPARENT in his file, not white — over a plate
+   it would show the plate through the words. So a white rectangle is laid
+   UNDER the image at the banner's measured position, and his red outline
+   draws on top of its edges.
+
+   Geometry measured off the 360x360 file, by ink:
+     angle  -15.03deg        banner height   64.5px = 17.9%
+     centre 50.5% / 52.2%    banner length  305.8px = 85%
+   Replacing the artwork means re-measuring all four. */
 .plate-stamp { position: relative; display: block; container-type: inline-size; }
 .stamp {
   position: absolute; inset: 0; margin: auto;
-  /* the plate is 5.09:1, so 172% of its height is about a THIRD of its width
-     — the seal lands across the middle of the plate, not on the emblem */
-  height: 172%; aspect-ratio: 1; border-radius: 50%;
-  display: grid; place-items: center; pointer-events: none;
-  /* the words are sized against the CIRCLE, not against the plate — on a
-     wide plate a cqw of plate is a third of a cqw of seal, and «لم يتم» ran
-     out past the ring. Making the seal its own container is what lets one
-     font-size hold for every plate size and every result. */
-  container-type: inline-size;
-  transform: rotate(-11deg);
-  border: 1.1cqw solid currentColor;
-  /* opaque enough that the emblem behind it does not fight the words */
-  background: rgba(255,255,255,.88);
-  box-shadow: 0 6px 22px rgba(0,0,0,.22);
+  /* the plate is 5.09:1, so 196% of its height is about 38% of its width —
+     the mark lands across the middle of the plate, not on the emblem */
+  height: 196%; aspect-ratio: 1;
+  pointer-events: none; container-type: inline-size;
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,.3));
 }
-/* a stamp has two rings */
-.stamp::before {
-  content: ''; position: absolute; inset: 8%;
-  border: .35cqw solid currentColor; border-radius: 50%; opacity: .85;
+.stamp .st-mark {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; display: block;
 }
-.stamp span {
-  display: grid; justify-items: center; line-height: 1.06;
-  font-weight: 900; letter-spacing: -.02em; white-space: nowrap;
-  /* the inner ring sits 8% in, and a horizontal line across a circle is
-     shorter than its diameter — so the words get the safe chord, not the
-     whole width, and nothing can reach the ring */
-  max-width: 88cqw;
+/* the white fill and the words share one placement, so they cannot drift */
+.stamp .st-band, .stamp .st-txt {
+  position: absolute; left: 50.5%; top: 52.2%;
+  width: 84%; height: 17.9%;
+  transform: translate(-50%, -50%) rotate(-15.03deg);
 }
-/* Sized against the seal, and MEASURED — the sizes below put the widest line
-   of each result at about 46% of the drawn ring, which leaves the words clear
-   of the inner ring at the 11° the seal is turned. «لم يتم» is the longest
-   word either seal carries, so it takes its own size rather than dragging
-   the others down with it. Re-measure if a result's wording changes. */
-.stamp b { display: block; font-size: 28cqw; }
-.stamp.unsold b:first-child { font-size: 20cqw; }
-.stamp.cancelled b { font-size: 24cqw; }
-.stamp.sold      { color: var(--ok-600); }
-.stamp.unsold    { color: #c0392b; }
+.stamp .st-band { background: #fff; }
+.stamp .st-txt {
+  display: grid; place-items: center; white-space: nowrap;
+  font-weight: 900; letter-spacing: -.02em; line-height: 1;
+  /* MEASURED, and capped by the banner's HEIGHT rather than its length: the
+     banner is 17.9% of the mark tall, so anything over ~13.5cqw starts
+     clipping the tall letters however short the word is. At 13.2 the longest
+     result, «لم يتم البيع», fills about three quarters of the banner and the
+     short ones stay short — which is what a real stamp does. */
+  font-size: 13.2cqw;
+}
+/* MEASURED, not picked by eye: on the banner's white these two land at the
+   same 5.04:1, so «تم البيع» and «لم يتم البيع» read at identical strength on
+   a stream. A brighter green was tried first and came in at 3.49 — legible on
+   a monitor, not through a phone camera. The green's hue is 147, the same
+   blue-green family as --ok-600, so green still means exactly one thing. */
+.stamp.sold      { color: #07803e; }
+.stamp.unsold    { color: #e00000; }
 .stamp.cancelled { color: #6b7b73; }
+
 .plate-wrap { position: relative; }
 
 /* a sum on a number's page: paddle, who raised it, how much */
@@ -1792,19 +1799,23 @@ function lotState(lot) {
   return new Date(lot.end_at).getTime() <= nowMs() ? 'ended' : 'live';
 }
 
-/* the sticker that goes on a finished number */
-/* A result is stamped across the plate like a seal, not labelled under it —
-   it has to read from across the room on a stream. Two words to a line so the
-   circle is filled rather than a wide word in a round hole. */
+/* The result, stamped across the plate with the owner's own mark. One line
+   now, not two stacked words: the artwork has a banner for the words, and a
+   banner takes a line. The file is picked by result — the three are the same
+   image in different ink. */
 const STAMP = {
-  sold:      ['تم', 'البيع'],
-  unsold:    ['لم يتم', 'البيع'],
-  cancelled: ['ملغي']
+  sold:      'تم البيع',
+  unsold:    'لم يتم البيع',
+  cancelled: 'ملغي'
 };
 function stampFor(st) {
   if (!STAMP[st]) return '';
-  return '<div class="stamp ' + st + '"><span>' +
-    STAMP[st].map(w => '<b>' + esc(w) + '</b>').join('') + '</span></div>';
+  return '<div class="stamp ' + st + '">' +
+    '<span class="st-band"></span>' +
+    '<img class="st-mark" src="mazad-stamp-' + st + '.png" alt="" ' +
+      'loading="lazy" decoding="async">' +
+    '<span class="st-txt">' + esc(STAMP[st]) + '</span>' +
+  '</div>';
 }
 /* ---------- the one bar at the foot of the broadcast ----------
    The site, the number and the commission used to be two stacked blocks, and
