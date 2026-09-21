@@ -15,6 +15,7 @@
 <link rel="icon" href="/mazad-icon.png" sizes="512x512">
 <link rel="apple-touch-icon" href="/mazad-icon.png">
 <style>
+@font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Light.otf')   format('opentype'); font-weight: 300; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Medium.otf')  format('opentype'); font-weight: 500 600; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Bold.otf')    format('opentype'); font-weight: 700 900; font-display: swap; }
@@ -65,7 +66,30 @@ body {
   line-height: 1.6;
   min-height: 100dvh;
   overflow-wrap: break-word;
+  /* ---------- the typeface was right, the SETTINGS were not ----------
+     The family and all three faces were already loading — verified against
+     the live site, which serves the real OTF. What was missing is everything
+     style.css wraps around it on the rest of the site, and every line of it
+     changes how Arabic actually draws:
+       · font-synthesis: none — without it a weight the family does not have
+         is FAKED by smearing the outline, which is what made the text read as
+         a different, mushier font at 800 and 900.
+       · 'calt', 'liga' and 'kern' are the contextual joins and spacing
+         Arabic depends on.
+     style.css also turns on 'ss01' and 'salt', Thmanyah's stylistic
+     alternates, and those are deliberately NOT here: rendered side by side
+     they extend the tails of final letters — «عرضـــ», «بيـــن» — which
+     suits a 2.4rem marketing headline and looks ragged in a 0.78rem footer,
+     which is most of this page. Turn them on only if the whole page is
+     re-typeset for them. */
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+  font-synthesis: none;
+  font-feature-settings: 'calt' 1, 'liga' 1, 'kern' 1;
+  font-variant-ligatures: common-ligatures contextual;
 }
+/* The plate is the one thing that must NOT wear the brand face — a real plate
+   is set in a plain grotesque, and its own rule below says so. */
 button, input, select, textarea { font-family: inherit; font-size: 1rem; color: inherit; }
 button { cursor: pointer; border: none; background: none; }
 a { color: inherit; }
@@ -522,19 +546,23 @@ a { color: inherit; }
 .ctl-bid.done .amt { color: var(--wine-600); }
 /* ---------- live broadcast screen ---------- */
 .live {
-  /* Burgundy at the top where the plate sits, sinking visibly into olive
-     across the lower half — the two colours together are what reads as فخم
-     on camera. It was there before but so faint that it read as plain
-     burgundy; the olive has to be seen to be a brand colour. */
+  /* ---------- olive is a TOUCH, not a second half ----------
+     The first version sank the whole lower half into olive, which stopped
+     reading as burgundy-with-an-accent and started reading as an olive card:
+     «الزيتي كبرته مرره — ابيه لمسات خفيفه ما يخفي جمالية العنابي». The card
+     is burgundy from top to bottom now, and the olive lands only in the last
+     few per cent — a shift you notice at the foot without ever naming it, the
+     way a good accent works. The accents that carry it are the head rule, the
+     bar's frame and the phone pill, which is where it does real work. */
   background:
     radial-gradient(115% 72% at 50% 0%, #7b1f38, rgba(67,16,31,.94) 42%, rgba(67,16,31,0) 72%),
-    linear-gradient(168deg, var(--wine-900) 18%, var(--olive-800) 78%, var(--olive-900));
+    linear-gradient(168deg, var(--wine-900) 20%, var(--wine-800) 76%, #2f2018 96%, #2b2a1c);
   border-radius: 20px; padding: 16px 14px 20px; color: #fff; margin-top: 14px;
   border: 2px solid rgba(217,164,65,.45); box-shadow: var(--shadow-lg);
 }
 .live-head {
   display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-  padding-bottom: 8px; border-bottom: 1.5px solid rgba(125,151,96,.45);
+  padding-bottom: 8px; border-bottom: 1px solid rgba(125,151,96,.38);
 }
 .live-dot {
   background: var(--gold-500); color: #3a1208; font-size: .75rem; font-weight: 800;
@@ -588,20 +616,26 @@ a { color: inherit; }
    screen that is filmed. The olive is the third brand colour doing real work
    here: it separates this bar from the burgundy card without using gold,
    which the price and the clock already own. */
+/* The bar was a solid olive block — the single biggest olive mass on the
+   screen, and the thing that made the card stop looking burgundy. It is a
+   dark burgundy panel now, and the olive is its EDGE: enough to separate it
+   from the card without using gold, which the price and the clock own. */
 .live-bar {
   margin-top: 12px; display: grid; gap: 6px; text-align: center;
-  background: linear-gradient(160deg, rgba(85,104,63,.72), rgba(29,36,22,.82));
-  border: 2px solid #6d8450;
+  background: rgba(30,9,16,.55);
+  border: 1.5px solid rgba(125,151,96,.62);
   border-radius: 16px; padding: 10px 12px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
 }
 .live-bar .lb-site { font-size: .84rem; color: #eae6dd; }
 .live-bar .lb-site b { color: var(--gold-400); direction: ltr; unicode-bidi: isolate;
   display: inline-block; font-size: .95rem; }
 /* the number sits in its own olive frame inside the bar */
+/* the number keeps its own olive ring — it is the one thing on the card a
+   viewer is meant to act on, so it is where the accent earns its place */
 .live-bar .lb-tel {
-  justify-self: center; border: 2px solid #7e9760;
-  background: rgba(29,36,22,.66); border-radius: 999px;
+  justify-self: center; border: 1.5px solid rgba(126,151,96,.85);
+  background: rgba(29,36,22,.45); border-radius: 999px;
   padding: 4px 14px; font-size: .84rem; color: #eae6dd;
 }
 .live-bar .lb-tel b { color: var(--gold-400); font-weight: 900; font-size: 1.02rem; }
@@ -1092,6 +1126,29 @@ body.on-air .foot { display: none; }
 .foot-tel a { color: var(--wine-600); font-weight: 900; text-decoration: none; font-size: .95rem; }
 .foot { text-align: center; font-size: .74rem; color: var(--muted); padding: 24px 10px 8px; line-height: 1.9; }
 .foot a { color: var(--wine-700); font-weight: 700; }
+/* ---------- «من نحن» is a BUTTON, not a line of text ----------
+   «ياليت تخليها وسط ايقونه واضحه لضغط، كذا يحسبونها فقط شكل» — as a bare
+   underlined line under a bright green button it read as a caption, and
+   nobody pressed it. Same shape and width as the WhatsApp button above it, so
+   the two read as a pair of things you can press; burgundy rather than green,
+   because green on this page means one thing and this is not it. */
+.about-btn {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  margin: 0 auto 14px; max-width: 340px; padding: 12px 18px;
+  border-radius: 14px; text-decoration: none;
+  background: #fff; color: var(--wine-700) !important;
+  border: 1.5px solid var(--wine-700);
+  font-size: .92rem; font-weight: 800; line-height: 1.3;
+  box-shadow: var(--shadow);
+}
+.about-btn .about-i {
+  display: grid; place-items: center; width: 24px; height: 24px; flex: none;
+  border-radius: 50%; background: var(--wine-700); color: #fff;
+  font-size: .86rem; font-weight: 900;
+}
+.about-btn .about-go { font-size: 1.1rem; line-height: 1; opacity: .55; }
+.about-btn:active { transform: scale(.98); }
+
 /* ---------- the one way to reach him ----------
    «وز الواتس ياليت يكون بالنص وبلون اخضر يمثل هوية الواتس». It carried the
    site's own burgundy, so on a page of burgundy buttons it read as one more
@@ -1198,7 +1255,11 @@ body.on-air .foot { display: none; }
       <span class="wa-txt">اضغط هنا للتواصل واتس
         <b class="num" id="footTelNum">—</b></span>
     </a>
-    <div class="foot-links"><a href="#/about">من نحن وكيف يشتغل المزاد ›</a></div>
+    <a class="about-btn" href="#/about">
+      <span class="about-i" aria-hidden="true">؟</span>
+      <span>من نحن وكيف يشتغل المزاد</span>
+      <span class="about-go" aria-hidden="true">‹</span>
+    </a>
     عمولة الموقع <b id="footFee">—</b> — على ذمة البائع.<br>
     الموقع وسيط عرض فقط. الاتفاق والتسليم والدفع بين البائع والمشتري مباشرة.<br>
     نقل الملكية يتم عبر الجهة المختصة وحسب أنظمتها.
@@ -1304,8 +1365,13 @@ function fmtPhone(p) {
   const d = String(p || '').replace(/[^0-9•]/g, '');
   return d.length === 10 ? d.slice(0,3) + ' ' + d.slice(3,6) + ' ' + d.slice(6) : d;
 }
+/* A queued lot is masked. For a plate that now means its LETTERS, not its
+   digits — see the mazad_public view for why. Both are still checked, so a
+   row written before the flip is read correctly either way. */
 const isMasked = (lot) => Boolean(lot && (lot.phone_masked ||
-  String(lot.phone || '').includes('•') || String(lot.plate_digits || '').includes('•')));
+  String(lot.phone || '').includes('•') ||
+  String(lot.plate_letters || '').includes('•') ||
+  String(lot.plate_digits  || '').includes('•')));
 
 /* ===================== ما الذي يُباع =====================
    The auction engine never cared what the lot is — bids, the clock, approval,
@@ -1419,6 +1485,14 @@ const plateLatin = (letters) => normPlate(letters).split('')
    zone — that is what makes a plate look like a plate. It also means the
    Arabic letters can never join into a word: separate elements do not
    connect, so no zero-width joiner is needed. */
+/* A plate written as running TEXT — the on-air banner, the share line, the
+   operator's bid rows. It needs the same ه rule as the drawn plate: «ع ه د
+   555» puts a bare circle right beside the digits, which is the ٥ he could
+   not tell apart. One helper, so the two can never disagree again. */
+const plateText = (letters, digits) =>
+  normPlate(letters).split('').map(c => PLATE_GLYPH[c] || c).join(' ') +
+  (digits ? ' ' + digits : '');
+
 const plateCells = (str) => String(str || '').split('')
   .map(c => '<span>' + esc(PLATE_GLYPH[c] || c) + '</span>').join('');
 const plateArabic = (letters) => normPlate(letters);
@@ -1475,7 +1549,7 @@ function itemLabel(lot) {
     const model = String(lot.car_model || '').trim();
     return [make, model === make ? '' : model, lot.car_year].filter(Boolean).join(' ');
   }
-  if (IS_PLATE(lot)) return normPlate(lot.plate_letters).split('').join(' ') + ' ' + (lot.plate_digits || '');
+  if (IS_PLATE(lot)) return plateText(lot.plate_letters, lot.plate_digits || '');
   return fmtPhone(lot.phone);
 }
 const itemWord  = (lot) => IS_CAR(lot) ? 'السيارة' : IS_PLATE(lot) ? 'اللوحة' : 'الرقم';
@@ -1547,6 +1621,9 @@ function itemPlate(lot, size) {
 
   const letters = normPlate(lot.plate_letters);
   const digits  = String(lot.plate_digits || '');
+  /* The digits are shown on a queued plate now and the LETTERS are masked, so
+     this guard reads the digits only to stay correct for a row written before
+     the flip — a masked run of • must not be fed to toArabicDigits. */
   const masked  = digits.includes('•');
   const kind    = plateKindOf(lot);
   const arDigits = masked ? digits : toArabicDigits(digits);
@@ -1616,11 +1693,13 @@ function stageItem(lot) {
   if (IS_CAR(lot)) return itemLabel(lot);
   const hide = !lot.is_live && lot.status === 'pending';
   if (IS_PLATE(lot)) {
-    const d = String(lot.plate_digits || '');
-    // the digits are what makes a plate worth bidding on, so they are what is
-    // held back — same rule the mazad_public view applies
-    return normPlate(lot.plate_letters).split('').join(' ') + ' ' +
-           (hide && !d.includes('•') ? '•'.repeat(d.length) : d);
+    const l = String(lot.plate_letters || '');
+    // the LETTERS are what is held back on a queued plate — same rule the
+    // mazad_public view applies, re-applied here because the operator's own
+    // screen reads unmasked rows and is the screen being filmed
+    const shown = (hide && !l.includes('•')) ? '•'.repeat(normPlate(l).length)
+                                             : normPlate(l);
+    return plateText(shown, String(lot.plate_digits || ''));
   }
   const raw = String(lot.phone || '');
   if (lot.is_live || lot.status !== 'pending' || raw.includes('•')) return fmtPhone(raw);
@@ -1750,11 +1829,13 @@ const me = {
   set city(v) { localStorage.setItem('mazad_city', v); }
 };
 function paintName() {
-  // The chip is the bidder's identity. The operator's screen is not a place to
-  // bid from, and it is on camera — so it has no business showing there.
+  /* The chip shows WHO YOU ARE, and only once you are one. An «اسمك؟» button
+     beside a «مزايدة» door was the same job twice, and the door is the one a
+     visitor understands. It stays hidden on /live too — the operator does not
+     bid from there and it is on camera. */
   const chip = $('#nameChip');
-  chip.classList.toggle('hidden', route && route.name === 'live');
-  chip.textContent = me.name ? '👤 ' + me.name : 'اسمك؟';
+  chip.classList.toggle('hidden', (route && route.name === 'live') || !me.name);
+  chip.textContent = me.name ? '👤 ' + me.name : '';
 }
 
 /* --------------------------------------------------------------- store */
@@ -3016,14 +3097,14 @@ function renderPendingBids(host) {
           '<b>' + esc(b.bidder_name) + '</b>' +
           (b.bidder_phone
             ? '<a class="wa" href="' + esc(waLink(b.bidder_phone, b.plate_letters
-                ? normPlate(b.plate_letters).split('').join(' ') + ' ' + (b.plate_digits || '')
+                ? plateText(b.plate_letters, b.plate_digits || '')
                 : fmtPhone(b.phone || ''))) + '"' +
               ' target="_blank" rel="noopener" title="واتساب المزايد">💬 <span class="num">' +
               esc(fmtPhone(b.bidder_phone)) + '</span></a>'
             : '<span class="sub-muted">بدون جوال</span>') +
           bidderCity(b) +
           '<span class="num">على ' + esc(b.plate_letters
-            ? normPlate(b.plate_letters).split('').join(' ') + ' ' + (b.plate_digits || '')
+            ? plateText(b.plate_letters, b.plate_digits || '')
             : fmtPhone(b.phone || '')) + '</span>' +
         '</div>' +
         '<div class="cmp">' +
@@ -3713,7 +3794,7 @@ function renderLot(lot, bids, full) {
           : st === 'pending'
           ? '<div class="wait-note">' +
             (isMasked(lot) ? (IS_PLATE(lot)
-                ? 'أرقام اللوحة مخفية لين يجي دورها — تظهر كاملة لما يفتح عليها السوم.<br>'
+                ? 'حروف اللوحة مخفية لين يجي دورها — تظهر كاملة لما يفتح عليها السوم.<br>'
                 : 'الرقم مخفي جزئياً لين يجي دوره — يظهر كامل لما يفتح عليه السوم.<br>') : '') +
             'ما يقدر أحد يزايد عليه إلا لما نفتح عليه السوم.</div>'
           : '') +
@@ -4247,13 +4328,24 @@ $('#nameChip').addEventListener('click', () => askName());
 /* ---------- the three doors ---------- */
 $('#doorSell').addEventListener('click', () => askListing());
 $('#doorWant').addEventListener('click', () => askWanted());
+/* «انت مكرر مرتين — فوق يسجل اسمه وتحت مزايدة وهي نفسها». The chip at the
+   top and this door were two ways to do one thing. The door is the one that
+   makes sense to a visitor, so it OWNS the registration: tap it, give the
+   three details once, and land on the open auction with the bid box in front
+   of you. The chip is no longer a door at all — it only appears once you are
+   registered, to show who you are and let you change it. */
 $('#doorBid').addEventListener('click', () => {
-  // whatever is on air is where the bidding is; otherwise the open sums
-  const air = cache.listings.find(l => l.is_live && (admin.on || kindShown(kindOf(l))));
-  if (air) { location.hash = '#/n/' + encodeURIComponent(air.id); return; }
-  const open = document.querySelector('.filter[data-filter="live"]');
-  if (open) open.click();
-  $('#lots').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const go = () => {
+    const air = cache.listings.find(l => l.is_live && (admin.on || kindShown(kindOf(l))));
+    if (air) { location.hash = '#/n/' + encodeURIComponent(air.id); return; }
+    // nothing on air — show what is open rather than a dead end
+    const open = document.querySelector('.filter[data-filter="live"]');
+    if (open) open.click();
+    $('#lots').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  // register once, here, rather than bouncing him to the bid box and asking there
+  if (!me.name || !/^05\d{8}$/.test(me.phone) || !me.city) { askName(go); return; }
+  go();
 });
 $('#btnBack').addEventListener('click', () => goList());
 $('#btnBackLive').addEventListener('click', () => goList());

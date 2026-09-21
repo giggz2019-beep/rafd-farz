@@ -265,11 +265,20 @@ select
       then left(l.phone, 3) || '•••••' || right(l.phone, 2)
     else l.phone
   end                                      as phone,
-  l.plate_letters,                         -- the letters are never the secret
+  -- A queued plate shows its DIGITS and hides its LETTERS. It was the other
+  -- way round, which gave away the half that identifies a plate: «ا ب ح» on
+  -- its own is on half the cars in the street, but a viewer who reads the
+  -- letters of a short plate has enough to go and find the seller. The digits
+  -- are the part worth showing — they are what draws a bidder in — and the
+  -- letters are what completes it, so they land when it goes on air.
+  case
+    when l.item_type <> 'plate' then l.plate_letters
+    when l.status = 'pending' and not l.is_live
+      then repeat('•', char_length(l.plate_letters))
+    else l.plate_letters
+  end                                      as plate_letters,
   case
     when l.item_type <> 'plate' then null
-    when l.status = 'pending' and not l.is_live
-      then repeat('•', char_length(l.plate_digits))
     else l.plate_digits
   end                                      as plate_digits,
   l.plate_emblem,
