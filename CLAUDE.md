@@ -325,6 +325,25 @@ must both be false.
     no `EDIT_OK` rule: a key with no rule is painted only.
   - A finished lot refuses the edit (`error: 'finished'`) — what it sold as
     must not change under it.
+- **The LETTERS need a wider slot than the digits — measure before changing
+  this.** In the plate's own face at one size, the ten Arabic-Indic digits are
+  all exactly 61.05 wide; the seventeen plate letters run from ا at **34.3** to
+  س at **138** — a **4x** spread. On the digits' 8cqw slot س overflowed by
+  21px and sat **1.8px** from its neighbour while the digits sat **18px**
+  apart: «تلزق لي الحروف في بعض», and measurably so. The letter row therefore
+  has its own slot (**10.2cqw**) and its own size (7.6/6.9cqw against the
+  digits' 8.3/7.2).
+  - **The block is solved against two walls**, the emblem's right edge at
+    **60.2%** and the KSA rule at **93.9%** — 33.7% of room for a 30.6% block.
+    Slot width and `.cp-let`'s centre (**77.3%**) move together: widen one and
+    the letters touch the emblem, which a first pass at 11cqw did.
+  - **Only س and ص are condensed** (`PLATE_WIDE` → `scaleX`), because only
+    those two are wide enough to crowd even the wider slot. Every other letter
+    is drawn at its natural width.
+  - **A transform shrinks what is PAINTED, not what is reserved.** Any test
+    checking slot width or overflow must read `offsetWidth`, never
+    `getBoundingClientRect()`, or it reports a phantom overflow and unequal
+    slots for exactly the two letters the condense exists to rescue.
 - **A plate is MONOSPACED, and that is the whole trick.** Every character sits
   in a slot of the same width (`.cp-ar > span`, `.cp-en > span`, 8cqw), which
   is why a ه and a ا stand the same distance apart as two digits and why the
@@ -390,8 +409,16 @@ must both be false.
     operator's quick-add and the strip editor.
     - **Either alphabet lands as the same letter**: `plateLetterOf()` folds
       أ إ آ ى ة and maps Latin through `PLATE_FROM_LATIN`, so typing `D` or
-      `د` both give د and he never switches keyboard. Anything outside the
-      seventeen is silently refused — a plate cannot carry it.
+      `د` both give د and he never switches keyboard.
+    - **The official code is not the key people press.** م is coded Z, ق is
+      G, و is U, ي is V — that is what the plate prints. Nobody types Z for
+      م. `PLATE_FROM_LATIN` therefore also accepts **M, Q, W and Y**, which
+      are codes for nothing else, so they collide with nothing.
+    - **A refused key says so.** A letter no plate carries used to vanish
+      with no letter and no error, which is indistinguishable from a broken
+      box — «اقلب الكيبورد انجليزي يرفض». The box flashes now.
+    - **The last letter carries on into the digits** (`wireLetterBoxes`'s
+      `nextField`), rather than stopping dead and waiting to be tapped.
     - A letter jumps to the next box; backspace in an empty box steps back.
     - **No `maxlength="1"`.** A box that already holds a letter refuses the
       next keystroke outright, so he taps it, types, and nothing happens — on
@@ -693,6 +720,23 @@ must both be false.
   false — sale prices are not a public archive yet. The operator still sees them
   (the filter is skipped when `admin.on`), and the sold number stays on the
   broadcast screen with its sticker.
+- **A clock is HELD by banking it, because `end_at` is an absolute instant.**
+  There is nothing in a timestamp to "stop": `mazad_admin('pause')` writes
+  what is left into `paused_ms` and clears `end_at`; `('resume')` sets
+  `end_at = now() + paused_ms` and clears the bank. A lot is held exactly when
+  `paused_ms` is not null — so a held lot is `status='open'` with no `end_at`,
+  which every expiry check already reads as "not expired".
+  - `lotState()` has to know, or a held lot falls through `if (!lot.end_at)`
+    and reads as **queued** — it returns `'live'` instead.
+  - `clockCell()` is the one place that emits a countdown node. A held one
+    carries **no `data-cd`**, which is what keeps `tick()` off it, and is
+    drawn amber with the banked time frozen.
+  - `paused_ms` is in the live and lot repaint signatures, and on
+    `mazad_public` — without the last one a viewer's clock keeps running on a
+    lot the operator has held.
+  - «صفّر العدّاد» is just `timer`, which also clears the bank: a fresh clock
+    is never born paused. Neither holding nor resetting touches the sums —
+    «رجّعه للقائمة» is the only thing that can.
 - **Countdowns run on the server clock, never the device's.** `end_at` is written
   by the database, so subtracting a device `Date.now()` from it shows the
   device's error, not the time left: a phone ten minutes slow displayed a
