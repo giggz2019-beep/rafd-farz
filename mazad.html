@@ -744,6 +744,42 @@ a { color: inherit; }
 .ed-emb button.on { border-color: var(--gold-500); background: #fff9e8; color: var(--ink); }
 .ed-err { color: #a3241c; font-size: .74rem; font-weight: 700; margin-top: 6px; }
 .ed-err:empty { display: none; }
+/* ---------- من نحن ---------- */
+.ab-hero { text-align: center; padding: 10px 4px 18px; }
+.ab-hero h1 {
+  font-size: 1.9rem; font-weight: 900; margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.ab-hero p { color: var(--muted); font-size: .95rem; max-width: 30rem; margin: 0 auto; }
+.ab-card { margin-bottom: 14px; }
+.ab-card h2 {
+  font-size: 1.05rem; font-weight: 800; margin-bottom: 12px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--line); color: var(--wine-700);
+}
+.ab-item {
+  position: relative; padding-inline-start: 22px; margin-bottom: 12px;
+  font-size: .9rem; line-height: 1.75;
+}
+.ab-item::before {
+  content: '✓'; position: absolute; inset-inline-start: 0; top: 0;
+  color: var(--ok-600); font-weight: 900;
+}
+.ab-item:last-child { margin-bottom: 0; }
+.ab-item b { color: var(--ink); }
+.ab-fee {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 9px 0; border-bottom: 1px dashed var(--line); font-size: .9rem;
+}
+.ab-fee:last-of-type { border-bottom: 0; }
+.ab-fee span { color: var(--muted); text-align: start; }
+.ab-note { font-size: .82rem; color: var(--muted); margin-top: 10px; line-height: 1.7; }
+.ab-trust .ab-item::before { content: '•'; color: var(--gold-500); }
+.ab-contact { text-align: center; }
+.ab-contact h2 { text-align: start; }
+.foot-links { margin-bottom: 10px; }
+.foot-links a { color: var(--wine-600); font-weight: 700; text-decoration: none; }
+
 .ops-seg { margin-bottom: 10px; }
 .ops-seg button { font-size: .74rem; padding: 8px 2px; }
 .ops-seg.locked button:not(.on) { opacity: .45; }
@@ -803,7 +839,7 @@ a { color: inherit; }
       <div class="brand-mark" id="brandMark">سوم</div>
       <div>
         <div class="brand-name">مزاد سوم</div>
-        <div class="brand-sub">لوحات وأرقام وسيارات — مزايدة مباشرة</div>
+        <div class="brand-sub" id="brandSub">مزايدة مباشرة</div>
       </div>
     </div>
     <button class="chip-name" id="nameChip">اسمك؟</button>
@@ -816,12 +852,9 @@ a { color: inherit; }
   <!-- ============ list view ============ -->
   <section id="viewList">
     <div class="toolbar">
-      <div class="filters kinds" id="kindRow">
-        <button class="filter on" data-kind="all">الكل</button>
-        <button class="filter" data-kind="plate">🚗 لوحات</button>
-        <button class="filter" data-kind="phone">📱 جوالات</button>
-        <button class="filter" data-kind="car">🚙 سيارات</button>
-      </div>
+      <!-- built from KINDS_SHOWN, so switching a section on or off is one
+           line in the script instead of four places in the markup -->
+      <div class="filters kinds" id="kindRow"></div>
       <div class="filters">
         <button class="filter on" data-filter="live">السوم المفتوح</button>
         <button class="filter" data-filter="pending">بانتظار الدور</button>
@@ -838,25 +871,32 @@ a { color: inherit; }
        PHYSICAL RIGHT so he can keep it outside the camera frame; everything
        left of the dashed edge is what the viewers see. -->
   <section id="viewLive" class="hidden">
-    <button class="backlink" id="btnBackLive">→ رجوع لكل الأرقام</button>
+    <button class="backlink" id="btnBackLive">→ رجوع للمزاد</button>
     <div class="live-split" id="liveSplit">
       <div id="liveBody" class="live-stage"></div>
       <aside id="liveOps" class="live-ops"></aside>
     </div>
   </section>
 
+  <!-- ============ about ============ -->
+  <section id="viewAbout" class="hidden">
+    <button class="backlink" id="btnBackAbout">→ رجوع للمزاد</button>
+    <div id="aboutBody"></div>
+  </section>
+
   <!-- ============ detail view ============ -->
   <section id="viewLot" class="hidden">
-    <button class="backlink" id="btnBack">→ رجوع لكل الأرقام</button>
+    <button class="backlink" id="btnBack">→ رجوع للمزاد</button>
     <div id="lotBody"></div>
   </section>
 
   <div class="foot">
+    <div class="foot-links"><a href="#/about">من نحن وكيف يشتغل المزاد ›</a></div>
     <div class="foot-tel">📞 للتواصل والاستفسار
       <a id="footTel" class="num" href="#">—</a></div>
     عمولة الموقع <b id="footFee">—</b> — على ذمة البائع.<br>
     الموقع وسيط عرض فقط. الاتفاق والتسليم والدفع بين البائع والمشتري مباشرة.<br>
-    نقل ملكية الرقم يتم عبر الشركة المشغّلة وحسب أنظمتها.
+    نقل الملكية يتم عبر الجهة المختصة وحسب أنظمتها.
   </div>
 </main>
 
@@ -1092,6 +1132,25 @@ const kindCount = (k) => k === 'plate' ? 'لوحة' : k === 'car' ? 'سيارة'
 const kindNoun  = (k) => k === 'plate' ? 'لوحتك' : k === 'car' ? 'سيارتك' : 'رقمك';
 const itemWordN = (lot) => IS_CAR(lot) ? 'سيارتك' : IS_PLATE(lot) ? 'لوحتك' : 'رقمك';
 const KIND_LABEL = { plate: '🚗 لوحات', phone: '📱 جوالات', car: '🚙 سيارات' };
+
+/* ---------- which sections the site OFFERS ----------
+   جوالات is switched off for now: the plates are where the money is, and a
+   third section that nobody is running only dilutes the other two. Put
+   'phone' back in this list and everything returns — the chips, the publish
+   form, the footer and the strip all read it, and nothing about a phone lot
+   was removed.
+
+   Lots in a hidden section are NOT deleted and NOT unreachable: the operator
+   still sees them (he has to finish what is already queued) and a direct link
+   still opens one, so a seller who listed yesterday is not cut off. Only the
+   public list and the forms stop offering the section. */
+const KINDS_SHOWN = ['plate', 'car'];
+const kindShown = (k) => KINDS_SHOWN.includes(k);
+/* the stored choice may name a section that is switched off now */
+const firstShownKind = (k) => kindShown(k) ? k : KINDS_SHOWN[0];
+const kindWords = () => KINDS_SHOWN.map(k => KIND_LABEL[k].replace(/^\S+\s/, '')).join(' و');
+/* the singular, for the publish form's own chips */
+const SEG_LABEL = { plate: '🚗 لوحة', phone: '📱 رقم', car: '🚙 سيارة' };
 /* the chip on a card says what the lot is; for a phone the carrier is more
    useful than the word "رقم", since every lot in that section is one */
 const kindBadge = (lot) => IS_CAR(lot) ? 'سيارة'
@@ -1686,7 +1745,13 @@ let cache = {
   listings: [], bids: {}, filter: 'live',
   // the section the viewer last chose, kept so a returning visitor lands on
   // the one he actually cares about
-  kind: (() => { try { return localStorage.getItem('mazad_kind') || 'all'; } catch { return 'all'; } })()
+  // a section switched off since his last visit must not leave him on an
+  // empty list he cannot get out of
+  kind: (() => {
+    let k = 'all';
+    try { k = localStorage.getItem('mazad_kind') || 'all'; } catch {}
+    return (k === 'all' || kindShown(k)) ? k : 'all';
+  })()
 };
 let route = { name: 'list', id: null };
 let pollTimer = null, tickTimer = null;
@@ -1695,6 +1760,7 @@ function parseRoute() {
   const h = location.hash.replace(/^#\/?/, '');
   if (h.startsWith('n/')) return { name: 'lot', id: decodeURIComponent(h.slice(2)) };
   if (h === 'admin') return { name: 'admin', id: null };
+  if (h === 'about') return { name: 'about', id: null };
   if (h === 'live') return { name: 'live', id: null };
   // one operator screen now: /control is kept only so an old link still lands
   // somewhere sensible
@@ -1710,7 +1776,7 @@ function parseRoute() {
    countdown, and tick() updates that in place through [data-cd], so each
    screen rebuilds only when something it shows has actually changed. Clearing
    the signatures on navigation forces the first paint of a screen. */
-let screenSig = { control: '', live: '', lot: '', ops: '', item: '' };
+let screenSig = { control: '', live: '', lot: '', ops: '', item: '', about: '' };
 
 /* The page re-reads itself every 2.5s, and the operator edits the lot that is
    ON AIR while he types. Without this the poll lands between two keystrokes
@@ -1738,7 +1804,10 @@ let opsFolded = (() => { try { return localStorage.getItem('mazad_ops_folded') =
    on camera. So /live has a section: whatever is on air sets it, and when
    nothing is on air the operator picks it from his strip. The queue, the
    commission line and التالي all obey it. */
-let liveKind = (() => { try { return localStorage.getItem('mazad_live_kind') || 'plate'; } catch { return 'plate'; } })();
+let liveKind = (() => {
+  try { return firstShownKind(localStorage.getItem('mazad_live_kind') || KINDS_SHOWN[0]); }
+  catch { return KINDS_SHOWN[0]; }
+})();
 function setLiveKind(k) {
   if (liveKind === k) return;
   liveKind = k;
@@ -1771,11 +1840,12 @@ function goList() {
 
 async function go() {
   route = parseRoute();
-  screenSig = { control: '', live: '', lot: '', ops: '', item: '' };
+  screenSig = { control: '', live: '', lot: '', ops: '', item: '', about: '' };
   if (route.name === 'admin') { location.hash = ''; askAdmin(); return; }
   $('#viewList').classList.toggle('hidden', route.name !== 'list');
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
   $('#viewLive').classList.toggle('hidden', route.name !== 'live');
+  $('#viewAbout').classList.toggle('hidden', route.name !== 'about');
   $('#bidbarHost').innerHTML = '';
   if (route.name !== 'live') document.body.classList.remove('ops-open');
   paintName();
@@ -1786,6 +1856,8 @@ async function go() {
 
 async function refresh(full) {
   try {
+    // static text, and it must open without waiting on the network
+    if (route.name === 'about') { renderAbout(); return; }
     if (route.name === 'live') {
       cache.listings = applyLiveEdit(await store.listings());
       const lot = cache.listings.find(l => l.is_live);
@@ -1869,6 +1941,10 @@ function renderList() {
 
   // the section comes first: a viewer picks what he is here for, then how far
   // along it is
+  // A section that is switched off is hidden from the public list but NOT
+  // deleted: the operator still sees those lots, because he has to finish
+  // what is already queued, and a direct link still opens one.
+  if (!admin.on) rows = rows.filter(l => kindShown(kindOf(l)));
   if (cache.kind && cache.kind !== 'all') {
     rows = rows.filter(l => (l.item_type || 'phone') === cache.kind);
   }
@@ -2167,8 +2243,10 @@ function renderLiveOps(lot) {
     host.innerHTML =
       '<div class="ops-warn">🎥 هذا الجزء لك وحدك — لا تدخله في إطار الكاميرا' +
         '<button class="ops-fold" title="اطوِ اللوحة">✕</button></div>' +
+      // the live sections, plus whatever is on air even if its section was
+      // switched off — otherwise he cannot see the lot he is running
       '<div class="seg ops-seg" id="opsKind">' +
-        Object.keys(KIND_LABEL).map(k =>
+        KINDS_SHOWN.concat(kindShown(kind) ? [] : [kind]).map(k =>
           '<button' + (k === kind ? ' class="on"' : '') + ' data-k="' + k + '">' +
             esc(KIND_LABEL[k]) + '</button>').join('') +
       '</div>' +
@@ -2620,6 +2698,83 @@ function askRequeue(lot) {
   });
 }
 
+/* ---------------------------- من نحن ----------------------------
+   What the site actually does, and nothing it does not. Every claim here has
+   a mechanism behind it in this file or in supabase-mazad.sql — no "advanced
+   search", no "we verify ownership", because neither exists. The commission
+   is printed from FEES through feeRule(), so this page cannot quote a rate
+   the rest of the site has stopped charging, and the sections come from
+   KINDS_SHOWN, so switching one off does not leave it described here. */
+function renderAbout() {
+  const host = $('#aboutBody');
+  if (screenSig.about === 'on' && host.firstElementChild) return;
+  screenSig.about = 'on';
+
+  const wa = 'https://wa.me/' + CONTACT_PHONE.replace(/\D/g, '').replace(/^0/, '966');
+  const feeRows = KINDS_SHOWN.map(k =>
+    '<div class="ab-fee"><b>' + esc(KIND_LABEL[k]) + '</b>' +
+      '<span>' + esc(feeRule(k)) + '</span></div>').join('');
+
+  host.innerHTML =
+    '<div class="ab-hero">' +
+      '<h1>مزاد سوم</h1>' +
+      '<p>مزاد مباشر لـ' + esc(kindWords()) + ' المميزة — يُدار على الهواء، ' +
+        'والسوم يمشي قدام الناس لحظة بلحظة.</p>' +
+    '</div>' +
+
+    '<div class="card ab-card">' +
+      '<h2>👤 لأصحاب ' + esc(kindWords()) + '</h2>' +
+      '<div class="ab-item"><b>العرض مجاني.</b> تعرض في المزاد بدون أي رسوم، ' +
+        'وتدخل قائمة الانتظار على طول.</div>' +
+      '<div class="ab-item"><b>ما ينكشف عليك أحد.</b> رقمك أو لوحتك تظهر ' +
+        '<span class="num">مخفية جزئياً</span> وهي بالانتظار، وما تبان كاملة إلا ' +
+        'لما يجي دورها في البث. وسيلة تواصلك ما تظهر لأحد أصلاً — توصل للمشرف فقط.</div>' +
+      '<div class="ab-item"><b>السوم قدام الجميع.</b> لما يجي دورك، يفتح المؤقت ' +
+        'ويبدأ السوم على الهواء. وكل سومة جديدة في آخر دقيقة تمدّد الوقت، ' +
+        'عشان ما أحد يخطف الرقم في آخر ثانية.</div>' +
+      '<div class="ab-item"><b>سعر بيع مباشر — اختياري.</b> تحدد سعراً ترضى ' +
+        'به، وأول ما توصله سومة محتسبة يُقفل البيع عنده ويوقف المؤقت.</div>' +
+      '<div class="ab-item"><b>ما فيه سومات وهمية.</b> كل سومة ما تُحتسب إلا ' +
+        'بعد اعتماد المشرف، ولازم صاحبها يترك اسمه ورقم جواله — سومة ما أحد ' +
+        'يقدر يتابعها ما تنفع البائع بشي.</div>' +
+    '</div>' +
+
+    '<div class="card ab-card">' +
+      '<h2>🛒 للمزايدين</h2>' +
+      '<div class="ab-item"><b>تزايد من الموقع مباشرة.</b> تفتح صفحة الرقم ' +
+        'وتكتب سومتك — ما تحتاج حساب ولا تسجيل.</div>' +
+      '<div class="ab-item"><b>اسمك يظهر، جوالك لا.</b> اسمك يبان مع سومتك، ' +
+        'ورقمك يوصل للمشرف فقط عشان نتواصل معك إذا ربحت.</div>' +
+      '<div class="ab-item"><b>سومتك تنتظر الاعتماد.</b> تشوفها عندك ' +
+        '«بانتظار الموافقة» لين يعتمدها المشرف، وعندها تدخل السوم وتظهر للكل.</div>' +
+      '<div class="ab-item"><b>السعر دائماً هو الأعلى المحتسب.</b> ما فيه ' +
+        'سعر مخفي ولا سومة تُحسب من ورا.</div>' +
+    '</div>' +
+
+    '<div class="card ab-card">' +
+      '<h2>💰 العمولة</h2>' +
+      feeRows +
+      '<div class="ab-note">على ذمة البائع، وتُستحق عند إتمام البيع فقط. ' +
+        'العرض والمزايدة مجانيان.</div>' +
+    '</div>' +
+
+    '<div class="card ab-card ab-trust">' +
+      '<h2>🛡 الثقة والأمان</h2>' +
+      '<div class="ab-item">الموقع <b>وسيط عرض فقط</b>. الاتفاق والتسليم والدفع ' +
+        'تتم بين البائع والمشتري مباشرة، والموقع ليس طرفاً فيها ولا يستلم أي مبلغ.</div>' +
+      '<div class="ab-item">نقل الملكية يتم عبر الجهة المختصة وحسب أنظمتها.</div>' +
+      '<div class="ab-item">تأكد من التفاصيل وهوية الطرف الآخر قبل أي اتفاق أو ' +
+        'تحويل. لا نضمن صحة ما يُعرض ولا ملكيته.</div>' +
+    '</div>' +
+
+    '<div class="card ab-card ab-contact">' +
+      '<h2>📞 تواصل معنا</h2>' +
+      '<a class="btn btn-gold btn-block" href="' + esc(wa) + '" target="_blank" rel="noopener">' +
+        'واتساب <span class="num">' + esc(fmtPhone(CONTACT_PHONE)) + '</span></a>' +
+      '<div class="ab-note">للعرض في المزاد أو أي استفسار.</div>' +
+    '</div>';
+}
+
 function queueHtml(open) {
   if (!open.length) return '';
   return '<div class="queue"><h3>قائمة الانتظار</h3>' +
@@ -2840,9 +2995,8 @@ function askQuickAdd() {
     '<p class="hint">للي يطلع معك بالبث — ينعرض على الهواء مباشرة.</p>' +
     '<div id="qkErr"></div>' +
     '<div class="seg" id="qkType">' +
-      '<button class="on" data-t="plate">🚗 لوحة</button>' +
-      '<button data-t="phone">📱 رقم</button>' +
-      '<button data-t="car">🚙 سيارة</button>' +
+      KINDS_SHOWN.map((k, i) => '<button' + (i ? '' : ' class="on"') +
+        ' data-t="' + k + '">' + esc(SEG_LABEL[k]) + '</button>').join('') +
     '</div>' +
     '<div data-qfor="plate">' +
       '<div class="field"><label>حروف اللوحة</label>' +
@@ -2891,7 +3045,7 @@ function askQuickAdd() {
     '<button class="btn btn-gold btn-block" id="qkSave">ابدأ السوم على الهواء 🔴</button>'
   );
 
-  let qkind = 'plate';
+  let qkind = KINDS_SHOWN[0];
   const qshow = () => {
     s2.querySelectorAll('[data-qfor]').forEach(n => n.classList.toggle('hidden', n.dataset.qfor !== qkind));
     s2.querySelectorAll('#qkType button').forEach(b => b.classList.toggle('on', b.dataset.t === qkind));
@@ -3278,9 +3432,8 @@ function askListing() {
     '<div id="lsErr"></div>' +
 
     '<div class="seg" id="lsType">' +
-      '<button class="on" data-t="plate">🚗 لوحة</button>' +
-      '<button data-t="phone">📱 رقم</button>' +
-      '<button data-t="car">🚙 سيارة</button>' +
+      KINDS_SHOWN.map((k, i) => '<button' + (i ? '' : ' class="on"') +
+        ' data-t="' + k + '">' + esc(SEG_LABEL[k]) + '</button>').join('') +
     '</div>' +
 
     // ---- a car plate: three letters and up to four digits
@@ -3344,7 +3497,7 @@ function askListing() {
     '<button class="btn btn-gold btn-block" id="lsSave">اعرضه — وأوافق على العمولة</button>'
   );
 
-  let kind = 'plate';
+  let kind = KINDS_SHOWN[0];
   // the commission differs per section, so the box has to follow the picker —
   // a seller must see the rule he is actually agreeing to
   const paintFee = () => {
@@ -3492,6 +3645,12 @@ $('#opsPeek').addEventListener('click', () => {
   screenSig.live = ''; screenSig.ops = '';
   refresh(false);
 });
+$('#btnBackAbout').addEventListener('click', () => goList());
+
+$('#kindRow').innerHTML =
+  '<button class="filter" data-kind="all">الكل</button>' +
+  KINDS_SHOWN.map(k => '<button class="filter" data-kind="' + k + '">' +
+    esc(KIND_LABEL[k]) + '</button>').join('');
 $('#kindRow').querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
   $('#kindRow').querySelectorAll('.filter').forEach(x => x.classList.toggle('on', x === b));
   cache.kind = b.dataset.kind;
@@ -3519,7 +3678,7 @@ if (!REMOTE) {
   b.innerHTML = '<b>وضع تجريبي محلي.</b> البيانات محفوظة في هذا المتصفح فقط. لتشغيل المزاد للناس، اربط Supabase من أعلى ملف mazad.html.';
 }
 
-$('#footFee').innerHTML = ['plate','car','phone']
+$('#footFee').innerHTML = KINDS_SHOWN
   .map(k => KIND_LABEL[k].replace(/^\S+\s/, '') + ' ' + feeRule(k))
   .join(' · ');
 (() => {
@@ -3528,6 +3687,7 @@ $('#footFee').innerHTML = ['plate','car','phone']
   a.href = 'https://wa.me/' + CONTACT_PHONE.replace(/\D/g, '').replace(/^0/, '966');
   a.target = '_blank'; a.rel = 'noopener';
 })();
+$('#brandSub').textContent = kindWords() + ' — مزايدة مباشرة';
 paintName();
 (() => {   // put the section chips back on the section this browser last used
   const row = $('#kindRow');
