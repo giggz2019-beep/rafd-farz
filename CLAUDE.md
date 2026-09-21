@@ -682,12 +682,28 @@ must both be false.
 - **Commission is per section** — `FEES` near the top of the script:
   | section | rule |
   |---|---|
-  | 🚗 لوحات | **250 flat**, whatever it sells for |
-  | 🚙 سيارات | **500 flat**, whatever it sells for |
+  | 🔖 لوحات | **250 flat**, whatever it sells for |
+  | 🚙 سيارات | **500**, or **1%** once the sale passes **50,000** |
   | 📱 جوالات | 200, or 2.5% once the sale passes 20,000 |
   A section with a `rate` charges the flat fee up to `threshold` and the rate
   above it; a section with only `flat` charges that and nothing more. So the
   same 30,000 sale costs 250, 500 or 750 depending on where it was listed.
+  - **لوحات is flat deliberately** — the owner set 250 and meant it, whatever
+    a plate goes for. Don't "improve" it into a rate.
+  - **سيارات is not**, because a flat fee is the one that stops making sense
+    as the sale grows: 500 on a 200,000 car is a quarter of a per-mille for
+    the same night's work as a 30,000 one.
+  - **The car threshold is picked so `threshold × rate === flat`** — 50,000 ×
+    1% is exactly 500 — so the fee does **not jump** at the crossover: a car
+    at 49,999 and one at 50,001 pay the same 500. Moving either number means
+    moving the other, or a seller two riyals over the line suddenly pays more.
+    `test-sections.js` asserts the crossover is flat. (The phone rule *does*
+    jump there — 20,000 × 2.5% is 500 against its 200 flat — but that section
+    is switched off and its numbers are the owner's, so it stands as it is.)
+  - **The publish form's worked sums straddle the threshold**, derived from it
+    rather than hard-coded. They were 10,000 and 30,000, both under the car
+    threshold, so the box printed «500 · 500» and a seller never saw the rate
+    at all — the half of the rule he most needs before he agrees to it.
   - `feeRule(kind)` is the one sentence every screen states it with and
     `commissionOn(price, kind)` the one sum, so the wording and the number
     cannot drift. **Every call site must pass the kind** — `kindOf(lot)` —

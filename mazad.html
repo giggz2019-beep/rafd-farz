@@ -1243,9 +1243,21 @@ const CONTACT_PHONE = '0558184381';   // the operator's own line, shown publicly
    `flat` charges that and nothing more, whatever the sale.
    Displayed only: the site takes no payment and settles nothing, so nothing
    in the database depends on any of this. */
+/* A flat fee on a car is the one that stops making sense as the sale grows:
+   500 on a 200,000 car is a quarter of a per-mille, for the same night's work
+   as a 30,000 one. So the car rule gains a rate above a threshold, the way
+   the phone rule always had one.
+
+   The threshold is chosen so that threshold × rate === flat — 50,000 × 1% is
+   exactly 500 — which means the fee does NOT jump at the crossover: a car at
+   49,999 and one at 50,001 pay the same 500. (The phone rule does jump there,
+   20,000 × 2.5% being 500 against its 200 flat; that section is switched off,
+   and its numbers are his, so it is left as it stands.)
+
+   لوحات stays flat at 250 because he set it that way on purpose. */
 const FEES = {
   plate: { flat: 250 },                                  // ثابت، مهما كان السعر
-  car:   { flat: 500 },                                  // ثابت، مهما كان السعر
+  car:   { flat: 500, threshold: 50000, rate: 0.01 },    // 500، و1% فوق 50,000
   phone: { flat: 200, threshold: 20000, rate: 0.025 }
 };
 const FEE_DEFAULT = 'phone';
@@ -4085,9 +4097,16 @@ function askListing() {
     const f = feeOf(kind);
     s.querySelector('#lsFee').innerHTML =
       '💰 عمولة الموقع <b>' + esc(feeRule(kind)) + '</b>، <b>على ذمة البائع</b>.' +
+      /* The two worked sums STRADDLE the threshold, derived from it rather
+         than hard-coded: 10,000 and 30,000 were both under the car threshold,
+         so the example printed «500 · 500» and a seller reading it never saw
+         the rate at all — which is the half of the rule he most needs to see
+         before he agrees to it. */
       (f.rate
-        ? '<br>بيع بـ <span class="num">10,000</span> ← <span class="num">' + money(commissionOn(10000, kind)) + '</span> ر.س' +
-          ' · بيع بـ <span class="num">30,000</span> ← <span class="num">' + money(commissionOn(30000, kind)) + '</span> ر.س.'
+        ? '<br>بيع بـ <span class="num">' + money(Math.round(f.threshold / 2)) + '</span> ← <span class="num">' +
+            money(commissionOn(Math.round(f.threshold / 2), kind)) + '</span> ر.س' +
+          ' · بيع بـ <span class="num">' + money(f.threshold * 3) + '</span> ← <span class="num">' +
+            money(commissionOn(f.threshold * 3, kind)) + '</span> ر.س.'
         : '<br>نفس المبلغ سواء باع بـ <span class="num">5,000</span> أو <span class="num">500,000</span>.') +
       '<br>بعرضك أنت موافق على هذا.';
   };
