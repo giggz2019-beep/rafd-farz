@@ -305,6 +305,31 @@ must both be false.
   - `PLATE_LATIN` maps the seventeen letters to their fixed Latin equivalents,
     and the Latin row is the Arabic order **reversed** (س ق م reads Z G S).
     Verified against real plates, not guessed.
+  - **The letters are TYPED, never picked from a list.** A dropdown means
+    hunting through seventeen options three times for every plate, and on a
+    phone it hides the keyboard that is already open. `letterBoxes()` /
+    `wireLetterBoxes()` are the one widget, used by the publish form, the
+    operator's quick-add and the strip editor.
+    - **Either alphabet lands as the same letter**: `plateLetterOf()` folds
+      أ إ آ ى ة and maps Latin through `PLATE_FROM_LATIN`, so typing `D` or
+      `د` both give د and he never switches keyboard. Anything outside the
+      seventeen is silently refused — a plate cannot carry it.
+    - A letter jumps to the next box; backspace in an empty box steps back.
+    - **No `maxlength="1"`.** A box that already holds a letter refuses the
+      next keystroke outright, so he taps it, types, and nothing happens — on
+      camera. Instead the box selects on focus and the handler takes the
+      character at the caret, so typing over a letter replaces it.
+  - **On the plate the letters are the same height as the digits**, the way a
+    real plate carries them. They were drawn at 70% (5.0/4.4cqw against
+    7.2/6.4) because they were joined with literal **spaces**, which fixed the
+    gap at one space's width and pushed the block out of its cell at any
+    larger size. They are separated by a **zero-width non-joiner** now — which
+    keeps the Arabic from joining into a word at no width at all — and the gap
+    is `letter-spacing` in CSS, with the same amount padded back on the
+    opposite side because letter-spacing also lands after the last glyph.
+    `plateArabic()` and `plateLatin()` are the two places that emit them.
+    Changing the size means re-checking the clearance to the emblem and the
+    KSA strip; `test-letters.js` asserts both.
   - **A car is never masked.** Hiding the make and model tells a viewer
     nothing, and unlike a phone number a car is not a way to reach the seller.
     A plate hides its **digits** while queued — that is showmanship, not the
