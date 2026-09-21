@@ -338,7 +338,11 @@ a { color: inherit; }
 .bid-row.top .bid-amt { color: #a9741d; }
 
 /* the same paddles, big, on the broadcast screen */
-.live-paddles { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+/* The gap has to clear the FOREARM, so it scales with the card. Not cqw:
+   .live is not a container, and cqw with no container ancestor falls back to
+   the viewport — a gap that changes with the window instead of the card. A
+   percentage gap in flexbox resolves against the flex container itself. */
+.live-paddles { display: flex; gap: 5%; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
 .lp { width: 88px; text-align: center; }
 .lp.top { width: 112px; }
 /* .paddle carries container-type: inline-size, which contains its own inline
@@ -561,24 +565,91 @@ a { color: inherit; }
 .cp-num, .cp-emblem, .cp-let {
   position: absolute; top: 50%; transform: translate(-50%, -50%);
 }
-.cp-num    { left: 12.1%; }
-.cp-emblem { left: 51.5%; height: 74%; display: flex; align-items: center; justify-content: center; }
-.cp-let    { left: 82.9%; }
-.cp-num, .cp-let { display: flex; flex-direction: column; align-items: center; line-height: 1.02; }
-.cp-emblem img { max-width: 100%; max-height: 100%; object-fit: contain; display: block;
-  width: 13cqw; }
+/* ---------- the content is SPREAD over the plate, not parked on it ----------
+   Measured off a photograph of a real plate (the one the owner pointed at):
+   the three digits sit at 11.9 / 20.7 / 29.5 percent of the plate's width and
+   the three letters at 72.3 / 80.5 / 88.9, so each block is about 21% wide
+   with a gap between glyphs roughly as wide as a glyph. The emblem spans
+   42.5–60.3 and the KSA rule falls at 93.9.
 
-.cp-ar { font-size: 7.2cqw; font-weight: 800; letter-spacing: .02em;
-  direction: rtl; white-space: nowrap; }
-.cp-en { font-size: 6.4cqw; font-weight: 800; letter-spacing: 0; white-space: nowrap; }
-/* On a real plate the letters are the same height as the digits. They used to
-   be drawn at 5.0/4.4cqw — about 70% — because they were joined with literal
-   spaces and a bigger size pushed the block out of its cell. The letters are
-   separated by a zero-width non-joiner now, so the gap is set here and the
-   size can match. letter-spacing also lands after the LAST glyph, so the same
-   amount is padded back on the other side to keep the block centred. */
-.cp-let .cp-ar { font-size: 7.2cqw; letter-spacing: .17em; padding-inline-start: .17em; }
-.cp-let .cp-en { font-size: 6.4cqw; letter-spacing: .17em; padding-inline-start: .17em; }
+   The blocks used to be pinned at 12.1 / 51.5 / 82.9 and left to shrink to
+   fit, which on a three-letter plate drew both blocks about 13% wide: the
+   letters bunched against the KSA strip and the middle of the plate sat
+   empty. A plate is not a line of text with a lot of margin — the characters
+   are laid out ACROSS it. */
+.cp-num    { left: 20.8%; width: 24%; }
+.cp-emblem { left: 51.4%; height: 84%; display: flex; align-items: center; justify-content: center; }
+.cp-let    { left: 80.6%; width: 22%; }
+.cp-num, .cp-let { display: flex; flex-direction: column; align-items: stretch; line-height: 1.04; }
+.cp-emblem img { max-width: 100%; max-height: 100%; object-fit: contain; display: block;
+  width: 17.8cqw; }
+
+/* A ZONE, and the characters spread across it. Letter-spacing cannot do this:
+   it puts a fixed gap between glyphs, so a three-letter plate drew a narrow
+   block that bunched against the KSA strip and left the middle of the plate
+   empty — which is exactly what a real plate never looks like. With a fixed
+   zone and space-between, one digit or four both fill the same area, the way
+   they do on the road. */
+.cp-ar, .cp-en {
+  display: flex; justify-content: space-between; width: 100%;
+  font-weight: 800; white-space: nowrap;
+}
+.cp-ar { font-size: 8.3cqw; direction: rtl; }
+/* Arabic-Indic digits are written LEFT to right — ٩٧٨ sits over 978 in the
+   same order. Only the letters read right to left, so the rtl above belongs
+   to .cp-let alone. */
+.cp-num .cp-ar { direction: ltr; }
+.cp-en { font-size: 7.6cqw; }
+/* a single character has nothing to spread against, so it is centred */
+.cp-ar.one, .cp-en.one { justify-content: center; }
+
+/* ---------- نقل and صغيرة: three cells, country in the middle ----------
+   Every number below is measured off the owner's reference images, the same
+   way the خصوصي plate was: the dividers fall at 46.4%/60.7% on نقل and
+   44.3%/62.0% on صغيرة, the ratios are 4.24 and 3.46, and the نقل middle cell
+   samples as rgb(60,104,165). Replacing a reference means re-measuring. */
+.carplate.cp3 {
+  display: flex; align-items: stretch; gap: 0;
+  padding: 1.1cqw; background: #e9e9e6;
+}
+.carplate.k-transport { aspect-ratio: 4.24 / 1; }
+.carplate.k-small     { aspect-ratio: 3.46 / 1; }
+.cp3 .c3 {
+  border: .5cqw solid #15151a; border-radius: 1.6cqw; background: #ececea;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-width: 0; overflow: hidden;
+}
+.cp3 .c3 + .c3 { margin-inline-start: .5cqw; }
+.k-transport .c3-num { flex: 0 0 45.4%; }
+.k-transport .c3-ksa { flex: 0 0 13.3%; }
+.k-transport .c3-let { flex: 1 1 auto; }
+.k-small .c3-num { flex: 0 0 43.3%; }
+.k-small .c3-ksa { flex: 0 0 16.7%; }
+.k-small .c3-let { flex: 1 1 auto; }
+
+/* on نقل the side cells are split in two by a rule; on صغيرة they are not */
+.cp3 .c3-r {
+  flex: 1 1 0; width: 100%; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 6%;
+  font-weight: 800; line-height: 1; white-space: nowrap; direction: ltr;
+}
+.cp3 .c3-r.c3-rtl { direction: rtl; }
+.cp3 .c3-r.one { justify-content: center; }
+.k-transport .c3-lat { border-top: .5cqw solid #15151a; }
+.k-transport .c3-r      { font-size: 7.4cqw; }
+.k-small     .c3-solo   { font-size: 11.5cqw; letter-spacing: .1em; }
+
+/* the country cell: نقل is the blue one — that is what names it on sight */
+.cp3 .c3-ksa { gap: .3cqw; padding: .6cqw .2cqw; }
+.cp3 .c3-emb { width: 62%; max-height: 42%; object-fit: contain; display: block; }
+.cp3 .c3-ar { font-size: 2.5cqw; font-weight: 700; }
+.cp3 .c3-en { font-size: 3.1cqw; font-weight: 800; letter-spacing: .1em; direction: ltr; }
+.cp3 .c3-tri { font-size: 3.2cqw; line-height: .8; }
+.k-transport .c3-ksa {
+  background: rgb(60,104,165); color: #fff;
+}
+.k-transport .c3-emb { filter: brightness(0); }
+.k-small .c3-ksa { background: #ececea; }
 
 /* the strip is lifted whole out of the reference, border included */
 .cp-ksa {
@@ -729,6 +800,15 @@ a { color: inherit; }
   width: 100%; text-align: center; font-size: 1.05rem; font-weight: 800;
   letter-spacing: .12em; direction: ltr;
 }
+/* نوع اللوحة — خصوصي / نقل / صغيرة */
+.ed-kind { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+.ed-kind button {
+  border: 1.5px solid var(--line); background: #fff; border-radius: 9px;
+  padding: 7px 2px; cursor: pointer; font-size: .76rem; font-weight: 800;
+  color: var(--muted); min-width: 0;
+}
+.ed-kind button.on { border-color: var(--wine-600); background: #fdf3f5; color: var(--wine-700); }
+.ed-emb.hidden { display: none; }
 .ed-emb {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
 }
@@ -777,6 +857,10 @@ a { color: inherit; }
 .ab-trust .ab-item::before { content: '•'; color: var(--gold-500); }
 .ab-contact { text-align: center; }
 .ab-contact h2 { text-align: start; }
+/* The broadcast card already carries the contact number and the commission —
+   the footer under it said both again, on camera, along with a «من نحن» link
+   nobody watching a stream is going to click. One screen, one statement. */
+body.on-air .foot { display: none; }
 .foot-links { margin-bottom: 10px; }
 .foot-links a { color: var(--wine-600); font-weight: 700; text-decoration: none; }
 
@@ -1086,7 +1170,30 @@ const plateLatin = (letters) => normPlate(letters).split('')
    breaks the connection at no width at all, so the gap is set in CSS
    (letter-spacing) and the letters can be as tall as the digits, the way they
    are on a real plate. */
-const plateArabic = (letters) => normPlate(letters).split('').join('\u200C');
+/* Each character is its own cell so the row can spread them across a fixed
+   zone — that is what makes a plate look like a plate. It also means the
+   Arabic letters can never join into a word: separate elements do not
+   connect, so no zero-width joiner is needed. */
+const plateCells = (str) => String(str || '').split('')
+  .map(c => '<span>' + esc(c) + '</span>').join('');
+const plateArabic = (letters) => normPlate(letters);
+
+/* ---------- the plate's own type ----------
+   A Saudi plate comes in shapes, and the shape is part of what is being sold:
+   a نقل plate is the blue one, a صغيرة is the short deep one off a sports car.
+   The three are drawn from the owner's reference images, measured — the cell
+   divisions below are where the dividers actually fall in them, not guesses:
+
+     خصوصي   private    5.09:1, one row of content, KSA strip at the edge
+     نقل     transport  4.24:1, three cells, BLUE middle, side cells split in two
+     صغيرة   small      3.46:1, three cells, light middle, Latin only
+
+   خصوصي keeps the layout measured off his own plate photo (pinned centres,
+   see .cp-num/.cp-emblem/.cp-let); the other two are three bordered cells,
+   because that is how they are actually divided. */
+const PLATE_KINDS = { private: 'خصوصي', transport: 'نقل', small: 'صغيرة' };
+const plateKindOf = (lot) =>
+  (lot && PLATE_KINDS[lot.plate_kind]) ? lot.plate_kind : 'private';
 
 /* The mark in the middle of a plate. Saudi plates carry different ones, so
    the seller is asked which his has and the plate on screen matches the plate
@@ -1187,17 +1294,55 @@ function itemPlate(lot, size) {
   const letters = normPlate(lot.plate_letters);
   const digits  = String(lot.plate_digits || '');
   const masked  = digits.includes('•');
+  const kind    = plateKindOf(lot);
+  const arDigits = masked ? digits : toArabicDigits(digits);
+
+  /* نقل and صغيرة are three bordered cells with the country cell in the
+     MIDDLE — a different plate, not a restyled خصوصي, so it gets its own
+     markup rather than bending the measured one. */
+  if (kind !== 'private') {
+    const twoRows = kind === 'transport';
+    // the characters are spread across the cell here too, and each is its own
+    // element so the Arabic letters cannot join into a word
+    const row = (cls, txt, rtl) =>
+      '<div class="c3-r ' + cls + (String(txt).length === 1 ? ' one' : '') +
+        (rtl ? ' c3-rtl' : '') + '">' + plateCells(txt) + '</div>';
+    const cell = (cls, ar, en, rtl) =>
+      '<div class="c3 ' + cls + '">' +
+        (twoRows ? row('', ar, rtl) + row('c3-lat', en, false)
+                 // صغيرة carries the Latin only — that is what comes on one
+                 : row('c3-lat c3-solo', en, false)) +
+      '</div>';
+    return (
+      '<div class="carplate cp3 k-' + kind + ' ' + (big ? 'big' : '') + '">' +
+        cell('c3-num', arDigits, digits, false) +
+        '<div class="c3 c3-ksa">' +
+          '<img class="c3-emb" src="mazad-emb-swords_black.png" alt="" ' +
+            'loading="lazy" decoding="async">' +
+          '<div class="c3-ar">السعودية</div>' +
+          '<div class="c3-en">KSA</div>' +
+          (twoRows ? '<div class="c3-tri">▼</div>' : '') +
+        '</div>' +
+        cell('c3-let', plateArabic(letters), plateLatin(letters), true) +
+      '</div>'
+    );
+  }
+
   return (
     '<div class="carplate ' + (big ? 'big' : '') + '">' +
       '<div class="cp-main">' +
         '<div class="cp-num">' +
-          '<div class="cp-ar">' + esc(masked ? digits : toArabicDigits(digits)) + '</div>' +
-          '<div class="cp-en">' + esc(digits) + '</div>' +
+          '<div class="cp-ar' + (arDigits.length === 1 ? ' one' : '') + '">' +
+            plateCells(arDigits) + '</div>' +
+          '<div class="cp-en' + (digits.length === 1 ? ' one' : '') + '">' +
+            plateCells(digits) + '</div>' +
         '</div>' +
         '<div class="cp-emblem">' + emblemSvg(lot.plate_emblem || 'swords') + '</div>' +
         '<div class="cp-let">' +
-          '<div class="cp-ar">' + esc(plateArabic(letters)) + '</div>' +
-          '<div class="cp-en">' + esc(plateLatin(letters)) + '</div>' +
+          '<div class="cp-ar' + (letters.length === 1 ? ' one' : '') + '">' +
+            plateCells(plateArabic(letters)) + '</div>' +
+          '<div class="cp-en' + (letters.length === 1 ? ' one' : '') + '">' +
+            plateCells(plateLatin(letters)) + '</div>' +
         '</div>' +
       '</div>' +
       '<img class="cp-ksa" src="mazad-plate-ksa.png" alt="KSA" loading="lazy" decoding="async">' +
@@ -1432,6 +1577,12 @@ const remote = {
       body: JSON.stringify({ p_listing: listing, p_secret: secret, p_emblem: emblem })
     });
   },
+  setPlateKind(listing, secret, kind) {
+    return this.req('rpc/mazad_set_plate_kind', {
+      method: 'POST',
+      body: JSON.stringify({ p_listing: listing, p_secret: secret, p_kind: kind })
+    });
+  },
   bidsOf(listing, secret) {
     return this.req('rpc/mazad_bids_of', {
       method: 'POST', body: JSON.stringify({ p_listing: listing, p_secret: secret })
@@ -1459,12 +1610,12 @@ const remote = {
     }
     return path;
   },
-  operatorCreate(secret, d) {
+  async operatorCreate(secret, d) {
     // two functions rather than one with more arguments: a defaulted extra
     // parameter on mazad_create would be an overload, and a call naming only
     // the original arguments would match both and be refused as ambiguous
     if (d.item_type === 'plate') {
-      return this.req('rpc/mazad_create_plate', {
+      const r = await this.req('rpc/mazad_create_plate', {
         method: 'POST',
         body: JSON.stringify({
           p_secret: secret, p_letters: d.plate_letters, p_digits: d.plate_digits,
@@ -1473,6 +1624,14 @@ const remote = {
           p_emblem: d.plate_emblem || null
         })
       });
+      // mazad_create_plate carries no type argument — adding one would mean
+      // dropping and recreating it — so the type is set right after, the same
+      // way the quick-add sets an auto-sell limit
+      if (r && r.ok && d.plate_kind && d.plate_kind !== 'private') {
+        try { await this.setPlateKind(r.id, secret, d.plate_kind); }
+        catch (e) { console.warn('plate kind not set', e); }
+      }
+      return r;
     }
     if (d.item_type === 'car') {
       return this.req('rpc/mazad_create_car', {
@@ -1672,6 +1831,15 @@ const local = {
     lot.plate_emblem = emblem; this.write(db);
     return { ok: true, emblem };
   },
+  async setPlateKind(listing, _secret, kind) {
+    const db = this.read();
+    const lot = db.listings.find(l => l.id === listing);
+    if (!lot) return { ok: false, error: 'not_found' };
+    if (lot.item_type !== 'plate') return { ok: false, error: 'not_a_plate' };
+    if (!PLATE_KINDS[kind]) return { ok: false, error: 'bad_kind' };
+    lot.plate_kind = kind; this.write(db);
+    return { ok: true, plate_kind: kind };
+  },
   async operatorCreate(_secret, d) {
     const db = this.read();
     db.listings.forEach(l => l.is_live = false);
@@ -1681,6 +1849,7 @@ const local = {
       plate_letters: d.item_type === 'plate' ? d.plate_letters : null,
       plate_digits:  d.item_type === 'plate' ? d.plate_digits  : null,
       plate_emblem:  d.item_type === 'plate' ? (d.plate_emblem || 'swords') : null,
+      plate_kind:    d.item_type === 'plate' ? (d.plate_kind || 'private') : null,
       car_make:  d.item_type === 'car' ? d.car_make  : null,
       car_model: d.item_type === 'car' ? d.car_model : null,
       car_year:  d.item_type === 'car' ? d.car_year  : null,
@@ -1846,6 +2015,7 @@ async function go() {
   $('#viewLot').classList.toggle('hidden', route.name !== 'lot');
   $('#viewLive').classList.toggle('hidden', route.name !== 'live');
   $('#viewAbout').classList.toggle('hidden', route.name !== 'about');
+  document.body.classList.toggle('on-air', route.name === 'live');
   $('#bidbarHost').innerHTML = '';
   if (route.name !== 'live') document.body.classList.remove('ops-open');
   paintName();
@@ -2141,14 +2311,17 @@ function renderLive(lot, bids) {
   const t = topBid(lot.id, lot);
   const shown = finalPrice(lot, t);
   const cd = countdown(lot.end_at);
-  const last = bids.slice(-6).reverse();
+  // Four, not six. The artwork is a hand on a FOREARM, so at six across the
+   // arms run under the next fist and the row reads as one smear — «مدموجة فوق
+   // بعض». The newest four, with the top sum among them, is what matters.
+  const last = bids.slice(-4).reverse();
   const best = bids.length ? Math.max(...bids.map(b => +b.amount)) : null;
 
   const sig = JSON.stringify([
     lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
     // the identity itself is editable from the strip now, so it belongs in
     // the signature: without it the stage keeps the old plate on camera
-    lot.plate_letters, lot.plate_digits, lot.plate_emblem,
+    lot.plate_letters, lot.plate_digits, lot.plate_emblem, lot.plate_kind,
     lot.car_make, lot.car_model, lot.car_year, lot.car_photo,
     lot.seller_name, lot.end_at, st, doneCount, kind,
     sigOfBids(bids), open.map(l => l.id).join(',')
@@ -2343,6 +2516,12 @@ function renderItemEditor(lot, host) {
         '<input id="edDigits" type="tel" inputmode="numeric" maxlength="4" ' +
           'value="' + esc(lot.plate_digits || '') + '" placeholder="900">' +
       '</div>' +
+      '<div class="ed-kind" id="edKind">' +
+        Object.keys(PLATE_KINDS).map(k =>
+          '<button data-pk="' + k + '"' +
+            (plateKindOf(lot) === k ? ' class="on"' : '') + '>' +
+            esc(PLATE_KINDS[k]) + '</button>').join('') +
+      '</div>' +
       '<div class="ed-emb" id="edEmb">' +
         Object.keys(EMBLEMS).map(k =>
           '<button data-e="' + k + '"' +
@@ -2362,6 +2541,14 @@ function renderItemEditor(lot, host) {
       e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
       pushEdit(lot, { plate_digits: e.target.value });
     });
+    host.querySelector('#edKind').addEventListener('click', async (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      host.querySelectorAll('#edKind button').forEach(x => x.classList.toggle('on', x === b));
+      // a نقل plate has no emblem cell of its own to pick, so hide the row
+      host.querySelector('#edEmb').classList.toggle('hidden', b.dataset.pk !== 'private');
+      await pushPlateKind(lot, b.dataset.pk);
+    });
+    host.querySelector('#edEmb').classList.toggle('hidden', plateKindOf(lot) !== 'private');
     host.querySelector('#edEmb').addEventListener('click', async (e) => {
       const b = e.target.closest('button'); if (!b) return;
       host.querySelectorAll('#edEmb button').forEach(x => x.classList.toggle('on', x === b));
@@ -2455,6 +2642,17 @@ function pushEdit(lot, fields, immediate) {
     } catch (e) { console.error(e); editErr('تعذّر الاتصال'); }
   };
   if (immediate) save(); else editTimer = setTimeout(save, 400);
+}
+
+async function pushPlateKind(lot, kind) {
+  pushEdit(lot, { plate_kind: kind });
+  try {
+    const r = await store.setPlateKind(lot.id, admin.secret, kind);
+    if (r && r.ok === false) {
+      editErr(r.error === 'forbidden' ? 'كلمة مرور المشرف غير صحيحة' : 'ما انحفظ نوع اللوحة');
+      liveEdit = null; refresh(false);
+    }
+  } catch (e) { console.error(e); editErr('تعذّر الاتصال'); }
 }
 
 async function pushEmblem(lot, emblem) {
@@ -2999,6 +3197,12 @@ function askQuickAdd() {
         ' data-t="' + k + '">' + esc(SEG_LABEL[k]) + '</button>').join('') +
     '</div>' +
     '<div data-qfor="plate">' +
+      '<div class="field"><label>نوع اللوحة</label>' +
+        '<div class="seg" id="qkKind">' +
+          Object.keys(PLATE_KINDS).map((k, i) =>
+            '<button' + (i ? '' : ' class="on"') + ' data-pk="' + k + '">' +
+              esc(PLATE_KINDS[k]) + '</button>').join('') +
+        '</div></div>' +
       '<div class="field"><label>حروف اللوحة</label>' +
         letterBoxes('qk', '') +
         '<div class="sub">بالعربي أو بالإنجليزي — د أو D.</div></div>' +
@@ -3054,13 +3258,21 @@ function askQuickAdd() {
     const b = e.target.closest('button'); if (!b) return; qkind = b.dataset.t; qshow();
   });
   qshow();
+  let qkKind = Object.keys(PLATE_KINDS)[0];
   const qPaint = () => {
     const l = readQkLetters();
     const d = s2.querySelector('#qkDigits').value.replace(/\D/g, '');
+    s2.querySelector('#qkEmblem').closest('.field').classList.toggle('hidden', qkKind !== 'private');
     s2.querySelector('#qkPreview').innerHTML = d
       ? itemPlate({ item_type: 'plate', plate_letters: l, plate_digits: d,
+                    plate_kind: qkKind,
                     plate_emblem: s2.querySelector('#qkEmblem').value }) : '';
   };
+  s2.querySelector('#qkKind').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    s2.querySelectorAll('#qkKind button').forEach(x => x.classList.toggle('on', x === b));
+    qkKind = b.dataset.pk; qPaint();
+  });
   const readQkLetters = wireLetterBoxes(s2, 'qk', () => qPaint());
   s2.querySelector('#qkDigits').addEventListener('input', qPaint);
   s2.querySelector('#qkEmblem').addEventListener('change', qPaint);
@@ -3109,6 +3321,7 @@ function askQuickAdd() {
         carrier: qkind === 'phone' ? s2.querySelector('#qkCarrier').value : null,
         plate_letters: letters, plate_digits: digits,
         plate_emblem: s2.querySelector('#qkEmblem').value,
+        plate_kind: qkKind,
         car_make: make, car_model: model, car_year: year, car_photo: photo,
         start_price: start,
         seller_name: s2.querySelector('#qkName').value.trim() || 'البائع',
@@ -3438,6 +3651,13 @@ function askListing() {
 
     // ---- a car plate: three letters and up to four digits
     '<div data-for="plate">' +
+      '<div class="field"><label>نوع اللوحة</label>' +
+        '<div class="seg" id="lsKind">' +
+          Object.keys(PLATE_KINDS).map((k, i) =>
+            '<button' + (i ? '' : ' class="on"') + ' data-pk="' + k + '">' +
+              esc(PLATE_KINDS[k]) + '</button>').join('') +
+        '</div>' +
+        '<div class="sub">نقل هي الزرقاء، وصغيرة هي القصيرة اللي على السيارات الرياضية.</div></div>' +
       '<div class="field"><label>حروف اللوحة</label>' +
         letterBoxes('ls', '') +
         '<div class="sub">اكتبها بالعربي أو بالإنجليزي — <b>د</b> أو <b>D</b>، ' +
@@ -3523,14 +3743,23 @@ function askListing() {
 
   // the seller sees the plate he is actually listing, drawn the way the
   // broadcast will draw it — the cheapest way to stop a wrong letter
+  let lsKind = Object.keys(PLATE_KINDS)[0];
   const paintPreview = () => {
     const letters = readLsLetters();
     const digits  = s.querySelector('#lsDigits').value.replace(/\D/g, '');
+    // only خصوصي carries an emblem of its own
+    s.querySelector('#lsEmblem').closest('.field').classList.toggle('hidden', lsKind !== 'private');
     s.querySelector('#lsPreview').innerHTML = digits
       ? itemPlate({ item_type: 'plate', plate_letters: letters, plate_digits: digits,
+                    plate_kind: lsKind,
                     plate_emblem: s.querySelector('#lsEmblem').value })
       : '<div class="sub" style="text-align:center">اكتب أرقام اللوحة عشان تشوفها</div>';
   };
+  s.querySelector('#lsKind').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    s.querySelectorAll('#lsKind button').forEach(x => x.classList.toggle('on', x === b));
+    lsKind = b.dataset.pk; paintPreview();
+  });
   const readLsLetters = wireLetterBoxes(s, 'ls', () => paintPreview());
   ['#lsDigits','#lsEmblem'].forEach(i =>
     s.querySelector(i).addEventListener('input', paintPreview));
@@ -3592,6 +3821,7 @@ function askListing() {
         plate_letters: kind === 'plate' ? letters : null,
         plate_digits:  kind === 'plate' ? digits  : null,
         plate_emblem:  kind === 'plate' ? s.querySelector('#lsEmblem').value : null,
+        plate_kind:    kind === 'plate' ? lsKind : null,
         car_make:      kind === 'car' ? make  : null,
         car_model:     kind === 'car' ? model : null,
         car_year:      kind === 'car' ? year  : null,

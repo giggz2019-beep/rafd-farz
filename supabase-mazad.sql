@@ -130,6 +130,20 @@ alter table mazad_listings add  constraint mazad_item_shape check (
 alter table mazad_listings drop constraint if exists mazad_emblem_on_plate_only;
 alter table mazad_listings add  constraint mazad_emblem_on_plate_only
   check (plate_emblem is null or item_type = 'plate');
+-- The plate's own TYPE. A Saudi plate comes in shapes, and the shape is part
+-- of what is being sold: نقل is the blue one, صغيرة the short deep one off a
+-- sports car. Measured off the owner's reference images — see mazad.html for
+-- the cell divisions and ratios that go with each.
+alter table mazad_listings add column if not exists plate_kind text;
+alter table mazad_listings drop constraint if exists mazad_plate_kind_values;
+alter table mazad_listings add  constraint mazad_plate_kind_values
+  check (plate_kind is null or plate_kind in ('private','transport','small'));
+alter table mazad_listings drop constraint if exists mazad_plate_kind_on_plate_only;
+alter table mazad_listings add  constraint mazad_plate_kind_on_plate_only
+  check (plate_kind is null or item_type = 'plate');
+update mazad_listings set plate_kind = 'private'
+ where item_type = 'plate' and plate_kind is null;
+
 alter table mazad_listings drop constraint if exists mazad_plate_emblem_values;
 alter table mazad_listings add  constraint mazad_plate_emblem_values
   check (plate_emblem is null
@@ -249,6 +263,7 @@ select
     else l.plate_digits
   end                                      as plate_digits,
   l.plate_emblem,
+  l.plate_kind,
   l.car_make, l.car_model, l.car_year, l.car_photo,
   (l.item_type <> 'car' and l.status = 'pending' and not l.is_live) as phone_masked,
   l.carrier, l.start_price, l.seller_name, l.note,
@@ -1032,6 +1047,36 @@ end;
 $$;
 
 grant execute on function mazad_set_emblem(uuid, text, text) to anon, authenticated;
+
+-- ---------- the plate's type, switched on air ----------
+-- Its own function rather than a defaulted argument on mazad_set_item: a
+-- defaulted argument creates an overload, and a call naming only the original
+-- arguments then matches both and is refused as ambiguous.
+create or replace function mazad_set_plate_kind(p_listing uuid, p_secret text, p_kind text)
+returns json
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare v_secret text; v_type text;
+begin
+  select value into v_secret from mazad_config where key = 'admin_secret';
+  if v_secret is null or p_secret is null or p_secret <> v_secret then
+    return json_build_object('ok', false, 'error', 'forbidden');
+  end if;
+  if p_kind not in ('private','transport','small') then
+    return json_build_object('ok', false, 'error', 'bad_kind');
+  end if;
+  select item_type into v_type from mazad_listings where id = p_listing;
+  if v_type is null then return json_build_object('ok', false, 'error', 'not_found'); end if;
+  if v_type <> 'plate' then return json_build_object('ok', false, 'error', 'not_a_plate'); end if;
+
+  update mazad_listings set plate_kind = p_kind where id = p_listing;
+  return json_build_object('ok', true, 'plate_kind', p_kind);
+end;
+$$;
+
+grant execute on function mazad_set_plate_kind(uuid, text, text) to anon, authenticated;
 
 -- ---------- correcting what is on air, while it is on air ----------
 -- The operator reads the plate off the seller's paper on camera and gets a
