@@ -740,9 +740,21 @@ must both be false.
   - `paused_ms` is in the live and lot repaint signatures, and on
     `mazad_public` — without the last one a viewer's clock keeps running on a
     lot the operator has held.
-  - «صفّر العدّاد» is just `timer`, which also clears the bank: a fresh clock
-    is never born paused. Neither holding nor resetting touches the sums —
-    «رجّعه للقائمة» is the only thing that can.
+  - **«صفّر» means ZERO, not «another minute».** It used to fire `timer` with
+    one minute, so pressing it launched a countdown he had not asked for,
+    live on camera («تصفيرت العداد تبدا من دقيقه ماهو من صفر»). It sends
+    `open` now: back to BEFORE the clock — `status='pending'`, no `end_at`,
+    no bank — still on air, every sum kept, and the «▶ ابدأ دقيقة/دقيقتين»
+    buttons above start whichever length he wants.
+    - `open` therefore **must clear `paused_ms`**, or a lot with no clock
+      still carries a bank and `clockCell` draws it a frozen countdown it
+      can never resume.
+    - It is the same database action as «رجّعه للقائمة»; the difference is
+      entirely on the page — that one goes through `askRequeue`, which
+      offers to delete the sums. `zero` never touches them and never takes
+      the lot off air.
+    - Neither holding nor zeroing touches the sums — `askRequeue`'s `reset`
+      is the only thing that can.
 - **Countdowns run on the server clock, never the device's.** `end_at` is written
   by the database, so subtracting a device `Date.now()` from it shows the
   device's error, not the time left: a phone ten minutes slow displayed a

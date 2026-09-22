@@ -535,10 +535,14 @@ begin
       return json_build_object('ok', true, 'auto_sold', v_auto);
     end if;
 
-  -- send a finished number back to the queue
+  -- Send a number back to BEFORE the clock: no countdown, no banked hold.
+  -- This is «رجّعه للقائمة» and it is also «صفّر العدّاد» — the difference is
+  -- only on the page (the first offers to delete the sums, the second never
+  -- touches them). paused_ms MUST be cleared here: a lot with no clock that
+  -- still carries a bank draws a frozen countdown it can never resume.
   elsif p_action = 'open' then
     update mazad_listings
-       set status = 'pending', sold_price = null, end_at = null
+       set status = 'pending', sold_price = null, end_at = null, paused_ms = null
      where id = p_listing;
 
   elsif p_action = 'extend' then
