@@ -657,6 +657,20 @@ must both be false.
   flex row starts at the right, so both rows sat in the corner with the line
   empty beside them («فوق ليه محاذاه كله يمين»). They wrap rather than scroll
   away, because a chip that has to be scrolled to is a chip nobody presses.
+- **«مميزة» agrees with لوحات and nothing else** («كيف سيارات مميزة؟ لوحات هي
+  المميزة»). The hero read «مزاد مباشر للوحات وسيارات المميزة», which hangs
+  the adjective on both. `kindWordsPremium()` pushes `PREMIUM_KIND` ('plate')
+  to the END of the list and only then appends the word, so it always lands
+  on the one section it agrees with: «سيارات ولوحات مميزة» today, «سيارات
+  وجوالات ولوحات مميزة» if جوالات returns, and no adjective at all if لوحات
+  is ever switched off. `kindWords()` keeps `KINDS_SHOWN`'s own order for
+  every other use — don't merge the two.
+- **Never promise «ما تحتاج تسجيل».** The bidders' card said «ما تحتاج حساب
+  ولا تسجيل» while the bid box demands a name, a mobile AND a city — the same
+  class of credibility hole as the old «لا يستلم أي مبلغ» line. What is true
+  is that there is no account and no password; the three details are asked
+  once and kept in `localStorage`. `test-about.js` asserts both the absence of
+  the claim and the presence of what is actually collected.
 - **`KIND_ICON` and `KIND_NAME` are kept apart**, and `KIND_LABEL` is built
   from them. Half the page wants the name on its own — «عمولة لوحات 250», «ما
   فيه سيارات هنا» — and stripping the icon back off with `/^\S+\s/` meant a
