@@ -1377,7 +1377,7 @@ body.on-air .topbar { border-bottom: 0; }
       <span class="about-go" aria-hidden="true">‹</span>
     </a>
     عمولة الموقع <b id="footFee">—</b> — على ذمة البائع.<br>
-    الموقع وسيط عرض فقط. الاتفاق والتسليم والدفع بين البائع والمشتري مباشرة.<br>
+    نحن وسيط بين البائع والمشتري لضمان وضوح وأمان العملية — التفاصيل في «من نحن».<br>
     نقل الملكية يتم عبر الجهة المختصة وحسب أنظمتها.
   </div>
 </main>
@@ -3626,11 +3626,20 @@ function renderAbout() {
 
     '<div class="card ab-card ab-trust">' +
       '<h2>🛡 الثقة والأمان</h2>' +
-      '<div class="ab-item">الموقع <b>وسيط عرض فقط</b>. الاتفاق والتسليم والدفع ' +
-        'تتم بين البائع والمشتري مباشرة، والموقع ليس طرفاً فيها ولا يستلم أي مبلغ.</div>' +
-      '<div class="ab-item">نقل الملكية يتم عبر الجهة المختصة وحسب أنظمتها.</div>' +
-      '<div class="ab-item">تأكد من التفاصيل وهوية الطرف الآخر قبل أي اتفاق أو ' +
-        'تحويل. لا نضمن صحة ما يُعرض ولا ملكيته.</div>' +
+      /* «انت كذا تفقدنا مصداقيتنا» — he acts as an escrow, not a display-only
+         broker: the money passes through his own account, held between the
+         WhatsApp confirmation and the completed transfer. This is a MANUAL
+         process run off-platform (WhatsApp + a bank transfer) — nothing in
+         this file or the schema tracks it, so the wording here is the only
+         place this promise is made and must match what he actually does. */
+      '<div class="ab-item">نحن <b>وسيط بين البائع والمشتري</b> لضمان وضوح وأمان العملية.</div>' +
+      '<div class="ab-item">بعد الاتفاق بين الطرفين، يتم جمع البائع والمشتري في مجموعة ' +
+        'واتساب مخصصة للصفقة، وبعد تأكيد الاتفاق يتم تحويل المبلغ إلى حسابنا كوسيط.</div>' +
+      '<div class="ab-item">يتم إتمام إجراءات نقل السيارة أو اللوحة حسب الاتفاق، وبعد ' +
+        'اكتمال النقل والتأكد من إتمام الصفقة، نقوم نحن بتحويل المبلغ المستحق مباشرة ' +
+        'إلى البائع.</div>' +
+      '<div class="ab-item">تأكد من التفاصيل وهوية الطرف الآخر قبل الاتفاق — لا نتحقق ' +
+        'من صحة ملكية ما يُعرض.</div>' +
     '</div>' +
 
     '<div class="card ab-card ab-contact">' +
