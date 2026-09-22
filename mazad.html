@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>مزاد سوم | لوحات وأرقام وسيارات</title>
-<meta name="description" content="مزاد سوم — مزاد مباشر للوحات المميزة وأرقام الجوال والسيارات. اعرض، والناس تزايد لحظة بلحظة.">
+<title>مزاد سوم | سيارات ولوحات مميزة</title>
+<meta name="description" content="مزاد سوم — مزاد سيارات ولوحات مميزة، يُدار على الهواء. اعرض، والناس تزايد لحظة بلحظة.">
 <meta name="theme-color" content="#5d172b">
-<meta property="og:title" content="مزاد سوم | لوحات وأرقام وسيارات">
-<meta property="og:description" content="اعرض رقمك المميز، والناس تزايد عليه مباشرة. أعلى سوم يكسب.">
+<meta property="og:title" content="مزاد سوم | سيارات ولوحات مميزة">
+<meta property="og:description" content="اعرض لوحتك أو سيارتك، والناس تزايد عليها مباشرة. أعلى سوم يكسب.">
 <meta property="og:image" content="/mazad-og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="/mazad-og.png">
@@ -1757,6 +1757,19 @@ const kindShown = (k) => KINDS_SHOWN.includes(k);
 /* the stored choice may name a section that is switched off now */
 const firstShownKind = (k) => kindShown(k) ? k : KINDS_SHOWN[0];
 const kindWords = () => KINDS_SHOWN.map(k => KIND_NAME[k]).join(' و');
+/* «كيف سيارات مميزة؟ لوحات هي المميزة» — he is right: the adjective agrees
+   with لوحات and with nothing else on the site. A car is just a car. So the
+   phrase that carries «مميزة» has to END with لوحات, whatever else is on.
+   kindWords() keeps KINDS_SHOWN's own order everywhere else; this one pushes
+   the premium kind last and only then appends the adjective — so switching
+   جوالات back on gives «سيارات وجوالات ولوحات مميزة», still correct, and
+   switching لوحات off drops the word instead of stranding it. */
+const PREMIUM_KIND = 'plate';
+const kindWordsPremium = () => {
+  const rest = KINDS_SHOWN.filter(k => k !== PREMIUM_KIND).map(k => KIND_NAME[k]);
+  if (!kindShown(PREMIUM_KIND)) return rest.join(' و');
+  return rest.concat(KIND_NAME[PREMIUM_KIND]).join(' و') + ' مميزة';
+};
 /* the singular, for the publish form's own chips */
 const SEG_LABEL = { plate: '🚗 لوحة', phone: '📱 رقم', car: '🚙 سيارة' };
 /* the chip on a card says what the lot is; for a phone the carrier is more
@@ -3584,7 +3597,7 @@ function renderAbout() {
   host.innerHTML =
     '<div class="ab-hero">' +
       '<h1>مزاد سوم</h1>' +
-      '<p>مزاد مباشر لـ' + esc(kindWords()) + ' المميزة — يُدار على الهواء، ' +
+      '<p>مزاد ' + esc(kindWordsPremium()) + ' — يُدار على الهواء، ' +
         'والسوم يمشي قدام الناس لحظة بلحظة.</p>' +
     '</div>' +
 
@@ -3607,8 +3620,9 @@ function renderAbout() {
 
     '<div class="card ab-card">' +
       '<h2>🛒 للمزايدين</h2>' +
-      '<div class="ab-item"><b>تزايد من الموقع مباشرة.</b> تفتح صفحة الرقم ' +
-        'وتكتب سومتك — ما تحتاج حساب ولا تسجيل.</div>' +
+      '<div class="ab-item"><b>تزايد من الموقع مباشرة.</b> ما تحتاج حساب ولا ' +
+        'كلمة سر — بس تعطينا اسمك وجوالك ومدينتك مرة وحدة وتنحفظ لك للسومات ' +
+        'الجاية، لأن التسليم ونقل الملكية يصير على أرض الواقع.</div>' +
       '<div class="ab-item"><b>اسمك يظهر، جوالك لا.</b> اسمك يبان مع سومتك، ' +
         'ورقمك يوصل للمشرف فقط عشان نتواصل معك إذا ربحت.</div>' +
       '<div class="ab-item"><b>سومتك تنتظر الاعتماد.</b> تشوفها عندك ' +
