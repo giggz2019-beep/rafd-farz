@@ -117,12 +117,14 @@ a { color: inherit; }
    The stop starts at 0 now and the olive reaches a fifth of the way in, so
    the bar actually reads burgundy-into-olive the way the card does. */
 .topbar {
-  background: linear-gradient(115deg, var(--olive-800) 0%, var(--olive-900) 12%,
-                                      var(--wine-900) 34%, var(--wine-700) 68%, var(--wine-600));
+  /* «يبي اسود كتم» — flat, one ink. His brand is three colours and a
+     gradient is a fourth thing; the gold lives on the rule under the bar
+     and on the mark, not smeared across the background. */
+  background: var(--wine-900);
   color: #fff;
   padding: 14px 0 18px;
   box-shadow: var(--shadow);
-  border-bottom: 2px solid var(--olive-700);
+  border-bottom: 2px solid var(--gold-500);
   position: sticky; top: 0; z-index: 40;
 }
 .topbar .wrap { padding-bottom: 0; display: flex; align-items: center; gap: 10px; }
@@ -256,11 +258,11 @@ a { color: inherit; }
 }
 .badge.live   { background: #fdf3dd; color: var(--wine-600); }
 .badge.sold   { background: #fdf0e6; color: #b5651d; }
-.badge.ended  { background: #f0f2f1; color: var(--muted); }
+.badge.ended  { background: #f1efe9; color: var(--muted); }
 .badge.unsold { background: #fdecea; color: #c0392b; }
-.badge.wait   { background: #eef2f7; color: #4a6b8a; }
-.badge.air    { background: #ffe9e7; color: #c0392b; }
-.badge.hid    { background: #f3edee; color: var(--wine-600); }
+.badge.wait   { background: #f6f1e4; color: #8a6a23; }
+.badge.air    { background: #fdf0d4; color: #8a5a05; }
+.badge.hid    { background: #f1efe9; color: var(--wine-600); }
 .badge.dot::before {
   content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
   background: currentColor; margin-inline-end: 5px; vertical-align: middle;
@@ -282,7 +284,7 @@ a { color: inherit; }
 .lot-stats { display: flex; gap: 8px; margin-top: 12px; }
 /* a faint olive wash — the same hue as the header, at a tenth of the weight,
    so the cards belong to the same site rather than being plain white boxes */
-.stat { flex: 1; background: #f7f8f3; border: 1px solid #e4e6dc; border-radius: 12px; padding: 8px 6px; text-align: center; }
+.stat { flex: 1; background: #f8f5ec; border: 1px solid #e6dfd0; border-radius: 12px; padding: 8px 6px; text-align: center; }
 .stat-k { font-size: .68rem; color: var(--muted); }
 .stat-v { font-weight: 800; font-size: .98rem; }
 .stat-v.price { color: var(--wine-600); }
@@ -394,7 +396,7 @@ a { color: inherit; }
   display: inline-flex; align-items: center; gap: 6px;
   margin: -4px 0 10px -8px; padding: 8px 10px; border-radius: 10px;
   font-size: .9rem; font-weight: 700; color: var(--wine-700);
-  background: #f6f1f2;
+  background: #f6f2ea;
 }
 .sheet-back:active { transform: scale(.97); }
 .sheet h2 { font-size: 1.15rem; margin-bottom: 4px; }
@@ -481,7 +483,7 @@ a { color: inherit; }
    blue-green family as --ok-600, so green still means exactly one thing. */
 .stamp.sold      { color: #07803e; }
 .stamp.unsold    { color: #e00000; }
-.stamp.cancelled { color: #6b7b73; }
+.stamp.cancelled { color: #78716a; }
 
 .plate-wrap { position: relative; }
 
@@ -513,7 +515,7 @@ a { color: inherit; }
    every paddle on camera was invisible and nothing failed. Any new place a
    paddle is drawn must give it a width. */
 .lp .paddle { width: 100%; }
-.lp-name { font-size: .7rem; color: #f0dde2; margin-top: 4px; white-space: nowrap;
+.lp-name { font-size: .7rem; color: #e6d9b8; margin-top: 4px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; }
 .lp.top .lp-name { color: var(--gold-400); font-weight: 700; }
 
@@ -592,7 +594,7 @@ a { color: inherit; }
 .ctl-bid.ok  .cmp-note { color: var(--ok-600); }
 .ctl-bid.low .cmp-note { color: var(--danger); }
 .ctl-bid button.yes[disabled] { opacity: .35; }
-.ctl-bid.done { background: #f4f9f6; border-color: var(--line); }
+.ctl-bid.done { background: #f7f4ec; border-color: var(--line); }
 .ctl-bid.done .amt { color: var(--wine-600); }
 /* ---------- live broadcast screen ---------- */
 .live {
@@ -622,7 +624,7 @@ a { color: inherit; }
 .live-clock.held, .countdown.held, .stat-v.time.held { color: var(--gold-400); }
 .stat-v.time.held { color: #9a6b12; }
 .live-dot {
-  background: var(--gold-500); color: #3a1208; font-size: .75rem; font-weight: 800;
+  background: var(--gold-500); color: #241802; font-size: .75rem; font-weight: 800;
   padding: 4px 11px; border-radius: 999px;
 }
 .live-dot::before {
@@ -790,7 +792,7 @@ a { color: inherit; }
 
 /* ---------- the publish / quick-add forms ---------- */
 .seg {
-  display: flex; gap: 6px; background: #f3edee; border-radius: 12px;
+  display: flex; gap: 6px; background: #f2efe7; border-radius: 12px;
   padding: 4px; margin-bottom: 12px;
 }
 .seg button {
@@ -834,7 +836,7 @@ a { color: inherit; }
 .carplate {
   position: relative; direction: ltr;
   aspect-ratio: 5.09 / 1;
-  background: #fff; color: #10100f; border: 2px solid #15151a;
+  background: #fff; color: #10100f; border: 2px solid #1a1712;
   border-radius: 10px; overflow: hidden; margin: 0 auto;
   width: min(100%, 380px);
   box-shadow: 0 3px 10px rgba(0,0,0,.18);
@@ -937,12 +939,12 @@ a { color: inherit; }
    samples as rgb(60,104,165). Replacing a reference means re-measuring. */
 .carplate.cp3 {
   display: flex; align-items: stretch; gap: 0;
-  padding: 1.1cqw; background: #e9e9e6;
+  padding: 1.1cqw; background: #ebe8e0;
 }
 .carplate.k-transport { aspect-ratio: 4.24 / 1; }
 .carplate.k-small     { aspect-ratio: 3.46 / 1; }
 .cp3 .c3 {
-  border: .5cqw solid #15151a; border-radius: 1.6cqw; background: #ececea;
+  border: .5cqw solid #161616; border-radius: 1.6cqw; background: #ececea;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   min-width: 0; overflow: hidden;
 }
@@ -963,7 +965,7 @@ a { color: inherit; }
 .cp3 .c3-r.c3-rtl { direction: rtl; }
 /* monospaced slots here too, for the same reason as on خصوصي above */
 .cp3 .c3-r > span { display: inline-block; text-align: center; }
-.k-transport .c3-lat { border-top: .5cqw solid #15151a; }
+.k-transport .c3-lat { border-top: .5cqw solid #161616; }
 .k-transport .c3-r        { font-size: 7.4cqw; }
 .k-transport .c3-r > span { width: 8.4cqw; }
 .k-transport .c3-lat      { font-weight: 600; }
@@ -985,7 +987,7 @@ a { color: inherit; }
 /* the strip is lifted whole out of the reference, border included */
 .cp-ksa {
   position: absolute; top: 0; right: 0; height: 100%; width: auto;
-  object-fit: contain; border-left: 2px solid #15151a; padding: 0 .4cqw;
+  object-fit: contain; border-left: 2px solid #161616; padding: 0 .4cqw;
 }
 
 /* on the broadcast it is the hero */
@@ -1009,10 +1011,10 @@ a { color: inherit; }
 
 .live-empty { text-align: center; padding: 26px 10px; }
 .live-empty .t { font-size: 1.2rem; font-weight: 800; }
-.live-empty .s { font-size: .86rem; color: #e3c3cc; margin-top: 4px; }
+.live-empty .s { font-size: .86rem; color: #e0cfa8; margin-top: 4px; }
 
 .queue { margin-top: 14px; }
-.queue h3 { font-size: .84rem; color: #e3c3cc; margin-bottom: 7px; font-weight: 700; }
+.queue h3 { font-size: .84rem; color: #e0cfa8; margin-bottom: 7px; font-weight: 700; }
 .queue .q {
   display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.14); border-radius: 12px; padding: 9px 11px; margin-bottom: 6px;
@@ -1036,15 +1038,16 @@ a { color: inherit; }
 .opbar button.add    { background: rgba(255,255,255,.22); }
 .opbar button.danger { background: rgba(192,57,43,.22); border-color: rgba(192,57,43,.5); }
 .opbar.light button.danger { background: #fdecea; color: var(--danger); border-color: #f3c6c1; }
-.opbar .lbl { font-size: .72rem; color: #e3c3cc; margin-bottom: 5px; }
+.opbar .lbl { font-size: .72rem; color: #e0cfa8; margin-bottom: 5px; }
 
 .live-banner {
   display: flex; align-items: center; gap: 10px; width: 100%; text-align: right;
-  background: linear-gradient(135deg, var(--wine-800), var(--wine-600));
+  background: var(--wine-900);
   color: #fff; border-radius: 16px; padding: 12px 14px; margin-bottom: 12px;
   box-shadow: var(--shadow); border: 1px solid rgba(218,151,36,.45);
 }
 .live-banner .n { flex: 1; font-weight: 900; font-size: 1.15rem; direction: ltr; unicode-bidi: isolate; text-align: center; }
+.live-banner.ctrl { background: var(--wine-700); }
 .live-banner .go { background: var(--gold-500); color: #2a1c02; border-radius: 10px; padding: 7px 12px; font-size: .8rem; font-weight: 800; }
 
 /* ---------- the broadcast screen and the operator's strip ---------- */
@@ -1143,7 +1146,7 @@ a { color: inherit; }
   padding: 7px 2px; cursor: pointer; font-size: .76rem; font-weight: 800;
   color: var(--muted); min-width: 0;
 }
-.ed-kind button.on { border-color: var(--wine-600); background: #fdf3f5; color: var(--wine-700); }
+.ed-kind button.on { border-color: var(--wine-600); background: #fbf4e3; color: var(--wine-700); }
 .ed-emb.hidden { display: none; }
 .ed-emb {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
@@ -1221,7 +1224,7 @@ body.on-air .topbar { border-bottom: 0; }
 .ops-peek.on { display: block; }
 
 .wait-note {
-  background: #eef2f7; color: #3c5872; border: 1px dashed #c3d3e3;
+  background: #f8f4e9; color: #7a6338; border: 1px dashed #e0d4b4;
   border-radius: 12px; padding: 10px 12px; margin-top: 12px;
   font-size: .84rem; text-align: center; line-height: 1.7;
 }
@@ -2806,7 +2809,7 @@ function renderList() {
         '</button>'
       : '') +
     (admin.on
-      ? '<button class="live-banner" id="goControl" style="background:#48121f">' +
+      ? '<button class="live-banner ctrl" id="goControl">' +
           '<span class="go">لوحة التحكم</span>' +
           '<span class="n" style="font-size:.86rem">تظهر لك وحدك</span>' +
         '</button>'
