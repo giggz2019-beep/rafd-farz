@@ -712,6 +712,45 @@ must both be false.
   judge anything: 1,050 on a number at 7,000 looked the same as 1,050 on a
   number at 900. Rows are colour-coded (clears the step / above but under it /
   below the price) and ✔ is disabled on a sum that cannot raise the price.
+- **A LISTING does not reach the public until the operator approves it**, the
+  same rule a sum has always had. Anyone could POST a plate, a car or a phone
+  straight onto the page a viewer lands on — no check, nothing between a
+  stranger and the site's own list («زر اضافة سياره ليش ينعرض لناس دايركت...
+  ما تطلع لناس لما يجي موافقة من صاحب الشان»).
+  - `mazad_listings.approved`, and `mazad_public` selects `where l.approved`.
+    Since `anon` has no SELECT on the table, an unapproved row cannot be read
+    by the public at all — not by the list, not by a direct `#/n/<id>` link,
+    not from the raw API.
+  - **The backfill runs ONCE.** The column is added `default true` so rows
+    that exist today stay visible, then the default is flipped to false.
+    Re-running `supabase-mazad.sql` must never re-approve a waiting
+    submission, which is why it is a guarded `do $$ … $$` block and not an
+    `add column if not exists`.
+  - **Who waits is decided in ONE trigger**, `mazad_approval_before`
+    (INSERT only): a row created through a SECURITY DEFINER helper runs as the
+    table OWNER and is approved; a row POSTed with the public key runs as
+    `anon` and is not. A create function added later cannot forget the flag.
+    It is **not** folded into `mazad_norm_row()`, which also fires on UPDATE —
+    there it would undo `mazad_admin('approve')` at the next edit.
+  - **anon's INSERT is granted column by column**, exactly like its SELECT on
+    `mazad_bids`: a table-wide grant would let the public key send
+    `approved: true` in the insert body. `approved`, `is_live` and
+    `sold_price` are left out, so they can only take their defaults.
+  - `mazad_admin('approve')` publishes one; rejecting is just `delete`.
+  - On the page: `isApproved(l)` treats a missing field as approved, so a page
+    talking to a schema that predates the column still works.
+    `requestsWaiting()` feeds `#opsReq` at the top of the strip, and
+    `queueOf()` **excludes** unapproved rows — putting one on air would
+    broadcast a card no viewer can load. `adminBar` grows a «✔ وافق» button on
+    one too.
+  - The publish sheet no longer jumps to `#/n/<id>` afterwards: that lot is
+    invisible to its own seller until it is approved, so it said «وصل ✔ —
+    بيراجعه المشرف» and goes back to the list instead.
+- **A recorded sum does not need a name.** «لا جا سومه وحطيتها ما يجبرني اسجل
+  اسم الشخص — اختياري الاسم». On air the amount is the thing; the name often
+  is not known and typing one is a keystroke tax on every call. The database
+  still wants 2–40 characters, so an empty box becomes «مزايد», and the sheet
+  opens with the **amount** focused, not the name.
 - **A sum does not count until the operator approves it.** `place_bid` inserts
   with `approved=false`, the RLS select policy on `mazad_bids` is `using
   (approved)`, and the price everywhere is computed from approved rows only — so

@@ -1088,6 +1088,11 @@ a { color: inherit; }
 }
 .live-ops .ctl-bid.done .amt { grid-area: amt; text-align: right; }
 .live-ops .ctl-q { flex-wrap: wrap; }
+/* a request is not a queued lot — gold edge, and the ✔ is the success green
+   that already means «يعتمد» everywhere else on this page */
+.ctl-q.req { border-color: var(--gold-400); background: #fffdf5; }
+.ctl-q button.ok, .adminbar button.ok { background: var(--ok-600); color: #fff; }
+.field label .opt { font-weight: 600; color: var(--muted); font-size: .76rem; }
 .ops-warn {
   display: flex; align-items: center; gap: 8px;
   background: #fff3d6; border: 1px solid #f0d79a; color: #7a4f05;
@@ -2587,8 +2592,20 @@ function liveSection(lot) {
   if (k !== liveKind) { liveKind = k; try { localStorage.setItem('mazad_live_kind', k); } catch {} }
   return k;
 }
+/* An unapproved row is a REQUEST, not a queued lot: it is invisible to the
+   public, so putting one on air would broadcast a card nobody watching can
+   see. It stays out of the queue until he approves it. `approved` is
+   undefined on a page talking to a schema that predates the column — treat
+   that as approved, the same degrade-instead-of-error rule used elsewhere. */
+const isApproved = (l) => l.approved !== false;
 const queueOf = (kind) => cache.listings
-  .filter(l => ['pending', 'live'].includes(lotState(l)) && !l.is_live && kindOf(l) === kind)
+  .filter(l => isApproved(l) && ['pending', 'live'].includes(lotState(l)) &&
+               !l.is_live && kindOf(l) === kind)
+  .sort((a, b) => a.created_at.localeCompare(b.created_at));
+// every section's requests, not just the one he is running: a car submitted
+// on a plates night must not sit unseen until he happens to switch
+const requestsWaiting = () => cache.listings
+  .filter(l => !isApproved(l))
   .sort((a, b) => a.created_at.localeCompare(b.created_at));
 const sigOfBids = bs => (bs || []).map(b => b.id + ':' + b.amount).join(',');
 
@@ -2825,6 +2842,9 @@ function wireLiveBanner() {
 
 function adminBar(lot) {
   const bar = el('<div class="adminbar">'
+    // an unapproved row reaches this bar only through mazad_admin_list — the
+    // public cannot see it at all, so approving is the first thing to offer
+    + (isApproved(lot) ? '' : '<button data-a="approve" class="ok">✔ وافق — اعرضه للناس</button>')
     + '<button data-a="live">🔴 اعرضه بالبث</button>'
     + '<button data-a="sold">' + (lot.status === 'sold' ? '✎ عدّل سعر البيع' : '✔ تم البيع') + '</button>'
     + '<button data-a="unsold">✖ لم يتم البيع</button>'
@@ -2839,6 +2859,7 @@ function adminBar(lot) {
     const r = await opDo(lot.id, a);
     if (!r) return;
     if (a === 'live') { toast('صار على الهواء 🔴'); return; }
+    if (a === 'approve') { toast('وافقت — صار يظهر للناس ✔'); return; }
     toast('تم');
     if (a === 'delete' && route.name === 'lot') goList();
   });
@@ -3008,10 +3029,13 @@ function renderLiveOps(lot) {
   const kind = liveSection(lot);
   const open = queueOf(kind);
 
+  const reqs = requestsWaiting();
+
   const sig = JSON.stringify([
     lot ? [lot.id, lot.status, lot.end_at, lot.auto_sell_price] : null,
     kind, sigOfBids(cache.pending),
-    open.map(l => l.id + ':' + itemLabel(l)).join(',')
+    open.map(l => l.id + ':' + itemLabel(l)).join(','),
+    reqs.map(l => l.id).join(',')
   ]);
   if (sig !== screenSig.ops || !host.firstElementChild) {
     screenSig.ops = sig;
@@ -3025,6 +3049,7 @@ function renderLiveOps(lot) {
           '<button' + (k === kind ? ' class="on"' : '') + ' data-k="' + k + '">' +
             esc(KIND_LABEL[k]) + '</button>').join('') +
       '</div>' +
+      '<div class="ops-card" id="opsReq"></div>' +
       '<div class="ops-card" id="opsItem"></div>' +
       '<div class="ops-card" id="opsBar"></div>' +
       '<div class="ops-card" id="opsPending"></div>' +
@@ -3049,6 +3074,37 @@ function renderLiveOps(lot) {
     const bar = opBar(lot);
     bar.classList.add('light');
     $('#opsBar').appendChild(bar);
+
+    /* «ما تطلع لناس لما يجي موافقة» — nothing a stranger submits reaches the
+       page until this card says so. It shows the full identity, like the rest
+       of the strip, which is why the strip stays out of the camera frame. */
+    $('#opsReq').innerHTML = reqs.length
+      ? '<div class="ops-h">طلبات بانتظار موافقتك (<span class="num">' + reqs.length + '</span>)</div>' +
+        reqs.map(l =>
+          '<div class="ctl-q req" data-r="' + esc(l.id) + '">' +
+            '<b class="num">' + esc(itemLabel(l)) + '</b>' +
+            '<span>' + esc(KIND_NAME[kindOf(l)] || '') + ' · ' + esc(l.seller_name) +
+              (l.seller_contact ? ' · <span class="num">' + esc(l.seller_contact) + '</span>' : '') +
+            '</span>' +
+            '<button class="ok" data-a="approve">✔ وافق</button>' +
+            '<button class="del" data-a="delete" title="ارفض">🗑</button>' +
+          '</div>').join('')
+      : '';
+
+    $('#opsReq').querySelectorAll('.ctl-q button').forEach(b => {
+      b.addEventListener('click', async () => {
+        const row = b.closest('.ctl-q');
+        const label = row.querySelector('b').textContent.trim();
+        if (b.dataset.a === 'delete') {
+          if (!confirm('ارفض ' + label + ' وتحذفه نهائياً؟')) return;
+          await opDo(row.dataset.r, 'delete');
+          toast('انرفض الطلب');
+          return;
+        }
+        await opDo(row.dataset.r, 'approve');
+        toast('وافقت على ' + label + ' ✔ — دخل القائمة');
+      });
+    });
 
     $('#opsQueue').innerHTML = open.length
       ? '<div class="ops-h">قائمة الانتظار (<span class="num">' + open.length + '</span>)</div>' +
@@ -3382,8 +3438,8 @@ function askManualBid(lot) {
     '<div id="mbErr"></div>' +
     '<div class="bid-now" style="margin-bottom:12px">السوم الحالي ' +
       '<b><span class="num">' + money(cur) + '</span> ر.س</b></div>' +
-    '<div class="field"><label>اسم المزايد</label>' +
-      '<input id="mbName" maxlength="40" placeholder="مثال: أبو فهد"></div>' +
+    '<div class="field"><label>اسم المزايد <span class="opt">(اختياري)</span></label>' +
+      '<input id="mbName" maxlength="40" placeholder="اتركه فاضي لو ما تعرف الاسم"></div>' +
     '<div class="field ltr"><label>المبلغ (ر.س)</label>' +
       '<input id="mbAmount" type="number" inputmode="numeric" min="0" value="' + (cur + step) + '">' +
       '<div class="sub">لازم يكون أعلى من <span class="num">' + money(cur) + '</span>.</div></div>' +
@@ -3400,9 +3456,11 @@ function askManualBid(lot) {
 
   const save = async () => {
     const err = (m) => { s2.querySelector('#mbErr').innerHTML = '<div class="err">' + esc(m) + '</div>'; };
-    const name = s2.querySelector('#mbName').value.trim();
+    /* «لا جا سومه وحطيتها ما يجبرني اسجل اسم الشخص — اختياري الاسم». On air
+       the sum is what matters and the name often is not known; the database
+       still wants two characters, so an empty box becomes «مزايد». */
+    const name = s2.querySelector('#mbName').value.trim() || 'مزايد';
     const amount = Number(s2.querySelector('#mbAmount').value);
-    if (name.length < 2) return err('اكتب اسم المزايد.');
     if (!(amount > 0)) return err('اكتب مبلغ صحيح.');
 
     const btn = s2.querySelector('#mbSave'); btn.disabled = true; btn.textContent = 'جاري…';
@@ -3427,7 +3485,9 @@ function askManualBid(lot) {
   };
   s2.querySelector('#mbSave').addEventListener('click', save);
   s2.querySelector('#mbAmount').addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
-  s2.querySelector('#mbName').focus();
+  s2.querySelector('#mbName').addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+  // the amount is the thing he actually has to type, so start there
+  const mbA = s2.querySelector('#mbAmount'); mbA.focus(); mbA.select();
 }
 
 /* The sums already counted on the number on air, each removable — this is how
@@ -4561,8 +4621,12 @@ function askListing() {
       });
       if (!me.name) me.name = name;
       closeSheet();
-      toast({ plate: 'لوحتك', car: 'سيارتك', phone: 'رقمك' }[kind] + ' دخل القائمة ✔ — ينتظر دوره');
-      location.hash = '#/n/' + encodeURIComponent(row.id);
+      /* It does NOT go on the page yet — `mazad_public` hides an unapproved
+         row, so sending the seller to #/n/<id> would land him on a lot that
+         does not exist for him. Say what actually happens instead. */
+      toast({ plate: 'لوحتك', car: 'سيارتك', phone: 'رقمك' }[kind] +
+        ' وصل ✔ — بيراجعه المشرف قبل لا يظهر في المزاد');
+      goList();
     } catch (e) {
       console.error(e);
       btn.disabled = false; btn.textContent = 'اعرضه — وأوافق على العمولة';
