@@ -3632,14 +3632,20 @@ function opBar(lot) {
       '</div>' +
       /* «ابي اوقف المزاد وارجع السومة مثل من البداية — ما فيه خيار يصفر
          العداد او توقيف مؤقت». Hold freezes the clock where it stands and
-         keeps every sum; reset puts the clock back to the top without
-         touching the sums either. Neither is «رجّعه للقائمة», which is the
+         keeps every sum.
+         «صفّر» means ZERO, not «start another minute». It used to fire
+         `timer` with one minute, so pressing it launched a fresh countdown
+         he had not asked for — live, on camera: «تصفيرت العداد تبدا من
+         دقيقه ماهو من صفر». It now puts the lot back to BEFORE the clock —
+         no countdown at all, still on air, every sum kept — and the
+         «▶ ابدأ دقيقة / دقيقتين» buttons above start whichever length he
+         wants. Neither this nor the hold is «رجّعه للقائمة», which is the
          one that can throw the sums away. */
       '<div class="row">' +
         (isPaused(lot)
           ? '<button class="start" data-a="resume">▶ كمّل العدّاد</button>'
           : '<button data-a="pause">⏸ وقف العدّاد</button>') +
-        '<button data-a="timer" data-m="1">↺ صفّر العدّاد</button>' +
+        '<button data-a="zero">↺ صفّر العدّاد</button>' +
       '</div>' +
       '<div class="lbl">السومات</div>' +
       '<div class="row">' +
@@ -3677,6 +3683,15 @@ function opBar(lot) {
     const a = b.dataset.a, m = b.dataset.m ? Number(b.dataset.m) : undefined;
     if (a === 'quick') { askQuickAdd(); return; }
     if (a === 'open' && lot) { askRequeue(lot); return; }
+    if (a === 'zero' && lot) {
+      /* 'open' is the action that clears the clock AND the bank. It is not
+         «رجّعه للقائمة» — that one goes through askRequeue, which offers to
+         delete the sums; this one never touches them and never takes the
+         lot off air. */
+      await opDo(lot.id, 'open');
+      toast('صفّرنا العدّاد ↺ — اضغط «ابدأ دقيقة» يبدأ من جديد');
+      return;
+    }
     if (a === 'manual' && lot) { askManualBid(lot); return; }
     if (a === 'auto'   && lot) { askAutoPrice(lot); return; }
     if (a === 'next') {
@@ -3702,7 +3717,7 @@ function opBar(lot) {
     await opDo(lot.id, a, m);
     if (a === 'pause')  toast('وقفنا العدّاد ⏸ — السومات محفوظة');
     if (a === 'resume') toast('كمّل العدّاد ▶');
-    if (a === 'timer')  toast('صفّرنا العدّاد ↺');
+    if (a === 'timer')  toast('بدأ السوم ▶');
     // bring the number and its sticker back into view for the broadcast
     if (a === 'unsold') window.scrollTo({ top: 0, behavior: 'smooth' });
   });
