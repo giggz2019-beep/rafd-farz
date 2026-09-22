@@ -241,6 +241,46 @@ insert into mazad_config (key, value)
 values ('admin_secret', 'change-me-now')
 on conflict (key) do nothing;
 
+-- ---------- a public submission waits for the operator ----------
+-- «زر اضافة سياره ليش ينعرض لناس دايركت... ما تطلع لناس لما يجي موافقة».
+-- Anyone could PUT a plate, a car or a phone straight onto the page a viewer
+-- lands on — no check, no operator, nothing between a stranger and the site's
+-- own list. A listing is invisible to the public until he approves it, the
+-- same rule bids have always had.
+--
+-- The backfill runs ONCE: rows that exist today were created under the old
+-- rule and must stay visible, so the column is added `default true` and the
+-- default is then flipped to false for everything after. Re-running this file
+-- is a no-op — it must never re-approve a submission that is waiting.
+do $$
+begin
+  if not exists (select 1 from information_schema.columns
+                  where table_schema = 'public'
+                    and table_name = 'mazad_listings'
+                    and column_name = 'approved') then
+    alter table mazad_listings add column approved boolean not null default true;
+    alter table mazad_listings alter column approved set default false;
+  end if;
+end $$;
+
+-- The operator's own additions never wait for the operator. A row created
+-- through one of the SECURITY DEFINER helpers runs as the table OWNER; a row
+-- POSTed with the public key runs as anon. That is the whole distinction, and
+-- keeping it in ONE trigger means a create function added later cannot forget
+-- the flag. INSERT only: on UPDATE it would undo mazad_admin('approve') at the
+-- next edit, which is why it is not folded into mazad_norm_row().
+create or replace function mazad_needs_approval()
+returns trigger language plpgsql as $$
+begin
+  new.approved := current_user not in ('anon', 'authenticated');
+  return new;
+end $$;
+
+drop trigger if exists mazad_approval_before on mazad_listings;
+create trigger mazad_approval_before
+  before insert on mazad_listings
+  for each row execute function mazad_needs_approval();
+
 -- ---------- table privileges ----------
 -- Supabase grants new public tables to anon by default. Narrow that down to
 -- exactly what the page needs: read listings + bids, create a listing.
@@ -251,8 +291,18 @@ revoke all on mazad_listings from anon, authenticated;
 revoke all on mazad_bids     from anon, authenticated;
 revoke all on mazad_config   from anon, authenticated;
 
--- the public reads the masked VIEW below, never the listings table itself
-grant insert on mazad_listings to anon, authenticated;
+-- The public reads the masked VIEW below, never the listings table itself.
+-- INSERT is granted COLUMN BY COLUMN for the same reason the SELECT on
+-- mazad_bids is: a table-wide grant would let the anon key send
+-- `approved: true` in the insert body and put its own row straight on the
+-- page. `approved`, `is_live` and `sold_price` are left out, so they can only
+-- ever take their defaults.
+grant insert (id, item_type, phone, carrier,
+              plate_letters, plate_digits, plate_emblem, plate_kind,
+              car_make, car_model, car_year, car_photo,
+              start_price, seller_name, seller_contact, note,
+              auto_sell_price, status, end_at)
+  on mazad_listings to anon, authenticated;
 -- column by column, so bidder_phone is never readable from a browser
 grant select (id, listing_id, bidder_name, amount, approved, created_at)
   on mazad_bids to anon, authenticated;
@@ -299,7 +349,11 @@ select
   l.carrier, l.start_price, l.seller_name, l.note,
   l.end_at, l.status, l.is_live, l.sold_price, l.auto_sell_price, l.paused_ms,
   l.created_at
-from mazad_listings l;
+from mazad_listings l
+-- An unapproved row is invisible here, and anon has no SELECT on the table
+-- itself — so a submission waiting for the operator cannot be read by the
+-- public at all, not by the list, not by a direct link, not from the raw API.
+where l.approved;
 
 alter view mazad_public set (security_invoker = off);
 
@@ -364,6 +418,7 @@ create policy mazad_listings_insert on mazad_listings
     and end_at is null
     and is_live = false
     and sold_price is null
+    and approved = false      -- belt and braces: the grant already forbids it
   );
 
 -- the public only ever sees approved sums
@@ -572,6 +627,11 @@ begin
            paused_ms = null,
            status = 'open'
      where id = p_listing and paused_ms is not null;
+
+  -- «ما تطلع لناس لما يجي موافقة» — this is what publishes a submission.
+  -- Rejecting one is just 'delete'; there is no third state to keep.
+  elsif p_action = 'approve' then
+    update mazad_listings set approved = true where id = p_listing;
 
   elsif p_action = 'live' then
     update mazad_listings set is_live = false where is_live;
