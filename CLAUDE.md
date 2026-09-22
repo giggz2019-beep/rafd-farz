@@ -260,6 +260,23 @@ must both be false.
   `feeRule()` and the sections through `KINDS_SHOWN`, so the page cannot quote
   a rate the site has stopped charging or describe a section that is switched
   off. `test-about.js` asserts each of those, including the absences.
+  - **He runs an ESCROW, not a display-only listing site** («انت كذا تفقدنا
+    مصداقيتنا» — the old «وسيط عرض فقط… ولا يستلم أي مبلغ» line was actively
+    hurting him). The trust card and the footer both now say it plainly:
+    buyer and seller are put in a deal-specific WhatsApp group, the buyer
+    transfers the price into **his own account**, and once the transfer of
+    the car or plate is confirmed he pays the seller.
+  - **This is entirely a MANUAL, off-platform process** — a WhatsApp group and
+    a bank transfer he makes himself. Nothing in `mazad.html` or
+    `supabase-mazad.sql` holds funds, tracks a transfer, or enforces a payout;
+    there is no ledger and no dispute mechanism. The wording on the page is
+    the only place this promise exists, so it must never drift from what he
+    actually does — and it means he is personally carrying the money-handling
+    risk (and, in Saudi Arabia, the regulatory exposure of acting as a
+    payment intermediary) on every deal, with nothing in the code to back it.
+  - The ownership disclaimer survives the rewrite in softer words —
+    «لا نتحقق من صحة ملكية ما يُعرض» — because it is still true: nothing here
+    verifies a seller's ownership before a deal is struck.
 - **The broadcast runs ONE section at a time.** A plates night is a plates
   night: mixing a phone into the queue behind a plate, and quoting the phone
   commission under a car, is not a smaller version of three auctions — it is a
