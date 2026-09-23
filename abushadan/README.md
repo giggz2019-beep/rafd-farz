@@ -48,3 +48,18 @@
       `mazad_config.admin_secret` وسُلّمت له خارج المستودع.
       تدويرها: `update mazad_config set value = '…' where key = 'admin_secret';`
 - [ ] **الدومين** — باسمه وبحسابه وبطاقته.
+
+## `abushadan/vercel.json`
+
+إعداد مستقل تماماً عن مزاد سوم: مشروع Vercel منفصل، الجذر (Root Directory)
+يساوي `abushadan`.
+
+**لا تضع فيه أي مفتاح غير مفاتيح Vercel** — ولا حتى `_comment` للشرح. Vercel
+يرفض الملف كاملاً على مفتاح لا يعرفه (`should NOT have additional property`)،
+فيفشل النشر كله. الشرح مكانه هنا في README، لأن JSON لا يقبل تعليقات.
+
+`connect-src` فيه مشروع Supabase الخاص به
+(`afylaiwfscmltcydripj.supabase.co`، https و wss). وهذا الملف **لا يعمل اليوم**
+— الموقع يُخدَم من `rafd-digital.com/abushadan`، فترويسة `vercel.json` الجذر
+هي الفعّالة. يبدأ عمل هذا الملف يوم ينتقل لدومينه، وعندها لا بد أن تكون
+الترويستان متطابقتين.
