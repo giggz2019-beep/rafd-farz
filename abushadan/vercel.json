@@ -1,32 +1,55 @@
 {
-  "_comment": [
-    "مزاد أبو شادن — إعداد مستقل تماماً عن مزاد سوم.",
-    "مشروع Vercel منفصل، الجذر (Root Directory) = abushadan",
-    "",
-    "مشروع Supabase الخاص به: afylaiwfscmltcydripj.supabase.co — مضاف في connect-src تحت",
-    "(https:// و wss:// الاثنين). تغيير المشروع يعني تعديل الترويسة هنا وفي vercel.json الجذر."
-  ],
   "cleanUrls": true,
   "buildCommand": "",
   "outputDirectory": ".",
   "installCommand": "",
   "framework": null,
   "rewrites": [
-    { "source": "/", "destination": "/index" },
-    { "source": "/m", "destination": "/index" },
-    { "source": "/mzad", "destination": "/index" },
-    { "source": "/mazad", "destination": "/index" },
-    { "source": "/live", "destination": "/index" },
-    { "source": "/control", "destination": "/index" }
+    {
+      "source": "/",
+      "destination": "/index"
+    },
+    {
+      "source": "/m",
+      "destination": "/index"
+    },
+    {
+      "source": "/mzad",
+      "destination": "/index"
+    },
+    {
+      "source": "/mazad",
+      "destination": "/index"
+    },
+    {
+      "source": "/live",
+      "destination": "/index"
+    },
+    {
+      "source": "/control",
+      "destination": "/index"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
         {
           "key": "Content-Security-Policy",
           "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://afylaiwfscmltcydripj.supabase.co wss://afylaiwfscmltcydripj.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
