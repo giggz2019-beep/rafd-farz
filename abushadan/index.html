@@ -1428,8 +1428,9 @@ body.on-air .topbar { border-bottom: 0; }
    secret — see supabase-mazad.sql.
    The project's modern publishable key works too, if the legacy key is ever
    rotated out: sb_publishable_137ORWCtoU2UZEEEfr4NzQ_sxWFyuXl */
-const SUPABASE_URL      = '';   /* ← مشروع Supabase الخاص بأبو شادن */
-const SUPABASE_ANON_KEY = '';   /* فاضيين = وضع تجريبي على هذا المتصفح فقط */
+const SUPABASE_URL      = 'https://afylaiwfscmltcydripj.supabase.co';  /* مشروع Supabase الخاص بأبو شادن */
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmeWxhaXdmc2NtbHRjeWRyaXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMTg0MTgsImV4cCI6MjEwNTY5NDQxOH0.oOfVZG1FDBF3skMy015O8EhD6-vV7cCY-RphO7-XbuY';  /* مفتاح عام — مقصود أن يكون مكشوفاً */
+/* فاضيين = وضع تجريبي على هذا المتصفح فقط */
 
 /* Commission, على ذمة البائع: a flat 200 SAR, but 2.5% once the number sells
    for more than 20,000. Note the step at the threshold — 20,000 costs 200,
@@ -4760,7 +4761,7 @@ $('#opsPeek').addEventListener('click', () => {
 $('#btnBackAbout').addEventListener('click', () => goList());
 
 $('#kindRow').innerHTML =
-  '<button class="filter" data-kind="all">🏷️ الكل</button>' +
+  '<button class="filter" data-kind="all">🏷️ كل الأقسام</button>' +
   KINDS_SHOWN.map(k => '<button class="filter" data-kind="' + k + '">' +
     esc(KIND_LABEL[k]) + '</button>').join('');
 $('#kindRow').querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
@@ -4770,7 +4771,7 @@ $('#kindRow').querySelectorAll('.filter').forEach(b => b.addEventListener('click
   renderList();
 }));
 document.querySelectorAll('.filter[data-filter]').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('.filter').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.filter[data-filter]').forEach(x => x.classList.toggle('on', x === b));
   cache.filter = b.dataset.filter; renderList();
 }));
 

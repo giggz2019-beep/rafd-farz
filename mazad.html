@@ -4712,7 +4712,7 @@ $('#opsPeek').addEventListener('click', () => {
 $('#btnBackAbout').addEventListener('click', () => goList());
 
 $('#kindRow').innerHTML =
-  '<button class="filter" data-kind="all">🏷️ الكل</button>' +
+  '<button class="filter" data-kind="all">🏷️ كل الأقسام</button>' +
   KINDS_SHOWN.map(k => '<button class="filter" data-kind="' + k + '">' +
     esc(KIND_LABEL[k]) + '</button>').join('');
 $('#kindRow').querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => {
@@ -4722,7 +4722,7 @@ $('#kindRow').querySelectorAll('.filter').forEach(b => b.addEventListener('click
   renderList();
 }));
 document.querySelectorAll('.filter[data-filter]').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('.filter').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.filter[data-filter]').forEach(x => x.classList.toggle('on', x === b));
   cache.filter = b.dataset.filter; renderList();
 }));
 

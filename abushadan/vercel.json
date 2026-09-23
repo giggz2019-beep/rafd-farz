@@ -3,8 +3,8 @@
     "مزاد أبو شادن — إعداد مستقل تماماً عن مزاد سوم.",
     "مشروع Vercel منفصل، الجذر (Root Directory) = abushadan",
     "",
-    "لما ينفتح مشروع Supabase الخاص بأبو شادن، أضف رابطه في connect-src تحت",
-    "(https:// و wss:// الاثنين) — وإلا المتصفح يحجب كل طلب من الصفحة."
+    "مشروع Supabase الخاص به: afylaiwfscmltcydripj.supabase.co — مضاف في connect-src تحت",
+    "(https:// و wss:// الاثنين). تغيير المشروع يعني تعديل الترويسة هنا وفي vercel.json الجذر."
   ],
   "cleanUrls": true,
   "buildCommand": "",
@@ -29,7 +29,7 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://afylaiwfscmltcydripj.supabase.co wss://afylaiwfscmltcydripj.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         }
       ]
     }
