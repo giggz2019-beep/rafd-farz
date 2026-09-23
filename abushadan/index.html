@@ -8,12 +8,17 @@
 <meta name="theme-color" content="#0a0908">
 <meta property="og:title" content="مزاد أبو شادن | سيارات ولوحات مميزة">
 <meta property="og:description" content="اعرض لوحتك أو سيارتك، والناس تزايد عليها مباشرة. أعلى سوم يكسب.">
-<meta property="og:image" content="/mazad-og.png">
+<!-- Absolute, and pointing INTO his folder. These two cannot use ASSET: a
+     crawler reads them without running any script, and og:image has to be a
+     full URL. They are the pair to change, with SITE_URL, the day he moves to
+     his own domain. They were "/mazad-og.png" — the ROOT — so his link
+     previews and his favicon were showing the other auction's branding. -->
+<meta property="og:image" content="https://rafd-digital.com/abushadan/mazad-og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="/mazad-og.png">
 <meta property="og:type" content="website">
-<link rel="icon" href="/mazad-icon.png" sizes="512x512">
-<link rel="apple-touch-icon" href="/mazad-icon.png">
+<link rel="icon" href="/abushadan/mazad-icon.png" sizes="512x512">
+<link rel="apple-touch-icon" href="/abushadan/mazad-icon.png">
 <style>
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Light.otf')   format('opentype'); font-weight: 300; font-display: swap; }
 @font-face { font-family: 'ThmanyahSans'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
@@ -1331,7 +1336,11 @@ body.on-air .topbar { border-bottom: 0; }
 <header class="topbar">
   <div class="wrap">
     <div class="brand">
-      <img class="brand-logo" id="brandMark" src="abushadan-logo.png"
+      <!-- No src here on purpose. At /abushadan a relative one resolves against
+           the site ROOT and fires a 404 before any script can correct it; an
+           absolute one would then be wrong the day he moves to his own domain.
+           The script sets it from ASSET, which is right in both places. -->
+      <img class="brand-logo" id="brandMark"
            alt="مزاد أبو شادن" draggable="false">
       <div class="brand-sub" id="brandSub">مزايدة مباشرة</div>
     </div>
@@ -1437,13 +1446,14 @@ body.on-air .topbar { border-bottom: 0; }
    to وضع تجريبي — a local demo on localStorage, this browser only.
    ===================================================================== */
 
-/* Supabase project "mazad-arqam" (ap-south-1) — its own project, deliberately
-   separate from the RAFD database. The key below is the PUBLIC anon key: it is
-   meant to ship in the page. It can only read listings/bids and create a
-   listing; it cannot change a price, close an auction, or read the operator
-   secret — see supabase-mazad.sql.
+/* Supabase project "mazad-abushadan" (eu-central-1) — HIS project, deliberately
+   separate from every other database here: the listings table is public-write
+   by design, so it does not sit beside anybody else's data. The key below is
+   the PUBLIC anon key and is meant to ship in the page. It can only read
+   listings/bids and create a listing; it cannot change a price, close an
+   auction, or read the operator secret — see supabase-mazad.sql.
    The project's modern publishable key works too, if the legacy key is ever
-   rotated out: sb_publishable_137ORWCtoU2UZEEEfr4NzQ_sxWFyuXl */
+   rotated out: sb_publishable_0AVVqgbWS_1XTWQns3wzTw_aHDS-7GU */
 const SUPABASE_URL      = 'https://afylaiwfscmltcydripj.supabase.co';  /* مشروع Supabase الخاص بأبو شادن */
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmeWxhaXdmc2NtbHRjeWRyaXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMTg0MTgsImV4cCI6MjEwNTY5NDQxOH0.oOfVZG1FDBF3skMy015O8EhD6-vV7cCY-RphO7-XbuY';  /* مفتاح عام — مقصود أن يكون مكشوفاً */
 /* فاضيين = وضع تجريبي على هذا المتصفح فقط */
@@ -1459,6 +1469,30 @@ const CONTACT_PHONE = '0560748891';   // رقم أبو شادن، يظهر لل�
    that resolves TODAY. Switch it to abushadan.rafd-digital.com the moment
    the CNAME is live at IONOS — not before. */
 const SITE_URL = 'rafd-digital.com/abushadan';
+
+/* WHERE THIS PAGE'S OWN PICTURES LIVE, and why it cannot just say
+   "mazad-paddle.png".
+
+   The page is served at /abushadan — a folder URL with NO trailing slash — so
+   the browser resolves a relative src against "/" and asks the ROOT of the
+   site for it. Two different failures came out of that, and only one of them
+   was visible:
+     * abushadan-logo.png has no twin at the root, so it simply 404'd.
+     * every other picture DOES exist at the root, because that is where the
+       other auction keeps its identical copies. So his page was quietly
+       drawing SOMEBODY ELSE'S files and looking perfectly fine doing it.
+   The second is the dangerous one: replace a picture in his folder and
+   nothing changes on his site, with no error anywhere to explain it.
+
+   ASSET pins every picture to the folder holding index.html. It is "" when the
+   page is served at the root — which is what happens the day he moves to his
+   own domain, where his folder IS the root — so nothing here needs editing
+   then. */
+const ASSET = (() => {
+  const p = location.pathname;
+  const route = /\/(index\.html|m|mzad|mazad|live|control)\/?$/;
+  return (route.test(p) ? p.replace(route, '') : p.replace(/\/$/, '')) + '/';
+})();
 /* Commission, per section — على ذمة البائع. A section with `rate` charges the
    flat fee up to `threshold` and the rate above it; a section with only
    `flat` charges that and nothing more, whatever the sale.
@@ -1748,7 +1782,7 @@ const EMBLEMS = {
 
 function emblemSvg(kind) {
   if (!kind || kind === 'none' || !EMBLEMS[kind]) return '';
-  return '<img src="mazad-emb-' + kind + '.png" alt="" loading="lazy" decoding="async">';
+  return '<img src="' + ASSET + 'mazad-emb-' + kind + '.png" alt="" loading="lazy" decoding="async">';
 }
 
 /* One line naming the lot, for a confirm box, a share text or a sheet title. */
@@ -1887,7 +1921,7 @@ function itemPlate(lot, size) {
       '<div class="carplate cp3 k-' + kind + ' ' + (big ? 'big' : '') + '">' +
         cell('c3-num', arDigits, digits, false) +
         '<div class="c3 c3-ksa">' +
-          '<img class="c3-emb" src="mazad-emb-swords_black.png" alt="" ' +
+          '<img class="c3-emb" src="' + ASSET + 'mazad-emb-swords_black.png" alt="" ' +
             'loading="lazy" decoding="async">' +
           '<div class="c3-ar">السعودية</div>' +
           '<div class="c3-en">KSA</div>' +
@@ -1915,7 +1949,7 @@ function itemPlate(lot, size) {
             plateCells(plateLatin(letters)) + '</div>' +
         '</div>' +
       '</div>' +
-      '<img class="cp-ksa" src="mazad-plate-ksa.png" alt="KSA" loading="lazy" decoding="async">' +
+      '<img class="cp-ksa" src="' + ASSET + 'mazad-plate-ksa.png" alt="KSA" loading="lazy" decoding="async">' +
     '</div>'
   );
 }
@@ -2038,7 +2072,7 @@ function stampFor(st) {
   if (!STAMP[st]) return '';
   return '<div class="stamp ' + st + '">' +
     '<span class="st-band"></span>' +
-    '<img class="st-mark" src="mazad-stamp-' + st + '.png" alt="" ' +
+    '<img class="st-mark" src="' + ASSET + 'mazad-stamp-' + st + '.png" alt="" ' +
       'loading="lazy" decoding="async">' +
     '<span class="st-txt">' + esc(STAMP[st]) + '</span>' +
   '</div>';
@@ -2765,7 +2799,7 @@ function paddle(amount, variant) {
   const fs = Math.min(17, 88 / Math.max(label.length, 1)).toFixed(2);
   return (
     '<span class="paddle ' + (variant || '') + '" style="--fs:' + fs + '">' +
-      '<img src="mazad-paddle.png" alt="" loading="lazy" decoding="async">' +
+      '<img src="' + ASSET + 'mazad-paddle.png" alt="" loading="lazy" decoding="async">' +
       '<span class="p-amt num">' + esc(label) + '</span>' +
     '</span>'
   );
@@ -3251,7 +3285,7 @@ function renderItemEditor(lot, host) {
           '<button data-e="' + k + '"' +
             ((lot.plate_emblem || 'swords') === k ? ' class="on"' : '') + '>' +
             (k === 'none' ? '<span class="none">—</span>'
-                          : '<img src="mazad-emb-' + k + '.png" alt="" loading="lazy">') +
+                          : '<img src="' + ASSET + 'mazad-emb-' + k + '.png" alt="" loading="lazy">') +
             '<span>' + esc(EMBLEMS[k]) + '</span>' +
           '</button>').join('') +
       '</div>' +
@@ -4819,6 +4853,7 @@ $('#footFee').innerHTML = (() => {
   $('#footTelNum').textContent = fmtPhone(CONTACT_PHONE);
   $('#footTel').href = 'https://wa.me/' + CONTACT_PHONE.replace(/\D/g, '').replace(/^0/, '966');
 })();
+$('#brandMark').src = ASSET + 'abushadan-logo.png';
 $('#brandSub').textContent = kindWords() + ' — مزايدة مباشرة';
 paintName();
 (() => {   // put the section chips back on the section this browser last used
