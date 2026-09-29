@@ -36,6 +36,22 @@
     {
       "source": "/abushadan/control",
       "destination": "/abushadan/index"
+    },
+    {
+      "source": "/mdmon",
+      "destination": "/mdmon/index"
+    },
+    {
+      "source": "/mdmon/m",
+      "destination": "/mdmon/index"
+    },
+    {
+      "source": "/mdmon/live",
+      "destination": "/mdmon/index"
+    },
+    {
+      "source": "/mdmon/control",
+      "destination": "/mdmon/index"
     }
   ],
   "headers": [
