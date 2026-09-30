@@ -98,6 +98,16 @@ A 30-minute practical assessment for AI Engineer candidates, plus an employer-on
 - Every failure path (no API key, model refusal, timeout, network error) degrades to the dashboard's **manual scoring** mode rather than erroring out.
 - Arabic report text is bidi-sensitive: score fragments like `15 / 20` must carry `class="num"` (`direction: ltr; unicode-bidi: isolate`), otherwise RTL reverses them to `20 / 15`.
 
+### Ambassador portal (`team.html`) — «سفراء رفد»
+
+Commission-only sales/marketing team: each ambassador registers, logs the clients she brings, shares a personal link (`/team#/r/<CODE>`) that clients fill themselves, and saves her IBAN for payouts. Operator dashboard at `/team#/admin`. Self-contained like `mazad.html` (no `i18n.js`, no `style.css`, Arabic-only), and **no serverless function** (api/ is at the 12-function limit) — it calls Supabase RPCs with the anon key; schema in `supabase-team.sql` (idempotent, tested on Postgres 16).
+
+- **Every table is deny-all**; the only door is the SECURITY DEFINER functions. Internal helpers (`team_insert_lead`, `team_is_admin`, `team_throttle`, …) are revoked from `public, anon, authenticated` by name — same trap as `mazad_try_auto_sell`. The check query is at the bottom of the SQL file.
+- **Attribution is decided in the database, never the page**: first ambassador to register a client's mobile owns it for 180 days; a later claim is kept but stamped `duplicate`. Ambassadors cannot edit status, amounts, or timestamps; every operator change is logged in `team_lead_events`. That log is the proof for both sides — don't add an ambassador-side edit or delete.
+- `source = 'link'` means the client filled the form himself — stronger evidence than `manual`.
+- The IBAN is validated (SA + 22 digits, mod-97) on both sides and returned to the ambassador only masked. The admin secret lives in `team_config.admin_secret`, never in the repo.
+- Both Supabase constants empty → وضع تجريبي (localStorage, admin password `demo`). The `demo` object in the page mirrors the SQL rule for rule; change both together.
+
 ### Phone-number auction (`mazad.html`) — «مزاد سوم»
 
 
