@@ -207,26 +207,65 @@ table.members th { font-size: .75rem; color: var(--muted); }
 .qrow input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 8px; background: #fff; font-size: .9rem; }
 .alerts { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 .alerts button { border: 0; cursor: pointer; }
-/* the quote page */
-.quote-doc { max-width: 780px; margin: 24px auto 40px; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 30px 28px; box-shadow: var(--shadow); }
-.qd-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 2px solid var(--navy-900); padding-bottom: 16px; margin-bottom: 18px; }
-.qd-head h1 { font-size: 1.7rem; font-weight: 900; color: var(--navy-900); }
-.qd-meta { font-size: .86rem; color: var(--muted); line-height: 1.9; }
-.qd-to { background: var(--paper); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: .95rem; }
-table.qd { width: 100%; border-collapse: collapse; font-size: .92rem; }
-table.qd th { background: var(--navy-900); color: #fff; font-weight: 700; padding: 9px 10px; text-align: right; }
-table.qd td { padding: 10px; border-bottom: 1px solid var(--line); }
+/* the quote page — our layout, RAFD navy/teal/gold */
+.qitem { border: 1px dashed var(--line); border-radius: 12px; padding: 8px; margin-bottom: 8px; background: #fff; }
+.qitem .qrow { margin-bottom: 6px; }
+.qrow2 { display: grid; grid-template-columns: 1fr 90px; gap: 6px; }
+.qrow2 input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; font-size: .84rem; background: #fcfbf8; }
+.qdoc { position: relative; overflow: hidden; max-width: 820px; margin: 24px auto 40px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 30px 30px 20px; box-shadow: var(--shadow); color: #1c2533; }
+.qdoc::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--gold-500), var(--teal-600), var(--navy-900)); }
+.qd-wm { position: absolute; width: 70%; left: 15%; top: 32%; opacity: .045; pointer-events: none; mix-blend-mode: multiply; }
+.qd-top, .qd-mid, .qd-info, table.qd, .qd-sum, .qd-sec, #qdState, .qd-actions, .qd-foot { position: relative; }
+.qd-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; }
+.qd-co { display: flex; flex-direction: column; font-size: .84rem; color: var(--muted); line-height: 1.8; }
+.qd-co b { font-size: 1rem; color: var(--navy-900); font-weight: 900; }
+.qd-logo { position: relative; display: block; width: 118px; height: 84px; overflow: hidden; flex: none; }
+.qd-logo img { position: absolute; height: 174px; left: -103px; top: -45px; mix-blend-mode: multiply; }
+.qd-mid { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 14px; }
+.qd-client { display: flex; flex-direction: column; font-size: .88rem; line-height: 1.75; }
+.qd-client small, .qd-no small, .qd-info small { color: var(--muted); font-size: .74rem; font-weight: 700; }
+.qd-client b { font-size: 1.05rem; color: var(--navy-900); }
+.qd-no { text-align: left; }
+.qd-no b { display: block; font-size: 1.9rem; font-weight: 900; color: var(--teal-600); letter-spacing: .02em; }
+.qd-info { display: grid; grid-template-columns: repeat(4, 1fr); border: 1.5px solid var(--navy-900); border-radius: 14px; overflow: hidden; margin-bottom: 16px; background: #fbfaf7; }
+.qd-info > div { padding: 10px 12px; border-inline-start: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+.qd-info > div:first-child { border-inline-start: 0; }
+.qd-info b { font-size: .9rem; color: var(--navy-900); }
+table.qd { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .9rem; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+table.qd th { background: var(--navy-900); color: #fff; font-weight: 700; padding: 10px; text-align: right; font-size: .82rem; }
+table.qd td { padding: 10px; border-top: 1px solid var(--line); }
 table.qd td.n, table.qd th.n { text-align: left; white-space: nowrap; }
-.qd-sum { margin-top: 12px; margin-right: auto; width: min(320px, 100%); font-size: .95rem; }
-.qd-sum div { display: flex; justify-content: space-between; padding: 6px 0; }
-.qd-sum .tot { border-top: 2px solid var(--navy-900); font-weight: 900; font-size: 1.15rem; color: var(--navy-900); margin-top: 4px; padding-top: 10px; }
-.qd-note { margin-top: 18px; font-size: .88rem; color: #3a4452; line-height: 1.9; white-space: pre-wrap; }
-.qd-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 22px; }
+table.qd tr.has-n td { border-bottom: 0; }
+table.qd tr.it-n td { border-top: 0; padding-top: 0; color: var(--muted); font-size: .82rem; font-style: italic; }
+.qd-sum { margin: 14px auto 0 0; width: min(340px, 100%); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: .92rem; }
+.qd-sum div { display: flex; justify-content: space-between; padding: 9px 12px; border-top: 1px solid var(--line); }
+.qd-sum div:first-child { border-top: 0; }
+.qd-sum .tot { background: linear-gradient(135deg, var(--navy-900), var(--teal-600)); color: #fff; font-weight: 900; font-size: 1.08rem; }
+.qd-sec { margin-top: 22px; font-size: .88rem; line-height: 1.95; }
+.qd-sec h3 { font-size: 1rem; font-weight: 900; color: var(--navy-900); margin-bottom: 4px; padding-bottom: 4px; border-bottom: 2px solid var(--gold-500); display: inline-block; }
+.qd-terms .lead-in { color: var(--muted); font-style: italic; }
+.qd-terms h4 { font-size: .9rem; font-weight: 800; color: var(--navy-900); margin-top: 12px; display: flex; align-items: center; gap: 8px; }
+.qd-terms .tn { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--navy-900); color: #fff; font-size: .72rem; flex: none; }
+.qd-terms ul { padding-right: 20px; }
+.qd-terms li { margin: 2px 0; }
+.qd-sign { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+.qd-sign div { border-top: 1.5px dashed var(--navy-700); padding-top: 6px; margin-top: 34px; text-align: center; font-size: .78rem; color: var(--muted); }
+.qd-bank dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 14px; background: #fbfaf7; border-radius: 12px; padding: 10px 14px; margin-top: 6px; }
+.qd-bank dt { color: var(--muted); } .qd-bank dd { font-weight: 800; color: var(--navy-900); }
+#qdState { margin-top: 16px; }
+.qd-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+.qd-foot { margin-top: 22px; padding-top: 12px; border-top: 1px solid var(--line); text-align: center; font-size: .78rem; color: var(--muted); }
+.qd-foot i { font-style: normal; margin: 0 8px; color: var(--gold-500); }
+@page { size: A4; margin: 14mm 12mm 16mm; @bottom-center { content: "الصفحة " counter(page) " / " counter(pages); font-size: 9pt; color: #6a7382; } }
 @media print {
-  .top, .foot, .demo, .qd-actions, #toast { display: none !important; }
+  .top, .foot, .demo, .qd-actions, #qdState, #toast { display: none !important; }
   body { background: #fff; }
-  .quote-doc { box-shadow: none; border: 0; margin: 0; max-width: none; padding: 0; }
-  table.qd th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { padding: 0; max-width: none; }
+  .qdoc { box-shadow: none; border: 0; margin: 0; max-width: none; padding: 8px 0 0; border-radius: 0; overflow: visible; }
+  .qd-wm { position: fixed; top: 30%; }
+  .qdoc, .qdoc * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table.qd tr, .qd-terms h4, .qd-sign, .qd-bank { break-inside: avoid; }
+  .qd-foot { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid #ddd; background: #fff; }
 }
 footer.foot { text-align: center; color: var(--muted); font-size: .8rem; padding: 26px 16px 34px; }
 
@@ -240,10 +279,17 @@ footer.foot { text-align: center; color: var(--muted); font-size: .8rem; padding
   .brand b { font-size: .95rem; }
   .row2 { grid-template-columns: 1fr; }
   .qrow { grid-template-columns: 1fr 56px 84px 30px; }
-  .quote-doc { padding: 20px 16px; border-radius: 0; margin: 0; }
-  table.qd { font-size: .8rem; }
+  .qdoc { padding: 22px 14px 16px; border-radius: 0; margin: 0 -16px; }
+  .qd-info { grid-template-columns: 1fr 1fr; }
+  .qd-info > div:nth-child(3) { border-inline-start: 0; }
+  .qd-info > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .qd-mid { flex-direction: column-reverse; align-items: stretch; }
+  .qd-no { text-align: right; }
+  table.qd { font-size: .78rem; }
   table.qd th, table.qd td { padding: 8px 5px; }
-  .qd-head h1 { font-size: 1.4rem; }
+  .qd-sign { grid-template-columns: 1fr 1fr; }
+  .qd-logo { width: 88px; height: 63px; }
+  .qd-logo img { height: 130px; left: -77px; top: -33px; }
 }
 </style>
 </head>
@@ -275,7 +321,17 @@ const REMOTE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 /* Printed on every quote. Fill the registration numbers in once they are final —
    an empty one is simply left off the page rather than printed blank. */
-const COMPANY = { name: 'رفد الرقمية', cr: '', vat: '', phone: '', email: '' };
+const COMPANY = {
+  name: 'رفد الرقمية',
+  address: [],                 // e.g. ['٧٨٥٢ طريق …، حي …', 'الرياض ١٢٣٤٥', 'المملكة العربية السعودية']
+  cr: '', vat: '', phone: '', email: '',
+  bank: { name: '', beneficiary: '', iban: '', account: '' }   // printed under «طريقة السداد»; empty → section hidden
+};
+/* The demo's copy of the default terms. The live default is seeded by
+   supabase-team.sql (team_config.quote_terms) — keep the two in step.
+   "## " starts a numbered section, "- " a bullet. */
+const DEFAULT_TERMS = "## بدء الخدمة وتجديدها\n- تُحتسب مدة الاشتراك من تاريخ أول تشغيل فعلي للنظام وإبلاغ العميل بذلك، ولا تدخل فترة التركيب والتهيئة ضمن مدة الاشتراك.\n- يتجدد الاشتراك تلقائياً لمدة مساوية، إلا إذا أبلغ أحد الطرفين الطرف الآخر كتابياً بعدم رغبته في التجديد قبل (30) يوماً على الأقل من انتهاء المدة الجارية.\n## التزامات رفد\n- تشغيل الخدمة وربطها تقنياً بكاميرات العميل وأجهزة التسجيل (NVR) وأنظمة التذاكر المعتمدة، مع التدريب والدعم الفني دون مقابل إضافي طوال مدة الاشتراك.\n- الالتزام بنظام حماية البيانات الشخصية في المملكة العربية السعودية، بحيث تُعالج البيانات لحظياً وبشكل مشفّر، ولا تُحفظ أي بيانات شخصية أو صور للأفراد على الأجهزة الطرفية.\n- حذف جميع بيانات العميل خلال (5) أيام عمل من انتهاء الاشتراك أو إلغائه، وتزويد العميل بما يثبت ذلك كتابياً.\n## التزامات العميل\n- تسهيل وصول فريق رفد إلى المواقع والأنظمة اللازمة لإكمال أعمال الربط والتركيب.\n- يُقرّ العميل بأن أجهزة الحوسبة الطرفية المركّبة في مواقعه مملوكة لرفد، ويتعهد بالمحافظة عليها كما يحافظ على ممتلكاته.\n## إنهاء الاشتراك\n- إذا أخلّ أحد الطرفين بأي من التزاماته يُبلَّغ كتابياً ويُمنح (5) أيام لتصحيح الإخلال، فإن لم يُصحَّح جاز للطرف الآخر إنهاء الاشتراك فوراً.\n- لكل طرف إنهاء الاشتراك بإشعار كتابي قبل (30) يوماً من التاريخ المحدد للإنهاء، ويسدد العميل قيمة الخدمة المقدَّمة حتى ذلك التاريخ، ويعيد أجهزة الحوسبة الطرفية المملوكة لرفد دون تأخير.\n## أحكام عامة\n- لا يُسأل أي طرف عن التأخير الناتج عن قوة قاهرة أو ظروف خارجة عن إرادته، كالقرارات الحكومية والأوبئة، بشرط ألا يتجاوز ذلك (30) يوماً من تاريخ إبلاغ الطرف الآخر.\n- تسري على هذا العرض وما ينتج عنه أنظمة المملكة العربية السعودية، وتكون محاكم مدينة الرياض وحدها المختصة بالنظر في أي خلاف.";
+const PLAN = { once: 'دفعة واحدة', monthly: 'شهري', yearly: 'سنوي' };
 const VAT_RATE = 0.15;
 const QUOTE_DAYS = 14;
 
@@ -316,6 +372,8 @@ const ERR = {
   accepted: 'العميل وافق على العرض من قبل',
   not_sent: 'العرض ما انرسل بعد',
   not_open: 'العرض منتهي أو تم الرد عليه',
+  client_vat: 'الرقم الضريبي للعميل لازم يكون 15 رقم',
+  terms: 'الشروط قصيرة جداً',
   items: 'راجع بنود العرض — كل بند يحتاج وصف وكمية وسعر',
   auth: 'انتهت الجلسة — سجّلي دخولك مرة ثانية',
   network: 'تعذّر الاتصال — تأكدي من الإنترنت وجرّبي مرة ثانية'
@@ -475,8 +533,9 @@ const demo = (() => {
     },
     team_quote_public(a) {
       const d = db(); const q = (d.quotes || []).find(x => x.id === a.p_id && x.status !== 'requested'); if (!q) return { error: 'not_found' };
-      const l = d.leads.find(x => x.id === q.lead_id) || {};
-      const { lead_id, details, requested_at, decision_note, id, ...pub } = q; return { ...pub, client_name: l.client_name, company: l.company };
+      const l = d.leads.find(x => x.id === q.lead_id) || {}; const m = d.members.find(x => x.id === l.member_id) || {};
+      const { lead_id, details, requested_at, decision_note, id, ...pub } = q;
+      return { ...pub, client_name: l.client_name, company: l.company, city: l.city, rep_name: m.full_name };
     },
     team_quote_client_accept(a) {
       const d = db(); const q = (d.quotes || []).find(x => x.id === a.p_id && x.status === 'sent');
@@ -537,12 +596,18 @@ const demo = (() => {
         if ('admin_note' in p) l.admin_note = p.admin_note || null;
         l.updated_at = now(); d.events.push({ lead_id: l.id, at: now(), actor: 'admin', action: 'update', detail: p }); save(d); return { ok: true };
       }
+      if (a.p_action === 'quote_terms') {
+        if ('terms' in p) { if (String(p.terms || '').length < 10) return { error: 'terms' }; d.quoteTerms = p.terms; save(d); }
+        return { ok: true, terms: d.quoteTerms || DEFAULT_TERMS };
+      }
       if (a.p_action === 'quote_send') {
         const q = (d.quotes || []).find(x => x.lead_id === p.lead_id && x.status !== 'accepted'); if (!q) return { error: 'not_found' };
         const items = Array.isArray(p.items) ? p.items : [];
         if (!items.length || items.some(i => !String(i.d || '').trim() || !(+i.q > 0) || !(+i.p >= 0))) return { error: 'items' };
         const sub = items.reduce((t, i) => t + i.q * i.p, 0); const vat = p.vat !== false;
-        Object.assign(q, { items: items.map(i => ({ d: String(i.d).trim().slice(0, 200), q: +i.q, p: +i.p })), vat, subtotal: +sub.toFixed(2),
+        const cv = String(p.client_vat || '').replace(/\D/g, ''); if (cv && cv.length !== 15) return { error: 'client_vat' };
+        Object.assign(q, { plan: p.plan || null, client_address: (p.client_address || '').trim() || null, client_vat: cv || null, terms: d.quoteTerms || DEFAULT_TERMS });
+        Object.assign(q, { items: items.map(i => ({ d: String(i.d).trim().slice(0, 200), q: +i.q, p: +i.p, n: (i.n || '').trim() || null, u: (i.u || '').trim() || null })), vat, subtotal: +sub.toFixed(2),
           total: +(sub * (vat ? 1 + VAT_RATE : 1)).toFixed(2), valid_until: p.valid_until || null, note: (p.note || '').trim() || null,
           status: 'sent', sent_at: now(), decided_at: null, decided_by: null, decision_note: null });
         save(d); return { ok: true };
@@ -1034,41 +1099,82 @@ async function viewRef(code) {
 }
 
 /* ---------- the quote page (sent to the client) ---------- */
+const sar = n => n == null || n === '' ? '—' : Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function termsHtml(t) {
+  let n = 0, out = '', open = false;
+  for (const raw of String(t || '').split('\n')) {
+    const line = raw.trim(); if (!line) continue;
+    if (line.startsWith('## ')) { if (open) out += '</ul>'; out += `<h4><span class="tn num">${++n}</span>${esc(line.slice(3))}</h4><ul>`; open = true; }
+    else if (line.startsWith('- ')) { if (!open) { out += '<ul>'; open = true; } out += `<li>${esc(line.slice(2))}</li>`; }
+    else { if (open) { out += '</ul>'; open = false; } out += `<p>${esc(line)}</p>`; }
+  }
+  return out + (open ? '</ul>' : '');
+}
+
 async function viewQuote(id) {
   app.innerHTML = '<div class="wrap"><div class="empty">…</div></div>';
   const q = await rpc('team_quote_public', { p_id: id });
   if (!q || q.error) { app.innerHTML = `<div class="wrap"><div class="card auth"><h2>العرض غير متاح</h2><p class="sub">تأكد من الرابط، أو تواصل مع من أرسله لك.</p></div></div>`; return; }
   const expired = q.valid_until && q.valid_until < todayRiyadh();
   const open = q.status === 'sent' && !expired;
-  const ids = [COMPANY.cr && `س.ت: <span class="num">${esc(COMPANY.cr)}</span>`, COMPANY.vat && `الرقم الضريبي: <span class="num">${esc(COMPANY.vat)}</span>`,
-    COMPANY.phone && `<span class="num">${esc(COMPANY.phone)}</span>`, COMPANY.email && `<span class="num">${esc(COMPANY.email)}</span>`].filter(Boolean).join(' · ');
-  app.innerHTML = `<div class="wrap"><div class="quote-doc">
-    <div class="qd-head">
-      <div><h1>عرض سعر</h1><div class="qd-meta">رقم <span class="num">Q-${String(q.no).padStart(4, '0')}</span><br>التاريخ ${fmtDate(q.sent_at)}${q.valid_until ? `<br>ساري حتى ${fmtDate(q.valid_until)}` : ''}</div></div>
-      <div style="text-align:left"><span class="logo-crop" style="display:inline-block;position:relative;width:92px;height:66px;overflow:hidden"><img src="/rafd-logo.png" alt="رفد" style="position:absolute;height:136px;left:-80px;top:-35px"></span>
-        <div class="qd-meta" style="text-align:left"><b style="color:var(--navy-900)">${esc(COMPANY.name)}</b>${ids ? '<br>' + ids : ''}</div></div>
-    </div>
-    <div class="qd-to">إلى: <b>${esc(q.client_name)}</b>${q.company ? ' — ' + esc(q.company) : ''}</div>
+  const no = 'Q-' + String(q.no).padStart(5, '0');
+  const C = COMPANY; const B = C.bank || {};
+  const foot = [C.email && `<span class="num">${esc(C.email)}</span>`, C.vat && `الرقم الضريبي <span class="num">${esc(C.vat)}</span>`,
+    C.cr && `س.ت <span class="num">${esc(C.cr)}</span>`, C.phone && `<span class="num">${esc(C.phone)}</span>`].filter(Boolean).join('<i>·</i>');
+  const tax = q.vat ? '15%' : '—';
+  app.innerHTML = `<div class="wrap"><article class="qdoc">
+    <img class="qd-wm" src="/rafd-logo.png" alt="">
+    <header class="qd-top">
+      <div class="qd-co"><b>${esc(C.name)}</b>${(C.address || []).map(a => `<span>${esc(a)}</span>`).join('')}</div>
+      <span class="qd-logo"><img src="/rafd-logo.png" alt="رفد"></span>
+    </header>
+    <section class="qd-mid">
+      <div class="qd-client">
+        <small>مقدَّم إلى</small>
+        <b>${esc(q.company || q.client_name)}</b>
+        ${q.company ? `<span>${esc(q.client_name)}</span>` : ''}
+        ${q.client_address ? `<span>${esc(q.client_address)}</span>` : q.city ? `<span>${esc(q.city)}</span>` : ''}
+        <span>المملكة العربية السعودية</span>
+        ${q.client_vat ? `<span>الرقم الضريبي: <span class="num">${esc(q.client_vat)}</span></span>` : ''}
+      </div>
+      <div class="qd-no"><small>عرض سعر</small><b class="num">${no}</b></div>
+    </section>
+    <section class="qd-info">
+      <div><small>نوع الاشتراك</small><b>${esc(PLAN[q.plan] || '—')}</b></div>
+      <div><small>تاريخ العرض</small><b>${fmtDate(q.sent_at)}</b></div>
+      <div><small>ساري حتى</small><b>${q.valid_until ? fmtDate(q.valid_until) : '—'}</b></div>
+      <div><small>مندوب المبيعات</small><b>${esc(q.rep_name || '—')}</b></div>
+    </section>
     <div class="scroll-x"><table class="qd">
-      <thead><tr><th style="width:36px">#</th><th>البند</th><th class="n">الكمية</th><th class="n">سعر الوحدة</th><th class="n">الإجمالي</th></tr></thead>
-      <tbody>${(q.items || []).map((it, i) => `<tr><td class="num">${i + 1}</td><td>${esc(it.d)}</td><td class="n num">${money(it.q)}</td><td class="n num">${money(it.p)}</td><td class="n num">${money(it.q * it.p)}</td></tr>`).join('')}</tbody>
+      <thead><tr><th>الوصف</th><th class="n">الكمية</th><th class="n">سعر الوحدة</th><th class="n">الضريبة</th><th class="n">المبلغ</th></tr></thead>
+      <tbody>${(q.items || []).map(it => `<tr class="it${it.n ? ' has-n' : ''}"><td><b>${esc(it.d)}</b></td><td class="n"><span class="num">${money(it.q)}</span>${it.u ? ' ' + esc(it.u) : ''}</td><td class="n num">${sar(it.p)}</td><td class="n num">${tax}</td><td class="n num">${sar(it.q * it.p)}</td></tr>
+        ${it.n ? `<tr class="it-n"><td colspan="5">${esc(it.n)}</td></tr>` : ''}`).join('')}</tbody>
     </table></div>
     <div class="qd-sum">
-      <div><span>المجموع</span><span class="num">${money(q.subtotal)} ر.س</span></div>
-      ${q.vat ? `<div><span>ضريبة القيمة المضافة 15%</span><span class="num">${money(q.total - q.subtotal)} ر.س</span></div>` : ''}
-      <div class="tot"><span>الإجمالي${q.vat ? ' شامل الضريبة' : ''}</span><span class="num">${money(q.total)} ر.س</span></div>
+      <div><span>المبلغ قبل الضريبة</span><span class="num">${sar(q.subtotal)} ر.س</span></div>
+      ${q.vat ? `<div><span>ضريبة القيمة المضافة 15%</span><span class="num">${sar(q.total - q.subtotal)} ر.س</span></div>` : ''}
+      <div class="tot"><span>الإجمالي</span><span class="num">${sar(q.total)} ر.س</span></div>
     </div>
-    ${q.note ? `<div class="qd-note"><b>ملاحظات وشروط</b><br>${esc(q.note)}</div>` : ''}
-    <div id="qdState" style="margin-top:18px">${q.status === 'accepted' ? `<div class="msg ok">✓ تمت الموافقة على العرض ${fmtDate(q.decided_at)} — بنتواصل معك لتوقيع العقد.</div>`
-      : q.status === 'declined' ? '<div class="msg info">هذا العرض مغلق.</div>' : expired ? '<div class="msg info">انتهت صلاحية هذا العرض — تواصل معنا لتحديثه.</div>' : ''}</div>
+    ${q.note ? `<section class="qd-sec"><h3>ملاحظات خاصة بهذا العرض</h3><p style="white-space:pre-wrap">${esc(q.note)}</p></section>` : ''}
+    ${q.terms ? `<section class="qd-sec qd-terms"><h3>الشروط والأحكام</h3><p class="lead-in">هذه الشروط جزء أساسي من عرض السعر ولا تنفصل عنه.</p>${termsHtml(q.terms)}</section>` : ''}
+    <section class="qd-sec"><h3>اعتماد العميل</h3>
+      <p>بتوقيعكم على هذا العرض، أو بضغطكم «أوافق على العرض» في نسخته الإلكترونية، تُقرّون بأنكم اطلعتم على تفاصيله وشروطه وأحكامه ووافقتم عليها.</p>
+      <div class="qd-sign"><div>اسم المفوّض</div><div>التوقيع</div><div>الختم</div><div>التاريخ</div></div>
+    </section>
+    ${B.iban ? `<section class="qd-sec qd-bank"><h3>طريقة السداد</h3><p>يُسدَّد المبلغ بتحويل بنكي إلى الحساب التالي${B.name ? ` لدى ${esc(B.name)}` : ''}:</p>
+      <dl>${B.beneficiary ? `<dt>اسم المستفيد</dt><dd>${esc(B.beneficiary)}</dd>` : ''}<dt>الآيبان</dt><dd class="num">${esc(ibanPretty(B.iban))}</dd>${B.account ? `<dt>رقم الحساب</dt><dd class="num">${esc(B.account)}</dd>` : ''}</dl></section>` : ''}
+    <div id="qdState">${q.status === 'accepted' ? `<div class="msg ok">✓ تمت الموافقة على العرض ${fmtDate(q.decided_at)} — بنتواصل معكم لتوقيع العقد.</div>`
+      : q.status === 'declined' ? '<div class="msg info">هذا العرض مغلق.</div>' : expired ? '<div class="msg info">انتهت صلاحية هذا العرض — تواصلوا معنا لتحديثه.</div>' : ''}</div>
     <div class="qd-actions">
       ${open ? '<button class="btn btn-main" id="qAccept">✓ أوافق على العرض</button>' : ''}
       <button class="btn btn-soft" onclick="window.print()">طباعة / حفظ PDF</button>
     </div>
-  </div></div>`;
+    ${foot ? `<footer class="qd-foot">${foot}</footer>` : ''}
+  </article></div>`;
   const acc = $('#qAccept');
   if (acc) acc.onclick = async () => {
-    if (!confirm('تأكيد الموافقة على عرض السعر؟ بيتواصل معك فريق رفد لتوقيع العقد.')) return;
+    if (!confirm('تأكيد الموافقة على عرض السعر؟ بيتواصل معكم فريق رفد لتوقيع العقد.')) return;
     acc.disabled = true;
     const r = await rpc('team_quote_client_accept', { p_id: id });
     if (!r || r.error) { acc.disabled = false; return toast(ERR[r && r.error] || ERR.network); }
@@ -1107,6 +1213,7 @@ function drawAdmin() {
       <button class="chip ${admTab === 'members' ? 'on' : ''}" data-t="members">الفريق (<span class="num">${members.length}</span>)</button>
       <button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">المهمة الشهرية</button>
       <span style="flex:1"></span>
+      <button class="btn btn-soft btn-sm" id="termsBtn">شروط العرض</button>
       <button class="btn btn-soft btn-sm" id="csv">تصدير Excel</button>
       <button class="btn btn-ghost btn-sm" id="admOut">خروج</button>
     </div>
@@ -1121,6 +1228,7 @@ function drawAdmin() {
   app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { admTab = b.dataset.t; drawAdmin(); });
   $('#admOut').onclick = () => { try { sessionStorage.removeItem(ADMIN_KEY); } catch (e) {} admLogin(); };
   $('#csv').onclick = exportCsv;
+  $('#termsBtn').onclick = openTermsEditor;
   admTab === 'leads' ? drawAdmLeads() : admTab === 'tasks' ? loadAdmTasks() : drawAdmMembers();
 }
 
@@ -1271,37 +1379,62 @@ function admQuoteBox(l) {
 function openQuoteEditor(l) {
   const q = l.quote;
   const rows = (q.items && q.items.length ? q.items : [{ d: '', q: 1, p: '' }]);
-  const row = it => `<div class="qrow"><input data-k="d" placeholder="الوصف" value="${esc(it.d)}"><input data-k="q" class="num" inputmode="decimal" placeholder="الكمية" value="${esc(it.q)}"><input data-k="p" class="num" inputmode="decimal" placeholder="السعر" value="${esc(it.p)}"><button type="button" class="x" data-rm title="حذف">✕</button></div>`;
+  const row = it => `<div class="qitem"><div class="qrow"><input data-k="d" placeholder="البند (مثلاً: اشتراك الفرع)" value="${esc(it.d)}"><input data-k="q" class="num" inputmode="decimal" placeholder="الكمية" value="${esc(it.q)}"><input data-k="p" class="num" inputmode="decimal" placeholder="السعر" value="${esc(it.p)}"><button type="button" class="x" data-rm title="حذف">✕</button></div>
+    <div class="qrow2"><input data-k="n" placeholder="وصف البند للعميل (اختياري)" value="${esc(it.n || '')}"><input data-k="u" placeholder="الوحدة" value="${esc(it.u || '')}"></div></div>`;
   const s = sheet(`عرض سعر — ${esc(l.client_name)}`, `
     <div class="msg info" style="white-space:pre-wrap">📝 ${esc(q.details)}</div>
     <div id="em"></div>
     <form id="ef" novalidate>
+      <div class="row2">
+        <div class="field"><label>نوع الاشتراك</label><select name="plan">${Object.entries(PLAN).map(([k, t]) => `<option value="${k}" ${(q.plan || 'yearly') === k ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+        <div class="field"><label>الرقم الضريبي للعميل <small>(اختياري)</small></label><input name="cvat" class="ltr num" inputmode="numeric" placeholder="3XXXXXXXXXXXXX3" value="${esc(q.client_vat || '')}"></div>
+      </div>
+      <div class="field"><label>عنوان العميل <small>(اختياري)</small></label><input name="caddr" placeholder="الحي، المدينة" value="${esc(q.client_address || l.city || '')}"></div>
       <div class="qrow" style="font-size:.72rem;color:var(--muted);font-weight:700;margin-bottom:2px"><span>البند</span><span>الكمية</span><span>سعر الوحدة</span><span></span></div>
       <div id="rows">${rows.map(row).join('')}</div>
       <button type="button" class="btn btn-ghost btn-sm" id="addRow">＋ بند</button>
       <label class="check" style="margin-top:10px"><input type="checkbox" name="vat" ${q.vat !== false ? 'checked' : ''}><span>يضاف ضريبة القيمة المضافة 15%</span></label>
       <div class="field"><label>ساري حتى</label><input type="date" name="valid" value="${esc(q.valid_until || addDays(QUOTE_DAYS))}"></div>
-      <div class="field"><label>ملاحظات وشروط <small>(تظهر للعميل)</small></label><textarea name="note" placeholder="مثلاً: الدفع 50% مقدم و50% بعد التركيب. الضمان سنتين.">${esc(q.note || '')}</textarea></div>
+      <div class="field"><label>ملاحظات خاصة بهذا العرض <small>(تظهر للعميل — الشروط العامة تنضاف تلقائياً)</small></label><textarea name="note" placeholder="مثلاً: الدفع 50% مقدم و50% بعد التركيب. الضمان سنتين.">${esc(q.note || '')}</textarea></div>
       <div class="qbox" id="sum" style="margin:0 0 12px"></div>
       <button class="btn btn-main btn-block" type="submit">إرسال العرض للسفيرة</button>
     </form>`);
   const f = $('#ef', s.el);
-  const read = () => [...f.querySelectorAll('#rows .qrow')].map(r => ({ d: r.querySelector('[data-k=d]').value.trim(),
-    q: +toLatin(r.querySelector('[data-k=q]').value).replace(/[^\d.]/g, ''), p: +toLatin(r.querySelector('[data-k=p]').value).replace(/[^\d.]/g, '') }));
+  const read = () => [...f.querySelectorAll('#rows .qitem')].map(r => ({ d: r.querySelector('[data-k=d]').value.trim(),
+    q: +toLatin(r.querySelector('[data-k=q]').value).replace(/[^\d.]/g, ''), p: +toLatin(r.querySelector('[data-k=p]').value).replace(/[^\d.]/g, ''),
+    n: r.querySelector('[data-k=n]').value.trim(), u: r.querySelector('[data-k=u]').value.trim() }));
   const sum = () => { const its = read().filter(i => i.d || i.q || i.p); const sub = its.reduce((t, i) => t + (i.q || 0) * (i.p || 0), 0); const vat = f.vat.checked;
     $('#sum', s.el).innerHTML = `المجموع <b class="num">${money(sub)}</b>${vat ? ` · الضريبة <b class="num">${money(sub * VAT_RATE)}</b>` : ''} · <b>الإجمالي <span class="num">${money(sub * (vat ? 1 + VAT_RATE : 1))}</span> ر.س</b>`; };
   f.addEventListener('input', sum); f.vat.onchange = sum; sum();
   $('#addRow', s.el).onclick = () => { $('#rows', s.el).insertAdjacentHTML('beforeend', row({ d: '', q: 1, p: '' })); sum(); };
-  $('#rows', s.el).onclick = e => { if (e.target.dataset.rm !== undefined && f.querySelectorAll('#rows .qrow').length > 1) { e.target.closest('.qrow').remove(); sum(); } };
+  $('#rows', s.el).onclick = e => { if (e.target.dataset.rm !== undefined && f.querySelectorAll('#rows .qitem').length > 1) { e.target.closest('.qitem').remove(); sum(); } };
   f.onsubmit = async e => {
     e.preventDefault(); const b = f.querySelector('button[type=submit]');
     const items = read().filter(i => i.d || i.q || i.p);
     if (!items.length || items.some(i => !i.d || !(i.q > 0) || !(i.p >= 0) || Number.isNaN(i.p))) return formMsg($('#em', s.el), 'err', ERR.items);
     b.disabled = true;
-    const r = await rpc('team_admin', { p_secret: admSecret(), p_action: 'quote_send', p: { lead_id: l.id, items, vat: f.vat.checked, valid_until: f.valid.value, note: f.note.value.trim() } });
+    const r = await rpc('team_admin', { p_secret: admSecret(), p_action: 'quote_send', p: { lead_id: l.id, items, vat: f.vat.checked, valid_until: f.valid.value, note: f.note.value.trim(),
+      plan: f.plan.value, client_address: f.caddr.value.trim(), client_vat: toLatin(f.cvat.value).replace(/\D/g, '') } });
     b.disabled = false;
     if (!r || r.error) return formMsg($('#em', s.el), 'err', ERR[r && r.error] || ERR.network);
     s.close(); toast('انرسل العرض للسفيرة ✓'); viewAdmin();
+  };
+}
+
+async function openTermsEditor() {
+  const r = await rpc('team_admin', { p_secret: admSecret(), p_action: 'quote_terms', p: {} });
+  if (!r || r.error) return toast(ERR[r && r.error] || ERR.network);
+  const s = sheet('الشروط والأحكام الافتراضية', `
+    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">تنضاف لكل عرض ترسله من الآن. العروض المرسلة قبل تبقى بشروطها وقت إرسالها.<br>
+      السطر اللي يبدأ بـ <b class="num">##</b> عنوان قسم مرقّم، واللي يبدأ بـ <b class="num">-</b> بند تحته.</p>
+    <div id="tm"></div>
+    <form id="tf" novalidate><div class="field"><textarea name="terms" style="min-height:360px;font-size:.88rem;line-height:1.8">${esc(r.terms || '')}</textarea></div>
+    <button class="btn btn-main btn-block" type="submit">حفظ</button></form>`);
+  $('#tf', s.el).onsubmit = async e => {
+    e.preventDefault();
+    const x = await rpc('team_admin', { p_secret: admSecret(), p_action: 'quote_terms', p: { terms: e.target.terms.value.trim() } });
+    if (!x || x.error) return formMsg($('#tm', s.el), 'err', ERR[x && x.error] || ERR.network);
+    s.close(); toast('انحفظت الشروط ✓');
   };
 }
 

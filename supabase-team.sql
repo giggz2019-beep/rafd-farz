@@ -382,6 +382,14 @@ begin
     return team_quote_send(p);
   end if;
 
+  if p_action = 'quote_terms' then
+    if p ? 'terms' then
+      if char_length(coalesce(p->>'terms','')) not between 10 and 8000 then return jsonb_build_object('error','terms'); end if;
+      update team_config set value = p->>'terms' where key = 'quote_terms';
+    end if;
+    return jsonb_build_object('ok', true, 'terms', (select value from team_config where key = 'quote_terms'));
+  end if;
+
   if p_action = 'member' then
     update team_members set status = p->>'status' where id = (p->>'id')::uuid;
     if (p->>'status') = 'suspended' then delete from team_sessions where member_id = (p->>'id')::uuid; end if;
@@ -599,6 +607,39 @@ alter table team_quotes enable row level security;
 revoke all on team_quotes from public, anon, authenticated;
 revoke all on sequence team_quotes_no_seq from public, anon, authenticated;
 
+-- the fuller quote layout: billing cycle, the client's address and VAT number,
+-- and the terms SNAPSHOT — copied from team_config at send time, so editing the
+-- default terms later never rewrites a quote a client has already seen.
+alter table team_quotes add column if not exists plan text
+  check (plan is null or plan in ('once','monthly','yearly'));
+alter table team_quotes add column if not exists client_address text
+  check (client_address is null or char_length(client_address) <= 300);
+alter table team_quotes add column if not exists client_vat text
+  check (client_vat is null or client_vat ~ '^[0-9]{15}$');
+alter table team_quotes add column if not exists terms text
+  check (terms is null or char_length(terms) <= 8000);
+
+-- default terms: "## " starts a numbered section, "- " a bullet. Editable from
+-- the operator's dashboard (team_admin('quote_terms')). Keep in step with
+-- DEFAULT_TERMS in team.html, which the demo uses.
+insert into team_config(key, value) values ('quote_terms', $terms$## بدء الخدمة وتجديدها
+- تُحتسب مدة الاشتراك من تاريخ أول تشغيل فعلي للنظام وإبلاغ العميل بذلك، ولا تدخل فترة التركيب والتهيئة ضمن مدة الاشتراك.
+- يتجدد الاشتراك تلقائياً لمدة مساوية، إلا إذا أبلغ أحد الطرفين الطرف الآخر كتابياً بعدم رغبته في التجديد قبل (30) يوماً على الأقل من انتهاء المدة الجارية.
+## التزامات رفد
+- تشغيل الخدمة وربطها تقنياً بكاميرات العميل وأجهزة التسجيل (NVR) وأنظمة التذاكر المعتمدة، مع التدريب والدعم الفني دون مقابل إضافي طوال مدة الاشتراك.
+- الالتزام بنظام حماية البيانات الشخصية في المملكة العربية السعودية، بحيث تُعالج البيانات لحظياً وبشكل مشفّر، ولا تُحفظ أي بيانات شخصية أو صور للأفراد على الأجهزة الطرفية.
+- حذف جميع بيانات العميل خلال (5) أيام عمل من انتهاء الاشتراك أو إلغائه، وتزويد العميل بما يثبت ذلك كتابياً.
+## التزامات العميل
+- تسهيل وصول فريق رفد إلى المواقع والأنظمة اللازمة لإكمال أعمال الربط والتركيب.
+- يُقرّ العميل بأن أجهزة الحوسبة الطرفية المركّبة في مواقعه مملوكة لرفد، ويتعهد بالمحافظة عليها كما يحافظ على ممتلكاته.
+## إنهاء الاشتراك
+- إذا أخلّ أحد الطرفين بأي من التزاماته يُبلَّغ كتابياً ويُمنح (5) أيام لتصحيح الإخلال، فإن لم يُصحَّح جاز للطرف الآخر إنهاء الاشتراك فوراً.
+- لكل طرف إنهاء الاشتراك بإشعار كتابي قبل (30) يوماً من التاريخ المحدد للإنهاء، ويسدد العميل قيمة الخدمة المقدَّمة حتى ذلك التاريخ، ويعيد أجهزة الحوسبة الطرفية المملوكة لرفد دون تأخير.
+## أحكام عامة
+- لا يُسأل أي طرف عن التأخير الناتج عن قوة قاهرة أو ظروف خارجة عن إرادته، كالقرارات الحكومية والأوبئة، بشرط ألا يتجاوز ذلك (30) يوماً من تاريخ إبلاغ الطرف الآخر.
+- تسري على هذا العرض وما ينتج عنه أنظمة المملكة العربية السعودية، وتكون محاكم مدينة الرياض وحدها المختصة بالنظر في أي خلاف.$terms$)
+on conflict (key) do nothing;
+
 create or replace function team_quote_request(p_token text, p_lead uuid, p_details text) returns jsonb
 language plpgsql security definer set search_path = public as $$
 declare v uuid := team_member_of(p_token); l team_leads; q team_quotes;
@@ -640,8 +681,10 @@ language sql security definer set search_path = public stable as $$
       'no', q.no, 'status', q.status, 'items', q.items, 'vat', q.vat, 'subtotal', q.subtotal,
       'total', q.total, 'valid_until', q.valid_until, 'note', q.note, 'sent_at', q.sent_at,
       'decided_at', q.decided_at, 'decided_by', q.decided_by,
-      'client_name', l.client_name, 'company', l.company)
-    from team_quotes q join team_leads l on l.id = q.lead_id
+      'plan', q.plan, 'client_address', q.client_address, 'client_vat', q.client_vat, 'terms', q.terms,
+      'client_name', l.client_name, 'company', l.company, 'city', l.city,
+      'rep_name', m.full_name)
+    from team_quotes q join team_leads l on l.id = q.lead_id join team_members m on m.id = l.member_id
     where q.id = p_id and q.status in ('sent','accepted','declined')),
     jsonb_build_object('error','not_found'))
 $$;
@@ -667,18 +710,25 @@ begin
   if jsonb_typeof(p->'items') <> 'array' or jsonb_array_length(p->'items') = 0 or jsonb_array_length(p->'items') > 40 then
     return jsonb_build_object('error','items');
   end if;
+  if regexp_replace(coalesce(p->>'client_vat',''), '\D', '', 'g') !~ '^([0-9]{15})?$' then
+    return jsonb_build_object('error','client_vat');
+  end if;
   for it in select * from jsonb_array_elements(p->'items') loop
     q := (it->>'q')::numeric; pr := (it->>'p')::numeric;
     if coalesce(trim(it->>'d'),'') = '' or q is null or q <= 0 or pr is null or pr < 0 then
       return jsonb_build_object('error','items');
     end if;
-    v_items := v_items || jsonb_build_array(jsonb_build_object('d', left(trim(it->>'d'), 200), 'q', q, 'p', pr));
+    v_items := v_items || jsonb_build_array(jsonb_build_object('d', left(trim(it->>'d'), 200), 'q', q, 'p', pr,
+                 'n', nullif(left(trim(coalesce(it->>'n','')), 300), ''), 'u', nullif(left(trim(coalesce(it->>'u','')), 20), '')));
     v_sub := v_sub + q * pr;
   end loop;
   update team_quotes set items = v_items, vat = v_vat, subtotal = round(v_sub, 2),
          total = round(v_sub * case when v_vat then 1.15 else 1 end, 2),
          valid_until = nullif(p->>'valid_until','')::date, note = nullif(left(trim(coalesce(p->>'note','')), 1000), ''),
-         status = 'sent', sent_at = now(), decided_at = null, decided_by = null, decision_note = null
+         status = 'sent', sent_at = now(), decided_at = null, decided_by = null, decision_note = null,
+         plan = nullif(p->>'plan',''), client_address = nullif(left(trim(coalesce(p->>'client_address','')), 300), ''),
+         client_vat = nullif(regexp_replace(coalesce(p->>'client_vat',''), '\D', '', 'g'), ''),
+         terms = (select value from team_config where key = 'quote_terms')
    where lead_id = v_lead and status in ('requested','sent','declined');
   if not found then return jsonb_build_object('error','not_found'); end if;
   insert into team_lead_events(lead_id, actor, action, detail) values (v_lead, 'admin', 'quote_sent', jsonb_build_object('total', round(v_sub, 2)));
