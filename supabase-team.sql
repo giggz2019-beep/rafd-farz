@@ -404,3 +404,148 @@ grant execute on function team_admin(text,text,jsonb)                           
 --   select has_table_privilege('anon','public.team_members','SELECT'),
 --          has_function_privilege('anon','public.team_insert_lead(uuid,text,text,text,text,text,text,text)','EXECUTE'),
 --          has_function_privilege('anon','public.team_is_admin(text)','EXECUTE');
+
+-- ============================================================
+--  المهمة الشهرية — monthly engagement task
+--
+--  The operator posts his TikTok video links. Each ambassador opens one,
+--  engages, and marks it done WITH THE TEXT OF HER COMMENT. TikTok exposes
+--  no way to learn who liked or shared a video, so the comment is the only
+--  part anyone can check: the operator finds it under her TikTok handle and
+--  rejects a mark he cannot find. Whoever has an accepted mark on every
+--  video of a calendar month (Riyadh time) is due the monthly bonus
+--  (team_config.monthly_bonus, default 150). Paying is recorded per member
+--  per month, so it can never be paid twice.
+-- ============================================================
+
+create table if not exists team_posts (
+  id          uuid primary key default gen_random_uuid(),
+  url         text not null,
+  title       text,
+  created_at  timestamptz not null default now(),
+  constraint team_p_url   check (url ~ '^https://' and char_length(url) <= 300),
+  constraint team_p_title check (title is null or char_length(title) <= 80)
+);
+
+create table if not exists team_post_done (
+  post_id    uuid not null references team_posts(id) on delete cascade,
+  member_id  uuid not null references team_members(id) on delete cascade,
+  comment    text not null,
+  done_at    timestamptz not null default now(),
+  rejected   boolean not null default false,
+  primary key (post_id, member_id),
+  constraint team_d_comment check (char_length(comment) between 2 and 300)
+);
+
+create table if not exists team_bonuses (
+  member_id  uuid not null references team_members(id) on delete cascade,
+  month      date not null,                       -- first day of the month
+  amount     numeric(12,2) not null,
+  paid_at    timestamptz not null default now(),
+  paid_ref   text,
+  primary key (member_id, month)
+);
+
+insert into team_config(key, value) values ('monthly_bonus', '150') on conflict (key) do nothing;
+
+alter table team_posts     enable row level security;
+alter table team_post_done enable row level security;
+alter table team_bonuses   enable row level security;
+revoke all on team_posts, team_post_done, team_bonuses from public, anon, authenticated;
+
+create or replace function team_month_of(t timestamptz) returns date
+language sql immutable as $$ select date_trunc('month', t at time zone 'Asia/Riyadh')::date $$;
+revoke all on function team_month_of(timestamptz) from public, anon, authenticated;
+
+-- what the ambassador sees: this month's and last month's videos, her marks, her bonuses
+create or replace function team_tasks(p_token text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v uuid := team_member_of(p_token);
+begin
+  if v is null then return jsonb_build_object('error','auth'); end if;
+  return jsonb_build_object(
+    'bonus', (select value::numeric from team_config where key = 'monthly_bonus'),
+    'this_month', team_month_of(now()),
+    'posts', coalesce((select jsonb_agg(jsonb_build_object(
+        'id', p.id, 'url', p.url, 'title', p.title, 'created_at', p.created_at,
+        'month', team_month_of(p.created_at),
+        'done', d.post_id is not null, 'rejected', coalesce(d.rejected, false), 'comment', d.comment)
+        order by p.created_at desc)
+      from team_posts p left join team_post_done d on d.post_id = p.id and d.member_id = v
+      where team_month_of(p.created_at) >= (team_month_of(now()) - interval '1 month')::date), '[]'::jsonb),
+    'bonuses', coalesce((select jsonb_agg(jsonb_build_object('month', b.month, 'amount', b.amount,
+        'paid_at', b.paid_at, 'paid_ref', b.paid_ref) order by b.month desc)
+      from team_bonuses b where b.member_id = v), '[]'::jsonb));
+end $$;
+
+create or replace function team_task_done(p_token text, p_post uuid, p_comment text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v uuid := team_member_of(p_token); m date;
+begin
+  if v is null then return jsonb_build_object('error','auth'); end if;
+  if char_length(trim(coalesce(p_comment,''))) < 2 then return jsonb_build_object('error','comment'); end if;
+  select team_month_of(created_at) into m from team_posts where id = p_post;
+  if m is null then return jsonb_build_object('error','not_found'); end if;
+  if m < team_month_of(now()) then return jsonb_build_object('error','closed'); end if;   -- last month is closed
+  insert into team_post_done(post_id, member_id, comment) values (p_post, v, left(trim(p_comment), 300))
+  on conflict (post_id, member_id) do update
+    set comment = excluded.comment, done_at = now()
+    where not team_post_done.rejected;       -- a rejected mark stays rejected until the operator lifts it
+  if not found then return jsonb_build_object('error','rejected'); end if;
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function team_task_admin(p_secret text, p_action text, p jsonb default '{}'::jsonb) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v_month date := coalesce((p->>'month')::date, team_month_of(now())); v_bonus numeric;
+begin
+  if not team_is_admin(p_secret) then return jsonb_build_object('error','auth'); end if;
+  select value::numeric into v_bonus from team_config where key = 'monthly_bonus';
+
+  if p_action = 'list' then
+    return jsonb_build_object(
+      'bonus', v_bonus, 'month', v_month,
+      'posts', coalesce((select jsonb_agg(jsonb_build_object('id', id, 'url', url, 'title', title, 'created_at', created_at)
+                 order by created_at desc) from team_posts where team_month_of(created_at) = v_month), '[]'::jsonb),
+      'done', coalesce((select jsonb_agg(jsonb_build_object('post_id', d.post_id, 'member_id', d.member_id,
+                 'comment', d.comment, 'done_at', d.done_at, 'rejected', d.rejected))
+               from team_post_done d join team_posts p on p.id = d.post_id
+               where team_month_of(p.created_at) = v_month), '[]'::jsonb),
+      'paid', coalesce((select jsonb_agg(jsonb_build_object('member_id', member_id, 'amount', amount,
+                 'paid_at', paid_at, 'paid_ref', paid_ref)) from team_bonuses where month = v_month), '[]'::jsonb));
+  end if;
+
+  if p_action = 'post_add' then
+    insert into team_posts(url, title) values (trim(p->>'url'), nullif(trim(p->>'title'),''));
+    return jsonb_build_object('ok', true);
+  end if;
+  if p_action = 'post_del' then
+    delete from team_posts where id = (p->>'id')::uuid;
+    return jsonb_build_object('ok', true);
+  end if;
+  if p_action = 'reject' then
+    update team_post_done set rejected = not coalesce((p->>'undo')::boolean, false)
+     where post_id = (p->>'post_id')::uuid and member_id = (p->>'member_id')::uuid;
+    return jsonb_build_object('ok', true);
+  end if;
+  if p_action = 'set_bonus' then
+    update team_config set value = ((p->>'amount')::numeric)::text where key = 'monthly_bonus';
+    return jsonb_build_object('ok', true);
+  end if;
+  if p_action = 'pay' then
+    insert into team_bonuses(member_id, month, amount, paid_ref)
+    values ((p->>'member_id')::uuid, v_month, coalesce((p->>'amount')::numeric, v_bonus), nullif(p->>'ref',''))
+    on conflict (member_id, month) do nothing;
+    if not found then return jsonb_build_object('error','already'); end if;
+    return jsonb_build_object('ok', true);
+  end if;
+  if p_action = 'unpay' then
+    delete from team_bonuses where member_id = (p->>'member_id')::uuid and month = v_month;
+    return jsonb_build_object('ok', true);
+  end if;
+  return jsonb_build_object('error','action');
+end $$;
+
+grant execute on function team_tasks(text)                       to anon, authenticated;
+grant execute on function team_task_done(text,uuid,text)         to anon, authenticated;
+grant execute on function team_task_admin(text,text,jsonb)       to anon, authenticated;

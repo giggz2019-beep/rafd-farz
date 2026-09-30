@@ -189,6 +189,15 @@ table.members th { font-size: .75rem; color: var(--muted); }
 .scroll-x { overflow-x: auto; }
 .search { width: 100%; border: 1.5px solid var(--line); border-radius: 13px; padding: 11px 14px; background: #fff; margin-bottom: 12px; font-size: .95rem; }
 
+.task { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px dashed var(--line); }
+.task:first-of-type { border-top: 0; }
+.task b { font-size: .92rem; color: var(--navy-900); display: block; }
+.task small { color: var(--muted); font-size: .76rem; }
+.bar { height: 8px; border-radius: 8px; background: #eeebe5; overflow: hidden; margin: 10px 0 4px; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--teal-500), var(--gold-500)); border-radius: 8px; }
+.task-box { background: linear-gradient(150deg, var(--rose-100), #fff 70%); border-color: var(--rose-300); }
+.cmt { background: #faf7f2; border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; font-size: .84rem; margin-top: 6px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.cmt.rej { background: var(--bad-bg); text-decoration: line-through; color: var(--bad); }
 footer.foot { text-align: center; color: var(--muted); font-size: .8rem; padding: 26px 16px 34px; }
 
 @media (max-width: 820px) {
@@ -256,6 +265,11 @@ const ERR = {
   iban: 'رقم الآيبان غير صحيح — تأكدي منه (SA + 22 رقم)',
   mine: 'هذا العميل مسجّل باسمك من قبل',
   code: 'الرابط غير صالح',
+  comment: 'الصقي نص تعليقك عشان نتأكد منه',
+  closed: 'هذا الشهر انقفل',
+  rejected: 'هذا المقطع انرفض — ما لقينا تعليقك. راجعي الإدارة',
+  already: 'المكافأة مصروفة من قبل',
+  url: 'الرابط لازم يبدأ بـ https://',
   auth: 'انتهت الجلسة — سجّلي دخولك مرة ثانية',
   network: 'تعذّر الاتصال — تأكدي من الإنترنت وجرّبي مرة ثانية'
 };
@@ -278,6 +292,12 @@ const fmtDate = d => d ? new Date(d).toLocaleDateString('ar-SA-u-ca-gregory-nu-l
 const fmtDateTime = d => d ? new Date(d).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
 const wa = p => 'https://wa.me/966' + String(p).slice(1);
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
+
+/* A calendar month in Riyadh time, as the first day: '2026-09-01' — the same key team_month_of() returns. */
+const monthOf = t => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Riyadh', year: 'numeric', month: '2-digit' }).format(new Date(t)) + '-01';
+const prevMonth = m => { const [y, mo] = m.split('-').map(Number); return mo === 1 ? `${y - 1}-12-01` : `${y}-${String(mo - 1).padStart(2, '0')}-01`; };
+const monthName = m => new Date(m + 'T12:00:00Z').toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { month: 'long', year: 'numeric' });
+const safeUrl = u => /^https:\/\//.test(u || '') ? u : '#';
 
 function ibanClean(s) { return toLatin(s).toUpperCase().replace(/[^A-Z0-9]/g, ''); }
 function ibanOk(x) {
@@ -382,6 +402,46 @@ const demo = (() => {
       if (!m) return { error: 'code' }; if (!phoneOk(a.p_phone)) return { error: 'phone' };
       if ((a.p_name || '').trim().length < 2) return { error: 'name' };
       insertLead(d, m, 'link', a); save(d); return { ok: true };
+    },
+    team_tasks(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      const cur = monthOf(now()); const prev = prevMonth(cur);
+      return { bonus: d.bonus ?? 150, this_month: cur,
+        posts: (d.posts || []).filter(p => monthOf(p.created_at) >= prev).sort((x, y) => y.created_at.localeCompare(x.created_at)).map(p => {
+          const k = (d.done || []).find(x => x.post_id === p.id && x.member_id === m.id);
+          return { ...p, month: monthOf(p.created_at), done: !!k, rejected: !!(k && k.rejected), comment: k ? k.comment : null }; }),
+        bonuses: (d.bonuses || []).filter(b => b.member_id === m.id).sort((x, y) => y.month.localeCompare(x.month)) };
+    },
+    team_task_done(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      if ((a.p_comment || '').trim().length < 2) return { error: 'comment' };
+      const p = (d.posts || []).find(x => x.id === a.p_post); if (!p) return { error: 'not_found' };
+      if (monthOf(p.created_at) < monthOf(now())) return { error: 'closed' };
+      d.done = d.done || [];
+      const k = d.done.find(x => x.post_id === p.id && x.member_id === m.id);
+      if (k && k.rejected) return { error: 'rejected' };
+      if (k) { k.comment = a.p_comment.trim().slice(0, 300); k.done_at = now(); }
+      else d.done.push({ post_id: p.id, member_id: m.id, comment: a.p_comment.trim().slice(0, 300), done_at: now(), rejected: false });
+      save(d); return { ok: true };
+    },
+    team_task_admin(a) {
+      const d = db(); if (a.p_secret !== 'demo') return { error: 'auth' };
+      const p = a.p || {}; const month = p.month || monthOf(now()); const bonus = d.bonus ?? 150;
+      d.posts = d.posts || []; d.done = d.done || []; d.bonuses = d.bonuses || [];
+      if (a.p_action === 'list') {
+        const ids = d.posts.filter(x => monthOf(x.created_at) === month).map(x => x.id);
+        return { bonus, month, posts: d.posts.filter(x => ids.includes(x.id)).sort((x, y) => y.created_at.localeCompare(x.created_at)),
+          done: d.done.filter(x => ids.includes(x.post_id)), paid: d.bonuses.filter(b => b.month === month) };
+      }
+      if (a.p_action === 'post_add') { if (!/^https:\/\//.test(p.url || '')) return { error: 'url' }; d.posts.push({ id: uid(), url: p.url.trim(), title: (p.title || '').trim() || null, created_at: now() }); }
+      else if (a.p_action === 'post_del') { d.posts = d.posts.filter(x => x.id !== p.id); d.done = d.done.filter(x => x.post_id !== p.id); }
+      else if (a.p_action === 'reject') { const k = d.done.find(x => x.post_id === p.post_id && x.member_id === p.member_id); if (k) k.rejected = !p.undo; }
+      else if (a.p_action === 'set_bonus') d.bonus = +p.amount;
+      else if (a.p_action === 'pay') { if (d.bonuses.some(b => b.member_id === p.member_id && b.month === month)) return { error: 'already' };
+        d.bonuses.push({ member_id: p.member_id, month, amount: p.amount ?? bonus, paid_at: now(), paid_ref: p.ref || null }); }
+      else if (a.p_action === 'unpay') d.bonuses = d.bonuses.filter(b => !(b.member_id === p.member_id && b.month === month));
+      else return { error: 'action' };
+      save(d); return { ok: true };
     },
     team_admin(a) {
       const d = db(); if (a.p_secret !== 'demo') return { error: 'auth' };
@@ -495,7 +555,7 @@ function viewJoin() {
         <div class="field"><label>رقم الجوال</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX" autocomplete="tel"></div>
         <div class="field"><label>المدينة</label><input name="city" autocomplete="address-level2"></div>
       </div>
-      <div class="field"><label>حسابك في تيك توك <small>(اختياري)</small></label><input name="tiktok" class="ltr" placeholder="@username"></div>
+      <div class="field"><label>حسابك في تيك توك <small>(نحتاجه للمهمة الشهرية)</small></label><input name="tiktok" class="ltr" placeholder="@username"></div>
       <div class="field"><label>كلمة المرور</label><input name="password" type="password" autocomplete="new-password"><div class="hint">6 أحرف على الأقل — تدخلين فيها مع رقم جوالك.</div></div>
       <details style="margin-bottom:8px"><summary style="cursor:pointer;font-weight:700;color:var(--teal-600);font-size:.9rem">اقرئي شروط البرنامج</summary><div style="margin-top:10px">${RULES}</div></details>
       <label class="check"><input type="checkbox" name="agree"><span>قرأت شروط البرنامج وأوافق عليها، وأعرف إن العمولة على العميل اللي أسجّله أول وتم التعاقد معه.</span></label>
@@ -544,12 +604,13 @@ function viewLogin() {
 }
 
 /* ---------- ambassador dashboard ---------- */
-let meData = null, leadFilter = 'all';
+let meData = null, tasksData = null, leadFilter = 'all';
 function refLink(code) { return location.origin + location.pathname + '#/r/' + code; }
 
 async function viewMe() {
   app.innerHTML = '<div class="wrap"><div class="empty">…</div></div>';
-  const r = await rpc('team_me', { p_token: store(TOKEN_KEY) });
+  const [r, t] = await Promise.all([rpc('team_me', { p_token: store(TOKEN_KEY) }), rpc('team_tasks', { p_token: store(TOKEN_KEY) })]);
+  tasksData = t && !t.error ? t : null;
   if (!r || r.error === 'auth') { store(TOKEN_KEY, null); toast(ERR.auth); return go('login'); }
   if (r.error) { app.innerHTML = `<div class="wrap"><div class="msg err" style="margin-top:20px">${ERR.network}</div></div>`; return; }
   meData = r; drawMe();
@@ -585,6 +646,7 @@ function drawMe() {
         <div id="leads"></div>
       </div>
       <div class="side">
+        <div class="card task-box" id="taskCard" ${tasksData ? '' : 'hidden'}></div>
         <div class="card ref-box">
           <div class="panel-title" style="margin-bottom:4px"><h2>كودك ورابطك</h2></div>
           <div class="ref-code num">${esc(m.code)}</div>
@@ -601,7 +663,7 @@ function drawMe() {
   </div>`;
   $('#cpLink').onclick = () => copy(refLink(m.code));
   $('#addLead').onclick = openLeadSheet;
-  drawFilters(); drawLeads(); drawIban();
+  drawFilters(); drawLeads(); drawIban(); drawTasks();
 }
 
 function drawFilters() {
@@ -661,6 +723,52 @@ function drawIban() {
     : `<p style="color:var(--muted);font-size:.88rem;line-height:1.8;margin-bottom:10px">أضيفي الآيبان عشان تنحوّل عمولتك على طول أول ما تتم الصفقة.</p>
        <button class="btn btn-gold btn-sm btn-block" id="editIban">إضافة الآيبان</button>`}`;
   $('#editIban').onclick = openIbanSheet;
+}
+
+function drawTasks() {
+  const c = $('#taskCard'); if (!c || !tasksData) return;
+  const t = tasksData; const cur = t.this_month;
+  const posts = t.posts.filter(p => p.month === cur);
+  const ok = posts.filter(p => p.done && !p.rejected).length;
+  const all = posts.length && ok === posts.length;
+  const paidNow = t.bonuses.find(b => b.month === cur);
+  c.innerHTML = `
+    <div class="panel-title" style="margin-bottom:4px"><h2>المهمة الشهرية</h2><span class="pill ${all ? 'won' : 'negotiating'} num">${ok} / ${posts.length}</span></div>
+    <p style="font-size:.86rem;color:#5b4442;line-height:1.8">لايك + شير + تعليق على كل مقطع ننزّله في ${esc(monthName(cur))}، وآخر الشهر تاخذين <b class="num">${money(t.bonus)}</b> ر.س.</p>
+    <div class="bar"><i style="width:${posts.length ? Math.round(ok / posts.length * 100) : 0}%"></i></div>
+    <p style="font-size:.8rem;margin-bottom:6px;color:${all ? 'var(--ok)' : 'var(--muted)'}">${paidNow ? `✓ انصرفت مكافأة هذا الشهر` : !posts.length ? 'ما نزل مقطع هذا الشهر بعد.' : all ? '✓ مكمّلة — تستحقين المكافأة آخر الشهر' : `باقي ${posts.length - ok} ${posts.length - ok === 1 ? 'مقطع' : 'مقاطع'}`}</p>
+    ${posts.map(p => `<div class="task">
+      <div style="min-width:0"><b>${esc(p.title || 'مقطع')}</b><small>${fmtDate(p.created_at)}</small>
+        ${p.rejected ? '<div style="font-size:.76rem;color:var(--bad)">✕ ما لقينا تعليقك — راجعي الإدارة</div>' : ''}</div>
+      <div class="btn-row" style="flex:none">
+        <a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">افتحي ↗</a>
+        ${p.rejected ? '' : p.done ? `<button class="btn btn-ghost btn-sm" data-task="${p.id}" style="color:var(--ok)">✓ تم</button>` : `<button class="btn btn-main btn-sm" data-task="${p.id}">سويتها</button>`}
+      </div></div>`).join('')}
+    ${t.bonuses.length ? `<div style="margin-top:10px;font-size:.8rem;color:var(--muted)">${t.bonuses.map(b => `✓ ${esc(monthName(b.month))}: <span class="num">${money(b.amount)}</span> ر.س`).join('<br>')}</div>` : ''}`;
+  c.onclick = e => { const b = e.target.closest('[data-task]'); if (b) openTaskSheet(t.posts.find(p => p.id === b.dataset.task)); };
+}
+
+function openTaskSheet(post) {
+  const s = sheet(esc(post.title || 'مقطع'), `
+    <div id="tm"></div>
+    <a class="btn btn-soft btn-block" href="${esc(safeUrl(post.url))}" target="_blank" rel="noopener" style="margin-bottom:14px">افتحي المقطع في تيك توك ↗</a>
+    <form id="tf" novalidate>
+      <label class="check"><input type="checkbox" name="like"><span>سويت لايك ❤️</span></label>
+      <label class="check" style="margin-top:-8px"><input type="checkbox" name="share"><span>سويت شير ↪️</span></label>
+      <div class="field"><label>الصقي تعليقك هنا</label><textarea name="comment" placeholder="نفس النص اللي كتبتيه تحت المقطع">${esc(post.comment || '')}</textarea>
+        <div class="hint">تيك توك ما تعطينا مين سوّى لايك أو شير، فالتعليق هو اللي نتأكد منه تحت حسابك${meData.member.tiktok ? ' <span class="num">' + esc(meData.member.tiktok) + '</span>' : ''}. تعليق ما نلقاه ينرفض.</div></div>
+      <button class="btn btn-main btn-block" type="submit">تم ✓</button>
+    </form>`);
+  $('#tf', s.el).onsubmit = async e => {
+    e.preventDefault(); const f = e.target; const m = $('#tm', s.el); const b = f.querySelector('button');
+    if (!f.like.checked || !f.share.checked) return formMsg(m, 'err', 'المهمة لايك وشير وتعليق — الثلاثة');
+    if (f.comment.value.trim().length < 2) return formMsg(m, 'err', ERR.comment);
+    b.disabled = true;
+    const r = await rpc('team_task_done', { p_token: store(TOKEN_KEY), p_post: post.id, p_comment: f.comment.value.trim() });
+    b.disabled = false;
+    if (!r || r.error) return formMsg(m, 'err', ERR[r && r.error] || ERR.network);
+    s.close(); toast('انحسبت ✓'); viewMe();
+  };
 }
 
 function sheet(title, html) {
@@ -798,6 +906,7 @@ function drawAdmin() {
     <div class="adm-tabs">
       <button class="chip ${admTab === 'leads' ? 'on' : ''}" data-t="leads">العملاء (<span class="num">${leads.length}</span>)</button>
       <button class="chip ${admTab === 'members' ? 'on' : ''}" data-t="members">الفريق (<span class="num">${members.length}</span>)</button>
+      <button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">المهمة الشهرية</button>
       <span style="flex:1"></span>
       <button class="btn btn-soft btn-sm" id="csv">تصدير Excel</button>
       <button class="btn btn-ghost btn-sm" id="admOut">خروج</button>
@@ -813,7 +922,81 @@ function drawAdmin() {
   app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { admTab = b.dataset.t; drawAdmin(); });
   $('#admOut').onclick = () => { try { sessionStorage.removeItem(ADMIN_KEY); } catch (e) {} admLogin(); };
   $('#csv').onclick = exportCsv;
-  admTab === 'leads' ? drawAdmLeads() : drawAdmMembers();
+  admTab === 'leads' ? drawAdmLeads() : admTab === 'tasks' ? loadAdmTasks() : drawAdmMembers();
+}
+
+let admTaskMonth = null, admTasks = null;
+async function loadAdmTasks() {
+  admTaskMonth = admTaskMonth || monthOf(Date.now());
+  const r = await rpc('team_task_admin', { p_secret: admSecret(), p_action: 'list', p: { month: admTaskMonth } });
+  if (!r || r.error) return toast(ERR[r && r.error] || ERR.network);
+  admTasks = r; drawAdmTasks();
+}
+
+async function taskAct(action, p) {
+  const r = await rpc('team_task_admin', { p_secret: admSecret(), p_action: action, p: { month: admTaskMonth, ...p } });
+  if (!r || r.error) { toast(ERR[r && r.error] || ERR.network); return false; }
+  toast('تم ✓'); await loadAdmTasks(); return true;
+}
+
+function drawAdmTasks() {
+  const { posts, done, paid, bonus } = admTasks; const members = admData.members.filter(m => m.status !== 'suspended' || paid.some(p => p.member_id === m.id));
+  const cur = monthOf(Date.now()); const months = [cur, prevMonth(cur), prevMonth(prevMonth(cur))];
+  const isCur = admTaskMonth === cur;
+  const rows = members.map(m => {
+    const mine = done.filter(d => d.member_id === m.id);
+    const ok = mine.filter(d => !d.rejected).length;
+    return { m, mine, ok, full: posts.length > 0 && ok === posts.length, pay: paid.find(p => p.member_id === m.id) };
+  }).sort((a, b) => b.ok - a.ok);
+  const due = rows.filter(r => r.full && !r.pay).length;
+  $('#admBody').innerHTML = `
+    <div class="filters">${months.map(mo => `<button class="chip ${mo === admTaskMonth ? 'on' : ''}" data-mo="${mo}">${esc(monthName(mo))}</button>`).join('')}</div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="row2" style="align-items:end">
+        <div class="field" style="margin:0"><label>المكافأة الشهرية (ر.س)</label><input id="bonusAmt" class="num" inputmode="decimal" value="${esc(bonus)}"></div>
+        <button class="btn btn-soft" id="bonusSave">حفظ المبلغ</button>
+      </div>
+      ${isCur ? `<form id="postForm" style="margin-top:14px" novalidate>
+        <div class="row2">
+          <div class="field" style="margin:0"><label>رابط المقطع</label><input name="url" class="ltr" placeholder="https://www.tiktok.com/@…/video/…"></div>
+          <div class="field" style="margin:0"><label>عنوان قصير <small>(اختياري)</small></label><input name="title" placeholder="مثلاً: إعلان الباقة الجديدة"></div>
+        </div>
+        <button class="btn btn-main btn-sm" style="margin-top:10px">＋ نزّل المقطع للفريق</button>
+      </form>` : '<p class="hint" style="margin-top:10px;color:var(--muted);font-size:.85rem">شهر منتهي — للمراجعة والصرف فقط.</p>'}
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="panel-title"><h2>مقاطع ${esc(monthName(admTaskMonth))} (<span class="num">${posts.length}</span>)</h2></div>
+      ${posts.map(p => `<div class="task"><div style="min-width:0"><b>${esc(p.title || 'مقطع')}</b><small>${fmtDate(p.created_at)} · سوّتها <span class="num">${done.filter(d => d.post_id === p.id && !d.rejected).length} / ${members.length}</span></small></div>
+        <div class="btn-row"><a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">فتح ↗</a><button class="btn btn-ghost btn-sm" data-del="${p.id}">حذف</button></div></div>`).join('') || '<div class="empty">ما نزل مقطع هذا الشهر.</div>'}
+    </div>
+    <div class="card">
+      <div class="panel-title"><h2>الفريق</h2>${due ? `<span class="pill negotiating">${due} يستحقون الصرف</span>` : ''}</div>
+      ${rows.map(({ m, mine, ok, full, pay }) => `<div class="adm-lead">
+        <div class="lead-top">
+          <div><b>${esc(m.name)}</b> ${m.tiktok ? `<span class="num" style="color:var(--teal-600);font-size:.85rem">${esc(m.tiktok)}</span>` : '<small style="color:var(--bad)">بدون حساب تيك توك</small>'}
+            <div class="who num">${ok} / ${posts.length}</div></div>
+          <div class="btn-row">${pay
+            ? `<span class="pill won">✓ صُرفت ${money(pay.amount)}${pay.paid_ref ? ' · ' + esc(pay.paid_ref) : ''}</span><button class="btn btn-ghost btn-sm" data-unpay="${m.id}">تراجع</button>`
+            : full ? `<button class="btn btn-gold btn-sm" data-pay="${m.id}">صرف ${money(bonus)}</button>` : `<span class="pill new">غير مكتملة</span>`}</div>
+        </div>
+        ${mine.length ? `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:.82rem;color:var(--teal-600)">التعليقات (${mine.length})</summary>
+          ${mine.map(d => { const p = posts.find(x => x.id === d.post_id) || {}; return `<div class="cmt ${d.rejected ? 'rej' : ''}"><span><small style="color:var(--muted)">${esc(p.title || 'مقطع')}:</small> ${esc(d.comment)}</span>
+            <button class="btn btn-ghost btn-sm" data-rej="${d.post_id}|${m.id}|${d.rejected ? 1 : 0}">${d.rejected ? 'إرجاع' : 'رفض'}</button></div>`; }).join('')}</details>` : ''}
+      </div>`).join('') || '<div class="empty">ما فيه أحد بعد.</div>'}
+    </div>`;
+  const body = $('#admBody');
+  body.querySelectorAll('[data-mo]').forEach(b => b.onclick = () => { admTaskMonth = b.dataset.mo; loadAdmTasks(); });
+  $('#bonusSave').onclick = () => { const v = +toLatin($('#bonusAmt').value).replace(/[^\d.]/g, ''); if (!v) return toast('اكتب مبلغ صحيح'); taskAct('set_bonus', { amount: v }); };
+  const pf = $('#postForm');
+  if (pf) pf.onsubmit = e => { e.preventDefault(); const url = pf.url.value.trim(); if (!/^https:\/\//.test(url)) return toast(ERR.url); taskAct('post_add', { url, title: pf.title.value.trim() }); };
+  body.onclick = e => {
+    const t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.del && confirm('تحذف المقطع؟ تنحذف معه علامات الفريق عليه.')) taskAct('post_del', { id: t.dataset.del });
+    if (t.dataset.rej) { const [post_id, member_id, was] = t.dataset.rej.split('|'); taskAct('reject', { post_id, member_id, undo: was === '1' }); }
+    if (t.dataset.pay) { const m = admData.members.find(x => x.id === t.dataset.pay);
+      const ref = prompt(`صرف ${money(bonus)} ر.س لـ ${m.name}\n${m.iban ? ibanPretty(m.iban) : 'ما أضافت آيبان'}\n\nالرقم المرجعي (اختياري):`, ''); if (ref !== null) taskAct('pay', { member_id: m.id, ref: ref.trim(), amount: bonus }); }
+    if (t.dataset.unpay && confirm('تلغي تسجيل الصرف؟')) taskAct('unpay', { member_id: t.dataset.unpay });
+  };
 }
 
 const memberById = id => admData.members.find(m => m.id === id) || {};
