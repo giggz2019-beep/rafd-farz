@@ -53,6 +53,10 @@ create table if not exists team_members (
   constraint team_m_bank    check (bank is null or char_length(bank) <= 40)
 );
 
+alter table team_members add column if not exists agreed_rate numeric(5,2);
+alter table team_members add column if not exists agreement_text text;
+alter table team_members add column if not exists agreement_text_en text;
+
 create table if not exists team_sessions (
   token_hash  text primary key,
   member_id   uuid not null references team_members(id) on delete cascade,
@@ -106,6 +110,64 @@ insert into team_config(key, value)
   on conflict (key) do nothing;
 -- Read it once in the SQL editor:   select value from team_config where key='admin_secret';
 -- Rotate it:                        update team_config set value='…' where key='admin_secret';
+
+-- ---------- the membership agreement ----------
+-- RAFD's written commitment to each ambassador. Its text lives here with
+-- placeholders ({rate} {days} {priority} {name} {phone}) and is RENDERED and
+-- SNAPSHOTTED onto the member at registration together with the rate, so a
+-- later change of rate or wording never touches what someone already accepted.
+insert into team_config(key, value) values ('commission_rate', '5') on conflict (key) do nothing;
+insert into team_config(key, value) values ('payout_days', '15') on conflict (key) do nothing;
+insert into team_config(key, value) values ('agreement', $agr$## أطراف الاتفاقية
+- الطرف الأول: شركة رفد الرقمية، ويُشار إليها بـ«رفد».
+- الطرف الثاني: {name}، جوال رقم {phone}، ويُشار إليه بـ«المندوب».
+## طبيعة العلاقة
+- يعمل المندوب مع رفد بصفة مستقلة وبنظام العمولة، ولا تُنشئ هذه الاتفاقية علاقة عمل بين الطرفين ولا تُعد عقد عمل، ولا يترتب عليها أجر ثابت أو بدلات أو أي من حقوق العامل المقررة نظاماً.
+- لرفد أن تعرض على المندوب الذي يُثبت كفاءته عقداً مستقلاً براتب وعمولة، ويخضع ذلك العقد لشروطه الخاصة.
+## العمولة
+- تلتزم رفد بأن تدفع للمندوب عمولة نسبتها ({rate}%) من قيمة العقد الأول المبرم مع كل عميل يُنسب إليه وفق هذه الاتفاقية.
+- تُحتسب العمولة على المبالغ المحصّلة فعلياً من العميل، غير شاملة ضريبة القيمة المضافة.
+- تُستحق العمولة بعد توقيع العميل العقد وتحصيل قيمته، وتُحوَّل خلال ({days}) يوماً من تاريخ التحصيل إلى الحساب البنكي المسجّل باسم المندوب في المنصة.
+- تبقى النسبة الواردة في هذه الاتفاقية سارية على المندوب، ولا يسري عليه أي تعديل لاحق عليها إلا بموافقته.
+## نسبة العميل إلى المندوب
+- يُنسب العميل إلى أول مندوب يسجّله في المنصة، وتبقى الأولوية له مدة ({priority}) يوماً من تاريخ التسجيل.
+- يُعد تسجيل المنصة، بتاريخه ووقته المحفوظين آلياً، المرجع المعتمد بين الطرفين عند أي اختلاف.
+## التزامات المندوب
+- تقديم معلومات صحيحة عن نفسه وعن العملاء الذين يسجّلهم.
+- عدم تقديم أي أسعار أو خصومات أو التزامات باسم رفد خارج عروض الأسعار الصادرة منها رسمياً.
+- المحافظة على سرية بيانات العملاء والأسعار، وعدم استخدامها لغير أغراض هذه الاتفاقية.
+## إنهاء المشاركة
+- لأي من الطرفين إنهاء المشاركة في أي وقت بإشعار عبر المنصة أو كتابياً.
+- يحتفظ المندوب بعد الإنهاء بحقه في عمولة العملاء المنسوبين إليه قبل الإنهاء، متى تعاقدوا خلال مدة الأولوية.
+- لرفد إيقاف حساب المندوب إذا أخلّ بأي من التزاماته، مع حفظ حقه في العمولات المستحقة عن الفترة السابقة للإخلال.
+## أحكام عامة
+- تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.
+- تُعد موافقة المندوب الإلكترونية على هذه الاتفاقية عند التسجيل إقراراً ملزماً للطرفين، وتحفظ المنصة نسخة منها في حساب المندوب بتاريخ الموافقة ونسبة العمولة المتفق عليها.$agr$) on conflict (key) do nothing;
+insert into team_config(key, value) values ('agreement_en', $agr$## Parties
+- First party: RAFD Digital ("RAFD").
+- Second party: {name}, mobile number {phone} (the "Representative").
+## Nature of the relationship
+- The Representative works with RAFD independently and on a commission basis. This agreement does not create an employment relationship between the parties, is not an employment contract, and gives rise to no fixed salary, allowances or any statutory employee entitlements.
+- RAFD may offer a Representative who proves their ability a separate contract with a salary and commission, which will be governed by its own terms.
+## Commission
+- RAFD undertakes to pay the Representative a commission of ({rate}%) of the value of the first contract concluded with each client attributed to them under this agreement.
+- Commission is calculated on amounts actually collected from the client, excluding VAT.
+- Commission becomes due once the client has signed the contract and its value has been collected, and is transferred within ({days}) days of collection to the bank account registered in the Representative's name on the platform.
+- The rate stated in this agreement continues to apply to the Representative, and no later change to it applies to them without their consent.
+## Attribution of clients
+- A client is attributed to the first Representative who registers them on the platform, and that priority is kept for ({priority}) days from the date of registration.
+- The platform's record, with its automatically stored date and time, is the agreed reference between the parties in the event of any dispute.
+## Representative's obligations
+- To provide accurate information about themselves and about the clients they register.
+- Not to offer any prices, discounts or commitments on RAFD's behalf outside the quotations RAFD issues officially.
+- To keep client data and prices confidential and not use them for any purpose other than this agreement.
+## Ending participation
+- Either party may end participation at any time by notice through the platform or in writing.
+- After participation ends, the Representative keeps the right to commission on clients attributed to them before it ended, provided they contract within the priority period.
+- RAFD may suspend the Representative's account for breach of any of their obligations, without prejudice to commission already earned for the period before the breach.
+## General provisions
+- This agreement is governed by the laws of the Kingdom of Saudi Arabia.
+- The Representative's electronic acceptance of this agreement at registration is a binding acknowledgement by both parties, and the platform keeps a copy of it in the Representative's account with the date of acceptance and the agreed commission rate.$agr$) on conflict (key) do nothing;
 
 create table if not exists team_attempts (
   key  text not null,
@@ -176,6 +238,17 @@ begin
   return ok;
 end $$;
 
+create or replace function team_agreement_render(p_key text, p_name text, p_phone text) returns text
+language sql security definer set search_path = public stable as $$
+  select replace(replace(replace(replace(replace(
+           (select value from team_config where key = p_key),
+           '{rate}',     (select trim(trailing '.' from to_char(value::numeric, 'FM999990.99')) from team_config where key = 'commission_rate')),
+           '{days}',     (select value from team_config where key = 'payout_days')),
+           '{priority}', '180'),
+           '{name}',     coalesce(nullif(trim(p_name),''), '________')),
+           '{phone}',    coalesce(nullif(trim(p_phone),''), '________'))
+$$;
+
 -- insert a lead and decide attribution in one place
 create or replace function team_insert_lead(p_member uuid, p_source text, p_name text, p_company text,
   p_phone text, p_city text, p_service text, p_notes text) returns jsonb
@@ -205,6 +278,7 @@ revoke all on function team_member_of(text)                   from public, anon,
 revoke all on function team_new_session(uuid)                 from public, anon, authenticated;
 revoke all on function team_is_admin(text)                    from public, anon, authenticated;
 revoke all on function team_insert_lead(uuid,text,text,text,text,text,text,text) from public, anon, authenticated;
+revoke all on function team_agreement_render(text,text,text)  from public, anon, authenticated;
 
 -- ---------- public API (callable with the anon key) ----------
 
@@ -224,9 +298,12 @@ begin
     exit when not exists (select 1 from team_members where code = v_code) or i > 20;
     i := i + 1;
   end loop;
-  insert into team_members(code, full_name, phone, city, tiktok, pass_hash)
+  insert into team_members(code, full_name, phone, city, tiktok, pass_hash, agreed_rate, agreement_text, agreement_text_en)
   values (v_code, trim(p_name), p_phone, nullif(trim(p_city),''), nullif(trim(p_tiktok),''),
-          crypt(p_password, gen_salt('bf')))
+          crypt(p_password, gen_salt('bf')),
+          (select value::numeric from team_config where key = 'commission_rate'),
+          team_agreement_render('agreement', p_name, p_phone),
+          team_agreement_render('agreement_en', p_name, p_phone))
   returning id into v_id;
   insert into team_attempts(key) values ('reg');
   return jsonb_build_object('ok', true, 'token', team_new_session(v_id));
@@ -265,7 +342,9 @@ begin
       'code', m.code, 'status', m.status, 'created_at', m.created_at,
       'iban_masked', case when m.iban is null then null
                           else 'SA•• •••• •••• •••• ••' || right(m.iban, 4) end,
-      'iban_name', m.iban_name, 'bank', m.bank, 'iban_at', m.iban_at),
+      'iban_name', m.iban_name, 'bank', m.bank, 'iban_at', m.iban_at,
+      'agreed_rate', m.agreed_rate, 'agreed_at', m.terms_at,
+      'agreement_text', m.agreement_text, 'agreement_text_en', m.agreement_text_en),
     'catalog', (select coalesce(jsonb_agg(e - 'price'), '[]'::jsonb)
                   from team_config c, jsonb_array_elements(c.value::jsonb) e where c.key = 'catalog'),
     'leads', coalesce((select jsonb_agg(jsonb_build_object(
@@ -303,6 +382,16 @@ begin
    where id = v;
   return jsonb_build_object('ok', true);
 end $$;
+
+-- the agreement as it stands today, for the sign-up page (name/phone are filled in live there)
+create or replace function team_agreement() returns jsonb
+language sql security definer set search_path = public stable as $$
+  select jsonb_build_object(
+    'rate', (select value::numeric from team_config where key = 'commission_rate'),
+    'days', (select value::int from team_config where key = 'payout_days'),
+    'text', team_agreement_render('agreement', '{name}', '{phone}'),
+    'text_en', team_agreement_render('agreement_en', '{name}', '{phone}'))
+$$;
 
 -- the client's own form, reached through an ambassador's link
 create or replace function team_ref_info(p_code text) returns jsonb
@@ -343,7 +432,8 @@ begin
       'members', coalesce((select jsonb_agg(jsonb_build_object(
           'id', m.id, 'code', m.code, 'name', m.full_name, 'phone', m.phone, 'city', m.city,
           'tiktok', m.tiktok, 'status', m.status, 'iban', m.iban, 'iban_name', m.iban_name,
-          'bank', m.bank, 'created_at', m.created_at) order by m.created_at) from team_members m), '[]'::jsonb),
+          'bank', m.bank, 'created_at', m.created_at, 'agreed_rate', m.agreed_rate, 'agreed_at', m.terms_at)
+          order by m.created_at) from team_members m), '[]'::jsonb),
       'leads', coalesce((select jsonb_agg(jsonb_build_object(
           'id', l.id, 'member_id', l.member_id, 'client_name', l.client_name, 'company', l.company,
           'client_phone', l.client_phone, 'city', l.city, 'service', l.service, 'notes', l.notes,
@@ -397,6 +487,30 @@ begin
                               'terms_en', (select value from team_config where key = 'quote_terms_en'));
   end if;
 
+  if p_action = 'agreement' then
+    if p ? 'rate' then
+      if (p->>'rate')::numeric not between 0 and 100 then return jsonb_build_object('error','rate'); end if;
+      update team_config set value = (p->>'rate') where key = 'commission_rate';
+    end if;
+    if p ? 'days' then
+      if (p->>'days')::int not between 1 and 120 then return jsonb_build_object('error','rate'); end if;
+      update team_config set value = (p->>'days') where key = 'payout_days';
+    end if;
+    if p ? 'text' then
+      if char_length(coalesce(p->>'text','')) not between 50 and 12000 then return jsonb_build_object('error','terms_short'); end if;
+      update team_config set value = p->>'text' where key = 'agreement';
+    end if;
+    if p ? 'text_en' then
+      if char_length(coalesce(p->>'text_en','')) not between 50 and 12000 then return jsonb_build_object('error','terms_short'); end if;
+      update team_config set value = p->>'text_en' where key = 'agreement_en';
+    end if;
+    return jsonb_build_object('ok', true,
+      'rate', (select value::numeric from team_config where key = 'commission_rate'),
+      'days', (select value::int from team_config where key = 'payout_days'),
+      'text', (select value from team_config where key = 'agreement'),
+      'text_en', (select value from team_config where key = 'agreement_en'));
+  end if;
+
   if p_action = 'catalog' then
     if p ? 'catalog' then
       if jsonb_typeof(p->'catalog') <> 'array' or jsonb_array_length(p->'catalog') > 40
@@ -433,6 +547,7 @@ grant execute on function team_me(text)                                         
 grant execute on function team_add_lead(text,text,text,text,text,text,text)           to anon, authenticated;
 grant execute on function team_set_iban(text,text,text,text)                          to anon, authenticated;
 grant execute on function team_ref_info(text)                                         to anon, authenticated;
+grant execute on function team_agreement()                                            to anon, authenticated;
 grant execute on function team_ref_submit(text,text,text,text,text,text,text)         to anon, authenticated;
 grant execute on function team_admin(text,text,jsonb)                                 to anon, authenticated;
 

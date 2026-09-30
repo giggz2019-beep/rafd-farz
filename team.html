@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>سفراء رفد</title>
-<meta name="description" content="سفراء رفد — سجّلي عملاءك باسمك، تابعي صفقاتك وعمولاتك خطوة بخطوة.">
+<meta name="description" content="سفراء رفد — سجّل عملاءك باسمك، وتابع صفقاتك وعمولاتك خطوة بخطوة.">
 <meta name="theme-color" content="#0A1628">
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon-32.png">
@@ -282,6 +282,22 @@ table.qd tr.it-n td { border-top: 0; padding-top: 0; color: var(--muted); font-s
 .catrow input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; font-size: .85rem; }
 .catrow input.en { direction: ltr; }
 .tabs2 { display: flex; gap: 6px; margin-bottom: 10px; }
+.agr { max-height: 300px; overflow-y: auto; border: 1.5px solid var(--line); border-radius: 14px; padding: 14px 16px; background: #fff; font-size: .86rem; line-height: 1.9; margin-bottom: 10px; }
+.agr h4 { font-size: .9rem; font-weight: 800; color: var(--navy-900); margin: 10px 0 2px; display: flex; gap: 8px; align-items: center; }
+.agr h4:first-child { margin-top: 0; }
+.agr .tn { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--navy-900); color: #fff; font-size: .68rem; flex: none; }
+.agr ul { padding-inline-start: 18px; }
+.agr-full { max-height: none; }
+.agr-title { font-weight: 900; color: var(--navy-900); font-size: 1rem; margin-bottom: 8px; }
+.agr-meta { font-size: .82rem; color: var(--muted); margin-bottom: 10px; line-height: 1.8; }
+.agr-card { background: linear-gradient(150deg, var(--teal-100), #fff 70%); border-color: #bfdfe2; }
+.agr-card .big { font-size: 1.6rem; font-weight: 900; color: var(--navy-900); }
+@media print {
+  body.print-sheet > *:not(.sheet-bg) { display: none !important; }
+  body.print-sheet .sheet-bg { position: static; background: none; display: block; }
+  body.print-sheet .sheet { max-height: none; overflow: visible; box-shadow: none; border-radius: 0; max-width: none; }
+  body.print-sheet .x, body.print-sheet .no-print { display: none !important; }
+}
 footer.foot { text-align: center; color: var(--muted); font-size: .8rem; padding: 26px 16px 34px; }
 
 @media (max-width: 820px) {
@@ -349,6 +365,9 @@ const COMPANY = {
 const DEFAULT_TERMS = "## بدء الخدمة وتجديدها\n- تُحتسب مدة الاشتراك من تاريخ أول تشغيل فعلي للنظام وإبلاغ العميل بذلك، ولا تدخل فترة التركيب والتهيئة ضمن مدة الاشتراك.\n- يتجدد الاشتراك تلقائياً لمدة مساوية، إلا إذا أبلغ أحد الطرفين الطرف الآخر كتابياً بعدم رغبته في التجديد قبل (30) يوماً على الأقل من انتهاء المدة الجارية.\n## التزامات رفد\n- تشغيل الخدمة وربطها تقنياً بكاميرات العميل وأجهزة التسجيل (NVR) وأنظمة التذاكر المعتمدة، مع التدريب والدعم الفني دون مقابل إضافي طوال مدة الاشتراك.\n- الالتزام بنظام حماية البيانات الشخصية في المملكة العربية السعودية، بحيث تُعالج البيانات لحظياً وبشكل مشفّر، ولا تُحفظ أي بيانات شخصية أو صور للأفراد على الأجهزة الطرفية.\n- حذف جميع بيانات العميل خلال (5) أيام عمل من انتهاء الاشتراك أو إلغائه، وتزويد العميل بما يثبت ذلك كتابياً.\n## التزامات العميل\n- تسهيل وصول فريق رفد إلى المواقع والأنظمة اللازمة لإكمال أعمال الربط والتركيب.\n- يُقرّ العميل بأن أجهزة الحوسبة الطرفية المركّبة في مواقعه مملوكة لرفد، ويتعهد بالمحافظة عليها كما يحافظ على ممتلكاته.\n## إنهاء الاشتراك\n- إذا أخلّ أحد الطرفين بأي من التزاماته يُبلَّغ كتابياً ويُمنح (5) أيام لتصحيح الإخلال، فإن لم يُصحَّح جاز للطرف الآخر إنهاء الاشتراك فوراً.\n- لكل طرف إنهاء الاشتراك بإشعار كتابي قبل (30) يوماً من التاريخ المحدد للإنهاء، ويسدد العميل قيمة الخدمة المقدَّمة حتى ذلك التاريخ، ويعيد أجهزة الحوسبة الطرفية المملوكة لرفد دون تأخير.\n## أحكام عامة\n- لا يُسأل أي طرف عن التأخير الناتج عن قوة قاهرة أو ظروف خارجة عن إرادته، كالقرارات الحكومية والأوبئة، بشرط ألا يتجاوز ذلك (30) يوماً من تاريخ إبلاغ الطرف الآخر.\n- تسري على هذا العرض وما ينتج عنه أنظمة المملكة العربية السعودية، وتكون محاكم مدينة الرياض وحدها المختصة بالنظر في أي خلاف.";
 const DEFAULT_TERMS_EN = "## Service start and renewal\n- The subscription term starts on the date the system is first put into actual operation and the client is notified; the installation and setup period is not counted as part of the term.\n- The subscription renews automatically for an equal term unless either party notifies the other in writing, at least (30) days before the current term ends, that it does not wish to renew.\n## RAFD's obligations\n- To operate the service and integrate it technically with the client's cameras, recording devices (NVR) and approved ticketing systems, including training and technical support at no extra charge throughout the subscription.\n- To comply with the Personal Data Protection Law of the Kingdom of Saudi Arabia, processing data in real time and in encrypted form, with no personal data or images of individuals stored on edge devices.\n- To delete all client data within (5) working days of the subscription ending or being cancelled, and to confirm this to the client in writing.\n## Client's obligations\n- To give RAFD's team access to the sites and systems needed to complete the integration and installation work.\n- The client acknowledges that the edge computing devices installed at its sites are owned by RAFD and undertakes to look after them as it would its own property.\n## Termination\n- If either party breaches any of its obligations, it shall be notified in writing and given (5) days to remedy the breach; if the breach is not remedied, the other party may terminate the subscription immediately.\n- Either party may terminate the subscription by written notice at least (30) days before the intended termination date. The client shall pay for the service provided up to that date and return RAFD's edge computing devices without delay.\n## General provisions\n- Neither party is liable for delay caused by force majeure or circumstances beyond its control, such as government decisions or epidemics, provided this does not exceed (30) days from notifying the other party.\n- This quotation and anything arising from it are governed by the laws of the Kingdom of Saudi Arabia, and the courts of Riyadh shall have exclusive jurisdiction over any dispute.";
 const DEFAULT_CATALOG = [{"id": "basic", "ar": "الباقة الأساسية", "en": "Basic Package", "desc_ar": "اشتراك في منصة رفد بالمزايا الأساسية لفرع واحد", "desc_en": "RAFD platform subscription with core features for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "pro", "ar": "الباقة الاحترافية (برو)", "en": "Pro Package", "desc_ar": "اشتراك في منصة رفد بكامل المزايا والتقارير المتقدمة لفرع واحد", "desc_en": "RAFD platform subscription with all features and advanced reports for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "face", "ar": "التعرف على الوجه (بصمة الوجه)", "en": "Face Recognition Attendance", "desc_ar": "تسجيل الحضور والانصراف بالتعرف على الوجه", "desc_en": "Check-in and check-out by face recognition", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "face_cam", "ar": "كاميرا التعرف على الوجه", "en": "Face Recognition Camera", "desc_ar": "كاميرا مخصصة للتعرف على الوجه شاملة التركيب", "desc_en": "Dedicated face recognition camera, installation included", "unit_ar": "كاميرا", "unit_en": "camera", "price": null}, {"id": "activation", "ar": "رسوم التفعيل", "en": "Activation Fee", "desc_ar": "تهيئة الخدمة وربطها لفرع واحد", "desc_en": "Service setup and integration for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}];
+const DEFAULT_AGREEMENT = "## أطراف الاتفاقية\n- الطرف الأول: شركة رفد الرقمية، ويُشار إليها بـ«رفد».\n- الطرف الثاني: {name}، جوال رقم {phone}، ويُشار إليه بـ«المندوب».\n## طبيعة العلاقة\n- يعمل المندوب مع رفد بصفة مستقلة وبنظام العمولة، ولا تُنشئ هذه الاتفاقية علاقة عمل بين الطرفين ولا تُعد عقد عمل، ولا يترتب عليها أجر ثابت أو بدلات أو أي من حقوق العامل المقررة نظاماً.\n- لرفد أن تعرض على المندوب الذي يُثبت كفاءته عقداً مستقلاً براتب وعمولة، ويخضع ذلك العقد لشروطه الخاصة.\n## العمولة\n- تلتزم رفد بأن تدفع للمندوب عمولة نسبتها ({rate}%) من قيمة العقد الأول المبرم مع كل عميل يُنسب إليه وفق هذه الاتفاقية.\n- تُحتسب العمولة على المبالغ المحصّلة فعلياً من العميل، غير شاملة ضريبة القيمة المضافة.\n- تُستحق العمولة بعد توقيع العميل العقد وتحصيل قيمته، وتُحوَّل خلال ({days}) يوماً من تاريخ التحصيل إلى الحساب البنكي المسجّل باسم المندوب في المنصة.\n- تبقى النسبة الواردة في هذه الاتفاقية سارية على المندوب، ولا يسري عليه أي تعديل لاحق عليها إلا بموافقته.\n## نسبة العميل إلى المندوب\n- يُنسب العميل إلى أول مندوب يسجّله في المنصة، وتبقى الأولوية له مدة ({priority}) يوماً من تاريخ التسجيل.\n- يُعد تسجيل المنصة، بتاريخه ووقته المحفوظين آلياً، المرجع المعتمد بين الطرفين عند أي اختلاف.\n## التزامات المندوب\n- تقديم معلومات صحيحة عن نفسه وعن العملاء الذين يسجّلهم.\n- عدم تقديم أي أسعار أو خصومات أو التزامات باسم رفد خارج عروض الأسعار الصادرة منها رسمياً.\n- المحافظة على سرية بيانات العملاء والأسعار، وعدم استخدامها لغير أغراض هذه الاتفاقية.\n## إنهاء المشاركة\n- لأي من الطرفين إنهاء المشاركة في أي وقت بإشعار عبر المنصة أو كتابياً.\n- يحتفظ المندوب بعد الإنهاء بحقه في عمولة العملاء المنسوبين إليه قبل الإنهاء، متى تعاقدوا خلال مدة الأولوية.\n- لرفد إيقاف حساب المندوب إذا أخلّ بأي من التزاماته، مع حفظ حقه في العمولات المستحقة عن الفترة السابقة للإخلال.\n## أحكام عامة\n- تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.\n- تُعد موافقة المندوب الإلكترونية على هذه الاتفاقية عند التسجيل إقراراً ملزماً للطرفين، وتحفظ المنصة نسخة منها في حساب المندوب بتاريخ الموافقة ونسبة العمولة المتفق عليها.";
+const DEFAULT_AGREEMENT_EN = "## Parties\n- First party: RAFD Digital (\"RAFD\").\n- Second party: {name}, mobile number {phone} (the \"Representative\").\n## Nature of the relationship\n- The Representative works with RAFD independently and on a commission basis. This agreement does not create an employment relationship between the parties, is not an employment contract, and gives rise to no fixed salary, allowances or any statutory employee entitlements.\n- RAFD may offer a Representative who proves their ability a separate contract with a salary and commission, which will be governed by its own terms.\n## Commission\n- RAFD undertakes to pay the Representative a commission of ({rate}%) of the value of the first contract concluded with each client attributed to them under this agreement.\n- Commission is calculated on amounts actually collected from the client, excluding VAT.\n- Commission becomes due once the client has signed the contract and its value has been collected, and is transferred within ({days}) days of collection to the bank account registered in the Representative's name on the platform.\n- The rate stated in this agreement continues to apply to the Representative, and no later change to it applies to them without their consent.\n## Attribution of clients\n- A client is attributed to the first Representative who registers them on the platform, and that priority is kept for ({priority}) days from the date of registration.\n- The platform's record, with its automatically stored date and time, is the agreed reference between the parties in the event of any dispute.\n## Representative's obligations\n- To provide accurate information about themselves and about the clients they register.\n- Not to offer any prices, discounts or commitments on RAFD's behalf outside the quotations RAFD issues officially.\n- To keep client data and prices confidential and not use them for any purpose other than this agreement.\n## Ending participation\n- Either party may end participation at any time by notice through the platform or in writing.\n- After participation ends, the Representative keeps the right to commission on clients attributed to them before it ended, provided they contract within the priority period.\n- RAFD may suspend the Representative's account for breach of any of their obligations, without prejudice to commission already earned for the period before the breach.\n## General provisions\n- This agreement is governed by the laws of the Kingdom of Saudi Arabia.\n- The Representative's electronic acceptance of this agreement at registration is a binding acknowledgement by both parties, and the platform keeps a copy of it in the Representative's account with the date of acceptance and the agreed commission rate.";
+const PRIORITY_DAYS = 180;
 const VAT_RATE = 0.15;
 const QUOTE_DAYS = 14;
 
@@ -380,33 +399,34 @@ const SERVICES = () => [L('منصة الفرز الذكي للتوظيف', 'AI h
 const SAR = () => L('ر.س', 'SAR');
 
 const ERRS = {
-  phone: ['رقم الجوال لازم يكون بصيغة 05XXXXXXXX', 'Mobile number must be in the format 05XXXXXXXX'],
+  phone: ['يجب أن يكون رقم الجوال بصيغة 05XXXXXXXX', 'Mobile number must be in the format 05XXXXXXXX'],
   password: ['كلمة المرور 6 أحرف على الأقل', 'Password must be at least 6 characters'],
-  name: ['اكتبي الاسم كامل', 'Please enter the full name'],
-  terms: ['لازم توافقين على شروط البرنامج', 'You need to accept the programme rules'],
-  exists: ['هذا الرقم مسجّل من قبل — ادخلي من «تسجيل الدخول»', 'This number is already registered — please sign in'],
+  name: ['يُرجى إدخال الاسم كاملاً', 'Please enter the full name'],
+  terms: ['يجب الموافقة على اتفاقية الانضمام', 'You must accept the membership agreement'],
+  exists: ['هذا الرقم مسجّل مسبقاً، يُرجى تسجيل الدخول', 'This number is already registered — please sign in'],
   bad: ['الجوال أو كلمة المرور غير صحيحة', 'Wrong mobile number or password'],
-  suspended: ['الحساب موقوف — تواصلي مع الإدارة', 'This account is suspended — please contact the team'],
-  too_many: ['محاولات كثيرة — انتظري شوي وجرّبي مرة ثانية', 'Too many attempts — please wait a moment and try again'],
-  iban: ['رقم الآيبان غير صحيح — تأكدي منه (SA + 22 رقم)', 'Invalid IBAN — please check it (SA + 22 digits)'],
-  mine: ['هذا العميل مسجّل باسمك من قبل', 'You have already registered this client'],
+  suspended: ['الحساب موقوف، يُرجى التواصل مع الإدارة', 'This account is suspended — please contact the team'],
+  too_many: ['محاولات كثيرة، يُرجى الانتظار قليلاً ثم المحاولة مجدداً', 'Too many attempts — please wait a moment and try again'],
+  iban: ['رقم الآيبان غير صحيح، يُرجى التحقق منه (SA ثم 22 رقماً)', 'Invalid IBAN — please check it (SA + 22 digits)'],
+  mine: ['هذا العميل مسجّل باسمك مسبقاً', 'You have already registered this client'],
   code: ['الرابط غير صالح', 'This link is not valid'],
-  comment: ['الصقي نص تعليقك عشان نتأكد منه', 'Paste the text of your comment so we can verify it'],
-  closed: ['هذا الشهر انقفل', 'This month is closed'],
-  rejected: ['هذا المقطع انرفض — ما لقينا تعليقك. راجعي الإدارة', 'Rejected — we could not find your comment. Please contact the team'],
-  already: ['المكافأة مصروفة من قبل', 'This bonus has already been paid'],
-  url: ['الرابط لازم يبدأ بـ https://', 'The link must start with https://'],
-  details: ['اختاري باقة أو اكتبي تفاصيل الطلب', 'Pick a package or describe the request'],
-  lead_closed: ['هذا العميل مقفل — ما يحتاج عرض سعر', 'This client is closed — no quote needed'],
-  accepted: ['العميل وافق على العرض من قبل', 'The client has already accepted this quote'],
-  not_sent: ['العرض ما انرسل بعد', 'The quote has not been sent yet'],
-  not_open: ['العرض منتهي أو تم الرد عليه', 'This quote has expired or already been answered'],
-  client_vat: ['الرقم الضريبي للعميل لازم يكون 15 رقم', "The client's VAT number must be 15 digits"],
-  items: ['راجع بنود العرض — كل بند يحتاج وصف وكمية وسعر', 'Check the quote lines — each needs a description, quantity and price'],
-  catalog: ['راجع الباقات — كل باقة تحتاج اسم عربي، والسعر ما يكون سالب', 'Check the packages — each needs an Arabic name and a non-negative price'],
+  comment: ['يُرجى لصق نص تعليقك للتحقق منه', 'Paste the text of your comment so we can verify it'],
+  closed: ['أُغلق هذا الشهر', 'This month is closed'],
+  rejected: ['رُفض هذا المقطع لعدم العثور على تعليقك، يُرجى مراجعة الإدارة', 'Rejected — we could not find your comment. Please contact the team'],
+  already: ['صُرفت هذه المكافأة مسبقاً', 'This bonus has already been paid'],
+  url: ['يجب أن يبدأ الرابط بـ https://', 'The link must start with https://'],
+  details: ['اختر باقة أو اكتب تفاصيل الطلب', 'Pick a package or describe the request'],
+  lead_closed: ['هذا العميل مغلق ولا يحتاج إلى عرض سعر', 'This client is closed — no quote needed'],
+  accepted: ['وافق العميل على العرض مسبقاً', 'The client has already accepted this quote'],
+  not_sent: ['لم يُرسل العرض بعد', 'The quote has not been sent yet'],
+  not_open: ['العرض منتهٍ أو تم الرد عليه', 'This quote has expired or already been answered'],
+  client_vat: ['يجب أن يتكون الرقم الضريبي للعميل من 15 رقماً', "The client's VAT number must be 15 digits"],
+  items: ['راجع بنود العرض، فكل بند يتطلب وصفاً وكمية وسعراً', 'Check the quote lines — each needs a description, quantity and price'],
+  catalog: ['راجع الباقات، فكل باقة تتطلب اسماً عربياً وسعراً غير سالب', 'Check the packages — each needs an Arabic name and a non-negative price'],
+  rate: ['راجع النسبة أو المدة', 'Check the rate or the number of days'],
   terms_short: ['الشروط قصيرة جداً', 'The terms are too short'],
-  auth: ['انتهت الجلسة — سجّلي دخولك مرة ثانية', 'Your session has ended — please sign in again'],
-  network: ['تعذّر الاتصال — تأكدي من الإنترنت وجرّبي مرة ثانية', 'Could not connect — check your internet and try again']
+  auth: ['انتهت الجلسة، يُرجى تسجيل الدخول مجدداً', 'Your session has ended — please sign in again'],
+  network: ['تعذّر الاتصال، يُرجى التحقق من الإنترنت والمحاولة مجدداً', 'Could not connect — check your internet and try again']
 };
 const err = k => { const e = ERRS[k] || ERRS.network; return L(e[0], e[1]); };
 
@@ -438,6 +458,11 @@ const todayRiyadh = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Riy
 const addDays = n => { const t = new Date(todayRiyadh() + 'T12:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
 const quoteLink = id => location.origin + location.pathname + '#/q/' + id;
 const safeUrl = u => /^https:\/\//.test(u || '') ? u : '#';
+const fmtRate = r => r == null || r === '' ? '—' : String(+Number(r).toFixed(2));
+/* Fills an agreement's placeholders — the same rule as team_agreement_render() in SQL. */
+const renderAgreement = (t, v) => String(t || '')
+  .replaceAll('{rate}', fmtRate(v.rate)).replaceAll('{days}', String(v.days ?? '')).replaceAll('{priority}', String(PRIORITY_DAYS))
+  .replaceAll('{name}', v.name || '________').replaceAll('{phone}', v.phone || '________');
 const catName = c => (EN() && c.en) ? c.en : c.ar;
 const catDesc = c => (EN() && c.desc_en) ? c.desc_en : (c.desc_ar || '');
 
@@ -457,7 +482,7 @@ function toast(t) {
 }
 async function copy(text) {
   try { await navigator.clipboard.writeText(text); toast(L('تم النسخ ✓', 'Copied ✓')); }
-  catch (e) { prompt(L('انسخي:', 'Copy:'), text); }
+  catch (e) { prompt(L('انسخ:', 'Copy:'), text); }
 }
 
 /* ---------- backend: Supabase RPC, or the demo mirror ---------- */
@@ -489,6 +514,7 @@ const demo = (() => {
   const me = (d, t) => { const id = d.sessions[t]; const m = d.members.find(x => x.id === id); return m && m.status !== 'suspended' ? m : null; };
   const code = d => { let c; do { c = 'RF' + Math.random().toString(36).slice(2, 6).toUpperCase().replace(/[0O1I]/g, 'X'); } while (d.members.some(m => m.code === c)); return c; };
   const catalog = d => d.catalog || DEFAULT_CATALOG;
+  const agr = d => ({ rate: d.rate ?? 5, days: d.payDays ?? 15, text: d.agreement || DEFAULT_AGREEMENT, text_en: d.agreementEn || DEFAULT_AGREEMENT_EN });
   function insertLead(d, m, src, a) {
     const cutoff = Date.now() - 180 * 864e5;
     const owner = d.leads.filter(l => l.client_phone === a.p_phone && l.status !== 'duplicate' && Date.parse(l.created_at) > cutoff)
@@ -512,8 +538,10 @@ const demo = (() => {
       if ((a.p_password || '').length < 6) return { error: 'password' };
       if ((a.p_name || '').trim().length < 3) return { error: 'name' };
       if (d.members.some(m => m.phone === a.p_phone)) return { error: 'exists' };
+      const v = { rate: agr(d).rate, days: agr(d).days, name: a.p_name.trim(), phone: a.p_phone };
       const m = { id: uid(), code: code(d), full_name: a.p_name.trim(), phone: a.p_phone, city: a.p_city || null, tiktok: a.p_tiktok || null,
-        pass: a.p_password, status: 'trial', iban: null, iban_name: null, bank: null, iban_at: null, created_at: now() };
+        pass: a.p_password, status: 'trial', iban: null, iban_name: null, bank: null, iban_at: null, created_at: now(), terms_at: now(),
+        agreed_rate: v.rate, agreement_text: renderAgreement(agr(d).text, v), agreement_text_en: renderAgreement(agr(d).text_en, v) };
       d.members.push(m); const t = uid(); d.sessions[t] = m.id; save(d); return { ok: true, token: t };
     },
     team_login(a) {
@@ -526,7 +554,8 @@ const demo = (() => {
     team_me(a) {
       const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
       return { member: { name: m.full_name, phone: m.phone, city: m.city, tiktok: m.tiktok, code: m.code, status: m.status, created_at: m.created_at,
-          iban_masked: m.iban ? 'SA•• •••• •••• •••• ••' + m.iban.slice(-4) : null, iban_name: m.iban_name, bank: m.bank, iban_at: m.iban_at },
+          iban_masked: m.iban ? 'SA•• •••• •••• •••• ••' + m.iban.slice(-4) : null, iban_name: m.iban_name, bank: m.bank, iban_at: m.iban_at,
+          agreed_rate: m.agreed_rate ?? null, agreed_at: m.terms_at || m.created_at, agreement_text: m.agreement_text || null, agreement_text_en: m.agreement_text_en || null },
         catalog: catalog(d).map(({ price, ...c }) => c),
         leads: d.leads.filter(l => l.member_id === m.id).sort((x, y) => y.created_at.localeCompare(x.created_at)).map(l => leadOut(d, l)) };
     },
@@ -542,6 +571,8 @@ const demo = (() => {
       if ((a.p_name || '').trim().length < 3) return { error: 'name' };
       Object.assign(m, { iban: x, iban_name: a.p_name.trim(), bank: (a.p_bank || '').trim() || null, iban_at: now() }); save(d); return { ok: true };
     },
+    team_agreement() { const d = db(); const g = agr(d); const v = { rate: g.rate, days: g.days, name: '{name}', phone: '{phone}' };
+      return { rate: g.rate, days: g.days, text: renderAgreement(g.text, v), text_en: renderAgreement(g.text_en, v) }; },
     team_ref_info(a) { const m = db().members.find(x => x.code === String(a.p_code).toUpperCase() && x.status !== 'suspended'); return m ? { first: m.full_name.split(' ')[0] } : { error: 'code' }; },
     team_ref_submit(a) {
       const d = db(); const m = d.members.find(x => x.code === String(a.p_code).toUpperCase() && x.status !== 'suspended');
@@ -625,7 +656,7 @@ const demo = (() => {
       const d = db(); if (a.p_secret !== 'demo') return { error: 'auth' };
       const p = a.p || {};
       if (a.p_action === 'list') return {
-        members: d.members.map(m => ({ id: m.id, code: m.code, name: m.full_name, phone: m.phone, city: m.city, tiktok: m.tiktok, status: m.status, iban: m.iban, iban_name: m.iban_name, bank: m.bank, created_at: m.created_at })),
+        members: d.members.map(m => ({ id: m.id, code: m.code, name: m.full_name, phone: m.phone, city: m.city, tiktok: m.tiktok, status: m.status, iban: m.iban, iban_name: m.iban_name, bank: m.bank, created_at: m.created_at, agreed_rate: m.agreed_rate ?? null, agreed_at: m.terms_at || null })),
         leads: [...d.leads].sort((x, y) => y.created_at.localeCompare(x.created_at)).map(l => ({ ...l, quote: quoteOf(d, l.id) })) };
       if (a.p_action === 'lead') {
         const l = d.leads.find(x => x.id === p.id); if (!l) return { error: 'not_found' };
@@ -639,6 +670,13 @@ const demo = (() => {
         for (const [k, key] of [['terms', 'quoteTerms'], ['terms_en', 'quoteTermsEn']])
           if (k in p) { if (String(p[k] || '').length < 10) return { error: 'terms_short' }; d[key] = p[k]; }
         save(d); return { ok: true, terms: d.quoteTerms || DEFAULT_TERMS, terms_en: d.quoteTermsEn || DEFAULT_TERMS_EN };
+      }
+      if (a.p_action === 'agreement') {
+        if ('rate' in p) { if (!(+p.rate >= 0 && +p.rate <= 100)) return { error: 'rate' }; d.rate = +p.rate; }
+        if ('days' in p) { if (!(+p.days >= 1 && +p.days <= 120)) return { error: 'rate' }; d.payDays = +p.days; }
+        if ('text' in p) { if (String(p.text || '').length < 50) return { error: 'terms_short' }; d.agreement = p.text; }
+        if ('text_en' in p) { if (String(p.text_en || '').length < 50) return { error: 'terms_short' }; d.agreementEn = p.text_en; }
+        save(d); const g = agr(d); return { ok: true, rate: g.rate, days: g.days, text: g.text, text_en: g.text_en };
       }
       if (a.p_action === 'catalog') {
         if ('catalog' in p) {
@@ -706,7 +744,7 @@ function applyLang() {
   document.title = L('سفراء رفد', 'RAFD Ambassadors');
   $('#brandName').innerHTML = L('سفراء <span>رفد</span>', '<span>RAFD</span> Ambassadors');
   $('#footText').textContent = L('© رفد الرقمية · سفراء رفد', '© RAFD Digital · RAFD Ambassadors');
-  $('#demoBar').innerHTML = L('وضع تجريبي — البيانات محفوظة على هذا الجهاز فقط ولا تصل لأحد. لوحة الإدارة: كلمة السر <b class="num">demo</b>',
+  $('#demoBar').innerHTML = L('وضع تجريبي: البيانات محفوظة على هذا الجهاز فقط. كلمة سر لوحة الإدارة: <b class="num">demo</b>',
     'Demo mode — data stays on this device only and reaches no one. Admin password: <b class="num">demo</b>');
 }
 function setLang(l) { LANG = l; store(LANG_KEY, l); route(); }
@@ -717,7 +755,7 @@ function renderTop(name) {
   let html = '';
   if (!['r', 'q', 'admin'].includes(name)) html = t
     ? (name === 'me' ? `<button class="btn btn-ghost" id="logout">${L('خروج', 'Sign out')}</button>` : `<a class="btn btn-main btn-sm" href="#/me">${L('لوحتي', 'My dashboard')}</a>`)
-    : `<a class="btn btn-ghost" href="#/login">${L('دخول', 'Sign in')}</a><a class="btn btn-main btn-sm" href="#/join">${L('انضمي', 'Join')}</a>`;
+    : `<a class="btn btn-ghost" href="#/login">${L('دخول', 'Sign in')}</a><a class="btn btn-main btn-sm" href="#/join">${L('انضم', 'Join')}</a>`;
   el.innerHTML = langBtn() + html;
   $('#langBtn').onclick = () => setLang(EN() ? 'ar' : 'en');
   const lo = $('#logout');
@@ -726,57 +764,68 @@ function renderTop(name) {
 
 const RULES = () => `
 <ul class="rules">
-  <li>${L('كل عميل تسجّلينه يُحفظ باسمك مع <b>التاريخ والوقت</b> من السيرفر — لا أنتِ ولا أي زميلة تقدر تعدّل عليه.',
+  <li>${L('يُحفظ كل عميل تسجّله باسمك مع <b>تاريخ التسجيل ووقته</b> من الخادم، ولا يملك أي طرف تعديله.',
          'Every client you register is saved under your name with the <b>server date and time</b> — neither you nor anyone else on the team can change it.')}</li>
-  <li>${L('العميل يُحسب لـ<b>أول من سجّله</b>، والأولوية محفوظة لكِ <b class="num">180</b> يوم من تاريخ التسجيل.',
+  <li>${L('يُنسب العميل إلى <b>أول من سجّله</b>، وتبقى الأولوية له مدة <b class="num">180</b> يوماً من تاريخ التسجيل.',
          'A client belongs to <b>whoever registered them first</b>, and that priority is kept for <b class="num">180</b> days.')}</li>
-  <li>${L('العمولة تُستحق على العميل اللي <b>تم التعاقد معه ودفع</b> — وتُحدَّد حسب النسبة المتفق عليها وتظهر لكِ في لوحتك.',
-         'Commission is earned on clients who <b>sign and pay</b> — at the agreed rate, and shown in your dashboard.')}</li>
-  <li>${L('التحويل يكون على <b>الآيبان المسجّل باسمك</b> في لوحتك، وتشوفين حالة التحويل ورقمه المرجعي.',
+  <li>${AGR ? L(`تلتزم رفد بعمولة نسبتها <b class="num">${fmtRate(AGR.rate)}%</b> من قيمة العقد الأول لكل عميل <b>يتعاقد ويسدّد</b>، تُحوَّل خلال <b class="num">${AGR.days}</b> يوماً من التحصيل.`,
+                `RAFD commits to a commission of <b class="num">${fmtRate(AGR.rate)}%</b> of the first contract of every client who <b>signs and pays</b>, transferred within <b class="num">${AGR.days}</b> days of collection.`) : ''}</li>
+  <li>${L('تُستحق العمولة عن العميل <b>الذي تعاقد وسدّد</b>، وفق النسبة المنصوص عليها في اتفاقية الانضمام، وتظهر في لوحتك.',
+         'Commission is earned on clients who <b>sign and pay</b>, at the rate set out in the membership agreement, and is shown in your dashboard.')}</li>
+  <li>${L('تُحوَّل العمولة إلى <b>الحساب البنكي المسجّل باسمك</b>، وتظهر لك حالة كل تحويل ورقمه المرجعي.',
          'Payments go to the <b>IBAN in your name</b> saved in your dashboard, where you can see each transfer and its reference.')}</li>
-  <li>${L('البرنامج بالعمولة في هذه المرحلة، وليس عقد عمل. اللي تثبت نفسها نوقّع معها عقد رسمي براتب ونسبة مستمرة.',
-         'At this stage the programme is commission-only and is not an employment contract. Those who prove themselves are offered a formal contract with a salary and ongoing commission.')}</li>
+  <li>${L('المشاركة في البرنامج بنظام العمولة ولا تُعد عقد عمل، ولرفد أن تعرض على من يُثبت كفاءته عقداً رسمياً براتب وعمولة مستمرة.',
+         'Participation is commission-based and is not an employment contract. RAFD may offer those who prove themselves a formal contract with a salary and ongoing commission.')}</li>
 </ul>`;
 
-function viewHome() {
+let AGR = null;   // the agreement as it stands today, for new members
+async function loadAgreement() { if (!AGR) { const r = await rpc('team_agreement', {}); if (r && !r.error) AGR = r; } return AGR; }
+
+function agreementHtml(text, full) {
+  return `<div class="agr${full ? ' agr-full' : ''}">${termsHtml(text).replaceAll('<h4><span class="tn num">', '<h4><span class="tn num">')}</div>`;
+}
+
+async function viewHome() {
+  await loadAgreement();
   app.innerHTML = `
   <section class="hero"><div class="wrap">
     <span class="eyebrow">✦ ${L('برنامج سفراء رفد للمبيعات والتسويق', 'RAFD Ambassadors — sales & marketing programme')}</span>
-    <h1>${L('كل عميل تجيبينه<br><em>محفوظ باسمك.</em>', 'Every client you bring<br><em>is saved in your name.</em>')}</h1>
-    <p class="hero-lead">${L('سجّلي عملاءك من جوالك، تابعي كل صفقة خطوة بخطوة، وشوفي عمولتك قدّام عينك — لين توصل حسابك.',
+    <h1>${L('كل عميل تجلبه<br><em>محفوظ باسمك.</em>', 'Every client you bring<br><em>is saved in your name.</em>')}</h1>
+    <p class="hero-lead">${L('سجّل عملاءك من جوالك، وتابع كل صفقة خطوة بخطوة، واطّلع على عمولتك حتى تصل إلى حسابك البنكي.',
       'Register clients from your phone, follow every deal step by step, and watch your commission all the way to your bank account.')}</p>
     <div class="hero-cta">
-      <a class="btn btn-gold" href="#/join">${L('انضمي للفريق', 'Join the team')}</a>
-      <a class="btn btn-soft" href="#/login">${L('عندي حساب', 'I have an account')}</a>
+      <a class="btn btn-gold" href="#/join">${L('انضم إلى الفريق', 'Join the team')}</a>
+      <a class="btn btn-soft" href="#/login">${L('لدي حساب', 'I have an account')}</a>
     </div>
   </div></section>
 
   <section class="block"><div class="wrap">
-    <h2 class="h2">${L('كيف يشتغل؟', 'How it works')}</h2>
-    <p class="sub">${L('أربع خطوات، وكل شيء موثّق من أول يوم.', 'Four steps, everything on record from day one.')}</p>
+    <h2 class="h2">${L('آلية العمل', 'How it works')}</h2>
+    <p class="sub">${L('أربع خطوات، وكل إجراء موثّق من اليوم الأول.', 'Four steps, everything on record from day one.')}</p>
     <div class="steps">
-      <div class="step"><div class="ic">📝</div><h3>${L('سجّلي نفسك', 'Sign up')}</h3><p>${L('اسمك وجوالك — وتاخذين كود ورابط خاص فيكِ.', 'Your name and mobile — and you get your own code and link.')}</p></div>
-      <div class="step"><div class="ic">🤝</div><h3>${L('سجّلي عملاءك', 'Register clients')}</h3><p>${L('أول ما تكلّمين عميل أو شركة، سجّليها باسمك — أو خلّيه يسجّل بنفسه من رابطك.', 'As soon as you talk to a client, register them under your name — or let them sign up through your link.')}</p></div>
-      <div class="step"><div class="ic">📈</div><h3>${L('تابعي الصفقة', 'Follow the deal')}</h3><p>${L('تشوفين حالة كل عميل: تواصل، تفاوض، تعاقد.', 'See where each client stands: contacted, negotiating, signed.')}</p></div>
-      <div class="step"><div class="ic">💸</div><h3>${L('استلمي عمولتك', 'Get paid')}</h3><p>${L('أول ما يتم التعاقد والدفع، تتحوّل عمولتك على آيبانك.', 'Once the client signs and pays, your commission goes to your IBAN.')}</p></div>
+      <div class="step"><div class="ic">📝</div><h3>${L('سجّل حسابك', 'Sign up')}</h3><p>${L('بالاسم ورقم الجوال، وتحصل على رمز ورابط خاصين بك.', 'Your name and mobile — and you get your own code and link.')}</p></div>
+      <div class="step"><div class="ic">🤝</div><h3>${L('سجّل عملاءك', 'Register clients')}</h3><p>${L('سجّل العميل أو الجهة باسمك فور التواصل معها، أو شارك رابطك ليسجّل العميل بنفسه.', 'As soon as you talk to a client, register them under your name — or let them sign up through your link.')}</p></div>
+      <div class="step"><div class="ic">📈</div><h3>${L('تابع الصفقة', 'Follow the deal')}</h3><p>${L('تشوفين حالة كل عميل: تواصل، تفاوض، تعاقد.', 'See where each client stands: contacted, negotiating, signed.')}</p></div>
+      <div class="step"><div class="ic">💸</div><h3>${L('استلم عمولتك', 'Get paid')}</h3><p>${L('بعد التعاقد وتحصيل القيمة، تُحوَّل العمولة إلى حسابك البنكي.', 'Once the client signs and pays, your commission goes to your IBAN.')}</p></div>
     </div>
   </div></section>
 
   <section class="block"><div class="wrap">
-    <h2 class="h2">${L('قواعد واضحة تحفظ حقك وحقنا', 'Clear rules that protect everyone')}</h2>
-    <p class="sub">${L('مكتوبة هنا عشان ما يصير فيها أخذ وعطا بعدين.', 'Written down here so there is nothing to argue about later.')}</p>
+    <h2 class="h2">${L('أحكام واضحة تحفظ حقوق الطرفين', 'Clear terms that protect both parties')}</h2>
+    <p class="sub">${L('منصوص عليها في اتفاقية الانضمام، ويوافق عليها كل منضم قبل بدء العمل.', 'Set out in the membership agreement, which every member accepts before starting.')}</p>
     ${RULES()}
-    <div style="text-align:center;margin:28px 0 10px"><a class="btn btn-main" href="#/join">${L('ابدئي الحين', 'Get started')}</a></div>
+    <div style="text-align:center;margin:28px 0 10px"><a class="btn btn-main" href="#/join">${L('ابدأ الآن', 'Get started')}</a></div>
   </div></section>`;
 }
 
 function formMsg(el, kind, text) { el.innerHTML = text ? `<div class="msg ${kind}">${text}</div>` : ''; }
 
-function viewJoin() {
+async function viewJoin() {
+  await loadAgreement();
   app.innerHTML = `
   <div class="wrap"><div class="card auth">
-    <h2>${L('انضمي لسفراء رفد', 'Join RAFD Ambassadors')}</h2>
-    <p class="sub">${L('دقيقة وحدة، وتبدين تسجّلين عملاءك باسمك.', 'One minute, and you can start registering clients in your name.')}</p>
+    <h2>${L('الانضمام إلى سفراء رفد', 'Join RAFD Ambassadors')}</h2>
+    <p class="sub">${L('خطوة واحدة، وتبدأ بتسجيل عملائك باسمك.', 'One minute, and you can start registering clients in your name.')}</p>
     <div id="m"></div>
     <form id="f" novalidate>
       <div class="field"><label>${L('الاسم الكامل', 'Full name')}</label><input name="name" autocomplete="name" required></div>
@@ -784,16 +833,21 @@ function viewJoin() {
         <div class="field"><label>${L('رقم الجوال', 'Mobile number')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX" autocomplete="tel"></div>
         <div class="field"><label>${L('المدينة', 'City')}</label><input name="city" autocomplete="address-level2"></div>
       </div>
-      <div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')} <small>${L('(نحتاجه للمهمة الشهرية)', '(needed for the monthly task)')}</small></label><input name="tiktok" class="ltr" placeholder="@username"></div>
-      <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="new-password"><div class="hint">${L('6 أحرف على الأقل — تدخلين فيها مع رقم جوالك.', 'At least 6 characters — you sign in with it and your mobile number.')}</div></div>
-      <details style="margin-bottom:8px"><summary style="cursor:pointer;font-weight:700;color:var(--teal-600);font-size:.9rem">${L('اقرئي شروط البرنامج', 'Read the programme rules')}</summary><div style="margin-top:10px">${RULES()}</div></details>
-      <label class="check"><input type="checkbox" name="agree"><span>${L('قرأت شروط البرنامج وأوافق عليها، وأعرف إن العمولة على العميل اللي أسجّله أول وتم التعاقد معه.', 'I have read and accept the programme rules, and understand commission is paid on clients I register first who then sign.')}</span></label>
+      <div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')} <small>${L('(مطلوب للمهمة الشهرية)', '(needed for the monthly task)')}</small></label><input name="tiktok" class="ltr" placeholder="@username"></div>
+      <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="new-password"><div class="hint">${L('ستة أحرف على الأقل، وتُستخدم مع رقم الجوال لتسجيل الدخول.', 'At least 6 characters — you sign in with it and your mobile number.')}</div></div>
+      <div class="agr-title">${L('اتفاقية الانضمام إلى برنامج سفراء رفد', 'RAFD Ambassadors membership agreement')}</div>
+      <div id="agrBox"></div>
+      <label class="check"><input type="checkbox" name="agree"><span>${L('أقرّ بأنني اطّلعت على اتفاقية الانضمام إلى برنامج سفراء رفد وأوافق على جميع بنودها.', 'I confirm that I have read the RAFD Ambassadors membership agreement and accept all of its terms.')}</span></label>
       <button class="btn btn-main btn-block" type="submit">${L('إنشاء حسابي', 'Create my account')}</button>
     </form>
-    <p class="alt">${L('عندك حساب؟', 'Have an account?')} <a href="#/login">${L('سجّلي دخول', 'Sign in')}</a></p>
+    <p class="alt">${L('لديك حساب؟', 'Have an account?')} <a href="#/login">${L('تسجيل الدخول', 'Sign in')}</a></p>
   </div></div>`;
+  const jf = $('#f');
+  const paintAgr = () => { if (!AGR) return; const t = EN() ? AGR.text_en : AGR.text;
+    $('#agrBox').innerHTML = agreementHtml(t.replaceAll('{name}', jf.name.value.trim() || '________').replaceAll('{phone}', normPhone(jf.phone.value) || '________')); };
+  jf.name.addEventListener('input', paintAgr); jf.phone.addEventListener('input', paintAgr); paintAgr();
   $('#f').onsubmit = async e => {
-    e.preventDefault(); const f = e.target; const b = f.querySelector('button'); const m = $('#m');
+    e.preventDefault(); const f = e.target; const b = f.querySelector('button[type=submit]'); const m = $('#m');
     const phone = normPhone(f.phone.value);
     if (f.name.value.trim().length < 3) return formMsg(m, 'err', err('name'));
     if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
@@ -803,22 +857,22 @@ function viewJoin() {
     const r = await rpc('team_register', { p_name: f.name.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_tiktok: f.tiktok.value.trim(), p_password: f.password.value, p_agree: true });
     b.disabled = false;
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
-    store(TOKEN_KEY, r.token); toast(L('أهلاً فيكِ في الفريق ✦', 'Welcome to the team ✦')); go('me');
+    store(TOKEN_KEY, r.token); toast(L('مرحباً بك في فريق سفراء رفد ✦', 'Welcome to the team ✦')); go('me');
   };
 }
 
 function viewLogin() {
   app.innerHTML = `
   <div class="wrap"><div class="card auth">
-    <h2>${L('أهلاً من جديد', 'Welcome back')}</h2>
-    <p class="sub">${L('ادخلي برقم جوالك وكلمة المرور.', 'Sign in with your mobile number and password.')}</p>
+    <h2>${L('مرحباً بعودتك', 'Welcome back')}</h2>
+    <p class="sub">${L('سجّل الدخول برقم الجوال وكلمة المرور.', 'Sign in with your mobile number and password.')}</p>
     <div id="m"></div>
     <form id="f" novalidate>
       <div class="field"><label>${L('رقم الجوال', 'Mobile number')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX" autocomplete="tel"></div>
       <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="current-password"></div>
       <button class="btn btn-main btn-block" type="submit">${L('دخول', 'Sign in')}</button>
     </form>
-    <p class="alt">${L('نسيتي كلمة المرور؟ تواصلي مع الإدارة.', 'Forgot your password? Contact the team.')}<br>${L('ما عندك حساب؟', 'No account yet?')} <a href="#/join">${L('انضمي', 'Join')}</a></p>
+    <p class="alt">${L('نسيت كلمة المرور؟ يُرجى التواصل مع الإدارة.', 'Forgot your password? Contact the team.')}<br>${L('ليس لديك حساب؟', 'No account yet?')} <a href="#/join">${L('انضم', 'Join')}</a></p>
   </div></div>`;
   $('#f').onsubmit = async e => {
     e.preventDefault(); const f = e.target; const b = f.querySelector('button'); const m = $('#m');
@@ -856,9 +910,9 @@ function drawMe() {
 
   app.innerHTML = `
   <div class="dash-head"><div class="wrap">
-    <span class="badge ${m.status === 'contracted' ? 'contracted' : 'trial'}">${m.status === 'contracted' ? L('✦ متعاقدة', '✦ Contracted') : L('فترة إثبات', 'Trial period')}</span>
-    <h1>${L('هلا', 'Hi')} ${first} 👋</h1>
-    <p>${L('عضوة منذ', 'Member since')} ${fmtDate(m.created_at)}</p>
+    <span class="badge ${m.status === 'contracted' ? 'contracted' : 'trial'}">${m.status === 'contracted' ? L('✦ متعاقد', '✦ Contracted') : L('فترة إثبات الكفاءة', 'Trial period')}</span>
+    <h1>${L('مرحباً', 'Hi')} ${first} 👋</h1>
+    <p>${L('عضو منذ', 'Member since')} ${fmtDate(m.created_at)}</p>
   </div></div>
   <div class="wrap">
     <div class="stats">
@@ -867,24 +921,25 @@ function drawMe() {
       <div class="stat gold"><span>${L('عمولة مستحقة', 'Commission due')}</span><b><span class="num">${money(due)}</span> <small>${SAR()}</small></b></div>
       <div class="stat green"><span>${L('تم تحويله', 'Paid out')}</span><b><span class="num">${money(paid)}</span> <small>${SAR()}</small></b></div>
     </div>
-    ${needIban ? `<div class="msg info" style="margin-top:14px">${L('عندك صفقة تمّت 🎉 — أضيفي الآيبان عشان نحوّل لك عمولتك.', 'You have a closed deal 🎉 — add your IBAN so we can pay your commission.')}</div>` : ''}
+    ${needIban ? `<div class="msg info" style="margin-top:14px">${L('لديك صفقة مكتملة 🎉 يُرجى إضافة رقم الآيبان لتحويل عمولتك.', 'You have a closed deal 🎉 — add your IBAN so we can pay your commission.')}</div>` : ''}
     <div class="grid-dash">
       <div class="card">
-        <div class="panel-title"><h2>${L('عملائي', 'My clients')}</h2><button class="btn btn-main btn-sm" id="addLead">＋ ${L('سجّلي عميل', 'Add client')}</button></div>
+        <div class="panel-title"><h2>${L('عملائي', 'My clients')}</h2><button class="btn btn-main btn-sm" id="addLead">＋ ${L('تسجيل عميل', 'Add client')}</button></div>
         <div class="filters" id="filters"></div>
         <div id="leads"></div>
       </div>
       <div class="side">
+        <div class="card agr-card" id="agrCard"></div>
         <div class="card task-box" id="taskCard" ${tasksData ? '' : 'hidden'}></div>
         <div class="card ref-box">
-          <div class="panel-title" style="margin-bottom:4px"><h2>${L('كودك ورابطك', 'Your code & link')}</h2></div>
+          <div class="panel-title" style="margin-bottom:4px"><h2>${L('رمزك ورابطك', 'Your code & link')}</h2></div>
           <div class="ref-code num">${esc(m.code)}</div>
           <div class="ref-link">${esc(refLink(m.code))}</div>
           <div class="btn-row">
             <button class="btn btn-soft btn-sm" id="cpLink">${L('نسخ الرابط', 'Copy link')}</button>
-            <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(L('سجّل اهتمامك بخدمات رفد من هنا: ', 'Register your interest in RAFD services here: ') + refLink(m.code))}">${L('مشاركة واتس', 'Share on WhatsApp')}</a>
+            <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(L('يسعدنا تسجيل اهتمامك بخدمات رفد عبر الرابط: ', 'Register your interest in RAFD services here: ') + refLink(m.code))}">${L('مشاركة عبر واتساب', 'Share on WhatsApp')}</a>
           </div>
-          <p class="hint" style="font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.7">${L('العميل اللي يسجّل من رابطك ينحفظ باسمك تلقائياً — وهذا أقوى إثبات لأنه هو بنفسه اللي سجّل.', 'A client who signs up through your link is saved under your name automatically — the strongest proof, since they registered themselves.')}</p>
+          <p class="hint" style="font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.7">${L('العميل الذي يسجّل من رابطك يُنسب إليك تلقائياً، وهو أقوى إثبات لأنه سجّل بنفسه.', 'A client who signs up through your link is saved under your name automatically — the strongest proof, since they registered themselves.')}</p>
         </div>
         <div class="card" id="ibanCard"></div>
       </div>
@@ -892,7 +947,7 @@ function drawMe() {
   </div>`;
   $('#cpLink').onclick = () => copy(refLink(m.code));
   $('#addLead').onclick = openLeadSheet;
-  drawFilters(); drawLeads(); drawIban(); drawTasks();
+  drawFilters(); drawLeads(); drawIban(); drawTasks(); drawAgreementCard();
 }
 
 function drawFilters() {
@@ -914,7 +969,7 @@ function leadCard(l) {
       <span>${L('عمولتك', 'Your commission')}: <b class="num">${money(l.commission)}</b> ${SAR()}</span>
       ${l.paid_at ? `<span class="paid">✓ ${L('تم التحويل', 'Paid')} ${fmtDate(l.paid_at)}${l.paid_ref ? ` · ${L('مرجع', 'ref.')} <span class="num">${esc(l.paid_ref)}</span>` : ''}</span>` : `<span style="color:#8a6a1f">⏳ ${L('بانتظار التحويل', 'Awaiting payment')}</span>`}
     </div>` : '';
-  const dupNote = l.status === 'duplicate' ? `<div class="meta" style="color:var(--bad)">${L('هذا العميل كان مسجّل قبلك باسم زميلة — الأولوية لأول تسجيل.', 'This client was already registered by a teammate — the first registration has priority.')}</div>` : '';
+  const dupNote = l.status === 'duplicate' ? `<div class="meta" style="color:var(--bad)">${L('هذا العميل مسجّل مسبقاً باسم مندوب آخر، والأولوية لأول تسجيل.', 'This client was already registered by a teammate — the first registration has priority.')}</div>` : '';
   return `<div class="lead">
     <div class="lead-top">
       <div>
@@ -924,7 +979,7 @@ function leadCard(l) {
       </div>
       <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
         <span class="pill ${l.status}">${STATUS()[l.status]}</span>
-        ${l.source === 'link' ? `<span class="pill link">${L('من رابطك', 'Via your link')}</span>` : ''}
+        ${l.source === 'link' ? `<span class="pill link">${L('عبر رابطك', 'Via your link')}</span>` : ''}
       </div>
     </div>
     ${dupNote}${track}${quoteBox(l)}${moneyRow}
@@ -943,7 +998,7 @@ function quoteBox(l) {
   const q = l.quote; const closed = ['duplicate', 'lost', 'won'].includes(l.status);
   if (!q) return closed ? '' : `<div class="btn-row" style="margin-top:10px"><button class="btn btn-soft btn-sm" data-qreq="${l.id}">📄 ${L('طلب عرض سعر', 'Request a quote')}</button></div>`;
   const total = `<b class="num">${money(q.total)}</b> ${SAR()}${q.vat ? ' ' + L('شامل الضريبة', 'incl. VAT') : ''}`;
-  if (q.status === 'requested') return `<div class="qbox">⏳ ${L('طلبتي عرض سعر', 'Quote requested')} ${fmtDate(q.requested_at)} — ${L('نجهّزه لك.', 'being prepared.')}
+  if (q.status === 'requested') return `<div class="qbox">⏳ ${L('تم طلب عرض سعر', 'Quote requested')} ${fmtDate(q.requested_at)} — ${L('جارٍ تجهيزه.', 'being prepared.')}
     <div style="font-size:.82rem">${pickedText(q.requested_items)}</div><div style="color:var(--muted);font-size:.82rem">${detailsText(q)}</div>
     <div class="btn-row"><button class="btn btn-ghost btn-sm" data-qreq="${l.id}">${L('تعديل الطلب', 'Edit request')}</button></div></div>`;
   if (q.status === 'sent') {
@@ -952,12 +1007,12 @@ function quoteBox(l) {
     return `<div class="qbox sent">📄 <b>${L('عرض السعر جاهز', 'Quote ready')}:</b> ${total}${q.valid_until ? ` · ${L('ساري حتى', 'valid until')} ${fmtDate(q.valid_until)}` : ''}
     <div class="btn-row">
       <a class="btn btn-soft btn-sm" href="#/q/${q.id}">${L('فتح العرض', 'Open quote')}</a>
-      <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${wa(l.client_phone)}?text=${encodeURIComponent(msg)}">${L('أرسليه للعميل واتس', 'Send to client on WhatsApp')}</a>
+      <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${wa(l.client_phone)}?text=${encodeURIComponent(msg)}">${L('إرسال العرض للعميل عبر واتساب', 'Send to client on WhatsApp')}</a>
       <button class="btn btn-ghost btn-sm" data-qcopy="${q.id}">${L('نسخ الرابط', 'Copy link')}</button>
     </div>
     <div class="btn-row"><button class="btn btn-main btn-sm" data-qdec="${l.id}|1">✓ ${L('العميل وافق', 'Client accepted')}</button><button class="btn btn-ghost btn-sm" data-qdec="${l.id}|0">${L('العميل رفض', 'Client declined')}</button></div></div>`;
   }
-  if (q.status === 'accepted') return `<div class="qbox accepted">✅ <b>${L('العميل وافق على العرض', 'The client accepted the quote')}</b> (${total})${q.decided_by === 'client' ? ' — ' + L('وافق بنفسه من صفحة العرض', 'accepted it directly on the quote page') : ''}<br>${L('الإدارة بتتواصل معه وتوقّع العقد.', 'The team will contact them to sign the contract.')}</div>`;
+  if (q.status === 'accepted') return `<div class="qbox accepted">✅ <b>${L('العميل وافق على العرض', 'The client accepted the quote')}</b> (${total})${q.decided_by === 'client' ? ' — ' + L('وافق بنفسه من صفحة العرض', 'accepted it directly on the quote page') : ''}<br>${L('ستتواصل الإدارة معه لتوقيع العقد.', 'The team will contact them to sign the contract.')}</div>`;
   return `<div class="qbox declined">✕ ${L('العميل رفض العرض', 'The client declined the quote')}${q.decision_note ? ': ' + esc(q.decision_note) : ''}
     <div class="btn-row"><button class="btn btn-soft btn-sm" data-qreq="${l.id}">${L('طلب عرض جديد', 'Request a new quote')}</button></div></div>`;
 }
@@ -973,15 +1028,15 @@ function openQuoteRequest(l) {
     <div class="msg info">${L('لـ', 'For')} <b>${esc(l.client_name)}</b>${l.company ? ' · ' + esc(l.company) : ''}</div>
     <div id="qm"></div>
     <form id="qf" novalidate>
-      <label style="display:block;font-weight:700;font-size:.9rem;margin-bottom:8px;color:var(--navy-800)">${L('وش يبي العميل؟', 'What does the client want?')}</label>
+      <label style="display:block;font-weight:700;font-size:.9rem;margin-bottom:8px;color:var(--navy-800)">${L('ما الذي يطلبه العميل؟', 'What does the client want?')}</label>
       <div id="cats">${cat.map(c => `<label class="cat ${picked.has(c.id) ? 'on' : ''}" data-id="${esc(c.id)}">
         <input type="checkbox" ${picked.has(c.id) ? 'checked' : ''}>
         <span><b>${esc(catName(c))}</b><small>${esc(catDesc(c))}</small></span>
         <input class="qty num" inputmode="numeric" value="${esc(picked.get(c.id) || 1)}" title="${L('الكمية', 'Quantity')}" aria-label="${L('الكمية', 'Quantity')}">
       </label>`).join('')}</div>
       <div class="field" style="margin-top:12px"><label>${L('تخصيص إضافي', 'Custom additions')} <small>${L('(اختياري)', '(optional)')}</small></label>
-        <textarea name="details" style="min-height:90px" placeholder="${L('أي شيء خاص يبيه العميل، أو تفاصيل الموقع وعدد الفروع…', 'Anything bespoke the client wants, site details, number of branches…')}">${esc(prev && prev.details !== '—' ? prev.details : '')}</textarea></div>
-      <button class="btn btn-main btn-block" type="submit">${L('أرسلي الطلب للإدارة', 'Send request to the team')}</button>
+        <textarea name="details" style="min-height:90px" placeholder="${L('أي متطلبات خاصة للعميل، أو تفاصيل الموقع وعدد الفروع…', 'Anything bespoke the client wants, site details, number of branches…')}">${esc(prev && prev.details !== '—' ? prev.details : '')}</textarea></div>
+      <button class="btn btn-main btn-block" type="submit">${L('إرسال الطلب إلى الإدارة', 'Send request to the team')}</button>
     </form>`);
   const box = $('#cats', s.el);
   box.addEventListener('change', e => { const r = e.target.closest('.cat'); if (r && e.target.type === 'checkbox') r.classList.toggle('on', e.target.checked); });
@@ -997,7 +1052,7 @@ function openQuoteRequest(l) {
     const r = await rpc('team_quote_request', { p_token: store(TOKEN_KEY), p_lead: l.id, p_details: details, p_items: items.length ? items : null });
     b.disabled = false;
     if (!r || r.error) return formMsg($('#qm', s.el), 'err', err(r && r.error));
-    s.close(); toast(L('وصل طلبك للإدارة ✓', 'Request sent to the team ✓')); viewMe();
+    s.close(); toast(L('تم إرسال طلبك إلى الإدارة ✓', 'Request sent to the team ✓')); viewMe();
   };
 }
 
@@ -1005,8 +1060,8 @@ function openQuoteDecide(l, accept) {
   const s = sheet(accept ? L('العميل وافق 🎉', 'Client accepted 🎉') : L('العميل رفض', 'Client declined'), `
     <div id="dm"></div>
     <form id="df" novalidate>
-      <p style="line-height:1.8;margin-bottom:12px">${accept ? L('بنبلّغ الإدارة تتواصل مع العميل وتوقّع العقد.', 'We will let the team know to contact the client and sign the contract.') : L('ولا يهمك — تقدرين تطلبين عرض جديد بعدين.', 'No problem — you can request a new quote later.')}</p>
-      <div class="field"><label>${accept ? L('ملاحظة للإدارة', 'Note for the team') : L('وش السبب؟', 'What was the reason?')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="note" placeholder="${accept ? L('مثلاً: يبي يوقّع الأحد، الأفضل التواصل بعد العصر', 'e.g. wants to sign on Sunday, best reached in the afternoon') : L('مثلاً: السعر أعلى من ميزانيته', 'e.g. the price is above their budget')}"></textarea></div>
+      <p style="line-height:1.8;margin-bottom:12px">${accept ? L('سيتم إبلاغ الإدارة للتواصل مع العميل وتوقيع العقد.', 'We will let the team know to contact the client and sign the contract.') : L('يمكنك طلب عرض جديد لاحقاً.', 'No problem — you can request a new quote later.')}</p>
+      <div class="field"><label>${accept ? L('ملاحظة للإدارة', 'Note for the team') : L('ما السبب؟', 'What was the reason?')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="note" placeholder="${accept ? L('مثلاً: يرغب بالتوقيع يوم الأحد، ويُفضّل التواصل بعد العصر', 'e.g. wants to sign on Sunday, best reached in the afternoon') : L('مثلاً: السعر أعلى من ميزانيته', 'e.g. the price is above their budget')}"></textarea></div>
       <button class="btn ${accept ? 'btn-main' : 'btn-soft'} btn-block" type="submit">${L('تأكيد', 'Confirm')}</button>
     </form>`);
   $('#df', s.el).onsubmit = async e => {
@@ -1014,7 +1069,7 @@ function openQuoteDecide(l, accept) {
     const r = await rpc('team_quote_decide', { p_token: store(TOKEN_KEY), p_lead: l.id, p_accept: accept, p_note: e.target.note.value.trim() });
     b.disabled = false;
     if (!r || r.error) return formMsg($('#dm', s.el), 'err', err(r && r.error));
-    s.close(); toast(accept ? L('مبروك! بلّغنا الإدارة ✓', 'Congratulations! The team has been told ✓') : L('تم التسجيل', 'Recorded')); viewMe();
+    s.close(); toast(accept ? L('مبارك! تم إبلاغ الإدارة ✓', 'Congratulations! The team has been told ✓') : L('تم التسجيل', 'Recorded')); viewMe();
   };
 }
 
@@ -1025,7 +1080,7 @@ function drawLeads() {
     : leadFilter === 'open' ? ['new', 'contacted', 'negotiating'].includes(l.status)
     : ['lost', 'duplicate'].includes(l.status));
   $('#leads').innerHTML = list.length ? list.map(leadCard).join('') : `
-    <div class="empty"><div class="big">🌱</div>${all.length ? L('ما فيه عملاء بهذي الحالة.', 'No clients with this status.') : L('لسّا ما سجّلتي أي عميل.<br>أول عميل تسجّلينه ينحفظ باسمك من اللحظة.', 'You have not registered a client yet.<br>The first one you add is yours from that moment.')}</div>`;
+    <div class="empty"><div class="big">🌱</div>${all.length ? L('لا يوجد عملاء بهذه الحالة.', 'No clients with this status.') : L('لم تسجّل أي عميل بعد.<br>أول عميل تسجّله يُحفظ باسمك من لحظة تسجيله.', 'You have not registered a client yet.<br>The first one you add is yours from that moment.')}</div>`;
   $('#leads').onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
     const lead = id => meData.leads.find(l => l.id === id);
@@ -1033,6 +1088,28 @@ function drawLeads() {
     if (b.dataset.qcopy) copy(quoteLink(b.dataset.qcopy));
     if (b.dataset.qdec) { const [id, acc] = b.dataset.qdec.split('|'); openQuoteDecide(lead(id), acc === '1'); }
   };
+}
+
+function drawAgreementCard() {
+  const m = meData.member; const c = $('#agrCard'); if (!c) return;
+  const has = m.agreed_rate != null;
+  c.innerHTML = `<div class="panel-title" style="margin-bottom:4px"><h2>${L('اتفاقيتي', 'My agreement')}</h2>${has ? `<span class="pill won">${L('موثّقة ✓', 'On record ✓')}</span>` : ''}</div>
+    ${has ? `<div class="big num">${fmtRate(m.agreed_rate)}%</div>
+      <p style="font-size:.84rem;color:var(--muted);line-height:1.8">${L('نسبة العمولة المتفق عليها من قيمة العقد الأول لكل عميل يُنسب إليك.', 'Your agreed commission on the first contract of every client attributed to you.')}<br>
+        ${L('تاريخ الموافقة', 'Accepted on')}: ${fmtDateTime(m.agreed_at)}</p>
+      <button class="btn btn-soft btn-sm" id="agrOpen" style="margin-top:8px">${L('عرض الاتفاقية', 'View agreement')}</button>`
+    : `<p style="font-size:.84rem;color:var(--muted);line-height:1.8">${L('لا توجد نسخة محفوظة من الاتفاقية لهذا الحساب. يُرجى التواصل مع الإدارة.', 'No stored copy of the agreement for this account. Please contact the team.')}</p>`}`;
+  const b = $('#agrOpen'); if (b) b.onclick = openMyAgreement;
+}
+
+function openMyAgreement() {
+  const m = meData.member;
+  const text = EN() ? (m.agreement_text_en || m.agreement_text) : (m.agreement_text || m.agreement_text_en);
+  const s = sheet(L('اتفاقية الانضمام إلى برنامج سفراء رفد', 'RAFD Ambassadors membership agreement'), `
+    <div class="agr-meta">${L('نسخة محفوظة بتاريخ موافقتك', 'Copy stored on the date you accepted')}: <b>${fmtDateTime(m.agreed_at)}</b> · ${L('نسبة العمولة', 'Commission rate')}: <b class="num">${fmtRate(m.agreed_rate)}%</b></div>
+    ${agreementHtml(text, true)}
+    <div class="btn-row no-print" style="margin-top:12px"><button class="btn btn-main btn-sm" id="agrPrint">${L('طباعة / حفظ PDF', 'Print / save PDF')}</button></div>`);
+  $('#agrPrint', s.el).onclick = () => { document.body.classList.add('print-sheet'); window.print(); setTimeout(() => document.body.classList.remove('print-sheet'), 500); };
 }
 
 function drawIban() {
@@ -1043,7 +1120,7 @@ function drawIban() {
       <div class="iban-shown num">${esc(m.iban_masked)}</div>
       <div class="meta" style="font-size:.85rem;color:var(--muted);line-height:1.8">${esc(m.iban_name)}${m.bank ? ' · ' + esc(m.bank) : ''}<br>${L('آخر تحديث', 'Last updated')} ${fmtDate(m.iban_at)}</div>
       <button class="btn btn-soft btn-sm" style="margin-top:10px" id="editIban">${L('تغيير الآيبان', 'Change IBAN')}</button>`
-    : `<p style="color:var(--muted);font-size:.88rem;line-height:1.8;margin-bottom:10px">${L('أضيفي الآيبان عشان تنحوّل عمولتك على طول أول ما تتم الصفقة.', 'Add your IBAN so your commission can be paid as soon as a deal closes.')}</p>
+    : `<p style="color:var(--muted);font-size:.88rem;line-height:1.8;margin-bottom:10px">${L('يُرجى إضافة رقم الآيبان ليتسنى تحويل العمولة فور استحقاقها.', 'Add your IBAN so your commission can be paid as soon as a deal closes.')}</p>
        <button class="btn btn-gold btn-sm btn-block" id="editIban">${L('إضافة الآيبان', 'Add IBAN')}</button>`}`;
   $('#editIban').onclick = openIbanSheet;
 }
@@ -1058,15 +1135,15 @@ function drawTasks() {
   const left = posts.length - ok;
   c.innerHTML = `
     <div class="panel-title" style="margin-bottom:4px"><h2>${L('المهمة الشهرية', 'Monthly task')}</h2><span class="pill ${all ? 'won' : 'negotiating'} num">${ok} / ${posts.length}</span></div>
-    <p style="font-size:.86rem;color:#5b4442;line-height:1.8">${L(`لايك + شير + تعليق على كل مقطع ننزّله في ${esc(monthName(cur))}، وآخر الشهر تاخذين`, `Like + share + comment on every video we post in ${esc(monthName(cur))}, and at month end you receive`)} <b class="num">${money(t.bonus)}</b> ${SAR()}.</p>
+    <p style="font-size:.86rem;color:#5b4442;line-height:1.8">${L(`إعجاب ومشاركة وتعليق على كل مقطع يُنشر في ${esc(monthName(cur))}، وتُصرف في نهاية الشهر مكافأة قدرها`, `Like + share + comment on every video we post in ${esc(monthName(cur))}, and at month end you receive`)} <b class="num">${money(t.bonus)}</b> ${SAR()}.</p>
     <div class="bar"><i style="width:${posts.length ? Math.round(ok / posts.length * 100) : 0}%"></i></div>
-    <p style="font-size:.8rem;margin-bottom:6px;color:${all ? 'var(--ok)' : 'var(--muted)'}">${paidNow ? L('✓ انصرفت مكافأة هذا الشهر', '✓ This month’s bonus has been paid') : !posts.length ? L('ما نزل مقطع هذا الشهر بعد.', 'No videos posted this month yet.') : all ? L('✓ مكمّلة — تستحقين المكافأة آخر الشهر', '✓ Complete — the bonus is due at month end') : L(`باقي ${left} ${left === 1 ? 'مقطع' : 'مقاطع'}`, `${left} ${left === 1 ? 'video' : 'videos'} left`)}</p>
+    <p style="font-size:.8rem;margin-bottom:6px;color:${all ? 'var(--ok)' : 'var(--muted)'}">${paidNow ? L('✓ انصرفت مكافأة هذا الشهر', '✓ This month’s bonus has been paid') : !posts.length ? L('لم يُنشر أي مقطع هذا الشهر بعد.', 'No videos posted this month yet.') : all ? L('✓ مكتملة، وتستحق المكافأة في نهاية الشهر', '✓ Complete — the bonus is due at month end') : L(`المتبقي ${left} ${left === 1 ? 'مقطع' : 'مقاطع'}`, `${left} ${left === 1 ? 'video' : 'videos'} left`)}</p>
     ${posts.map(p => `<div class="task">
       <div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)}</small>
-        ${p.rejected ? `<div style="font-size:.76rem;color:var(--bad)">✕ ${L('ما لقينا تعليقك — راجعي الإدارة', 'We could not find your comment — contact the team')}</div>` : ''}</div>
+        ${p.rejected ? `<div style="font-size:.76rem;color:var(--bad)">✕ ${L('لم يُعثر على تعليقك، يُرجى مراجعة الإدارة', 'We could not find your comment — contact the team')}</div>` : ''}</div>
       <div class="btn-row" style="flex:none">
-        <a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${L('افتحي ↗', 'Open ↗')}</a>
-        ${p.rejected ? '' : p.done ? `<button class="btn btn-ghost btn-sm" data-task="${p.id}" style="color:var(--ok)">✓ ${L('تم', 'Done')}</button>` : `<button class="btn btn-main btn-sm" data-task="${p.id}">${L('سويتها', 'Mark done')}</button>`}
+        <a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${L('فتح ↗', 'Open ↗')}</a>
+        ${p.rejected ? '' : p.done ? `<button class="btn btn-ghost btn-sm" data-task="${p.id}" style="color:var(--ok)">✓ ${L('تم', 'Done')}</button>` : `<button class="btn btn-main btn-sm" data-task="${p.id}">${L('تم التنفيذ', 'Mark done')}</button>`}
       </div></div>`).join('')}
     ${t.bonuses.length ? `<div style="margin-top:10px;font-size:.8rem;color:var(--muted)">${t.bonuses.map(b => `✓ ${esc(monthName(b.month))}: <span class="num">${money(b.amount)}</span> ${SAR()}`).join('<br>')}</div>` : ''}`;
   c.onclick = e => { const b = e.target.closest('[data-task]'); if (b) openTaskSheet(t.posts.find(p => p.id === b.dataset.task)); };
@@ -1075,23 +1152,23 @@ function drawTasks() {
 function openTaskSheet(post) {
   const s = sheet(esc(post.title || L('مقطع', 'Video')), `
     <div id="tm"></div>
-    <a class="btn btn-soft btn-block" href="${esc(safeUrl(post.url))}" target="_blank" rel="noopener" style="margin-bottom:14px">${L('افتحي المقطع في تيك توك ↗', 'Open the video on TikTok ↗')}</a>
+    <a class="btn btn-soft btn-block" href="${esc(safeUrl(post.url))}" target="_blank" rel="noopener" style="margin-bottom:14px">${L('فتح المقطع في تيك توك ↗', 'Open the video on TikTok ↗')}</a>
     <form id="tf" novalidate>
-      <label class="check"><input type="checkbox" name="like"><span>${L('سويت لايك ❤️', 'I liked it ❤️')}</span></label>
-      <label class="check" style="margin-top:-8px"><input type="checkbox" name="share"><span>${L('سويت شير ↪️', 'I shared it ↪️')}</span></label>
-      <div class="field"><label>${L('الصقي تعليقك هنا', 'Paste your comment here')}</label><textarea name="comment" placeholder="${L('نفس النص اللي كتبتيه تحت المقطع', 'The exact text you wrote under the video')}">${esc(post.comment || '')}</textarea>
-        <div class="hint">${L('تيك توك ما تعطينا مين سوّى لايك أو شير، فالتعليق هو اللي نتأكد منه تحت حسابك', 'TikTok does not tell us who liked or shared, so the comment is what we check under your account')}${meData.member.tiktok ? ' <span class="num">' + esc(meData.member.tiktok) + '</span>' : ''}. ${L('تعليق ما نلقاه ينرفض.', 'A comment we cannot find is rejected.')}</div></div>
+      <label class="check"><input type="checkbox" name="like"><span>${L('تم الإعجاب ❤️', 'I liked it ❤️')}</span></label>
+      <label class="check" style="margin-top:-8px"><input type="checkbox" name="share"><span>${L('تمت المشاركة ↪️', 'I shared it ↪️')}</span></label>
+      <div class="field"><label>${L('الصق نص تعليقك هنا', 'Paste your comment here')}</label><textarea name="comment" placeholder="${L('النص ذاته الذي كتبته تحت المقطع', 'The exact text you wrote under the video')}">${esc(post.comment || '')}</textarea>
+        <div class="hint">${L('لا تتيح تيك توك معرفة من أعجب بالمقطع أو شاركه، لذا يُتحقق من التعليق تحت حسابك', 'TikTok does not tell us who liked or shared, so the comment is what we check under your account')}${meData.member.tiktok ? ' <span class="num">' + esc(meData.member.tiktok) + '</span>' : ''}. ${L('ويُرفض التعليق الذي لا يُعثر عليه.', 'A comment we cannot find is rejected.')}</div></div>
       <button class="btn btn-main btn-block" type="submit">${L('تم ✓', 'Done ✓')}</button>
     </form>`);
   $('#tf', s.el).onsubmit = async e => {
     e.preventDefault(); const f = e.target; const m = $('#tm', s.el); const b = f.querySelector('button');
-    if (!f.like.checked || !f.share.checked) return formMsg(m, 'err', L('المهمة لايك وشير وتعليق — الثلاثة', 'The task is like, share and comment — all three'));
+    if (!f.like.checked || !f.share.checked) return formMsg(m, 'err', L('المهمة تشمل الإعجاب والمشاركة والتعليق معاً', 'The task is like, share and comment — all three'));
     if (f.comment.value.trim().length < 2) return formMsg(m, 'err', err('comment'));
     b.disabled = true;
     const r = await rpc('team_task_done', { p_token: store(TOKEN_KEY), p_post: post.id, p_comment: f.comment.value.trim() });
     b.disabled = false;
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
-    s.close(); toast(L('انحسبت ✓', 'Counted ✓')); viewMe();
+    s.close(); toast(L('تم الاحتساب ✓', 'Counted ✓')); viewMe();
   };
 }
 
@@ -1114,28 +1191,28 @@ const LEAD_FIELDS = (client) => `
     <div class="field"><label>${client ? L('رقم الجوال', 'Mobile number') : L('جوال العميل', 'Client mobile')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX"></div>
     <div class="field"><label>${L('المدينة', 'City')}</label><input name="city"></div>
   </div>
-  <div class="field"><label>${L('الخدمة المطلوبة', 'Service of interest')}</label><select name="service"><option value="">${client ? L('— اختر —', '— Select —') : L('— اختاري —', '— Select —')}</option>${SERVICES().map(s => `<option>${esc(s)}</option>`).join('')}</select></div>`;
+  <div class="field"><label>${L('الخدمة المطلوبة', 'Service of interest')}</label><select name="service"><option value="">${client ? L('— اختر —', '— Select —') : L('— اختر —', '— Select —')}</option>${SERVICES().map(s => `<option>${esc(s)}</option>`).join('')}</select></div>`;
 
 function openLeadSheet() {
   const s = sheet(L('تسجيل عميل جديد', 'Register a new client'), `
     <div id="lm"></div>
     <form id="lf" novalidate>
       ${LEAD_FIELDS(false)}
-      <div class="field"><label>${L('ملاحظات', 'Notes')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="notes" placeholder="${L('مثلاً: مدير الموارد البشرية، يبي عرض سعر لـ 50 موظف', 'e.g. HR manager, wants a quote for 50 employees')}"></textarea></div>
-      <p class="hint" style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.7">${L('يُحفظ بتاريخ ووقت التسجيل ولا يمكن تعديله أو حذفه بعد الحفظ — تأكدي من رقم الجوال.', 'Saved with the date and time of registration and cannot be edited or deleted afterwards — double-check the mobile number.')}</p>
+      <div class="field"><label>${L('ملاحظات', 'Notes')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="notes" placeholder="${L('مثلاً: مدير الموارد البشرية، يرغب بعرض سعر لخمسين موظفاً', 'e.g. HR manager, wants a quote for 50 employees')}"></textarea></div>
+      <p class="hint" style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.7">${L('يُحفظ بتاريخ التسجيل ووقته ولا يمكن تعديله أو حذفه بعد الحفظ، لذا يُرجى التأكد من رقم الجوال.', 'Saved with the date and time of registration and cannot be edited or deleted afterwards — double-check the mobile number.')}</p>
       <button class="btn btn-main btn-block" type="submit">${L('حفظ باسمي', 'Save under my name')}</button>
     </form>`);
   $('#lf', s.el).onsubmit = async e => {
     e.preventDefault(); const f = e.target; const m = $('#lm', s.el); const b = f.querySelector('button[type=submit]');
     const phone = normPhone(f.phone.value);
-    if (f.name.value.trim().length < 2) return formMsg(m, 'err', L('اكتبي اسم العميل', "Enter the client's name"));
+    if (f.name.value.trim().length < 2) return formMsg(m, 'err', L('يُرجى إدخال اسم العميل', "Enter the client's name"));
     if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
     b.disabled = true;
     const r = await rpc('team_add_lead', { p_token: store(TOKEN_KEY), p_name: f.name.value.trim(), p_company: f.company.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_service: f.service.value, p_notes: f.notes.value.trim() });
     b.disabled = false;
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
     s.close();
-    toast(r.status === 'duplicate' ? L('انحفظ — لكن هذا العميل مسجّل قبلك باسم زميلة', 'Saved — but a teammate registered this client first') : L('انحفظ باسمك ✓', 'Saved under your name ✓'));
+    toast(r.status === 'duplicate' ? L('تم الحفظ، علماً بأن هذا العميل مسجّل مسبقاً باسم مندوب آخر', 'Saved — but a teammate registered this client first') : L('تم الحفظ باسمك ✓', 'Saved under your name ✓'));
     viewMe();
   };
 }
@@ -1145,23 +1222,23 @@ function openIbanSheet() {
   const s = sheet(L('حساب التحويل', 'Payout account'), `
     <div id="im"></div>
     <form id="iform" novalidate>
-      <div class="field"><label>${L('رقم الآيبان', 'IBAN')}</label><input name="iban" class="ltr" placeholder="SA00 0000 0000 0000 0000 0000" autocomplete="off" spellcheck="false"><div class="hint" id="ihint">${L('يبدأ بـ SA وبعده 22 رقم — تلقينه في تطبيق البنك.', 'Starts with SA followed by 22 digits — you will find it in your banking app.')}</div></div>
+      <div class="field"><label>${L('رقم الآيبان', 'IBAN')}</label><input name="iban" class="ltr" placeholder="SA00 0000 0000 0000 0000 0000" autocomplete="off" spellcheck="false"><div class="hint" id="ihint">${L('يبدأ بـ SA ويليه 22 رقماً، ويمكن الحصول عليه من تطبيق البنك.', 'Starts with SA followed by 22 digits — you will find it in your banking app.')}</div></div>
       <div class="field"><label>${L('اسم صاحب الحساب', 'Account holder name')} <small>${L('(كما هو في البنك)', '(as held by the bank)')}</small></label><input name="name" value="${esc(m.iban_name || m.name)}"></div>
       <div class="field"><label>${L('البنك', 'Bank')}</label><input name="bank" value="${esc(m.bank || '')}" placeholder="${L('مثلاً: الراجحي', 'e.g. Al Rajhi')}"></div>
-      <p class="hint" style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.7">🔒 ${L('الآيبان يظهر لك مخفي، ولا يطّلع عليه إلا الإدارة عند التحويل. الحساب لازم يكون باسمك.', 'Your IBAN is shown to you masked and only the team sees it, when paying you. The account must be in your name.')}</p>
+      <p class="hint" style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.7">🔒 ${L('يظهر رقم الآيبان لك مخفياً، ولا تطّلع عليه إلا الإدارة عند التحويل. ويجب أن يكون الحساب باسمك.', 'Your IBAN is shown to you masked and only the team sees it, when paying you. The account must be in your name.')}</p>
       <button class="btn btn-gold btn-block" type="submit">${L('حفظ', 'Save')}</button>
     </form>`);
   const f = $('#iform', s.el); const hint = $('#ihint', s.el);
   f.iban.addEventListener('input', () => {
     const x = ibanClean(f.iban.value);
-    if (x.length >= 24) { hint.textContent = ibanOk(x) ? L('✓ رقم آيبان صحيح', '✓ Valid IBAN') : L('✕ الرقم فيه خطأ — راجعيه', '✕ This IBAN has an error — please check it'); hint.style.color = ibanOk(x) ? 'var(--ok)' : 'var(--bad)'; }
-    else { const n = Math.max(0, 24 - x.length); hint.textContent = L(`باقي ${n} خانة`, `${n} characters to go`); hint.style.color = ''; }
+    if (x.length >= 24) { hint.textContent = ibanOk(x) ? L('✓ رقم آيبان صحيح', '✓ Valid IBAN') : L('✕ الرقم غير صحيح، يُرجى مراجعته', '✕ This IBAN has an error — please check it'); hint.style.color = ibanOk(x) ? 'var(--ok)' : 'var(--bad)'; }
+    else { const n = Math.max(0, 24 - x.length); hint.textContent = L(`المتبقي ${n} خانة`, `${n} characters to go`); hint.style.color = ''; }
   });
   f.onsubmit = async e => {
     e.preventDefault(); const mm = $('#im', s.el); const b = f.querySelector('button');
     const x = ibanClean(f.iban.value);
     if (!ibanOk(x)) return formMsg(mm, 'err', err('iban'));
-    if (f.name.value.trim().length < 3) return formMsg(mm, 'err', L('اكتبي اسم صاحب الحساب', 'Enter the account holder name'));
+    if (f.name.value.trim().length < 3) return formMsg(mm, 'err', L('يُرجى إدخال اسم صاحب الحساب', 'Enter the account holder name'));
     b.disabled = true;
     const r = await rpc('team_set_iban', { p_token: store(TOKEN_KEY), p_iban: x, p_name: f.name.value.trim(), p_bank: f.bank.value.trim() });
     b.disabled = false;
@@ -1174,7 +1251,7 @@ function openIbanSheet() {
 async function viewRef(code) {
   app.innerHTML = '<div class="wrap"><div class="empty">…</div></div>';
   const info = await rpc('team_ref_info', { p_code: code });
-  if (!info || info.error) { app.innerHTML = `<div class="wrap"><div class="card auth"><h2>${L('الرابط غير صالح', 'This link is not valid')}</h2><p class="sub">${L('تأكد من الرابط اللي وصلك.', 'Please check the link you received.')}</p></div></div>`; return; }
+  if (!info || info.error) { app.innerHTML = `<div class="wrap"><div class="card auth"><h2>${L('الرابط غير صالح', 'This link is not valid')}</h2><p class="sub">${L('يُرجى التأكد من الرابط المرسل إليك.', 'Please check the link you received.')}</p></div></div>`; return; }
   app.innerHTML = `
   <div class="wrap"><div class="card auth">
     <span class="pill link" style="display:inline-block;margin-bottom:10px">${L(`عن طريق ${esc(info.first)} من فريق رفد`, `Via ${esc(info.first)} from the RAFD team`)}</span>
@@ -1183,21 +1260,21 @@ async function viewRef(code) {
     <div id="m"></div>
     <form id="f" novalidate>
       ${LEAD_FIELDS(true)}
-      <div class="field"><label>${L('وش تحتاج؟', 'What do you need?')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="notes"></textarea></div>
+      <div class="field"><label>${L('ما احتياجك؟', 'What do you need?')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="notes"></textarea></div>
       <button class="btn btn-main btn-block" type="submit">${L('إرسال', 'Send')}</button>
     </form>
   </div></div>`;
   $('#f').onsubmit = async e => {
     e.preventDefault(); const f = e.target; const m = $('#m'); const b = f.querySelector('button');
     const phone = normPhone(f.phone.value);
-    if (f.name.value.trim().length < 2) return formMsg(m, 'err', L('اكتب اسمك', 'Please enter your name'));
+    if (f.name.value.trim().length < 2) return formMsg(m, 'err', L('يُرجى إدخال الاسم', 'Please enter your name'));
     if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
     b.disabled = true;
     const r = await rpc('team_ref_submit', { p_code: code, p_name: f.name.value.trim(), p_company: f.company.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_service: f.service.value, p_notes: f.notes.value.trim() });
     b.disabled = false;
-    if (r && r.error === 'too_many') return formMsg(m, 'info', L('وصلنا طلبك من قبل ✓ — بنتواصل معك قريب.', 'We already have your request ✓ — we will be in touch soon.'));
+    if (r && r.error === 'too_many') return formMsg(m, 'info', L('طلبك مسجّل لدينا مسبقاً ✓ وسنتواصل معك قريباً.', 'We already have your request ✓ — we will be in touch soon.'));
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
-    $('.auth').innerHTML = `<div class="empty"><div class="big">✅</div><h2 style="color:var(--navy-900);margin:8px 0">${L('وصلنا طلبك', 'Request received')}</h2>${L('شكراً لك — بيتواصل معك فريق رفد قريب.', 'Thank you — the RAFD team will contact you soon.')}</div>`;
+    $('.auth').innerHTML = `<div class="empty"><div class="big">✅</div><h2 style="color:var(--navy-900);margin:8px 0">${L('تم استلام طلبك', 'Request received')}</h2>${L('شكراً لك، سيتواصل معك فريق رفد قريباً.', 'Thank you — the RAFD team will contact you soon.')}</div>`;
   };
 }
 
@@ -1274,8 +1351,8 @@ async function viewQuote(id) {
     </section>
     ${B.iban ? `<section class="qd-sec qd-bank"><h3>${L('طريقة السداد', 'Payment details')}</h3><p>${L('يُسدَّد المبلغ بتحويل بنكي إلى الحساب التالي', 'Payment is made by bank transfer to the following account')}${(B.name || B.name_en) ? ` ${L('لدى', 'at')} ${esc(pick(B.name, B.name_en))}` : ''}:</p>
       <dl>${(B.beneficiary || B.beneficiary_en) ? `<dt>${L('اسم المستفيد', 'Beneficiary')}</dt><dd>${esc(pick(B.beneficiary, B.beneficiary_en))}</dd>` : ''}<dt>IBAN</dt><dd class="num">${esc(ibanPretty(B.iban))}</dd>${B.account ? `<dt>${L('رقم الحساب', 'Account no.')}</dt><dd class="num">${esc(B.account)}</dd>` : ''}</dl></section>` : ''}
-    <div id="qdState">${q.status === 'accepted' ? `<div class="msg ok">✓ ${L('تمت الموافقة على العرض', 'Quotation accepted on')} ${fmtDate(q.decided_at)} — ${L('بنتواصل معكم لتوقيع العقد.', 'we will contact you to sign the contract.')}</div>`
-      : q.status === 'declined' ? `<div class="msg info">${L('هذا العرض مغلق.', 'This quotation is closed.')}</div>` : expired ? `<div class="msg info">${L('انتهت صلاحية هذا العرض — تواصلوا معنا لتحديثه.', 'This quotation has expired — contact us for an updated one.')}</div>` : ''}</div>
+    <div id="qdState">${q.status === 'accepted' ? `<div class="msg ok">✓ ${L('تمت الموافقة على العرض', 'Quotation accepted on')} ${fmtDate(q.decided_at)} — ${L('وسنتواصل معكم لتوقيع العقد.', 'we will contact you to sign the contract.')}</div>`
+      : q.status === 'declined' ? `<div class="msg info">${L('هذا العرض مغلق.', 'This quotation is closed.')}</div>` : expired ? `<div class="msg info">${L('انتهت صلاحية هذا العرض، يُرجى التواصل معنا لتحديثه.', 'This quotation has expired — contact us for an updated one.')}</div>` : ''}</div>
     <div class="qd-actions">
       ${open ? `<button class="btn btn-main" id="qAccept">✓ ${L('أوافق على العرض', 'Accept quotation')}</button>` : ''}
       <button class="btn btn-soft" onclick="window.print()">${L('طباعة / حفظ PDF', 'Print / save PDF')}</button>
@@ -1286,7 +1363,7 @@ async function viewQuote(id) {
   $('#qLang').onclick = () => setLang(EN() ? 'ar' : 'en');
   const acc = $('#qAccept');
   if (acc) acc.onclick = async () => {
-    if (!confirm(L('تأكيد الموافقة على عرض السعر؟ بيتواصل معكم فريق رفد لتوقيع العقد.', 'Confirm you accept this quotation? The RAFD team will contact you to sign the contract.'))) return;
+    if (!confirm(L('هل تؤكدون الموافقة على عرض السعر؟ سيتواصل معكم فريق رفد لتوقيع العقد.', 'Confirm you accept this quotation? The RAFD team will contact you to sign the contract.'))) return;
     acc.disabled = true;
     const r = await rpc('team_quote_client_accept', { p_id: id });
     if (!r || r.error) { acc.disabled = false; return toast(err(r && r.error)); }
@@ -1310,7 +1387,7 @@ async function viewAdmin() {
 }
 
 function admLogin(e) {
-  app.innerHTML = `<div class="wrap"><div class="card auth"><h2>${L('إدارة سفراء رفد', 'RAFD Ambassadors — admin')}</h2><p class="sub">${L('للإدارة فقط.', 'For the team only.')}</p><div id="m">${e ? `<div class="msg err">${esc(e)}</div>` : ''}</div>
+  app.innerHTML = `<div class="wrap"><div class="card auth"><h2>${L('لوحة إدارة سفراء رفد', 'RAFD Ambassadors — admin')}</h2><p class="sub">${L('للإدارة فقط.', 'For the team only.')}</p><div id="m">${e ? `<div class="msg err">${esc(e)}</div>` : ''}</div>
     <form id="f"><div class="field"><label>${L('كلمة السر', 'Password')}</label><input name="s" type="password" autocomplete="current-password"></div><button class="btn btn-main btn-block">${L('دخول', 'Sign in')}</button></form></div></div>`;
   $('#f').onsubmit = ev => { ev.preventDefault(); try { sessionStorage.setItem(ADMIN_KEY, ev.target.s.value); } catch (x) {} viewAdmin(); };
 }
@@ -1327,6 +1404,7 @@ function drawAdmin() {
       <button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">${L('المهمة الشهرية', 'Monthly task')}</button>
       <span style="flex:1"></span>
       <button class="btn btn-soft btn-sm" id="catBtn">${L('الباقات والأسعار', 'Packages & prices')}</button>
+      <button class="btn btn-soft btn-sm" id="agrBtn">${L('اتفاقية المندوبين', 'Representative agreement')}</button>
       <button class="btn btn-soft btn-sm" id="termsBtn">${L('شروط العرض', 'Quote terms')}</button>
       <button class="btn btn-soft btn-sm" id="csv">${L('تصدير Excel', 'Export to Excel')}</button>
       <button class="btn btn-ghost btn-sm" id="admOut">${L('خروج', 'Sign out')}</button>
@@ -1344,6 +1422,7 @@ function drawAdmin() {
   $('#csv').onclick = exportCsv;
   $('#termsBtn').onclick = openTermsEditor;
   $('#catBtn').onclick = openCatalogEditor;
+  $('#agrBtn').onclick = openAgreementEditor;
   admTab === 'leads' ? drawAdmLeads() : admTab === 'tasks' ? loadAdmTasks() : drawAdmMembers();
 }
 
@@ -1383,13 +1462,13 @@ function drawAdmTasks() {
           <div class="field" style="margin:0"><label>${L('رابط المقطع', 'Video link')}</label><input name="url" class="ltr" placeholder="https://www.tiktok.com/@…/video/…"></div>
           <div class="field" style="margin:0"><label>${L('عنوان قصير', 'Short title')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="title" placeholder="${L('مثلاً: إعلان الباقة الجديدة', 'e.g. New package launch')}"></div>
         </div>
-        <button class="btn btn-main btn-sm" style="margin-top:10px">＋ ${L('نزّل المقطع للفريق', 'Post video to the team')}</button>
-      </form>` : `<p class="hint" style="margin-top:10px;color:var(--muted);font-size:.85rem">${L('شهر منتهي — للمراجعة والصرف فقط.', 'A past month — for review and payouts only.')}</p>`}
+        <button class="btn btn-main btn-sm" style="margin-top:10px">＋ ${L('نشر المقطع للفريق', 'Post video to the team')}</button>
+      </form>` : `<p class="hint" style="margin-top:10px;color:var(--muted);font-size:.85rem">${L('شهر منتهٍ، للمراجعة والصرف فقط.', 'A past month — for review and payouts only.')}</p>`}
     </div>
     <div class="card" style="margin-bottom:12px">
       <div class="panel-title"><h2>${L('مقاطع', 'Videos —')} ${esc(monthName(admTaskMonth))} (<span class="num">${posts.length}</span>)</h2></div>
-      ${posts.map(p => `<div class="task"><div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)} · ${L('سوّتها', 'done by')} <span class="num">${done.filter(d => d.post_id === p.id && !d.rejected).length} / ${members.length}</span></small></div>
-        <div class="btn-row"><a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${L('فتح ↗', 'Open ↗')}</a><button class="btn btn-ghost btn-sm" data-del="${p.id}">${L('حذف', 'Delete')}</button></div></div>`).join('') || `<div class="empty">${L('ما نزل مقطع هذا الشهر.', 'No videos posted this month.')}</div>`}
+      ${posts.map(p => `<div class="task"><div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)} · ${L('نفّذها', 'done by')} <span class="num">${done.filter(d => d.post_id === p.id && !d.rejected).length} / ${members.length}</span></small></div>
+        <div class="btn-row"><a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${L('فتح ↗', 'Open ↗')}</a><button class="btn btn-ghost btn-sm" data-del="${p.id}">${L('حذف', 'Delete')}</button></div></div>`).join('') || `<div class="empty">${L('لم يُنشر أي مقطع هذا الشهر.', 'No videos posted this month.')}</div>`}
     </div>
     <div class="card">
       <div class="panel-title"><h2>${L('الفريق', 'Team')}</h2>${due ? `<span class="pill negotiating">${due} ${L('يستحقون الصرف', 'due for payout')}</span>` : ''}</div>
@@ -1404,20 +1483,20 @@ function drawAdmTasks() {
         ${mine.length ? `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:.82rem;color:var(--teal-600)">${L('التعليقات', 'Comments')} (${mine.length})</summary>
           ${mine.map(d => { const p = posts.find(x => x.id === d.post_id) || {}; return `<div class="cmt ${d.rejected ? 'rej' : ''}"><span><small style="color:var(--muted)">${esc(p.title || L('مقطع', 'Video'))}:</small> ${esc(d.comment)}</span>
             <button class="btn btn-ghost btn-sm" data-rej="${d.post_id}|${m.id}|${d.rejected ? 1 : 0}">${d.rejected ? L('إرجاع', 'Restore') : L('رفض', 'Reject')}</button></div>`; }).join('')}</details>` : ''}
-      </div>`).join('') || `<div class="empty">${L('ما فيه أحد بعد.', 'Nobody yet.')}</div>`}
+      </div>`).join('') || `<div class="empty">${L('لا يوجد أعضاء بعد.', 'Nobody yet.')}</div>`}
     </div>`;
   const body = $('#admBody');
   body.querySelectorAll('[data-mo]').forEach(b => b.onclick = () => { admTaskMonth = b.dataset.mo; loadAdmTasks(); });
-  $('#bonusSave').onclick = () => { const v = +toLatin($('#bonusAmt').value).replace(/[^\d.]/g, ''); if (!v) return toast(L('اكتب مبلغ صحيح', 'Enter a valid amount')); taskAct('set_bonus', { amount: v }); };
+  $('#bonusSave').onclick = () => { const v = +toLatin($('#bonusAmt').value).replace(/[^\d.]/g, ''); if (!v) return toast(L('أدخل مبلغاً صحيحاً', 'Enter a valid amount')); taskAct('set_bonus', { amount: v }); };
   const pf = $('#postForm');
   if (pf) pf.onsubmit = e => { e.preventDefault(); const url = pf.url.value.trim(); if (!/^https:\/\//.test(url)) return toast(err('url')); taskAct('post_add', { url, title: pf.title.value.trim() }); };
   body.onclick = e => {
     const t = e.target.closest('button'); if (!t) return;
-    if (t.dataset.del && confirm(L('تحذف المقطع؟ تنحذف معه علامات الفريق عليه.', 'Delete this video? The team’s marks on it are deleted too.'))) taskAct('post_del', { id: t.dataset.del });
+    if (t.dataset.del && confirm(L('حذف المقطع يحذف معه تسجيلات الفريق عليه. هل تريد المتابعة؟', 'Delete this video? The team’s marks on it are deleted too.'))) taskAct('post_del', { id: t.dataset.del });
     if (t.dataset.rej) { const [post_id, member_id, was] = t.dataset.rej.split('|'); taskAct('reject', { post_id, member_id, undo: was === '1' }); }
     if (t.dataset.pay) { const m = admData.members.find(x => x.id === t.dataset.pay);
-      const ref = prompt(`${L('صرف', 'Pay')} ${money(bonus)} ${SAR()} ${L('لـ', 'to')} ${m.name}\n${m.iban ? ibanPretty(m.iban) : L('ما أضافت آيبان', 'no IBAN added')}\n\n${L('الرقم المرجعي (اختياري):', 'Transfer reference (optional):')}`, ''); if (ref !== null) taskAct('pay', { member_id: m.id, ref: ref.trim(), amount: bonus }); }
-    if (t.dataset.unpay && confirm(L('تلغي تسجيل الصرف؟', 'Undo this payout record?'))) taskAct('unpay', { member_id: t.dataset.unpay });
+      const ref = prompt(`${L('صرف', 'Pay')} ${money(bonus)} ${SAR()} ${L('لـ', 'to')} ${m.name}\n${m.iban ? ibanPretty(m.iban) : L('لم يُضف رقم الآيبان', 'no IBAN added')}\n\n${L('الرقم المرجعي (اختياري):', 'Transfer reference (optional):')}`, ''); if (ref !== null) taskAct('pay', { member_id: m.id, ref: ref.trim(), amount: bonus }); }
+    if (t.dataset.unpay && confirm(L('هل تريد إلغاء تسجيل الصرف؟', 'Undo this payout record?'))) taskAct('unpay', { member_id: t.dataset.unpay });
   };
 }
 
@@ -1428,8 +1507,8 @@ function drawAdmLeads() {
   const opts = [['all', L('الكل', 'All')], ['q_req', '📄 ' + L('طلبات عرض سعر', 'Quote requests')], ['q_ok', '✅ ' + L('وافقوا على العرض', 'Accepted quotes')], ...Object.entries(STATUS()), ['unpaid', L('مستحق تحويل', 'Payout due')]];
   const nReq = admData.leads.filter(l => l.quote && l.quote.status === 'requested').length;
   const nOk = admData.leads.filter(l => l.quote && l.quote.status === 'accepted' && l.status !== 'won').length;
-  body.innerHTML = `<input class="search" id="q" placeholder="${L('ابحث باسم العميل، الشركة، الجوال، أو اسم السفيرة', 'Search by client, company, mobile or ambassador')}" value="${esc(admQuery)}">
-    ${nReq || nOk ? `<div class="alerts">${nReq ? `<button class="pill negotiating" data-s="q_req">📄 ${nReq} ${L('طلب عرض سعر بانتظارك', 'quote request(s) waiting')}</button>` : ''}${nOk ? `<button class="pill won" data-s="q_ok">✅ ${nOk} ${L('عميل وافق — تواصل ووقّع العقد', 'accepted — contact them to sign')}</button>` : ''}</div>` : ''}
+  body.innerHTML = `<input class="search" id="q" placeholder="${L('ابحث باسم العميل أو الشركة أو الجوال أو اسم المندوب', 'Search by client, company, mobile or representative')}" value="${esc(admQuery)}">
+    ${nReq || nOk ? `<div class="alerts">${nReq ? `<button class="pill negotiating" data-s="q_req">📄 ${nReq} ${L('طلب عرض سعر بانتظار التسعير', 'quote request(s) waiting')}</button>` : ''}${nOk ? `<button class="pill won" data-s="q_ok">✅ ${nOk} ${L('عميل وافق، يُرجى التواصل لتوقيع العقد', 'accepted — contact them to sign')}</button>` : ''}</div>` : ''}
     <div class="filters">${opts.map(([k, t]) => `<button class="chip ${admStatus === k ? 'on' : ''}" data-s="${k}">${t}</button>`).join('')}</div>
     <div id="admList"></div>`;
   $('#q').oninput = e => { admQuery = e.target.value; drawAdmList(); };
@@ -1455,7 +1534,7 @@ function drawAdmList() {
         <div>
           <h3 style="font-size:1rem;font-weight:800">${esc(l.client_name)}${l.company ? ' · ' + esc(l.company) : ''}</h3>
           <div class="meta" style="font-size:.84rem;color:var(--muted);line-height:1.8"><a class="num" href="${wa(l.client_phone)}" target="_blank" rel="noopener">${esc(l.client_phone)}</a>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(l.service) : ''}</div>
-          <div class="who">${L('السفيرة', 'Ambassador')}: <b>${esc(m.name || '—')}</b> <span class="num">(${esc(m.code || '')})</span> · ${fmtDateTime(l.created_at)} · ${l.source === 'link' ? L('سجّل العميل بنفسه من رابطها', 'client signed up via her link') : L('سجّلته هي', 'registered by her')}</div>
+          <div class="who">${L('المندوب', 'Representative')}: <b>${esc(m.name || '—')}</b> <span class="num">(${esc(m.code || '')})</span> · ${fmtDateTime(l.created_at)} · ${l.source === 'link' ? L('سجّل العميل بنفسه من رابط المندوب', 'client signed up via the representative\'s link') : L('سجّله المندوب', 'registered by the representative')}</div>
           ${l.notes ? `<div class="who" style="margin-top:4px">📝 ${esc(l.notes)}</div>` : ''}
         </div>
         <span class="pill ${l.status}">${ST[l.status]}</span>
@@ -1463,7 +1542,7 @@ function drawAdmList() {
       <div class="adm-edit">
         <div><label>${L('الحالة', 'Status')}</label><select data-f="status">${Object.entries(ST).map(([k, t]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
         <div><label>${L('قيمة الصفقة', 'Deal value')}</label><input data-f="deal_value" class="num" inputmode="decimal" value="${l.deal_value ?? (l.quote && l.quote.status === 'accepted' ? l.quote.total : '')}"></div>
-        <div><label>${L('العمولة', 'Commission')}</label><input data-f="commission" class="num" inputmode="decimal" value="${l.commission ?? ''}"></div>
+        <div><label>${L('العمولة', 'Commission')}${m.agreed_rate != null ? ` <span class="num">(${fmtRate(m.agreed_rate)}%)</span>` : ''}</label><input data-f="commission" class="num" inputmode="decimal" value="${l.commission ?? ''}" data-rate="${m.agreed_rate ?? ''}"></div>
         <button class="btn btn-main btn-sm" data-a="save">${L('حفظ', 'Save')}</button>
       </div>
       ${admQuoteBox(l)}
@@ -1474,15 +1553,24 @@ function drawAdmList() {
           : `<button class="btn btn-gold btn-sm" data-a="pay">${L('تم التحويل', 'Mark paid')}</button><span></span>`) : '<span></span><span></span>'}
       </div>
     </div>`;
-  }).join('') : `<div class="empty">${L('ما فيه نتائج.', 'No results.')}</div>`;
+  }).join('') : `<div class="empty">${L('لا توجد نتائج.', 'No results.')}</div>`;
   $('#admList').onclick = admLeadAction;
+  /* The commission follows from the deal value and the rate THIS member agreed to —
+     filled in as a suggestion the moment the deal is marked signed, still editable. */
+  $('#admList').onchange = e => {
+    const card = e.target.closest('.adm-lead'); if (!card) return;
+    const f = k => card.querySelector(`[data-f=${k}]`);
+    if (!['status', 'deal_value'].includes(e.target.dataset.f) || f('status').value !== 'won') return;
+    const rate = +f('commission').dataset.rate, deal = +toLatin(f('deal_value').value).replace(/[^\d.]/g, '');
+    if (rate && deal && (!f('commission').value || e.target.dataset.f === 'deal_value')) f('commission').value = +(deal * rate / 100).toFixed(2);
+  };
 }
 
 function admQuoteBox(l) {
   const q = l.quote; if (!q) return '';
-  const head = { requested: '📄 <b>' + L('طلب عرض سعر', 'Quote request') + '</b> — ' + L('بانتظارك', 'waiting for you'),
-    sent: '📄 ' + L('أُرسل العرض — بانتظار رد العميل', 'Quote sent — awaiting the client'),
-    accepted: `✅ <b>${L('العميل وافق', 'Client accepted')}</b>${q.decided_by === 'client' ? ' ' + L('بنفسه من صفحة العرض', 'directly on the quote page') : ' ' + L('(حسب السفيرة)', '(per the ambassador)')} ${fmtDateTime(q.decided_at)} — ${L('تواصل ووقّع العقد', 'contact them to sign')}`,
+  const head = { requested: '📄 <b>' + L('طلب عرض سعر', 'Quote request') + '</b> — ' + L('بانتظار الإجراء', 'waiting for you'),
+    sent: '📄 ' + L('أُرسل العرض، بانتظار رد العميل', 'Quote sent — awaiting the client'),
+    accepted: `✅ <b>${L('العميل وافق', 'Client accepted')}</b>${q.decided_by === 'client' ? ' ' + L('بنفسه من صفحة العرض', 'directly on the quote page') : ' ' + L('(بإفادة المندوب)', '(as reported by the representative)')} ${fmtDateTime(q.decided_at)} — ${L('يُرجى التواصل وتوقيع العقد', 'contact them to sign')}`,
     declined: '✕ ' + L('العميل رفض العرض', 'The client declined') }[q.status];
   return `<div class="qbox ${q.status}">${head}
     ${q.requested_items && q.requested_items.length ? `<div style="font-size:.86rem">🧾 ${pickedText(q.requested_items, admCatalog)}</div>` : ''}
@@ -1527,9 +1615,9 @@ function openQuoteEditor(l) {
       <button type="button" class="btn btn-ghost btn-sm" id="addRow">＋ ${L('بند مخصص', 'Custom line')}</button>
       <label class="check" style="margin-top:10px"><input type="checkbox" name="vat" ${q.vat !== false ? 'checked' : ''}><span>${L('يضاف ضريبة القيمة المضافة 15%', 'Add 15% VAT')}</span></label>
       <div class="field"><label>${L('ساري حتى', 'Valid until')}</label><input type="date" name="valid" value="${esc(q.valid_until || addDays(QUOTE_DAYS))}"></div>
-      <div class="field"><label>${L('ملاحظات خاصة بهذا العرض', 'Notes on this quote')} <small>${L('(تظهر للعميل — الشروط العامة تنضاف تلقائياً)', '(shown to the client — the standard terms are added automatically)')}</small></label><textarea name="note" placeholder="${L('مثلاً: الدفع 50% مقدم و50% بعد التركيب.', 'e.g. 50% upfront, 50% after installation.')}">${esc(q.note || '')}</textarea></div>
+      <div class="field"><label>${L('ملاحظات خاصة بهذا العرض', 'Notes on this quote')} <small>${L('(تظهر للعميل، وتُضاف الشروط العامة تلقائياً)', '(shown to the client — the standard terms are added automatically)')}</small></label><textarea name="note" placeholder="${L('مثلاً: الدفع 50% مقدم و50% بعد التركيب.', 'e.g. 50% upfront, 50% after installation.')}">${esc(q.note || '')}</textarea></div>
       <div class="qbox" id="sum" style="margin:0 0 12px"></div>
-      <button class="btn btn-main btn-block" type="submit">${L('إرسال العرض للسفيرة', 'Send quote to the ambassador')}</button>
+      <button class="btn btn-main btn-block" type="submit">${L('إرسال العرض إلى المندوب', 'Send quote to the representative')}</button>
     </form>`);
   const f = $('#ef', s.el); const rowsEl = $('#rows', s.el);
   const val = (r, k) => (r.querySelector(`[data-k=${k}]`) || {}).value || '';
@@ -1558,7 +1646,7 @@ function openQuoteEditor(l) {
       plan: f.plan.value, client_address: f.caddr.value.trim(), client_vat: toLatin(f.cvat.value).replace(/\D/g, '') });
     b.disabled = false;
     if (!r || r.error) return formMsg($('#em', s.el), 'err', err(r && r.error));
-    s.close(); toast(L('انرسل العرض للسفيرة ✓', 'Quote sent to the ambassador ✓')); viewAdmin();
+    s.close(); toast(L('تم إرسال العرض إلى المندوب ✓', 'Quote sent to the representative ✓')); viewAdmin();
   };
 }
 
@@ -1573,7 +1661,7 @@ function openCatalogEditor() {
     <input data-k="price" class="num" inputmode="decimal" placeholder="${L('السعر الافتراضي (اختياري)', 'Default price (optional)')}" value="${esc(c.price ?? '')}">
     <button type="button" class="btn btn-ghost btn-sm" data-rm>${L('حذف الباقة', 'Remove package')}</button></div>`;
   const s = sheet(L('الباقات والأسعار', 'Packages & prices'), `
-    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('هذي القائمة اللي تختار منها السفيرات وقت طلب العرض، وتضيف منها أنت وقت التسعير. السعر الافتراضي ينعبى تلقائياً وتقدر تغيّره في كل عرض.', 'Ambassadors pick from this list when requesting a quote, and you add from it when pricing. The default price fills in automatically and can be changed on each quote.')}</p>
+    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('يختار المندوبون من هذه القائمة عند طلب عرض السعر، وتضيف منها الإدارة عند التسعير. يُعبّأ السعر الافتراضي تلقائياً ويمكن تعديله في كل عرض.', 'Representatives pick from this list when requesting a quote, and the team adds from it when pricing. The default price fills in automatically and can be changed on each quote.')}</p>
     <div id="cm"></div>
     <div id="catRows">${cat.map(row).join('')}</div>
     <button type="button" class="btn btn-soft btn-sm" id="catNew">＋ ${L('باقة جديدة', 'New package')}</button>
@@ -1589,7 +1677,7 @@ function openCatalogEditor() {
     }).filter(c => c.ar || c.en);
     const r = await admRpc('catalog', { catalog: out });
     if (!r || r.error) return formMsg($('#cm', s.el), 'err', err(r && r.error));
-    admCatalog = r.catalog; s.close(); toast(L('انحفظت الباقات ✓', 'Packages saved ✓'));
+    admCatalog = r.catalog; s.close(); toast(L('تم حفظ الباقات ✓', 'Packages saved ✓'));
   };
 }
 
@@ -1597,8 +1685,8 @@ async function openTermsEditor() {
   const r = await admRpc('quote_terms');
   if (!r || r.error) return toast(err(r && r.error));
   const s = sheet(L('الشروط والأحكام الافتراضية', 'Default terms and conditions'), `
-    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('تنضاف لكل عرض ترسله من الآن. العروض المرسلة قبل تبقى بشروطها وقت إرسالها.', 'Added to every quote you send from now on. Quotes already sent keep the terms they were sent with.')}<br>
-      ${L('السطر اللي يبدأ بـ', 'A line starting with')} <b class="num">##</b> ${L('عنوان قسم مرقّم، واللي يبدأ بـ', 'is a numbered section; one starting with')} <b class="num">-</b> ${L('بند تحته.', 'is a clause under it.')}</p>
+    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('تُضاف إلى كل عرض يُرسل من الآن، وتبقى العروض المرسلة سابقاً بالشروط التي أُرسلت بها.', 'Added to every quote you send from now on. Quotes already sent keep the terms they were sent with.')}<br>
+      ${L('السطر الذي يبدأ بـ', 'A line starting with')} <b class="num">##</b> ${L('عنوان قسم مرقّم، والذي يبدأ بـ', 'is a numbered section; one starting with')} <b class="num">-</b> ${L('بند تحته.', 'is a clause under it.')}</p>
     <div class="tabs2"><button type="button" class="chip on" data-tl="ar">العربية</button><button type="button" class="chip" data-tl="en">English</button></div>
     <div id="tm"></div>
     <form id="tf" novalidate>
@@ -1613,7 +1701,36 @@ async function openTermsEditor() {
     e.preventDefault();
     const x = await admRpc('quote_terms', { terms: e.target.terms.value.trim(), terms_en: e.target.terms_en.value.trim() });
     if (!x || x.error) return formMsg($('#tm', s.el), 'err', err(x && x.error));
-    s.close(); toast(L('انحفظت الشروط ✓', 'Terms saved ✓'));
+    s.close(); toast(L('تم حفظ الشروط ✓', 'Terms saved ✓'));
+  };
+}
+
+async function openAgreementEditor() {
+  const r = await admRpc('agreement');
+  if (!r || r.error) return toast(err(r && r.error));
+  const s = sheet(L('اتفاقية المندوبين', 'Representative agreement'), `
+    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('ما تحدده هنا يسري على المنضمين الجدد فقط. من وافق سابقاً تبقى نسبته ونص اتفاقيته كما وافق عليها، ومحفوظة في حسابه.', 'Changes here apply to new members only. Anyone who has already accepted keeps the rate and text they agreed to, stored in their account.')}<br>
+      ${L('المتغيرات داخل النص', 'Placeholders in the text')}: <b class="num">{rate}</b> <b class="num">{days}</b> <b class="num">{priority}</b> <b class="num">{name}</b> <b class="num">{phone}</b></p>
+    <div id="am"></div>
+    <form id="af" novalidate>
+      <div class="row2">
+        <div class="field"><label>${L('نسبة العمولة %', 'Commission rate %')}</label><input name="rate" class="num" inputmode="decimal" value="${esc(r.rate)}"></div>
+        <div class="field"><label>${L('مدة التحويل بعد التحصيل (يوم)', 'Payout days after collection')}</label><input name="days" class="num" inputmode="numeric" value="${esc(r.days)}"></div>
+      </div>
+      <div class="tabs2"><button type="button" class="chip on" data-tl="ar">العربية</button><button type="button" class="chip" data-tl="en">English</button></div>
+      <div class="field" data-pane="ar"><textarea name="text" dir="rtl" style="min-height:340px;font-size:.86rem;line-height:1.8">${esc(r.text || '')}</textarea></div>
+      <div class="field" data-pane="en" hidden><textarea name="text_en" dir="ltr" style="min-height:340px;font-size:.86rem;line-height:1.8">${esc(r.text_en || '')}</textarea></div>
+      <button class="btn btn-main btn-block" type="submit">${L('حفظ', 'Save')}</button>
+    </form>`);
+  s.el.querySelectorAll('[data-tl]').forEach(b => b.onclick = () => {
+    s.el.querySelectorAll('[data-tl]').forEach(x => x.classList.toggle('on', x === b));
+    s.el.querySelectorAll('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== b.dataset.tl);
+  });
+  $('#af', s.el).onsubmit = async e => {
+    e.preventDefault(); const f = e.target;
+    const x = await admRpc('agreement', { rate: +toLatin(f.rate.value).replace(/[^\d.]/g, ''), days: +toLatin(f.days.value).replace(/\D/g, ''), text: f.text.value.trim(), text_en: f.text_en.value.trim() });
+    if (!x || x.error) return formMsg($('#am', s.el), 'err', err(x && x.error));
+    AGR = null; s.close(); toast(L('تم حفظ الاتفاقية ✓', 'Agreement saved ✓'));
   };
 }
 
@@ -1625,42 +1742,43 @@ async function admLeadAction(e) {
   if (a === 'save') {
     const p = { id };
     card.querySelectorAll('[data-f]').forEach(i => p[i.dataset.f] = i.dataset.f === 'deal_value' || i.dataset.f === 'commission' ? toLatin(i.value).replace(/[^\d.]/g, '') : i.value.trim());
-    if (p.status === 'won' && !p.commission) return toast(L('حدّد العمولة قبل ما تحفظ الصفقة', 'Set the commission before saving the deal'));
+    if (p.status === 'won' && !p.commission) return toast(L('حدّد العمولة قبل حفظ الصفقة', 'Set the commission before saving the deal'));
     b.disabled = true; r = await admRpc('lead', p);
   } else if (a === 'pay') {
     const l = admData.leads.find(x => x.id === id); const m = memberById(l.member_id);
-    if (!m.iban && !confirm(L('السفيرة ما أضافت آيبان بعد. تسجّل التحويل على كل حال؟', 'This ambassador has not added an IBAN yet. Record the payment anyway?'))) return;
+    if (!m.iban && !confirm(L('لم يُضف المندوب رقم الآيبان بعد. هل تريد تسجيل التحويل؟', 'This representative has not added an IBAN yet. Record the payment anyway?'))) return;
     const ref = prompt(`${L('تحويل', 'Pay')} ${money(l.commission)} ${SAR()} ${L('إلى', 'to')} ${m.name}\n${m.iban ? ibanPretty(m.iban) : ''}\n\n${L('الرقم المرجعي للتحويل (اختياري):', 'Transfer reference (optional):')}`, '');
     if (ref === null) return;
     b.disabled = true; r = await admRpc('paid', { id, ref: ref.trim() });
   } else if (a === 'unpay') {
-    if (!confirm(L('تلغي تسجيل التحويل؟', 'Undo this payment record?'))) return;
+    if (!confirm(L('هل تريد إلغاء تسجيل التحويل؟', 'Undo this payment record?'))) return;
     r = await admRpc('paid', { id, undo: true });
   }
-  if (!r || r.error) { b.disabled = false; return toast(r && r.error === 'not_won' ? L('لازم تكون الحالة «تم التعاقد» ومحفوظة أول', 'The status must be “Contract signed” and saved first') : err(r && r.error)); }
+  if (!r || r.error) { b.disabled = false; return toast(r && r.error === 'not_won' ? L('يجب أن تكون الحالة «تم التعاقد» ومحفوظة أولاً', 'The status must be “Contract signed” and saved first') : err(r && r.error)); }
   toast(L('تم الحفظ ✓', 'Saved ✓')); viewAdmin();
 }
 
 function drawAdmMembers() {
   const { members, leads } = admData;
   $('#admBody').innerHTML = `<div class="card scroll-x" style="padding:8px 12px"><table class="members">
-    <thead><tr><th>${L('السفيرة', 'Ambassador')}</th><th>${L('عملاء', 'Clients')}</th><th>${L('صفقات', 'Deals')}</th><th>${L('مستحق', 'Due')}</th><th>IBAN</th><th>${L('الحالة', 'Status')}</th></tr></thead>
+    <thead><tr><th>${L('المندوب', 'Representative')}</th><th>${L('عملاء', 'Clients')}</th><th>${L('صفقات', 'Deals')}</th><th>${L('مستحق', 'Due')}</th><th>${L('النسبة', 'Rate')}</th><th>IBAN</th><th>${L('الحالة', 'Status')}</th></tr></thead>
     <tbody>${members.map(m => {
       const ls = leads.filter(l => l.member_id === m.id);
       const w = ls.filter(l => l.status === 'won');
       const due = w.filter(l => !l.paid_at).reduce((s, l) => s + (+l.commission || 0), 0);
       return `<tr>
-        <td><b>${esc(m.name)}</b><br><a class="num" href="${wa(m.phone)}" target="_blank" rel="noopener">${esc(m.phone)}</a> · <span class="num">${esc(m.code)}</span>${m.city ? '<br>' + esc(m.city) : ''}${m.tiktok ? '<br><span class="num">' + esc(m.tiktok) + '</span>' : ''}<br><small style="color:var(--muted)">${L('انضمت', 'Joined')} ${fmtDate(m.created_at)}</small></td>
+        <td><b>${esc(m.name)}</b><br><a class="num" href="${wa(m.phone)}" target="_blank" rel="noopener">${esc(m.phone)}</a> · <span class="num">${esc(m.code)}</span>${m.city ? '<br>' + esc(m.city) : ''}${m.tiktok ? '<br><span class="num">' + esc(m.tiktok) + '</span>' : ''}<br><small style="color:var(--muted)">${L('انضم في', 'Joined')} ${fmtDate(m.created_at)}</small></td>
         <td class="num">${ls.filter(l => l.status !== 'duplicate').length}</td>
         <td class="num">${w.length}</td>
         <td><b class="num">${money(due)}</b></td>
+        <td><span class="num">${m.agreed_rate != null ? fmtRate(m.agreed_rate) + '%' : '—'}</span>${m.agreed_at ? `<br><small style="color:var(--muted)">${fmtDate(m.agreed_at)}</small>` : ''}</td>
         <td>${m.iban ? `<span class="num" style="font-size:.8rem">${esc(ibanPretty(m.iban))}</span><br><small>${esc(m.iban_name || '')}${m.bank ? ' · ' + esc(m.bank) : ''}</small><br><button class="btn btn-ghost btn-sm" data-copy="${esc(m.iban)}">${L('نسخ', 'Copy')}</button>` : `<small style="color:var(--muted)">${L('لم يُضف', 'Not added')}</small>`}</td>
-        <td><select data-m="${m.id}" style="border:1.5px solid var(--line);border-radius:10px;padding:7px"><option value="trial" ${m.status === 'trial' ? 'selected' : ''}>${L('فترة إثبات', 'Trial period')}</option><option value="contracted" ${m.status === 'contracted' ? 'selected' : ''}>${L('متعاقدة', 'Contracted')}</option><option value="suspended" ${m.status === 'suspended' ? 'selected' : ''}>${L('موقوفة', 'Suspended')}</option></select></td>
+        <td><select data-m="${m.id}" style="border:1.5px solid var(--line);border-radius:10px;padding:7px"><option value="trial" ${m.status === 'trial' ? 'selected' : ''}>${L('فترة إثبات الكفاءة', 'Trial period')}</option><option value="contracted" ${m.status === 'contracted' ? 'selected' : ''}>${L('متعاقد', 'Contracted')}</option><option value="suspended" ${m.status === 'suspended' ? 'selected' : ''}>${L('موقوف', 'Suspended')}</option></select></td>
       </tr>`;
-    }).join('') || `<tr><td colspan="6" class="empty">${L('ما فيه أحد بعد.', 'Nobody yet.')}</td></tr>`}</tbody></table></div>`;
+    }).join('') || `<tr><td colspan="7" class="empty">${L('لا يوجد أعضاء بعد.', 'Nobody yet.')}</td></tr>`}</tbody></table></div>`;
   $('#admBody').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copy(b.dataset.copy));
   $('#admBody').querySelectorAll('[data-m]').forEach(s => s.onchange = async () => {
-    if (s.value === 'suspended' && !confirm(L('إيقاف الحساب يسجّل خروجها ويمنعها من الدخول. متأكد؟', 'Suspending signs her out and blocks sign-in. Are you sure?'))) return drawAdmMembers();
+    if (s.value === 'suspended' && !confirm(L('إيقاف الحساب يُنهي جلسة المندوب ويمنعه من الدخول. هل تريد المتابعة؟', 'Suspending signs the representative out and blocks sign-in. Continue?'))) return drawAdmMembers();
     const r = await admRpc('member', { id: s.dataset.m, status: s.value });
     if (!r || r.error) return toast(err('network'));
     toast(L('تم ✓', 'Done ✓')); viewAdmin();
@@ -1670,7 +1788,7 @@ function drawAdmMembers() {
 function exportCsv() {
   const cell = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const ST = STATUS();
-  const rows = [[L('السفيرة', 'Ambassador'), L('كود', 'Code'), L('جوال السفيرة', 'Ambassador mobile'), L('العميل', 'Client'), L('الشركة', 'Company'), L('جوال العميل', 'Client mobile'), L('المدينة', 'City'), L('الخدمة', 'Service'), L('المصدر', 'Source'), L('الحالة', 'Status'), L('قيمة الصفقة', 'Deal value'), L('العمولة', 'Commission'), L('تاريخ التسجيل', 'Registered'), L('تاريخ التحويل', 'Paid on'), L('مرجع التحويل', 'Payment ref.'), 'IBAN', L('اسم صاحب الحساب', 'Account holder')]];
+  const rows = [[L('المندوب', 'Representative'), L('الرمز', 'Code'), L('جوال المندوب', 'Representative mobile'), L('العميل', 'Client'), L('الشركة', 'Company'), L('جوال العميل', 'Client mobile'), L('المدينة', 'City'), L('الخدمة', 'Service'), L('المصدر', 'Source'), L('الحالة', 'Status'), L('قيمة الصفقة', 'Deal value'), L('العمولة', 'Commission'), L('تاريخ التسجيل', 'Registered'), L('تاريخ التحويل', 'Paid on'), L('مرجع التحويل', 'Payment ref.'), 'IBAN', L('اسم صاحب الحساب', 'Account holder')]];
   for (const l of admData.leads) {
     const m = memberById(l.member_id);
     rows.push([m.name, m.code, m.phone, l.client_name, l.company, l.client_phone, l.city, l.service, l.source === 'link' ? L('رابط', 'Link') : L('يدوي', 'Manual'), ST[l.status], l.deal_value, l.commission, l.created_at, l.paid_at, l.paid_ref, m.iban, m.iban_name]);
