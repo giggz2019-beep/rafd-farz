@@ -266,6 +266,8 @@ begin
       'iban_masked', case when m.iban is null then null
                           else 'SA•• •••• •••• •••• ••' || right(m.iban, 4) end,
       'iban_name', m.iban_name, 'bank', m.bank, 'iban_at', m.iban_at),
+    'catalog', (select coalesce(jsonb_agg(e - 'price'), '[]'::jsonb)
+                  from team_config c, jsonb_array_elements(c.value::jsonb) e where c.key = 'catalog'),
     'leads', coalesce((select jsonb_agg(jsonb_build_object(
         'id', l.id, 'client_name', l.client_name, 'company', l.company,
         'client_phone', l.client_phone, 'city', l.city, 'service', l.service, 'notes', l.notes,
@@ -384,10 +386,28 @@ begin
 
   if p_action = 'quote_terms' then
     if p ? 'terms' then
-      if char_length(coalesce(p->>'terms','')) not between 10 and 8000 then return jsonb_build_object('error','terms'); end if;
+      if char_length(coalesce(p->>'terms','')) not between 10 and 8000 then return jsonb_build_object('error','terms_short'); end if;
       update team_config set value = p->>'terms' where key = 'quote_terms';
     end if;
-    return jsonb_build_object('ok', true, 'terms', (select value from team_config where key = 'quote_terms'));
+    if p ? 'terms_en' then
+      if char_length(coalesce(p->>'terms_en','')) not between 10 and 8000 then return jsonb_build_object('error','terms_short'); end if;
+      update team_config set value = p->>'terms_en' where key = 'quote_terms_en';
+    end if;
+    return jsonb_build_object('ok', true, 'terms', (select value from team_config where key = 'quote_terms'),
+                              'terms_en', (select value from team_config where key = 'quote_terms_en'));
+  end if;
+
+  if p_action = 'catalog' then
+    if p ? 'catalog' then
+      if jsonb_typeof(p->'catalog') <> 'array' or jsonb_array_length(p->'catalog') > 40
+         or exists (select 1 from jsonb_array_elements(p->'catalog') e
+                    where coalesce(e->>'id','') !~ '^[a-z0-9_]{1,30}$' or coalesce(trim(e->>'ar'),'') = ''
+                       or (e->>'price' is not null and (e->>'price')::numeric < 0)) then
+        return jsonb_build_object('error','catalog');
+      end if;
+      update team_config set value = (p->'catalog')::text where key = 'catalog';
+    end if;
+    return jsonb_build_object('ok', true, 'catalog', (select value::jsonb from team_config where key = 'catalog'));
   end if;
 
   if p_action = 'member' then
@@ -640,19 +660,71 @@ insert into team_config(key, value) values ('quote_terms', $terms$## بدء ال
 - تسري على هذا العرض وما ينتج عنه أنظمة المملكة العربية السعودية، وتكون محاكم مدينة الرياض وحدها المختصة بالنظر في أي خلاف.$terms$)
 on conflict (key) do nothing;
 
-create or replace function team_quote_request(p_token text, p_lead uuid, p_details text) returns jsonb
+-- bilingual quotes: the language a quote opens in, the English terms snapshot,
+-- and what the ambassador picked from the catalogue when she asked for it.
+alter table team_quotes add column if not exists lang text not null default 'ar' check (lang in ('ar','en'));
+alter table team_quotes add column if not exists terms_en text check (terms_en is null or char_length(terms_en) <= 8000);
+alter table team_quotes add column if not exists requested_items jsonb;
+-- a request may now be the picked packages alone, with no free text
+alter table team_quotes drop constraint if exists team_q_details;
+alter table team_quotes add constraint team_q_details check (char_length(details) between 1 and 1000);
+
+insert into team_config(key, value) values ('quote_terms_en', $terms$## Service start and renewal
+- The subscription term starts on the date the system is first put into actual operation and the client is notified; the installation and setup period is not counted as part of the term.
+- The subscription renews automatically for an equal term unless either party notifies the other in writing, at least (30) days before the current term ends, that it does not wish to renew.
+## RAFD's obligations
+- To operate the service and integrate it technically with the client's cameras, recording devices (NVR) and approved ticketing systems, including training and technical support at no extra charge throughout the subscription.
+- To comply with the Personal Data Protection Law of the Kingdom of Saudi Arabia, processing data in real time and in encrypted form, with no personal data or images of individuals stored on edge devices.
+- To delete all client data within (5) working days of the subscription ending or being cancelled, and to confirm this to the client in writing.
+## Client's obligations
+- To give RAFD's team access to the sites and systems needed to complete the integration and installation work.
+- The client acknowledges that the edge computing devices installed at its sites are owned by RAFD and undertakes to look after them as it would its own property.
+## Termination
+- If either party breaches any of its obligations, it shall be notified in writing and given (5) days to remedy the breach; if the breach is not remedied, the other party may terminate the subscription immediately.
+- Either party may terminate the subscription by written notice at least (30) days before the intended termination date. The client shall pay for the service provided up to that date and return RAFD's edge computing devices without delay.
+## General provisions
+- Neither party is liable for delay caused by force majeure or circumstances beyond its control, such as government decisions or epidemics, provided this does not exceed (30) days from notifying the other party.
+- This quotation and anything arising from it are governed by the laws of the Kingdom of Saudi Arabia, and the courts of Riyadh shall have exclusive jurisdiction over any dispute.$terms$)
+on conflict (key) do nothing;
+
+-- the product catalogue the ambassador picks from and the operator prices from.
+-- price null = priced per quote. Edited from the dashboard (team_admin('catalog')).
+-- Keep in step with DEFAULT_CATALOG in team.html, which the demo uses.
+insert into team_config(key, value) values ('catalog', $cat$[
+ {"id":"basic","ar":"الباقة الأساسية","en":"Basic Package","desc_ar":"اشتراك في منصة رفد بالمزايا الأساسية لفرع واحد","desc_en":"RAFD platform subscription with core features for one branch","unit_ar":"فرع","unit_en":"branch","price":null},
+ {"id":"pro","ar":"الباقة الاحترافية (برو)","en":"Pro Package","desc_ar":"اشتراك في منصة رفد بكامل المزايا والتقارير المتقدمة لفرع واحد","desc_en":"RAFD platform subscription with all features and advanced reports for one branch","unit_ar":"فرع","unit_en":"branch","price":null},
+ {"id":"face","ar":"التعرف على الوجه (بصمة الوجه)","en":"Face Recognition Attendance","desc_ar":"تسجيل الحضور والانصراف بالتعرف على الوجه","desc_en":"Check-in and check-out by face recognition","unit_ar":"فرع","unit_en":"branch","price":null},
+ {"id":"face_cam","ar":"كاميرا التعرف على الوجه","en":"Face Recognition Camera","desc_ar":"كاميرا مخصصة للتعرف على الوجه شاملة التركيب","desc_en":"Dedicated face recognition camera, installation included","unit_ar":"كاميرا","unit_en":"camera","price":null},
+ {"id":"activation","ar":"رسوم التفعيل","en":"Activation Fee","desc_ar":"تهيئة الخدمة وربطها لفرع واحد","desc_en":"Service setup and integration for one branch","unit_ar":"فرع","unit_en":"branch","price":null}
+]$cat$)
+on conflict (key) do nothing;
+
+-- the 3-argument version is DROPPED, not left beside this one: a defaulted
+-- extra argument would make a 3-argument call ambiguous (see CLAUDE.md).
+drop function if exists team_quote_request(text,uuid,text);
+create or replace function team_quote_request(p_token text, p_lead uuid, p_details text, p_items jsonb) returns jsonb
 language plpgsql security definer set search_path = public as $$
 declare v uuid := team_member_of(p_token); l team_leads; q team_quotes;
 begin
   if v is null then return jsonb_build_object('error','auth'); end if;
-  if char_length(trim(coalesce(p_details,''))) < 3 then return jsonb_build_object('error','details'); end if;
+  if char_length(trim(coalesce(p_details,''))) < 3
+     and (p_items is null or jsonb_typeof(p_items) <> 'array' or jsonb_array_length(p_items) = 0) then
+    return jsonb_build_object('error','details');
+  end if;
+  if p_items is not null and (jsonb_typeof(p_items) <> 'array' or jsonb_array_length(p_items) > 20
+     or exists (select 1 from jsonb_array_elements(p_items) e
+                where coalesce(e->>'id','') !~ '^[a-z0-9_]{1,30}$' or coalesce((e->>'q')::numeric, 0) <= 0)) then
+    return jsonb_build_object('error','items');
+  end if;
   select * into l from team_leads where id = p_lead and member_id = v;
   if l.id is null then return jsonb_build_object('error','not_found'); end if;
   if l.status in ('duplicate','lost','won') then return jsonb_build_object('error','lead_closed'); end if;
   select * into q from team_quotes where lead_id = p_lead;
   if q.status = 'accepted' then return jsonb_build_object('error','accepted'); end if;
-  insert into team_quotes(lead_id, details) values (p_lead, left(trim(p_details), 1000))
-  on conflict (lead_id) do update set details = excluded.details, status = 'requested', items = null,
+  insert into team_quotes(lead_id, details, requested_items)
+  values (p_lead, coalesce(nullif(left(trim(coalesce(p_details,'')), 1000), ''), '—'), p_items)
+  on conflict (lead_id) do update set details = excluded.details, requested_items = excluded.requested_items,
+    status = 'requested', items = null,
     subtotal = null, total = null, valid_until = null, note = null, requested_at = now(),
     sent_at = null, decided_at = null, decided_by = null, decision_note = null;
   insert into team_lead_events(lead_id, actor, action, detail) values (p_lead, 'member', 'quote_request', null);
@@ -682,6 +754,7 @@ language sql security definer set search_path = public stable as $$
       'total', q.total, 'valid_until', q.valid_until, 'note', q.note, 'sent_at', q.sent_at,
       'decided_at', q.decided_at, 'decided_by', q.decided_by,
       'plan', q.plan, 'client_address', q.client_address, 'client_vat', q.client_vat, 'terms', q.terms,
+      'terms_en', q.terms_en, 'lang', q.lang,
       'client_name', l.client_name, 'company', l.company, 'city', l.city,
       'rep_name', m.full_name)
     from team_quotes q join team_leads l on l.id = q.lead_id join team_members m on m.id = l.member_id
@@ -719,7 +792,9 @@ begin
       return jsonb_build_object('error','items');
     end if;
     v_items := v_items || jsonb_build_array(jsonb_build_object('d', left(trim(it->>'d'), 200), 'q', q, 'p', pr,
-                 'n', nullif(left(trim(coalesce(it->>'n','')), 300), ''), 'u', nullif(left(trim(coalesce(it->>'u','')), 20), '')));
+                 'n', nullif(left(trim(coalesce(it->>'n','')), 300), ''), 'u', nullif(left(trim(coalesce(it->>'u','')), 20), ''),
+                 'd_en', nullif(left(trim(coalesce(it->>'d_en','')), 200), ''), 'n_en', nullif(left(trim(coalesce(it->>'n_en','')), 300), ''),
+                 'u_en', nullif(left(trim(coalesce(it->>'u_en','')), 20), '')));
     v_sub := v_sub + q * pr;
   end loop;
   update team_quotes set items = v_items, vat = v_vat, subtotal = round(v_sub, 2),
@@ -728,7 +803,9 @@ begin
          status = 'sent', sent_at = now(), decided_at = null, decided_by = null, decision_note = null,
          plan = nullif(p->>'plan',''), client_address = nullif(left(trim(coalesce(p->>'client_address','')), 300), ''),
          client_vat = nullif(regexp_replace(coalesce(p->>'client_vat',''), '\D', '', 'g'), ''),
-         terms = (select value from team_config where key = 'quote_terms')
+         terms = (select value from team_config where key = 'quote_terms'),
+         terms_en = (select value from team_config where key = 'quote_terms_en'),
+         lang = case when p->>'lang' = 'en' then 'en' else 'ar' end
    where lead_id = v_lead and status in ('requested','sent','declined');
   if not found then return jsonb_build_object('error','not_found'); end if;
   insert into team_lead_events(lead_id, actor, action, detail) values (v_lead, 'admin', 'quote_sent', jsonb_build_object('total', round(v_sub, 2)));
@@ -736,7 +813,7 @@ begin
 end $$;
 revoke all on function team_quote_send(jsonb) from public, anon, authenticated;
 
-grant execute on function team_quote_request(text,uuid,text)            to anon, authenticated;
+grant execute on function team_quote_request(text,uuid,text,jsonb)      to anon, authenticated;
 grant execute on function team_quote_decide(text,uuid,boolean,text)     to anon, authenticated;
 grant execute on function team_quote_public(uuid)                       to anon, authenticated;
 grant execute on function team_quote_client_accept(uuid)                to anon, authenticated;
