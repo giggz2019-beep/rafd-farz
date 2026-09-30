@@ -365,7 +365,7 @@ const COMPANY = {
 const DEFAULT_TERMS = "## بدء الخدمة وتجديدها\n- تُحتسب مدة الاشتراك من تاريخ أول تشغيل فعلي للنظام وإبلاغ العميل بذلك، ولا تدخل فترة التركيب والتهيئة ضمن مدة الاشتراك.\n- يتجدد الاشتراك تلقائياً لمدة مساوية، إلا إذا أبلغ أحد الطرفين الطرف الآخر كتابياً بعدم رغبته في التجديد قبل (30) يوماً على الأقل من انتهاء المدة الجارية.\n## التزامات رفد\n- تشغيل الخدمة وربطها تقنياً بكاميرات العميل وأجهزة التسجيل (NVR) وأنظمة التذاكر المعتمدة، مع التدريب والدعم الفني دون مقابل إضافي طوال مدة الاشتراك.\n- الالتزام بنظام حماية البيانات الشخصية في المملكة العربية السعودية، بحيث تُعالج البيانات لحظياً وبشكل مشفّر، ولا تُحفظ أي بيانات شخصية أو صور للأفراد على الأجهزة الطرفية.\n- حذف جميع بيانات العميل خلال (5) أيام عمل من انتهاء الاشتراك أو إلغائه، وتزويد العميل بما يثبت ذلك كتابياً.\n## التزامات العميل\n- تسهيل وصول فريق رفد إلى المواقع والأنظمة اللازمة لإكمال أعمال الربط والتركيب.\n- يُقرّ العميل بأن أجهزة الحوسبة الطرفية المركّبة في مواقعه مملوكة لرفد، ويتعهد بالمحافظة عليها كما يحافظ على ممتلكاته.\n## إنهاء الاشتراك\n- إذا أخلّ أحد الطرفين بأي من التزاماته يُبلَّغ كتابياً ويُمنح (5) أيام لتصحيح الإخلال، فإن لم يُصحَّح جاز للطرف الآخر إنهاء الاشتراك فوراً.\n- لكل طرف إنهاء الاشتراك بإشعار كتابي قبل (30) يوماً من التاريخ المحدد للإنهاء، ويسدد العميل قيمة الخدمة المقدَّمة حتى ذلك التاريخ، ويعيد أجهزة الحوسبة الطرفية المملوكة لرفد دون تأخير.\n## أحكام عامة\n- لا يُسأل أي طرف عن التأخير الناتج عن قوة قاهرة أو ظروف خارجة عن إرادته، كالقرارات الحكومية والأوبئة، بشرط ألا يتجاوز ذلك (30) يوماً من تاريخ إبلاغ الطرف الآخر.\n- تسري على هذا العرض وما ينتج عنه أنظمة المملكة العربية السعودية، وتكون محاكم مدينة الرياض وحدها المختصة بالنظر في أي خلاف.";
 const DEFAULT_TERMS_EN = "## Service start and renewal\n- The subscription term starts on the date the system is first put into actual operation and the client is notified; the installation and setup period is not counted as part of the term.\n- The subscription renews automatically for an equal term unless either party notifies the other in writing, at least (30) days before the current term ends, that it does not wish to renew.\n## RAFD's obligations\n- To operate the service and integrate it technically with the client's cameras, recording devices (NVR) and approved ticketing systems, including training and technical support at no extra charge throughout the subscription.\n- To comply with the Personal Data Protection Law of the Kingdom of Saudi Arabia, processing data in real time and in encrypted form, with no personal data or images of individuals stored on edge devices.\n- To delete all client data within (5) working days of the subscription ending or being cancelled, and to confirm this to the client in writing.\n## Client's obligations\n- To give RAFD's team access to the sites and systems needed to complete the integration and installation work.\n- The client acknowledges that the edge computing devices installed at its sites are owned by RAFD and undertakes to look after them as it would its own property.\n## Termination\n- If either party breaches any of its obligations, it shall be notified in writing and given (5) days to remedy the breach; if the breach is not remedied, the other party may terminate the subscription immediately.\n- Either party may terminate the subscription by written notice at least (30) days before the intended termination date. The client shall pay for the service provided up to that date and return RAFD's edge computing devices without delay.\n## General provisions\n- Neither party is liable for delay caused by force majeure or circumstances beyond its control, such as government decisions or epidemics, provided this does not exceed (30) days from notifying the other party.\n- This quotation and anything arising from it are governed by the laws of the Kingdom of Saudi Arabia, and the courts of Riyadh shall have exclusive jurisdiction over any dispute.";
 const DEFAULT_CATALOG = [{"id": "basic", "ar": "الباقة الأساسية", "en": "Basic Package", "desc_ar": "اشتراك في منصة رفد بالمزايا الأساسية لفرع واحد", "desc_en": "RAFD platform subscription with core features for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "pro", "ar": "الباقة الاحترافية (برو)", "en": "Pro Package", "desc_ar": "اشتراك في منصة رفد بكامل المزايا والتقارير المتقدمة لفرع واحد", "desc_en": "RAFD platform subscription with all features and advanced reports for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "face", "ar": "التعرف على الوجه (بصمة الوجه)", "en": "Face Recognition Attendance", "desc_ar": "تسجيل الحضور والانصراف بالتعرف على الوجه", "desc_en": "Check-in and check-out by face recognition", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "face_cam", "ar": "كاميرا التعرف على الوجه", "en": "Face Recognition Camera", "desc_ar": "كاميرا مخصصة للتعرف على الوجه شاملة التركيب", "desc_en": "Dedicated face recognition camera, installation included", "unit_ar": "كاميرا", "unit_en": "camera", "price": null}, {"id": "activation", "ar": "رسوم التفعيل", "en": "Activation Fee", "desc_ar": "تهيئة الخدمة وربطها لفرع واحد", "desc_en": "Service setup and integration for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}];
-const DEFAULT_AGREEMENT = "## أطراف الاتفاقية\n- الطرف الأول: شركة رفد الرقمية، ويُشار إليها بـ«رفد».\n- الطرف الثاني: {name}، جوال رقم {phone}، ويُشار إليه بـ«المندوب».\n## طبيعة العلاقة\n- يعمل المندوب مع رفد بصفة مستقلة وبنظام العمولة، ولا تُنشئ هذه الاتفاقية علاقة عمل بين الطرفين ولا تُعد عقد عمل، ولا يترتب عليها أجر ثابت أو بدلات أو أي من حقوق العامل المقررة نظاماً.\n- لرفد أن تعرض على المندوب الذي يُثبت كفاءته عقداً مستقلاً براتب وعمولة، ويخضع ذلك العقد لشروطه الخاصة.\n## العمولة\n- تلتزم رفد بأن تدفع للمندوب عمولة نسبتها ({rate}%) من قيمة العقد الأول المبرم مع كل عميل يُنسب إليه وفق هذه الاتفاقية.\n- تُحتسب العمولة على المبالغ المحصّلة فعلياً من العميل، غير شاملة ضريبة القيمة المضافة.\n- تُستحق العمولة بعد توقيع العميل العقد وتحصيل قيمته، وتُحوَّل خلال ({days}) يوماً من تاريخ التحصيل إلى الحساب البنكي المسجّل باسم المندوب في المنصة.\n- تبقى النسبة الواردة في هذه الاتفاقية سارية على المندوب، ولا يسري عليه أي تعديل لاحق عليها إلا بموافقته.\n## نسبة العميل إلى المندوب\n- يُنسب العميل إلى أول مندوب يسجّله في المنصة، وتبقى الأولوية له مدة ({priority}) يوماً من تاريخ التسجيل.\n- يُعد تسجيل المنصة، بتاريخه ووقته المحفوظين آلياً، المرجع المعتمد بين الطرفين عند أي اختلاف.\n## التزامات المندوب\n- تقديم معلومات صحيحة عن نفسه وعن العملاء الذين يسجّلهم.\n- عدم تقديم أي أسعار أو خصومات أو التزامات باسم رفد خارج عروض الأسعار الصادرة منها رسمياً.\n- المحافظة على سرية بيانات العملاء والأسعار، وعدم استخدامها لغير أغراض هذه الاتفاقية.\n## إنهاء المشاركة\n- لأي من الطرفين إنهاء المشاركة في أي وقت بإشعار عبر المنصة أو كتابياً.\n- يحتفظ المندوب بعد الإنهاء بحقه في عمولة العملاء المنسوبين إليه قبل الإنهاء، متى تعاقدوا خلال مدة الأولوية.\n- لرفد إيقاف حساب المندوب إذا أخلّ بأي من التزاماته، مع حفظ حقه في العمولات المستحقة عن الفترة السابقة للإخلال.\n## أحكام عامة\n- تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.\n- تُعد موافقة المندوب الإلكترونية على هذه الاتفاقية عند التسجيل إقراراً ملزماً للطرفين، وتحفظ المنصة نسخة منها في حساب المندوب بتاريخ الموافقة ونسبة العمولة المتفق عليها.";
+const DEFAULT_AGREEMENT = "## أطراف الاتفاقية\n- الطرف الأول: شركة رفد الرقمية، ويُشار إليها بـ«رفد».\n- الطرف الثاني: {name}، جوال رقم {phone}، ويُشار إليه بـ«ممثل المبيعات».\n## طبيعة العلاقة\n- يعمل ممثل المبيعات مع رفد بصفة مستقلة وبنظام العمولة، ولا تُنشئ هذه الاتفاقية علاقة عمل بين الطرفين ولا تُعد عقد عمل، ولا يترتب عليها أجر ثابت أو بدلات أو أي من حقوق العامل المقررة نظاماً.\n- لرفد أن تعرض على ممثل المبيعات الذي يُثبت كفاءته عقداً مستقلاً براتب وعمولة، ويخضع ذلك العقد لشروطه الخاصة.\n## العمولة\n- تلتزم رفد بأن تدفع لممثل المبيعات عمولة نسبتها ({rate}%) من قيمة العقد الأول المبرم مع كل عميل يُنسب إليه وفق هذه الاتفاقية.\n- تُحتسب العمولة على المبالغ المحصّلة فعلياً من العميل، غير شاملة ضريبة القيمة المضافة.\n- تُستحق العمولة بعد توقيع العميل العقد وتحصيل قيمته، وتُحوَّل خلال ({days}) يوماً من تاريخ التحصيل إلى الحساب البنكي المسجّل باسم ممثل المبيعات في المنصة.\n- تبقى النسبة الواردة في هذه الاتفاقية سارية على ممثل المبيعات، ولا يسري عليه أي تعديل لاحق عليها إلا بموافقته.\n## نسبة العميل إلى ممثل المبيعات\n- يُنسب العميل إلى أول ممثل مبيعات يسجّله في المنصة، وتبقى الأولوية له مدة ({priority}) يوماً من تاريخ التسجيل.\n- يُعد تسجيل المنصة، بتاريخه ووقته المحفوظين آلياً، المرجع المعتمد بين الطرفين عند أي اختلاف.\n## التزامات ممثل المبيعات\n- تقديم معلومات صحيحة عن نفسه وعن العملاء الذين يسجّلهم.\n- عدم تقديم أي أسعار أو خصومات أو التزامات باسم رفد خارج عروض الأسعار الصادرة منها رسمياً.\n- المحافظة على سرية بيانات العملاء والأسعار، وعدم استخدامها لغير أغراض هذه الاتفاقية.\n## إنهاء المشاركة\n- لأي من الطرفين إنهاء المشاركة في أي وقت بإشعار عبر المنصة أو كتابياً.\n- يحتفظ ممثل المبيعات بعد الإنهاء بحقه في عمولة العملاء المنسوبين إليه قبل الإنهاء، متى تعاقدوا خلال مدة الأولوية.\n- لرفد إيقاف حساب ممثل المبيعات إذا أخلّ بأي من التزاماته، مع حفظ حقه في العمولات المستحقة عن الفترة السابقة للإخلال.\n## أحكام عامة\n- تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.\n- تُعد موافقة ممثل المبيعات الإلكترونية على هذه الاتفاقية عند التسجيل إقراراً ملزماً للطرفين، وتحفظ المنصة نسخة منها في حساب ممثل المبيعات بتاريخ الموافقة ونسبة العمولة المتفق عليها.";
 const DEFAULT_AGREEMENT_EN = "## Parties\n- First party: RAFD Digital (\"RAFD\").\n- Second party: {name}, mobile number {phone} (the \"Representative\").\n## Nature of the relationship\n- The Representative works with RAFD independently and on a commission basis. This agreement does not create an employment relationship between the parties, is not an employment contract, and gives rise to no fixed salary, allowances or any statutory employee entitlements.\n- RAFD may offer a Representative who proves their ability a separate contract with a salary and commission, which will be governed by its own terms.\n## Commission\n- RAFD undertakes to pay the Representative a commission of ({rate}%) of the value of the first contract concluded with each client attributed to them under this agreement.\n- Commission is calculated on amounts actually collected from the client, excluding VAT.\n- Commission becomes due once the client has signed the contract and its value has been collected, and is transferred within ({days}) days of collection to the bank account registered in the Representative's name on the platform.\n- The rate stated in this agreement continues to apply to the Representative, and no later change to it applies to them without their consent.\n## Attribution of clients\n- A client is attributed to the first Representative who registers them on the platform, and that priority is kept for ({priority}) days from the date of registration.\n- The platform's record, with its automatically stored date and time, is the agreed reference between the parties in the event of any dispute.\n## Representative's obligations\n- To provide accurate information about themselves and about the clients they register.\n- Not to offer any prices, discounts or commitments on RAFD's behalf outside the quotations RAFD issues officially.\n- To keep client data and prices confidential and not use them for any purpose other than this agreement.\n## Ending participation\n- Either party may end participation at any time by notice through the platform or in writing.\n- After participation ends, the Representative keeps the right to commission on clients attributed to them before it ended, provided they contract within the priority period.\n- RAFD may suspend the Representative's account for breach of any of their obligations, without prejudice to commission already earned for the period before the breach.\n## General provisions\n- This agreement is governed by the laws of the Kingdom of Saudi Arabia.\n- The Representative's electronic acceptance of this agreement at registration is a binding acknowledgement by both parties, and the platform keeps a copy of it in the Representative's account with the date of acceptance and the agreed commission rate.";
 const PRIORITY_DAYS = 180;
 const VAT_RATE = 0.15;
@@ -969,7 +969,7 @@ function leadCard(l) {
       <span>${L('عمولتك', 'Your commission')}: <b class="num">${money(l.commission)}</b> ${SAR()}</span>
       ${l.paid_at ? `<span class="paid">✓ ${L('تم التحويل', 'Paid')} ${fmtDate(l.paid_at)}${l.paid_ref ? ` · ${L('مرجع', 'ref.')} <span class="num">${esc(l.paid_ref)}</span>` : ''}</span>` : `<span style="color:#8a6a1f">⏳ ${L('بانتظار التحويل', 'Awaiting payment')}</span>`}
     </div>` : '';
-  const dupNote = l.status === 'duplicate' ? `<div class="meta" style="color:var(--bad)">${L('هذا العميل مسجّل مسبقاً باسم مندوب آخر، والأولوية لأول تسجيل.', 'This client was already registered by a teammate — the first registration has priority.')}</div>` : '';
+  const dupNote = l.status === 'duplicate' ? `<div class="meta" style="color:var(--bad)">${L('هذا العميل مسجّل مسبقاً باسم ممثل مبيعات آخر، والأولوية لأول تسجيل.', 'This client was already registered by a teammate — the first registration has priority.')}</div>` : '';
   return `<div class="lead">
     <div class="lead-top">
       <div>
@@ -1212,7 +1212,7 @@ function openLeadSheet() {
     b.disabled = false;
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
     s.close();
-    toast(r.status === 'duplicate' ? L('تم الحفظ، علماً بأن هذا العميل مسجّل مسبقاً باسم مندوب آخر', 'Saved — but a teammate registered this client first') : L('تم الحفظ باسمك ✓', 'Saved under your name ✓'));
+    toast(r.status === 'duplicate' ? L('تم الحفظ، علماً بأن هذا العميل مسجّل مسبقاً باسم ممثل مبيعات آخر', 'Saved — but a teammate registered this client first') : L('تم الحفظ باسمك ✓', 'Saved under your name ✓'));
     viewMe();
   };
 }
@@ -1329,7 +1329,7 @@ async function viewQuote(id) {
       <div><small>${L('نوع الاشتراك', 'Billing')}</small><b>${esc(PLAN()[q.plan] || '—')}</b></div>
       <div><small>${L('تاريخ العرض', 'Quote date')}</small><b>${fmtDate(q.sent_at)}</b></div>
       <div><small>${L('ساري حتى', 'Valid until')}</small><b>${q.valid_until ? fmtDate(q.valid_until) : '—'}</b></div>
-      <div><small>${L('مندوب المبيعات', 'Sales representative')}</small><b>${esc(q.rep_name || '—')}</b></div>
+      <div><small>${L('ممثل المبيعات', 'Sales representative')}</small><b>${esc(q.rep_name || '—')}</b></div>
     </section>
     <div class="scroll-x"><table class="qd">
       <thead><tr><th>${L('الوصف', 'Description')}</th><th class="n">${L('الكمية', 'Qty')}</th><th class="n">${L('سعر الوحدة', 'Unit price')}</th><th class="n">${L('الضريبة', 'VAT')}</th><th class="n">${L('المبلغ', 'Amount')}</th></tr></thead>
@@ -1404,7 +1404,7 @@ function drawAdmin() {
       <button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">${L('المهمة الشهرية', 'Monthly task')}</button>
       <span style="flex:1"></span>
       <button class="btn btn-soft btn-sm" id="catBtn">${L('الباقات والأسعار', 'Packages & prices')}</button>
-      <button class="btn btn-soft btn-sm" id="agrBtn">${L('اتفاقية المندوبين', 'Representative agreement')}</button>
+      <button class="btn btn-soft btn-sm" id="agrBtn">${L('اتفاقية ممثلي المبيعات', 'Sales representative agreement')}</button>
       <button class="btn btn-soft btn-sm" id="termsBtn">${L('شروط العرض', 'Quote terms')}</button>
       <button class="btn btn-soft btn-sm" id="csv">${L('تصدير Excel', 'Export to Excel')}</button>
       <button class="btn btn-ghost btn-sm" id="admOut">${L('خروج', 'Sign out')}</button>
@@ -1507,7 +1507,7 @@ function drawAdmLeads() {
   const opts = [['all', L('الكل', 'All')], ['q_req', '📄 ' + L('طلبات عرض سعر', 'Quote requests')], ['q_ok', '✅ ' + L('وافقوا على العرض', 'Accepted quotes')], ...Object.entries(STATUS()), ['unpaid', L('مستحق تحويل', 'Payout due')]];
   const nReq = admData.leads.filter(l => l.quote && l.quote.status === 'requested').length;
   const nOk = admData.leads.filter(l => l.quote && l.quote.status === 'accepted' && l.status !== 'won').length;
-  body.innerHTML = `<input class="search" id="q" placeholder="${L('ابحث باسم العميل أو الشركة أو الجوال أو اسم المندوب', 'Search by client, company, mobile or representative')}" value="${esc(admQuery)}">
+  body.innerHTML = `<input class="search" id="q" placeholder="${L('ابحث باسم العميل أو الشركة أو الجوال أو اسم ممثل المبيعات', 'Search by client, company, mobile or representative')}" value="${esc(admQuery)}">
     ${nReq || nOk ? `<div class="alerts">${nReq ? `<button class="pill negotiating" data-s="q_req">📄 ${nReq} ${L('طلب عرض سعر بانتظار التسعير', 'quote request(s) waiting')}</button>` : ''}${nOk ? `<button class="pill won" data-s="q_ok">✅ ${nOk} ${L('عميل وافق، يُرجى التواصل لتوقيع العقد', 'accepted — contact them to sign')}</button>` : ''}</div>` : ''}
     <div class="filters">${opts.map(([k, t]) => `<button class="chip ${admStatus === k ? 'on' : ''}" data-s="${k}">${t}</button>`).join('')}</div>
     <div id="admList"></div>`;
@@ -1534,7 +1534,7 @@ function drawAdmList() {
         <div>
           <h3 style="font-size:1rem;font-weight:800">${esc(l.client_name)}${l.company ? ' · ' + esc(l.company) : ''}</h3>
           <div class="meta" style="font-size:.84rem;color:var(--muted);line-height:1.8"><a class="num" href="${wa(l.client_phone)}" target="_blank" rel="noopener">${esc(l.client_phone)}</a>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(l.service) : ''}</div>
-          <div class="who">${L('المندوب', 'Representative')}: <b>${esc(m.name || '—')}</b> <span class="num">(${esc(m.code || '')})</span> · ${fmtDateTime(l.created_at)} · ${l.source === 'link' ? L('سجّل العميل بنفسه من رابط المندوب', 'client signed up via the representative\'s link') : L('سجّله المندوب', 'registered by the representative')}</div>
+          <div class="who">${L('ممثل المبيعات', 'Representative')}: <b>${esc(m.name || '—')}</b> <span class="num">(${esc(m.code || '')})</span> · ${fmtDateTime(l.created_at)} · ${l.source === 'link' ? L('سجّل العميل بنفسه من رابط ممثل المبيعات', 'client signed up via the representative\'s link') : L('سجّله ممثل المبيعات', 'registered by the representative')}</div>
           ${l.notes ? `<div class="who" style="margin-top:4px">📝 ${esc(l.notes)}</div>` : ''}
         </div>
         <span class="pill ${l.status}">${ST[l.status]}</span>
@@ -1570,7 +1570,7 @@ function admQuoteBox(l) {
   const q = l.quote; if (!q) return '';
   const head = { requested: '📄 <b>' + L('طلب عرض سعر', 'Quote request') + '</b> — ' + L('بانتظار الإجراء', 'waiting for you'),
     sent: '📄 ' + L('أُرسل العرض، بانتظار رد العميل', 'Quote sent — awaiting the client'),
-    accepted: `✅ <b>${L('العميل وافق', 'Client accepted')}</b>${q.decided_by === 'client' ? ' ' + L('بنفسه من صفحة العرض', 'directly on the quote page') : ' ' + L('(بإفادة المندوب)', '(as reported by the representative)')} ${fmtDateTime(q.decided_at)} — ${L('يُرجى التواصل وتوقيع العقد', 'contact them to sign')}`,
+    accepted: `✅ <b>${L('العميل وافق', 'Client accepted')}</b>${q.decided_by === 'client' ? ' ' + L('بنفسه من صفحة العرض', 'directly on the quote page') : ' ' + L('(بإفادة ممثل المبيعات)', '(as reported by the representative)')} ${fmtDateTime(q.decided_at)} — ${L('يُرجى التواصل وتوقيع العقد', 'contact them to sign')}`,
     declined: '✕ ' + L('العميل رفض العرض', 'The client declined') }[q.status];
   return `<div class="qbox ${q.status}">${head}
     ${q.requested_items && q.requested_items.length ? `<div style="font-size:.86rem">🧾 ${pickedText(q.requested_items, admCatalog)}</div>` : ''}
@@ -1617,7 +1617,7 @@ function openQuoteEditor(l) {
       <div class="field"><label>${L('ساري حتى', 'Valid until')}</label><input type="date" name="valid" value="${esc(q.valid_until || addDays(QUOTE_DAYS))}"></div>
       <div class="field"><label>${L('ملاحظات خاصة بهذا العرض', 'Notes on this quote')} <small>${L('(تظهر للعميل، وتُضاف الشروط العامة تلقائياً)', '(shown to the client — the standard terms are added automatically)')}</small></label><textarea name="note" placeholder="${L('مثلاً: الدفع 50% مقدم و50% بعد التركيب.', 'e.g. 50% upfront, 50% after installation.')}">${esc(q.note || '')}</textarea></div>
       <div class="qbox" id="sum" style="margin:0 0 12px"></div>
-      <button class="btn btn-main btn-block" type="submit">${L('إرسال العرض إلى المندوب', 'Send quote to the representative')}</button>
+      <button class="btn btn-main btn-block" type="submit">${L('إرسال العرض إلى ممثل المبيعات', 'Send quote to the representative')}</button>
     </form>`);
   const f = $('#ef', s.el); const rowsEl = $('#rows', s.el);
   const val = (r, k) => (r.querySelector(`[data-k=${k}]`) || {}).value || '';
@@ -1646,7 +1646,7 @@ function openQuoteEditor(l) {
       plan: f.plan.value, client_address: f.caddr.value.trim(), client_vat: toLatin(f.cvat.value).replace(/\D/g, '') });
     b.disabled = false;
     if (!r || r.error) return formMsg($('#em', s.el), 'err', err(r && r.error));
-    s.close(); toast(L('تم إرسال العرض إلى المندوب ✓', 'Quote sent to the representative ✓')); viewAdmin();
+    s.close(); toast(L('تم إرسال العرض إلى ممثل المبيعات ✓', 'Quote sent to the representative ✓')); viewAdmin();
   };
 }
 
@@ -1661,7 +1661,7 @@ function openCatalogEditor() {
     <input data-k="price" class="num" inputmode="decimal" placeholder="${L('السعر الافتراضي (اختياري)', 'Default price (optional)')}" value="${esc(c.price ?? '')}">
     <button type="button" class="btn btn-ghost btn-sm" data-rm>${L('حذف الباقة', 'Remove package')}</button></div>`;
   const s = sheet(L('الباقات والأسعار', 'Packages & prices'), `
-    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('يختار المندوبون من هذه القائمة عند طلب عرض السعر، وتضيف منها الإدارة عند التسعير. يُعبّأ السعر الافتراضي تلقائياً ويمكن تعديله في كل عرض.', 'Representatives pick from this list when requesting a quote, and the team adds from it when pricing. The default price fills in automatically and can be changed on each quote.')}</p>
+    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('يختار ممثلو المبيعات من هذه القائمة عند طلب عرض السعر، وتضيف منها الإدارة عند التسعير. يُعبّأ السعر الافتراضي تلقائياً ويمكن تعديله في كل عرض.', 'Representatives pick from this list when requesting a quote, and the team adds from it when pricing. The default price fills in automatically and can be changed on each quote.')}</p>
     <div id="cm"></div>
     <div id="catRows">${cat.map(row).join('')}</div>
     <button type="button" class="btn btn-soft btn-sm" id="catNew">＋ ${L('باقة جديدة', 'New package')}</button>
@@ -1708,7 +1708,7 @@ async function openTermsEditor() {
 async function openAgreementEditor() {
   const r = await admRpc('agreement');
   if (!r || r.error) return toast(err(r && r.error));
-  const s = sheet(L('اتفاقية المندوبين', 'Representative agreement'), `
+  const s = sheet(L('اتفاقية ممثلي المبيعات', 'Sales representative agreement'), `
     <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('ما تحدده هنا يسري على المنضمين الجدد فقط. من وافق سابقاً تبقى نسبته ونص اتفاقيته كما وافق عليها، ومحفوظة في حسابه.', 'Changes here apply to new members only. Anyone who has already accepted keeps the rate and text they agreed to, stored in their account.')}<br>
       ${L('المتغيرات داخل النص', 'Placeholders in the text')}: <b class="num">{rate}</b> <b class="num">{days}</b> <b class="num">{priority}</b> <b class="num">{name}</b> <b class="num">{phone}</b></p>
     <div id="am"></div>
@@ -1746,7 +1746,7 @@ async function admLeadAction(e) {
     b.disabled = true; r = await admRpc('lead', p);
   } else if (a === 'pay') {
     const l = admData.leads.find(x => x.id === id); const m = memberById(l.member_id);
-    if (!m.iban && !confirm(L('لم يُضف المندوب رقم الآيبان بعد. هل تريد تسجيل التحويل؟', 'This representative has not added an IBAN yet. Record the payment anyway?'))) return;
+    if (!m.iban && !confirm(L('لم يُضف ممثل المبيعات رقم الآيبان بعد. هل تريد تسجيل التحويل؟', 'This representative has not added an IBAN yet. Record the payment anyway?'))) return;
     const ref = prompt(`${L('تحويل', 'Pay')} ${money(l.commission)} ${SAR()} ${L('إلى', 'to')} ${m.name}\n${m.iban ? ibanPretty(m.iban) : ''}\n\n${L('الرقم المرجعي للتحويل (اختياري):', 'Transfer reference (optional):')}`, '');
     if (ref === null) return;
     b.disabled = true; r = await admRpc('paid', { id, ref: ref.trim() });
@@ -1761,7 +1761,7 @@ async function admLeadAction(e) {
 function drawAdmMembers() {
   const { members, leads } = admData;
   $('#admBody').innerHTML = `<div class="card scroll-x" style="padding:8px 12px"><table class="members">
-    <thead><tr><th>${L('المندوب', 'Representative')}</th><th>${L('عملاء', 'Clients')}</th><th>${L('صفقات', 'Deals')}</th><th>${L('مستحق', 'Due')}</th><th>${L('النسبة', 'Rate')}</th><th>IBAN</th><th>${L('الحالة', 'Status')}</th></tr></thead>
+    <thead><tr><th>${L('ممثل المبيعات', 'Representative')}</th><th>${L('عملاء', 'Clients')}</th><th>${L('صفقات', 'Deals')}</th><th>${L('مستحق', 'Due')}</th><th>${L('النسبة', 'Rate')}</th><th>IBAN</th><th>${L('الحالة', 'Status')}</th></tr></thead>
     <tbody>${members.map(m => {
       const ls = leads.filter(l => l.member_id === m.id);
       const w = ls.filter(l => l.status === 'won');
@@ -1778,7 +1778,7 @@ function drawAdmMembers() {
     }).join('') || `<tr><td colspan="7" class="empty">${L('لا يوجد أعضاء بعد.', 'Nobody yet.')}</td></tr>`}</tbody></table></div>`;
   $('#admBody').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copy(b.dataset.copy));
   $('#admBody').querySelectorAll('[data-m]').forEach(s => s.onchange = async () => {
-    if (s.value === 'suspended' && !confirm(L('إيقاف الحساب يُنهي جلسة المندوب ويمنعه من الدخول. هل تريد المتابعة؟', 'Suspending signs the representative out and blocks sign-in. Continue?'))) return drawAdmMembers();
+    if (s.value === 'suspended' && !confirm(L('إيقاف الحساب يُنهي جلسة ممثل المبيعات ويمنعه من الدخول. هل تريد المتابعة؟', 'Suspending signs the representative out and blocks sign-in. Continue?'))) return drawAdmMembers();
     const r = await admRpc('member', { id: s.dataset.m, status: s.value });
     if (!r || r.error) return toast(err('network'));
     toast(L('تم ✓', 'Done ✓')); viewAdmin();
@@ -1788,7 +1788,7 @@ function drawAdmMembers() {
 function exportCsv() {
   const cell = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const ST = STATUS();
-  const rows = [[L('المندوب', 'Representative'), L('الرمز', 'Code'), L('جوال المندوب', 'Representative mobile'), L('العميل', 'Client'), L('الشركة', 'Company'), L('جوال العميل', 'Client mobile'), L('المدينة', 'City'), L('الخدمة', 'Service'), L('المصدر', 'Source'), L('الحالة', 'Status'), L('قيمة الصفقة', 'Deal value'), L('العمولة', 'Commission'), L('تاريخ التسجيل', 'Registered'), L('تاريخ التحويل', 'Paid on'), L('مرجع التحويل', 'Payment ref.'), 'IBAN', L('اسم صاحب الحساب', 'Account holder')]];
+  const rows = [[L('ممثل المبيعات', 'Representative'), L('الرمز', 'Code'), L('جوال ممثل المبيعات', 'Representative mobile'), L('العميل', 'Client'), L('الشركة', 'Company'), L('جوال العميل', 'Client mobile'), L('المدينة', 'City'), L('الخدمة', 'Service'), L('المصدر', 'Source'), L('الحالة', 'Status'), L('قيمة الصفقة', 'Deal value'), L('العمولة', 'Commission'), L('تاريخ التسجيل', 'Registered'), L('تاريخ التحويل', 'Paid on'), L('مرجع التحويل', 'Payment ref.'), 'IBAN', L('اسم صاحب الحساب', 'Account holder')]];
   for (const l of admData.leads) {
     const m = memberById(l.member_id);
     rows.push([m.name, m.code, m.phone, l.client_name, l.company, l.client_phone, l.city, l.service, l.source === 'link' ? L('رابط', 'Link') : L('يدوي', 'Manual'), ST[l.status], l.deal_value, l.commission, l.created_at, l.paid_at, l.paid_ref, m.iban, m.iban_name]);
