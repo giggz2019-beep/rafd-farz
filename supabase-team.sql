@@ -271,7 +271,9 @@ begin
         'client_phone', l.client_phone, 'city', l.city, 'service', l.service, 'notes', l.notes,
         'source', l.source, 'status', l.status, 'deal_value', l.deal_value,
         'commission', l.commission, 'paid_at', l.paid_at, 'paid_ref', l.paid_ref,
-        'created_at', l.created_at, 'updated_at', l.updated_at) order by l.created_at desc)
+        'created_at', l.created_at, 'updated_at', l.updated_at,
+        'quote', (select to_jsonb(q) - 'lead_id' from team_quotes q where q.lead_id = l.id))
+        order by l.created_at desc)
       from team_leads l where l.member_id = v), '[]'::jsonb));
 end $$;
 
@@ -345,7 +347,9 @@ begin
           'client_phone', l.client_phone, 'city', l.city, 'service', l.service, 'notes', l.notes,
           'source', l.source, 'status', l.status, 'deal_value', l.deal_value, 'commission', l.commission,
           'paid_at', l.paid_at, 'paid_ref', l.paid_ref, 'admin_note', l.admin_note,
-          'created_at', l.created_at) order by l.created_at desc) from team_leads l), '[]'::jsonb));
+          'created_at', l.created_at,
+          'quote', (select to_jsonb(q) - 'lead_id' from team_quotes q where q.lead_id = l.id))
+          order by l.created_at desc) from team_leads l), '[]'::jsonb));
   end if;
 
   if p_action = 'lead' then
@@ -372,6 +376,10 @@ begin
     if not found then return jsonb_build_object('error','not_won'); end if;
     insert into team_lead_events(lead_id, actor, action, detail) values (v_id, 'admin', 'paid', p - 'id');
     return jsonb_build_object('ok', true);
+  end if;
+
+  if p_action = 'quote_send' then
+    return team_quote_send(p);
   end if;
 
   if p_action = 'member' then
@@ -549,3 +557,136 @@ end $$;
 grant execute on function team_tasks(text)                       to anon, authenticated;
 grant execute on function team_task_done(text,uuid,text)         to anon, authenticated;
 grant execute on function team_task_admin(text,text,jsonb)       to anon, authenticated;
+
+-- ============================================================
+--  عروض الأسعار — quotes
+--
+--  An ambassador asks for a quote on one of her own leads, with the
+--  client's requirements. The operator prices it line by line; the total
+--  (and 15% VAT when ticked) is computed HERE, never trusted from the page.
+--  The quote then has its own page (/team#/q/<id>) that the ambassador
+--  sends the client. Acceptance is recorded either by the ambassador or —
+--  stronger evidence — by the client pressing «أوافق» on that page
+--  (decided_by = 'client'). Accepting does not mark the lead won: the
+--  operator still signs the contract and sets «تم التعاقد» himself.
+--  One quote per lead; asking again re-opens it until it is accepted.
+-- ============================================================
+
+create table if not exists team_quotes (
+  id             uuid primary key default gen_random_uuid(),
+  no             serial,
+  lead_id        uuid not null unique references team_leads(id) on delete cascade,
+  details        text not null,
+  status         text not null default 'requested',     -- requested | sent | accepted | declined
+  items          jsonb,                                  -- [{d, q, p}]
+  vat            boolean not null default true,
+  subtotal       numeric(12,2),
+  total          numeric(12,2),
+  valid_until    date,
+  note           text,
+  requested_at   timestamptz not null default now(),
+  sent_at        timestamptz,
+  decided_at     timestamptz,
+  decided_by     text,                                   -- member | client
+  decision_note  text,
+  constraint team_q_details check (char_length(details) between 3 and 1000),
+  constraint team_q_status  check (status in ('requested','sent','accepted','declined')),
+  constraint team_q_note    check (note is null or char_length(note) <= 1000),
+  constraint team_q_dnote   check (decision_note is null or char_length(decision_note) <= 300),
+  constraint team_q_by      check (decided_by is null or decided_by in ('member','client'))
+);
+alter table team_quotes enable row level security;
+revoke all on team_quotes from public, anon, authenticated;
+revoke all on sequence team_quotes_no_seq from public, anon, authenticated;
+
+create or replace function team_quote_request(p_token text, p_lead uuid, p_details text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v uuid := team_member_of(p_token); l team_leads; q team_quotes;
+begin
+  if v is null then return jsonb_build_object('error','auth'); end if;
+  if char_length(trim(coalesce(p_details,''))) < 3 then return jsonb_build_object('error','details'); end if;
+  select * into l from team_leads where id = p_lead and member_id = v;
+  if l.id is null then return jsonb_build_object('error','not_found'); end if;
+  if l.status in ('duplicate','lost','won') then return jsonb_build_object('error','lead_closed'); end if;
+  select * into q from team_quotes where lead_id = p_lead;
+  if q.status = 'accepted' then return jsonb_build_object('error','accepted'); end if;
+  insert into team_quotes(lead_id, details) values (p_lead, left(trim(p_details), 1000))
+  on conflict (lead_id) do update set details = excluded.details, status = 'requested', items = null,
+    subtotal = null, total = null, valid_until = null, note = null, requested_at = now(),
+    sent_at = null, decided_at = null, decided_by = null, decision_note = null;
+  insert into team_lead_events(lead_id, actor, action, detail) values (p_lead, 'member', 'quote_request', null);
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function team_quote_decide(p_token text, p_lead uuid, p_accept boolean, p_note text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v uuid := team_member_of(p_token);
+begin
+  if v is null then return jsonb_build_object('error','auth'); end if;
+  update team_quotes q set status = case when p_accept then 'accepted' else 'declined' end,
+         decided_at = now(), decided_by = 'member', decision_note = nullif(left(trim(coalesce(p_note,'')), 300), '')
+   where q.lead_id = p_lead and q.status = 'sent'
+     and exists (select 1 from team_leads l where l.id = p_lead and l.member_id = v);
+  if not found then return jsonb_build_object('error','not_sent'); end if;
+  insert into team_lead_events(lead_id, actor, action, detail)
+    values (p_lead, 'member', case when p_accept then 'quote_accepted' else 'quote_declined' end, null);
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- the client's quote page: no ambassador, no phone, no commission on it
+create or replace function team_quote_public(p_id uuid) returns jsonb
+language sql security definer set search_path = public stable as $$
+  select coalesce((select jsonb_build_object(
+      'no', q.no, 'status', q.status, 'items', q.items, 'vat', q.vat, 'subtotal', q.subtotal,
+      'total', q.total, 'valid_until', q.valid_until, 'note', q.note, 'sent_at', q.sent_at,
+      'decided_at', q.decided_at, 'decided_by', q.decided_by,
+      'client_name', l.client_name, 'company', l.company)
+    from team_quotes q join team_leads l on l.id = q.lead_id
+    where q.id = p_id and q.status in ('sent','accepted','declined')),
+    jsonb_build_object('error','not_found'))
+$$;
+
+create or replace function team_quote_client_accept(p_id uuid) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v_lead uuid;
+begin
+  update team_quotes set status = 'accepted', decided_at = now(), decided_by = 'client'
+   where id = p_id and status = 'sent' and (valid_until is null or valid_until >= (now() at time zone 'Asia/Riyadh')::date)
+  returning lead_id into v_lead;
+  if v_lead is null then return jsonb_build_object('error','not_open'); end if;
+  insert into team_lead_events(lead_id, actor, action, detail) values (v_lead, 'client', 'quote_accepted', null);
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- internal: called by team_admin('quote_send'). Prices every line and sums it here.
+create or replace function team_quote_send(p jsonb) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v_lead uuid := (p->>'lead_id')::uuid; v_items jsonb := '[]'::jsonb; it jsonb;
+        v_sub numeric := 0; v_vat boolean := coalesce((p->>'vat')::boolean, true); q numeric; pr numeric;
+begin
+  if jsonb_typeof(p->'items') <> 'array' or jsonb_array_length(p->'items') = 0 or jsonb_array_length(p->'items') > 40 then
+    return jsonb_build_object('error','items');
+  end if;
+  for it in select * from jsonb_array_elements(p->'items') loop
+    q := (it->>'q')::numeric; pr := (it->>'p')::numeric;
+    if coalesce(trim(it->>'d'),'') = '' or q is null or q <= 0 or pr is null or pr < 0 then
+      return jsonb_build_object('error','items');
+    end if;
+    v_items := v_items || jsonb_build_array(jsonb_build_object('d', left(trim(it->>'d'), 200), 'q', q, 'p', pr));
+    v_sub := v_sub + q * pr;
+  end loop;
+  update team_quotes set items = v_items, vat = v_vat, subtotal = round(v_sub, 2),
+         total = round(v_sub * case when v_vat then 1.15 else 1 end, 2),
+         valid_until = nullif(p->>'valid_until','')::date, note = nullif(left(trim(coalesce(p->>'note','')), 1000), ''),
+         status = 'sent', sent_at = now(), decided_at = null, decided_by = null, decision_note = null
+   where lead_id = v_lead and status in ('requested','sent','declined');
+  if not found then return jsonb_build_object('error','not_found'); end if;
+  insert into team_lead_events(lead_id, actor, action, detail) values (v_lead, 'admin', 'quote_sent', jsonb_build_object('total', round(v_sub, 2)));
+  return jsonb_build_object('ok', true);
+end $$;
+revoke all on function team_quote_send(jsonb) from public, anon, authenticated;
+
+grant execute on function team_quote_request(text,uuid,text)            to anon, authenticated;
+grant execute on function team_quote_decide(text,uuid,boolean,text)     to anon, authenticated;
+grant execute on function team_quote_public(uuid)                       to anon, authenticated;
+grant execute on function team_quote_client_accept(uuid)                to anon, authenticated;
