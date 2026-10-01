@@ -406,7 +406,10 @@ const STATUS = () => ({
   duplicate:   L('مسجّل مسبقاً', 'Already registered')
 });
 const STEP_OF = { new: 1, contacted: 2, negotiating: 3, won: 4 };
-const SERVICES = () => [L('منصة الفرز الذكي للتوظيف', 'AI hiring platform'), L('باقة شركات', 'Business package'), L('شراكة / وكالة توظيف', 'Partnership / recruitment agency'), L('أخرى', 'Other')];
+/* The three services RAFD sells. The value stored on a lead is always the Arabic name, so the operator reads one spelling whatever language the member used; svcLabel() shows it in the viewer's language. Older leads keep whatever text they were saved with. */
+const SERVICE_LIST = [['خدمة RAFD Sense (الكاميرات)', 'RAFD Sense (cameras)'], ['الأتمتة والوكيل الذكي', 'Automation & AI agent'], ['التسويق عبر السوشل ميديا', 'Social media marketing']];
+const SERVICES = () => SERVICE_LIST.map(([ar, en]) => ({ v: ar, t: L(ar, en) }));
+const svcLabel = v => { const x = SERVICE_LIST.find(([ar]) => ar === v); return x ? L(x[0], x[1]) : v; };
 const SAR = () => L('ر.س', 'SAR');
 
 const ERRS = {
@@ -1072,7 +1075,7 @@ function leadCard(l) {
     <div class="lead-top">
       <div>
         <h3>${esc(l.client_name)}${l.company ? ` · <span style="font-weight:600;color:var(--teal-600)">${esc(l.company)}</span>` : ''}</h3>
-        <div class="meta"><span class="num">${esc(l.client_phone)}</span>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(l.service) : ''}</div>
+        <div class="meta"><span class="num">${esc(l.client_phone)}</span>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(svcLabel(l.service)) : ''}</div>
         <div class="meta">${L('سُجّل', 'Registered')} ${fmtDateTime(l.created_at)}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
@@ -1326,7 +1329,7 @@ const LEAD_FIELDS = (client) => `
     <div class="field"><label>${client ? L('رقم الجوال', 'Mobile number') : L('جوال العميل', 'Client mobile')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX"></div>
     <div class="field"><label>${L('المدينة', 'City')}</label><input name="city"></div>
   </div>
-  <div class="field"><label>${L('الخدمة المطلوبة', 'Service of interest')}</label><select name="service"><option value="">${client ? L('— اختر —', '— Select —') : L('— اختر —', '— Select —')}</option>${SERVICES().map(s => `<option>${esc(s)}</option>`).join('')}</select></div>`;
+  <div class="field"><label>${L('الخدمة المطلوبة', 'Service of interest')}</label><select name="service"><option value="">${client ? L('— اختر —', '— Select —') : L('— اختر —', '— Select —')}</option>${SERVICES().map(s => `<option value="${esc(s.v)}">${esc(s.t)}</option>`).join('')}</select></div>`;
 
 function openLeadSheet() {
   const s = sheet(L('تسجيل عميل جديد', 'Register a new client'), `
@@ -1684,7 +1687,7 @@ function drawAdmList() {
       <div class="lead-top">
         <div>
           <h3 style="font-size:1rem;font-weight:800">${esc(l.client_name)}${l.company ? ' · ' + esc(l.company) : ''}</h3>
-          <div class="meta" style="font-size:.84rem;color:var(--muted);line-height:1.8"><a class="num" href="${wa(l.client_phone)}" target="_blank" rel="noopener">${esc(l.client_phone)}</a>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(l.service) : ''}</div>
+          <div class="meta" style="font-size:.84rem;color:var(--muted);line-height:1.8"><a class="num" href="${wa(l.client_phone)}" target="_blank" rel="noopener">${esc(l.client_phone)}</a>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(svcLabel(l.service)) : ''}</div>
           <div class="who">${L('ممثل المبيعات', 'Representative')}: <b>${esc(m.name || '—')}</b> <span class="num">(${esc(m.code || '')})</span> · ${fmtDateTime(l.created_at)} · ${l.source === 'link' ? L('سجّل العميل بنفسه من رابط ممثل المبيعات', 'client signed up via the representative\'s link') : L('سجّله ممثل المبيعات', 'registered by the representative')}</div>
           ${l.notes ? `<div class="who" style="margin-top:4px">📝 ${esc(l.notes)}</div>` : ''}
         </div>
