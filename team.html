@@ -198,7 +198,12 @@ table.members th { font-size: .75rem; color: var(--muted); }
 .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--teal-500), var(--gold-500)); border-radius: 8px; }
 .bonus-rule { font-size: .8rem; background: #fff; border: 1px dashed var(--rose-300); border-radius: 10px; padding: 7px 10px; margin: 8px 0; color: #5b4442; line-height: 1.7; }
 .task-terms { margin: 4px 0 10px; font-size: .8rem; }
-.task-terms summary { cursor: pointer; font-weight: 700; color: var(--teal-600); }
+.task-terms > b { color: var(--navy-900); }
+.task-terms:not(.open) li.more { display: none; }
+.more-btn { background: none; border: 0; padding: 2px 0; font: inherit; font-weight: 700; color: var(--teal-600); cursor: pointer; }
+.tt-title { display: flex; align-items: center; gap: 8px; }
+.tt-ic { width: 1em; height: 1em; vertical-align: -0.12em; fill: #111; filter: drop-shadow(-1px -1px 0 #25F4EE) drop-shadow(1px 1px 0 #FE2C55); flex: none; }
+.tt-title .tt-ic { width: 1.05em; height: 1.05em; }
 .task-terms ul { margin: 6px 0 0; padding-inline-start: 18px; line-height: 1.8; color: #5b4442; }
 .proof-img { display: block; max-width: 100%; max-height: 70vh; margin: 0 auto; border-radius: 12px; border: 1px solid var(--line); }
 .task-box { background: linear-gradient(150deg, var(--rose-100), #fff 70%); border-color: var(--rose-300); }
@@ -885,8 +890,8 @@ async function viewHome() {
     <h2 class="h2">${L('آلية العمل', 'How it works')}</h2>
     <p class="sub">${L('أربع خطوات، وكل إجراء موثّق من اليوم الأول.', 'Four steps, everything on record from day one.')}</p>
     <div class="steps">
-      <div class="step"><div class="ic">📝</div><h3>${L('سجّل حسابك', 'Sign up')}</h3><p>${L('بالاسم ورقم الجوال، وتحصل على رمز ورابط خاصين بك.', 'Your name and mobile — and you get your own code and link.')}</p></div>
-      <div class="step"><div class="ic">🤝</div><h3>${L('سجّل عملاءك', 'Register clients')}</h3><p>${L('سجّل العميل أو الجهة باسمك فور التواصل معها، أو شارك رابطك ليسجّل العميل بنفسه.', 'As soon as you talk to a client, register them under your name — or let them sign up through your link.')}</p></div>
+      <div class="step"><div class="ic">📝</div><h3>${L('سجّل حسابك', 'Sign up')}</h3><p>${L('بالاسم ورقم الجوال، وتحصل على رمز خاص بك.', 'Your name and mobile — and you get your own code.')}</p></div>
+      <div class="step"><div class="ic">🤝</div><h3>${L('سجّل عملاءك', 'Register clients')}</h3><p>${L('سجّل العميل أو الجهة باسمك فور التواصل معها.', 'As soon as you talk to a client, register them under your name.')}</p></div>
       <div class="step"><div class="ic">📈</div><h3>${L('تابع الصفقة', 'Follow the deal')}</h3><p>${L('تابع حالة كل عميل: تواصل، تفاوض، تعاقد.', 'See where each client stands: contacted, negotiating, signed.')}</p></div>
       <div class="step"><div class="ic">💸</div><h3>${L('استلم عمولتك', 'Get paid')}</h3><p>${L('بعد التعاقد وتحصيل القيمة، تُحوَّل العمولة إلى حسابك البنكي.', 'Once the client signs and pays, your commission goes to your IBAN.')}</p></div>
     </div>
@@ -924,7 +929,7 @@ async function viewJoin(inviteArg) {
         <div class="field"><label>${L('المدينة', 'City')}</label><input name="city" autocomplete="address-level2"></div>
       </div>
       <div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')}</label><input name="tiktok" class="ltr" placeholder="@username" autocapitalize="off">
-        <div class="hint">${L('حساب حقيقي نشط باسمك، وهو الحساب الذي تُنفّذ به المهمة الشهرية. لا يُقبل الحساب نفسه لعضوين.', 'A real, active account of your own — the one you do the monthly task with. One account per member.')}</div></div>
+        <div class="hint">${L('حساب حقيقي نشط باسمك، وهو الحساب الذي تُنفّذ به مهمة تيك توك الشهرية. لا يُقبل الحساب نفسه لعضوين.', 'A real, active account of your own — the one you do the monthly TikTok task with. One account per member.')}</div></div>
       <div class="field"><label>${L('رمز الدعوة', 'Invite code')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="invite" class="ltr" placeholder="RF····" autocapitalize="characters" value="${esc((inviteArg || '').toUpperCase())}">
         <div class="hint" id="invHint">${L('إذا دعاك أحد أعضاء الفريق فاكتب رمزه هنا.', 'If a team member invited you, type their code here.')}</div></div>
       <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="new-password"><div class="hint">${L('ستة أحرف على الأقل، وتُستخدم مع رقم الجوال لتسجيل الدخول.', 'At least 6 characters — you sign in with it and your mobile number.')}</div></div>
@@ -1033,21 +1038,10 @@ function drawMe() {
         <div class="card agr-card" id="agrCard"></div>
         <div class="card task-box" id="taskCard" ${tasksData ? '' : 'hidden'}></div>
         <div class="card" id="inviteCard" ${tasksData ? '' : 'hidden'}></div>
-        <div class="card ref-box">
-          <div class="panel-title" style="margin-bottom:4px"><h2>${L('رابط العملاء', 'Client link')}</h2></div>
-          <div class="ref-code num">${esc(m.code)}</div>
-          <div class="ref-link">${esc(refLink(m.code))}</div>
-          <div class="btn-row">
-            <button class="btn btn-soft btn-sm" id="cpLink">${L('نسخ الرابط', 'Copy link')}</button>
-            <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(L('يسعدنا تسجيل اهتمامك بخدمات رفد عبر الرابط: ', 'Register your interest in RAFD services here: ') + refLink(m.code))}">${L('مشاركة عبر واتساب', 'Share on WhatsApp')}</a>
-          </div>
-          <p class="hint" style="font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.7">${L('العميل الذي يسجّل من رابطك يُنسب إليك تلقائياً، وهو أقوى إثبات لأنه سجّل بنفسه.', 'A client who signs up through your link is saved under your name automatically — the strongest proof, since they registered themselves.')}</p>
-        </div>
         <div class="card" id="ibanCard"></div>
       </div>
     </div>
   </div>`;
-  $('#cpLink').onclick = () => copy(refLink(m.code));
   $('#addLead').onclick = openLeadSheet;
   drawFilters(); drawLeads(); drawIban(); drawTasks(); drawAgreementCard();
 }
@@ -1215,6 +1209,9 @@ function drawIban() {
   $('#editIban').onclick = openIbanSheet;
 }
 
+/* TikTok's note mark, drawn in its own colours so the platform reads at a glance. */
+const TT_ICON = '<svg class="tt-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>';
+let termsOpen = false;
 const joinLink = () => location.origin + location.pathname + '#/join';
 const doneOk = p => p.done && !p.rejected && p.proof;
 
@@ -1227,29 +1224,30 @@ function drawTasks() {
   const paidNow = t.bonuses.find(b => b.month === cur);
   const left = posts.length - ok; const due = t.due || { amount: 0, invites_ok: 0 };
   c.innerHTML = `
-    <div class="panel-title" style="margin-bottom:4px"><h2>${L('المهمة الشهرية', 'Monthly task')}</h2><span class="pill ${all ? 'won' : 'negotiating'} num">${ok} / ${posts.length}</span></div>
+    <div class="panel-title" style="margin-bottom:4px"><h2 class="tt-title">${TT_ICON}${L('مهمة تيك توك الشهرية', 'Monthly TikTok task')}</h2><span class="pill ${all ? 'won' : 'negotiating'} num">${ok} / ${posts.length}</span></div>
     <p style="font-size:.86rem;color:#5b4442;line-height:1.8">${L(`على كل مقطع يُنشر في ${esc(monthName(cur))}: إعجاب، ومشاركة، وتعليق عن محتوى المقطع، ومتابعة حساب رفد، ثم أرفق صورة الشاشة.`, `On every video posted in ${esc(monthName(cur))}: like, share, comment on what the video says, and follow RAFD’s account — then attach a screenshot.`)}</p>
     <div class="bonus-rule">${L('المكافأة', 'Bonus')}: <b class="num">${money(t.bonus)}</b> ${SAR()} + <b class="num">${money(t.invite_bonus)}</b> ${SAR()} ${L('عن كل مدعو يُكمل الشهر', 'per invitee who completes the month')} · ${L('بحد أقصى', 'max')} <b class="num">${money(t.cap)}</b> ${SAR()}</div>
-    <details class="task-terms"><summary>${L('شروط المهمة والمكافأة', 'Task & bonus terms')}</summary><ul>
+    <div class="task-terms ${termsOpen ? 'open' : ''}"><b>${L('شروط المهمة والمكافأة', 'Task & bonus terms')}</b><ul>
       <li>${L(`تُستحق المكافأة الثابتة (<b class="num">${money(t.bonus)}</b> ر.س) لمن يُكمل مهمة الشهر كاملة: الإعجاب والمشاركة والتعليق ومتابعة حساب رفد على كل مقطع يُنشر خلال الشهر، مع إرفاق صورة الشاشة لكل مقطع.`,
               `The fixed bonus (<b class="num">${money(t.bonus)}</b> SAR) is earned by completing the whole month: like, share, comment and follow RAFD’s account on every video posted that month, with a screenshot for each.`)}</li>
-      <li>${L(`يُضاف <b class="num">${money(t.invite_bonus)}</b> ر.س عن كل شخص ينضم برمز دعوتك ويُكمل مهمة الشهر نفسه كاملة، بشرط أن تُكمل مهمتك أنت أيضاً، وبحد أقصى <b class="num">${money(t.cap)}</b> ر.س شهرياً للمكافأة كلها.`,
+      <li class="more">${L(`يُضاف <b class="num">${money(t.invite_bonus)}</b> ر.س عن كل شخص ينضم برمز دعوتك ويُكمل مهمة الشهر نفسه كاملة، بشرط أن تُكمل مهمتك أنت أيضاً، وبحد أقصى <b class="num">${money(t.cap)}</b> ر.س شهرياً للمكافأة كلها.`,
               `Add <b class="num">${money(t.invite_bonus)}</b> SAR for each person who joins with your invite code and completes the same month, provided you complete yours too — up to <b class="num">${money(t.cap)}</b> SAR a month in total.`)}</li>
-      <li>${L('يجب أن يكون التعليق عن محتوى المقطع، فلا يُقبل التعليق العشوائي أو المكوّن من رموز فقط.', 'The comment must be about the video — random comments or emoji alone are not accepted.')}</li>
-      <li>${L('يجب أن يكون الحساب المشارك به حساباً حقيقياً نشطاً، وليس حساباً وهمياً.', 'The account used must be a real, active one — not a fake account.')}</li>
-      <li>${L('لرفد رفض أي مشاركة لا تستوفي الشروط، وإيقاف الحساب عند ثبوت التلاعب، وتعديل مبالغ المكافأة مع إعلان ذلك هنا.', 'RAFD may reject any entry that falls short, suspend an account where manipulation is found, and change the bonus amounts, announcing it here.')}</li>
-    </ul></details>
+      <li class="more">${L('يجب أن يكون التعليق عن محتوى المقطع، فلا يُقبل التعليق العشوائي أو المكوّن من رموز فقط.', 'The comment must be about the video — random comments or emoji alone are not accepted.')}</li>
+      <li class="more">${L('يجب أن يكون الحساب المشارك به حساباً حقيقياً نشطاً، وليس حساباً وهمياً.', 'The account used must be a real, active one — not a fake account.')}</li>
+      <li class="more">${L('لرفد رفض أي مشاركة لا تستوفي الشروط، وإيقاف الحساب عند ثبوت التلاعب، وتعديل مبالغ المكافأة مع إعلان ذلك هنا.', 'RAFD may reject any entry that falls short, suspend an account where manipulation is found, and change the bonus amounts, announcing it here.')}</li>
+    </ul><button type="button" class="more-btn" id="termsMore">${termsOpen ? L('عرض أقل ▴', 'Show less ▴') : L('المزيد ▾', 'More ▾')}</button></div>
     <div class="bar"><i style="width:${posts.length ? Math.round(ok / posts.length * 100) : 0}%"></i></div>
     <p style="font-size:.8rem;margin-bottom:6px;color:${all ? 'var(--ok)' : 'var(--muted)'}">${paidNow ? L(`✓ صُرفت مكافأة هذا الشهر: ${money(paidNow.amount)} ر.س`, `✓ This month’s bonus has been paid: ${money(paidNow.amount)} SAR`) : !posts.length ? L('لم يُنشر أي مقطع هذا الشهر بعد.', 'No videos posted this month yet.') : all ? L(`✓ مكتملة — مستحقك حتى الآن <b class="num">${money(due.amount)}</b> ر.س، ويُصرف في نهاية الشهر`, `✓ Complete — <b class="num">${money(due.amount)}</b> SAR so far, paid at month end`) : L(`المتبقي ${left} ${left === 1 ? 'مقطع' : 'مقاطع'}`, `${left} ${left === 1 ? 'video' : 'videos'} left`)}</p>
     ${posts.map(p => `<div class="task">
       <div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)}</small>
         ${p.rejected ? `<div style="font-size:.76rem;color:var(--bad)">✕ ${L('رُفضت المشاركة، يُرجى مراجعة الإدارة', 'Entry rejected — contact the team')}</div>` : p.done && !p.proof ? `<div style="font-size:.76rem;color:var(--warn,#b7791f)">${L('ينقصها صورة الشاشة', 'Screenshot missing')}</div>` : ''}</div>
       <div class="btn-row" style="flex:none">
-        <a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${L('فتح ↗', 'Open ↗')}</a>
+        <a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${TT_ICON} ${L('فتح', 'Open')}</a>
         ${p.rejected ? '' : doneOk(p) ? `<button class="btn btn-ghost btn-sm" data-task="${p.id}" style="color:var(--ok)">✓ ${L('تم', 'Done')}</button>` : `<button class="btn btn-main btn-sm" data-task="${p.id}">${p.done ? L('أرفق الصورة', 'Add screenshot') : L('تم التنفيذ', 'Mark done')}</button>`}
       </div></div>`).join('')}
     ${t.bonuses.length ? `<div style="margin-top:10px;font-size:.8rem;color:var(--muted)">${t.bonuses.map(b => `✓ ${esc(monthName(b.month))}: <span class="num">${money(b.amount)}</span> ${SAR()}`).join('<br>')}</div>` : ''}`;
   c.onclick = e => { const b = e.target.closest('[data-task]'); if (b) openTaskSheet(t.posts.find(p => p.id === b.dataset.task)); };
+  $('#termsMore').onclick = () => { termsOpen = !termsOpen; drawTasks(); };
   drawInvites();
 }
 
@@ -1276,7 +1274,7 @@ function drawInvites() {
 function openTaskSheet(post) {
   const s = sheet(esc(post.title || L('مقطع', 'Video')), `
     <div id="tm"></div>
-    <a class="btn btn-soft btn-block" href="${esc(safeUrl(post.url))}" target="_blank" rel="noopener" style="margin-bottom:14px">${L('فتح المقطع في تيك توك ↗', 'Open the video on TikTok ↗')}</a>
+    <a class="btn btn-soft btn-block" href="${esc(safeUrl(post.url))}" target="_blank" rel="noopener" style="margin-bottom:14px">${TT_ICON} ${L('فتح المقطع في تيك توك', 'Open the video on TikTok')}</a>
     <form id="tf" novalidate>
       <label class="check"><input type="checkbox" name="like"><span>${L('تم الإعجاب ❤️', 'I liked it ❤️')}</span></label>
       <label class="check" style="margin-top:-8px"><input type="checkbox" name="share"><span>${L('تمت المشاركة ↪️', 'I shared it ↪️')}</span></label>
@@ -1536,7 +1534,7 @@ function drawAdmin() {
     <div class="adm-tabs">
       <button class="chip ${admTab === 'leads' ? 'on' : ''}" data-t="leads">${L('العملاء', 'Clients')} (<span class="num">${leads.length}</span>)</button>
       <button class="chip ${admTab === 'members' ? 'on' : ''}" data-t="members">${L('الفريق', 'Team')} (<span class="num">${members.length}</span>)</button>
-      <button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">${L('المهمة الشهرية', 'Monthly task')}</button>
+      <button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">${TT_ICON} ${L('مهمة تيك توك', 'TikTok task')}</button>
       <span style="flex:1"></span>
       <button class="btn btn-soft btn-sm" id="catBtn">${L('الباقات والأسعار', 'Packages & prices')}</button>
       <button class="btn btn-soft btn-sm" id="agrBtn">${L('نسبة العمولة', 'Commission rate')}</button>
@@ -1609,7 +1607,7 @@ function drawAdmTasks() {
     <div class="card" style="margin-bottom:12px">
       <div class="panel-title"><h2>${L('مقاطع', 'Videos —')} ${esc(monthName(admTaskMonth))} (<span class="num">${posts.length}</span>)</h2></div>
       ${posts.map(p => `<div class="task"><div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)} · ${L('نفّذها', 'done by')} <span class="num">${done.filter(d => d.post_id === p.id && !d.rejected && d.proof).length} / ${members.length}</span></small></div>
-        <div class="btn-row"><a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${L('فتح ↗', 'Open ↗')}</a><button class="btn btn-ghost btn-sm" data-del="${p.id}">${L('حذف', 'Delete')}</button></div></div>`).join('') || `<div class="empty">${L('لم يُنشر أي مقطع هذا الشهر.', 'No videos posted this month.')}</div>`}
+        <div class="btn-row"><a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${TT_ICON} ${L('فتح', 'Open')}</a><button class="btn btn-ghost btn-sm" data-del="${p.id}">${L('حذف', 'Delete')}</button></div></div>`).join('') || `<div class="empty">${L('لم يُنشر أي مقطع هذا الشهر.', 'No videos posted this month.')}</div>`}
     </div>
     <div class="card">
       <div class="panel-title"><h2>${L('الفريق', 'Team')}</h2>${nDue ? `<span class="pill negotiating">${nDue} ${L('يستحقون الصرف', 'due for payout')}</span>` : ''}</div>
