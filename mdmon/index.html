@@ -3062,11 +3062,15 @@ function renderLive(lot, bids) {
   const t = topBid(lot.id, lot);
   const shown = finalPrice(lot, t);
   const cd = countdown(lot.end_at);
-  // Four, not six. The artwork is a hand on a FOREARM, so at six across the
-   // arms run under the next fist and the row reads as one smear — «مدموجة فوق
-   // بعض». The newest four, with the top sum among them, is what matters.
-  const last = bids.slice(-4).reverse();
+  // ONE paddle on air: the highest sum, and nothing else. A row of them put
+   // 50 and 300 beside the 5,000 on camera, which is the losing numbers taking
+   // up the screen the winning one is for — «بس اللي ينعرض فوق الاعلى فقط».
+   // The full run of sums is not lost: the operator reads it in his strip
+   // («السومات المحتسبة») and it is on the lot's own page.
+   // Ties take the LATEST of them, so the hand raised is the one that just
+   // went up rather than whoever got there first.
   const best = bids.length ? Math.max(...bids.map(b => +b.amount)) : null;
+  const last = bids.length ? [bids.filter(b => +b.amount === best).pop()] : [];
 
   const sig = JSON.stringify([
     lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
