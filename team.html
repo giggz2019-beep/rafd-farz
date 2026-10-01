@@ -1338,7 +1338,7 @@ const LEAD_FIELDS = (client) => `
     <div class="field"><label>${client ? L('رقم الجوال', 'Mobile number') : L('جوال العميل', 'Client mobile')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX"></div>
     <div class="field"><label>${L('المدينة', 'City')}</label><input name="city"></div>
   </div>
-  <div class="field"><label>${L('الخدمة المطلوبة', 'Service of interest')}</label><select name="service"><option value="">${client ? L('— اختر —', '— Select —') : L('— اختر —', '— Select —')}</option>${SERVICES().map(s => `<option value="${esc(s.v)}">${esc(s.t)}</option>`).join('')}</select></div>`;
+  <div class="field"><label>${L('البرنامج المطلوب', 'Programme of interest')}</label><select name="service"><option value="">${client ? L('— اختر —', '— Select —') : L('— اختر —', '— Select —')}</option>${SERVICES().map(s => `<option value="${esc(s.v)}">${esc(s.t)}</option>`).join('')}</select></div>`;
 
 function openLeadSheet() {
   const s = sheet(L('تسجيل عميل جديد', 'Register a new client'), `
@@ -1962,7 +1962,7 @@ function drawAdmMembers() {
 function exportCsv() {
   const cell = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const ST = STATUS();
-  const rows = [[L('ممثل المبيعات', 'Representative'), L('الرمز', 'Code'), L('جوال ممثل المبيعات', 'Representative mobile'), L('العميل', 'Client'), L('الشركة', 'Company'), L('جوال العميل', 'Client mobile'), L('المدينة', 'City'), L('الخدمة', 'Service'), L('المصدر', 'Source'), L('الحالة', 'Status'), L('قيمة الصفقة', 'Deal value'), L('العمولة', 'Commission'), L('تاريخ التسجيل', 'Registered'), L('تاريخ التحويل', 'Paid on'), L('مرجع التحويل', 'Payment ref.'), 'IBAN', L('اسم صاحب الحساب', 'Account holder')]];
+  const rows = [[L('ممثل المبيعات', 'Representative'), L('الرمز', 'Code'), L('جوال ممثل المبيعات', 'Representative mobile'), L('العميل', 'Client'), L('الشركة', 'Company'), L('جوال العميل', 'Client mobile'), L('المدينة', 'City'), L('البرنامج', 'Programme'), L('المصدر', 'Source'), L('الحالة', 'Status'), L('قيمة الصفقة', 'Deal value'), L('العمولة', 'Commission'), L('تاريخ التسجيل', 'Registered'), L('تاريخ التحويل', 'Paid on'), L('مرجع التحويل', 'Payment ref.'), 'IBAN', L('اسم صاحب الحساب', 'Account holder')]];
   for (const l of admData.leads) {
     const m = memberById(l.member_id);
     rows.push([m.name, m.code, m.phone, l.client_name, l.company, l.client_phone, l.city, l.service, l.source === 'link' ? L('رابط', 'Link') : L('يدوي', 'Manual'), ST[l.status], l.deal_value, l.commission, l.created_at, l.paid_at, l.paid_ref, m.iban, m.iban_name]);
