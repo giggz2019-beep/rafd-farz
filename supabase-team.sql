@@ -56,6 +56,10 @@ create table if not exists team_members (
 alter table team_members add column if not exists agreed_rate numeric(5,2);
 alter table team_members add column if not exists agreement_text text;
 alter table team_members add column if not exists agreement_text_en text;
+-- who invited this member (the code typed at sign-up); drives the monthly invite bonus
+alter table team_members add column if not exists invited_by uuid references team_members(id) on delete set null;
+-- one TikTok account, one member: the cheapest brake on fake accounts claiming a bonus
+create unique index if not exists team_members_tiktok_uq on team_members (lower(ltrim(tiktok, '@'))) where tiktok is not null;
 
 create table if not exists team_sessions (
   token_hash  text primary key,
@@ -118,6 +122,9 @@ insert into team_config(key, value)
 -- later change of rate or wording never touches what someone already accepted.
 insert into team_config(key, value) values ('commission_rate', '5') on conflict (key) do nothing;
 insert into team_config(key, value) values ('payout_days', '15') on conflict (key) do nothing;
+-- sign-ups: the operator can close them, or cap the team at a size (0 = no cap)
+insert into team_config(key, value) values ('join_open', 'true') on conflict (key) do nothing;
+insert into team_config(key, value) values ('join_cap',  '0')    on conflict (key) do nothing;
 insert into team_config(key, value) values ('agreement', $agr$## أطراف الاتفاقية
 - الطرف الأول: شركة رفد الرقمية، ويُشار إليها بـ«رفد».
 - الطرف الثاني: {name}، جوال رقم {phone}، ويُشار إليه بـ«ممثل المبيعات».
@@ -249,6 +256,15 @@ language sql security definer set search_path = public stable as $$
            '{phone}',    coalesce(nullif(trim(p_phone),''), '________'))
 $$;
 
+-- are sign-ups open: the switch is on, and the team is under its cap (0 = none)
+create or replace function team_join_open() returns boolean
+language sql security definer set search_path = public stable as $$
+  select coalesce((select value from team_config where key = 'join_open'), 'true') = 'true'
+     and (coalesce((select value::int from team_config where key = 'join_cap'), 0) = 0
+          or (select count(*) from team_members where status <> 'suspended')
+             < (select value::int from team_config where key = 'join_cap'))
+$$;
+
 -- insert a lead and decide attribution in one place
 create or replace function team_insert_lead(p_member uuid, p_source text, p_name text, p_company text,
   p_phone text, p_city text, p_service text, p_notes text) returns jsonb
@@ -279,28 +295,42 @@ revoke all on function team_new_session(uuid)                 from public, anon,
 revoke all on function team_is_admin(text)                    from public, anon, authenticated;
 revoke all on function team_insert_lead(uuid,text,text,text,text,text,text,text) from public, anon, authenticated;
 revoke all on function team_agreement_render(text,text,text)  from public, anon, authenticated;
+revoke all on function team_join_open()                       from public, anon, authenticated;
 
 -- ---------- public API (callable with the anon key) ----------
 
+-- p_invite (the inviter's code) was added: the 6-argument version is DROPPED,
+-- not left beside it, or a call naming the first six arguments is ambiguous.
+drop function if exists team_register(text,text,text,text,text,boolean);
 create or replace function team_register(p_name text, p_phone text, p_city text, p_tiktok text,
-  p_password text, p_agree boolean) returns jsonb
+  p_password text, p_agree boolean, p_invite text default null) returns jsonb
 language plpgsql security definer set search_path = public, extensions as $$
-declare v_id uuid; v_code text; i int := 0;
+declare v_id uuid; v_code text; i int := 0; v_inv uuid;
+        v_tt text := '@' || ltrim(trim(coalesce(p_tiktok,'')), '@');
 begin
   if not coalesce(p_agree, false) then return jsonb_build_object('error','terms'); end if;
+  if not team_join_open() then return jsonb_build_object('error','join_closed'); end if;
   if p_phone !~ '^05[0-9]{8}$' then return jsonb_build_object('error','phone'); end if;
   if char_length(coalesce(p_password,'')) < 6 then return jsonb_build_object('error','password'); end if;
   if char_length(trim(coalesce(p_name,''))) < 3 then return jsonb_build_object('error','name'); end if;
+  if v_tt !~ '^@[A-Za-z0-9._]{2,24}$' then return jsonb_build_object('error','tiktok'); end if;
   if not team_throttle('reg', 30, interval '1 hour') then return jsonb_build_object('error','too_many'); end if;
   if exists (select 1 from team_members where phone = p_phone) then return jsonb_build_object('error','exists'); end if;
+  if exists (select 1 from team_members where lower(ltrim(tiktok,'@')) = lower(ltrim(v_tt,'@'))) then
+    return jsonb_build_object('error','tiktok_taken');
+  end if;
+  if nullif(trim(coalesce(p_invite,'')),'') is not null then
+    select id into v_inv from team_members where code = upper(trim(p_invite)) and status <> 'suspended';
+    if v_inv is null then return jsonb_build_object('error','invite_code'); end if;
+  end if;
   loop
     v_code := 'RF' || upper(substr(translate(encode(gen_random_bytes(6),'base64'),'+/=0O1lI','XYZ'), 1, 4));
     exit when not exists (select 1 from team_members where code = v_code) or i > 20;
     i := i + 1;
   end loop;
-  insert into team_members(code, full_name, phone, city, tiktok, pass_hash, agreed_rate, agreement_text, agreement_text_en)
-  values (v_code, trim(p_name), p_phone, nullif(trim(p_city),''), nullif(trim(p_tiktok),''),
-          crypt(p_password, gen_salt('bf')),
+  insert into team_members(code, full_name, phone, city, tiktok, pass_hash, invited_by, agreed_rate, agreement_text, agreement_text_en)
+  values (v_code, trim(p_name), p_phone, nullif(trim(p_city),''), v_tt,
+          crypt(p_password, gen_salt('bf')), v_inv,
           (select value::numeric from team_config where key = 'commission_rate'),
           team_agreement_render('agreement', p_name, p_phone),
           team_agreement_render('agreement_en', p_name, p_phone))
@@ -308,6 +338,18 @@ begin
   insert into team_attempts(key) values ('reg');
   return jsonb_build_object('ok', true, 'token', team_new_session(v_id));
 end $$;
+
+-- for the home and sign-up pages: whether sign-ups are open, whose code was
+-- typed, and the monthly bonus terms (stated in the terms a new member accepts)
+create or replace function team_join_info(p_code text default null) returns jsonb
+language sql security definer set search_path = public stable as $$
+  select jsonb_build_object('open', team_join_open(),
+    'bonus',        (select value::numeric from team_config where key = 'monthly_bonus'),
+    'invite_bonus', (select value::numeric from team_config where key = 'invite_bonus'),
+    'cap',          (select value::numeric from team_config where key = 'bonus_cap'),
+    'inviter', (select split_part(full_name, ' ', 1) from team_members
+                 where code = upper(trim(coalesce(p_code,''))) and status <> 'suspended'))
+$$;
 
 create or replace function team_login(p_phone text, p_password text) returns jsonb
 language plpgsql security definer set search_path = public, extensions as $$
@@ -432,8 +474,12 @@ begin
       'members', coalesce((select jsonb_agg(jsonb_build_object(
           'id', m.id, 'code', m.code, 'name', m.full_name, 'phone', m.phone, 'city', m.city,
           'tiktok', m.tiktok, 'status', m.status, 'iban', m.iban, 'iban_name', m.iban_name,
-          'bank', m.bank, 'created_at', m.created_at, 'agreed_rate', m.agreed_rate, 'agreed_at', m.terms_at)
+          'bank', m.bank, 'created_at', m.created_at, 'agreed_rate', m.agreed_rate, 'agreed_at', m.terms_at,
+          'invited_by', m.invited_by)
           order by m.created_at) from team_members m), '[]'::jsonb),
+      'join', jsonb_build_object('open', (select value = 'true' from team_config where key = 'join_open'),
+                                 'cap', (select value::int from team_config where key = 'join_cap'),
+                                 'accepting', team_join_open()),
       'leads', coalesce((select jsonb_agg(jsonb_build_object(
           'id', l.id, 'member_id', l.member_id, 'client_name', l.client_name, 'company', l.company,
           'client_phone', l.client_phone, 'city', l.city, 'service', l.service, 'notes', l.notes,
@@ -524,6 +570,15 @@ begin
     return jsonb_build_object('ok', true, 'catalog', (select value::jsonb from team_config where key = 'catalog'));
   end if;
 
+  if p_action = 'join' then
+    if p ? 'cap' and coalesce((p->>'cap')::int, -1) not between 0 and 100000 then
+      return jsonb_build_object('error','join_cap');
+    end if;
+    if p ? 'open' then update team_config set value = case when (p->>'open')::boolean then 'true' else 'false' end where key = 'join_open'; end if;
+    if p ? 'cap'  then update team_config set value = ((p->>'cap')::int)::text where key = 'join_cap'; end if;
+    return jsonb_build_object('ok', true);
+  end if;
+
   if p_action = 'member' then
     update team_members set status = p->>'status' where id = (p->>'id')::uuid;
     if (p->>'status') = 'suspended' then delete from team_sessions where member_id = (p->>'id')::uuid; end if;
@@ -540,7 +595,8 @@ end $$;
 
 -- A new function is EXECUTE-able by PUBLIC, and Supabase grants anon/authenticated on top.
 -- Only the API above is meant for the browser; grant it explicitly, and nothing else.
-grant execute on function team_register(text,text,text,text,text,boolean)            to anon, authenticated;
+grant execute on function team_register(text,text,text,text,text,boolean,text)       to anon, authenticated;
+grant execute on function team_join_info(text)                                        to anon, authenticated;
 grant execute on function team_login(text,text)                                       to anon, authenticated;
 grant execute on function team_logout(text)                                           to anon, authenticated;
 grant execute on function team_me(text)                                               to anon, authenticated;
@@ -559,14 +615,27 @@ grant execute on function team_admin(text,text,jsonb)                           
 -- ============================================================
 --  المهمة الشهرية — monthly engagement task
 --
---  The operator posts his TikTok video links. Each ambassador opens one,
---  engages, and marks it done WITH THE TEXT OF HER COMMENT. TikTok exposes
---  no way to learn who liked or shared a video, so the comment is the only
---  part anyone can check: the operator finds it under her TikTok handle and
---  rejects a mark he cannot find. Whoever has an accepted mark on every
---  video of a calendar month (Riyadh time) is due the monthly bonus
---  (team_config.monthly_bonus, default 150). Paying is recorded per member
---  per month, so it can never be paid twice.
+--  The operator posts his TikTok video links. Each member opens one, likes,
+--  shares, comments and follows the account, then marks it done with
+--  (1) the TEXT of the comment and (2) a SCREENSHOT. TikTok exposes no way
+--  to learn who liked, shared or followed, so the screenshot and the
+--  comment are the evidence: the operator checks them and rejects what he
+--  cannot verify (an inactive or fake-looking account, a comment he cannot
+--  find).
+--
+--  The comment must be a real sentence about the video, so the server
+--  refuses: fewer than 3 words / 8 letters (emoji or "👍🔥" alone), the same
+--  comment pasted on two videos, and a copy of a teammate's comment on the
+--  same video. Whether it is ABOUT the video is the operator's call.
+--
+--  Bonus for a calendar month (Riyadh time), computed HERE, never by the page:
+--    qualified = an accepted mark WITH a screenshot on every video of the month
+--    amount    = min(bonus_cap, monthly_bonus + invite_bonus × invitees who
+--                also qualified that month)        — only if the member qualified
+--  Defaults 25 + 5 × n, capped at 150. An invitee is a member who typed this
+--  member's code at sign-up (team_members.invited_by). One level only: the
+--  invitee's own invitees earn nothing for the first member.
+--  Paying is recorded per member per month, so it can never be paid twice.
 -- ============================================================
 
 create table if not exists team_posts (
@@ -588,6 +657,19 @@ create table if not exists team_post_done (
   constraint team_d_comment check (char_length(comment) between 2 and 300)
 );
 
+-- The screenshot, kept apart so listing marks never drags images along.
+-- A compressed JPEG data URL (the page shrinks it to ~1000px before sending).
+create table if not exists team_proofs (
+  post_id    uuid not null,
+  member_id  uuid not null,
+  img        text not null,
+  added_at   timestamptz not null default now(),
+  primary key (post_id, member_id),
+  foreign key (post_id, member_id) references team_post_done(post_id, member_id) on delete cascade,
+  constraint team_pr_img check (img ~ '^data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$'
+                                and char_length(img) <= 600000)
+);
+
 create table if not exists team_bonuses (
   member_id  uuid not null references team_members(id) on delete cascade,
   month      date not null,                       -- first day of the month
@@ -597,75 +679,160 @@ create table if not exists team_bonuses (
   primary key (member_id, month)
 );
 
-insert into team_config(key, value) values ('monthly_bonus', '150') on conflict (key) do nothing;
+insert into team_config(key, value) values ('monthly_bonus', '25')  on conflict (key) do nothing;
+insert into team_config(key, value) values ('invite_bonus',  '5')   on conflict (key) do nothing;
+insert into team_config(key, value) values ('bonus_cap',     '150') on conflict (key) do nothing;
 
 alter table team_posts     enable row level security;
 alter table team_post_done enable row level security;
+alter table team_proofs    enable row level security;
 alter table team_bonuses   enable row level security;
-revoke all on team_posts, team_post_done, team_bonuses from public, anon, authenticated;
+revoke all on team_posts, team_post_done, team_proofs, team_bonuses from public, anon, authenticated;
 
 create or replace function team_month_of(t timestamptz) returns date
 language sql immutable as $$ select date_trunc('month', t at time zone 'Asia/Riyadh')::date $$;
-revoke all on function team_month_of(timestamptz) from public, anon, authenticated;
 
--- what the ambassador sees: this month's and last month's videos, her marks, her bonuses
+-- a comment is a sentence, not a reaction: ≥ 3 words and ≥ 8 letters (Arabic or Latin)
+create or replace function team_comment_ok(c text) returns boolean
+language sql immutable as $$
+  select char_length(regexp_replace(coalesce(c,''), '[^A-Za-zء-ي]', '', 'g')) >= 8
+     and coalesce(array_length(regexp_split_to_array(trim(coalesce(c,'')), '\s+'), 1), 0) >= 3
+$$;
+-- the shape two comments are compared in: letters and digits only, lower case
+create or replace function team_comment_key(c text) returns text
+language sql immutable as $$ select lower(regexp_replace(coalesce(c,''), '[^A-Za-z0-9ء-ي٠-٩]', '', 'g')) $$;
+
+-- did this member complete this month: every video has an accepted mark with a screenshot
+create or replace function team_qualified(p_member uuid, p_month date) returns boolean
+language sql security definer set search_path = public stable as $$
+  select exists (select 1 from team_posts where team_month_of(created_at) = p_month)
+     and not exists (
+       select 1 from team_posts p
+        where team_month_of(p.created_at) = p_month
+          and not exists (select 1 from team_post_done d join team_proofs f
+                            on f.post_id = d.post_id and f.member_id = d.member_id
+                           where d.post_id = p.id and d.member_id = p_member and not d.rejected))
+$$;
+
+create or replace function team_bonus_of(p_member uuid, p_month date) returns jsonb
+language plpgsql security definer set search_path = public stable as $$
+declare q boolean := team_qualified(p_member, p_month); n int; b numeric; i numeric; c numeric;
+begin
+  select value::numeric into b from team_config where key = 'monthly_bonus';
+  select value::numeric into i from team_config where key = 'invite_bonus';
+  select value::numeric into c from team_config where key = 'bonus_cap';
+  select count(*) into n from team_members
+   where invited_by = p_member and status <> 'suspended' and team_qualified(id, p_month);
+  return jsonb_build_object('qualified', q, 'invites_ok', n,
+    'amount', case when q then least(c, b + i * n) else 0 end);
+end $$;
+
+revoke all on function team_month_of(timestamptz)   from public, anon, authenticated;
+revoke all on function team_comment_ok(text)        from public, anon, authenticated;
+revoke all on function team_comment_key(text)       from public, anon, authenticated;
+revoke all on function team_qualified(uuid,date)    from public, anon, authenticated;
+revoke all on function team_bonus_of(uuid,date)     from public, anon, authenticated;
+
+-- what the member sees: this month's and last month's videos, their marks,
+-- the people they invited and how this month stands, and their bonuses
 create or replace function team_tasks(p_token text) returns jsonb
 language plpgsql security definer set search_path = public as $$
-declare v uuid := team_member_of(p_token);
+declare v uuid := team_member_of(p_token); cur date := team_month_of(now());
 begin
   if v is null then return jsonb_build_object('error','auth'); end if;
   return jsonb_build_object(
-    'bonus', (select value::numeric from team_config where key = 'monthly_bonus'),
-    'this_month', team_month_of(now()),
+    'bonus',        (select value::numeric from team_config where key = 'monthly_bonus'),
+    'invite_bonus', (select value::numeric from team_config where key = 'invite_bonus'),
+    'cap',          (select value::numeric from team_config where key = 'bonus_cap'),
+    'this_month', cur,
+    'due', team_bonus_of(v, cur),
     'posts', coalesce((select jsonb_agg(jsonb_build_object(
         'id', p.id, 'url', p.url, 'title', p.title, 'created_at', p.created_at,
         'month', team_month_of(p.created_at),
-        'done', d.post_id is not null, 'rejected', coalesce(d.rejected, false), 'comment', d.comment)
+        'done', d.post_id is not null, 'rejected', coalesce(d.rejected, false), 'comment', d.comment,
+        'proof', exists (select 1 from team_proofs f where f.post_id = p.id and f.member_id = v))
         order by p.created_at desc)
       from team_posts p left join team_post_done d on d.post_id = p.id and d.member_id = v
-      where team_month_of(p.created_at) >= (team_month_of(now()) - interval '1 month')::date), '[]'::jsonb),
+      where team_month_of(p.created_at) >= (cur - interval '1 month')::date), '[]'::jsonb),
+    'invitees', coalesce((select jsonb_agg(jsonb_build_object(
+        'first', split_part(m.full_name, ' ', 1), 'joined', m.created_at,
+        'done', (select count(*) from team_post_done d join team_posts p on p.id = d.post_id
+                  join team_proofs f on f.post_id = d.post_id and f.member_id = d.member_id
+                 where d.member_id = m.id and not d.rejected and team_month_of(p.created_at) = cur),
+        'qualified', team_qualified(m.id, cur)) order by m.created_at)
+      from team_members m where m.invited_by = v and m.status <> 'suspended'), '[]'::jsonb),
     'bonuses', coalesce((select jsonb_agg(jsonb_build_object('month', b.month, 'amount', b.amount,
         'paid_at', b.paid_at, 'paid_ref', b.paid_ref) order by b.month desc)
       from team_bonuses b where b.member_id = v), '[]'::jsonb));
 end $$;
 
-create or replace function team_task_done(p_token text, p_post uuid, p_comment text) returns jsonb
+-- the screenshot became mandatory: the 3-argument version is DROPPED, not left
+-- beside it (a defaulted extra argument would make the old call ambiguous)
+drop function if exists team_task_done(text,uuid,text);
+create or replace function team_task_done(p_token text, p_post uuid, p_comment text, p_proof text) returns jsonb
 language plpgsql security definer set search_path = public as $$
-declare v uuid := team_member_of(p_token); m date;
+declare v uuid := team_member_of(p_token); m date; c text := left(trim(coalesce(p_comment,'')), 300); k text;
 begin
   if v is null then return jsonb_build_object('error','auth'); end if;
-  if char_length(trim(coalesce(p_comment,''))) < 2 then return jsonb_build_object('error','comment'); end if;
+  if not team_comment_ok(c) then return jsonb_build_object('error','comment_weak'); end if;
   select team_month_of(created_at) into m from team_posts where id = p_post;
   if m is null then return jsonb_build_object('error','not_found'); end if;
   if m < team_month_of(now()) then return jsonb_build_object('error','closed'); end if;   -- last month is closed
-  insert into team_post_done(post_id, member_id, comment) values (p_post, v, left(trim(p_comment), 300))
-  on conflict (post_id, member_id) do update
-    set comment = excluded.comment, done_at = now()
-    where not team_post_done.rejected;       -- a rejected mark stays rejected until the operator lifts it
-  if not found then return jsonb_build_object('error','rejected'); end if;
+  if exists (select 1 from team_post_done where post_id = p_post and member_id = v and rejected) then
+    return jsonb_build_object('error','rejected');        -- stays rejected until the operator lifts it
+  end if;
+  k := team_comment_key(c);
+  if exists (select 1 from team_post_done where member_id = v and post_id <> p_post and team_comment_key(comment) = k) then
+    return jsonb_build_object('error','comment_reused');
+  end if;
+  if exists (select 1 from team_post_done where post_id = p_post and member_id <> v and team_comment_key(comment) = k) then
+    return jsonb_build_object('error','comment_copied');
+  end if;
+  if p_proof is null and not exists (select 1 from team_proofs where post_id = p_post and member_id = v) then
+    return jsonb_build_object('error','proof');
+  end if;
+  if p_proof is not null and (p_proof !~ '^data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$'
+                              or char_length(p_proof) > 600000) then
+    return jsonb_build_object('error','proof_bad');
+  end if;
+  insert into team_post_done(post_id, member_id, comment) values (p_post, v, c)
+  on conflict (post_id, member_id) do update set comment = excluded.comment, done_at = now();
+  if p_proof is not null then
+    insert into team_proofs(post_id, member_id, img) values (p_post, v, p_proof)
+    on conflict (post_id, member_id) do update set img = excluded.img, added_at = now();
+  end if;
   return jsonb_build_object('ok', true);
 end $$;
 
 create or replace function team_task_admin(p_secret text, p_action text, p jsonb default '{}'::jsonb) returns jsonb
 language plpgsql security definer set search_path = public as $$
-declare v_month date := coalesce((p->>'month')::date, team_month_of(now())); v_bonus numeric;
+declare v_month date := coalesce((p->>'month')::date, team_month_of(now())); v_due jsonb; v_amt numeric;
 begin
   if not team_is_admin(p_secret) then return jsonb_build_object('error','auth'); end if;
-  select value::numeric into v_bonus from team_config where key = 'monthly_bonus';
 
   if p_action = 'list' then
     return jsonb_build_object(
-      'bonus', v_bonus, 'month', v_month,
+      'bonus',        (select value::numeric from team_config where key = 'monthly_bonus'),
+      'invite_bonus', (select value::numeric from team_config where key = 'invite_bonus'),
+      'cap',          (select value::numeric from team_config where key = 'bonus_cap'),
+      'month', v_month,
       'posts', coalesce((select jsonb_agg(jsonb_build_object('id', id, 'url', url, 'title', title, 'created_at', created_at)
                  order by created_at desc) from team_posts where team_month_of(created_at) = v_month), '[]'::jsonb),
       'done', coalesce((select jsonb_agg(jsonb_build_object('post_id', d.post_id, 'member_id', d.member_id,
-                 'comment', d.comment, 'done_at', d.done_at, 'rejected', d.rejected))
+                 'comment', d.comment, 'done_at', d.done_at, 'rejected', d.rejected,
+                 'proof', exists (select 1 from team_proofs f where f.post_id = d.post_id and f.member_id = d.member_id)))
                from team_post_done d join team_posts p on p.id = d.post_id
                where team_month_of(p.created_at) = v_month), '[]'::jsonb),
+      'due', coalesce((select jsonb_agg(team_bonus_of(m.id, v_month) || jsonb_build_object('member_id', m.id))
+               from team_members m), '[]'::jsonb),
       'paid', coalesce((select jsonb_agg(jsonb_build_object('member_id', member_id, 'amount', amount,
                  'paid_at', paid_at, 'paid_ref', paid_ref)) from team_bonuses where month = v_month), '[]'::jsonb));
   end if;
 
+  if p_action = 'proof' then
+    return jsonb_build_object('img', (select img from team_proofs
+            where post_id = (p->>'post_id')::uuid and member_id = (p->>'member_id')::uuid));
+  end if;
   if p_action = 'post_add' then
     insert into team_posts(url, title) values (trim(p->>'url'), nullif(trim(p->>'title'),''));
     return jsonb_build_object('ok', true);
@@ -680,12 +847,21 @@ begin
     return jsonb_build_object('ok', true);
   end if;
   if p_action = 'set_bonus' then
+    if coalesce((p->>'amount')::numeric, -1) < 0 or coalesce((p->>'invite')::numeric, -1) < 0
+       or coalesce((p->>'cap')::numeric, -1) < coalesce((p->>'amount')::numeric, 0) then
+      return jsonb_build_object('error','bonus_bad');
+    end if;
     update team_config set value = ((p->>'amount')::numeric)::text where key = 'monthly_bonus';
+    update team_config set value = ((p->>'invite')::numeric)::text where key = 'invite_bonus';
+    update team_config set value = ((p->>'cap')::numeric)::text    where key = 'bonus_cap';
     return jsonb_build_object('ok', true);
   end if;
   if p_action = 'pay' then
+    v_due := team_bonus_of((p->>'member_id')::uuid, v_month);
+    if not (v_due->>'qualified')::boolean then return jsonb_build_object('error','not_due'); end if;
+    v_amt := coalesce((p->>'amount')::numeric, (v_due->>'amount')::numeric);
     insert into team_bonuses(member_id, month, amount, paid_ref)
-    values ((p->>'member_id')::uuid, v_month, coalesce((p->>'amount')::numeric, v_bonus), nullif(p->>'ref',''))
+    values ((p->>'member_id')::uuid, v_month, v_amt, nullif(p->>'ref',''))
     on conflict (member_id, month) do nothing;
     if not found then return jsonb_build_object('error','already'); end if;
     return jsonb_build_object('ok', true);
@@ -698,7 +874,7 @@ begin
 end $$;
 
 grant execute on function team_tasks(text)                       to anon, authenticated;
-grant execute on function team_task_done(text,uuid,text)         to anon, authenticated;
+grant execute on function team_task_done(text,uuid,text,text)    to anon, authenticated;
 grant execute on function team_task_admin(text,text,jsonb)       to anon, authenticated;
 
 -- ============================================================

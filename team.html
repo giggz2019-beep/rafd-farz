@@ -196,6 +196,8 @@ table.members th { font-size: .75rem; color: var(--muted); }
 .task small { color: var(--muted); font-size: .76rem; }
 .bar { height: 8px; border-radius: 8px; background: #eeebe5; overflow: hidden; margin: 10px 0 4px; }
 .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--teal-500), var(--gold-500)); border-radius: 8px; }
+.bonus-rule { font-size: .8rem; background: #fff; border: 1px dashed var(--rose-300); border-radius: 10px; padding: 7px 10px; margin: 8px 0; color: #5b4442; line-height: 1.7; }
+.proof-img { display: block; max-width: 100%; max-height: 70vh; margin: 0 auto; border-radius: 12px; border: 1px solid var(--line); }
 .task-box { background: linear-gradient(150deg, var(--rose-100), #fff 70%); border-color: var(--rose-300); }
 .cmt { background: #faf7f2; border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; font-size: .84rem; margin-top: 6px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
 .cmt.rej { background: var(--bad-bg); text-decoration: line-through; color: var(--bad); }
@@ -412,6 +414,18 @@ const ERRS = {
   mine: ['هذا العميل مسجّل باسمك مسبقاً', 'You have already registered this client'],
   code: ['الرابط غير صالح', 'This link is not valid'],
   comment: ['يُرجى لصق نص تعليقك للتحقق منه', 'Paste the text of your comment so we can verify it'],
+  comment_weak: ['التعليق يجب أن يكون جملة عن محتوى المقطع (ثلاث كلمات على الأقل)، ولا يُقبل التعليق العشوائي أو المكوّن من رموز فقط', 'The comment must be a sentence about the video (at least three words) — random comments or emoji alone are not accepted'],
+  comment_reused: ['استخدمت هذا التعليق على مقطع آخر، يُرجى كتابة تعليق خاص بهذا المقطع', 'You used this comment on another video — write one about this video'],
+  comment_copied: ['هذا التعليق مطابق لتعليق عضو آخر على المقطع نفسه، يُرجى كتابة تعليقك الخاص', 'This matches a teammate’s comment on the same video — write your own'],
+  proof: ['يُرجى إرفاق صورة الشاشة', 'Please attach the screenshot'],
+  proof_bad: ['تعذّر قراءة الصورة، يُرجى اختيار صورة أخرى', 'Could not read that image — please pick another'],
+  tiktok: ['يُرجى إدخال اسم حسابك في تيك توك بصيغة ‎@username', 'Enter your TikTok account as @username'],
+  tiktok_taken: ['حساب تيك توك هذا مسجّل باسم عضو آخر', 'This TikTok account is already registered to another member'],
+  invite_code: ['رمز الدعوة غير صحيح، تحقّق منه أو اترك الحقل فارغاً', 'Invalid invite code — check it or leave the field empty'],
+  join_closed: ['التسجيل في البرنامج مغلق حالياً', 'Sign-ups are closed at the moment'],
+  join_cap: ['أدخل عدداً صحيحاً (0 = بلا حد)', 'Enter a whole number (0 = no limit)'],
+  not_due: ['لم يُكمل العضو مهمة هذا الشهر', 'This member has not completed this month'],
+  bonus_bad: ['راجع المبالغ، والحد الأقصى لا يقل عن المكافأة الثابتة', 'Check the amounts — the cap cannot be below the fixed bonus'],
   closed: ['أُغلق هذا الشهر', 'This month is closed'],
   rejected: ['رُفض هذا المقطع لعدم العثور على تعليقك، يُرجى مراجعة الإدارة', 'Rejected — we could not find your comment. Please contact the team'],
   already: ['صُرفت هذه المكافأة مسبقاً', 'This bonus has already been paid'],
@@ -464,6 +478,28 @@ const fmtRate = r => r == null || r === '' ? '—' : String(+Number(r).toFixed(2
 const renderAgreement = (t, v) => String(t || '')
   .replaceAll('{rate}', fmtRate(v.rate)).replaceAll('{days}', String(v.days ?? '')).replaceAll('{priority}', String(PRIORITY_DAYS))
   .replaceAll('{name}', v.name || '________').replaceAll('{phone}', v.phone || '________');
+/* A comment is a sentence, not a reaction — the same rule as team_comment_ok() in SQL. */
+const commentOk = c => String(c || '').replace(/[^A-Za-zء-ي]/g, '').length >= 8 && String(c || '').trim().split(/\s+/).filter(Boolean).length >= 3;
+const commentKey = c => String(c || '').toLowerCase().replace(/[^a-z0-9ء-ي٠-٩]/g, '');
+const normTiktok = s => '@' + String(s || '').trim().replace(/^@+/, '');
+const tiktokOk = s => /^@[A-Za-z0-9._]{2,24}$/.test(s);
+const tiktokUrl = s => 'https://www.tiktok.com/' + normTiktok(s);
+/* Screenshots are shrunk in the browser before upload: long side ≤ 1400px, JPEG. */
+function shrinkImage(file, max = 1400) {
+  return new Promise((ok, no) => {
+    if (!file || !/^image\//.test(file.type)) return no('proof_bad');
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      let out = c.toDataURL('image/jpeg', 0.6); if (out.length > 590000) out = c.toDataURL('image/jpeg', 0.35);
+      out.length > 590000 ? no('proof_bad') : ok(out);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); no('proof_bad'); };
+    img.src = url;
+  });
+}
 const catName = c => (EN() && c.en) ? c.en : c.ar;
 const catDesc = c => (EN() && c.desc_en) ? c.desc_en : (c.desc_ar || '');
 
@@ -515,6 +551,14 @@ const demo = (() => {
   const me = (d, t) => { const id = d.sessions[t]; const m = d.members.find(x => x.id === id); return m && m.status !== 'suspended' ? m : null; };
   const code = d => { let c; do { c = 'RF' + Math.random().toString(36).slice(2, 6).toUpperCase().replace(/[0O1I]/g, 'X'); } while (d.members.some(m => m.code === c)); return c; };
   const catalog = d => d.catalog || DEFAULT_CATALOG;
+  const cfg = d => ({ bonus: d.bonus ?? 25, invite: d.inviteBonus ?? 5, cap: d.bonusCap ?? 150, open: d.joinOpen ?? true, joinCap: d.joinCap ?? 0 });
+  const joinOpen = d => { const c = cfg(d); return c.open && (!c.joinCap || d.members.filter(m => m.status !== 'suspended').length < c.joinCap); };
+  const hasProof = (d, post, mem) => !!(d.proofs || {})[post + '|' + mem];
+  const qualified = (d, mem, month) => { const ps = (d.posts || []).filter(p => monthOf(p.created_at) === month);
+    return ps.length > 0 && ps.every(p => (d.done || []).some(x => x.post_id === p.id && x.member_id === mem && !x.rejected) && hasProof(d, p.id, mem)); };
+  const bonusOf = (d, mem, month) => { const c = cfg(d); const q = qualified(d, mem, month);
+    const n = d.members.filter(m => m.invited_by === mem && m.status !== 'suspended' && qualified(d, m.id, month)).length;
+    return { qualified: q, invites_ok: n, amount: q ? Math.min(c.cap, c.bonus + c.invite * n) : 0 }; };
   const agr = d => ({ rate: d.rate ?? 5, days: d.payDays ?? 15, text: d.agreement || DEFAULT_AGREEMENT, text_en: d.agreementEn || DEFAULT_AGREEMENT_EN });
   function insertLead(d, m, src, a) {
     const cutoff = Date.now() - 180 * 864e5;
@@ -535,12 +579,17 @@ const demo = (() => {
     team_register(a) {
       const d = db();
       if (!a.p_agree) return { error: 'terms' };
+      if (!joinOpen(d)) return { error: 'join_closed' };
       if (!phoneOk(a.p_phone)) return { error: 'phone' };
       if ((a.p_password || '').length < 6) return { error: 'password' };
       if ((a.p_name || '').trim().length < 3) return { error: 'name' };
+      const tt = normTiktok(a.p_tiktok); if (!tiktokOk(tt)) return { error: 'tiktok' };
       if (d.members.some(m => m.phone === a.p_phone)) return { error: 'exists' };
+      if (d.members.some(m => m.tiktok && m.tiktok.replace(/^@/, '').toLowerCase() === tt.slice(1).toLowerCase())) return { error: 'tiktok_taken' };
+      let inv = null; const ic = String(a.p_invite || '').trim().toUpperCase();
+      if (ic) { const x = d.members.find(m => m.code === ic && m.status !== 'suspended'); if (!x) return { error: 'invite_code' }; inv = x.id; }
       const v = { rate: agr(d).rate, days: agr(d).days, name: a.p_name.trim(), phone: a.p_phone };
-      const m = { id: uid(), code: code(d), full_name: a.p_name.trim(), phone: a.p_phone, city: a.p_city || null, tiktok: a.p_tiktok || null,
+      const m = { id: uid(), code: code(d), full_name: a.p_name.trim(), phone: a.p_phone, city: a.p_city || null, tiktok: tt, invited_by: inv,
         pass: a.p_password, status: 'trial', iban: null, iban_name: null, bank: null, iban_at: null, created_at: now(), terms_at: now(),
         agreed_rate: v.rate, agreement_text: renderAgreement(agr(d).text, v), agreement_text_en: renderAgreement(agr(d).text_en, v) };
       d.members.push(m); const t = uid(); d.sessions[t] = m.id; save(d); return { ok: true, token: t };
@@ -572,6 +621,9 @@ const demo = (() => {
       if ((a.p_name || '').trim().length < 3) return { error: 'name' };
       Object.assign(m, { iban: x, iban_name: a.p_name.trim(), bank: (a.p_bank || '').trim() || null, iban_at: now() }); save(d); return { ok: true };
     },
+    team_join_info(a) { const d = db(); const c = cfg(d); const ic = String((a && a.p_code) || '').trim().toUpperCase();
+      const x = ic && d.members.find(m => m.code === ic && m.status !== 'suspended');
+      return { open: joinOpen(d), bonus: c.bonus, invite_bonus: c.invite, cap: c.cap, inviter: x ? x.full_name.split(' ')[0] : null }; },
     team_agreement() { const d = db(); const g = agr(d); const v = { rate: g.rate, days: g.days, name: '{name}', phone: '{phone}' };
       return { rate: g.rate, days: g.days, text: renderAgreement(g.text, v), text_en: renderAgreement(g.text_en, v) }; },
     team_ref_info(a) { const m = db().members.find(x => x.code === String(a.p_code).toUpperCase() && x.status !== 'suspended'); return m ? { first: m.full_name.split(' ')[0] } : { error: 'code' }; },
@@ -615,40 +667,55 @@ const demo = (() => {
     },
     team_tasks(a) {
       const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
-      const cur = monthOf(now()); const prev = prevMonth(cur);
-      return { bonus: d.bonus ?? 150, this_month: cur,
+      const cur = monthOf(now()); const prev = prevMonth(cur); const c = cfg(d);
+      return { bonus: c.bonus, invite_bonus: c.invite, cap: c.cap, this_month: cur, due: bonusOf(d, m.id, cur),
         posts: (d.posts || []).filter(p => monthOf(p.created_at) >= prev).sort((x, y) => y.created_at.localeCompare(x.created_at)).map(p => {
           const k = (d.done || []).find(x => x.post_id === p.id && x.member_id === m.id);
-          return { ...p, month: monthOf(p.created_at), done: !!k, rejected: !!(k && k.rejected), comment: k ? k.comment : null }; }),
+          return { ...p, month: monthOf(p.created_at), done: !!k, rejected: !!(k && k.rejected), comment: k ? k.comment : null, proof: hasProof(d, p.id, m.id) }; }),
+        invitees: d.members.filter(x => x.invited_by === m.id && x.status !== 'suspended').sort((x, y) => x.created_at.localeCompare(y.created_at)).map(x => ({
+          first: x.full_name.split(' ')[0], joined: x.created_at, qualified: qualified(d, x.id, cur),
+          done: (d.posts || []).filter(p => monthOf(p.created_at) === cur && (d.done || []).some(k => k.post_id === p.id && k.member_id === x.id && !k.rejected) && hasProof(d, p.id, x.id)).length })),
         bonuses: (d.bonuses || []).filter(b => b.member_id === m.id).sort((x, y) => y.month.localeCompare(x.month)) };
     },
     team_task_done(a) {
       const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
-      if ((a.p_comment || '').trim().length < 2) return { error: 'comment' };
+      const c = String(a.p_comment || '').trim().slice(0, 300);
+      if (!commentOk(c)) return { error: 'comment_weak' };
       const p = (d.posts || []).find(x => x.id === a.p_post); if (!p) return { error: 'not_found' };
       if (monthOf(p.created_at) < monthOf(now())) return { error: 'closed' };
-      d.done = d.done || [];
+      d.done = d.done || []; d.proofs = d.proofs || {};
       const k = d.done.find(x => x.post_id === p.id && x.member_id === m.id);
       if (k && k.rejected) return { error: 'rejected' };
-      if (k) { k.comment = a.p_comment.trim().slice(0, 300); k.done_at = now(); }
-      else d.done.push({ post_id: p.id, member_id: m.id, comment: a.p_comment.trim().slice(0, 300), done_at: now(), rejected: false });
-      save(d); return { ok: true };
+      const key = commentKey(c);
+      if (d.done.some(x => x.member_id === m.id && x.post_id !== p.id && commentKey(x.comment) === key)) return { error: 'comment_reused' };
+      if (d.done.some(x => x.post_id === p.id && x.member_id !== m.id && commentKey(x.comment) === key)) return { error: 'comment_copied' };
+      if (!a.p_proof && !hasProof(d, p.id, m.id)) return { error: 'proof' };
+      if (a.p_proof && (!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(a.p_proof) || a.p_proof.length > 600000)) return { error: 'proof_bad' };
+      if (k) { k.comment = c; k.done_at = now(); } else d.done.push({ post_id: p.id, member_id: m.id, comment: c, done_at: now(), rejected: false });
+      if (a.p_proof) d.proofs[p.id + '|' + m.id] = a.p_proof;
+      try { save(d); } catch (e) { return { error: 'proof_bad' }; }
+      return { ok: true };
     },
     team_task_admin(a) {
       const d = db(); if (a.p_secret !== 'demo') return { error: 'auth' };
-      const p = a.p || {}; const month = p.month || monthOf(now()); const bonus = d.bonus ?? 150;
-      d.posts = d.posts || []; d.done = d.done || []; d.bonuses = d.bonuses || [];
+      const p = a.p || {}; const month = p.month || monthOf(now()); const c = cfg(d);
+      d.posts = d.posts || []; d.done = d.done || []; d.bonuses = d.bonuses || []; d.proofs = d.proofs || {};
       if (a.p_action === 'list') {
         const ids = d.posts.filter(x => monthOf(x.created_at) === month).map(x => x.id);
-        return { bonus, month, posts: d.posts.filter(x => ids.includes(x.id)).sort((x, y) => y.created_at.localeCompare(x.created_at)),
-          done: d.done.filter(x => ids.includes(x.post_id)), paid: d.bonuses.filter(b => b.month === month) };
+        return { bonus: c.bonus, invite_bonus: c.invite, cap: c.cap, month, posts: d.posts.filter(x => ids.includes(x.id)).sort((x, y) => y.created_at.localeCompare(x.created_at)),
+          done: d.done.filter(x => ids.includes(x.post_id)).map(x => ({ ...x, proof: hasProof(d, x.post_id, x.member_id) })),
+          due: d.members.map(m => ({ member_id: m.id, ...bonusOf(d, m.id, month) })), paid: d.bonuses.filter(b => b.month === month) };
       }
+      if (a.p_action === 'proof') return { img: d.proofs[p.post_id + '|' + p.member_id] || null };
       if (a.p_action === 'post_add') { if (!/^https:\/\//.test(p.url || '')) return { error: 'url' }; d.posts.push({ id: uid(), url: p.url.trim(), title: (p.title || '').trim() || null, created_at: now() }); }
-      else if (a.p_action === 'post_del') { d.posts = d.posts.filter(x => x.id !== p.id); d.done = d.done.filter(x => x.post_id !== p.id); }
+      else if (a.p_action === 'post_del') { d.posts = d.posts.filter(x => x.id !== p.id); d.done = d.done.filter(x => x.post_id !== p.id);
+        for (const k in d.proofs) if (k.startsWith(p.id + '|')) delete d.proofs[k]; }
       else if (a.p_action === 'reject') { const k = d.done.find(x => x.post_id === p.post_id && x.member_id === p.member_id); if (k) k.rejected = !p.undo; }
-      else if (a.p_action === 'set_bonus') d.bonus = +p.amount;
-      else if (a.p_action === 'pay') { if (d.bonuses.some(b => b.member_id === p.member_id && b.month === month)) return { error: 'already' };
-        d.bonuses.push({ member_id: p.member_id, month, amount: p.amount ?? bonus, paid_at: now(), paid_ref: p.ref || null }); }
+      else if (a.p_action === 'set_bonus') { if (!(+p.amount >= 0) || !(+p.invite >= 0) || !(+p.cap >= +p.amount)) return { error: 'bonus_bad' };
+        d.bonus = +p.amount; d.inviteBonus = +p.invite; d.bonusCap = +p.cap; }
+      else if (a.p_action === 'pay') { const due = bonusOf(d, p.member_id, month); if (!due.qualified) return { error: 'not_due' };
+        if (d.bonuses.some(b => b.member_id === p.member_id && b.month === month)) return { error: 'already' };
+        d.bonuses.push({ member_id: p.member_id, month, amount: p.amount ?? due.amount, paid_at: now(), paid_ref: p.ref || null }); }
       else if (a.p_action === 'unpay') d.bonuses = d.bonuses.filter(b => !(b.member_id === p.member_id && b.month === month));
       else return { error: 'action' };
       save(d); return { ok: true };
@@ -657,7 +724,8 @@ const demo = (() => {
       const d = db(); if (a.p_secret !== 'demo') return { error: 'auth' };
       const p = a.p || {};
       if (a.p_action === 'list') return {
-        members: d.members.map(m => ({ id: m.id, code: m.code, name: m.full_name, phone: m.phone, city: m.city, tiktok: m.tiktok, status: m.status, iban: m.iban, iban_name: m.iban_name, bank: m.bank, created_at: m.created_at, agreed_rate: m.agreed_rate ?? null, agreed_at: m.terms_at || null })),
+        members: d.members.map(m => ({ id: m.id, code: m.code, name: m.full_name, phone: m.phone, city: m.city, tiktok: m.tiktok, status: m.status, iban: m.iban, iban_name: m.iban_name, bank: m.bank, created_at: m.created_at, agreed_rate: m.agreed_rate ?? null, agreed_at: m.terms_at || null, invited_by: m.invited_by || null })),
+        join: { open: cfg(d).open, cap: cfg(d).joinCap, accepting: joinOpen(d) },
         leads: [...d.leads].sort((x, y) => y.created_at.localeCompare(x.created_at)).map(l => ({ ...l, quote: quoteOf(d, l.id) })) };
       if (a.p_action === 'lead') {
         const l = d.leads.find(x => x.id === p.id); if (!l) return { error: 'not_found' };
@@ -706,6 +774,10 @@ const demo = (() => {
         l.paid_at = p.undo ? null : now(); l.paid_ref = p.undo ? null : (p.ref || null); l.updated_at = now();
         d.events.push({ lead_id: l.id, at: now(), actor: 'admin', action: 'paid', detail: p }); save(d); return { ok: true };
       }
+      if (a.p_action === 'join') {
+        if ('cap' in p && !(Number.isInteger(+p.cap) && +p.cap >= 0 && +p.cap <= 100000)) return { error: 'join_cap' };
+        if ('open' in p) d.joinOpen = !!p.open; if ('cap' in p) d.joinCap = +p.cap; save(d); return { ok: true };
+      }
       if (a.p_action === 'member') {
         const m = d.members.find(x => x.id === p.id); if (m) m.status = p.status;
         if (p.status === 'suspended') for (const t in d.sessions) if (d.sessions[t] === p.id) delete d.sessions[t];
@@ -731,7 +803,7 @@ function route() {
   if (name === 'r' && arg) return viewRef(arg);
   if (name === 'q' && arg) return viewQuote(arg);
   if (name === 'admin') return viewAdmin();
-  if (name === 'join') return token ? go('me') : viewJoin();
+  if (name === 'join') return token ? go('me') : viewJoin(arg);
   if (name === 'login') return token ? go('me') : viewLogin();
   if (name === 'me') return token ? viewMe() : go('login');
   return viewHome();
@@ -775,12 +847,24 @@ const RULES = () => `
          'Commission is earned on clients who <b>sign and pay</b>, at the programme rate, and is shown in your dashboard.')}</li>
   <li>${L('تُحوَّل العمولة إلى <b>الحساب البنكي المسجّل باسمك</b>، وتظهر لك حالة كل تحويل ورقمه المرجعي.',
          'Payments go to the <b>IBAN in your name</b> saved in your dashboard, where you can see each transfer and its reference.')}</li>
+  ${JOIN ? `<li>${L(`<b>مكافأة التفاعل الشهرية:</b> <b class="num">${money(JOIN.bonus)}</b> ر.س لمن يُكمل مهمة الشهر كاملة، وهي على كل مقطع يُنشر خلال الشهر: الإعجاب والمشاركة والتعليق ومتابعة حساب رفد، مع إرفاق صورة الشاشة.`,
+         `<b>Monthly engagement bonus:</b> <b class="num">${money(JOIN.bonus)}</b> SAR for completing the whole month’s task — on every video posted that month: like, share, comment and follow RAFD’s account, with a screenshot attached.`)}</li>
+  <li>${L(`يُضاف <b class="num">${money(JOIN.invite_bonus)}</b> ر.س عن كل شخص ينضم بـ<b>رمز دعوتك</b> ويُكمل مهمة الشهر نفسه كاملة، بشرط أن تُكمل مهمتك أنت أيضاً، وبحد أقصى <b class="num">${money(JOIN.cap)}</b> ر.س شهرياً للمكافأة كلها.`,
+         `Add <b class="num">${money(JOIN.invite_bonus)}</b> SAR for each person who joins with <b>your invite code</b> and completes the same month, provided you complete yours too — up to <b class="num">${money(JOIN.cap)}</b> SAR a month for the whole bonus.`)}</li>
+  <li>${L('يجب أن يكون التعليق عن محتوى المقطع، فلا يُقبل التعليق العشوائي أو المكوّن من رموز فقط، وأن يكون الحساب المشارك به حساباً حقيقياً نشطاً. ولرفد رفض أي مشاركة لا تستوفي ذلك، وإيقاف الحساب عند ثبوت التلاعب.',
+         'The comment must be about the video — random comments or emoji alone are not accepted — and the account used must be a real, active one. RAFD may reject any entry that falls short and suspend an account where manipulation is found.')}</li>` : ''}
+  <li>${L('لرفد إيقاف الانضمام إلى البرنامج متى بلغ عدد الأعضاء الحد المطلوب، وتعديل مبالغ المكافأة مع إعلان ذلك في لوحة الأعضاء.',
+         'RAFD may close sign-ups once the team reaches the size it needs, and may change the bonus amounts, announcing it in the members’ dashboard.')}</li>
   <li>${L('المشاركة في البرنامج بنظام العمولة ولا تُعد عقد عمل، ولرفد أن تعرض على من يُثبت كفاءته عقداً رسمياً براتب وعمولة مستمرة.',
          'Participation is commission-based and is not an employment contract. RAFD may offer those who prove themselves a formal contract with a salary and ongoing commission.')}</li>
 </ul>`;
 
 let AGR = null;   // the agreement as it stands today, for new members
-async function loadAgreement() { if (!AGR) { const r = await rpc('team_agreement', {}); if (r && !r.error) AGR = r; } return AGR; }
+let JOIN = null;  // sign-ups open? and the monthly bonus terms
+async function loadAgreement() {
+  const [a, j] = await Promise.all([AGR ? AGR : rpc('team_agreement', {}), rpc('team_join_info', { p_code: null })]);
+  if (a && !a.error) AGR = a; JOIN = j && !j.error ? j : null; return AGR;
+}
 
 function agreementHtml(text, full) {
   return `<div class="agr${full ? ' agr-full' : ''}">${termsHtml(text).replaceAll('<h4><span class="tn num">', '<h4><span class="tn num">')}</div>`;
@@ -806,7 +890,7 @@ async function viewHome() {
     <div class="steps">
       <div class="step"><div class="ic">📝</div><h3>${L('سجّل حسابك', 'Sign up')}</h3><p>${L('بالاسم ورقم الجوال، وتحصل على رمز ورابط خاصين بك.', 'Your name and mobile — and you get your own code and link.')}</p></div>
       <div class="step"><div class="ic">🤝</div><h3>${L('سجّل عملاءك', 'Register clients')}</h3><p>${L('سجّل العميل أو الجهة باسمك فور التواصل معها، أو شارك رابطك ليسجّل العميل بنفسه.', 'As soon as you talk to a client, register them under your name — or let them sign up through your link.')}</p></div>
-      <div class="step"><div class="ic">📈</div><h3>${L('تابع الصفقة', 'Follow the deal')}</h3><p>${L('تشوفين حالة كل عميل: تواصل، تفاوض، تعاقد.', 'See where each client stands: contacted, negotiating, signed.')}</p></div>
+      <div class="step"><div class="ic">📈</div><h3>${L('تابع الصفقة', 'Follow the deal')}</h3><p>${L('تابع حالة كل عميل: تواصل، تفاوض، تعاقد.', 'See where each client stands: contacted, negotiating, signed.')}</p></div>
       <div class="step"><div class="ic">💸</div><h3>${L('استلم عمولتك', 'Get paid')}</h3><p>${L('بعد التعاقد وتحصيل القيمة، تُحوَّل العمولة إلى حسابك البنكي.', 'Once the client signs and pays, your commission goes to your IBAN.')}</p></div>
     </div>
   </div></section>
@@ -822,8 +906,15 @@ async function viewHome() {
 
 function formMsg(el, kind, text) { el.innerHTML = text ? `<div class="msg ${kind}">${text}</div>` : ''; }
 
-async function viewJoin() {
+async function viewJoin(inviteArg) {
   await loadAgreement();
+  if (JOIN && !JOIN.open) {
+    app.innerHTML = `<div class="wrap"><div class="card auth" style="text-align:center">
+      <div style="font-size:2.2rem">🔒</div><h2>${err('join_closed')}</h2>
+      <p class="sub">${L('اكتمل عدد أعضاء الفريق في الوقت الحالي، وسيُعلن عن فتح التسجيل مجدداً.', 'The team is full for now — we will announce when sign-ups reopen.')}</p>
+      <p class="alt">${L('لديك حساب؟', 'Have an account?')} <a href="#/login">${L('تسجيل الدخول', 'Sign in')}</a></p></div></div>`;
+    return;
+  }
   app.innerHTML = `
   <div class="wrap"><div class="card auth">
     <h2>${L('الانضمام إلى سفراء رفد', 'Join RAFD Ambassadors')}</h2>
@@ -835,7 +926,10 @@ async function viewJoin() {
         <div class="field"><label>${L('رقم الجوال', 'Mobile number')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX" autocomplete="tel"></div>
         <div class="field"><label>${L('المدينة', 'City')}</label><input name="city" autocomplete="address-level2"></div>
       </div>
-      <div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')} <small>${L('(مطلوب للمهمة الشهرية)', '(needed for the monthly task)')}</small></label><input name="tiktok" class="ltr" placeholder="@username"></div>
+      <div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')}</label><input name="tiktok" class="ltr" placeholder="@username" autocapitalize="off">
+        <div class="hint">${L('حساب حقيقي نشط باسمك، وهو الحساب الذي تُنفّذ به المهمة الشهرية. لا يُقبل الحساب نفسه لعضوين.', 'A real, active account of your own — the one you do the monthly task with. One account per member.')}</div></div>
+      <div class="field"><label>${L('رمز الدعوة', 'Invite code')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="invite" class="ltr" placeholder="RF····" autocapitalize="characters" value="${esc((inviteArg || '').toUpperCase())}">
+        <div class="hint" id="invHint">${L('إذا دعاك أحد أعضاء الفريق فاكتب رمزه هنا.', 'If a team member invited you, type their code here.')}</div></div>
       <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="new-password"><div class="hint">${L('ستة أحرف على الأقل، وتُستخدم مع رقم الجوال لتسجيل الدخول.', 'At least 6 characters — you sign in with it and your mobile number.')}</div></div>
       <details style="margin-bottom:8px"><summary style="cursor:pointer;font-weight:700;color:var(--teal-600);font-size:.9rem">${L('اطّلع على الشروط والأحكام', 'Read the terms and conditions')}</summary><div style="margin-top:10px">${RULES()}</div></details>
 
@@ -844,14 +938,26 @@ async function viewJoin() {
     </form>
     <p class="alt">${L('لديك حساب؟', 'Have an account?')} <a href="#/login">${L('تسجيل الدخول', 'Sign in')}</a></p>
   </div></div>`;
+  const inv = $('#f').invite; let invT = 0;
+  const checkInvite = async () => {
+    const code = inv.value.trim().toUpperCase(); const h = $('#invHint');
+    if (!code) { h.style.color = ''; h.textContent = L('إذا دعاك أحد أعضاء الفريق فاكتب رمزه هنا.', 'If a team member invited you, type their code here.'); return; }
+    const r = await rpc('team_join_info', { p_code: code });
+    if (inv.value.trim().toUpperCase() !== code) return;
+    if (r && r.inviter) { h.style.color = 'var(--ok)'; h.textContent = L('✓ دعوة من ', '✓ Invited by ') + r.inviter; }
+    else { h.style.color = 'var(--bad)'; h.textContent = err('invite_code'); }
+  };
+  inv.oninput = () => { clearTimeout(invT); invT = setTimeout(checkInvite, 350); };
+  if (inv.value) checkInvite();
   $('#f').onsubmit = async e => {
     e.preventDefault(); const f = e.target; const b = f.querySelector('button[type=submit]'); const m = $('#m');
-    const phone = normPhone(f.phone.value);
+    const phone = normPhone(f.phone.value); const tt = normTiktok(f.tiktok.value);
     if (f.name.value.trim().length < 3) return formMsg(m, 'err', err('name'));
     if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
+    if (!tiktokOk(tt)) return formMsg(m, 'err', err('tiktok'));
     if (f.password.value.length < 6) return formMsg(m, 'err', err('password'));
     b.disabled = true;
-    const r = await rpc('team_register', { p_name: f.name.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_tiktok: f.tiktok.value.trim(), p_password: f.password.value, p_agree: true });
+    const r = await rpc('team_register', { p_name: f.name.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_tiktok: tt, p_password: f.password.value, p_agree: true, p_invite: f.invite.value.trim() || null });
     b.disabled = false;
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
     store(TOKEN_KEY, r.token); toast(L('مرحباً بك في فريق سفراء رفد ✦', 'Welcome to the team ✦')); go('me');
@@ -928,8 +1034,9 @@ function drawMe() {
       <div class="side">
         <div class="card agr-card" id="agrCard"></div>
         <div class="card task-box" id="taskCard" ${tasksData ? '' : 'hidden'}></div>
+        <div class="card" id="inviteCard" ${tasksData ? '' : 'hidden'}></div>
         <div class="card ref-box">
-          <div class="panel-title" style="margin-bottom:4px"><h2>${L('رمزك ورابطك', 'Your code & link')}</h2></div>
+          <div class="panel-title" style="margin-bottom:4px"><h2>${L('رابط العملاء', 'Client link')}</h2></div>
           <div class="ref-code num">${esc(m.code)}</div>
           <div class="ref-link">${esc(refLink(m.code))}</div>
           <div class="btn-row">
@@ -1110,28 +1217,53 @@ function drawIban() {
   $('#editIban').onclick = openIbanSheet;
 }
 
+const joinLink = () => location.origin + location.pathname + '#/join';
+const doneOk = p => p.done && !p.rejected && p.proof;
+
 function drawTasks() {
   const c = $('#taskCard'); if (!c || !tasksData) return;
   const t = tasksData; const cur = t.this_month;
   const posts = t.posts.filter(p => p.month === cur);
-  const ok = posts.filter(p => p.done && !p.rejected).length;
+  const ok = posts.filter(doneOk).length;
   const all = posts.length && ok === posts.length;
   const paidNow = t.bonuses.find(b => b.month === cur);
-  const left = posts.length - ok;
+  const left = posts.length - ok; const due = t.due || { amount: 0, invites_ok: 0 };
   c.innerHTML = `
     <div class="panel-title" style="margin-bottom:4px"><h2>${L('المهمة الشهرية', 'Monthly task')}</h2><span class="pill ${all ? 'won' : 'negotiating'} num">${ok} / ${posts.length}</span></div>
-    <p style="font-size:.86rem;color:#5b4442;line-height:1.8">${L(`إعجاب ومشاركة وتعليق على كل مقطع يُنشر في ${esc(monthName(cur))}، وتُصرف في نهاية الشهر مكافأة قدرها`, `Like + share + comment on every video we post in ${esc(monthName(cur))}, and at month end you receive`)} <b class="num">${money(t.bonus)}</b> ${SAR()}.</p>
+    <p style="font-size:.86rem;color:#5b4442;line-height:1.8">${L(`على كل مقطع يُنشر في ${esc(monthName(cur))}: إعجاب، ومشاركة، وتعليق عن محتوى المقطع، ومتابعة حساب رفد، ثم أرفق صورة الشاشة.`, `On every video posted in ${esc(monthName(cur))}: like, share, comment on what the video says, and follow RAFD’s account — then attach a screenshot.`)}</p>
+    <div class="bonus-rule">${L('المكافأة', 'Bonus')}: <b class="num">${money(t.bonus)}</b> ${SAR()} + <b class="num">${money(t.invite_bonus)}</b> ${SAR()} ${L('عن كل مدعو يُكمل الشهر', 'per invitee who completes the month')} · ${L('بحد أقصى', 'max')} <b class="num">${money(t.cap)}</b> ${SAR()}</div>
     <div class="bar"><i style="width:${posts.length ? Math.round(ok / posts.length * 100) : 0}%"></i></div>
-    <p style="font-size:.8rem;margin-bottom:6px;color:${all ? 'var(--ok)' : 'var(--muted)'}">${paidNow ? L('✓ انصرفت مكافأة هذا الشهر', '✓ This month’s bonus has been paid') : !posts.length ? L('لم يُنشر أي مقطع هذا الشهر بعد.', 'No videos posted this month yet.') : all ? L('✓ مكتملة، وتستحق المكافأة في نهاية الشهر', '✓ Complete — the bonus is due at month end') : L(`المتبقي ${left} ${left === 1 ? 'مقطع' : 'مقاطع'}`, `${left} ${left === 1 ? 'video' : 'videos'} left`)}</p>
+    <p style="font-size:.8rem;margin-bottom:6px;color:${all ? 'var(--ok)' : 'var(--muted)'}">${paidNow ? L(`✓ صُرفت مكافأة هذا الشهر: ${money(paidNow.amount)} ر.س`, `✓ This month’s bonus has been paid: ${money(paidNow.amount)} SAR`) : !posts.length ? L('لم يُنشر أي مقطع هذا الشهر بعد.', 'No videos posted this month yet.') : all ? L(`✓ مكتملة — مستحقك حتى الآن <b class="num">${money(due.amount)}</b> ر.س، ويُصرف في نهاية الشهر`, `✓ Complete — <b class="num">${money(due.amount)}</b> SAR so far, paid at month end`) : L(`المتبقي ${left} ${left === 1 ? 'مقطع' : 'مقاطع'}`, `${left} ${left === 1 ? 'video' : 'videos'} left`)}</p>
     ${posts.map(p => `<div class="task">
       <div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)}</small>
-        ${p.rejected ? `<div style="font-size:.76rem;color:var(--bad)">✕ ${L('لم يُعثر على تعليقك، يُرجى مراجعة الإدارة', 'We could not find your comment — contact the team')}</div>` : ''}</div>
+        ${p.rejected ? `<div style="font-size:.76rem;color:var(--bad)">✕ ${L('رُفضت المشاركة، يُرجى مراجعة الإدارة', 'Entry rejected — contact the team')}</div>` : p.done && !p.proof ? `<div style="font-size:.76rem;color:var(--warn,#b7791f)">${L('ينقصها صورة الشاشة', 'Screenshot missing')}</div>` : ''}</div>
       <div class="btn-row" style="flex:none">
         <a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${L('فتح ↗', 'Open ↗')}</a>
-        ${p.rejected ? '' : p.done ? `<button class="btn btn-ghost btn-sm" data-task="${p.id}" style="color:var(--ok)">✓ ${L('تم', 'Done')}</button>` : `<button class="btn btn-main btn-sm" data-task="${p.id}">${L('تم التنفيذ', 'Mark done')}</button>`}
+        ${p.rejected ? '' : doneOk(p) ? `<button class="btn btn-ghost btn-sm" data-task="${p.id}" style="color:var(--ok)">✓ ${L('تم', 'Done')}</button>` : `<button class="btn btn-main btn-sm" data-task="${p.id}">${p.done ? L('أرفق الصورة', 'Add screenshot') : L('تم التنفيذ', 'Mark done')}</button>`}
       </div></div>`).join('')}
     ${t.bonuses.length ? `<div style="margin-top:10px;font-size:.8rem;color:var(--muted)">${t.bonuses.map(b => `✓ ${esc(monthName(b.month))}: <span class="num">${money(b.amount)}</span> ${SAR()}`).join('<br>')}</div>` : ''}`;
   c.onclick = e => { const b = e.target.closest('[data-task]'); if (b) openTaskSheet(t.posts.find(p => p.id === b.dataset.task)); };
+  drawInvites();
+}
+
+function drawInvites() {
+  const c = $('#inviteCard'); if (!c || !tasksData) return;
+  const t = tasksData; const code = meData.member.code; const inv = t.invitees || [];
+  const total = t.posts.filter(p => p.month === t.this_month).length;
+  const msg = L(`انضم إلى برنامج سفراء رفد للمبيعات والتسويق:\n${joinLink()}\nواكتب رمز الدعوة ${code} عند إنشاء حسابك.`,
+                `Join the RAFD Ambassadors sales & marketing programme:\n${joinLink()}\nand enter invite code ${code} when you sign up.`);
+  c.innerHTML = `
+    <div class="panel-title" style="margin-bottom:4px"><h2>${L('ادعُ زملاءك', 'Invite others')}</h2>${inv.length ? `<span class="pill new num">${inv.length}</span>` : ''}</div>
+    <p style="font-size:.84rem;color:#5b4442;line-height:1.8">${L(`شارك رمزك، ومن يكتبه عند إنشاء حسابه يُحسب من مدعوّيك. يُضاف لك <b class="num">${money(t.invite_bonus)}</b> ر.س عن كل مدعو يُكمل مهمة الشهر كاملة، بحد أقصى <b class="num">${money(t.cap)}</b> ر.س للمكافأة كلها.`,
+      `Share your code — whoever enters it at sign-up counts as your invitee. You get <b class="num">${money(t.invite_bonus)}</b> SAR for each invitee who completes the month, up to <b class="num">${money(t.cap)}</b> SAR for the whole bonus.`)}</p>
+    <div class="ref-code num" style="margin:8px 0">${esc(code)}</div>
+    <div class="btn-row">
+      <button class="btn btn-soft btn-sm" id="cpInvite">${L('نسخ الرمز', 'Copy code')}</button>
+      <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">${L('إرسال عبر واتساب', 'Send on WhatsApp')}</a>
+    </div>
+    ${inv.length ? `<div style="margin-top:12px">${inv.map(i => `<div class="task"><div><b>${esc(i.first)}</b><small>${L('انضم في', 'Joined')} ${fmtDate(i.joined)}</small></div>
+      <span class="pill ${i.qualified ? 'won' : 'new'} num">${i.qualified ? L('✓ أكمل الشهر', '✓ Completed') : `${i.done} / ${total}`}</span></div>`).join('')}</div>` : ''}`;
+  $('#cpInvite').onclick = () => copy(code);
 }
 
 function openTaskSheet(post) {
@@ -1141,19 +1273,30 @@ function openTaskSheet(post) {
     <form id="tf" novalidate>
       <label class="check"><input type="checkbox" name="like"><span>${L('تم الإعجاب ❤️', 'I liked it ❤️')}</span></label>
       <label class="check" style="margin-top:-8px"><input type="checkbox" name="share"><span>${L('تمت المشاركة ↪️', 'I shared it ↪️')}</span></label>
+      <label class="check" style="margin-top:-8px"><input type="checkbox" name="follow"><span>${L('أتابع حساب رفد ➕', 'I follow RAFD’s account ➕')}</span></label>
       <div class="field"><label>${L('الصق نص تعليقك هنا', 'Paste your comment here')}</label><textarea name="comment" placeholder="${L('النص ذاته الذي كتبته تحت المقطع', 'The exact text you wrote under the video')}">${esc(post.comment || '')}</textarea>
-        <div class="hint">${L('لا تتيح تيك توك معرفة من أعجب بالمقطع أو شاركه، لذا يُتحقق من التعليق تحت حسابك', 'TikTok does not tell us who liked or shared, so the comment is what we check under your account')}${meData.member.tiktok ? ' <span class="num">' + esc(meData.member.tiktok) + '</span>' : ''}. ${L('ويُرفض التعليق الذي لا يُعثر عليه.', 'A comment we cannot find is rejected.')}</div></div>
-      <button class="btn btn-main btn-block" type="submit">${L('تم ✓', 'Done ✓')}</button>
+        <div class="hint">${L('جملة عن محتوى المقطع، ثلاث كلمات على الأقل. لا يُقبل التعليق العشوائي أو الرموز وحدها، ولا تكرار تعليق سابق أو نسخ تعليق زميل.', 'A sentence about what the video says, at least three words. No random comments or emoji alone, no repeating an earlier comment or copying a teammate’s.')}</div></div>
+      <div class="field"><label>${L('صورة الشاشة', 'Screenshot')}</label><input type="file" name="shot" accept="image/*">
+        <div class="hint">${post.proof ? L('أُرفقت صورة سابقاً، ويمكنك استبدالها باختيار صورة جديدة.', 'A screenshot is already attached — pick a new one to replace it.') : L('صورة تُظهر تعليقك تحت المقطع باسم حسابك', 'A screenshot showing your comment under the video, with your account name')}${meData.member.tiktok ? ' <span class="num">' + esc(meData.member.tiktok) + '</span>' : ''}.</div>
+        <img id="shotPrev" alt="" style="display:none;max-width:100%;max-height:240px;margin-top:8px;border-radius:10px;border:1px solid var(--line)"></div>
+      <button class="btn btn-main btn-block" type="submit">${L('إرسال ✓', 'Submit ✓')}</button>
     </form>`);
-  $('#tf', s.el).onsubmit = async e => {
-    e.preventDefault(); const f = e.target; const m = $('#tm', s.el); const b = f.querySelector('button');
-    if (!f.like.checked || !f.share.checked) return formMsg(m, 'err', L('المهمة تشمل الإعجاب والمشاركة والتعليق معاً', 'The task is like, share and comment — all three'));
-    if (f.comment.value.trim().length < 2) return formMsg(m, 'err', err('comment'));
+  let proof = null; const f = $('#tf', s.el); const m = $('#tm', s.el);
+  f.shot.onchange = async () => {
+    proof = null; const pv = $('#shotPrev', s.el); pv.style.display = 'none';
+    try { proof = await shrinkImage(f.shot.files[0]); pv.src = proof; pv.style.display = 'block'; formMsg(m, '', ''); }
+    catch (e) { formMsg(m, 'err', err('proof_bad')); }
+  };
+  f.onsubmit = async e => {
+    e.preventDefault(); const b = f.querySelector('button[type=submit]');
+    if (!f.like.checked || !f.share.checked || !f.follow.checked) return formMsg(m, 'err', L('المهمة تشمل الإعجاب والمشاركة والتعليق ومتابعة الحساب معاً', 'The task is like, share, comment and follow — all of them'));
+    if (!commentOk(f.comment.value)) return formMsg(m, 'err', err('comment_weak'));
+    if (!proof && !post.proof) return formMsg(m, 'err', err('proof'));
     b.disabled = true;
-    const r = await rpc('team_task_done', { p_token: store(TOKEN_KEY), p_post: post.id, p_comment: f.comment.value.trim() });
+    const r = await rpc('team_task_done', { p_token: store(TOKEN_KEY), p_post: post.id, p_comment: f.comment.value.trim(), p_proof: proof });
     b.disabled = false;
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
-    s.close(); toast(L('تم الاحتساب ✓', 'Counted ✓')); viewMe();
+    s.close(); toast(L('تم الإرسال، وتراجعه الإدارة ✓', 'Sent — the team will review it ✓')); viewMe();
   };
 }
 
@@ -1426,22 +1569,28 @@ async function taskAct(action, p) {
 }
 
 function drawAdmTasks() {
-  const { posts, done, paid, bonus } = admTasks; const members = admData.members.filter(m => m.status !== 'suspended' || paid.some(p => p.member_id === m.id));
+  const { posts, done, paid, bonus, invite_bonus, cap, due: dueList } = admTasks;
+  const members = admData.members.filter(m => m.status !== 'suspended' || paid.some(p => p.member_id === m.id));
   const cur = monthOf(Date.now()); const months = [cur, prevMonth(cur), prevMonth(prevMonth(cur))];
   const isCur = admTaskMonth === cur;
   const rows = members.map(m => {
     const mine = done.filter(d => d.member_id === m.id);
-    const ok = mine.filter(d => !d.rejected).length;
-    return { m, mine, ok, full: posts.length > 0 && ok === posts.length, pay: paid.find(p => p.member_id === m.id) };
+    const ok = mine.filter(d => !d.rejected && d.proof).length;
+    const due = (dueList || []).find(x => x.member_id === m.id) || { qualified: false, invites_ok: 0, amount: 0 };
+    return { m, mine, ok, due, pay: paid.find(p => p.member_id === m.id),
+      invited: admData.members.filter(x => x.invited_by === m.id).length };
   }).sort((a, b) => b.ok - a.ok);
-  const due = rows.filter(r => r.full && !r.pay).length;
+  const nDue = rows.filter(r => r.due.qualified && !r.pay).length;
   $('#admBody').innerHTML = `
     <div class="filters">${months.map(mo => `<button class="chip ${mo === admTaskMonth ? 'on' : ''}" data-mo="${mo}">${esc(monthName(mo))}</button>`).join('')}</div>
     <div class="card" style="margin-bottom:12px">
-      <div class="row2" style="align-items:end">
-        <div class="field" style="margin:0"><label>${L('المكافأة الشهرية', 'Monthly bonus')} (${SAR()})</label><input id="bonusAmt" class="num" inputmode="decimal" value="${esc(bonus)}"></div>
-        <button class="btn btn-soft" id="bonusSave">${L('حفظ المبلغ', 'Save amount')}</button>
+      <div class="row2" style="align-items:end;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
+        <div class="field" style="margin:0"><label>${L('المكافأة الثابتة', 'Fixed bonus')} (${SAR()})</label><input id="bonusAmt" class="num" inputmode="decimal" value="${esc(bonus)}"></div>
+        <div class="field" style="margin:0"><label>${L('عن كل مدعو', 'Per invitee')} (${SAR()})</label><input id="bonusInv" class="num" inputmode="decimal" value="${esc(invite_bonus)}"></div>
+        <div class="field" style="margin:0"><label>${L('الحد الأقصى شهرياً', 'Monthly cap')} (${SAR()})</label><input id="bonusCap" class="num" inputmode="decimal" value="${esc(cap)}"></div>
+        <button class="btn btn-soft" id="bonusSave">${L('حفظ المبالغ', 'Save amounts')}</button>
       </div>
+      <p class="hint" style="margin-top:8px;color:var(--muted);font-size:.8rem">${L('يُحتسب المستحق عند الصرف بالمبالغ المحفوظة، فعدّلها قبل صرف الشهر لا بعده.', 'What is due is computed at payout with the saved amounts — change them before paying a month, not after.')}</p>
       ${isCur ? `<form id="postForm" style="margin-top:14px" novalidate>
         <div class="row2">
           <div class="field" style="margin:0"><label>${L('رابط المقطع', 'Video link')}</label><input name="url" class="ltr" placeholder="https://www.tiktok.com/@…/video/…"></div>
@@ -1452,35 +1601,44 @@ function drawAdmTasks() {
     </div>
     <div class="card" style="margin-bottom:12px">
       <div class="panel-title"><h2>${L('مقاطع', 'Videos —')} ${esc(monthName(admTaskMonth))} (<span class="num">${posts.length}</span>)</h2></div>
-      ${posts.map(p => `<div class="task"><div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)} · ${L('نفّذها', 'done by')} <span class="num">${done.filter(d => d.post_id === p.id && !d.rejected).length} / ${members.length}</span></small></div>
+      ${posts.map(p => `<div class="task"><div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)} · ${L('نفّذها', 'done by')} <span class="num">${done.filter(d => d.post_id === p.id && !d.rejected && d.proof).length} / ${members.length}</span></small></div>
         <div class="btn-row"><a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${L('فتح ↗', 'Open ↗')}</a><button class="btn btn-ghost btn-sm" data-del="${p.id}">${L('حذف', 'Delete')}</button></div></div>`).join('') || `<div class="empty">${L('لم يُنشر أي مقطع هذا الشهر.', 'No videos posted this month.')}</div>`}
     </div>
     <div class="card">
-      <div class="panel-title"><h2>${L('الفريق', 'Team')}</h2>${due ? `<span class="pill negotiating">${due} ${L('يستحقون الصرف', 'due for payout')}</span>` : ''}</div>
-      ${rows.map(({ m, mine, ok, full, pay }) => `<div class="adm-lead">
+      <div class="panel-title"><h2>${L('الفريق', 'Team')}</h2>${nDue ? `<span class="pill negotiating">${nDue} ${L('يستحقون الصرف', 'due for payout')}</span>` : ''}</div>
+      <p class="hint" style="color:var(--muted);font-size:.8rem;margin-bottom:6px">${L('راجع كل صورة وتعليق، وافتح حساب تيك توك للتأكد أنه حقيقي نشط. ارفض ما لا يستوفي الشروط.', 'Check each screenshot and comment, and open the TikTok account to make sure it is real and active. Reject anything that falls short.')}</p>
+      ${rows.map(({ m, mine, ok, due, pay, invited }) => `<div class="adm-lead">
         <div class="lead-top">
-          <div><b>${esc(m.name)}</b> ${m.tiktok ? `<span class="num" style="color:var(--teal-600);font-size:.85rem">${esc(m.tiktok)}</span>` : `<small style="color:var(--bad)">${L('بدون حساب تيك توك', 'no TikTok account')}</small>`}
-            <div class="who num">${ok} / ${posts.length}</div></div>
+          <div><b>${esc(m.name)}</b> ${m.tiktok ? `<a class="num" style="color:var(--teal-600);font-size:.85rem" href="${esc(tiktokUrl(m.tiktok))}" target="_blank" rel="noopener">${esc(m.tiktok)} ↗</a>` : `<small style="color:var(--bad)">${L('بدون حساب تيك توك', 'no TikTok account')}</small>`}
+            <div class="who"><span class="num">${ok} / ${posts.length}</span> · ${L('مدعوون', 'Invited')} <span class="num">${invited}</span>${due.invites_ok ? ` · ${L('أكمل منهم', 'completed')} <span class="num">${due.invites_ok}</span>` : ''}</div></div>
           <div class="btn-row">${pay
             ? `<span class="pill won">✓ ${L('صُرفت', 'Paid')} ${money(pay.amount)}${pay.paid_ref ? ' · ' + esc(pay.paid_ref) : ''}</span><button class="btn btn-ghost btn-sm" data-unpay="${m.id}">${L('تراجع', 'Undo')}</button>`
-            : full ? `<button class="btn btn-gold btn-sm" data-pay="${m.id}">${L('صرف', 'Pay')} ${money(bonus)}</button>` : `<span class="pill new">${L('غير مكتملة', 'Incomplete')}</span>`}</div>
+            : due.qualified ? `<button class="btn btn-gold btn-sm" data-pay="${m.id}">${L('صرف', 'Pay')} ${money(due.amount)}</button>` : `<span class="pill new">${L('غير مكتملة', 'Incomplete')}</span>`}</div>
         </div>
-        ${mine.length ? `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:.82rem;color:var(--teal-600)">${L('التعليقات', 'Comments')} (${mine.length})</summary>
+        ${mine.length ? `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:.82rem;color:var(--teal-600)">${L('المشاركات', 'Entries')} (${mine.length})</summary>
           ${mine.map(d => { const p = posts.find(x => x.id === d.post_id) || {}; return `<div class="cmt ${d.rejected ? 'rej' : ''}"><span><small style="color:var(--muted)">${esc(p.title || L('مقطع', 'Video'))}:</small> ${esc(d.comment)}</span>
-            <button class="btn btn-ghost btn-sm" data-rej="${d.post_id}|${m.id}|${d.rejected ? 1 : 0}">${d.rejected ? L('إرجاع', 'Restore') : L('رفض', 'Reject')}</button></div>`; }).join('')}</details>` : ''}
+            <span class="btn-row" style="flex:none">${d.proof ? `<button class="btn btn-soft btn-sm" data-proof="${d.post_id}|${m.id}">📷 ${L('الصورة', 'Screenshot')}</button>` : `<small style="color:var(--bad)">${L('بلا صورة', 'no screenshot')}</small>`}
+            <button class="btn btn-ghost btn-sm" data-rej="${d.post_id}|${m.id}|${d.rejected ? 1 : 0}">${d.rejected ? L('إرجاع', 'Restore') : L('رفض', 'Reject')}</button></span></div>`; }).join('')}</details>` : ''}
       </div>`).join('') || `<div class="empty">${L('لا يوجد أعضاء بعد.', 'Nobody yet.')}</div>`}
     </div>`;
-  const body = $('#admBody');
+  const body = $('#admBody'); const num = id => +toLatin($(id).value).replace(/[^\d.]/g, '');
   body.querySelectorAll('[data-mo]').forEach(b => b.onclick = () => { admTaskMonth = b.dataset.mo; loadAdmTasks(); });
-  $('#bonusSave').onclick = () => { const v = +toLatin($('#bonusAmt').value).replace(/[^\d.]/g, ''); if (!v) return toast(L('أدخل مبلغاً صحيحاً', 'Enter a valid amount')); taskAct('set_bonus', { amount: v }); };
+  $('#bonusSave').onclick = () => { const v = { amount: num('#bonusAmt'), invite: num('#bonusInv'), cap: num('#bonusCap') };
+    if (!(v.cap >= v.amount) || isNaN(v.invite)) return toast(err('bonus_bad')); taskAct('set_bonus', v); };
   const pf = $('#postForm');
   if (pf) pf.onsubmit = e => { e.preventDefault(); const url = pf.url.value.trim(); if (!/^https:\/\//.test(url)) return toast(err('url')); taskAct('post_add', { url, title: pf.title.value.trim() }); };
-  body.onclick = e => {
+  body.onclick = async e => {
     const t = e.target.closest('button'); if (!t) return;
     if (t.dataset.del && confirm(L('حذف المقطع يحذف معه تسجيلات الفريق عليه. هل تريد المتابعة؟', 'Delete this video? The team’s marks on it are deleted too.'))) taskAct('post_del', { id: t.dataset.del });
     if (t.dataset.rej) { const [post_id, member_id, was] = t.dataset.rej.split('|'); taskAct('reject', { post_id, member_id, undo: was === '1' }); }
-    if (t.dataset.pay) { const m = admData.members.find(x => x.id === t.dataset.pay);
-      const ref = prompt(`${L('صرف', 'Pay')} ${money(bonus)} ${SAR()} ${L('لـ', 'to')} ${m.name}\n${m.iban ? ibanPretty(m.iban) : L('لم يُضف رقم الآيبان', 'no IBAN added')}\n\n${L('الرقم المرجعي (اختياري):', 'Transfer reference (optional):')}`, ''); if (ref !== null) taskAct('pay', { member_id: m.id, ref: ref.trim(), amount: bonus }); }
+    if (t.dataset.proof) { const [post_id, member_id] = t.dataset.proof.split('|');
+      const r = await rpc('team_task_admin', { p_secret: admSecret(), p_action: 'proof', p: { post_id, member_id } });
+      if (!r || r.error || !r.img) return toast(err(r && r.error));
+      const m = memberById(member_id); const d = done.find(x => x.post_id === post_id && x.member_id === member_id) || {};
+      sheet(esc(m.name || ''), `<p style="font-size:.86rem;margin-bottom:10px">«${esc(d.comment || '')}»</p><img class="proof-img" src="${esc(r.img)}" alt="">
+        ${m.tiktok ? `<a class="btn btn-soft btn-block" style="margin-top:12px" href="${esc(tiktokUrl(m.tiktok))}" target="_blank" rel="noopener">${L('فتح حساب', 'Open account')} ${esc(m.tiktok)} ↗</a>` : ''}`); }
+    if (t.dataset.pay) { const m = admData.members.find(x => x.id === t.dataset.pay); const due = (dueList || []).find(x => x.member_id === m.id) || {};
+      const ref = prompt(`${L('صرف', 'Pay')} ${money(due.amount)} ${SAR()} ${L('لـ', 'to')} ${m.name}\n${m.iban ? ibanPretty(m.iban) : L('لم يُضف رقم الآيبان', 'no IBAN added')}\n\n${L('الرقم المرجعي (اختياري):', 'Transfer reference (optional):')}`, ''); if (ref !== null) taskAct('pay', { member_id: m.id, ref: ref.trim() }); }
     if (t.dataset.unpay && confirm(L('هل تريد إلغاء تسجيل الصرف؟', 'Undo this payout record?'))) taskAct('unpay', { member_id: t.dataset.unpay });
   };
 }
@@ -1736,15 +1894,25 @@ async function admLeadAction(e) {
 }
 
 function drawAdmMembers() {
-  const { members, leads } = admData;
-  $('#admBody').innerHTML = `<div class="card scroll-x" style="padding:8px 12px"><table class="members">
+  const { members, leads } = admData; const j = admData.join || { open: true, cap: 0, accepting: true };
+  const active = members.filter(m => m.status !== 'suspended').length;
+  $('#admBody').innerHTML = `<div class="card" style="margin-bottom:12px">
+      <div class="panel-title" style="margin-bottom:6px"><h2>${L('الانضمام إلى البرنامج', 'Sign-ups')}</h2><span class="pill ${j.accepting ? 'won' : 'lost'}">${j.accepting ? L('مفتوح', 'Open') : L('مغلق', 'Closed')}</span></div>
+      <div class="row2" style="align-items:end">
+        <label class="check" style="margin:0"><input type="checkbox" id="joinOpen" ${j.open ? 'checked' : ''}><span>${L('السماح بتسجيل أعضاء جدد', 'Allow new members to sign up')}</span></label>
+        <div class="field" style="margin:0"><label>${L('إغلاق تلقائي عند بلوغ عدد', 'Close automatically at')} <small>${L('(0 = بلا حد)', '(0 = no limit)')}</small></label><input id="joinCap" class="num" inputmode="numeric" value="${esc(j.cap || 0)}"></div>
+      </div>
+      <p class="hint" style="margin-top:8px;color:var(--muted);font-size:.8rem">${L('الأعضاء النشطون الآن', 'Active members now')}: <b class="num">${active}</b>${j.cap ? ` / <span class="num">${j.cap}</span>` : ''}. ${L('الإغلاق يمنع التسجيل الجديد فقط، ولا يمس الأعضاء الحاليين.', 'Closing only stops new sign-ups — current members are unaffected.')}</p>
+      <button class="btn btn-soft btn-sm" id="joinSave" style="margin-top:8px">${L('حفظ', 'Save')}</button>
+    </div>
+    <div class="card scroll-x" style="padding:8px 12px"><table class="members">
     <thead><tr><th>${L('ممثل المبيعات', 'Representative')}</th><th>${L('عملاء', 'Clients')}</th><th>${L('صفقات', 'Deals')}</th><th>${L('مستحق', 'Due')}</th><th>${L('النسبة', 'Rate')}</th><th>IBAN</th><th>${L('الحالة', 'Status')}</th></tr></thead>
     <tbody>${members.map(m => {
       const ls = leads.filter(l => l.member_id === m.id);
       const w = ls.filter(l => l.status === 'won');
       const due = w.filter(l => !l.paid_at).reduce((s, l) => s + (+l.commission || 0), 0);
       return `<tr>
-        <td><b>${esc(m.name)}</b><br><a class="num" href="${wa(m.phone)}" target="_blank" rel="noopener">${esc(m.phone)}</a> · <span class="num">${esc(m.code)}</span>${m.city ? '<br>' + esc(m.city) : ''}${m.tiktok ? '<br><span class="num">' + esc(m.tiktok) + '</span>' : ''}<br><small style="color:var(--muted)">${L('انضم في', 'Joined')} ${fmtDate(m.created_at)}</small></td>
+        <td><b>${esc(m.name)}</b><br><a class="num" href="${wa(m.phone)}" target="_blank" rel="noopener">${esc(m.phone)}</a> · <span class="num">${esc(m.code)}</span>${m.city ? '<br>' + esc(m.city) : ''}${m.tiktok ? '<br><a class="num" href="' + esc(tiktokUrl(m.tiktok)) + '" target="_blank" rel="noopener">' + esc(m.tiktok) + '</a>' : ''}<br><small style="color:var(--muted)">${L('انضم في', 'Joined')} ${fmtDate(m.created_at)}${m.invited_by ? ' · ' + L('بدعوة من', 'invited by') + ' ' + esc(memberById(m.invited_by).name || '—') : ''}</small></td>
         <td class="num">${ls.filter(l => l.status !== 'duplicate').length}</td>
         <td class="num">${w.length}</td>
         <td><b class="num">${money(due)}</b></td>
@@ -1754,6 +1922,11 @@ function drawAdmMembers() {
       </tr>`;
     }).join('') || `<tr><td colspan="7" class="empty">${L('لا يوجد أعضاء بعد.', 'Nobody yet.')}</td></tr>`}</tbody></table></div>`;
   $('#admBody').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copy(b.dataset.copy));
+  $('#joinSave').onclick = async () => {
+    const cap = toLatin($('#joinCap').value).trim(); if (!/^\d{1,6}$/.test(cap)) return toast(err('join_cap'));
+    const r = await admRpc('join', { open: $('#joinOpen').checked, cap: +cap });
+    if (!r || r.error) return toast(err(r && r.error)); toast(L('تم الحفظ ✓', 'Saved ✓')); viewAdmin();
+  };
   $('#admBody').querySelectorAll('[data-m]').forEach(s => s.onchange = async () => {
     if (s.value === 'suspended' && !confirm(L('إيقاف الحساب يُنهي جلسة ممثل المبيعات ويمنعه من الدخول. هل تريد المتابعة؟', 'Suspending signs the representative out and blocks sign-in. Continue?'))) return drawAdmMembers();
     const r = await admRpc('member', { id: s.dataset.m, status: s.value });
