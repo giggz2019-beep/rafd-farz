@@ -870,8 +870,8 @@ const RULES = () => `
          'RAFD may close sign-ups once the team reaches the size it needs.')}</li>
   <li>${L('المشاركة في البرنامج بنظام العمولة ولا تُعد عقد عمل.',
          'Participation is commission-based and is not an employment contract.')}</li>
-  <li>${L('يُرشَّح ممثل المبيعات الذي يُتمّ <b>ثلاثة عقود</b> بالعمولة لوظيفة «ممثل مبيعات» بعقد عمل رسمي مع الشركة براتب شهري لا يقل عن <b class="num">4,500</b> ريال، ويخضع التعيين للمقابلة والشروط الواردة في عقد العمل.',
-         'A Representative who completes <b>three commission contracts</b> is nominated for a Sales Representative position under a formal employment contract with the company at a monthly salary of no less than <b class="num">SAR 4,500</b>; hiring is subject to an interview and the terms of the employment contract.')}</li>
+  <li>${L(`يُرشَّح ممثل المبيعات الذي يُتمّ <b>ثلاثة عقود</b> بالعمولة لوظيفة «ممثل مبيعات» بعقد عمل رسمي مع الشركة براتب شهري لا يقل عن <b class="num">4,500</b> ريال، بالإضافة إلى العمولة بنسبة <b class="num">${fmtRate(AGR ? AGR.rate : 5)}%</b>، ويخضع التعيين للمقابلة والشروط الواردة في عقد العمل.`,
+         `A Representative who completes <b>three commission contracts</b> is nominated for a Sales Representative position under a formal employment contract with the company at a monthly salary of no less than <b class="num">SAR 4,500</b>, in addition to the <b class="num">${fmtRate(AGR ? AGR.rate : 5)}%</b> commission; hiring is subject to an interview and the terms of the employment contract.`)}</li>
 </ul>`;
 
 let AGR = null;   // the agreement as it stands today, for new members
