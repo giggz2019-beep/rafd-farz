@@ -443,6 +443,7 @@ const ERRS = {
   accepted: ['وافق العميل على العرض مسبقاً', 'The client has already accepted this quote'],
   not_sent: ['لم يُرسل العرض بعد', 'The quote has not been sent yet'],
   not_open: ['العرض منتهٍ أو تم الرد عليه', 'This quote has expired or already been answered'],
+  client_cr: ['يجب أن يتكون السجل التجاري للعميل من 10 أرقام', "The client's commercial registration (CR) number must be 10 digits"],
   client_vat: ['يجب أن يتكون الرقم الضريبي للعميل من 15 رقماً', "The client's VAT number must be 15 digits"],
   items: ['راجع بنود العرض، فكل بند يتطلب وصفاً وكمية وسعراً', 'Check the quote lines — each needs a description, quantity and price'],
   catalog: ['راجع الباقات، فكل باقة تتطلب اسماً عربياً وسعراً غير سالب', 'Check the packages — each needs an Arabic name and a non-negative price'],
@@ -768,9 +769,10 @@ const demo = (() => {
         const items = Array.isArray(p.items) ? p.items : [];
         if (!items.length || items.length > 40 || items.some(i => !String(i.d || '').trim() || !(+i.q > 0) || !(+i.p >= 0))) return { error: 'items' };
         const cv = String(p.client_vat || '').replace(/\D/g, ''); if (cv && cv.length !== 15) return { error: 'client_vat' };
+        const cc = String(p.client_cr || '').replace(/\D/g, ''); if (cc && cc.length !== 10) return { error: 'client_cr' };
         const sub = items.reduce((t, i) => t + i.q * i.p, 0); const vat = p.vat !== false;
         const t = (v, n) => String(v || '').trim().slice(0, n) || null;
-        Object.assign(q, { plan: p.plan || null, client_address: t(p.client_address, 300), client_vat: cv || null, lang: p.lang === 'en' ? 'en' : 'ar',
+        Object.assign(q, { plan: p.plan || null, client_address: t(p.client_address, 300), client_vat: cv || null, client_cr: cc || null, lang: p.lang === 'en' ? 'en' : 'ar',
           terms: d.quoteTerms || DEFAULT_TERMS, terms_en: d.quoteTermsEn || DEFAULT_TERMS_EN,
           items: items.map(i => ({ d: t(i.d, 200), q: +i.q, p: +i.p, n: t(i.n, 300), u: t(i.u, 20), d_en: t(i.d_en, 200), n_en: t(i.n_en, 300), u_en: t(i.u_en, 20) })),
           vat, subtotal: +sub.toFixed(2), total: +(sub * (vat ? 1 + VAT_RATE : 1)).toFixed(2), valid_until: p.valid_until || null, note: t(p.note, 1000),
@@ -1454,6 +1456,7 @@ async function viewQuote(id) {
         ${q.company ? `<span>${esc(q.client_name)}</span>` : ''}
         ${q.client_address ? `<span>${esc(q.client_address)}</span>` : q.city ? `<span>${esc(q.city)}</span>` : ''}
         <span>${L('المملكة العربية السعودية', 'Kingdom of Saudi Arabia')}</span>
+        ${q.client_cr ? `<span>${L('السجل التجاري', 'CR No.')}: <span class="num">${esc(q.client_cr)}</span></span>` : ''}
         ${q.client_vat ? `<span>${L('الرقم الضريبي', 'VAT No.')}: <span class="num">${esc(q.client_vat)}</span></span>` : ''}
       </div>
       <div class="qd-no"><small>${L('عرض سعر', 'Quotation')}</small><b class="num">${no}</b></div>
@@ -1754,6 +1757,9 @@ function openQuoteEditor(l) {
       </div>
       <div class="row2">
         <div class="field"><label>${L('عنوان العميل', 'Client address')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="caddr" placeholder="${L('الحي، المدينة', 'District, city')}" value="${esc(q.client_address || l.city || '')}"></div>
+        <div class="field"><label>${L('السجل التجاري للعميل', 'Client CR no.')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="ccr" class="ltr num" inputmode="numeric" placeholder="10XXXXXXXX" value="${esc(q.client_cr || '')}"></div>
+      </div>
+      <div class="row2">
         <div class="field"><label>${L('الرقم الضريبي للعميل', 'Client VAT no.')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="cvat" class="ltr num" inputmode="numeric" placeholder="3XXXXXXXXXXXXX3" value="${esc(q.client_vat || '')}"></div>
       </div>
       <label style="display:block;font-weight:700;font-size:.85rem;margin-bottom:6px;color:var(--navy-800)">${L('أضف من الباقات', 'Add from packages')}</label>
@@ -1791,7 +1797,7 @@ function openQuoteEditor(l) {
     if (!items.length || items.some(i => !i.d || !(i.q > 0) || !(i.p >= 0) || Number.isNaN(i.p))) return formMsg($('#em', s.el), 'err', err('items'));
     b.disabled = true;
     const r = await admRpc('quote_send', { lead_id: l.id, items, vat: f.vat.checked, valid_until: f.valid.value, note: f.note.value.trim(), lang: f.lang.value,
-      plan: f.plan.value, client_address: f.caddr.value.trim(), client_vat: toLatin(f.cvat.value).replace(/\D/g, '') });
+      plan: f.plan.value, client_address: f.caddr.value.trim(), client_vat: toLatin(f.cvat.value).replace(/\D/g, ''), client_cr: toLatin(f.ccr.value).replace(/\D/g, '') });
     b.disabled = false;
     if (!r || r.error) return formMsg($('#em', s.el), 'err', err(r && r.error));
     s.close(); toast(L('تم إرسال العرض إلى ممثل المبيعات ✓', 'Quote sent to the representative ✓')); viewAdmin();

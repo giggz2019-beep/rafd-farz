@@ -927,6 +927,8 @@ alter table team_quotes add column if not exists client_address text
   check (client_address is null or char_length(client_address) <= 300);
 alter table team_quotes add column if not exists client_vat text
   check (client_vat is null or client_vat ~ '^[0-9]{15}$');
+alter table team_quotes add column if not exists client_cr text
+  check (client_cr is null or client_cr ~ '^[0-9]{10}$');
 alter table team_quotes add column if not exists terms text
   check (terms is null or char_length(terms) <= 8000);
 
@@ -1044,7 +1046,7 @@ language sql security definer set search_path = public stable as $$
       'no', q.no, 'status', q.status, 'items', q.items, 'vat', q.vat, 'subtotal', q.subtotal,
       'total', q.total, 'valid_until', q.valid_until, 'note', q.note, 'sent_at', q.sent_at,
       'decided_at', q.decided_at, 'decided_by', q.decided_by,
-      'plan', q.plan, 'client_address', q.client_address, 'client_vat', q.client_vat, 'terms', q.terms,
+      'plan', q.plan, 'client_address', q.client_address, 'client_vat', q.client_vat, 'client_cr', q.client_cr, 'terms', q.terms,
       'terms_en', q.terms_en, 'lang', q.lang,
       'client_name', l.client_name, 'company', l.company, 'city', l.city,
       'rep_name', m.full_name)
@@ -1077,6 +1079,9 @@ begin
   if regexp_replace(coalesce(p->>'client_vat',''), '\D', '', 'g') !~ '^([0-9]{15})?$' then
     return jsonb_build_object('error','client_vat');
   end if;
+  if regexp_replace(coalesce(p->>'client_cr',''), '\D', '', 'g') !~ '^([0-9]{10})?$' then
+    return jsonb_build_object('error','client_cr');
+  end if;
   for it in select * from jsonb_array_elements(p->'items') loop
     q := (it->>'q')::numeric; pr := (it->>'p')::numeric;
     if coalesce(trim(it->>'d'),'') = '' or q is null or q <= 0 or pr is null or pr < 0 then
@@ -1094,6 +1099,7 @@ begin
          status = 'sent', sent_at = now(), decided_at = null, decided_by = null, decision_note = null,
          plan = nullif(p->>'plan',''), client_address = nullif(left(trim(coalesce(p->>'client_address','')), 300), ''),
          client_vat = nullif(regexp_replace(coalesce(p->>'client_vat',''), '\D', '', 'g'), ''),
+         client_cr  = nullif(regexp_replace(coalesce(p->>'client_cr',''), '\D', '', 'g'), ''),
          terms = (select value from team_config where key = 'quote_terms'),
          terms_en = (select value from team_config where key = 'quote_terms_en'),
          lang = case when p->>'lang' = 'en' then 'en' else 'ar' end
