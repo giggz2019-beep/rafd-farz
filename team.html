@@ -820,8 +820,8 @@ function applyLang() {
   document.title = L('سفراء رفد', 'RAFD Ambassadors');
   $('#brandName').innerHTML = L('سفراء <span>رفد</span>', '<span>RAFD</span> Ambassadors');
   $('#footText').textContent = L('© رفد الرقمية · سفراء رفد', '© RAFD Digital · RAFD Ambassadors');
-  $('#demoBar').innerHTML = L('وضع تجريبي: البيانات محفوظة على هذا الجهاز فقط. كلمة سر لوحة الإدارة: <b class="num">demo</b>',
-    'Demo mode — data stays on this device only and reaches no one. Admin password: <b class="num">demo</b>');
+  $('#demoBar').innerHTML = L('وضع تجريبي: البيانات محفوظة على هذا الجهاز وهذا الرابط فقط. كلمة سر لوحة الإدارة: <b class="num">demo</b>',
+    'Demo mode — data stays on this device and this link only. Admin password: <b class="num">demo</b>');
 }
 function setLang(l) { LANG = l; store(LANG_KEY, l); route(); }
 const langBtn = () => `<button class="lang-btn" id="langBtn" type="button">${EN() ? 'عربي' : 'English'}</button>`;
@@ -981,7 +981,8 @@ function viewLogin() {
     b.disabled = true;
     const r = await rpc('team_login', { p_phone: phone, p_password: f.password.value });
     b.disabled = false;
-    if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
+    if (!r || r.error) return formMsg(m, 'err', err(r && r.error) + (!REMOTE && r && r.error === 'bad'
+      ? '<br><small>' + L('في الوضع التجريبي يُحفظ الحساب على هذا الجهاز وهذا الرابط فقط، فإن أنشأته من جهاز أو رابط آخر فأنشئ حساباً جديداً هنا.', 'In demo mode an account lives on this device and this link only — if you created it elsewhere, create a new one here.') + '</small>' : ''));
     store(TOKEN_KEY, r.token); go('me');
   };
 }
