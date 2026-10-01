@@ -360,6 +360,10 @@ footer.foot { text-align: center; color: var(--muted); font-size: .8rem; padding
 const SUPABASE_URL      = 'https://ycnnawohrbbluawxzttt.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inljbm5hd29ocmJibHVhd3h6dHR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NTYyNzgsImV4cCI6MjA5NzUzMjI3OH0.Qtg6yZaZQlzbP3In7olUx0No6lKBWLOryBEVvZkwiBE';
 const REMOTE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+/* The monthly TikTok task and its bonus (and the invite code that feeds it) are paused for now.
+   Flip to true and the task card, the invite card, the admin tab and the sign-up fields all return;
+   nothing in the database was removed. */
+const TIKTOK_TASK = false;
 
 /* Printed on every quote. Fill the registration numbers in once they are final —
    an empty one is simply left off the page rather than printed blank. */
@@ -595,9 +599,9 @@ const demo = (() => {
       if (!phoneOk(a.p_phone)) return { error: 'phone' };
       if ((a.p_password || '').length < 6) return { error: 'password' };
       if ((a.p_name || '').trim().length < 3) return { error: 'name' };
-      const tt = normTiktok(a.p_tiktok); if (!tiktokOk(tt)) return { error: 'tiktok' };
+      const tt = String(a.p_tiktok || '').trim() ? normTiktok(a.p_tiktok) : null; if (tt && !tiktokOk(tt)) return { error: 'tiktok' };
       if (d.members.some(m => m.phone === a.p_phone)) return { error: 'exists' };
-      if (d.members.some(m => m.tiktok && m.tiktok.replace(/^@/, '').toLowerCase() === tt.slice(1).toLowerCase())) return { error: 'tiktok_taken' };
+      if (tt && d.members.some(m => m.tiktok && m.tiktok.replace(/^@/, '').toLowerCase() === tt.slice(1).toLowerCase())) return { error: 'tiktok_taken' };
       let inv = null; const ic = String(a.p_invite || '').trim().toUpperCase();
       if (ic) { const x = d.members.find(m => m.code === ic && m.status !== 'suspended'); if (!x) return { error: 'invite_code' }; inv = x.id; }
       const v = { rate: agr(d).rate, days: agr(d).days, name: a.p_name.trim(), phone: a.p_phone };
@@ -866,8 +870,8 @@ const RULES = () => `
          'RAFD may close sign-ups once the team reaches the size it needs.')}</li>
   <li>${L('المشاركة في البرنامج بنظام العمولة ولا تُعد عقد عمل، ولرفد أن تعرض على من يُثبت كفاءته عقداً رسمياً براتب وعمولة مستمرة.',
          'Participation is commission-based and is not an employment contract. RAFD may offer those who prove themselves a formal contract with a salary and ongoing commission.')}</li>
-  <li>${L('يُرشَّح ممثل المبيعات الذي يُتمّ <b>ثلاثة عقود</b> بالعمولة لوظيفة «ممثل مبيعات» بعقد عمل رسمي مع الشركة براتب شهري قدره <b class="num">5,000</b> ريال. والترشيح لا يُلزم رفد بالتعيين، ويخضع التعيين للمقابلة والشروط الواردة في عقد العمل.',
-         'A Representative who completes <b>three commission contracts</b> is nominated for a Sales Representative position under a formal employment contract with the company at a monthly salary of <b class="num">SAR 5,000</b>. Nomination does not oblige RAFD to hire; hiring is subject to an interview and the terms of the employment contract.')}</li>
+  <li>${L('يُرشَّح ممثل المبيعات الذي يُتمّ <b>ثلاثة عقود</b> بالعمولة لوظيفة «ممثل مبيعات» بعقد عمل رسمي مع الشركة براتب شهري لا يقل عن <b class="num">4,500</b> ريال. والترشيح لا يُلزم رفد بالتعيين، ويخضع التعيين للمقابلة والشروط الواردة في عقد العمل.',
+         'A Representative who completes <b>three commission contracts</b> is nominated for a Sales Representative position under a formal employment contract with the company at a monthly salary of no less than <b class="num">SAR 4,500</b>. Nomination does not oblige RAFD to hire; hiring is subject to an interview and the terms of the employment contract.')}</li>
 </ul>`;
 
 let AGR = null;   // the agreement as it stands today, for new members
@@ -937,10 +941,11 @@ async function viewJoin(inviteArg) {
         <div class="field"><label>${L('رقم الجوال', 'Mobile number')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX" autocomplete="tel"></div>
         <div class="field"><label>${L('المدينة', 'City')}</label><input name="city" autocomplete="address-level2"></div>
       </div>
-      <div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')}</label><input name="tiktok" class="ltr" placeholder="@username" autocapitalize="off">
+      ${TIKTOK_TASK ? `<div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')}</label><input name="tiktok" class="ltr" placeholder="@username" autocapitalize="off">
         <div class="hint">${L('حساب حقيقي نشط باسمك، وهو الحساب الذي تُنفّذ به مهمة تيك توك الشهرية. لا يُقبل الحساب نفسه لعضوين.', 'A real, active account of your own — the one you do the monthly TikTok task with. One account per member.')}</div></div>
       <div class="field"><label>${L('رمز الدعوة', 'Invite code')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="invite" class="ltr" placeholder="RF····" autocapitalize="characters" value="${esc((inviteArg || '').toUpperCase())}">
         <div class="hint" id="invHint">${L('إذا دعاك أحد أعضاء الفريق فاكتب رمزه هنا.', 'If a team member invited you, type their code here.')}</div></div>
+      ` : ''}
       <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="new-password"><div class="hint">${L('ستة أحرف على الأقل، وتُستخدم مع رقم الجوال لتسجيل الدخول.', 'At least 6 characters — you sign in with it and your mobile number.')}</div></div>
       <details style="margin-bottom:8px"><summary style="cursor:pointer;font-weight:700;color:var(--teal-600);font-size:.9rem">${L('اطّلع على الشروط والأحكام', 'Read the terms and conditions')}</summary><div style="margin-top:10px">${RULES()}</div></details>
 
@@ -949,7 +954,7 @@ async function viewJoin(inviteArg) {
     </form>
     <p class="alt">${L('لديك حساب؟', 'Have an account?')} <a href="#/login">${L('تسجيل الدخول', 'Sign in')}</a></p>
   </div></div>`;
-  const inv = $('#f').invite; let invT = 0;
+  const inv = $('#f').invite || { value: '' }; let invT = 0;
   const checkInvite = async () => {
     const code = inv.value.trim().toUpperCase(); const h = $('#invHint');
     if (!code) { h.style.color = ''; h.textContent = L('إذا دعاك أحد أعضاء الفريق فاكتب رمزه هنا.', 'If a team member invited you, type their code here.'); return; }
@@ -962,13 +967,13 @@ async function viewJoin(inviteArg) {
   if (inv.value) checkInvite();
   $('#f').onsubmit = async e => {
     e.preventDefault(); const f = e.target; const b = f.querySelector('button[type=submit]'); const m = $('#m');
-    const phone = normPhone(f.phone.value); const tt = normTiktok(f.tiktok.value);
+    const phone = normPhone(f.phone.value); const tt = TIKTOK_TASK ? normTiktok(f.tiktok.value) : null;
     if (f.name.value.trim().length < 3) return formMsg(m, 'err', err('name'));
     if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
-    if (!tiktokOk(tt)) return formMsg(m, 'err', err('tiktok'));
+    if (TIKTOK_TASK && !tiktokOk(tt)) return formMsg(m, 'err', err('tiktok'));
     if (f.password.value.length < 6) return formMsg(m, 'err', err('password'));
     b.disabled = true;
-    const r = await rpc('team_register', { p_name: f.name.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_tiktok: tt, p_password: f.password.value, p_agree: true, p_invite: f.invite.value.trim() || null });
+    const r = await rpc('team_register', { p_name: f.name.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_tiktok: tt, p_password: f.password.value, p_agree: true, p_invite: TIKTOK_TASK ? (f.invite.value.trim() || null) : null });
     b.disabled = false;
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
     store(TOKEN_KEY, r.token); toast(L('مرحباً بك في فريق سفراء رفد ✦', 'Welcome to the team ✦')); go('me');
@@ -1007,7 +1012,7 @@ function refLink(code) { return location.origin + location.pathname + '#/r/' + c
 
 async function viewMe() {
   app.innerHTML = '<div class="wrap"><div class="empty">…</div></div>';
-  const [r, t] = await Promise.all([rpc('team_me', { p_token: store(TOKEN_KEY) }), rpc('team_tasks', { p_token: store(TOKEN_KEY) })]);
+  const [r, t] = await Promise.all([rpc('team_me', { p_token: store(TOKEN_KEY) }), TIKTOK_TASK ? rpc('team_tasks', { p_token: store(TOKEN_KEY) }) : null]);
   tasksData = t && !t.error ? t : null;
   if (!r || r.error === 'auth') { store(TOKEN_KEY, null); toast(err('auth')); return go('login'); }
   if (r.error) { app.innerHTML = `<div class="wrap"><div class="msg err" style="margin-top:20px">${err('network')}</div></div>`; return; }
@@ -1045,8 +1050,8 @@ function drawMe() {
       </div>
       <div class="side">
         <div class="card agr-card" id="agrCard"></div>
-        <div class="card task-box" id="taskCard" ${tasksData ? '' : 'hidden'}></div>
-        <div class="card" id="inviteCard" ${tasksData ? '' : 'hidden'}></div>
+        ${TIKTOK_TASK ? `<div class="card task-box" id="taskCard" ${tasksData ? '' : 'hidden'}></div>
+        <div class="card" id="inviteCard" ${tasksData ? '' : 'hidden'}></div>` : ''}
         <div class="card" id="ibanCard"></div>
       </div>
     </div>
@@ -1544,7 +1549,7 @@ function drawAdmin() {
     <div class="adm-tabs">
       <button class="chip ${admTab === 'leads' ? 'on' : ''}" data-t="leads">${L('العملاء', 'Clients')} (<span class="num">${leads.length}</span>)</button>
       <button class="chip ${admTab === 'members' ? 'on' : ''}" data-t="members">${L('الفريق', 'Team')} (<span class="num">${members.length}</span>)</button>
-      <button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">${TT_ICON} ${L('مهمة تيك توك', 'TikTok task')}</button>
+      ${TIKTOK_TASK ? `<button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">${TT_ICON} ${L('مهمة تيك توك', 'TikTok task')}</button>` : ''}
       <span style="flex:1"></span>
       <button class="btn btn-soft btn-sm" id="catBtn">${L('الباقات والأسعار', 'Packages & prices')}</button>
       <button class="btn btn-soft btn-sm" id="agrBtn">${L('نسبة العمولة', 'Commission rate')}</button>
@@ -1566,6 +1571,7 @@ function drawAdmin() {
   $('#termsBtn').onclick = openTermsEditor;
   $('#catBtn').onclick = openCatalogEditor;
   $('#agrBtn').onclick = openAgreementEditor;
+  if (admTab === 'tasks' && !TIKTOK_TASK) admTab = 'leads';
   admTab === 'leads' ? drawAdmLeads() : admTab === 'tasks' ? loadAdmTasks() : drawAdmMembers();
 }
 

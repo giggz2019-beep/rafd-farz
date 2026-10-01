@@ -306,17 +306,17 @@ create or replace function team_register(p_name text, p_phone text, p_city text,
   p_password text, p_agree boolean, p_invite text default null) returns jsonb
 language plpgsql security definer set search_path = public, extensions as $$
 declare v_id uuid; v_code text; i int := 0; v_inv uuid;
-        v_tt text := '@' || ltrim(trim(coalesce(p_tiktok,'')), '@');
+        v_tt text := nullif('@' || ltrim(trim(coalesce(p_tiktok,'')), '@'), '@');   -- optional while the TikTok task is paused
 begin
   if not coalesce(p_agree, false) then return jsonb_build_object('error','terms'); end if;
   if not team_join_open() then return jsonb_build_object('error','join_closed'); end if;
   if p_phone !~ '^05[0-9]{8}$' then return jsonb_build_object('error','phone'); end if;
   if char_length(coalesce(p_password,'')) < 6 then return jsonb_build_object('error','password'); end if;
   if char_length(trim(coalesce(p_name,''))) < 3 then return jsonb_build_object('error','name'); end if;
-  if v_tt !~ '^@[A-Za-z0-9._]{2,24}$' then return jsonb_build_object('error','tiktok'); end if;
+  if v_tt is not null and v_tt !~ '^@[A-Za-z0-9._]{2,24}$' then return jsonb_build_object('error','tiktok'); end if;
   if not team_throttle('reg', 30, interval '1 hour') then return jsonb_build_object('error','too_many'); end if;
   if exists (select 1 from team_members where phone = p_phone) then return jsonb_build_object('error','exists'); end if;
-  if exists (select 1 from team_members where lower(ltrim(tiktok,'@')) = lower(ltrim(v_tt,'@'))) then
+  if v_tt is not null and exists (select 1 from team_members where lower(ltrim(tiktok,'@')) = lower(ltrim(v_tt,'@'))) then
     return jsonb_build_object('error','tiktok_taken');
   end if;
   if nullif(trim(coalesce(p_invite,'')),'') is not null then
