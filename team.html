@@ -411,9 +411,11 @@ const STATUS = () => ({
 });
 const STEP_OF = { new: 1, contacted: 2, negotiating: 3, won: 4 };
 /* The three services RAFD sells. The value stored on a lead is always the Arabic name, so the operator reads one spelling whatever language the member used; svcLabel() shows it in the viewer's language. Older leads keep whatever text they were saved with. */
-const SERVICE_LIST = [['خدمة RAFD Sense (الكاميرات)', 'RAFD Sense (cameras)'], ['الأتمتة والوكيل الذكي', 'Automation & AI agent'], ['التسويق عبر السوشل ميديا', 'Social media marketing']];
+const SERVICE_LIST = [['سند AI (الكاميرات)', 'Sanad AI (cameras)'], ['التسويق الرقمي', 'Digital marketing'], ['الأتمتة والوكيل الذكي', 'Automation & AI agent']];
+/* Names a lead may have been saved under before the programmes were renamed. */
+const SERVICE_OLD = { 'خدمة RAFD Sense (الكاميرات)': 'سند AI (الكاميرات)', 'التسويق عبر السوشل ميديا': 'التسويق الرقمي' };
 const SERVICES = () => SERVICE_LIST.map(([ar, en]) => ({ v: ar, t: L(ar, en) }));
-const svcLabel = v => { const x = SERVICE_LIST.find(([ar]) => ar === v); return x ? L(x[0], x[1]) : v; };
+const svcLabel = v => { const k = SERVICE_OLD[v] || v; const x = SERVICE_LIST.find(([ar]) => ar === k); return x ? L(x[0], x[1]) : v; };
 const SAR = () => L('ر.س', 'SAR');
 
 const ERRS = {
