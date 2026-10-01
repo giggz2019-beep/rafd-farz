@@ -298,6 +298,7 @@ table.qd tr.it-n td { border-top: 0; padding-top: 0; color: var(--muted); font-s
   body.print-sheet .sheet { max-height: none; overflow: visible; box-shadow: none; border-radius: 0; max-width: none; }
   body.print-sheet .x, body.print-sheet .no-print { display: none !important; }
 }
+.consent { font-size: .8rem; color: var(--muted); line-height: 1.8; margin-top: 10px; text-align: center; }
 footer.foot { text-align: center; color: var(--muted); font-size: .8rem; padding: 26px 16px 34px; }
 
 @media (max-width: 820px) {
@@ -402,7 +403,7 @@ const ERRS = {
   phone: ['يجب أن يكون رقم الجوال بصيغة 05XXXXXXXX', 'Mobile number must be in the format 05XXXXXXXX'],
   password: ['كلمة المرور 6 أحرف على الأقل', 'Password must be at least 6 characters'],
   name: ['يُرجى إدخال الاسم كاملاً', 'Please enter the full name'],
-  terms: ['يجب الموافقة على اتفاقية الانضمام', 'You must accept the membership agreement'],
+  terms: ['يجب الموافقة على الشروط والأحكام', 'You must accept the terms and conditions'],
   exists: ['هذا الرقم مسجّل مسبقاً، يُرجى تسجيل الدخول', 'This number is already registered — please sign in'],
   bad: ['الجوال أو كلمة المرور غير صحيحة', 'Wrong mobile number or password'],
   suspended: ['الحساب موقوف، يُرجى التواصل مع الإدارة', 'This account is suspended — please contact the team'],
@@ -770,8 +771,8 @@ const RULES = () => `
          'A client belongs to <b>whoever registered them first</b>, and that priority is kept for <b class="num">180</b> days.')}</li>
   <li>${AGR ? L(`تلتزم رفد بعمولة نسبتها <b class="num">${fmtRate(AGR.rate)}%</b> من قيمة العقد الأول لكل عميل <b>يتعاقد ويسدّد</b>، تُحوَّل خلال <b class="num">${AGR.days}</b> يوماً من التحصيل.`,
                 `RAFD commits to a commission of <b class="num">${fmtRate(AGR.rate)}%</b> of the first contract of every client who <b>signs and pays</b>, transferred within <b class="num">${AGR.days}</b> days of collection.`) : ''}</li>
-  <li>${L('تُستحق العمولة عن العميل <b>الذي تعاقد وسدّد</b>، وفق النسبة المنصوص عليها في اتفاقية الانضمام، وتظهر في لوحتك.',
-         'Commission is earned on clients who <b>sign and pay</b>, at the rate set out in the membership agreement, and is shown in your dashboard.')}</li>
+  <li>${L('تُستحق العمولة عن العميل <b>الذي تعاقد وسدّد</b>، وفق النسبة المعتمدة في البرنامج، وتظهر في لوحتك.',
+         'Commission is earned on clients who <b>sign and pay</b>, at the programme rate, and is shown in your dashboard.')}</li>
   <li>${L('تُحوَّل العمولة إلى <b>الحساب البنكي المسجّل باسمك</b>، وتظهر لك حالة كل تحويل ورقمه المرجعي.',
          'Payments go to the <b>IBAN in your name</b> saved in your dashboard, where you can see each transfer and its reference.')}</li>
   <li>${L('المشاركة في البرنامج بنظام العمولة ولا تُعد عقد عمل، ولرفد أن تعرض على من يُثبت كفاءته عقداً رسمياً براتب وعمولة مستمرة.',
@@ -811,10 +812,11 @@ async function viewHome() {
   </div></section>
 
   <section class="block"><div class="wrap">
-    <h2 class="h2">${L('أحكام واضحة تحفظ حقوق الطرفين', 'Clear terms that protect both parties')}</h2>
-    <p class="sub">${L('منصوص عليها في اتفاقية الانضمام، ويوافق عليها كل منضم قبل بدء العمل.', 'Set out in the membership agreement, which every member accepts before starting.')}</p>
+    <h2 class="h2">${L('الشروط والأحكام', 'Terms and conditions')}</h2>
+    <p class="sub">${L('يوافق عليها كل منضم عند التسجيل، قبل بدء العمل.', 'Every member accepts them at sign-up, before starting.')}</p>
     ${RULES()}
-    <div style="text-align:center;margin:28px 0 10px"><a class="btn btn-main" href="#/join">${L('ابدأ الآن', 'Get started')}</a></div>
+    <div style="text-align:center;margin:28px 0 10px"><a class="btn btn-main" href="#/join">${L('ابدأ الآن', 'Get started')}</a>
+      <p class="consent">${L('بالضغط على «ابدأ الآن» فإنك تُقرّ باطّلاعك على الشروط والأحكام أعلاه وموافقتك عليها.', 'By pressing “Get started” you confirm that you have read and accept the terms and conditions above.')}</p></div>
   </div></section>`;
 }
 
@@ -835,24 +837,19 @@ async function viewJoin() {
       </div>
       <div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')} <small>${L('(مطلوب للمهمة الشهرية)', '(needed for the monthly task)')}</small></label><input name="tiktok" class="ltr" placeholder="@username"></div>
       <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="new-password"><div class="hint">${L('ستة أحرف على الأقل، وتُستخدم مع رقم الجوال لتسجيل الدخول.', 'At least 6 characters — you sign in with it and your mobile number.')}</div></div>
-      <div class="agr-title">${L('اتفاقية الانضمام إلى برنامج سفراء رفد', 'RAFD Ambassadors membership agreement')}</div>
-      <div id="agrBox"></div>
-      <label class="check"><input type="checkbox" name="agree"><span>${L('أقرّ بأنني اطّلعت على اتفاقية الانضمام إلى برنامج سفراء رفد وأوافق على جميع بنودها.', 'I confirm that I have read the RAFD Ambassadors membership agreement and accept all of its terms.')}</span></label>
+      <details style="margin-bottom:8px"><summary style="cursor:pointer;font-weight:700;color:var(--teal-600);font-size:.9rem">${L('اطّلع على الشروط والأحكام', 'Read the terms and conditions')}</summary><div style="margin-top:10px">${RULES()}</div></details>
+
       <button class="btn btn-main btn-block" type="submit">${L('إنشاء حسابي', 'Create my account')}</button>
+      <p class="consent">${L('بإنشاء حسابك فإنك تُقرّ باطّلاعك على الشروط والأحكام وموافقتك عليها.', 'By creating your account you confirm that you have read and accept the terms and conditions.')}</p>
     </form>
     <p class="alt">${L('لديك حساب؟', 'Have an account?')} <a href="#/login">${L('تسجيل الدخول', 'Sign in')}</a></p>
   </div></div>`;
-  const jf = $('#f');
-  const paintAgr = () => { if (!AGR) return; const t = EN() ? AGR.text_en : AGR.text;
-    $('#agrBox').innerHTML = agreementHtml(t.replaceAll('{name}', jf.name.value.trim() || '________').replaceAll('{phone}', normPhone(jf.phone.value) || '________')); };
-  jf.name.addEventListener('input', paintAgr); jf.phone.addEventListener('input', paintAgr); paintAgr();
   $('#f').onsubmit = async e => {
     e.preventDefault(); const f = e.target; const b = f.querySelector('button[type=submit]'); const m = $('#m');
     const phone = normPhone(f.phone.value);
     if (f.name.value.trim().length < 3) return formMsg(m, 'err', err('name'));
     if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
     if (f.password.value.length < 6) return formMsg(m, 'err', err('password'));
-    if (!f.agree.checked) return formMsg(m, 'err', err('terms'));
     b.disabled = true;
     const r = await rpc('team_register', { p_name: f.name.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_tiktok: f.tiktok.value.trim(), p_password: f.password.value, p_agree: true });
     b.disabled = false;
@@ -1093,23 +1090,11 @@ function drawLeads() {
 function drawAgreementCard() {
   const m = meData.member; const c = $('#agrCard'); if (!c) return;
   const has = m.agreed_rate != null;
-  c.innerHTML = `<div class="panel-title" style="margin-bottom:4px"><h2>${L('اتفاقيتي', 'My agreement')}</h2>${has ? `<span class="pill won">${L('موثّقة ✓', 'On record ✓')}</span>` : ''}</div>
-    ${has ? `<div class="big num">${fmtRate(m.agreed_rate)}%</div>
-      <p style="font-size:.84rem;color:var(--muted);line-height:1.8">${L('نسبة العمولة المتفق عليها من قيمة العقد الأول لكل عميل يُنسب إليك.', 'Your agreed commission on the first contract of every client attributed to you.')}<br>
-        ${L('تاريخ الموافقة', 'Accepted on')}: ${fmtDateTime(m.agreed_at)}</p>
-      <button class="btn btn-soft btn-sm" id="agrOpen" style="margin-top:8px">${L('عرض الاتفاقية', 'View agreement')}</button>`
-    : `<p style="font-size:.84rem;color:var(--muted);line-height:1.8">${L('لا توجد نسخة محفوظة من الاتفاقية لهذا الحساب. يُرجى التواصل مع الإدارة.', 'No stored copy of the agreement for this account. Please contact the team.')}</p>`}`;
-  const b = $('#agrOpen'); if (b) b.onclick = openMyAgreement;
-}
-
-function openMyAgreement() {
-  const m = meData.member;
-  const text = EN() ? (m.agreement_text_en || m.agreement_text) : (m.agreement_text || m.agreement_text_en);
-  const s = sheet(L('اتفاقية الانضمام إلى برنامج سفراء رفد', 'RAFD Ambassadors membership agreement'), `
-    <div class="agr-meta">${L('نسخة محفوظة بتاريخ موافقتك', 'Copy stored on the date you accepted')}: <b>${fmtDateTime(m.agreed_at)}</b> · ${L('نسبة العمولة', 'Commission rate')}: <b class="num">${fmtRate(m.agreed_rate)}%</b></div>
-    ${agreementHtml(text, true)}
-    <div class="btn-row no-print" style="margin-top:12px"><button class="btn btn-main btn-sm" id="agrPrint">${L('طباعة / حفظ PDF', 'Print / save PDF')}</button></div>`);
-  $('#agrPrint', s.el).onclick = () => { document.body.classList.add('print-sheet'); window.print(); setTimeout(() => document.body.classList.remove('print-sheet'), 500); };
+  if (!has) { c.hidden = true; return; }
+  c.innerHTML = `<div class="panel-title" style="margin-bottom:4px"><h2>${L('نسبة عمولتك', 'Your commission rate')}</h2></div>
+    <div class="big num">${fmtRate(m.agreed_rate)}%</div>
+    <p style="font-size:.84rem;color:var(--muted);line-height:1.8">${L('من قيمة العقد الأول لكل عميل يُنسب إليك.', 'Of the first contract of every client attributed to you.')}<br>
+      ${L('تاريخ الموافقة على الشروط', 'Terms accepted on')}: ${fmtDateTime(m.agreed_at)}</p>`;
 }
 
 function drawIban() {
@@ -1404,7 +1389,7 @@ function drawAdmin() {
       <button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">${L('المهمة الشهرية', 'Monthly task')}</button>
       <span style="flex:1"></span>
       <button class="btn btn-soft btn-sm" id="catBtn">${L('الباقات والأسعار', 'Packages & prices')}</button>
-      <button class="btn btn-soft btn-sm" id="agrBtn">${L('اتفاقية ممثلي المبيعات', 'Sales representative agreement')}</button>
+      <button class="btn btn-soft btn-sm" id="agrBtn">${L('نسبة العمولة', 'Commission rate')}</button>
       <button class="btn btn-soft btn-sm" id="termsBtn">${L('شروط العرض', 'Quote terms')}</button>
       <button class="btn btn-soft btn-sm" id="csv">${L('تصدير Excel', 'Export to Excel')}</button>
       <button class="btn btn-ghost btn-sm" id="admOut">${L('خروج', 'Sign out')}</button>
@@ -1708,29 +1693,21 @@ async function openTermsEditor() {
 async function openAgreementEditor() {
   const r = await admRpc('agreement');
   if (!r || r.error) return toast(err(r && r.error));
-  const s = sheet(L('اتفاقية ممثلي المبيعات', 'Sales representative agreement'), `
-    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('ما تحدده هنا يسري على المنضمين الجدد فقط. من وافق سابقاً تبقى نسبته ونص اتفاقيته كما وافق عليها، ومحفوظة في حسابه.', 'Changes here apply to new members only. Anyone who has already accepted keeps the rate and text they agreed to, stored in their account.')}<br>
-      ${L('المتغيرات داخل النص', 'Placeholders in the text')}: <b class="num">{rate}</b> <b class="num">{days}</b> <b class="num">{priority}</b> <b class="num">{name}</b> <b class="num">{phone}</b></p>
+  const s = sheet(L('نسبة العمولة', 'Commission rate'), `
+    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('تظهر في الشروط والأحكام بالصفحة الرئيسية، وتسري على المنضمين الجدد فقط؛ من سجّل سابقاً تبقى نسبته كما وافق عليها.', 'Shown in the terms and conditions on the home page, and applies to new members only; existing members keep the rate they signed up with.')}</p>
     <div id="am"></div>
     <form id="af" novalidate>
       <div class="row2">
         <div class="field"><label>${L('نسبة العمولة %', 'Commission rate %')}</label><input name="rate" class="num" inputmode="decimal" value="${esc(r.rate)}"></div>
         <div class="field"><label>${L('مدة التحويل بعد التحصيل (يوم)', 'Payout days after collection')}</label><input name="days" class="num" inputmode="numeric" value="${esc(r.days)}"></div>
       </div>
-      <div class="tabs2"><button type="button" class="chip on" data-tl="ar">العربية</button><button type="button" class="chip" data-tl="en">English</button></div>
-      <div class="field" data-pane="ar"><textarea name="text" dir="rtl" style="min-height:340px;font-size:.86rem;line-height:1.8">${esc(r.text || '')}</textarea></div>
-      <div class="field" data-pane="en" hidden><textarea name="text_en" dir="ltr" style="min-height:340px;font-size:.86rem;line-height:1.8">${esc(r.text_en || '')}</textarea></div>
       <button class="btn btn-main btn-block" type="submit">${L('حفظ', 'Save')}</button>
     </form>`);
-  s.el.querySelectorAll('[data-tl]').forEach(b => b.onclick = () => {
-    s.el.querySelectorAll('[data-tl]').forEach(x => x.classList.toggle('on', x === b));
-    s.el.querySelectorAll('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== b.dataset.tl);
-  });
   $('#af', s.el).onsubmit = async e => {
     e.preventDefault(); const f = e.target;
-    const x = await admRpc('agreement', { rate: +toLatin(f.rate.value).replace(/[^\d.]/g, ''), days: +toLatin(f.days.value).replace(/\D/g, ''), text: f.text.value.trim(), text_en: f.text_en.value.trim() });
+    const x = await admRpc('agreement', { rate: +toLatin(f.rate.value).replace(/[^\d.]/g, ''), days: +toLatin(f.days.value).replace(/\D/g, '') });
     if (!x || x.error) return formMsg($('#am', s.el), 'err', err(x && x.error));
-    AGR = null; s.close(); toast(L('تم حفظ الاتفاقية ✓', 'Agreement saved ✓'));
+    AGR = null; s.close(); toast(L('تم حفظ النسبة ✓', 'Rate saved ✓'));
   };
 }
 
