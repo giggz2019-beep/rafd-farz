@@ -729,19 +729,19 @@ body.on-air .brand-foot { display: none; }
    off a phone screen pointed at a laptop, so it is the last place to be
    saving a tenth of a rem. */
 .live-bar {
-  margin-top: 12px; display: grid; gap: 7px; text-align: center;
+  margin-top: 10px; display: grid; gap: 5px; text-align: center;
   /* His olive, a step lighter than the card so the bar reads as a panel on it
      — it was a BRONZE gradient (rgba(140,90,5…) over #8c5a05), the other
      tenant's colour, left behind by the copy and visibly orange against his
      olive. Flat for the same reason the card is: a gradient bands on camera. */
   background: #4b4730;
   border: 2px solid rgba(195,159,86,.55);
-  border-radius: 16px; padding: 12px 14px;
+  border-radius: 14px; padding: 9px 12px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
-.live-bar .lb-site { font-size: .92rem; color: #eae6dd; }
+.live-bar .lb-site { font-size: .82rem; color: #eae6dd; }
 .live-bar .lb-site b { color: var(--gold-400); direction: ltr; unicode-bidi: isolate;
-  display: inline-block; font-size: 1.05rem; }
+  display: inline-block; font-size: .95rem; }
 /* the number sits in its own olive frame inside the bar */
 /* the number is the one thing on the card a viewer is meant to ACT on, so it
    is the biggest thing in the bar and it keeps its own olive ring */
@@ -750,16 +750,22 @@ body.on-air .brand-foot { display: none; }
      other tenant's bronze ring over a near-black fill */
   justify-self: center; border: 2px solid rgba(195,159,86,.70);
   background: rgba(23,22,15,.55); border-radius: 999px;
-  padding: 6px 18px; font-size: .95rem; color: #eae6dd;
+  padding: 4px 14px; font-size: .84rem; color: #eae6dd;
 }
-.live-bar .lb-tel b { color: var(--gold-400); font-weight: 900; font-size: 1.24rem;
+.live-bar .lb-tel b { color: var(--gold-400); font-weight: 900; font-size: 1.08rem;
   letter-spacing: .01em; }
+/* The bar was 181px — a fifth of the card — and crowded the plate and the
+   paddle, which are what the camera is pointed at. It gives up PADDING and
+   LEADING first and type only after that, and nothing in it drops below 13px:
+   it is read off a phone filming a laptop, so that is the floor, not a
+   preference. The phone number stays the largest thing in the bar, because it
+   is the one thing a viewer is meant to act on. */
 /* the commission is the one thing a seller agrees to, so it is read, not skimmed */
 .live-bar .lb-fee {
-  font-size: .95rem; font-weight: 800; color: #f7efdd; line-height: 1.65;
-  border-top: 1px dashed rgba(234,230,221,.3); padding-top: 8px;
+  font-size: .84rem; font-weight: 800; color: #f7efdd; line-height: 1.5;
+  border-top: 1px dashed rgba(234,230,221,.3); padding-top: 6px;
 }
-.live-bar .lb-fee b { color: var(--gold-400); font-weight: 900; font-size: 1.04rem; }
+.live-bar .lb-fee b { color: var(--gold-400); font-weight: 900; font-size: .94rem; }
 
 /* The commission has to be readable on the broadcast without anyone
    scrolling — it only lived in the page footer, under the fold, so on camera
