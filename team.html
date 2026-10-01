@@ -197,6 +197,9 @@ table.members th { font-size: .75rem; color: var(--muted); }
 .bar { height: 8px; border-radius: 8px; background: #eeebe5; overflow: hidden; margin: 10px 0 4px; }
 .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--teal-500), var(--gold-500)); border-radius: 8px; }
 .bonus-rule { font-size: .8rem; background: #fff; border: 1px dashed var(--rose-300); border-radius: 10px; padding: 7px 10px; margin: 8px 0; color: #5b4442; line-height: 1.7; }
+.task-terms { margin: 4px 0 10px; font-size: .8rem; }
+.task-terms summary { cursor: pointer; font-weight: 700; color: var(--teal-600); }
+.task-terms ul { margin: 6px 0 0; padding-inline-start: 18px; line-height: 1.8; color: #5b4442; }
 .proof-img { display: block; max-width: 100%; max-height: 70vh; margin: 0 auto; border-radius: 12px; border: 1px solid var(--line); }
 .task-box { background: linear-gradient(150deg, var(--rose-100), #fff 70%); border-color: var(--rose-300); }
 .cmt { background: #faf7f2; border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; font-size: .84rem; margin-top: 6px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
@@ -847,14 +850,8 @@ const RULES = () => `
          'Commission is earned on clients who <b>sign and pay</b>, at the programme rate, and is shown in your dashboard.')}</li>
   <li>${L('تُحوَّل العمولة إلى <b>الحساب البنكي المسجّل باسمك</b>، وتظهر لك حالة كل تحويل ورقمه المرجعي.',
          'Payments go to the <b>IBAN in your name</b> saved in your dashboard, where you can see each transfer and its reference.')}</li>
-  ${JOIN ? `<li>${L(`<b>مكافأة التفاعل الشهرية:</b> <b class="num">${money(JOIN.bonus)}</b> ر.س لمن يُكمل مهمة الشهر كاملة، وهي على كل مقطع يُنشر خلال الشهر: الإعجاب والمشاركة والتعليق ومتابعة حساب رفد، مع إرفاق صورة الشاشة.`,
-         `<b>Monthly engagement bonus:</b> <b class="num">${money(JOIN.bonus)}</b> SAR for completing the whole month’s task — on every video posted that month: like, share, comment and follow RAFD’s account, with a screenshot attached.`)}</li>
-  <li>${L(`يُضاف <b class="num">${money(JOIN.invite_bonus)}</b> ر.س عن كل شخص ينضم بـ<b>رمز دعوتك</b> ويُكمل مهمة الشهر نفسه كاملة، بشرط أن تُكمل مهمتك أنت أيضاً، وبحد أقصى <b class="num">${money(JOIN.cap)}</b> ر.س شهرياً للمكافأة كلها.`,
-         `Add <b class="num">${money(JOIN.invite_bonus)}</b> SAR for each person who joins with <b>your invite code</b> and completes the same month, provided you complete yours too — up to <b class="num">${money(JOIN.cap)}</b> SAR a month for the whole bonus.`)}</li>
-  <li>${L('يجب أن يكون التعليق عن محتوى المقطع، فلا يُقبل التعليق العشوائي أو المكوّن من رموز فقط، وأن يكون الحساب المشارك به حساباً حقيقياً نشطاً. ولرفد رفض أي مشاركة لا تستوفي ذلك، وإيقاف الحساب عند ثبوت التلاعب.',
-         'The comment must be about the video — random comments or emoji alone are not accepted — and the account used must be a real, active one. RAFD may reject any entry that falls short and suspend an account where manipulation is found.')}</li>` : ''}
-  <li>${L('لرفد إيقاف الانضمام إلى البرنامج متى بلغ عدد الأعضاء الحد المطلوب، وتعديل مبالغ المكافأة مع إعلان ذلك في لوحة الأعضاء.',
-         'RAFD may close sign-ups once the team reaches the size it needs, and may change the bonus amounts, announcing it in the members’ dashboard.')}</li>
+  <li>${L('لرفد إيقاف الانضمام إلى البرنامج متى بلغ عدد الأعضاء الحد المطلوب.',
+         'RAFD may close sign-ups once the team reaches the size it needs.')}</li>
   <li>${L('المشاركة في البرنامج بنظام العمولة ولا تُعد عقد عمل، ولرفد أن تعرض على من يُثبت كفاءته عقداً رسمياً براتب وعمولة مستمرة.',
          'Participation is commission-based and is not an employment contract. RAFD may offer those who prove themselves a formal contract with a salary and ongoing commission.')}</li>
 </ul>`;
@@ -1232,6 +1229,15 @@ function drawTasks() {
     <div class="panel-title" style="margin-bottom:4px"><h2>${L('المهمة الشهرية', 'Monthly task')}</h2><span class="pill ${all ? 'won' : 'negotiating'} num">${ok} / ${posts.length}</span></div>
     <p style="font-size:.86rem;color:#5b4442;line-height:1.8">${L(`على كل مقطع يُنشر في ${esc(monthName(cur))}: إعجاب، ومشاركة، وتعليق عن محتوى المقطع، ومتابعة حساب رفد، ثم أرفق صورة الشاشة.`, `On every video posted in ${esc(monthName(cur))}: like, share, comment on what the video says, and follow RAFD’s account — then attach a screenshot.`)}</p>
     <div class="bonus-rule">${L('المكافأة', 'Bonus')}: <b class="num">${money(t.bonus)}</b> ${SAR()} + <b class="num">${money(t.invite_bonus)}</b> ${SAR()} ${L('عن كل مدعو يُكمل الشهر', 'per invitee who completes the month')} · ${L('بحد أقصى', 'max')} <b class="num">${money(t.cap)}</b> ${SAR()}</div>
+    <details class="task-terms"><summary>${L('شروط المهمة والمكافأة', 'Task & bonus terms')}</summary><ul>
+      <li>${L(`تُستحق المكافأة الثابتة (<b class="num">${money(t.bonus)}</b> ر.س) لمن يُكمل مهمة الشهر كاملة: الإعجاب والمشاركة والتعليق ومتابعة حساب رفد على كل مقطع يُنشر خلال الشهر، مع إرفاق صورة الشاشة لكل مقطع.`,
+              `The fixed bonus (<b class="num">${money(t.bonus)}</b> SAR) is earned by completing the whole month: like, share, comment and follow RAFD’s account on every video posted that month, with a screenshot for each.`)}</li>
+      <li>${L(`يُضاف <b class="num">${money(t.invite_bonus)}</b> ر.س عن كل شخص ينضم برمز دعوتك ويُكمل مهمة الشهر نفسه كاملة، بشرط أن تُكمل مهمتك أنت أيضاً، وبحد أقصى <b class="num">${money(t.cap)}</b> ر.س شهرياً للمكافأة كلها.`,
+              `Add <b class="num">${money(t.invite_bonus)}</b> SAR for each person who joins with your invite code and completes the same month, provided you complete yours too — up to <b class="num">${money(t.cap)}</b> SAR a month in total.`)}</li>
+      <li>${L('يجب أن يكون التعليق عن محتوى المقطع، فلا يُقبل التعليق العشوائي أو المكوّن من رموز فقط.', 'The comment must be about the video — random comments or emoji alone are not accepted.')}</li>
+      <li>${L('يجب أن يكون الحساب المشارك به حساباً حقيقياً نشطاً، وليس حساباً وهمياً.', 'The account used must be a real, active one — not a fake account.')}</li>
+      <li>${L('لرفد رفض أي مشاركة لا تستوفي الشروط، وإيقاف الحساب عند ثبوت التلاعب، وتعديل مبالغ المكافأة مع إعلان ذلك هنا.', 'RAFD may reject any entry that falls short, suspend an account where manipulation is found, and change the bonus amounts, announcing it here.')}</li>
+    </ul></details>
     <div class="bar"><i style="width:${posts.length ? Math.round(ok / posts.length * 100) : 0}%"></i></div>
     <p style="font-size:.8rem;margin-bottom:6px;color:${all ? 'var(--ok)' : 'var(--muted)'}">${paidNow ? L(`✓ صُرفت مكافأة هذا الشهر: ${money(paidNow.amount)} ر.س`, `✓ This month’s bonus has been paid: ${money(paidNow.amount)} SAR`) : !posts.length ? L('لم يُنشر أي مقطع هذا الشهر بعد.', 'No videos posted this month yet.') : all ? L(`✓ مكتملة — مستحقك حتى الآن <b class="num">${money(due.amount)}</b> ر.س، ويُصرف في نهاية الشهر`, `✓ Complete — <b class="num">${money(due.amount)}</b> SAR so far, paid at month end`) : L(`المتبقي ${left} ${left === 1 ? 'مقطع' : 'مقاطع'}`, `${left} ${left === 1 ? 'video' : 'videos'} left`)}</p>
     ${posts.map(p => `<div class="task">
