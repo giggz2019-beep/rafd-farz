@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>سفراء رفد</title>
+<meta name="description" content="سفراء رفد — سجّل عملاءك باسمك، وتابع صفقاتك وعمولاتك خطوة بخطوة.">
+<meta name="theme-color" content="#0A1628">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+@font-face { font-family: 'Thmanyah'; src: url('/fonts/thmanyah-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Thmanyah'; src: url('/fonts/thmanyah-Medium.otf') format('opentype'); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: 'Thmanyah'; src: url('/fonts/thmanyah-Bold.otf') format('opentype'); font-weight: 700 900; font-display: swap; }
+
+:root {
+  --navy-900: #0A1628; --navy-800: #102640; --navy-700: #16395a;
+  --teal-600: #1d6b78; --teal-500: #2a8a96; --teal-100: #e3f1f2;
+  --leaf-600: #5b8a3c; --leaf-100: #ecf3e4;
+  --gold-600: #b08a36; --gold-500: #C9A24B; --gold-200: #f1e2bb; --gold-100: #fbf5e6;
+  --rose-100: #fbeeee; --rose-300: #efc9c6;
+  --ink: #16202e; --muted: #6a7382; --line: #e9e4dc; --paper: #fbf9f5; --card: #ffffff;
+  --ok: #0f7a47; --ok-bg: #e5f4ec; --bad: #b3261e; --bad-bg: #fbeaea;
+  --r: 18px; --shadow: 0 10px 30px rgba(16,38,64,.08);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Thmanyah', -apple-system, 'Segoe UI', Tahoma, sans-serif; font-weight: 500;
+  color: var(--ink); background: var(--paper); min-height: 100vh; overflow-x: hidden;
+  -webkit-font-smoothing: antialiased; font-synthesis: none;
+  font-feature-settings: 'calt' 1, 'liga' 1, 'kern' 1;
+}
+.num { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--teal-600); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+[hidden] { display: none !important; }
+
+/* top bar */
+.top { position: sticky; top: 0; z-index: 20; background: rgba(251,249,245,.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--navy-900); }
+.brand .logo-crop { position: relative; display: block; width: 66px; height: 47px; overflow: hidden; flex: none; }
+/* rafd-logo.png carries wide white margins: the mark sits at x 487–1055, y 213–615 of 1472×832 */
+.brand .logo-crop img { position: absolute; height: 97px; width: auto; right: auto; left: -57px; top: -25px; mix-blend-mode: multiply; }
+.brand b { font-size: 1.05rem; font-weight: 800; white-space: nowrap; }
+.brand b span { color: var(--gold-600); }
+.top-actions { display: flex; gap: 8px; align-items: center; }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; cursor: pointer; border-radius: 14px; padding: 13px 20px; font-weight: 700; font-size: 1rem; text-decoration: none; transition: transform .15s, box-shadow .15s, background .15s; }
+.btn:active { transform: scale(.98); }
+.btn-main { background: linear-gradient(135deg, var(--navy-800), var(--teal-600)); color: #fff; box-shadow: 0 8px 22px rgba(29,107,120,.28); }
+.btn-gold { background: linear-gradient(135deg, var(--gold-500), #ddb866); color: var(--navy-900); box-shadow: 0 8px 22px rgba(201,162,75,.3); }
+.btn-soft { background: #fff; color: var(--navy-800); border: 1.5px solid var(--line); }
+.btn-ghost { background: transparent; color: var(--navy-800); padding: 9px 12px; font-size: .9rem; }
+.btn-sm { padding: 8px 12px; font-size: .85rem; border-radius: 11px; }
+.btn-wa { background: #25D366; color: #fff; }
+.btn[disabled] { opacity: .55; cursor: default; }
+.btn-block { width: 100%; }
+
+/* demo banner */
+.demo { background: var(--gold-100); color: #6b5317; border-bottom: 1px solid var(--gold-200); font-size: .82rem; text-align: center; padding: 7px 16px; }
+
+/* hero */
+.hero { position: relative; overflow: hidden; background: radial-gradient(120% 90% at 100% 0%, #1f6f7c 0%, var(--navy-800) 45%, var(--navy-900) 100%); color: #fff; border-radius: 0 0 32px 32px; }
+.hero::before { content: ""; position: absolute; width: 380px; height: 380px; left: -120px; bottom: -160px; border-radius: 50%; background: radial-gradient(circle, rgba(201,162,75,.35), transparent 65%); }
+.hero::after { content: ""; position: absolute; width: 260px; height: 260px; right: -60px; top: -80px; border-radius: 50%; background: radial-gradient(circle, rgba(239,201,198,.25), transparent 65%); }
+.hero .wrap { position: relative; z-index: 1; padding-top: 48px; padding-bottom: 56px; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); padding: 6px 14px; border-radius: 999px; font-size: .82rem; color: var(--gold-200); }
+.hero h1 { font-size: clamp(1.9rem, 6.5vw, 3rem); font-weight: 900; line-height: 1.3; margin: 18px 0 12px; letter-spacing: -.01em; }
+.hero h1 em { font-style: normal; color: var(--gold-500); }
+.hero p.hero-lead { font-size: 1.08rem; line-height: 1.9; color: rgba(255,255,255,.82); max-width: 560px; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.hero-cta .btn-soft { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.25); }
+
+/* sections */
+section.block { padding: 36px 0 8px; }
+.h2 { font-size: 1.4rem; font-weight: 800; color: var(--navy-900); margin-bottom: 6px; }
+.sub { color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.step { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; box-shadow: var(--shadow); }
+.step .ic { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-size: 1.3rem; margin-bottom: 12px; background: var(--gold-100); }
+.step:nth-child(2) .ic { background: var(--teal-100); }
+.step:nth-child(3) .ic { background: var(--rose-100); }
+.step:nth-child(4) .ic { background: var(--leaf-100); }
+.step h3 { font-size: 1.02rem; font-weight: 800; margin-bottom: 6px; color: var(--navy-900); }
+.step p { color: var(--muted); font-size: .92rem; line-height: 1.75; }
+.rules { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 20px 22px; box-shadow: var(--shadow); }
+.rules li { list-style: none; position: relative; padding-inline-start: 26px; line-height: 1.85; margin-bottom: 8px; color: #333c4a; font-size: .95rem; }
+.rules li::before { content: "✦"; position: absolute; inset-inline-start: 0; top: 0; color: var(--gold-500); }
+
+/* cards & forms */
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; box-shadow: var(--shadow); }
+.auth { max-width: 460px; margin: 36px auto 60px; }
+.auth h2 { font-size: 1.45rem; font-weight: 900; color: var(--navy-900); margin-bottom: 4px; }
+.auth .sub { margin-bottom: 20px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-weight: 700; font-size: .9rem; margin-bottom: 6px; color: var(--navy-800); }
+.field label small { color: var(--muted); font-weight: 500; }
+.field input, .field select, .field textarea { width: 100%; border: 1.5px solid var(--line); background: #fff; border-radius: 13px; padding: 12px 14px; font-size: 1rem; outline: none; transition: border-color .15s, box-shadow .15s; }
+.field textarea { min-height: 80px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--teal-500); box-shadow: 0 0 0 4px rgba(42,138,150,.12); }
+.field input.ltr { direction: ltr; text-align: right; }
+[dir=ltr] .field input.ltr, [dir=ltr] .iban-shown { text-align: left; }
+.field .hint { font-size: .8rem; color: var(--muted); margin-top: 5px; line-height: 1.6; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: .88rem; line-height: 1.7; color: #3a4452; margin: 6px 0 16px; }
+.check input { margin-top: 5px; width: 18px; height: 18px; accent-color: var(--teal-600); flex: none; }
+.msg { border-radius: 12px; padding: 11px 14px; font-size: .9rem; line-height: 1.7; margin-bottom: 14px; }
+.msg.err { background: var(--bad-bg); color: var(--bad); }
+.msg.ok { background: var(--ok-bg); color: var(--ok); }
+.msg.info { background: var(--gold-100); color: #6b5317; }
+.alt { text-align: center; margin-top: 16px; font-size: .92rem; color: var(--muted); }
+
+/* dashboard */
+.dash-head { background: linear-gradient(135deg, var(--navy-900), var(--navy-700) 60%, var(--teal-600)); color: #fff; border-radius: 0 0 28px 28px; padding: 26px 0 70px; }
+.dash-head h1 { font-size: 1.5rem; font-weight: 900; margin: 6px 0 4px; }
+.dash-head p { color: rgba(255,255,255,.75); font-size: .92rem; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 700; padding: 4px 11px; border-radius: 999px; }
+.badge.trial { background: rgba(201,162,75,.18); color: var(--gold-200); border: 1px solid rgba(201,162,75,.4); }
+.badge.contracted { background: rgba(91,138,60,.25); color: #d8efc6; border: 1px solid rgba(160,210,120,.4); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: -48px; position: relative; }
+.stat { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px 14px 12px; box-shadow: var(--shadow); }
+.stat > span { display: block; font-size: .78rem; color: var(--muted); font-weight: 600; }
+.stat b { display: block; font-size: 1.45rem; font-weight: 900; color: var(--navy-900); margin-top: 4px; }
+.stat b small { font-size: .75rem; color: var(--muted); font-weight: 600; }
+.stat.gold { background: linear-gradient(160deg, #fff, var(--gold-100)); border-color: var(--gold-200); }
+.stat.green { background: linear-gradient(160deg, #fff, var(--ok-bg)); }
+.grid-dash { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; margin: 18px 0 50px; align-items: start; }
+.panel-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+.panel-title h2 { font-size: 1.1rem; font-weight: 800; color: var(--navy-900); }
+.ref-box { background: linear-gradient(150deg, var(--gold-100), #fff 70%); border: 1px solid var(--gold-200); }
+.ref-code { font-size: 1.6rem; font-weight: 900; letter-spacing: .12em; color: var(--navy-900); margin: 4px 0 10px; }
+.ref-link { direction: ltr; text-align: left; font-size: .8rem; background: #fff; border: 1px dashed var(--gold-500); border-radius: 10px; padding: 9px 10px; word-break: break-all; color: var(--navy-700); margin-bottom: 10px; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.side { display: grid; gap: 16px; }
+
+.lead { border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; background: #fff; }
+.lead-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.lead h3 { font-size: 1rem; font-weight: 800; color: var(--navy-900); }
+.lead .meta { font-size: .82rem; color: var(--muted); margin-top: 3px; line-height: 1.7; }
+.pill { font-size: .75rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.pill.new { background: #eef1f6; color: #465569; }
+.pill.contacted { background: var(--teal-100); color: var(--teal-600); }
+.pill.negotiating { background: var(--gold-100); color: #8a6a1f; }
+.pill.won { background: var(--ok-bg); color: var(--ok); }
+.pill.lost { background: #f2f2f2; color: #777; }
+.pill.duplicate { background: var(--bad-bg); color: var(--bad); }
+.pill.link { background: var(--rose-100); color: #9b4b45; }
+.track { display: flex; gap: 4px; margin: 12px 0 6px; }
+.track i { flex: 1; height: 6px; border-radius: 6px; background: #eeebe5; }
+.track i.on { background: linear-gradient(90deg, var(--teal-500), var(--gold-500)); }
+.track-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted); }
+.money { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: .88rem; }
+.money b { color: var(--navy-900); }
+.money .paid { color: var(--ok); font-weight: 800; }
+.empty { text-align: center; color: var(--muted); padding: 30px 10px; line-height: 1.9; }
+.empty .big { font-size: 2.2rem; }
+.iban-shown { direction: ltr; text-align: right; font-weight: 800; letter-spacing: .04em; color: var(--navy-900); margin: 6px 0; }
+.filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.chip { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; font-size: .82rem; font-weight: 700; cursor: pointer; color: var(--navy-800); }
+.chip.on { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
+
+/* sheet */
+.sheet-bg { position: fixed; inset: 0; background: rgba(10,22,40,.5); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
+.sheet { background: var(--paper); width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; border-radius: 26px 26px 0 0; padding: 20px 18px 28px; animation: up .22s ease-out; }
+@media (min-width: 700px) { .sheet-bg { align-items: center; } .sheet { border-radius: 26px; } }
+@keyframes up { from { transform: translateY(30px); opacity: .4; } to { transform: none; opacity: 1; } }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.sheet-head h2 { font-size: 1.2rem; font-weight: 900; color: var(--navy-900); }
+.x { border: 0; background: #fff; border: 1px solid var(--line); width: 38px; height: 38px; border-radius: 12px; cursor: pointer; font-size: 1.1rem; }
+
+/* toast */
+.toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--navy-900); color: #fff; padding: 12px 18px; border-radius: 14px; font-size: .92rem; z-index: 90; box-shadow: 0 10px 30px rgba(0,0,0,.25); max-width: calc(100% - 32px); text-align: center; }
+
+/* admin */
+.adm-tabs { display: flex; gap: 8px; margin: 18px 0 14px; flex-wrap: wrap; }
+.adm-sum { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.adm-lead { border: 1px solid var(--line); border-radius: 16px; background: #fff; padding: 14px; margin-bottom: 10px; }
+.adm-lead .who { font-size: .8rem; color: var(--muted); }
+.adm-edit { display: grid; grid-template-columns: 1.3fr 1fr 1fr auto; gap: 8px; margin-top: 10px; align-items: end; }
+.adm-edit select, .adm-edit input { width: 100%; border: 1.5px solid var(--line); border-radius: 11px; padding: 9px 10px; background: #fff; font-size: .9rem; }
+.adm-edit label { font-size: .72rem; color: var(--muted); font-weight: 700; display: block; margin-bottom: 3px; }
+table.members { width: 100%; border-collapse: collapse; font-size: .88rem; }
+table.members th, table.members td { text-align: start; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.members th { font-size: .75rem; color: var(--muted); }
+.scroll-x { overflow-x: auto; }
+.search { width: 100%; border: 1.5px solid var(--line); border-radius: 13px; padding: 11px 14px; background: #fff; margin-bottom: 12px; font-size: .95rem; }
+
+.task { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px dashed var(--line); }
+.task:first-of-type { border-top: 0; }
+.task b { font-size: .92rem; color: var(--navy-900); display: block; }
+.task small { color: var(--muted); font-size: .76rem; }
+.bar { height: 8px; border-radius: 8px; background: #eeebe5; overflow: hidden; margin: 10px 0 4px; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--teal-500), var(--gold-500)); border-radius: 8px; }
+.bonus-rule { font-size: .8rem; background: #fff; border: 1px dashed var(--rose-300); border-radius: 10px; padding: 7px 10px; margin: 8px 0; color: #5b4442; line-height: 1.7; }
+.task-terms { margin: 4px 0 10px; font-size: .8rem; }
+.task-terms > b { color: var(--navy-900); }
+.task-terms:not(.open) li.more { display: none; }
+.more-btn { background: none; border: 0; padding: 2px 0; font: inherit; font-weight: 700; color: var(--teal-600); cursor: pointer; }
+.tt-title { display: flex; align-items: center; gap: 8px; }
+.tt-ic { width: 1em; height: 1em; vertical-align: -0.12em; fill: #111; filter: drop-shadow(-1px -1px 0 #25F4EE) drop-shadow(1px 1px 0 #FE2C55); flex: none; }
+.tt-title .tt-ic { width: 1.05em; height: 1.05em; }
+.task-terms ul { margin: 6px 0 0; padding-inline-start: 18px; line-height: 1.8; color: #5b4442; }
+.proof-img { display: block; max-width: 100%; max-height: 70vh; margin: 0 auto; border-radius: 12px; border: 1px solid var(--line); }
+.task-box { background: linear-gradient(150deg, var(--rose-100), #fff 70%); border-color: var(--rose-300); }
+.cmt { background: #faf7f2; border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; font-size: .84rem; margin-top: 6px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.cmt.rej { background: var(--bad-bg); text-decoration: line-through; color: var(--bad); }
+.qbox { margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: #fcfbf8; font-size: .88rem; line-height: 1.8; }
+.qbox.sent { background: var(--gold-100); border-color: var(--gold-200); }
+.qbox.accepted { background: var(--ok-bg); border-color: #bfe3cf; }
+.qbox.declined { background: #f5f3f1; }
+.qbox .btn-row { margin-top: 8px; }
+.qrow { display: grid; grid-template-columns: 1fr 70px 100px 34px; gap: 6px; margin-bottom: 6px; }
+.qrow input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 8px; background: #fff; font-size: .9rem; }
+.alerts { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.alerts button { border: 0; cursor: pointer; }
+/* the quote page — our layout, RAFD navy/teal/gold */
+.qitem { border: 1px dashed var(--line); border-radius: 12px; padding: 8px; margin-bottom: 8px; background: #fff; }
+.qitem .qrow { margin-bottom: 6px; }
+.qrow2 { display: grid; grid-template-columns: 1fr 90px; gap: 6px; }
+.qrow2 input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; font-size: .84rem; background: #fcfbf8; }
+.qdoc { position: relative; overflow: hidden; max-width: 820px; margin: 24px auto 40px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 30px 30px 20px; box-shadow: var(--shadow); color: #1c2533; }
+.qdoc::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--gold-500), var(--teal-600), var(--navy-900)); }
+.qd-wm { position: absolute; width: 70%; left: 15%; top: 32%; opacity: .045; pointer-events: none; mix-blend-mode: multiply; }
+.qd-top, .qd-mid, .qd-info, table.qd, .qd-sum, .qd-sec, #qdState, .qd-actions, .qd-foot { position: relative; }
+.qd-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; }
+.qd-co { display: flex; flex-direction: column; font-size: .84rem; color: var(--muted); line-height: 1.8; }
+.qd-co b { font-size: 1rem; color: var(--navy-900); font-weight: 900; }
+.qd-logo { position: relative; display: block; width: 118px; height: 84px; overflow: hidden; flex: none; }
+.qd-logo img { position: absolute; height: 174px; left: -103px; top: -45px; mix-blend-mode: multiply; }
+.qd-mid { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 14px; }
+.qd-client { display: flex; flex-direction: column; font-size: .88rem; line-height: 1.75; }
+.qd-client small, .qd-no small, .qd-info small { color: var(--muted); font-size: .74rem; font-weight: 700; }
+.qd-client b { font-size: 1.05rem; color: var(--navy-900); }
+.qd-no { text-align: end; }
+.qd-no b { display: block; font-size: 1.9rem; font-weight: 900; color: var(--teal-600); letter-spacing: .02em; }
+.qd-info { display: grid; grid-template-columns: repeat(4, 1fr); border: 1.5px solid var(--navy-900); border-radius: 14px; overflow: hidden; margin-bottom: 16px; background: #fbfaf7; }
+.qd-info > div { padding: 10px 12px; border-inline-start: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+.qd-info > div:first-child { border-inline-start: 0; }
+.qd-info b { font-size: .9rem; color: var(--navy-900); }
+table.qd { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .9rem; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+table.qd th { background: var(--navy-900); color: #fff; font-weight: 700; padding: 10px; text-align: start; font-size: .82rem; }
+table.qd td { padding: 10px; border-top: 1px solid var(--line); }
+table.qd td.n, table.qd th.n { text-align: end; white-space: nowrap; }
+table.qd tr.has-n td { border-bottom: 0; }
+table.qd tr.it-n td { border-top: 0; padding-top: 0; color: var(--muted); font-size: .82rem; font-style: italic; }
+.qd-sum { margin: 14px 0 0; margin-inline-start: auto; width: min(340px, 100%); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: .92rem; }
+.qd-sum div { display: flex; justify-content: space-between; padding: 9px 12px; border-top: 1px solid var(--line); }
+.qd-sum div:first-child { border-top: 0; }
+.qd-sum .tot { background: linear-gradient(135deg, var(--navy-900), var(--teal-600)); color: #fff; font-weight: 900; font-size: 1.08rem; }
+.qd-sec { margin-top: 22px; font-size: .88rem; line-height: 1.95; }
+.qd-sec h3 { font-size: 1rem; font-weight: 900; color: var(--navy-900); margin-bottom: 4px; padding-bottom: 4px; border-bottom: 2px solid var(--gold-500); display: inline-block; }
+.qd-terms .lead-in { color: var(--muted); font-style: italic; }
+.qd-terms h4 { font-size: .9rem; font-weight: 800; color: var(--navy-900); margin-top: 12px; display: flex; align-items: center; gap: 8px; }
+.qd-terms .tn { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--navy-900); color: #fff; font-size: .72rem; flex: none; }
+.qd-terms ul { padding-inline-start: 20px; }
+.qd-terms li { margin: 2px 0; }
+.qd-sign { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+.qd-sign div { border-top: 1.5px dashed var(--navy-700); padding-top: 6px; margin-top: 34px; text-align: center; font-size: .78rem; color: var(--muted); }
+.qd-bank dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 14px; background: #fbfaf7; border-radius: 12px; padding: 10px 14px; margin-top: 6px; }
+.qd-bank dt { color: var(--muted); } .qd-bank dd { font-weight: 800; color: var(--navy-900); }
+#qdState { margin-top: 16px; }
+.qd-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+.qd-foot { margin-top: 22px; padding-top: 12px; border-top: 1px solid var(--line); text-align: center; font-size: .78rem; color: var(--muted); }
+.qd-foot i { font-style: normal; margin: 0 8px; color: var(--gold-500); }
+@page { size: A4; margin: 14mm 12mm 16mm; @bottom-center { content: "الصفحة " counter(page) " / " counter(pages); font-size: 9pt; color: #6a7382; } }
+@media print {
+  .top, .foot, .demo, .qd-actions, #qdState, #toast { display: none !important; }
+  body { background: #fff; }
+  .wrap { padding: 0; max-width: none; }
+  .qdoc { box-shadow: none; border: 0; margin: 0; max-width: none; padding: 8px 0 0; border-radius: 0; overflow: visible; }
+  .qd-wm { position: fixed; top: 30%; }
+  .qdoc, .qdoc * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table.qd tr, .qd-terms h4, .qd-sign, .qd-bank { break-inside: avoid; }
+  .qd-foot { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid #ddd; background: #fff; }
+}
+.lang-btn { border: 1.5px solid var(--line); background: #fff; border-radius: 10px; padding: 6px 10px; font-weight: 800; font-size: .8rem; cursor: pointer; color: var(--navy-800); font-family: inherit; }
+.cat { display: grid; grid-template-columns: auto 1fr 64px; gap: 10px; align-items: center; border: 1.5px solid var(--line); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; background: #fff; cursor: pointer; }
+.cat.on { border-color: var(--teal-500); background: var(--teal-100); }
+.cat input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--teal-600); }
+.cat b { display: block; font-size: .92rem; color: var(--navy-900); }
+.cat small { color: var(--muted); font-size: .78rem; line-height: 1.6; display: block; }
+.cat input.qty { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 6px; text-align: center; background: #fff; }
+.qrow3 { display: grid; grid-template-columns: 1fr 1fr 90px; gap: 6px; margin-top: 6px; }
+.qrow3 input { width: 100%; border: 1.5px dashed var(--line); border-radius: 10px; padding: 8px; font-size: .82rem; direction: ltr; background: #f7fafb; }
+#ef:not(.en) .qrow3 { display: none; }
+.catrow { border: 1px solid var(--line); border-radius: 14px; padding: 10px; margin-bottom: 10px; background: #fff; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.catrow input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; font-size: .85rem; }
+.catrow input.en { direction: ltr; }
+.tabs2 { display: flex; gap: 6px; margin-bottom: 10px; }
+.agr { max-height: 300px; overflow-y: auto; border: 1.5px solid var(--line); border-radius: 14px; padding: 14px 16px; background: #fff; font-size: .86rem; line-height: 1.9; margin-bottom: 10px; }
+.agr h4 { font-size: .9rem; font-weight: 800; color: var(--navy-900); margin: 10px 0 2px; display: flex; gap: 8px; align-items: center; }
+.agr h4:first-child { margin-top: 0; }
+.agr .tn { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--navy-900); color: #fff; font-size: .68rem; flex: none; }
+.agr ul { padding-inline-start: 18px; }
+.agr-full { max-height: none; }
+.agr-title { font-weight: 900; color: var(--navy-900); font-size: 1rem; margin-bottom: 8px; }
+.agr-meta { font-size: .82rem; color: var(--muted); margin-bottom: 10px; line-height: 1.8; }
+.agr-card { background: linear-gradient(150deg, var(--teal-100), #fff 70%); border-color: #bfdfe2; }
+.agr-card .big { font-size: 1.6rem; font-weight: 900; color: var(--navy-900); }
+@media print {
+  body.print-sheet > *:not(.sheet-bg) { display: none !important; }
+  body.print-sheet .sheet-bg { position: static; background: none; display: block; }
+  body.print-sheet .sheet { max-height: none; overflow: visible; box-shadow: none; border-radius: 0; max-width: none; }
+  body.print-sheet .x, body.print-sheet .no-print { display: none !important; }
+}
+.consent { font-size: .8rem; color: var(--muted); line-height: 1.8; margin-top: 10px; text-align: center; }
+footer.foot { text-align: center; color: var(--muted); font-size: .8rem; padding: 26px 16px 34px; }
+
+@media (max-width: 820px) {
+  .grid-dash { grid-template-columns: 1fr; }
+  .side { order: -1; }
+}
+@media (max-width: 600px) {
+  .stats, .adm-sum { grid-template-columns: repeat(2, 1fr); }
+  .adm-edit { grid-template-columns: 1fr 1fr; }
+  .brand b { font-size: .95rem; }
+  .row2 { grid-template-columns: 1fr; }
+  .qrow { grid-template-columns: 1fr 56px 84px 30px; }
+  .qdoc { padding: 22px 14px 16px; border-radius: 0; margin: 0 -16px; }
+  .qd-info { grid-template-columns: 1fr 1fr; }
+  .qd-info > div:nth-child(3) { border-inline-start: 0; }
+  .qd-info > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .qd-mid { flex-direction: column-reverse; align-items: stretch; }
+  .qd-no { text-align: start; }
+  table.qd { font-size: .78rem; }
+  table.qd th, table.qd td { padding: 8px 5px; }
+  .qd-sign { grid-template-columns: 1fr 1fr; }
+  .qd-logo { width: 88px; height: 63px; }
+  .qd-logo img { height: 130px; left: -77px; top: -33px; }
+}
+</style>
+</head>
+<body>
+
+<div id="demoBar" class="demo" hidden></div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#/"><span class="logo-crop"><img src="/rafd-logo.png" alt="رفد"></span><b id="brandName">سفراء <span>رفد</span></b></a>
+    <div class="top-actions" id="topActions"></div>
+  </div>
+</header>
+
+<main id="app"></main>
+<footer class="foot" id="footText">© رفد الرقمية · سفراء رفد</footer>
+
+<script>
+'use strict';
+/* ============================================================
+   سفراء رفد / RAFD Ambassadors — ambassador portal.
+   Both constants empty → وضع تجريبي (localStorage), the repo's usual
+   degrade-instead-of-error convention. Fill them with the RAFD project's
+   URL and anon key once supabase-team.sql has been run.
+   ============================================================ */
+const SUPABASE_URL      = 'https://ycnnawohrbbluawxzttt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inljbm5hd29ocmJibHVhd3h6dHR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NTYyNzgsImV4cCI6MjA5NzUzMjI3OH0.Qtg6yZaZQlzbP3In7olUx0No6lKBWLOryBEVvZkwiBE';
+const REMOTE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+/* The monthly TikTok task and its bonus (and the invite code that feeds it) are paused for now.
+   Flip to true and the task card, the invite card, the admin tab and the sign-up fields all return;
+   nothing in the database was removed. */
+const TIKTOK_TASK = false;
+
+/* Printed on every quote. Fill the registration numbers in once they are final —
+   an empty one is simply left off the page rather than printed blank. */
+const COMPANY = {
+  name: 'رفد الرقمية', name_en: 'RAFD Digital',
+  address: [],                 // e.g. ['٧٨٥٢ طريق …، حي …', 'الرياض ١٢٣٤٥']
+  address_en: [],              // e.g. ['7852 … Rd, … District', 'Riyadh 12345']
+  cr: '', vat: '', phone: '', email: '',
+  bank: { name: '', name_en: '', beneficiary: '', beneficiary_en: '', iban: '', account: '' }   // empty iban → no «طريقة السداد»
+};
+/* The demo's copies of the live defaults seeded by supabase-team.sql
+   (team_config.quote_terms / quote_terms_en / catalog) — keep them in step.
+   Terms: "## " starts a numbered section, "- " a bullet. */
+const DEFAULT_TERMS = "## بدء الخدمة وتجديدها\n- تُحتسب مدة الاشتراك من تاريخ أول تشغيل فعلي للنظام وإبلاغ العميل بذلك، ولا تدخل فترة التركيب والتهيئة ضمن مدة الاشتراك.\n- يتجدد الاشتراك تلقائياً لمدة مساوية، إلا إذا أبلغ أحد الطرفين الطرف الآخر كتابياً بعدم رغبته في التجديد قبل (30) يوماً على الأقل من انتهاء المدة الجارية.\n## التزامات رفد\n- تشغيل الخدمة وربطها تقنياً بكاميرات العميل وأجهزة التسجيل (NVR) وأنظمة التذاكر المعتمدة، مع التدريب والدعم الفني دون مقابل إضافي طوال مدة الاشتراك.\n- الالتزام بنظام حماية البيانات الشخصية في المملكة العربية السعودية، بحيث تُعالج البيانات لحظياً وبشكل مشفّر، ولا تُحفظ أي بيانات شخصية أو صور للأفراد على الأجهزة الطرفية.\n- حذف جميع بيانات العميل خلال (5) أيام عمل من انتهاء الاشتراك أو إلغائه، وتزويد العميل بما يثبت ذلك كتابياً.\n## التزامات العميل\n- تسهيل وصول فريق رفد إلى المواقع والأنظمة اللازمة لإكمال أعمال الربط والتركيب.\n- يُقرّ العميل بأن أجهزة الحوسبة الطرفية المركّبة في مواقعه مملوكة لرفد، ويتعهد بالمحافظة عليها كما يحافظ على ممتلكاته.\n## إنهاء الاشتراك\n- إذا أخلّ أحد الطرفين بأي من التزاماته يُبلَّغ كتابياً ويُمنح (5) أيام لتصحيح الإخلال، فإن لم يُصحَّح جاز للطرف الآخر إنهاء الاشتراك فوراً.\n- لكل طرف إنهاء الاشتراك بإشعار كتابي قبل (30) يوماً من التاريخ المحدد للإنهاء، ويسدد العميل قيمة الخدمة المقدَّمة حتى ذلك التاريخ، ويعيد أجهزة الحوسبة الطرفية المملوكة لرفد دون تأخير.\n## أحكام عامة\n- لا يُسأل أي طرف عن التأخير الناتج عن قوة قاهرة أو ظروف خارجة عن إرادته، كالقرارات الحكومية والأوبئة، بشرط ألا يتجاوز ذلك (30) يوماً من تاريخ إبلاغ الطرف الآخر.\n- تسري على هذا العرض وما ينتج عنه أنظمة المملكة العربية السعودية، وتكون محاكم مدينة الرياض وحدها المختصة بالنظر في أي خلاف.";
+const DEFAULT_TERMS_EN = "## Service start and renewal\n- The subscription term starts on the date the system is first put into actual operation and the client is notified; the installation and setup period is not counted as part of the term.\n- The subscription renews automatically for an equal term unless either party notifies the other in writing, at least (30) days before the current term ends, that it does not wish to renew.\n## RAFD's obligations\n- To operate the service and integrate it technically with the client's cameras, recording devices (NVR) and approved ticketing systems, including training and technical support at no extra charge throughout the subscription.\n- To comply with the Personal Data Protection Law of the Kingdom of Saudi Arabia, processing data in real time and in encrypted form, with no personal data or images of individuals stored on edge devices.\n- To delete all client data within (5) working days of the subscription ending or being cancelled, and to confirm this to the client in writing.\n## Client's obligations\n- To give RAFD's team access to the sites and systems needed to complete the integration and installation work.\n- The client acknowledges that the edge computing devices installed at its sites are owned by RAFD and undertakes to look after them as it would its own property.\n## Termination\n- If either party breaches any of its obligations, it shall be notified in writing and given (5) days to remedy the breach; if the breach is not remedied, the other party may terminate the subscription immediately.\n- Either party may terminate the subscription by written notice at least (30) days before the intended termination date. The client shall pay for the service provided up to that date and return RAFD's edge computing devices without delay.\n## General provisions\n- Neither party is liable for delay caused by force majeure or circumstances beyond its control, such as government decisions or epidemics, provided this does not exceed (30) days from notifying the other party.\n- This quotation and anything arising from it are governed by the laws of the Kingdom of Saudi Arabia, and the courts of Riyadh shall have exclusive jurisdiction over any dispute.";
+const DEFAULT_CATALOG = [{"id": "basic", "ar": "الباقة الأساسية", "en": "Basic Package", "desc_ar": "اشتراك في منصة رفد بالمزايا الأساسية لفرع واحد", "desc_en": "RAFD platform subscription with core features for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "pro", "ar": "الباقة الاحترافية (برو)", "en": "Pro Package", "desc_ar": "اشتراك في منصة رفد بكامل المزايا والتقارير المتقدمة لفرع واحد", "desc_en": "RAFD platform subscription with all features and advanced reports for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "face", "ar": "التعرف على الوجه (بصمة الوجه)", "en": "Face Recognition Attendance", "desc_ar": "تسجيل الحضور والانصراف بالتعرف على الوجه", "desc_en": "Check-in and check-out by face recognition", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "face_cam", "ar": "كاميرا التعرف على الوجه", "en": "Face Recognition Camera", "desc_ar": "كاميرا مخصصة للتعرف على الوجه شاملة التركيب", "desc_en": "Dedicated face recognition camera, installation included", "unit_ar": "كاميرا", "unit_en": "camera", "price": null}, {"id": "activation", "ar": "رسوم التفعيل", "en": "Activation Fee", "desc_ar": "تهيئة الخدمة وربطها لفرع واحد", "desc_en": "Service setup and integration for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}];
+const DEFAULT_AGREEMENT = "## أطراف الاتفاقية\n- الطرف الأول: شركة رفد الرقمية، ويُشار إليها بـ«رفد».\n- الطرف الثاني: {name}، جوال رقم {phone}، ويُشار إليه بـ«ممثل المبيعات».\n## طبيعة العلاقة\n- يعمل ممثل المبيعات مع رفد بصفة مستقلة وبنظام العمولة، ولا تُنشئ هذه الاتفاقية علاقة عمل بين الطرفين ولا تُعد عقد عمل، ولا يترتب عليها أجر ثابت أو بدلات أو أي من حقوق العامل المقررة نظاماً.\n- لرفد أن تعرض على ممثل المبيعات الذي يُثبت كفاءته عقداً مستقلاً براتب وعمولة، ويخضع ذلك العقد لشروطه الخاصة.\n## العمولة\n- تلتزم رفد بأن تدفع لممثل المبيعات عمولة نسبتها ({rate}%) من قيمة العقد الأول المبرم مع كل عميل يُنسب إليه وفق هذه الاتفاقية.\n- تُحتسب العمولة على المبالغ المحصّلة فعلياً من العميل، غير شاملة ضريبة القيمة المضافة.\n- تُستحق العمولة بعد توقيع العميل العقد وتحصيل قيمته، وتُحوَّل خلال ({days}) يوماً من تاريخ التحصيل إلى الحساب البنكي المسجّل باسم ممثل المبيعات في المنصة.\n- تبقى النسبة الواردة في هذه الاتفاقية سارية على ممثل المبيعات، ولا يسري عليه أي تعديل لاحق عليها إلا بموافقته.\n## نسبة العميل إلى ممثل المبيعات\n- يُنسب العميل إلى أول ممثل مبيعات يسجّله في المنصة، وتبقى الأولوية له مدة ({priority}) يوماً من تاريخ التسجيل.\n- يُعد تسجيل المنصة، بتاريخه ووقته المحفوظين آلياً، المرجع المعتمد بين الطرفين عند أي اختلاف.\n## التزامات ممثل المبيعات\n- تقديم معلومات صحيحة عن نفسه وعن العملاء الذين يسجّلهم.\n- عدم تقديم أي أسعار أو خصومات أو التزامات باسم رفد خارج عروض الأسعار الصادرة منها رسمياً.\n- المحافظة على سرية بيانات العملاء والأسعار، وعدم استخدامها لغير أغراض هذه الاتفاقية.\n## إنهاء المشاركة\n- لأي من الطرفين إنهاء المشاركة في أي وقت بإشعار عبر المنصة أو كتابياً.\n- يحتفظ ممثل المبيعات بعد الإنهاء بحقه في عمولة العملاء المنسوبين إليه قبل الإنهاء، متى تعاقدوا خلال مدة الأولوية.\n- لرفد إيقاف حساب ممثل المبيعات إذا أخلّ بأي من التزاماته، مع حفظ حقه في العمولات المستحقة عن الفترة السابقة للإخلال.\n## أحكام عامة\n- تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.\n- تُعد موافقة ممثل المبيعات الإلكترونية على هذه الاتفاقية عند التسجيل إقراراً ملزماً للطرفين، وتحفظ المنصة نسخة منها في حساب ممثل المبيعات بتاريخ الموافقة ونسبة العمولة المتفق عليها.";
+const DEFAULT_AGREEMENT_EN = "## Parties\n- First party: RAFD Digital (\"RAFD\").\n- Second party: {name}, mobile number {phone} (the \"Representative\").\n## Nature of the relationship\n- The Representative works with RAFD independently and on a commission basis. This agreement does not create an employment relationship between the parties, is not an employment contract, and gives rise to no fixed salary, allowances or any statutory employee entitlements.\n- RAFD may offer a Representative who proves their ability a separate contract with a salary and commission, which will be governed by its own terms.\n## Commission\n- RAFD undertakes to pay the Representative a commission of ({rate}%) of the value of the first contract concluded with each client attributed to them under this agreement.\n- Commission is calculated on amounts actually collected from the client, excluding VAT.\n- Commission becomes due once the client has signed the contract and its value has been collected, and is transferred within ({days}) days of collection to the bank account registered in the Representative's name on the platform.\n- The rate stated in this agreement continues to apply to the Representative, and no later change to it applies to them without their consent.\n## Attribution of clients\n- A client is attributed to the first Representative who registers them on the platform, and that priority is kept for ({priority}) days from the date of registration.\n- The platform's record, with its automatically stored date and time, is the agreed reference between the parties in the event of any dispute.\n## Representative's obligations\n- To provide accurate information about themselves and about the clients they register.\n- Not to offer any prices, discounts or commitments on RAFD's behalf outside the quotations RAFD issues officially.\n- To keep client data and prices confidential and not use them for any purpose other than this agreement.\n## Ending participation\n- Either party may end participation at any time by notice through the platform or in writing.\n- After participation ends, the Representative keeps the right to commission on clients attributed to them before it ended, provided they contract within the priority period.\n- RAFD may suspend the Representative's account for breach of any of their obligations, without prejudice to commission already earned for the period before the breach.\n## General provisions\n- This agreement is governed by the laws of the Kingdom of Saudi Arabia.\n- The Representative's electronic acceptance of this agreement at registration is a binding acknowledgement by both parties, and the platform keeps a copy of it in the Representative's account with the date of acceptance and the agreed commission rate.";
+const PRIORITY_DAYS = 180;
+const VAT_RATE = 0.15;
+const QUOTE_DAYS = 14;
+
+const TOKEN_KEY = 'rafd_team_token';
+const ADMIN_KEY = 'rafd_team_admin';
+const DEMO_KEY  = 'rafd_team_demo';
+const LANG_KEY  = 'rafd_lang';            // shared with i18n.js, so the choice follows the visitor across the site
+
+/* ---------- language ----------
+   This page is self-contained (like mazad.html) and does not load i18n.js;
+   every visible string is written as L(arabic, english) right where it is used,
+   so the two can never drift into different files. Arabic is the default. */
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
+let LANG = store(LANG_KEY) === 'en' ? 'en' : 'ar';
+const L = (ar, en) => (LANG === 'en' ? en : ar);
+const EN = () => LANG === 'en';
+
+const PLAN = () => ({ once: L('دفعة واحدة', 'One-time'), monthly: L('شهري', 'Monthly'), yearly: L('سنوي', 'Annual') });
+const STATUS = () => ({
+  new:         L('جديد', 'New'),
+  contacted:   L('تم التواصل', 'Contacted'),
+  negotiating: L('قيد التفاوض', 'Negotiating'),
+  won:         L('تم التعاقد ✓', 'Contract signed ✓'),
+  lost:        L('لم يتم', 'Lost'),
+  duplicate:   L('مسجّل مسبقاً', 'Already registered')
+});
+const STEP_OF = { new: 1, contacted: 2, negotiating: 3, won: 4 };
+/* The three services RAFD sells. The value stored on a lead is always the Arabic name, so the operator reads one spelling whatever language the member used; svcLabel() shows it in the viewer's language. Older leads keep whatever text they were saved with. */
+const SERVICE_LIST = [['سند AI (الكاميرات)', 'Sanad AI (cameras)'], ['التسويق الرقمي', 'Digital marketing'], ['الأتمتة والوكيل الذكي', 'Automation & AI agent']];
+/* Names a lead may have been saved under before the programmes were renamed. */
+const SERVICE_OLD = { 'خدمة RAFD Sense (الكاميرات)': 'سند AI (الكاميرات)', 'التسويق عبر السوشل ميديا': 'التسويق الرقمي' };
+const SERVICES = () => SERVICE_LIST.map(([ar, en]) => ({ v: ar, t: L(ar, en) }));
+const svcLabel = v => { const k = SERVICE_OLD[v] || v; const x = SERVICE_LIST.find(([ar]) => ar === k); return x ? L(x[0], x[1]) : v; };
+const SAR = () => L('ر.س', 'SAR');
+
+const ERRS = {
+  phone: ['يجب أن يكون رقم الجوال بصيغة 05XXXXXXXX', 'Mobile number must be in the format 05XXXXXXXX'],
+  password: ['كلمة المرور 6 أحرف على الأقل', 'Password must be at least 6 characters'],
+  name: ['يُرجى إدخال الاسم كاملاً', 'Please enter the full name'],
+  terms: ['يجب الموافقة على الشروط والأحكام', 'You must accept the terms and conditions'],
+  exists: ['هذا الرقم مسجّل مسبقاً، يُرجى تسجيل الدخول', 'This number is already registered — please sign in'],
+  bad: ['الجوال أو كلمة المرور غير صحيحة', 'Wrong mobile number or password'],
+  suspended: ['الحساب موقوف، يُرجى التواصل مع الإدارة', 'This account is suspended — please contact the team'],
+  too_many: ['محاولات كثيرة، يُرجى الانتظار قليلاً ثم المحاولة مجدداً', 'Too many attempts — please wait a moment and try again'],
+  iban: ['رقم الآيبان غير صحيح، يُرجى التحقق منه (SA ثم 22 رقماً)', 'Invalid IBAN — please check it (SA + 22 digits)'],
+  mine: ['هذا العميل مسجّل باسمك مسبقاً', 'You have already registered this client'],
+  code: ['الرابط غير صالح', 'This link is not valid'],
+  comment: ['يُرجى لصق نص تعليقك للتحقق منه', 'Paste the text of your comment so we can verify it'],
+  comment_weak: ['التعليق يجب أن يكون جملة عن محتوى المقطع (ثلاث كلمات على الأقل)، ولا يُقبل التعليق العشوائي أو المكوّن من رموز فقط', 'The comment must be a sentence about the video (at least three words) — random comments or emoji alone are not accepted'],
+  comment_reused: ['استخدمت هذا التعليق على مقطع آخر، يُرجى كتابة تعليق خاص بهذا المقطع', 'You used this comment on another video — write one about this video'],
+  comment_copied: ['هذا التعليق مطابق لتعليق عضو آخر على المقطع نفسه، يُرجى كتابة تعليقك الخاص', 'This matches a teammate’s comment on the same video — write your own'],
+  proof: ['يُرجى إرفاق صورة الشاشة', 'Please attach the screenshot'],
+  proof_bad: ['تعذّر قراءة الصورة، يُرجى اختيار صورة أخرى', 'Could not read that image — please pick another'],
+  tiktok: ['يُرجى إدخال اسم حسابك في تيك توك بصيغة ‎@username', 'Enter your TikTok account as @username'],
+  tiktok_taken: ['حساب تيك توك هذا مسجّل باسم عضو آخر', 'This TikTok account is already registered to another member'],
+  invite_code: ['رمز الدعوة غير صحيح، تحقّق منه أو اترك الحقل فارغاً', 'Invalid invite code — check it or leave the field empty'],
+  join_closed: ['التسجيل في البرنامج مغلق حالياً', 'Sign-ups are closed at the moment'],
+  join_cap: ['أدخل عدداً صحيحاً (0 = بلا حد)', 'Enter a whole number (0 = no limit)'],
+  not_due: ['لم يُكمل العضو مهمة هذا الشهر', 'This member has not completed this month'],
+  bonus_bad: ['راجع المبالغ، والحد الأقصى لا يقل عن المكافأة الثابتة', 'Check the amounts — the cap cannot be below the fixed bonus'],
+  closed: ['أُغلق هذا الشهر', 'This month is closed'],
+  rejected: ['رُفض هذا المقطع لعدم العثور على تعليقك، يُرجى مراجعة الإدارة', 'Rejected — we could not find your comment. Please contact the team'],
+  already: ['صُرفت هذه المكافأة مسبقاً', 'This bonus has already been paid'],
+  url: ['يجب أن يبدأ الرابط بـ https://', 'The link must start with https://'],
+  details: ['اختر باقة أو اكتب تفاصيل الطلب', 'Pick a package or describe the request'],
+  lead_closed: ['هذا العميل مغلق ولا يحتاج إلى عرض سعر', 'This client is closed — no quote needed'],
+  accepted: ['وافق العميل على العرض مسبقاً', 'The client has already accepted this quote'],
+  not_sent: ['لم يُرسل العرض بعد', 'The quote has not been sent yet'],
+  not_open: ['العرض منتهٍ أو تم الرد عليه', 'This quote has expired or already been answered'],
+  client_cr: ['يجب أن يتكون السجل التجاري للعميل من 10 أرقام', "The client's commercial registration (CR) number must be 10 digits"],
+  client_vat: ['يجب أن يتكون الرقم الضريبي للعميل من 15 رقماً', "The client's VAT number must be 15 digits"],
+  items: ['راجع بنود العرض، فكل بند يتطلب وصفاً وكمية وسعراً', 'Check the quote lines — each needs a description, quantity and price'],
+  catalog: ['راجع الباقات، فكل باقة تتطلب اسماً عربياً وسعراً غير سالب', 'Check the packages — each needs an Arabic name and a non-negative price'],
+  rate: ['راجع النسبة أو المدة', 'Check the rate or the number of days'],
+  terms_short: ['الشروط قصيرة جداً', 'The terms are too short'],
+  auth: ['انتهت الجلسة، يُرجى تسجيل الدخول مجدداً', 'Your session has ended — please sign in again'],
+  network: ['تعذّر الاتصال، يُرجى التحقق من الإنترنت والمحاولة مجدداً', 'Could not connect — check your internet and try again']
+};
+const err = k => { const e = ERRS[k] || ERRS.network; return L(e[0], e[1]); };
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const toLatin = s => String(s || '').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+function normPhone(s) {
+  let p = toLatin(s).replace(/[^\d+]/g, '');
+  if (p.startsWith('+966')) p = '0' + p.slice(4);
+  else if (p.startsWith('00966')) p = '0' + p.slice(5);
+  else if (p.startsWith('966')) p = '0' + p.slice(3);
+  else if (p.startsWith('5') && p.length === 9) p = '0' + p;
+  return p;
+}
+const phoneOk = p => /^05\d{8}$/.test(p);
+const money = n => n == null || n === '' ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
+const sar = n => n == null || n === '' ? '—' : Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const LOCALE = () => L('ar-SA-u-ca-gregory-nu-latn', 'en-GB');
+const fmtDate = d => d ? new Date(d.length === 10 ? d + 'T12:00:00Z' : d).toLocaleDateString(LOCALE(), { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+const fmtDateTime = d => d ? new Date(d).toLocaleString(LOCALE(), { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+const wa = p => 'https://wa.me/966' + String(p).slice(1);
+
+/* A calendar month in Riyadh time, as the first day: '2026-09-01' — the same key team_month_of() returns. */
+const monthOf = t => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Riyadh', year: 'numeric', month: '2-digit' }).format(new Date(t)) + '-01';
+const prevMonth = m => { const [y, mo] = m.split('-').map(Number); return mo === 1 ? `${y - 1}-12-01` : `${y}-${String(mo - 1).padStart(2, '0')}-01`; };
+const monthName = m => new Date(m + 'T12:00:00Z').toLocaleDateString(LOCALE(), { month: 'long', year: 'numeric' });
+const todayRiyadh = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Riyadh' }).format(new Date());
+const addDays = n => { const t = new Date(todayRiyadh() + 'T12:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
+const quoteLink = id => location.origin + location.pathname + '#/q/' + id;
+const safeUrl = u => /^https:\/\//.test(u || '') ? u : '#';
+const fmtRate = r => r == null || r === '' ? '—' : String(+Number(r).toFixed(2));
+/* Fills an agreement's placeholders — the same rule as team_agreement_render() in SQL. */
+const renderAgreement = (t, v) => String(t || '')
+  .replaceAll('{rate}', fmtRate(v.rate)).replaceAll('{days}', String(v.days ?? '')).replaceAll('{priority}', String(PRIORITY_DAYS))
+  .replaceAll('{name}', v.name || '________').replaceAll('{phone}', v.phone || '________');
+/* A comment is a sentence, not a reaction — the same rule as team_comment_ok() in SQL. */
+const commentOk = c => String(c || '').replace(/[^A-Za-zء-ي]/g, '').length >= 8 && String(c || '').trim().split(/\s+/).filter(Boolean).length >= 3;
+const commentKey = c => String(c || '').toLowerCase().replace(/[^a-z0-9ء-ي٠-٩]/g, '');
+const normTiktok = s => '@' + String(s || '').trim().replace(/^@+/, '');
+const tiktokOk = s => /^@[A-Za-z0-9._]{2,24}$/.test(s);
+const tiktokUrl = s => 'https://www.tiktok.com/' + normTiktok(s);
+/* Screenshots are shrunk in the browser before upload: long side ≤ 1400px, JPEG. */
+function shrinkImage(file, max = 1400) {
+  return new Promise((ok, no) => {
+    if (!file || !/^image\//.test(file.type)) return no('proof_bad');
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      let out = c.toDataURL('image/jpeg', 0.6); if (out.length > 590000) out = c.toDataURL('image/jpeg', 0.35);
+      out.length > 590000 ? no('proof_bad') : ok(out);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); no('proof_bad'); };
+    img.src = url;
+  });
+}
+const catName = c => (EN() && c.en) ? c.en : c.ar;
+const catDesc = c => (EN() && c.desc_en) ? c.desc_en : (c.desc_ar || '');
+
+function ibanClean(s) { return toLatin(s).toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+function ibanOk(x) {
+  if (!/^SA\d{22}$/.test(x)) return false;
+  const s = x.slice(4) + '2810' + x.slice(2, 4);
+  let r = 0; for (const c of s) r = (r * 10 + +c) % 97;
+  return r === 1;
+}
+function ibanPretty(x) { return x.replace(/(.{4})/g, '$1 ').trim(); }
+
+let toastT;
+function toast(t) {
+  let el = $('#toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.appendChild(el); }
+  el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => el.hidden = true, 3200);
+}
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); toast(L('تم النسخ ✓', 'Copied ✓')); }
+  catch (e) { prompt(L('انسخ:', 'Copy:'), text); }
+}
+
+/* ---------- backend: Supabase RPC, or the demo mirror ---------- */
+async function rpc(fn, args) {
+  if (!REMOTE) return demo[fn](args);
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + fn, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(args)
+    });
+    const body = await res.json().catch(() => null);
+    if (!res.ok) {
+      if (body && /too_many/.test(body.message || '')) return { error: 'too_many' };
+      return { error: 'network', detail: body };
+    }
+    return body;
+  } catch (e) { return { error: 'network' }; }
+}
+
+/* The demo mirrors supabase-team.sql rule for rule, so what a person sees
+   in a demo is what the live site will do. */
+const demo = (() => {
+  const load = () => { try { return JSON.parse(store(DEMO_KEY)) || null; } catch (e) { return null; } };
+  const db = () => load() || { members: [], leads: [], sessions: {}, events: [] };
+  const save = d => store(DEMO_KEY, JSON.stringify(d));
+  const uid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+  const now = () => new Date().toISOString();
+  const me = (d, t) => { const id = d.sessions[t]; const m = d.members.find(x => x.id === id); return m && m.status !== 'suspended' ? m : null; };
+  const code = d => { let c; do { c = 'RF' + Math.random().toString(36).slice(2, 6).toUpperCase().replace(/[0O1I]/g, 'X'); } while (d.members.some(m => m.code === c)); return c; };
+  const catalog = d => d.catalog || DEFAULT_CATALOG;
+  const cfg = d => ({ bonus: d.bonus ?? 25, invite: d.inviteBonus ?? 5, cap: d.bonusCap ?? 150, open: d.joinOpen ?? true, joinCap: d.joinCap ?? 0 });
+  const joinOpen = d => { const c = cfg(d); return c.open && (!c.joinCap || d.members.filter(m => m.status !== 'suspended').length < c.joinCap); };
+  const hasProof = (d, post, mem) => !!(d.proofs || {})[post + '|' + mem];
+  const qualified = (d, mem, month) => { const ps = (d.posts || []).filter(p => monthOf(p.created_at) === month);
+    return ps.length > 0 && ps.every(p => (d.done || []).some(x => x.post_id === p.id && x.member_id === mem && !x.rejected) && hasProof(d, p.id, mem)); };
+  const bonusOf = (d, mem, month) => { const c = cfg(d); const q = qualified(d, mem, month);
+    const n = d.members.filter(m => m.invited_by === mem && m.status !== 'suspended' && qualified(d, m.id, month)).length;
+    return { qualified: q, invites_ok: n, amount: q ? Math.min(c.cap, c.bonus + c.invite * n) : 0 }; };
+  const agr = d => ({ rate: d.rate ?? 5, days: d.payDays ?? 15, text: d.agreement || DEFAULT_AGREEMENT, text_en: d.agreementEn || DEFAULT_AGREEMENT_EN });
+  function insertLead(d, m, src, a) {
+    const cutoff = Date.now() - 180 * 864e5;
+    const owner = d.leads.filter(l => l.client_phone === a.p_phone && l.status !== 'duplicate' && Date.parse(l.created_at) > cutoff)
+                         .sort((x, y) => x.created_at.localeCompare(y.created_at))[0];
+    if (owner && owner.member_id === m.id) return { error: 'mine' };
+    const l = { id: uid(), member_id: m.id, client_name: a.p_name.trim(), company: (a.p_company || '').trim() || null,
+      client_phone: a.p_phone, city: (a.p_city || '').trim() || null, service: a.p_service || null, notes: (a.p_notes || '').trim() || null,
+      source: src, status: owner ? 'duplicate' : 'new', deal_value: null, commission: null, paid_at: null, paid_ref: null,
+      admin_note: null, created_at: now(), updated_at: now() };
+    d.leads.push(l); d.events.push({ lead_id: l.id, at: now(), actor: src === 'link' ? 'client' : 'member', action: 'created', detail: { status: l.status } });
+    return { ok: true, id: l.id, status: l.status };
+  }
+  const quoteOf = (d, id) => { const q = (d.quotes || []).find(x => x.lead_id === id); if (!q) return null; const { lead_id, ...r } = q; return r; };
+  const leadOut = (d, l) => { const { member_id, admin_note, ...rest } = l; return { ...rest, quote: quoteOf(d, l.id) }; };
+  const itemOk = i => /^[a-z0-9_]{1,30}$/.test(i.id || '') && +i.q > 0;
+  return {
+    team_register(a) {
+      const d = db();
+      if (!a.p_agree) return { error: 'terms' };
+      if (!joinOpen(d)) return { error: 'join_closed' };
+      if (!phoneOk(a.p_phone)) return { error: 'phone' };
+      if ((a.p_password || '').length < 6) return { error: 'password' };
+      if ((a.p_name || '').trim().length < 3) return { error: 'name' };
+      const tt = String(a.p_tiktok || '').trim() ? normTiktok(a.p_tiktok) : null; if (tt && !tiktokOk(tt)) return { error: 'tiktok' };
+      if (d.members.some(m => m.phone === a.p_phone)) return { error: 'exists' };
+      if (tt && d.members.some(m => m.tiktok && m.tiktok.replace(/^@/, '').toLowerCase() === tt.slice(1).toLowerCase())) return { error: 'tiktok_taken' };
+      let inv = null; const ic = String(a.p_invite || '').trim().toUpperCase();
+      if (ic) { const x = d.members.find(m => m.code === ic && m.status !== 'suspended'); if (!x) return { error: 'invite_code' }; inv = x.id; }
+      const v = { rate: agr(d).rate, days: agr(d).days, name: a.p_name.trim(), phone: a.p_phone };
+      const m = { id: uid(), code: code(d), full_name: a.p_name.trim(), phone: a.p_phone, city: a.p_city || null, tiktok: tt, invited_by: inv,
+        pass: a.p_password, status: 'trial', iban: null, iban_name: null, bank: null, iban_at: null, created_at: now(), terms_at: now(),
+        agreed_rate: v.rate, agreement_text: renderAgreement(agr(d).text, v), agreement_text_en: renderAgreement(agr(d).text_en, v) };
+      d.members.push(m); const t = uid(); d.sessions[t] = m.id; save(d); return { ok: true, token: t };
+    },
+    team_login(a) {
+      const d = db(); const m = d.members.find(x => x.phone === a.p_phone);
+      if (!m || m.pass !== a.p_password) return { error: 'bad' };
+      if (m.status === 'suspended') return { error: 'suspended' };
+      const t = uid(); d.sessions[t] = m.id; save(d); return { ok: true, token: t };
+    },
+    team_logout(a) { const d = db(); delete d.sessions[a.p_token]; save(d); return null; },
+    team_me(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      return { member: { name: m.full_name, phone: m.phone, city: m.city, tiktok: m.tiktok, code: m.code, status: m.status, created_at: m.created_at,
+          iban_masked: m.iban ? 'SA•• •••• •••• •••• ••' + m.iban.slice(-4) : null, iban_name: m.iban_name, bank: m.bank, iban_at: m.iban_at,
+          agreed_rate: m.agreed_rate ?? null, agreed_at: m.terms_at || m.created_at, agreement_text: m.agreement_text || null, agreement_text_en: m.agreement_text_en || null },
+        catalog: catalog(d).map(({ price, ...c }) => c),
+        leads: d.leads.filter(l => l.member_id === m.id).sort((x, y) => y.created_at.localeCompare(x.created_at)).map(l => leadOut(d, l)) };
+    },
+    team_add_lead(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      if (!phoneOk(a.p_phone)) return { error: 'phone' };
+      if ((a.p_name || '').trim().length < 2) return { error: 'name' };
+      const r = insertLead(d, m, 'manual', a); save(d); return r;
+    },
+    team_set_iban(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      const x = ibanClean(a.p_iban); if (!ibanOk(x)) return { error: 'iban' };
+      if ((a.p_name || '').trim().length < 3) return { error: 'name' };
+      Object.assign(m, { iban: x, iban_name: a.p_name.trim(), bank: (a.p_bank || '').trim() || null, iban_at: now() }); save(d); return { ok: true };
+    },
+    team_join_info(a) { const d = db(); const c = cfg(d); const ic = String((a && a.p_code) || '').trim().toUpperCase();
+      const x = ic && d.members.find(m => m.code === ic && m.status !== 'suspended');
+      return { open: joinOpen(d), bonus: c.bonus, invite_bonus: c.invite, cap: c.cap, inviter: x ? x.full_name.split(' ')[0] : null }; },
+    team_agreement() { const d = db(); const g = agr(d); const v = { rate: g.rate, days: g.days, name: '{name}', phone: '{phone}' };
+      return { rate: g.rate, days: g.days, text: renderAgreement(g.text, v), text_en: renderAgreement(g.text_en, v) }; },
+    team_ref_info(a) { const m = db().members.find(x => x.code === String(a.p_code).toUpperCase() && x.status !== 'suspended'); return m ? { first: m.full_name.split(' ')[0] } : { error: 'code' }; },
+    team_ref_submit(a) {
+      const d = db(); const m = d.members.find(x => x.code === String(a.p_code).toUpperCase() && x.status !== 'suspended');
+      if (!m) return { error: 'code' }; if (!phoneOk(a.p_phone)) return { error: 'phone' };
+      if ((a.p_name || '').trim().length < 2) return { error: 'name' };
+      insertLead(d, m, 'link', a); save(d); return { ok: true };
+    },
+    team_quote_request(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      const items = a.p_items;
+      if ((a.p_details || '').trim().length < 3 && !(Array.isArray(items) && items.length)) return { error: 'details' };
+      if (items != null && (!Array.isArray(items) || items.length > 20 || !items.every(itemOk))) return { error: 'items' };
+      const l = d.leads.find(x => x.id === a.p_lead && x.member_id === m.id); if (!l) return { error: 'not_found' };
+      if (['duplicate', 'lost', 'won'].includes(l.status)) return { error: 'lead_closed' };
+      d.quotes = d.quotes || []; let q = d.quotes.find(x => x.lead_id === l.id);
+      if (q && q.status === 'accepted') return { error: 'accepted' };
+      if (!q) { q = { id: uid(), no: (d.quotes.length ? Math.max(...d.quotes.map(x => x.no)) : 0) + 1, lead_id: l.id }; d.quotes.push(q); }
+      Object.assign(q, { details: (a.p_details || '').trim().slice(0, 1000) || '—', requested_items: items || null, status: 'requested', items: null, vat: true,
+        subtotal: null, total: null, valid_until: null, note: null, requested_at: now(), sent_at: null, decided_at: null, decided_by: null, decision_note: null });
+      save(d); return { ok: true };
+    },
+    team_quote_decide(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      const l = d.leads.find(x => x.id === a.p_lead && x.member_id === m.id);
+      const q = l && (d.quotes || []).find(x => x.lead_id === l.id && x.status === 'sent'); if (!q) return { error: 'not_sent' };
+      Object.assign(q, { status: a.p_accept ? 'accepted' : 'declined', decided_at: now(), decided_by: 'member', decision_note: (a.p_note || '').trim() || null });
+      save(d); return { ok: true };
+    },
+    team_quote_public(a) {
+      const d = db(); const q = (d.quotes || []).find(x => x.id === a.p_id && x.status !== 'requested'); if (!q) return { error: 'not_found' };
+      const l = d.leads.find(x => x.id === q.lead_id) || {}; const m = d.members.find(x => x.id === l.member_id) || {};
+      const { lead_id, details, requested_at, requested_items, decision_note, id, ...pub } = q;
+      return { ...pub, client_name: l.client_name, company: l.company, city: l.city, rep_name: m.full_name };
+    },
+    team_quote_client_accept(a) {
+      const d = db(); const q = (d.quotes || []).find(x => x.id === a.p_id && x.status === 'sent');
+      if (!q || (q.valid_until && q.valid_until < todayRiyadh())) return { error: 'not_open' };
+      Object.assign(q, { status: 'accepted', decided_at: now(), decided_by: 'client' }); save(d); return { ok: true };
+    },
+    team_tasks(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      const cur = monthOf(now()); const prev = prevMonth(cur); const c = cfg(d);
+      return { bonus: c.bonus, invite_bonus: c.invite, cap: c.cap, this_month: cur, due: bonusOf(d, m.id, cur),
+        posts: (d.posts || []).filter(p => monthOf(p.created_at) >= prev).sort((x, y) => y.created_at.localeCompare(x.created_at)).map(p => {
+          const k = (d.done || []).find(x => x.post_id === p.id && x.member_id === m.id);
+          return { ...p, month: monthOf(p.created_at), done: !!k, rejected: !!(k && k.rejected), comment: k ? k.comment : null, proof: hasProof(d, p.id, m.id) }; }),
+        invitees: d.members.filter(x => x.invited_by === m.id && x.status !== 'suspended').sort((x, y) => x.created_at.localeCompare(y.created_at)).map(x => ({
+          first: x.full_name.split(' ')[0], joined: x.created_at, qualified: qualified(d, x.id, cur),
+          done: (d.posts || []).filter(p => monthOf(p.created_at) === cur && (d.done || []).some(k => k.post_id === p.id && k.member_id === x.id && !k.rejected) && hasProof(d, p.id, x.id)).length })),
+        bonuses: (d.bonuses || []).filter(b => b.member_id === m.id).sort((x, y) => y.month.localeCompare(x.month)) };
+    },
+    team_task_done(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      const c = String(a.p_comment || '').trim().slice(0, 300);
+      if (!commentOk(c)) return { error: 'comment_weak' };
+      const p = (d.posts || []).find(x => x.id === a.p_post); if (!p) return { error: 'not_found' };
+      if (monthOf(p.created_at) < monthOf(now())) return { error: 'closed' };
+      d.done = d.done || []; d.proofs = d.proofs || {};
+      const k = d.done.find(x => x.post_id === p.id && x.member_id === m.id);
+      if (k && k.rejected) return { error: 'rejected' };
+      const key = commentKey(c);
+      if (d.done.some(x => x.member_id === m.id && x.post_id !== p.id && commentKey(x.comment) === key)) return { error: 'comment_reused' };
+      if (d.done.some(x => x.post_id === p.id && x.member_id !== m.id && commentKey(x.comment) === key)) return { error: 'comment_copied' };
+      if (!a.p_proof && !hasProof(d, p.id, m.id)) return { error: 'proof' };
+      if (a.p_proof && (!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(a.p_proof) || a.p_proof.length > 600000)) return { error: 'proof_bad' };
+      if (k) { k.comment = c; k.done_at = now(); } else d.done.push({ post_id: p.id, member_id: m.id, comment: c, done_at: now(), rejected: false });
+      if (a.p_proof) d.proofs[p.id + '|' + m.id] = a.p_proof;
+      try { save(d); } catch (e) { return { error: 'proof_bad' }; }
+      return { ok: true };
+    },
+    team_task_admin(a) {
+      const d = db(); if (a.p_secret !== 'demo') return { error: 'auth' };
+      const p = a.p || {}; const month = p.month || monthOf(now()); const c = cfg(d);
+      d.posts = d.posts || []; d.done = d.done || []; d.bonuses = d.bonuses || []; d.proofs = d.proofs || {};
+      if (a.p_action === 'list') {
+        const ids = d.posts.filter(x => monthOf(x.created_at) === month).map(x => x.id);
+        return { bonus: c.bonus, invite_bonus: c.invite, cap: c.cap, month, posts: d.posts.filter(x => ids.includes(x.id)).sort((x, y) => y.created_at.localeCompare(x.created_at)),
+          done: d.done.filter(x => ids.includes(x.post_id)).map(x => ({ ...x, proof: hasProof(d, x.post_id, x.member_id) })),
+          due: d.members.map(m => ({ member_id: m.id, ...bonusOf(d, m.id, month) })), paid: d.bonuses.filter(b => b.month === month) };
+      }
+      if (a.p_action === 'proof') return { img: d.proofs[p.post_id + '|' + p.member_id] || null };
+      if (a.p_action === 'post_add') { if (!/^https:\/\//.test(p.url || '')) return { error: 'url' }; d.posts.push({ id: uid(), url: p.url.trim(), title: (p.title || '').trim() || null, created_at: now() }); }
+      else if (a.p_action === 'post_del') { d.posts = d.posts.filter(x => x.id !== p.id); d.done = d.done.filter(x => x.post_id !== p.id);
+        for (const k in d.proofs) if (k.startsWith(p.id + '|')) delete d.proofs[k]; }
+      else if (a.p_action === 'reject') { const k = d.done.find(x => x.post_id === p.post_id && x.member_id === p.member_id); if (k) k.rejected = !p.undo; }
+      else if (a.p_action === 'set_bonus') { if (!(+p.amount >= 0) || !(+p.invite >= 0) || !(+p.cap >= +p.amount)) return { error: 'bonus_bad' };
+        d.bonus = +p.amount; d.inviteBonus = +p.invite; d.bonusCap = +p.cap; }
+      else if (a.p_action === 'pay') { const due = bonusOf(d, p.member_id, month); if (!due.qualified) return { error: 'not_due' };
+        if (d.bonuses.some(b => b.member_id === p.member_id && b.month === month)) return { error: 'already' };
+        d.bonuses.push({ member_id: p.member_id, month, amount: p.amount ?? due.amount, paid_at: now(), paid_ref: p.ref || null }); }
+      else if (a.p_action === 'unpay') d.bonuses = d.bonuses.filter(b => !(b.member_id === p.member_id && b.month === month));
+      else return { error: 'action' };
+      save(d); return { ok: true };
+    },
+    team_admin(a) {
+      const d = db(); if (a.p_secret !== 'demo') return { error: 'auth' };
+      const p = a.p || {};
+      if (a.p_action === 'list') return {
+        members: d.members.map(m => ({ id: m.id, code: m.code, name: m.full_name, phone: m.phone, city: m.city, tiktok: m.tiktok, status: m.status, iban: m.iban, iban_name: m.iban_name, bank: m.bank, created_at: m.created_at, agreed_rate: m.agreed_rate ?? null, agreed_at: m.terms_at || null, invited_by: m.invited_by || null })),
+        join: { open: cfg(d).open, cap: cfg(d).joinCap, accepting: joinOpen(d) },
+        leads: [...d.leads].sort((x, y) => y.created_at.localeCompare(x.created_at)).map(l => ({ ...l, quote: quoteOf(d, l.id) })) };
+      if (a.p_action === 'lead') {
+        const l = d.leads.find(x => x.id === p.id); if (!l) return { error: 'not_found' };
+        if (p.status) l.status = p.status;
+        if ('deal_value' in p) l.deal_value = p.deal_value === '' ? null : +p.deal_value;
+        if ('commission' in p) l.commission = p.commission === '' ? null : +p.commission;
+        if ('admin_note' in p) l.admin_note = p.admin_note || null;
+        l.updated_at = now(); d.events.push({ lead_id: l.id, at: now(), actor: 'admin', action: 'update', detail: p }); save(d); return { ok: true };
+      }
+      if (a.p_action === 'quote_terms') {
+        for (const [k, key] of [['terms', 'quoteTerms'], ['terms_en', 'quoteTermsEn']])
+          if (k in p) { if (String(p[k] || '').length < 10) return { error: 'terms_short' }; d[key] = p[k]; }
+        save(d); return { ok: true, terms: d.quoteTerms || DEFAULT_TERMS, terms_en: d.quoteTermsEn || DEFAULT_TERMS_EN };
+      }
+      if (a.p_action === 'agreement') {
+        if ('rate' in p) { if (!(+p.rate >= 0 && +p.rate <= 100)) return { error: 'rate' }; d.rate = +p.rate; }
+        if ('days' in p) { if (!(+p.days >= 1 && +p.days <= 120)) return { error: 'rate' }; d.payDays = +p.days; }
+        if ('text' in p) { if (String(p.text || '').length < 50) return { error: 'terms_short' }; d.agreement = p.text; }
+        if ('text_en' in p) { if (String(p.text_en || '').length < 50) return { error: 'terms_short' }; d.agreementEn = p.text_en; }
+        save(d); const g = agr(d); return { ok: true, rate: g.rate, days: g.days, text: g.text, text_en: g.text_en };
+      }
+      if (a.p_action === 'catalog') {
+        if ('catalog' in p) {
+          const c = p.catalog;
+          if (!Array.isArray(c) || c.length > 40 || c.some(x => !/^[a-z0-9_]{1,30}$/.test(x.id || '') || !String(x.ar || '').trim() || (x.price != null && +x.price < 0))) return { error: 'catalog' };
+          d.catalog = c; save(d);
+        }
+        return { ok: true, catalog: catalog(d) };
+      }
+      if (a.p_action === 'quote_send') {
+        const q = (d.quotes || []).find(x => x.lead_id === p.lead_id && x.status !== 'accepted'); if (!q) return { error: 'not_found' };
+        const items = Array.isArray(p.items) ? p.items : [];
+        if (!items.length || items.length > 40 || items.some(i => !String(i.d || '').trim() || !(+i.q > 0) || !(+i.p >= 0))) return { error: 'items' };
+        const cv = String(p.client_vat || '').replace(/\D/g, ''); if (cv && cv.length !== 15) return { error: 'client_vat' };
+        const cc = String(p.client_cr || '').replace(/\D/g, ''); if (cc && cc.length !== 10) return { error: 'client_cr' };
+        const sub = items.reduce((t, i) => t + i.q * i.p, 0); const vat = p.vat !== false;
+        const t = (v, n) => String(v || '').trim().slice(0, n) || null;
+        Object.assign(q, { plan: p.plan || null, client_address: t(p.client_address, 300), client_vat: cv || null, client_cr: cc || null, lang: p.lang === 'en' ? 'en' : 'ar',
+          terms: d.quoteTerms || DEFAULT_TERMS, terms_en: d.quoteTermsEn || DEFAULT_TERMS_EN,
+          items: items.map(i => ({ d: t(i.d, 200), q: +i.q, p: +i.p, n: t(i.n, 300), u: t(i.u, 20), d_en: t(i.d_en, 200), n_en: t(i.n_en, 300), u_en: t(i.u_en, 20) })),
+          vat, subtotal: +sub.toFixed(2), total: +(sub * (vat ? 1 + VAT_RATE : 1)).toFixed(2), valid_until: p.valid_until || null, note: t(p.note, 1000),
+          status: 'sent', sent_at: now(), decided_at: null, decided_by: null, decision_note: null });
+        save(d); return { ok: true };
+      }
+      if (a.p_action === 'paid') {
+        const l = d.leads.find(x => x.id === p.id && x.status === 'won'); if (!l) return { error: 'not_won' };
+        l.paid_at = p.undo ? null : now(); l.paid_ref = p.undo ? null : (p.ref || null); l.updated_at = now();
+        d.events.push({ lead_id: l.id, at: now(), actor: 'admin', action: 'paid', detail: p }); save(d); return { ok: true };
+      }
+      if (a.p_action === 'join') {
+        if ('cap' in p && !(Number.isInteger(+p.cap) && +p.cap >= 0 && +p.cap <= 100000)) return { error: 'join_cap' };
+        if ('open' in p) d.joinOpen = !!p.open; if ('cap' in p) d.joinCap = +p.cap; save(d); return { ok: true };
+      }
+      if (a.p_action === 'member') {
+        const m = d.members.find(x => x.id === p.id); if (m) m.status = p.status;
+        if (p.status === 'suspended') for (const t in d.sessions) if (d.sessions[t] === p.id) delete d.sessions[t];
+        save(d); return { ok: true };
+      }
+      if (a.p_action === 'events') return d.events.filter(e => e.lead_id === p.id);
+      return { error: 'action' };
+    }
+  };
+})();
+
+/* ---------- routing ---------- */
+const app = $('#app');
+let quoteLangSet = null;       // a quote opens in its own language once, until the visitor switches
+function route() {
+  const h = location.hash.replace(/^#\/?/, '');
+  const [name, arg] = h.split('/');
+  const token = store(TOKEN_KEY);
+  window.scrollTo(0, 0);
+  if (name !== 'q') { quoteLangSet = null; LANG = store(LANG_KEY) === 'en' ? 'en' : 'ar'; }
+  applyLang();
+  renderTop(name);
+  if (name === 'r' && arg) return viewRef(arg);
+  if (name === 'q' && arg) return viewQuote(arg);
+  if (name === 'admin') return viewAdmin();
+  if (name === 'join') return token ? go('me') : viewJoin(arg);
+  if (name === 'login') return token ? go('me') : viewLogin();
+  if (name === 'me') return token ? viewMe() : go('login');
+  return viewHome();
+}
+function go(n) { location.hash = '#/' + n; }
+window.addEventListener('hashchange', route);
+
+function applyLang() {
+  const h = document.documentElement;
+  h.lang = LANG; h.dir = EN() ? 'ltr' : 'rtl';
+  document.title = L('سفراء رفد', 'RAFD Ambassadors');
+  $('#brandName').innerHTML = L('سفراء <span>رفد</span>', '<span>RAFD</span> Ambassadors');
+  $('#footText').textContent = L('© رفد الرقمية · سفراء رفد', '© RAFD Digital · RAFD Ambassadors');
+  $('#demoBar').innerHTML = L('وضع تجريبي: البيانات محفوظة على هذا الجهاز وهذا الرابط فقط. كلمة سر لوحة الإدارة: <b class="num">demo</b>',
+    'Demo mode — data stays on this device and this link only. Admin password: <b class="num">demo</b>');
+}
+function setLang(l) { LANG = l; store(LANG_KEY, l); route(); }
+const langBtn = () => `<button class="lang-btn" id="langBtn" type="button">${EN() ? 'عربي' : 'English'}</button>`;
+
+function renderTop(name) {
+  const t = store(TOKEN_KEY); const el = $('#topActions');
+  let html = '';
+  if (!['r', 'q', 'admin'].includes(name)) html = t
+    ? (name === 'me' ? `<button class="btn btn-ghost" id="logout">${L('خروج', 'Sign out')}</button>` : `<a class="btn btn-main btn-sm" href="#/me">${L('لوحتي', 'My dashboard')}</a>`)
+    : `<a class="btn btn-ghost" href="#/login">${L('دخول', 'Sign in')}</a><a class="btn btn-main btn-sm" href="#/join">${L('انضم', 'Join')}</a>`;
+  el.innerHTML = langBtn() + html;
+  $('#langBtn').onclick = () => setLang(EN() ? 'ar' : 'en');
+  const lo = $('#logout');
+  if (lo) lo.onclick = async () => { await rpc('team_logout', { p_token: t }); store(TOKEN_KEY, null); go(''); };
+}
+
+const RULES = () => `
+<ul class="rules">
+  <li>${L('يُحفظ كل عميل تسجّله باسمك مع <b>تاريخ التسجيل ووقته</b> من الخادم، ولا يملك أي طرف تعديله.',
+         'Every client you register is saved under your name with the <b>server date and time</b> — neither you nor anyone else on the team can change it.')}</li>
+  <li>${L('يُنسب العميل إلى <b>أول من سجّله</b>، وتبقى الأولوية له مدة <b class="num">180</b> يوماً من تاريخ التسجيل.',
+         'A client belongs to <b>whoever registered them first</b>, and that priority is kept for <b class="num">180</b> days.')}</li>
+  <li>${AGR ? L(`تلتزم رفد بعمولة نسبتها <b class="num">${fmtRate(AGR.rate)}%</b> من قيمة العقد الأول لكل عميل <b>يتعاقد ويسدّد</b>، تُحوَّل خلال <b class="num">${AGR.days}</b> يوماً من التحصيل.`,
+                `RAFD commits to a commission of <b class="num">${fmtRate(AGR.rate)}%</b> of the first contract of every client who <b>signs and pays</b>, transferred within <b class="num">${AGR.days}</b> days of collection.`) : ''}</li>
+  <li>${L('تُحوَّل العمولة إلى <b>الحساب البنكي المسجّل باسمك</b>، وتظهر لك حالة كل تحويل ورقمه المرجعي.',
+         'Payments go to the <b>IBAN in your name</b> saved in your dashboard, where you can see each transfer and its reference.')}</li>
+  <li>${L('يلتزم ممثل المبيعات بالمظهر اللائق والأنيق عند مقابلة العملاء، فهو يمثّل رفد أمامهم.',
+         'Representatives must dress and present themselves smartly and professionally when meeting clients, as they represent RAFD.')}</li>
+  <li>${L('لرفد إيقاف الانضمام إلى البرنامج متى بلغ عدد الأعضاء الحد المطلوب.',
+         'RAFD may close sign-ups once the team reaches the size it needs.')}</li>
+  <li>${L('المشاركة في البرنامج بنظام العمولة ولا تُعد عقد عمل، وإنما هي فترة لإثبات الكفاءة.',
+         'Participation is commission-based and is not an employment contract; it is a period to prove your ability.')}</li>
+  <li>${L(`يُرشَّح ممثل المبيعات الذي يُتمّ <b>ثلاثة عقود</b> بالعمولة لوظيفة «ممثل مبيعات» بعقد عمل رسمي مع الشركة براتب شهري لا يقل عن <b class="num">4,500</b> ريال، بالإضافة إلى العمولة بنسبة <b class="num">${fmtRate(AGR ? AGR.rate : 5)}%</b>، ويخضع التعيين للمقابلة والشروط الواردة في عقد العمل.`,
+         `A Representative who completes <b>three commission contracts</b> is nominated for a Sales Representative position under a formal employment contract with the company at a monthly salary of no less than <b class="num">SAR 4,500</b>, in addition to the <b class="num">${fmtRate(AGR ? AGR.rate : 5)}%</b> commission; hiring is subject to an interview and the terms of the employment contract.`)}</li>
+</ul>`;
+
+let AGR = null;   // the agreement as it stands today, for new members
+let JOIN = null;  // sign-ups open? and the monthly bonus terms
+async function loadAgreement() {
+  const [a, j] = await Promise.all([AGR ? AGR : rpc('team_agreement', {}), rpc('team_join_info', { p_code: null })]);
+  if (a && !a.error) AGR = a; JOIN = j && !j.error ? j : null; return AGR;
+}
+
+function agreementHtml(text, full) {
+  return `<div class="agr${full ? ' agr-full' : ''}">${termsHtml(text).replaceAll('<h4><span class="tn num">', '<h4><span class="tn num">')}</div>`;
+}
+
+async function viewHome() {
+  await loadAgreement();
+  app.innerHTML = `
+  <section class="hero"><div class="wrap">
+    <span class="eyebrow">✦ ${L('برنامج سفراء رفد للمبيعات والتسويق', 'RAFD Ambassadors — sales & marketing programme')}</span>
+    <h1>${L('كل عميل تجلبه<br><em>محفوظ باسمك.</em>', 'Every client you bring<br><em>is saved in your name.</em>')}</h1>
+    <p class="hero-lead">${L('سجّل عملاءك من جوالك، وتابع كل صفقة خطوة بخطوة، واطّلع على عمولتك حتى تصل إلى حسابك البنكي.',
+      'Register clients from your phone, follow every deal step by step, and watch your commission all the way to your bank account.')}</p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="#/join">${L('انضم إلى الفريق', 'Join the team')}</a>
+      <a class="btn btn-soft" href="#/login">${L('لدي حساب', 'I have an account')}</a>
+    </div>
+  </div></section>
+
+  <section class="block"><div class="wrap">
+    <h2 class="h2">${L('آلية العمل', 'How it works')}</h2>
+    <p class="sub">${L('أربع خطوات، وكل إجراء موثّق من اليوم الأول.', 'Four steps, everything on record from day one.')}</p>
+    <div class="steps">
+      <div class="step"><div class="ic">📝</div><h3>${L('سجّل حسابك', 'Sign up')}</h3><p>${L('بالاسم ورقم الجوال، وتحصل على رمز خاص بك.', 'Your name and mobile — and you get your own code.')}</p></div>
+      <div class="step"><div class="ic">🤝</div><h3>${L('سجّل عملاءك', 'Register clients')}</h3><p>${L('سجّل العميل أو الجهة باسمك فور التواصل معها.', 'As soon as you talk to a client, register them under your name.')}</p></div>
+      <div class="step"><div class="ic">📈</div><h3>${L('تابع الصفقة', 'Follow the deal')}</h3><p>${L('تابع حالة كل عميل: تواصل، تفاوض، تعاقد.', 'See where each client stands: contacted, negotiating, signed.')}</p></div>
+      <div class="step"><div class="ic">💸</div><h3>${L('استلم عمولتك', 'Get paid')}</h3><p>${L('بعد التعاقد وتحصيل القيمة، تُحوَّل العمولة إلى حسابك البنكي.', 'Once the client signs and pays, your commission goes to your IBAN.')}</p></div>
+    </div>
+  </div></section>
+
+  <section class="block"><div class="wrap">
+    <h2 class="h2">${L('الشروط والأحكام', 'Terms and conditions')}</h2>
+    <p class="sub">${L('يوافق عليها كل منضم عند التسجيل، قبل بدء العمل.', 'Every member accepts them at sign-up, before starting.')}</p>
+    ${RULES()}
+    <div style="text-align:center;margin:28px 0 10px"><a class="btn btn-main" href="#/join">${L('ابدأ الآن', 'Get started')}</a>
+      <p class="consent">${L('بالضغط على «ابدأ الآن» فإنك تُقرّ باطّلاعك على الشروط والأحكام أعلاه وموافقتك عليها.', 'By pressing “Get started” you confirm that you have read and accept the terms and conditions above.')}</p></div>
+  </div></section>`;
+}
+
+function formMsg(el, kind, text) { el.innerHTML = text ? `<div class="msg ${kind}">${text}</div>` : ''; }
+
+async function viewJoin(inviteArg) {
+  await loadAgreement();
+  if (JOIN && !JOIN.open) {
+    app.innerHTML = `<div class="wrap"><div class="card auth" style="text-align:center">
+      <div style="font-size:2.2rem">🔒</div><h2>${err('join_closed')}</h2>
+      <p class="sub">${L('اكتمل عدد أعضاء الفريق في الوقت الحالي، وسيُعلن عن فتح التسجيل مجدداً.', 'The team is full for now — we will announce when sign-ups reopen.')}</p>
+      <p class="alt">${L('لديك حساب؟', 'Have an account?')} <a href="#/login">${L('تسجيل الدخول', 'Sign in')}</a></p></div></div>`;
+    return;
+  }
+  app.innerHTML = `
+  <div class="wrap"><div class="card auth">
+    <h2>${L('الانضمام إلى سفراء رفد', 'Join RAFD Ambassadors')}</h2>
+    <p class="sub">${L('خطوة واحدة، وتبدأ بتسجيل عملائك باسمك.', 'One minute, and you can start registering clients in your name.')}</p>
+    <div id="m"></div>
+    <form id="f" novalidate>
+      <div class="field"><label>${L('الاسم الكامل', 'Full name')}</label><input name="name" autocomplete="name" required></div>
+      <div class="row2">
+        <div class="field"><label>${L('رقم الجوال', 'Mobile number')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX" autocomplete="tel"></div>
+        <div class="field"><label>${L('المدينة', 'City')}</label><input name="city" autocomplete="address-level2"></div>
+      </div>
+      ${TIKTOK_TASK ? `<div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')}</label><input name="tiktok" class="ltr" placeholder="@username" autocapitalize="off">
+        <div class="hint">${L('حساب حقيقي نشط باسمك، وهو الحساب الذي تُنفّذ به مهمة تيك توك الشهرية. لا يُقبل الحساب نفسه لعضوين.', 'A real, active account of your own — the one you do the monthly TikTok task with. One account per member.')}</div></div>
+      <div class="field"><label>${L('رمز الدعوة', 'Invite code')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="invite" class="ltr" placeholder="RF····" autocapitalize="characters" value="${esc((inviteArg || '').toUpperCase())}">
+        <div class="hint" id="invHint">${L('إذا دعاك أحد أعضاء الفريق فاكتب رمزه هنا.', 'If a team member invited you, type their code here.')}</div></div>
+      ` : ''}
+      <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="new-password"><div class="hint">${L('ستة أحرف على الأقل، وتُستخدم مع رقم الجوال لتسجيل الدخول.', 'At least 6 characters — you sign in with it and your mobile number.')}</div></div>
+      <details style="margin-bottom:8px"><summary style="cursor:pointer;font-weight:700;color:var(--teal-600);font-size:.9rem">${L('اطّلع على الشروط والأحكام', 'Read the terms and conditions')}</summary><div style="margin-top:10px">${RULES()}</div></details>
+
+      <button class="btn btn-main btn-block" type="submit">${L('إنشاء حسابي', 'Create my account')}</button>
+      <p class="consent">${L('بإنشاء حسابك فإنك تُقرّ باطّلاعك على الشروط والأحكام وموافقتك عليها.', 'By creating your account you confirm that you have read and accept the terms and conditions.')}</p>
+    </form>
+    <p class="alt">${L('لديك حساب؟', 'Have an account?')} <a href="#/login">${L('تسجيل الدخول', 'Sign in')}</a></p>
+  </div></div>`;
+  const inv = $('#f').invite || { value: '' }; let invT = 0;
+  const checkInvite = async () => {
+    const code = inv.value.trim().toUpperCase(); const h = $('#invHint');
+    if (!code) { h.style.color = ''; h.textContent = L('إذا دعاك أحد أعضاء الفريق فاكتب رمزه هنا.', 'If a team member invited you, type their code here.'); return; }
+    const r = await rpc('team_join_info', { p_code: code });
+    if (inv.value.trim().toUpperCase() !== code) return;
+    if (r && r.inviter) { h.style.color = 'var(--ok)'; h.textContent = L('✓ دعوة من ', '✓ Invited by ') + r.inviter; }
+    else { h.style.color = 'var(--bad)'; h.textContent = err('invite_code'); }
+  };
+  inv.oninput = () => { clearTimeout(invT); invT = setTimeout(checkInvite, 350); };
+  if (inv.value) checkInvite();
+  $('#f').onsubmit = async e => {
+    e.preventDefault(); const f = e.target; const b = f.querySelector('button[type=submit]'); const m = $('#m');
+    const phone = normPhone(f.phone.value); const tt = TIKTOK_TASK ? normTiktok(f.tiktok.value) : null;
+    if (f.name.value.trim().length < 3) return formMsg(m, 'err', err('name'));
+    if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
+    if (TIKTOK_TASK && !tiktokOk(tt)) return formMsg(m, 'err', err('tiktok'));
+    if (f.password.value.length < 6) return formMsg(m, 'err', err('password'));
+    b.disabled = true;
+    const r = await rpc('team_register', { p_name: f.name.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_tiktok: tt, p_password: f.password.value, p_agree: true, p_invite: TIKTOK_TASK ? (f.invite.value.trim() || null) : null });
+    b.disabled = false;
+    if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
+    store(TOKEN_KEY, r.token); toast(L('مرحباً بك في فريق سفراء رفد ✦', 'Welcome to the team ✦')); go('me');
+  };
+}
+
+function viewLogin() {
+  app.innerHTML = `
+  <div class="wrap"><div class="card auth">
+    <h2>${L('مرحباً بعودتك', 'Welcome back')}</h2>
+    <p class="sub">${L('سجّل الدخول برقم الجوال وكلمة المرور.', 'Sign in with your mobile number and password.')}</p>
+    <div id="m"></div>
+    <form id="f" novalidate>
+      <div class="field"><label>${L('رقم الجوال', 'Mobile number')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX" autocomplete="tel"></div>
+      <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="current-password"></div>
+      <button class="btn btn-main btn-block" type="submit">${L('دخول', 'Sign in')}</button>
+    </form>
+    <p class="alt">${L('نسيت كلمة المرور؟ يُرجى التواصل مع الإدارة.', 'Forgot your password? Contact the team.')}<br>${L('ليس لديك حساب؟', 'No account yet?')} <a href="#/join">${L('انضم', 'Join')}</a></p>
+  </div></div>`;
+  $('#f').onsubmit = async e => {
+    e.preventDefault(); const f = e.target; const b = f.querySelector('button'); const m = $('#m');
+    const phone = normPhone(f.phone.value);
+    if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
+    b.disabled = true;
+    const r = await rpc('team_login', { p_phone: phone, p_password: f.password.value });
+    b.disabled = false;
+    if (!r || r.error) return formMsg(m, 'err', err(r && r.error) + (!REMOTE && r && r.error === 'bad'
+      ? '<br><small>' + L('في الوضع التجريبي يُحفظ الحساب على هذا الجهاز وهذا الرابط فقط، فإن أنشأته من جهاز أو رابط آخر فأنشئ حساباً جديداً هنا.', 'In demo mode an account lives on this device and this link only — if you created it elsewhere, create a new one here.') + '</small>' : ''));
+    store(TOKEN_KEY, r.token); go('me');
+  };
+}
+
+/* ---------- ambassador dashboard ---------- */
+let meData = null, tasksData = null, leadFilter = 'all';
+function refLink(code) { return location.origin + location.pathname + '#/r/' + code; }
+
+async function viewMe() {
+  app.innerHTML = '<div class="wrap"><div class="empty">…</div></div>';
+  const [r, t] = await Promise.all([rpc('team_me', { p_token: store(TOKEN_KEY) }), TIKTOK_TASK ? rpc('team_tasks', { p_token: store(TOKEN_KEY) }) : null]);
+  tasksData = t && !t.error ? t : null;
+  if (!r || r.error === 'auth') { store(TOKEN_KEY, null); toast(err('auth')); return go('login'); }
+  if (r.error) { app.innerHTML = `<div class="wrap"><div class="msg err" style="margin-top:20px">${err('network')}</div></div>`; return; }
+  meData = r; drawMe();
+}
+
+function drawMe() {
+  const { member: m, leads } = meData;
+  const mineLeads = leads.filter(l => l.status !== 'duplicate');
+  const won = leads.filter(l => l.status === 'won');
+  const due = won.filter(l => !l.paid_at).reduce((s, l) => s + (+l.commission || 0), 0);
+  const paid = won.filter(l => l.paid_at).reduce((s, l) => s + (+l.commission || 0), 0);
+  const first = esc(m.name.split(' ')[0]);
+  const needIban = won.length && !m.iban_masked;
+
+  app.innerHTML = `
+  <div class="dash-head"><div class="wrap">
+    <span class="badge ${m.status === 'contracted' ? 'contracted' : 'trial'}">${m.status === 'contracted' ? L('✦ متعاقد', '✦ Contracted') : L('فترة إثبات الكفاءة', 'Trial period')}</span>
+    <h1>${L('مرحباً', 'Hi')} ${first} 👋</h1>
+    <p>${L('عضو منذ', 'Member since')} ${fmtDate(m.created_at)}</p>
+  </div></div>
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><span>${L('عملاء مسجّلين', 'Clients registered')}</span><b class="num">${mineLeads.length}</b></div>
+      <div class="stat"><span>${L('صفقات تمّت', 'Deals closed')}</span><b class="num">${won.length}</b></div>
+      <div class="stat gold"><span>${L('عمولة مستحقة', 'Commission due')}</span><b><span class="num">${money(due)}</span> <small>${SAR()}</small></b></div>
+      <div class="stat green"><span>${L('تم تحويله', 'Paid out')}</span><b><span class="num">${money(paid)}</span> <small>${SAR()}</small></b></div>
+    </div>
+    ${needIban ? `<div class="msg info" style="margin-top:14px">${L('لديك صفقة مكتملة 🎉 يُرجى إضافة رقم الآيبان لتحويل عمولتك.', 'You have a closed deal 🎉 — add your IBAN so we can pay your commission.')}</div>` : ''}
+    <div class="grid-dash">
+      <div class="card">
+        <div class="panel-title"><h2>${L('عملائي', 'My clients')}</h2><button class="btn btn-main btn-sm" id="addLead">＋ ${L('تسجيل عميل', 'Add client')}</button></div>
+        <div class="filters" id="filters"></div>
+        <div id="leads"></div>
+      </div>
+      <div class="side">
+        <div class="card agr-card" id="agrCard"></div>
+        ${TIKTOK_TASK ? `<div class="card task-box" id="taskCard" ${tasksData ? '' : 'hidden'}></div>
+        <div class="card" id="inviteCard" ${tasksData ? '' : 'hidden'}></div>` : ''}
+        <div class="card" id="ibanCard"></div>
+      </div>
+    </div>
+  </div>`;
+  $('#addLead').onclick = openLeadSheet;
+  drawFilters(); drawLeads(); drawIban(); drawTasks(); drawAgreementCard();
+}
+
+function drawFilters() {
+  const leads = meData.leads;
+  const opts = [['all', L('الكل', 'All')], ['open', L('قيد المتابعة', 'In progress')], ['won', L('تمّت', 'Closed')], ['other', L('أخرى', 'Other')]];
+  $('#filters').innerHTML = leads.length ? opts.map(([k, t]) => `<button class="chip ${leadFilter === k ? 'on' : ''}" data-k="${k}">${t}</button>`).join('') : '';
+  $('#filters').onclick = e => { const k = e.target.dataset && e.target.dataset.k; if (k) { leadFilter = k; drawFilters(); drawLeads(); } };
+}
+
+function leadCard(l) {
+  const step = Math.max(STEP_OF[l.status] || 0, l.quote && l.status !== 'won' ? 3 : 0);
+  const paidStep = l.paid_at ? 5 : step;
+  const track = (l.status === 'lost' || l.status === 'duplicate') ? '' : `
+    <div class="track">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= paidStep ? 'on' : ''}"></i>`).join('')}</div>
+    <div class="track-labels"><span>${L('تسجيل', 'Registered')}</span><span>${L('تواصل', 'Contacted')}</span><span>${L('تفاوض', 'Negotiating')}</span><span>${L('تعاقد', 'Signed')}</span><span>${L('تحويل', 'Paid')}</span></div>`;
+  const moneyRow = l.status === 'won' ? `
+    <div class="money">
+      <span>${L('قيمة الصفقة', 'Deal value')}: <b class="num">${money(l.deal_value)}</b> ${SAR()}</span>
+      <span>${L('عمولتك', 'Your commission')}: <b class="num">${money(l.commission)}</b> ${SAR()}</span>
+      ${l.paid_at ? `<span class="paid">✓ ${L('تم التحويل', 'Paid')} ${fmtDate(l.paid_at)}${l.paid_ref ? ` · ${L('مرجع', 'ref.')} <span class="num">${esc(l.paid_ref)}</span>` : ''}</span>` : `<span style="color:#8a6a1f">⏳ ${L('بانتظار التحويل', 'Awaiting payment')}</span>`}
+    </div>` : '';
+  const dupNote = l.status === 'duplicate' ? `<div class="meta" style="color:var(--bad)">${L('هذا العميل مسجّل مسبقاً باسم ممثل مبيعات آخر، والأولوية لأول تسجيل.', 'This client was already registered by a teammate — the first registration has priority.')}</div>` : '';
+  return `<div class="lead">
+    <div class="lead-top">
+      <div>
+        <h3>${esc(l.client_name)}${l.company ? ` · <span style="font-weight:600;color:var(--teal-600)">${esc(l.company)}</span>` : ''}</h3>
+        <div class="meta"><span class="num">${esc(l.client_phone)}</span>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(svcLabel(l.service)) : ''}</div>
+        <div class="meta">${L('سُجّل', 'Registered')} ${fmtDateTime(l.created_at)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+        <span class="pill ${l.status}">${STATUS()[l.status]}</span>
+        ${l.source === 'link' ? `<span class="pill link">${L('عبر رابطك', 'Via your link')}</span>` : ''}
+      </div>
+    </div>
+    ${dupNote}${track}${quoteBox(l)}${moneyRow}
+  </div>`;
+}
+
+/* what the ambassador picked, as readable text: «الباقة الاحترافية × 2 · كاميرا التعرف على الوجه × 4» */
+function pickedText(items, catalog) {
+  if (!Array.isArray(items) || !items.length) return '';
+  const cat = catalog || (meData && meData.catalog) || [];
+  return items.map(i => { const c = cat.find(x => x.id === i.id); return `${esc(c ? catName(c) : i.id)} × <span class="num">${money(i.q)}</span>`; }).join(' · ');
+}
+const detailsText = q => q && q.details && q.details !== '—' ? esc(q.details) : '';
+
+function quoteBox(l) {
+  const q = l.quote; const closed = ['duplicate', 'lost', 'won'].includes(l.status);
+  if (!q) return closed ? '' : `<div class="btn-row" style="margin-top:10px"><button class="btn btn-soft btn-sm" data-qreq="${l.id}">📄 ${L('طلب عرض سعر', 'Request a quote')}</button></div>`;
+  const total = `<b class="num">${money(q.total)}</b> ${SAR()}${q.vat ? ' ' + L('شامل الضريبة', 'incl. VAT') : ''}`;
+  if (q.status === 'requested') return `<div class="qbox">⏳ ${L('تم طلب عرض سعر', 'Quote requested')} ${fmtDate(q.requested_at)} — ${L('جارٍ تجهيزه.', 'being prepared.')}
+    <div style="font-size:.82rem">${pickedText(q.requested_items)}</div><div style="color:var(--muted);font-size:.82rem">${detailsText(q)}</div>
+    <div class="btn-row"><button class="btn btn-ghost btn-sm" data-qreq="${l.id}">${L('تعديل الطلب', 'Edit request')}</button></div></div>`;
+  if (q.status === 'sent') {
+    const qEn = q.lang === 'en';
+    const msg = qEn ? `Hello ${l.client_name}, here is your quotation from RAFD Digital:\n${quoteLink(q.id)}` : `السلام عليكم ${l.client_name}، هذا عرض السعر من رفد الرقمية:\n${quoteLink(q.id)}`;
+    return `<div class="qbox sent">📄 <b>${L('عرض السعر جاهز', 'Quote ready')}:</b> ${total}${q.valid_until ? ` · ${L('ساري حتى', 'valid until')} ${fmtDate(q.valid_until)}` : ''}
+    <div class="btn-row">
+      <a class="btn btn-soft btn-sm" href="#/q/${q.id}">${L('فتح العرض', 'Open quote')}</a>
+      <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${wa(l.client_phone)}?text=${encodeURIComponent(msg)}">${L('إرسال العرض للعميل عبر واتساب', 'Send to client on WhatsApp')}</a>
+      <button class="btn btn-ghost btn-sm" data-qcopy="${q.id}">${L('نسخ الرابط', 'Copy link')}</button>
+    </div>
+    <div class="btn-row"><button class="btn btn-main btn-sm" data-qdec="${l.id}|1">✓ ${L('العميل وافق', 'Client accepted')}</button><button class="btn btn-ghost btn-sm" data-qdec="${l.id}|0">${L('العميل رفض', 'Client declined')}</button></div></div>`;
+  }
+  if (q.status === 'accepted') return `<div class="qbox accepted">✅ <b>${L('العميل وافق على العرض', 'The client accepted the quote')}</b> (${total})${q.decided_by === 'client' ? ' — ' + L('وافق بنفسه من صفحة العرض', 'accepted it directly on the quote page') : ''}<br>${L('ستتواصل الإدارة معه لتوقيع العقد.', 'The team will contact them to sign the contract.')}</div>`;
+  return `<div class="qbox declined">✕ ${L('العميل رفض العرض', 'The client declined the quote')}${q.decision_note ? ': ' + esc(q.decision_note) : ''}
+    <div class="btn-row"><button class="btn btn-soft btn-sm" data-qreq="${l.id}">${L('طلب عرض جديد', 'Request a new quote')}</button></div></div>`;
+}
+
+/* The ambassador builds the request from the catalogue — tick what the client
+   wants, set how many — and adds anything bespoke as free text. Only what she
+   picks reaches the quote. */
+function openQuoteRequest(l) {
+  const cat = meData.catalog || [];
+  const prev = l.quote && l.quote.status === 'requested' ? l.quote : null;
+  const picked = new Map(((prev && prev.requested_items) || []).map(i => [i.id, i.q]));
+  const s = sheet(L('طلب عرض سعر', 'Request a quote'), `
+    <div class="msg info">${L('لـ', 'For')} <b>${esc(l.client_name)}</b>${l.company ? ' · ' + esc(l.company) : ''}</div>
+    <div id="qm"></div>
+    <form id="qf" novalidate>
+      <label style="display:block;font-weight:700;font-size:.9rem;margin-bottom:8px;color:var(--navy-800)">${L('ما الذي يطلبه العميل؟', 'What does the client want?')}</label>
+      <div id="cats">${cat.map(c => `<label class="cat ${picked.has(c.id) ? 'on' : ''}" data-id="${esc(c.id)}">
+        <input type="checkbox" ${picked.has(c.id) ? 'checked' : ''}>
+        <span><b>${esc(catName(c))}</b><small>${esc(catDesc(c))}</small></span>
+        <input class="qty num" inputmode="numeric" value="${esc(picked.get(c.id) || 1)}" title="${L('الكمية', 'Quantity')}" aria-label="${L('الكمية', 'Quantity')}">
+      </label>`).join('')}</div>
+      <div class="field" style="margin-top:12px"><label>${L('تخصيص إضافي', 'Custom additions')} <small>${L('(اختياري)', '(optional)')}</small></label>
+        <textarea name="details" style="min-height:90px" placeholder="${L('أي متطلبات خاصة للعميل، أو تفاصيل الموقع وعدد الفروع…', 'Anything bespoke the client wants, site details, number of branches…')}">${esc(prev && prev.details !== '—' ? prev.details : '')}</textarea></div>
+      <button class="btn btn-main btn-block" type="submit">${L('إرسال الطلب إلى الإدارة', 'Send request to the team')}</button>
+    </form>`);
+  const box = $('#cats', s.el);
+  box.addEventListener('change', e => { const r = e.target.closest('.cat'); if (r && e.target.type === 'checkbox') r.classList.toggle('on', e.target.checked); });
+  box.addEventListener('input', e => { const r = e.target.closest('.cat'); if (r && e.target.classList.contains('qty')) { r.querySelector('[type=checkbox]').checked = true; r.classList.add('on'); } });
+  box.addEventListener('click', e => { if (e.target.classList.contains('qty')) e.preventDefault(); });
+  $('#qf', s.el).onsubmit = async e => {
+    e.preventDefault(); const f = e.target; const b = f.querySelector('button[type=submit]');
+    const items = [...box.querySelectorAll('.cat')].filter(r => r.querySelector('[type=checkbox]').checked)
+      .map(r => ({ id: r.dataset.id, q: Math.max(1, +toLatin(r.querySelector('.qty').value).replace(/[^\d.]/g, '') || 1) }));
+    const details = f.details.value.trim();
+    if (!items.length && details.length < 3) return formMsg($('#qm', s.el), 'err', err('details'));
+    b.disabled = true;
+    const r = await rpc('team_quote_request', { p_token: store(TOKEN_KEY), p_lead: l.id, p_details: details, p_items: items.length ? items : null });
+    b.disabled = false;
+    if (!r || r.error) return formMsg($('#qm', s.el), 'err', err(r && r.error));
+    s.close(); toast(L('تم إرسال طلبك إلى الإدارة ✓', 'Request sent to the team ✓')); viewMe();
+  };
+}
+
+function openQuoteDecide(l, accept) {
+  const s = sheet(accept ? L('العميل وافق 🎉', 'Client accepted 🎉') : L('العميل رفض', 'Client declined'), `
+    <div id="dm"></div>
+    <form id="df" novalidate>
+      <p style="line-height:1.8;margin-bottom:12px">${accept ? L('سيتم إبلاغ الإدارة للتواصل مع العميل وتوقيع العقد.', 'We will let the team know to contact the client and sign the contract.') : L('يمكنك طلب عرض جديد لاحقاً.', 'No problem — you can request a new quote later.')}</p>
+      <div class="field"><label>${accept ? L('ملاحظة للإدارة', 'Note for the team') : L('ما السبب؟', 'What was the reason?')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="note" placeholder="${accept ? L('مثلاً: يرغب بالتوقيع يوم الأحد، ويُفضّل التواصل بعد العصر', 'e.g. wants to sign on Sunday, best reached in the afternoon') : L('مثلاً: السعر أعلى من ميزانيته', 'e.g. the price is above their budget')}"></textarea></div>
+      <button class="btn ${accept ? 'btn-main' : 'btn-soft'} btn-block" type="submit">${L('تأكيد', 'Confirm')}</button>
+    </form>`);
+  $('#df', s.el).onsubmit = async e => {
+    e.preventDefault(); const b = e.target.querySelector('button'); b.disabled = true;
+    const r = await rpc('team_quote_decide', { p_token: store(TOKEN_KEY), p_lead: l.id, p_accept: accept, p_note: e.target.note.value.trim() });
+    b.disabled = false;
+    if (!r || r.error) return formMsg($('#dm', s.el), 'err', err(r && r.error));
+    s.close(); toast(accept ? L('مبارك! تم إبلاغ الإدارة ✓', 'Congratulations! The team has been told ✓') : L('تم التسجيل', 'Recorded')); viewMe();
+  };
+}
+
+function drawLeads() {
+  const all = meData.leads;
+  const list = all.filter(l => leadFilter === 'all' ? true
+    : leadFilter === 'won' ? l.status === 'won'
+    : leadFilter === 'open' ? ['new', 'contacted', 'negotiating'].includes(l.status)
+    : ['lost', 'duplicate'].includes(l.status));
+  $('#leads').innerHTML = list.length ? list.map(leadCard).join('') : `
+    <div class="empty"><div class="big">🌱</div>${all.length ? L('لا يوجد عملاء بهذه الحالة.', 'No clients with this status.') : L('لم تسجّل أي عميل بعد.<br>أول عميل تسجّله يُحفظ باسمك من لحظة تسجيله.', 'You have not registered a client yet.<br>The first one you add is yours from that moment.')}</div>`;
+  $('#leads').onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const lead = id => meData.leads.find(l => l.id === id);
+    if (b.dataset.qreq) openQuoteRequest(lead(b.dataset.qreq));
+    if (b.dataset.qcopy) copy(quoteLink(b.dataset.qcopy));
+    if (b.dataset.qdec) { const [id, acc] = b.dataset.qdec.split('|'); openQuoteDecide(lead(id), acc === '1'); }
+  };
+}
+
+function drawAgreementCard() {
+  const m = meData.member; const c = $('#agrCard'); if (!c) return;
+  const has = m.agreed_rate != null;
+  if (!has) { c.hidden = true; return; }
+  c.innerHTML = `<div class="panel-title" style="margin-bottom:4px"><h2>${L('نسبة عمولتك', 'Your commission rate')}</h2></div>
+    <div class="big num">${fmtRate(m.agreed_rate)}%</div>
+    <p style="font-size:.84rem;color:var(--muted);line-height:1.8">${L('من قيمة العقد الأول لكل عميل يُنسب إليك.', 'Of the first contract of every client attributed to you.')}<br>
+      ${L('تاريخ الموافقة على الشروط', 'Terms accepted on')}: ${fmtDateTime(m.agreed_at)}</p>`;
+}
+
+function drawIban() {
+  const m = meData.member; const c = $('#ibanCard');
+  c.innerHTML = `
+    <div class="panel-title" style="margin-bottom:6px"><h2>${L('حساب التحويل', 'Payout account')}</h2>${m.iban_masked ? `<span class="pill won">${L('محفوظ ✓', 'Saved ✓')}</span>` : ''}</div>
+    ${m.iban_masked ? `
+      <div class="iban-shown num">${esc(m.iban_masked)}</div>
+      <div class="meta" style="font-size:.85rem;color:var(--muted);line-height:1.8">${esc(m.iban_name)}${m.bank ? ' · ' + esc(m.bank) : ''}<br>${L('آخر تحديث', 'Last updated')} ${fmtDate(m.iban_at)}</div>
+      <button class="btn btn-soft btn-sm" style="margin-top:10px" id="editIban">${L('تغيير الآيبان', 'Change IBAN')}</button>`
+    : `<p style="color:var(--muted);font-size:.88rem;line-height:1.8;margin-bottom:10px">${L('يُرجى إضافة رقم الآيبان ليتسنى تحويل العمولة فور استحقاقها.', 'Add your IBAN so your commission can be paid as soon as a deal closes.')}</p>
+       <button class="btn btn-gold btn-sm btn-block" id="editIban">${L('إضافة الآيبان', 'Add IBAN')}</button>`}`;
+  $('#editIban').onclick = openIbanSheet;
+}
+
+/* TikTok's note mark, drawn in its own colours so the platform reads at a glance. */
+const TT_ICON = '<svg class="tt-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>';
+let termsOpen = false;
+const joinLink = () => location.origin + location.pathname + '#/join';
+const doneOk = p => p.done && !p.rejected && p.proof;
+
+function drawTasks() {
+  const c = $('#taskCard'); if (!c || !tasksData) return;
+  const t = tasksData; const cur = t.this_month;
+  const posts = t.posts.filter(p => p.month === cur);
+  const ok = posts.filter(doneOk).length;
+  const all = posts.length && ok === posts.length;
+  const paidNow = t.bonuses.find(b => b.month === cur);
+  const left = posts.length - ok; const due = t.due || { amount: 0, invites_ok: 0 };
+  c.innerHTML = `
+    <div class="panel-title" style="margin-bottom:4px"><h2 class="tt-title">${TT_ICON}${L('مهمة تيك توك الشهرية', 'Monthly TikTok task')}</h2><span class="pill ${all ? 'won' : 'negotiating'} num">${ok} / ${posts.length}</span></div>
+    <p style="font-size:.86rem;color:#5b4442;line-height:1.8">${L(`على كل مقطع يُنشر في ${esc(monthName(cur))}: إعجاب، ومشاركة، وتعليق عن محتوى المقطع، ومتابعة حساب رفد، ثم أرفق صورة الشاشة.`, `On every video posted in ${esc(monthName(cur))}: like, share, comment on what the video says, and follow RAFD’s account — then attach a screenshot.`)}</p>
+    <div class="bonus-rule">${L('المكافأة', 'Bonus')}: <b class="num">${money(t.bonus)}</b> ${SAR()} + <b class="num">${money(t.invite_bonus)}</b> ${SAR()} ${L('عن كل مدعو يُكمل الشهر', 'per invitee who completes the month')} · ${L('بحد أقصى', 'max')} <b class="num">${money(t.cap)}</b> ${SAR()}</div>
+    <div class="task-terms ${termsOpen ? 'open' : ''}"><b>${L('شروط المهمة والمكافأة', 'Task & bonus terms')}</b><ul>
+      <li>${L(`تُستحق المكافأة الثابتة (<b class="num">${money(t.bonus)}</b> ر.س) لمن يُكمل مهمة الشهر كاملة: الإعجاب والمشاركة والتعليق ومتابعة حساب رفد على كل مقطع يُنشر خلال الشهر، مع إرفاق صورة الشاشة لكل مقطع.`,
+              `The fixed bonus (<b class="num">${money(t.bonus)}</b> SAR) is earned by completing the whole month: like, share, comment and follow RAFD’s account on every video posted that month, with a screenshot for each.`)}</li>
+      <li class="more">${L(`يُضاف <b class="num">${money(t.invite_bonus)}</b> ر.س عن كل شخص ينضم برمز دعوتك ويُكمل مهمة الشهر نفسه كاملة، بشرط أن تُكمل مهمتك أنت أيضاً، وبحد أقصى <b class="num">${money(t.cap)}</b> ر.س شهرياً للمكافأة كلها.`,
+              `Add <b class="num">${money(t.invite_bonus)}</b> SAR for each person who joins with your invite code and completes the same month, provided you complete yours too — up to <b class="num">${money(t.cap)}</b> SAR a month in total.`)}</li>
+      <li class="more">${L('يجب أن يكون التعليق عن محتوى المقطع، فلا يُقبل التعليق العشوائي أو المكوّن من رموز فقط.', 'The comment must be about the video — random comments or emoji alone are not accepted.')}</li>
+      <li class="more">${L('يجب أن يكون الحساب المشارك به حساباً حقيقياً نشطاً، وليس حساباً وهمياً.', 'The account used must be a real, active one — not a fake account.')}</li>
+      <li class="more">${L('لرفد رفض أي مشاركة لا تستوفي الشروط، وإيقاف الحساب عند ثبوت التلاعب، وتعديل مبالغ المكافأة مع إعلان ذلك هنا.', 'RAFD may reject any entry that falls short, suspend an account where manipulation is found, and change the bonus amounts, announcing it here.')}</li>
+    </ul><button type="button" class="more-btn" id="termsMore">${termsOpen ? L('عرض أقل ▴', 'Show less ▴') : L('المزيد ▾', 'More ▾')}</button></div>
+    <div class="bar"><i style="width:${posts.length ? Math.round(ok / posts.length * 100) : 0}%"></i></div>
+    <p style="font-size:.8rem;margin-bottom:6px;color:${all ? 'var(--ok)' : 'var(--muted)'}">${paidNow ? L(`✓ صُرفت مكافأة هذا الشهر: ${money(paidNow.amount)} ر.س`, `✓ This month’s bonus has been paid: ${money(paidNow.amount)} SAR`) : !posts.length ? L('لم يُنشر أي مقطع هذا الشهر بعد.', 'No videos posted this month yet.') : all ? L(`✓ مكتملة — مستحقك حتى الآن <b class="num">${money(due.amount)}</b> ر.س، ويُصرف في نهاية الشهر`, `✓ Complete — <b class="num">${money(due.amount)}</b> SAR so far, paid at month end`) : L(`المتبقي ${left} ${left === 1 ? 'مقطع' : 'مقاطع'}`, `${left} ${left === 1 ? 'video' : 'videos'} left`)}</p>
+    ${posts.map(p => `<div class="task">
+      <div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)}</small>
+        ${p.rejected ? `<div style="font-size:.76rem;color:var(--bad)">✕ ${L('رُفضت المشاركة، يُرجى مراجعة الإدارة', 'Entry rejected — contact the team')}</div>` : p.done && !p.proof ? `<div style="font-size:.76rem;color:var(--warn,#b7791f)">${L('ينقصها صورة الشاشة', 'Screenshot missing')}</div>` : ''}</div>
+      <div class="btn-row" style="flex:none">
+        <a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${TT_ICON} ${L('فتح', 'Open')}</a>
+        ${p.rejected ? '' : doneOk(p) ? `<button class="btn btn-ghost btn-sm" data-task="${p.id}" style="color:var(--ok)">✓ ${L('تم', 'Done')}</button>` : `<button class="btn btn-main btn-sm" data-task="${p.id}">${p.done ? L('أرفق الصورة', 'Add screenshot') : L('تم التنفيذ', 'Mark done')}</button>`}
+      </div></div>`).join('')}
+    ${t.bonuses.length ? `<div style="margin-top:10px;font-size:.8rem;color:var(--muted)">${t.bonuses.map(b => `✓ ${esc(monthName(b.month))}: <span class="num">${money(b.amount)}</span> ${SAR()}`).join('<br>')}</div>` : ''}`;
+  c.onclick = e => { const b = e.target.closest('[data-task]'); if (b) openTaskSheet(t.posts.find(p => p.id === b.dataset.task)); };
+  $('#termsMore').onclick = () => { termsOpen = !termsOpen; drawTasks(); };
+  drawInvites();
+}
+
+function drawInvites() {
+  const c = $('#inviteCard'); if (!c || !tasksData) return;
+  const t = tasksData; const code = meData.member.code; const inv = t.invitees || [];
+  const total = t.posts.filter(p => p.month === t.this_month).length;
+  const msg = L(`انضم إلى برنامج سفراء رفد للمبيعات والتسويق:\n${joinLink()}\nواكتب رمز الدعوة ${code} عند إنشاء حسابك.`,
+                `Join the RAFD Ambassadors sales & marketing programme:\n${joinLink()}\nand enter invite code ${code} when you sign up.`);
+  c.innerHTML = `
+    <div class="panel-title" style="margin-bottom:4px"><h2>${L('ادعُ زملاءك', 'Invite others')}</h2>${inv.length ? `<span class="pill new num">${inv.length}</span>` : ''}</div>
+    <p style="font-size:.84rem;color:#5b4442;line-height:1.8">${L(`شارك رمزك، ومن يكتبه عند إنشاء حسابه يُحسب من مدعوّيك. يُضاف لك <b class="num">${money(t.invite_bonus)}</b> ر.س عن كل مدعو يُكمل مهمة الشهر كاملة، بحد أقصى <b class="num">${money(t.cap)}</b> ر.س للمكافأة كلها.`,
+      `Share your code — whoever enters it at sign-up counts as your invitee. You get <b class="num">${money(t.invite_bonus)}</b> SAR for each invitee who completes the month, up to <b class="num">${money(t.cap)}</b> SAR for the whole bonus.`)}</p>
+    <div class="ref-code num" style="margin:8px 0">${esc(code)}</div>
+    <div class="btn-row">
+      <button class="btn btn-soft btn-sm" id="cpInvite">${L('نسخ الرمز', 'Copy code')}</button>
+      <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">${L('إرسال عبر واتساب', 'Send on WhatsApp')}</a>
+    </div>
+    ${inv.length ? `<div style="margin-top:12px">${inv.map(i => `<div class="task"><div><b>${esc(i.first)}</b><small>${L('انضم في', 'Joined')} ${fmtDate(i.joined)}</small></div>
+      <span class="pill ${i.qualified ? 'won' : 'new'} num">${i.qualified ? L('✓ أكمل الشهر', '✓ Completed') : `${i.done} / ${total}`}</span></div>`).join('')}</div>` : ''}`;
+  $('#cpInvite').onclick = () => copy(code);
+}
+
+function openTaskSheet(post) {
+  const s = sheet(esc(post.title || L('مقطع', 'Video')), `
+    <div id="tm"></div>
+    <a class="btn btn-soft btn-block" href="${esc(safeUrl(post.url))}" target="_blank" rel="noopener" style="margin-bottom:14px">${TT_ICON} ${L('فتح المقطع في تيك توك', 'Open the video on TikTok')}</a>
+    <form id="tf" novalidate>
+      <label class="check"><input type="checkbox" name="like"><span>${L('تم الإعجاب ❤️', 'I liked it ❤️')}</span></label>
+      <label class="check" style="margin-top:-8px"><input type="checkbox" name="share"><span>${L('تمت المشاركة ↪️', 'I shared it ↪️')}</span></label>
+      <label class="check" style="margin-top:-8px"><input type="checkbox" name="follow"><span>${L('أتابع حساب رفد ➕', 'I follow RAFD’s account ➕')}</span></label>
+      <div class="field"><label>${L('الصق نص تعليقك هنا', 'Paste your comment here')}</label><textarea name="comment" placeholder="${L('النص ذاته الذي كتبته تحت المقطع', 'The exact text you wrote under the video')}">${esc(post.comment || '')}</textarea>
+        <div class="hint">${L('جملة عن محتوى المقطع، ثلاث كلمات على الأقل. لا يُقبل التعليق العشوائي أو الرموز وحدها، ولا تكرار تعليق سابق أو نسخ تعليق زميل.', 'A sentence about what the video says, at least three words. No random comments or emoji alone, no repeating an earlier comment or copying a teammate’s.')}</div></div>
+      <div class="field"><label>${L('صورة الشاشة', 'Screenshot')}</label><input type="file" name="shot" accept="image/*">
+        <div class="hint">${post.proof ? L('أُرفقت صورة سابقاً، ويمكنك استبدالها باختيار صورة جديدة.', 'A screenshot is already attached — pick a new one to replace it.') : L('صورة تُظهر تعليقك تحت المقطع باسم حسابك', 'A screenshot showing your comment under the video, with your account name')}${meData.member.tiktok ? ' <span class="num">' + esc(meData.member.tiktok) + '</span>' : ''}.</div>
+        <img id="shotPrev" alt="" style="display:none;max-width:100%;max-height:240px;margin-top:8px;border-radius:10px;border:1px solid var(--line)"></div>
+      <button class="btn btn-main btn-block" type="submit">${L('إرسال ✓', 'Submit ✓')}</button>
+    </form>`);
+  let proof = null; const f = $('#tf', s.el); const m = $('#tm', s.el);
+  f.shot.onchange = async () => {
+    proof = null; const pv = $('#shotPrev', s.el); pv.style.display = 'none';
+    try { proof = await shrinkImage(f.shot.files[0]); pv.src = proof; pv.style.display = 'block'; formMsg(m, '', ''); }
+    catch (e) { formMsg(m, 'err', err('proof_bad')); }
+  };
+  f.onsubmit = async e => {
+    e.preventDefault(); const b = f.querySelector('button[type=submit]');
+    if (!f.like.checked || !f.share.checked || !f.follow.checked) return formMsg(m, 'err', L('المهمة تشمل الإعجاب والمشاركة والتعليق ومتابعة الحساب معاً', 'The task is like, share, comment and follow — all of them'));
+    if (!commentOk(f.comment.value)) return formMsg(m, 'err', err('comment_weak'));
+    if (!proof && !post.proof) return formMsg(m, 'err', err('proof'));
+    b.disabled = true;
+    const r = await rpc('team_task_done', { p_token: store(TOKEN_KEY), p_post: post.id, p_comment: f.comment.value.trim(), p_proof: proof });
+    b.disabled = false;
+    if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
+    s.close(); toast(L('تم الإرسال، وتراجعه الإدارة ✓', 'Sent — the team will review it ✓')); viewMe();
+  };
+}
+
+function sheet(title, html) {
+  const bg = document.createElement('div'); bg.className = 'sheet-bg';
+  bg.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="sheet-head"><h2>${title}</h2><button class="x" aria-label="${L('إغلاق', 'Close')}">✕</button></div>${html}</div>`;
+  const close = () => { bg.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = e => { if (e.key === 'Escape') close(); };
+  bg.addEventListener('click', e => { if (e.target === bg) close(); });
+  bg.querySelector('.x').onclick = close; document.addEventListener('keydown', onKey);
+  document.body.appendChild(bg);
+  const first = bg.querySelector('input:not([type=checkbox]), textarea'); if (first) setTimeout(() => first.focus(), 60);
+  return { el: bg, close };
+}
+
+const LEAD_FIELDS = (client) => `
+  <div class="field"><label>${client ? L('الاسم', 'Your name') : L('اسم العميل', 'Client name')}</label><input name="name" required></div>
+  <div class="field"><label>${L('الشركة / الجهة', 'Company / organisation')} <small>${L('(إن وجدت)', '(if any)')}</small></label><input name="company"></div>
+  <div class="row2">
+    <div class="field"><label>${client ? L('رقم الجوال', 'Mobile number') : L('جوال العميل', 'Client mobile')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX"></div>
+    <div class="field"><label>${L('المدينة', 'City')}</label><input name="city"></div>
+  </div>
+  <div class="field"><label>${L('البرنامج المطلوب', 'Programme of interest')}</label><select name="service"><option value="">${client ? L('— اختر —', '— Select —') : L('— اختر —', '— Select —')}</option>${SERVICES().map(s => `<option value="${esc(s.v)}">${esc(s.t)}</option>`).join('')}</select></div>`;
+
+function openLeadSheet() {
+  const s = sheet(L('تسجيل عميل جديد', 'Register a new client'), `
+    <div id="lm"></div>
+    <form id="lf" novalidate>
+      ${LEAD_FIELDS(false)}
+      <div class="field"><label>${L('ملاحظات', 'Notes')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="notes" placeholder="${L('مثلاً: مدير الموارد البشرية، يرغب بعرض سعر لخمسين موظفاً', 'e.g. HR manager, wants a quote for 50 employees')}"></textarea></div>
+      <p class="hint" style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.7">${L('يُحفظ بتاريخ التسجيل ووقته ولا يمكن تعديله أو حذفه بعد الحفظ، لذا يُرجى التأكد من رقم الجوال.', 'Saved with the date and time of registration and cannot be edited or deleted afterwards — double-check the mobile number.')}</p>
+      <button class="btn btn-main btn-block" type="submit">${L('حفظ باسمي', 'Save under my name')}</button>
+    </form>`);
+  $('#lf', s.el).onsubmit = async e => {
+    e.preventDefault(); const f = e.target; const m = $('#lm', s.el); const b = f.querySelector('button[type=submit]');
+    const phone = normPhone(f.phone.value);
+    if (f.name.value.trim().length < 2) return formMsg(m, 'err', L('يُرجى إدخال اسم العميل', "Enter the client's name"));
+    if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
+    b.disabled = true;
+    const r = await rpc('team_add_lead', { p_token: store(TOKEN_KEY), p_name: f.name.value.trim(), p_company: f.company.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_service: f.service.value, p_notes: f.notes.value.trim() });
+    b.disabled = false;
+    if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
+    s.close();
+    toast(r.status === 'duplicate' ? L('تم الحفظ، علماً بأن هذا العميل مسجّل مسبقاً باسم ممثل مبيعات آخر', 'Saved — but a teammate registered this client first') : L('تم الحفظ باسمك ✓', 'Saved under your name ✓'));
+    viewMe();
+  };
+}
+
+function openIbanSheet() {
+  const m = meData.member;
+  const s = sheet(L('حساب التحويل', 'Payout account'), `
+    <div id="im"></div>
+    <form id="iform" novalidate>
+      <div class="field"><label>${L('رقم الآيبان', 'IBAN')}</label><input name="iban" class="ltr" placeholder="SA00 0000 0000 0000 0000 0000" autocomplete="off" spellcheck="false"><div class="hint" id="ihint">${L('يبدأ بـ SA ويليه 22 رقماً، ويمكن الحصول عليه من تطبيق البنك.', 'Starts with SA followed by 22 digits — you will find it in your banking app.')}</div></div>
+      <div class="field"><label>${L('اسم صاحب الحساب', 'Account holder name')} <small>${L('(كما هو في البنك)', '(as held by the bank)')}</small></label><input name="name" value="${esc(m.iban_name || m.name)}"></div>
+      <div class="field"><label>${L('البنك', 'Bank')}</label><input name="bank" value="${esc(m.bank || '')}" placeholder="${L('مثلاً: الراجحي', 'e.g. Al Rajhi')}"></div>
+      <p class="hint" style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.7">🔒 ${L('يظهر رقم الآيبان لك مخفياً، ولا تطّلع عليه إلا الإدارة عند التحويل. ويجب أن يكون الحساب باسمك.', 'Your IBAN is shown to you masked and only the team sees it, when paying you. The account must be in your name.')}</p>
+      <button class="btn btn-gold btn-block" type="submit">${L('حفظ', 'Save')}</button>
+    </form>`);
+  const f = $('#iform', s.el); const hint = $('#ihint', s.el);
+  f.iban.addEventListener('input', () => {
+    const x = ibanClean(f.iban.value);
+    if (x.length >= 24) { hint.textContent = ibanOk(x) ? L('✓ رقم آيبان صحيح', '✓ Valid IBAN') : L('✕ الرقم غير صحيح، يُرجى مراجعته', '✕ This IBAN has an error — please check it'); hint.style.color = ibanOk(x) ? 'var(--ok)' : 'var(--bad)'; }
+    else { const n = Math.max(0, 24 - x.length); hint.textContent = L(`المتبقي ${n} خانة`, `${n} characters to go`); hint.style.color = ''; }
+  });
+  f.onsubmit = async e => {
+    e.preventDefault(); const mm = $('#im', s.el); const b = f.querySelector('button');
+    const x = ibanClean(f.iban.value);
+    if (!ibanOk(x)) return formMsg(mm, 'err', err('iban'));
+    if (f.name.value.trim().length < 3) return formMsg(mm, 'err', L('يُرجى إدخال اسم صاحب الحساب', 'Enter the account holder name'));
+    b.disabled = true;
+    const r = await rpc('team_set_iban', { p_token: store(TOKEN_KEY), p_iban: x, p_name: f.name.value.trim(), p_bank: f.bank.value.trim() });
+    b.disabled = false;
+    if (!r || r.error) return formMsg(mm, 'err', err(r && r.error));
+    s.close(); toast(L('تم حفظ الآيبان ✓', 'IBAN saved ✓')); viewMe();
+  };
+}
+
+/* ---------- the client's own form (ambassador link) ---------- */
+async function viewRef(code) {
+  app.innerHTML = '<div class="wrap"><div class="empty">…</div></div>';
+  const info = await rpc('team_ref_info', { p_code: code });
+  if (!info || info.error) { app.innerHTML = `<div class="wrap"><div class="card auth"><h2>${L('الرابط غير صالح', 'This link is not valid')}</h2><p class="sub">${L('يُرجى التأكد من الرابط المرسل إليك.', 'Please check the link you received.')}</p></div></div>`; return; }
+  app.innerHTML = `
+  <div class="wrap"><div class="card auth">
+    <span class="pill link" style="display:inline-block;margin-bottom:10px">${L(`عن طريق ${esc(info.first)} من فريق رفد`, `Via ${esc(info.first)} from the RAFD team`)}</span>
+    <h2>${L('اطلب خدمات رفد', 'Request RAFD services')}</h2>
+    <p class="sub">${L('اترك بياناتك ويتواصل معك فريقنا في أقرب وقت.', 'Leave your details and our team will be in touch shortly.')}</p>
+    <div id="m"></div>
+    <form id="f" novalidate>
+      ${LEAD_FIELDS(true)}
+      <div class="field"><label>${L('ما احتياجك؟', 'What do you need?')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="notes"></textarea></div>
+      <button class="btn btn-main btn-block" type="submit">${L('إرسال', 'Send')}</button>
+    </form>
+  </div></div>`;
+  $('#f').onsubmit = async e => {
+    e.preventDefault(); const f = e.target; const m = $('#m'); const b = f.querySelector('button');
+    const phone = normPhone(f.phone.value);
+    if (f.name.value.trim().length < 2) return formMsg(m, 'err', L('يُرجى إدخال الاسم', 'Please enter your name'));
+    if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
+    b.disabled = true;
+    const r = await rpc('team_ref_submit', { p_code: code, p_name: f.name.value.trim(), p_company: f.company.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_service: f.service.value, p_notes: f.notes.value.trim() });
+    b.disabled = false;
+    if (r && r.error === 'too_many') return formMsg(m, 'info', L('طلبك مسجّل لدينا مسبقاً ✓ وسنتواصل معك قريباً.', 'We already have your request ✓ — we will be in touch soon.'));
+    if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
+    $('.auth').innerHTML = `<div class="empty"><div class="big">✅</div><h2 style="color:var(--navy-900);margin:8px 0">${L('تم استلام طلبك', 'Request received')}</h2>${L('شكراً لك، سيتواصل معك فريق رفد قريباً.', 'Thank you — the RAFD team will contact you soon.')}</div>`;
+  };
+}
+
+/* ---------- the quote page (sent to the client) ---------- */
+function termsHtml(t) {
+  let n = 0, out = '', open = false;
+  for (const raw of String(t || '').split('\n')) {
+    const line = raw.trim(); if (!line) continue;
+    if (line.startsWith('## ')) { if (open) out += '</ul>'; out += `<h4><span class="tn num">${++n}</span>${esc(line.slice(3))}</h4><ul>`; open = true; }
+    else if (line.startsWith('- ')) { if (!open) { out += '<ul>'; open = true; } out += `<li>${esc(line.slice(2))}</li>`; }
+    else { if (open) { out += '</ul>'; open = false; } out += `<p>${esc(line)}</p>`; }
+  }
+  return out + (open ? '</ul>' : '');
+}
+
+/* A quote opens in the language it was written in; the visitor can switch.
+   Each line prints its English text in English when the operator gave one,
+   and its Arabic text otherwise — a line is never left blank. */
+async function viewQuote(id) {
+  app.innerHTML = '<div class="wrap"><div class="empty">…</div></div>';
+  const q = await rpc('team_quote_public', { p_id: id });
+  if (!q || q.error) { app.innerHTML = `<div class="wrap"><div class="card auth"><h2>${L('العرض غير متاح', 'Quote not available')}</h2><p class="sub">${L('تأكد من الرابط، أو تواصل مع من أرسله لك.', 'Check the link, or contact whoever sent it to you.')}</p></div></div>`; return; }
+  if (quoteLangSet !== id) { quoteLangSet = id; if ((q.lang || 'ar') !== LANG) { LANG = q.lang || 'ar'; applyLang(); renderTop('q'); } }
+  const expired = q.valid_until && q.valid_until < todayRiyadh();
+  const open = q.status === 'sent' && !expired;
+  const no = 'Q-' + String(q.no).padStart(5, '0');
+  const C = COMPANY; const B = C.bank || {};
+  const foot = [C.email && `<span class="num">${esc(C.email)}</span>`, C.vat && `${L('الرقم الضريبي', 'VAT No.')} <span class="num">${esc(C.vat)}</span>`,
+    C.cr && `${L('س.ت', 'CR')} <span class="num">${esc(C.cr)}</span>`, C.phone && `<span class="num">${esc(C.phone)}</span>`].filter(Boolean).join('<i>·</i>');
+  const tax = q.vat ? '15%' : '—';
+  const pick = (ar, en) => (EN() && en) ? en : ar;
+  const addr = EN() && (C.address_en || []).length ? C.address_en : (C.address || []);
+  const terms = pick(q.terms, q.terms_en);
+  app.innerHTML = `<div class="wrap"><article class="qdoc">
+    <img class="qd-wm" src="/rafd-logo.png" alt="">
+    <header class="qd-top">
+      <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${addr.map(a => `<span>${esc(a)}</span>`).join('')}</div>
+      <span class="qd-logo"><img src="/rafd-logo.png" alt="RAFD"></span>
+    </header>
+    <section class="qd-mid">
+      <div class="qd-client">
+        <small>${L('مقدَّم إلى', 'Prepared for')}</small>
+        <b>${esc(q.company || q.client_name)}</b>
+        ${q.company ? `<span>${esc(q.client_name)}</span>` : ''}
+        ${q.client_address ? `<span>${esc(q.client_address)}</span>` : q.city ? `<span>${esc(q.city)}</span>` : ''}
+        <span>${L('المملكة العربية السعودية', 'Kingdom of Saudi Arabia')}</span>
+        ${q.client_cr ? `<span>${L('السجل التجاري', 'CR No.')}: <span class="num">${esc(q.client_cr)}</span></span>` : ''}
+        ${q.client_vat ? `<span>${L('الرقم الضريبي', 'VAT No.')}: <span class="num">${esc(q.client_vat)}</span></span>` : ''}
+      </div>
+      <div class="qd-no"><small>${L('عرض سعر', 'Quotation')}</small><b class="num">${no}</b></div>
+    </section>
+    <section class="qd-info">
+      <div><small>${L('نوع الاشتراك', 'Billing')}</small><b>${esc(PLAN()[q.plan] || '—')}</b></div>
+      <div><small>${L('تاريخ العرض', 'Quote date')}</small><b>${fmtDate(q.sent_at)}</b></div>
+      <div><small>${L('ساري حتى', 'Valid until')}</small><b>${q.valid_until ? fmtDate(q.valid_until) : '—'}</b></div>
+      <div><small>${L('ممثل المبيعات', 'Sales representative')}</small><b>${esc(q.rep_name || '—')}</b></div>
+    </section>
+    <div class="scroll-x"><table class="qd">
+      <thead><tr><th>${L('الوصف', 'Description')}</th><th class="n">${L('الكمية', 'Qty')}</th><th class="n">${L('سعر الوحدة', 'Unit price')}</th><th class="n">${L('الضريبة', 'VAT')}</th><th class="n">${L('المبلغ', 'Amount')}</th></tr></thead>
+      <tbody>${(q.items || []).map(it => { const n = pick(it.n, it.n_en); const u = pick(it.u, it.u_en);
+        return `<tr class="it${n ? ' has-n' : ''}"><td><b>${esc(pick(it.d, it.d_en))}</b></td><td class="n"><span class="num">${money(it.q)}</span>${u ? ' ' + esc(u) : ''}</td><td class="n num">${sar(it.p)}</td><td class="n num">${tax}</td><td class="n num">${sar(it.q * it.p)}</td></tr>
+        ${n ? `<tr class="it-n"><td colspan="5">${esc(n)}</td></tr>` : ''}`; }).join('')}</tbody>
+    </table></div>
+    <div class="qd-sum">
+      <div><span>${L('المبلغ قبل الضريبة', 'Subtotal (excl. VAT)')}</span><span class="num">${sar(q.subtotal)} ${SAR()}</span></div>
+      ${q.vat ? `<div><span>${L('ضريبة القيمة المضافة 15%', 'VAT 15%')}</span><span class="num">${sar(q.total - q.subtotal)} ${SAR()}</span></div>` : ''}
+      <div class="tot"><span>${L('الإجمالي', 'Total')}</span><span class="num">${sar(q.total)} ${SAR()}</span></div>
+    </div>
+    ${q.note ? `<section class="qd-sec"><h3>${L('ملاحظات خاصة بهذا العرض', 'Notes on this quotation')}</h3><p style="white-space:pre-wrap">${esc(q.note)}</p></section>` : ''}
+    ${terms ? `<section class="qd-sec qd-terms"><h3>${L('الشروط والأحكام', 'Terms and conditions')}</h3><p class="lead-in">${L('هذه الشروط جزء أساسي من عرض السعر ولا تنفصل عنه.', 'These terms form an integral part of this quotation.')}</p>${termsHtml(terms)}</section>` : ''}
+    <section class="qd-sec"><h3>${L('اعتماد العميل', 'Client acceptance')}</h3>
+      <p>${L('بتوقيعكم على هذا العرض، أو بضغطكم «أوافق على العرض» في نسخته الإلكترونية، تُقرّون بأنكم اطلعتم على تفاصيله وشروطه وأحكامه ووافقتم عليها.',
+            'By signing this quotation, or by pressing “Accept quotation” on its online version, you confirm that you have read and agree to its details, terms and conditions.')}</p>
+      <div class="qd-sign"><div>${L('اسم المفوّض', 'Authorised name')}</div><div>${L('التوقيع', 'Signature')}</div><div>${L('الختم', 'Stamp')}</div><div>${L('التاريخ', 'Date')}</div></div>
+    </section>
+    ${B.iban ? `<section class="qd-sec qd-bank"><h3>${L('طريقة السداد', 'Payment details')}</h3><p>${L('يُسدَّد المبلغ بتحويل بنكي إلى الحساب التالي', 'Payment is made by bank transfer to the following account')}${(B.name || B.name_en) ? ` ${L('لدى', 'at')} ${esc(pick(B.name, B.name_en))}` : ''}:</p>
+      <dl>${(B.beneficiary || B.beneficiary_en) ? `<dt>${L('اسم المستفيد', 'Beneficiary')}</dt><dd>${esc(pick(B.beneficiary, B.beneficiary_en))}</dd>` : ''}<dt>IBAN</dt><dd class="num">${esc(ibanPretty(B.iban))}</dd>${B.account ? `<dt>${L('رقم الحساب', 'Account no.')}</dt><dd class="num">${esc(B.account)}</dd>` : ''}</dl></section>` : ''}
+    <div id="qdState">${q.status === 'accepted' ? `<div class="msg ok">✓ ${L('تمت الموافقة على العرض', 'Quotation accepted on')} ${fmtDate(q.decided_at)} — ${L('وسنتواصل معكم لتوقيع العقد.', 'we will contact you to sign the contract.')}</div>`
+      : q.status === 'declined' ? `<div class="msg info">${L('هذا العرض مغلق.', 'This quotation is closed.')}</div>` : expired ? `<div class="msg info">${L('انتهت صلاحية هذا العرض، يُرجى التواصل معنا لتحديثه.', 'This quotation has expired — contact us for an updated one.')}</div>` : ''}</div>
+    <div class="qd-actions">
+      ${open ? `<button class="btn btn-main" id="qAccept">✓ ${L('أوافق على العرض', 'Accept quotation')}</button>` : ''}
+      <button class="btn btn-soft" onclick="window.print()">${L('طباعة / حفظ PDF', 'Print / save PDF')}</button>
+      <button class="btn btn-ghost" id="qLang">${EN() ? 'عربي' : 'English'}</button>
+    </div>
+    ${foot ? `<footer class="qd-foot">${foot}</footer>` : ''}
+  </article></div>`;
+  $('#qLang').onclick = () => setLang(EN() ? 'ar' : 'en');
+  const acc = $('#qAccept');
+  if (acc) acc.onclick = async () => {
+    if (!confirm(L('هل تؤكدون الموافقة على عرض السعر؟ سيتواصل معكم فريق رفد لتوقيع العقد.', 'Confirm you accept this quotation? The RAFD team will contact you to sign the contract.'))) return;
+    acc.disabled = true;
+    const r = await rpc('team_quote_client_accept', { p_id: id });
+    if (!r || r.error) { acc.disabled = false; return toast(err(r && r.error)); }
+    viewQuote(id);
+  };
+}
+
+/* ---------- operator ---------- */
+let admData = null, admTab = 'leads', admQuery = '', admStatus = 'all', admCatalog = null;
+const admSecret = () => { try { return sessionStorage.getItem(ADMIN_KEY); } catch (e) { return null; } };
+const admRpc = (action, p = {}) => rpc('team_admin', { p_secret: admSecret(), p_action: action, p });
+
+async function viewAdmin() {
+  if (!admSecret()) return admLogin();
+  const [r, c] = await Promise.all([admRpc('list'), admRpc('catalog')]);
+  if (!r || r.error) {
+    try { sessionStorage.removeItem(ADMIN_KEY); } catch (e) {}
+    return admLogin(r && r.error === 'auth' ? L('كلمة السر غير صحيحة', 'Wrong password') : err(r && r.error));
+  }
+  admData = r; admCatalog = (c && c.catalog) || DEFAULT_CATALOG; drawAdmin();
+}
+
+function admLogin(e) {
+  app.innerHTML = `<div class="wrap"><div class="card auth"><h2>${L('لوحة إدارة سفراء رفد', 'RAFD Ambassadors — admin')}</h2><p class="sub">${L('للإدارة فقط.', 'For the team only.')}</p><div id="m">${e ? `<div class="msg err">${esc(e)}</div>` : ''}</div>
+    <form id="f"><div class="field"><label>${L('كلمة السر', 'Password')}</label><input name="s" type="password" autocomplete="current-password"></div><button class="btn btn-main btn-block">${L('دخول', 'Sign in')}</button></form></div></div>`;
+  $('#f').onsubmit = ev => { ev.preventDefault(); try { sessionStorage.setItem(ADMIN_KEY, ev.target.s.value); } catch (x) {} viewAdmin(); };
+}
+
+function drawAdmin() {
+  const { members, leads } = admData;
+  const won = leads.filter(l => l.status === 'won');
+  const due = won.filter(l => !l.paid_at).reduce((s, l) => s + (+l.commission || 0), 0);
+  const paid = won.filter(l => l.paid_at).reduce((s, l) => s + (+l.commission || 0), 0);
+  app.innerHTML = `<div class="wrap">
+    <div class="adm-tabs">
+      <button class="chip ${admTab === 'leads' ? 'on' : ''}" data-t="leads">${L('العملاء', 'Clients')} (<span class="num">${leads.length}</span>)</button>
+      <button class="chip ${admTab === 'members' ? 'on' : ''}" data-t="members">${L('الفريق', 'Team')} (<span class="num">${members.length}</span>)</button>
+      ${TIKTOK_TASK ? `<button class="chip ${admTab === 'tasks' ? 'on' : ''}" data-t="tasks">${TT_ICON} ${L('مهمة تيك توك', 'TikTok task')}</button>` : ''}
+      <span style="flex:1"></span>
+      <button class="btn btn-soft btn-sm" id="catBtn">${L('الباقات والأسعار', 'Packages & prices')}</button>
+      <button class="btn btn-soft btn-sm" id="agrBtn">${L('نسبة العمولة', 'Commission rate')}</button>
+      <button class="btn btn-soft btn-sm" id="termsBtn">${L('شروط العرض', 'Quote terms')}</button>
+      <button class="btn btn-soft btn-sm" id="csv">${L('تصدير Excel', 'Export to Excel')}</button>
+      <button class="btn btn-ghost btn-sm" id="admOut">${L('خروج', 'Sign out')}</button>
+    </div>
+    <div class="adm-sum">
+      <div class="stat"><span>${L('أعضاء الفريق', 'Team members')}</span><b class="num">${members.length}</b></div>
+      <div class="stat"><span>${L('صفقات تمّت', 'Deals closed')}</span><b class="num">${won.length}</b></div>
+      <div class="stat gold"><span>${L('عمولات مستحقة', 'Commission due')}</span><b><span class="num">${money(due)}</span> <small>${SAR()}</small></b></div>
+      <div class="stat green"><span>${L('تم تحويله', 'Paid out')}</span><b><span class="num">${money(paid)}</span> <small>${SAR()}</small></b></div>
+    </div>
+    <div id="admBody"></div>
+  </div>`;
+  app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { admTab = b.dataset.t; drawAdmin(); });
+  $('#admOut').onclick = () => { try { sessionStorage.removeItem(ADMIN_KEY); } catch (e) {} admLogin(); };
+  $('#csv').onclick = exportCsv;
+  $('#termsBtn').onclick = openTermsEditor;
+  $('#catBtn').onclick = openCatalogEditor;
+  $('#agrBtn').onclick = openAgreementEditor;
+  if (admTab === 'tasks' && !TIKTOK_TASK) admTab = 'leads';
+  admTab === 'leads' ? drawAdmLeads() : admTab === 'tasks' ? loadAdmTasks() : drawAdmMembers();
+}
+
+let admTaskMonth = null, admTasks = null;
+async function loadAdmTasks() {
+  admTaskMonth = admTaskMonth || monthOf(Date.now());
+  const r = await rpc('team_task_admin', { p_secret: admSecret(), p_action: 'list', p: { month: admTaskMonth } });
+  if (!r || r.error) return toast(err(r && r.error));
+  admTasks = r; drawAdmTasks();
+}
+
+async function taskAct(action, p) {
+  const r = await rpc('team_task_admin', { p_secret: admSecret(), p_action: action, p: { month: admTaskMonth, ...p } });
+  if (!r || r.error) { toast(err(r && r.error)); return false; }
+  toast(L('تم ✓', 'Done ✓')); await loadAdmTasks(); return true;
+}
+
+function drawAdmTasks() {
+  const { posts, done, paid, bonus, invite_bonus, cap, due: dueList } = admTasks;
+  const members = admData.members.filter(m => m.status !== 'suspended' || paid.some(p => p.member_id === m.id));
+  const cur = monthOf(Date.now()); const months = [cur, prevMonth(cur), prevMonth(prevMonth(cur))];
+  const isCur = admTaskMonth === cur;
+  const rows = members.map(m => {
+    const mine = done.filter(d => d.member_id === m.id);
+    const ok = mine.filter(d => !d.rejected && d.proof).length;
+    const due = (dueList || []).find(x => x.member_id === m.id) || { qualified: false, invites_ok: 0, amount: 0 };
+    return { m, mine, ok, due, pay: paid.find(p => p.member_id === m.id),
+      invited: admData.members.filter(x => x.invited_by === m.id).length };
+  }).sort((a, b) => b.ok - a.ok);
+  const nDue = rows.filter(r => r.due.qualified && !r.pay).length;
+  $('#admBody').innerHTML = `
+    <div class="filters">${months.map(mo => `<button class="chip ${mo === admTaskMonth ? 'on' : ''}" data-mo="${mo}">${esc(monthName(mo))}</button>`).join('')}</div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="row2" style="align-items:end;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
+        <div class="field" style="margin:0"><label>${L('المكافأة الثابتة', 'Fixed bonus')} (${SAR()})</label><input id="bonusAmt" class="num" inputmode="decimal" value="${esc(bonus)}"></div>
+        <div class="field" style="margin:0"><label>${L('عن كل مدعو', 'Per invitee')} (${SAR()})</label><input id="bonusInv" class="num" inputmode="decimal" value="${esc(invite_bonus)}"></div>
+        <div class="field" style="margin:0"><label>${L('الحد الأقصى شهرياً', 'Monthly cap')} (${SAR()})</label><input id="bonusCap" class="num" inputmode="decimal" value="${esc(cap)}"></div>
+        <button class="btn btn-soft" id="bonusSave">${L('حفظ المبالغ', 'Save amounts')}</button>
+      </div>
+      <p class="hint" style="margin-top:8px;color:var(--muted);font-size:.8rem">${L('يُحتسب المستحق عند الصرف بالمبالغ المحفوظة، فعدّلها قبل صرف الشهر لا بعده.', 'What is due is computed at payout with the saved amounts — change them before paying a month, not after.')}</p>
+      ${isCur ? `<form id="postForm" style="margin-top:14px" novalidate>
+        <div class="row2">
+          <div class="field" style="margin:0"><label>${L('رابط المقطع', 'Video link')}</label><input name="url" class="ltr" placeholder="https://www.tiktok.com/@…/video/…"></div>
+          <div class="field" style="margin:0"><label>${L('عنوان قصير', 'Short title')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="title" placeholder="${L('مثلاً: إعلان الباقة الجديدة', 'e.g. New package launch')}"></div>
+        </div>
+        <button class="btn btn-main btn-sm" style="margin-top:10px">＋ ${L('نشر المقطع للفريق', 'Post video to the team')}</button>
+      </form>` : `<p class="hint" style="margin-top:10px;color:var(--muted);font-size:.85rem">${L('شهر منتهٍ، للمراجعة والصرف فقط.', 'A past month — for review and payouts only.')}</p>`}
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="panel-title"><h2>${L('مقاطع', 'Videos —')} ${esc(monthName(admTaskMonth))} (<span class="num">${posts.length}</span>)</h2></div>
+      ${posts.map(p => `<div class="task"><div style="min-width:0"><b>${esc(p.title || L('مقطع', 'Video'))}</b><small>${fmtDate(p.created_at)} · ${L('نفّذها', 'done by')} <span class="num">${done.filter(d => d.post_id === p.id && !d.rejected && d.proof).length} / ${members.length}</span></small></div>
+        <div class="btn-row"><a class="btn btn-soft btn-sm" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${TT_ICON} ${L('فتح', 'Open')}</a><button class="btn btn-ghost btn-sm" data-del="${p.id}">${L('حذف', 'Delete')}</button></div></div>`).join('') || `<div class="empty">${L('لم يُنشر أي مقطع هذا الشهر.', 'No videos posted this month.')}</div>`}
+    </div>
+    <div class="card">
+      <div class="panel-title"><h2>${L('الفريق', 'Team')}</h2>${nDue ? `<span class="pill negotiating">${nDue} ${L('يستحقون الصرف', 'due for payout')}</span>` : ''}</div>
+      <p class="hint" style="color:var(--muted);font-size:.8rem;margin-bottom:6px">${L('راجع كل صورة وتعليق، وافتح حساب تيك توك للتأكد أنه حقيقي نشط. ارفض ما لا يستوفي الشروط.', 'Check each screenshot and comment, and open the TikTok account to make sure it is real and active. Reject anything that falls short.')}</p>
+      ${rows.map(({ m, mine, ok, due, pay, invited }) => `<div class="adm-lead">
+        <div class="lead-top">
+          <div><b>${esc(m.name)}</b> ${m.tiktok ? `<a class="num" style="color:var(--teal-600);font-size:.85rem" href="${esc(tiktokUrl(m.tiktok))}" target="_blank" rel="noopener">${esc(m.tiktok)} ↗</a>` : `<small style="color:var(--bad)">${L('بدون حساب تيك توك', 'no TikTok account')}</small>`}
+            <div class="who"><span class="num">${ok} / ${posts.length}</span> · ${L('مدعوون', 'Invited')} <span class="num">${invited}</span>${due.invites_ok ? ` · ${L('أكمل منهم', 'completed')} <span class="num">${due.invites_ok}</span>` : ''}</div></div>
+          <div class="btn-row">${pay
+            ? `<span class="pill won">✓ ${L('صُرفت', 'Paid')} ${money(pay.amount)}${pay.paid_ref ? ' · ' + esc(pay.paid_ref) : ''}</span><button class="btn btn-ghost btn-sm" data-unpay="${m.id}">${L('تراجع', 'Undo')}</button>`
+            : due.qualified ? `<button class="btn btn-gold btn-sm" data-pay="${m.id}">${L('صرف', 'Pay')} ${money(due.amount)}</button>` : `<span class="pill new">${L('غير مكتملة', 'Incomplete')}</span>`}</div>
+        </div>
+        ${mine.length ? `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:.82rem;color:var(--teal-600)">${L('المشاركات', 'Entries')} (${mine.length})</summary>
+          ${mine.map(d => { const p = posts.find(x => x.id === d.post_id) || {}; return `<div class="cmt ${d.rejected ? 'rej' : ''}"><span><small style="color:var(--muted)">${esc(p.title || L('مقطع', 'Video'))}:</small> ${esc(d.comment)}</span>
+            <span class="btn-row" style="flex:none">${d.proof ? `<button class="btn btn-soft btn-sm" data-proof="${d.post_id}|${m.id}">📷 ${L('الصورة', 'Screenshot')}</button>` : `<small style="color:var(--bad)">${L('بلا صورة', 'no screenshot')}</small>`}
+            <button class="btn btn-ghost btn-sm" data-rej="${d.post_id}|${m.id}|${d.rejected ? 1 : 0}">${d.rejected ? L('إرجاع', 'Restore') : L('رفض', 'Reject')}</button></span></div>`; }).join('')}</details>` : ''}
+      </div>`).join('') || `<div class="empty">${L('لا يوجد أعضاء بعد.', 'Nobody yet.')}</div>`}
+    </div>`;
+  const body = $('#admBody'); const num = id => +toLatin($(id).value).replace(/[^\d.]/g, '');
+  body.querySelectorAll('[data-mo]').forEach(b => b.onclick = () => { admTaskMonth = b.dataset.mo; loadAdmTasks(); });
+  $('#bonusSave').onclick = () => { const v = { amount: num('#bonusAmt'), invite: num('#bonusInv'), cap: num('#bonusCap') };
+    if (!(v.cap >= v.amount) || isNaN(v.invite)) return toast(err('bonus_bad')); taskAct('set_bonus', v); };
+  const pf = $('#postForm');
+  if (pf) pf.onsubmit = e => { e.preventDefault(); const url = pf.url.value.trim(); if (!/^https:\/\//.test(url)) return toast(err('url')); taskAct('post_add', { url, title: pf.title.value.trim() }); };
+  body.onclick = async e => {
+    const t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.del && confirm(L('حذف المقطع يحذف معه تسجيلات الفريق عليه. هل تريد المتابعة؟', 'Delete this video? The team’s marks on it are deleted too.'))) taskAct('post_del', { id: t.dataset.del });
+    if (t.dataset.rej) { const [post_id, member_id, was] = t.dataset.rej.split('|'); taskAct('reject', { post_id, member_id, undo: was === '1' }); }
+    if (t.dataset.proof) { const [post_id, member_id] = t.dataset.proof.split('|');
+      const r = await rpc('team_task_admin', { p_secret: admSecret(), p_action: 'proof', p: { post_id, member_id } });
+      if (!r || r.error || !r.img) return toast(err(r && r.error));
+      const m = memberById(member_id); const d = done.find(x => x.post_id === post_id && x.member_id === member_id) || {};
+      sheet(esc(m.name || ''), `<p style="font-size:.86rem;margin-bottom:10px">«${esc(d.comment || '')}»</p><img class="proof-img" src="${esc(r.img)}" alt="">
+        ${m.tiktok ? `<a class="btn btn-soft btn-block" style="margin-top:12px" href="${esc(tiktokUrl(m.tiktok))}" target="_blank" rel="noopener">${L('فتح حساب', 'Open account')} ${esc(m.tiktok)} ↗</a>` : ''}`); }
+    if (t.dataset.pay) { const m = admData.members.find(x => x.id === t.dataset.pay); const due = (dueList || []).find(x => x.member_id === m.id) || {};
+      const ref = prompt(`${L('صرف', 'Pay')} ${money(due.amount)} ${SAR()} ${L('لـ', 'to')} ${m.name}\n${m.iban ? ibanPretty(m.iban) : L('لم يُضف رقم الآيبان', 'no IBAN added')}\n\n${L('الرقم المرجعي (اختياري):', 'Transfer reference (optional):')}`, ''); if (ref !== null) taskAct('pay', { member_id: m.id, ref: ref.trim() }); }
+    if (t.dataset.unpay && confirm(L('هل تريد إلغاء تسجيل الصرف؟', 'Undo this payout record?'))) taskAct('unpay', { member_id: t.dataset.unpay });
+  };
+}
+
+const memberById = id => admData.members.find(m => m.id === id) || {};
+
+function drawAdmLeads() {
+  const body = $('#admBody');
+  const opts = [['all', L('الكل', 'All')], ['q_req', '📄 ' + L('طلبات عرض سعر', 'Quote requests')], ['q_ok', '✅ ' + L('وافقوا على العرض', 'Accepted quotes')], ...Object.entries(STATUS()), ['unpaid', L('مستحق تحويل', 'Payout due')]];
+  const nReq = admData.leads.filter(l => l.quote && l.quote.status === 'requested').length;
+  const nOk = admData.leads.filter(l => l.quote && l.quote.status === 'accepted' && l.status !== 'won').length;
+  body.innerHTML = `<input class="search" id="q" placeholder="${L('ابحث باسم العميل أو الشركة أو الجوال أو اسم ممثل المبيعات', 'Search by client, company, mobile or representative')}" value="${esc(admQuery)}">
+    ${nReq || nOk ? `<div class="alerts">${nReq ? `<button class="pill negotiating" data-s="q_req">📄 ${nReq} ${L('طلب عرض سعر بانتظار التسعير', 'quote request(s) waiting')}</button>` : ''}${nOk ? `<button class="pill won" data-s="q_ok">✅ ${nOk} ${L('عميل وافق، يُرجى التواصل لتوقيع العقد', 'accepted — contact them to sign')}</button>` : ''}</div>` : ''}
+    <div class="filters">${opts.map(([k, t]) => `<button class="chip ${admStatus === k ? 'on' : ''}" data-s="${k}">${t}</button>`).join('')}</div>
+    <div id="admList"></div>`;
+  $('#q').oninput = e => { admQuery = e.target.value; drawAdmList(); };
+  body.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { admStatus = b.dataset.s; drawAdmLeads(); });
+  drawAdmList();
+}
+
+function drawAdmList() {
+  const q = admQuery.trim().toLowerCase(); const ST = STATUS();
+  const list = admData.leads.filter(l => {
+    const qs = l.quote && l.quote.status;
+    if (admStatus === 'q_req') { if (qs !== 'requested') return false; }
+    else if (admStatus === 'q_ok') { if (qs !== 'accepted' || l.status === 'won') return false; }
+    else if (admStatus === 'unpaid' ? !(l.status === 'won' && !l.paid_at) : admStatus !== 'all' && l.status !== admStatus) return false;
+    if (!q) return true;
+    const m = memberById(l.member_id);
+    return [l.client_name, l.company, l.client_phone, m.name, m.code].some(v => String(v || '').toLowerCase().includes(q));
+  });
+  $('#admList').innerHTML = list.length ? list.map(l => {
+    const m = memberById(l.member_id);
+    return `<div class="adm-lead" data-id="${l.id}">
+      <div class="lead-top">
+        <div>
+          <h3 style="font-size:1rem;font-weight:800">${esc(l.client_name)}${l.company ? ' · ' + esc(l.company) : ''}</h3>
+          <div class="meta" style="font-size:.84rem;color:var(--muted);line-height:1.8"><a class="num" href="${wa(l.client_phone)}" target="_blank" rel="noopener">${esc(l.client_phone)}</a>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(svcLabel(l.service)) : ''}</div>
+          <div class="who">${L('ممثل المبيعات', 'Representative')}: <b>${esc(m.name || '—')}</b> <span class="num">(${esc(m.code || '')})</span> · ${fmtDateTime(l.created_at)} · ${l.source === 'link' ? L('سجّل العميل بنفسه من رابط ممثل المبيعات', 'client signed up via the representative\'s link') : L('سجّله ممثل المبيعات', 'registered by the representative')}</div>
+          ${l.notes ? `<div class="who" style="margin-top:4px">📝 ${esc(l.notes)}</div>` : ''}
+        </div>
+        <span class="pill ${l.status}">${ST[l.status]}</span>
+      </div>
+      <div class="adm-edit">
+        <div><label>${L('الحالة', 'Status')}</label><select data-f="status">${Object.entries(ST).map(([k, t]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+        <div><label>${L('قيمة الصفقة', 'Deal value')}</label><input data-f="deal_value" class="num" inputmode="decimal" value="${l.deal_value ?? (l.quote && l.quote.status === 'accepted' ? l.quote.total : '')}"></div>
+        <div><label>${L('العمولة', 'Commission')}${m.agreed_rate != null ? ` <span class="num">(${fmtRate(m.agreed_rate)}%)</span>` : ''}</label><input data-f="commission" class="num" inputmode="decimal" value="${l.commission ?? ''}" data-rate="${m.agreed_rate ?? ''}"></div>
+        <button class="btn btn-main btn-sm" data-a="save">${L('حفظ', 'Save')}</button>
+      </div>
+      ${admQuoteBox(l)}
+      <div class="adm-edit" style="grid-template-columns:1fr auto auto">
+        <div><label>${L('ملاحظة داخلية', 'Internal note')}</label><input data-f="admin_note" value="${esc(l.admin_note || '')}"></div>
+        ${l.status === 'won' ? (l.paid_at
+          ? `<span class="pill won" style="align-self:center">✓ ${L('حُوّلت', 'Paid')} ${fmtDate(l.paid_at)}${l.paid_ref ? ' · ' + esc(l.paid_ref) : ''}</span><button class="btn btn-ghost btn-sm" data-a="unpay">${L('تراجع', 'Undo')}</button>`
+          : `<button class="btn btn-gold btn-sm" data-a="pay">${L('تم التحويل', 'Mark paid')}</button><span></span>`) : '<span></span><span></span>'}
+      </div>
+    </div>`;
+  }).join('') : `<div class="empty">${L('لا توجد نتائج.', 'No results.')}</div>`;
+  $('#admList').onclick = admLeadAction;
+  /* The commission follows from the deal value and the rate THIS member agreed to —
+     filled in as a suggestion the moment the deal is marked signed, still editable. */
+  $('#admList').onchange = e => {
+    const card = e.target.closest('.adm-lead'); if (!card) return;
+    const f = k => card.querySelector(`[data-f=${k}]`);
+    if (!['status', 'deal_value'].includes(e.target.dataset.f) || f('status').value !== 'won') return;
+    const rate = +f('commission').dataset.rate, deal = +toLatin(f('deal_value').value).replace(/[^\d.]/g, '');
+    if (rate && deal && (!f('commission').value || e.target.dataset.f === 'deal_value')) f('commission').value = +(deal * rate / 100).toFixed(2);
+  };
+}
+
+function admQuoteBox(l) {
+  const q = l.quote; if (!q) return '';
+  const head = { requested: '📄 <b>' + L('طلب عرض سعر', 'Quote request') + '</b> — ' + L('بانتظار الإجراء', 'waiting for you'),
+    sent: '📄 ' + L('أُرسل العرض، بانتظار رد العميل', 'Quote sent — awaiting the client'),
+    accepted: `✅ <b>${L('العميل وافق', 'Client accepted')}</b>${q.decided_by === 'client' ? ' ' + L('بنفسه من صفحة العرض', 'directly on the quote page') : ' ' + L('(بإفادة ممثل المبيعات)', '(as reported by the representative)')} ${fmtDateTime(q.decided_at)} — ${L('يُرجى التواصل وتوقيع العقد', 'contact them to sign')}`,
+    declined: '✕ ' + L('العميل رفض العرض', 'The client declined') }[q.status];
+  return `<div class="qbox ${q.status}">${head}
+    ${q.requested_items && q.requested_items.length ? `<div style="font-size:.86rem">🧾 ${pickedText(q.requested_items, admCatalog)}</div>` : ''}
+    ${detailsText(q) ? `<div style="font-size:.84rem;color:#3a4452">📝 ${detailsText(q)}</div>` : ''}
+    ${q.total != null ? `<div>${L('الإجمالي', 'Total')}: <b class="num">${money(q.total)}</b> ${SAR()}${q.vat ? ' ' + L('شامل الضريبة', 'incl. VAT') : ''}</div>` : ''}
+    ${q.decision_note ? `<div style="font-size:.84rem">💬 ${esc(q.decision_note)}</div>` : ''}
+    <div class="btn-row">
+      ${q.status !== 'accepted' ? `<button class="btn ${q.status === 'requested' ? 'btn-gold' : 'btn-soft'} btn-sm" data-a="quote">${q.status === 'requested' ? L('جهّز العرض', 'Prepare quote') : L('تعديل العرض وإعادة إرساله', 'Edit and resend')}</button>` : ''}
+      ${q.status !== 'requested' ? `<a class="btn btn-ghost btn-sm" href="#/q/${q.id}" target="_blank" rel="noopener">${L('فتح العرض ↗', 'Open quote ↗')}</a>` : ''}
+    </div></div>`;
+}
+
+/* A catalogue entry becomes a quote line carrying BOTH languages, so the same
+   quote prints correctly whichever language the client reads it in. */
+const lineFromCat = (c, q) => ({ d: c.ar, d_en: c.en || '', n: c.desc_ar || '', n_en: c.desc_en || '', u: c.unit_ar || '', u_en: c.unit_en || '', q: q || 1, p: c.price ?? '' });
+
+function openQuoteEditor(l) {
+  const q = l.quote;
+  let rows = q.items && q.items.length ? q.items
+    : (q.requested_items || []).map(i => { const c = admCatalog.find(x => x.id === i.id); return c ? lineFromCat(c, i.q) : null; }).filter(Boolean);
+  if (!rows.length) rows = [{ d: '', q: 1, p: '' }];
+  const row = it => `<div class="qitem"><div class="qrow"><input data-k="d" placeholder="${L('البند', 'Item')}" value="${esc(it.d)}"><input data-k="q" class="num" inputmode="decimal" placeholder="${L('الكمية', 'Qty')}" value="${esc(it.q)}"><input data-k="p" class="num" inputmode="decimal" placeholder="${L('السعر', 'Price')}" value="${esc(it.p)}"><button type="button" class="x" data-rm title="${L('حذف', 'Remove')}">✕</button></div>
+    <div class="qrow2"><input data-k="n" placeholder="${L('وصف البند للعميل (اختياري)', 'Line description for the client (optional)')}" value="${esc(it.n || '')}"><input data-k="u" placeholder="${L('الوحدة', 'Unit')}" value="${esc(it.u || '')}"></div>
+    <div class="qrow3"><input data-k="d_en" placeholder="Item (English)" value="${esc(it.d_en || '')}"><input data-k="n_en" placeholder="Description (English)" value="${esc(it.n_en || '')}"><input data-k="u_en" placeholder="Unit" value="${esc(it.u_en || '')}"></div></div>`;
+  const s = sheet(`${L('عرض سعر', 'Quote')} — ${esc(l.client_name)}`, `
+    ${q.requested_items && q.requested_items.length ? `<div class="msg info">🧾 ${pickedText(q.requested_items, admCatalog)}</div>` : ''}
+    ${detailsText(q) ? `<div class="msg info" style="white-space:pre-wrap">📝 ${detailsText(q)}</div>` : ''}
+    <div id="em"></div>
+    <form id="ef" novalidate class="${(q.lang || 'ar') === 'en' ? 'en' : ''}">
+      <div class="row2">
+        <div class="field"><label>${L('لغة العرض', 'Quote language')}</label><select name="lang"><option value="ar" ${(q.lang || 'ar') === 'ar' ? 'selected' : ''}>العربية</option><option value="en" ${q.lang === 'en' ? 'selected' : ''}>English</option></select></div>
+        <div class="field"><label>${L('نوع الاشتراك', 'Billing')}</label><select name="plan">${Object.entries(PLAN()).map(([k, t]) => `<option value="${k}" ${(q.plan || 'yearly') === k ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>${L('عنوان العميل', 'Client address')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="caddr" placeholder="${L('الحي، المدينة', 'District, city')}" value="${esc(q.client_address || l.city || '')}"></div>
+        <div class="field"><label>${L('السجل التجاري للعميل', 'Client CR no.')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="ccr" class="ltr num" inputmode="numeric" placeholder="10XXXXXXXX" value="${esc(q.client_cr || '')}"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>${L('الرقم الضريبي للعميل', 'Client VAT no.')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="cvat" class="ltr num" inputmode="numeric" placeholder="3XXXXXXXXXXXXX3" value="${esc(q.client_vat || '')}"></div>
+      </div>
+      <label style="display:block;font-weight:700;font-size:.85rem;margin-bottom:6px;color:var(--navy-800)">${L('أضف من الباقات', 'Add from packages')}</label>
+      <div class="filters" id="catAdd">${admCatalog.map(c => `<button type="button" class="chip" data-cat="${esc(c.id)}">＋ ${esc(catName(c))}${c.price != null ? ` · <span class="num">${money(c.price)}</span>` : ''}</button>`).join('')}</div>
+      <div class="qrow" style="font-size:.72rem;color:var(--muted);font-weight:700;margin-bottom:2px"><span>${L('البند', 'Item')}</span><span>${L('الكمية', 'Qty')}</span><span>${L('سعر الوحدة', 'Unit price')}</span><span></span></div>
+      <div id="rows">${rows.map(row).join('')}</div>
+      <button type="button" class="btn btn-ghost btn-sm" id="addRow">＋ ${L('بند مخصص', 'Custom line')}</button>
+      <label class="check" style="margin-top:10px"><input type="checkbox" name="vat" ${q.vat !== false ? 'checked' : ''}><span>${L('يضاف ضريبة القيمة المضافة 15%', 'Add 15% VAT')}</span></label>
+      <div class="field"><label>${L('ساري حتى', 'Valid until')}</label><input type="date" name="valid" value="${esc(q.valid_until || addDays(QUOTE_DAYS))}"></div>
+      <div class="field"><label>${L('ملاحظات خاصة بهذا العرض', 'Notes on this quote')} <small>${L('(تظهر للعميل، وتُضاف الشروط العامة تلقائياً)', '(shown to the client — the standard terms are added automatically)')}</small></label><textarea name="note" placeholder="${L('مثلاً: الدفع 50% مقدم و50% بعد التركيب.', 'e.g. 50% upfront, 50% after installation.')}">${esc(q.note || '')}</textarea></div>
+      <div class="qbox" id="sum" style="margin:0 0 12px"></div>
+      <button class="btn btn-main btn-block" type="submit">${L('إرسال العرض إلى ممثل المبيعات', 'Send quote to the representative')}</button>
+    </form>`);
+  const f = $('#ef', s.el); const rowsEl = $('#rows', s.el);
+  const val = (r, k) => (r.querySelector(`[data-k=${k}]`) || {}).value || '';
+  const read = () => [...f.querySelectorAll('#rows .qitem')].map(r => ({ d: val(r, 'd').trim(),
+    q: +toLatin(val(r, 'q')).replace(/[^\d.]/g, ''), p: (x => x === '' ? NaN : +x)(toLatin(val(r, 'p')).replace(/[^\d.]/g, '')),
+    n: val(r, 'n').trim(), u: val(r, 'u').trim(), d_en: val(r, 'd_en').trim(), n_en: val(r, 'n_en').trim(), u_en: val(r, 'u_en').trim() }));
+  const filled = i => i.d || i.q > 1 || !Number.isNaN(i.p);
+  const sum = () => { const its = read().filter(filled); const sub = its.reduce((t, i) => t + (i.q || 0) * (i.p || 0), 0); const vat = f.vat.checked;
+    $('#sum', s.el).innerHTML = `${L('المجموع', 'Subtotal')} <b class="num">${money(sub)}</b>${vat ? ` · ${L('الضريبة', 'VAT')} <b class="num">${money(sub * VAT_RATE)}</b>` : ''} · <b>${L('الإجمالي', 'Total')} <span class="num">${money(sub * (vat ? 1 + VAT_RATE : 1))}</span> ${SAR()}</b>`; };
+  f.addEventListener('input', sum); f.vat.onchange = sum; sum();
+  f.lang.onchange = () => f.classList.toggle('en', f.lang.value === 'en');
+  const addLine = it => {
+    const empty = [...rowsEl.querySelectorAll('.qitem')].find(r => !val(r, 'd').trim() && !val(r, 'p').trim());
+    if (empty) empty.outerHTML = row(it); else rowsEl.insertAdjacentHTML('beforeend', row(it));
+    sum();
+  };
+  $('#catAdd', s.el).onclick = e => { const b = e.target.closest('[data-cat]'); if (!b) return; const c = admCatalog.find(x => x.id === b.dataset.cat); if (c) addLine(lineFromCat(c, 1)); };
+  $('#addRow', s.el).onclick = () => { rowsEl.insertAdjacentHTML('beforeend', row({ d: '', q: 1, p: '' })); sum(); };
+  rowsEl.onclick = e => { if (e.target.dataset.rm !== undefined && f.querySelectorAll('#rows .qitem').length > 1) { e.target.closest('.qitem').remove(); sum(); } };
+  f.onsubmit = async e => {
+    e.preventDefault(); const b = f.querySelector('button[type=submit]');
+    const items = read().filter(filled);
+    if (!items.length || items.some(i => !i.d || !(i.q > 0) || !(i.p >= 0) || Number.isNaN(i.p))) return formMsg($('#em', s.el), 'err', err('items'));
+    b.disabled = true;
+    const r = await admRpc('quote_send', { lead_id: l.id, items, vat: f.vat.checked, valid_until: f.valid.value, note: f.note.value.trim(), lang: f.lang.value,
+      plan: f.plan.value, client_address: f.caddr.value.trim(), client_vat: toLatin(f.cvat.value).replace(/\D/g, ''), client_cr: toLatin(f.ccr.value).replace(/\D/g, '') });
+    b.disabled = false;
+    if (!r || r.error) return formMsg($('#em', s.el), 'err', err(r && r.error));
+    s.close(); toast(L('تم إرسال العرض إلى ممثل المبيعات ✓', 'Quote sent to the representative ✓')); viewAdmin();
+  };
+}
+
+/* The packages the ambassadors pick from and the operator prices from.
+   A blank price means «priced per quote». */
+function openCatalogEditor() {
+  const cat = (admCatalog || []).map(c => ({ ...c }));
+  const row = c => `<div class="catrow" data-id="${esc(c.id)}">
+    <input data-k="ar" placeholder="الاسم بالعربي" value="${esc(c.ar || '')}"><input data-k="en" class="en" placeholder="Name in English" value="${esc(c.en || '')}">
+    <input data-k="desc_ar" placeholder="الوصف بالعربي" value="${esc(c.desc_ar || '')}"><input data-k="desc_en" class="en" placeholder="Description in English" value="${esc(c.desc_en || '')}">
+    <input data-k="unit_ar" placeholder="الوحدة (فرع، كاميرا…)" value="${esc(c.unit_ar || '')}"><input data-k="unit_en" class="en" placeholder="Unit (branch, camera…)" value="${esc(c.unit_en || '')}">
+    <input data-k="price" class="num" inputmode="decimal" placeholder="${L('السعر الافتراضي (اختياري)', 'Default price (optional)')}" value="${esc(c.price ?? '')}">
+    <button type="button" class="btn btn-ghost btn-sm" data-rm>${L('حذف الباقة', 'Remove package')}</button></div>`;
+  const s = sheet(L('الباقات والأسعار', 'Packages & prices'), `
+    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('يختار ممثلو المبيعات من هذه القائمة عند طلب عرض السعر، وتضيف منها الإدارة عند التسعير. يُعبّأ السعر الافتراضي تلقائياً ويمكن تعديله في كل عرض.', 'Representatives pick from this list when requesting a quote, and the team adds from it when pricing. The default price fills in automatically and can be changed on each quote.')}</p>
+    <div id="cm"></div>
+    <div id="catRows">${cat.map(row).join('')}</div>
+    <button type="button" class="btn btn-soft btn-sm" id="catNew">＋ ${L('باقة جديدة', 'New package')}</button>
+    <button type="button" class="btn btn-main btn-block" id="catSave" style="margin-top:14px">${L('حفظ', 'Save')}</button>`);
+  const box = $('#catRows', s.el);
+  $('#catNew', s.el).onclick = () => box.insertAdjacentHTML('beforeend', row({ id: 'c' + Date.now().toString(36) }));
+  box.onclick = e => { if (e.target.dataset.rm !== undefined) e.target.closest('.catrow').remove(); };
+  $('#catSave', s.el).onclick = async () => {
+    const out = [...box.querySelectorAll('.catrow')].map(r => {
+      const g = k => r.querySelector(`[data-k=${k}]`).value.trim();
+      const pr = toLatin(g('price')).replace(/[^\d.]/g, '');
+      return { id: r.dataset.id, ar: g('ar'), en: g('en'), desc_ar: g('desc_ar'), desc_en: g('desc_en'), unit_ar: g('unit_ar'), unit_en: g('unit_en'), price: pr === '' ? null : +pr };
+    }).filter(c => c.ar || c.en);
+    const r = await admRpc('catalog', { catalog: out });
+    if (!r || r.error) return formMsg($('#cm', s.el), 'err', err(r && r.error));
+    admCatalog = r.catalog; s.close(); toast(L('تم حفظ الباقات ✓', 'Packages saved ✓'));
+  };
+}
+
+async function openTermsEditor() {
+  const r = await admRpc('quote_terms');
+  if (!r || r.error) return toast(err(r && r.error));
+  const s = sheet(L('الشروط والأحكام الافتراضية', 'Default terms and conditions'), `
+    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('تُضاف إلى كل عرض يُرسل من الآن، وتبقى العروض المرسلة سابقاً بالشروط التي أُرسلت بها.', 'Added to every quote you send from now on. Quotes already sent keep the terms they were sent with.')}<br>
+      ${L('السطر الذي يبدأ بـ', 'A line starting with')} <b class="num">##</b> ${L('عنوان قسم مرقّم، والذي يبدأ بـ', 'is a numbered section; one starting with')} <b class="num">-</b> ${L('بند تحته.', 'is a clause under it.')}</p>
+    <div class="tabs2"><button type="button" class="chip on" data-tl="ar">العربية</button><button type="button" class="chip" data-tl="en">English</button></div>
+    <div id="tm"></div>
+    <form id="tf" novalidate>
+      <div class="field" data-pane="ar"><textarea name="terms" dir="rtl" style="min-height:340px;font-size:.88rem;line-height:1.8">${esc(r.terms || '')}</textarea></div>
+      <div class="field" data-pane="en" hidden><textarea name="terms_en" dir="ltr" style="min-height:340px;font-size:.88rem;line-height:1.8">${esc(r.terms_en || '')}</textarea></div>
+      <button class="btn btn-main btn-block" type="submit">${L('حفظ', 'Save')}</button></form>`);
+  s.el.querySelectorAll('[data-tl]').forEach(b => b.onclick = () => {
+    s.el.querySelectorAll('[data-tl]').forEach(x => x.classList.toggle('on', x === b));
+    s.el.querySelectorAll('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== b.dataset.tl);
+  });
+  $('#tf', s.el).onsubmit = async e => {
+    e.preventDefault();
+    const x = await admRpc('quote_terms', { terms: e.target.terms.value.trim(), terms_en: e.target.terms_en.value.trim() });
+    if (!x || x.error) return formMsg($('#tm', s.el), 'err', err(x && x.error));
+    s.close(); toast(L('تم حفظ الشروط ✓', 'Terms saved ✓'));
+  };
+}
+
+async function openAgreementEditor() {
+  const r = await admRpc('agreement');
+  if (!r || r.error) return toast(err(r && r.error));
+  const s = sheet(L('نسبة العمولة', 'Commission rate'), `
+    <p class="hint" style="font-size:.84rem;color:var(--muted);line-height:1.8;margin-bottom:10px">${L('تظهر في الشروط والأحكام بالصفحة الرئيسية، وتسري على المنضمين الجدد فقط؛ من سجّل سابقاً تبقى نسبته كما وافق عليها.', 'Shown in the terms and conditions on the home page, and applies to new members only; existing members keep the rate they signed up with.')}</p>
+    <div id="am"></div>
+    <form id="af" novalidate>
+      <div class="row2">
+        <div class="field"><label>${L('نسبة العمولة %', 'Commission rate %')}</label><input name="rate" class="num" inputmode="decimal" value="${esc(r.rate)}"></div>
+        <div class="field"><label>${L('مدة التحويل بعد التحصيل (يوم)', 'Payout days after collection')}</label><input name="days" class="num" inputmode="numeric" value="${esc(r.days)}"></div>
+      </div>
+      <button class="btn btn-main btn-block" type="submit">${L('حفظ', 'Save')}</button>
+    </form>`);
+  $('#af', s.el).onsubmit = async e => {
+    e.preventDefault(); const f = e.target;
+    const x = await admRpc('agreement', { rate: +toLatin(f.rate.value).replace(/[^\d.]/g, ''), days: +toLatin(f.days.value).replace(/\D/g, '') });
+    if (!x || x.error) return formMsg($('#am', s.el), 'err', err(x && x.error));
+    AGR = null; s.close(); toast(L('تم حفظ النسبة ✓', 'Rate saved ✓'));
+  };
+}
+
+async function admLeadAction(e) {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const card = b.closest('.adm-lead'); const id = card.dataset.id; const a = b.dataset.a;
+  if (a === 'quote') return openQuoteEditor(admData.leads.find(x => x.id === id));
+  let r;
+  if (a === 'save') {
+    const p = { id };
+    card.querySelectorAll('[data-f]').forEach(i => p[i.dataset.f] = i.dataset.f === 'deal_value' || i.dataset.f === 'commission' ? toLatin(i.value).replace(/[^\d.]/g, '') : i.value.trim());
+    if (p.status === 'won' && !p.commission) return toast(L('حدّد العمولة قبل حفظ الصفقة', 'Set the commission before saving the deal'));
+    b.disabled = true; r = await admRpc('lead', p);
+  } else if (a === 'pay') {
+    const l = admData.leads.find(x => x.id === id); const m = memberById(l.member_id);
+    if (!m.iban && !confirm(L('لم يُضف ممثل المبيعات رقم الآيبان بعد. هل تريد تسجيل التحويل؟', 'This representative has not added an IBAN yet. Record the payment anyway?'))) return;
+    const ref = prompt(`${L('تحويل', 'Pay')} ${money(l.commission)} ${SAR()} ${L('إلى', 'to')} ${m.name}\n${m.iban ? ibanPretty(m.iban) : ''}\n\n${L('الرقم المرجعي للتحويل (اختياري):', 'Transfer reference (optional):')}`, '');
+    if (ref === null) return;
+    b.disabled = true; r = await admRpc('paid', { id, ref: ref.trim() });
+  } else if (a === 'unpay') {
+    if (!confirm(L('هل تريد إلغاء تسجيل التحويل؟', 'Undo this payment record?'))) return;
+    r = await admRpc('paid', { id, undo: true });
+  }
+  if (!r || r.error) { b.disabled = false; return toast(r && r.error === 'not_won' ? L('يجب أن تكون الحالة «تم التعاقد» ومحفوظة أولاً', 'The status must be “Contract signed” and saved first') : err(r && r.error)); }
+  toast(L('تم الحفظ ✓', 'Saved ✓')); viewAdmin();
+}
+
+function drawAdmMembers() {
+  const { members, leads } = admData; const j = admData.join || { open: true, cap: 0, accepting: true };
+  const active = members.filter(m => m.status !== 'suspended').length;
+  $('#admBody').innerHTML = `<div class="card" style="margin-bottom:12px">
+      <div class="panel-title" style="margin-bottom:6px"><h2>${L('الانضمام إلى البرنامج', 'Sign-ups')}</h2><span class="pill ${j.accepting ? 'won' : 'lost'}">${j.accepting ? L('مفتوح', 'Open') : L('مغلق', 'Closed')}</span></div>
+      <div class="row2" style="align-items:end">
+        <label class="check" style="margin:0"><input type="checkbox" id="joinOpen" ${j.open ? 'checked' : ''}><span>${L('السماح بتسجيل أعضاء جدد', 'Allow new members to sign up')}</span></label>
+        <div class="field" style="margin:0"><label>${L('إغلاق تلقائي عند بلوغ عدد', 'Close automatically at')} <small>${L('(0 = بلا حد)', '(0 = no limit)')}</small></label><input id="joinCap" class="num" inputmode="numeric" value="${esc(j.cap || 0)}"></div>
+      </div>
+      <p class="hint" style="margin-top:8px;color:var(--muted);font-size:.8rem">${L('الأعضاء النشطون الآن', 'Active members now')}: <b class="num">${active}</b>${j.cap ? ` / <span class="num">${j.cap}</span>` : ''}. ${L('الإغلاق يمنع التسجيل الجديد فقط، ولا يمس الأعضاء الحاليين.', 'Closing only stops new sign-ups — current members are unaffected.')}</p>
+      <button class="btn btn-soft btn-sm" id="joinSave" style="margin-top:8px">${L('حفظ', 'Save')}</button>
+    </div>
+    <div class="card scroll-x" style="padding:8px 12px"><table class="members">
+    <thead><tr><th>${L('ممثل المبيعات', 'Representative')}</th><th>${L('عملاء', 'Clients')}</th><th>${L('صفقات', 'Deals')}</th><th>${L('مستحق', 'Due')}</th><th>${L('النسبة', 'Rate')}</th><th>IBAN</th><th>${L('الحالة', 'Status')}</th></tr></thead>
+    <tbody>${members.map(m => {
+      const ls = leads.filter(l => l.member_id === m.id);
+      const w = ls.filter(l => l.status === 'won');
+      const due = w.filter(l => !l.paid_at).reduce((s, l) => s + (+l.commission || 0), 0);
+      return `<tr>
+        <td><b>${esc(m.name)}</b><br><a class="num" href="${wa(m.phone)}" target="_blank" rel="noopener">${esc(m.phone)}</a> · <span class="num">${esc(m.code)}</span>${m.city ? '<br>' + esc(m.city) : ''}${m.tiktok ? '<br><a class="num" href="' + esc(tiktokUrl(m.tiktok)) + '" target="_blank" rel="noopener">' + esc(m.tiktok) + '</a>' : ''}<br><small style="color:var(--muted)">${L('انضم في', 'Joined')} ${fmtDate(m.created_at)}${m.invited_by ? ' · ' + L('بدعوة من', 'invited by') + ' ' + esc(memberById(m.invited_by).name || '—') : ''}</small></td>
+        <td class="num">${ls.filter(l => l.status !== 'duplicate').length}</td>
+        <td class="num">${w.length}</td>
+        <td><b class="num">${money(due)}</b></td>
+        <td><span class="num">${m.agreed_rate != null ? fmtRate(m.agreed_rate) + '%' : '—'}</span>${m.agreed_at ? `<br><small style="color:var(--muted)">${fmtDate(m.agreed_at)}</small>` : ''}</td>
+        <td>${m.iban ? `<span class="num" style="font-size:.8rem">${esc(ibanPretty(m.iban))}</span><br><small>${esc(m.iban_name || '')}${m.bank ? ' · ' + esc(m.bank) : ''}</small><br><button class="btn btn-ghost btn-sm" data-copy="${esc(m.iban)}">${L('نسخ', 'Copy')}</button>` : `<small style="color:var(--muted)">${L('لم يُضف', 'Not added')}</small>`}</td>
+        <td><select data-m="${m.id}" style="border:1.5px solid var(--line);border-radius:10px;padding:7px"><option value="trial" ${m.status === 'trial' ? 'selected' : ''}>${L('فترة إثبات الكفاءة', 'Trial period')}</option><option value="contracted" ${m.status === 'contracted' ? 'selected' : ''}>${L('متعاقد', 'Contracted')}</option><option value="suspended" ${m.status === 'suspended' ? 'selected' : ''}>${L('موقوف', 'Suspended')}</option></select></td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="7" class="empty">${L('لا يوجد أعضاء بعد.', 'Nobody yet.')}</td></tr>`}</tbody></table></div>`;
+  $('#admBody').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copy(b.dataset.copy));
+  $('#joinSave').onclick = async () => {
+    const cap = toLatin($('#joinCap').value).trim(); if (!/^\d{1,6}$/.test(cap)) return toast(err('join_cap'));
+    const r = await admRpc('join', { open: $('#joinOpen').checked, cap: +cap });
+    if (!r || r.error) return toast(err(r && r.error)); toast(L('تم الحفظ ✓', 'Saved ✓')); viewAdmin();
+  };
+  $('#admBody').querySelectorAll('[data-m]').forEach(s => s.onchange = async () => {
+    if (s.value === 'suspended' && !confirm(L('إيقاف الحساب يُنهي جلسة ممثل المبيعات ويمنعه من الدخول. هل تريد المتابعة؟', 'Suspending signs the representative out and blocks sign-in. Continue?'))) return drawAdmMembers();
+    const r = await admRpc('member', { id: s.dataset.m, status: s.value });
+    if (!r || r.error) return toast(err('network'));
+    toast(L('تم ✓', 'Done ✓')); viewAdmin();
+  });
+}
+
+function exportCsv() {
+  const cell = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const ST = STATUS();
+  const rows = [[L('ممثل المبيعات', 'Representative'), L('الرمز', 'Code'), L('جوال ممثل المبيعات', 'Representative mobile'), L('العميل', 'Client'), L('الشركة', 'Company'), L('جوال العميل', 'Client mobile'), L('المدينة', 'City'), L('البرنامج', 'Programme'), L('المصدر', 'Source'), L('الحالة', 'Status'), L('قيمة الصفقة', 'Deal value'), L('العمولة', 'Commission'), L('تاريخ التسجيل', 'Registered'), L('تاريخ التحويل', 'Paid on'), L('مرجع التحويل', 'Payment ref.'), 'IBAN', L('اسم صاحب الحساب', 'Account holder')]];
+  for (const l of admData.leads) {
+    const m = memberById(l.member_id);
+    rows.push([m.name, m.code, m.phone, l.client_name, l.company, l.client_phone, l.city, l.service, l.source === 'link' ? L('رابط', 'Link') : L('يدوي', 'Manual'), ST[l.status], l.deal_value, l.commission, l.created_at, l.paid_at, l.paid_ref, m.iban, m.iban_name]);
+  }
+  const blob = new Blob(['﻿' + rows.map(r => r.map(cell).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'rafd-team-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+}
+
+/* ---------- boot ---------- */
+$('#demoBar').hidden = REMOTE;
+route();
+</script>
+</body>
+</html>
