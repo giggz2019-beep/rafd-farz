@@ -210,7 +210,7 @@ body.on-air .brand-foot { display: none; }
 .door:active { transform: scale(.97); }
 /* the one that lists a lot is the one he wants pressed */
 #doorSell { border-color: var(--gold-500); background: linear-gradient(170deg, #fffaf0, #fdf1dc); }
-#doorSell .door-i { background: rgba(218,151,36,.18); border-color: rgba(218,151,36,.55); }
+#doorSell .door-i { background: rgba(209,183,127,.18); border-color: rgba(209,183,127,.55); }
 
 /* ---------- toolbar ---------- */
 /* two rows now — the section, then how far along — so each gets its own line
@@ -600,7 +600,7 @@ body.on-air .brand-foot { display: none; }
 .opbar.light button.sold   { background: var(--ok-600); border-color: var(--ok-600); color: #fff; }
 .opbar.light button.unsold { background: #c0392b; border-color: #c0392b; color: #fff; }
 .opbar.light button.start  { background: var(--ok-600); border-color: var(--ok-600); color: #fff; }
-.opbar.light button.next   { background: linear-gradient(135deg,#f0dcae,#da9724); color: #2a1c02; border-color: transparent; }
+.opbar.light button.next   { background: linear-gradient(135deg,#f0dcae,#d1b77f); color: #2a1c02; border-color: transparent; }
 
 .pill { background: var(--danger); color: #fff; border-radius: 999px; padding: 1px 8px; font-size: .74rem; }
 .ctl-bid {
@@ -632,33 +632,36 @@ body.on-air .brand-foot { display: none; }
 .ctl-bid.done .amt { color: var(--wine-600); }
 /* ---------- live broadcast screen ---------- */
 .live {
-  /* ---------- the olive band is real, it just climbs less far ----------
-     Three goes at this. It started at 78%, which put olive across the whole
-     lower half and stopped the card reading as burgundy («كبرته مرره»).
-     Removing it went too far the other way — «لاتخفي الزيتي خليه مثل ماهو».
-     So the band is back as it was, only shorter: burgundy holds to 62%, the
-     olive is unmistakably itself by 88%, and the card still closes on
-     --olive-900. Moving that 88% is the one knob — lower it and the olive
-     climbs, raise it and it retreats to a hairline. */
-  /* «اسود كامل بدون تدرج» — flat black, on purpose. The original card is a
-     burgundy-to-olive gradient; his is one ink. On camera a flat field is
-     also the safer choice: a gradient banded visibly on a phone recording a
-     laptop, and the plate and the paddles are what the viewer should read,
-     not the background. The gold lives on the frame, the price and the bar
-     at the foot instead. */
-  background: var(--wine-900);
+  /* ZEITI, not black. The black was inherited from the tenant this file was
+     copied from — it was his request, not مضمون's, and nothing in either file
+     مضمون sent is black. #3e3b28 is his own band colour (#555136, hue 52°,
+     sat .22) carried down to lum .20: deep enough that the plate, the gold
+     price and the paddle all sit clearly on top of it, and still plainly the
+     olive of his logo rather than a neutral dark grey.
+
+     FLAT, no gradient. On camera a gradient bands visibly when a phone films
+     a laptop screen, and the plate and the paddle are what a viewer should be
+     reading, not the background. The gold lives on the frame, the price and
+     the bar at the foot.
+
+     The topbar sits a step lighter at his #555136, so the page reads as his
+     band, his cream, then his card — three steps of one colour, not two
+     unrelated darks. */
+  background: #3e3b28;
   border-radius: 20px; padding: 16px 14px 20px; color: #fff; margin-top: 14px;
-  border: 2px solid rgba(218,151,36,.45); box-shadow: var(--shadow-lg);
+  /* HIS gold on the frame. This was rgba(209,183,127,…) — the other tenant's
+     gold, left behind by the copy, and visibly oranger than his. */
+  border: 2px solid rgba(195,159,86,.55); box-shadow: var(--shadow-lg);
 }
 .live-head {
   display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-  padding-bottom: 8px; border-bottom: 1.5px solid rgba(189,120,3,.45);
+  padding-bottom: 8px; border-bottom: 1.5px solid rgba(195,159,86,.45);
 }
 /* a held clock reads as held at a glance — amber, not the running white */
 .live-clock.held, .countdown.held, .stat-v.time.held { color: var(--gold-400); }
 .stat-v.time.held { color: #9a6b12; }
 .live-dot {
-  background: var(--gold-500); color: #241802; font-size: .75rem; font-weight: 800;
+  background: var(--gold-500); color: #1d1b12; font-size: .75rem; font-weight: 800;
   padding: 4px 11px; border-radius: 999px;
 }
 .live-dot::before {
@@ -700,7 +703,7 @@ body.on-air .brand-foot { display: none; }
 .live-price .k { font-size: .82rem; color: #e0cfa8; }
 .live-price .v {
   font-size: clamp(2rem, 11vw, 3.4rem); font-weight: 900;
-  background: linear-gradient(160deg,#f0dcae,#da9724 45%,#bd7803);
+  background: linear-gradient(160deg,#f0dcae,#d1b77f 45%,#c39f56);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   direction: ltr; unicode-bidi: isolate;
 }
@@ -711,7 +714,7 @@ body.on-air .brand-foot { display: none; }
   background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);
   border-radius: 999px; padding: 5px 11px; font-size: .8rem; font-weight: 700;
 }
-.live-bids span.top { background: rgba(218,151,36,.92); color: #241802; border-color: transparent; }
+.live-bids span.top { background: rgba(209,183,127,.92); color: #1d1b12; border-color: transparent; }
 
 /* ---------- the foot of the broadcast card ----------
    The site, the number and the commission, in ONE olive-framed bar. They were
@@ -726,37 +729,49 @@ body.on-air .brand-foot { display: none; }
    off a phone screen pointed at a laptop, so it is the last place to be
    saving a tenth of a rem. */
 .live-bar {
-  margin-top: 12px; display: grid; gap: 7px; text-align: center;
-  background: linear-gradient(160deg, rgba(140,90,5,.60), rgba(26,17,3,.86));
-  border: 2px solid #8c5a05;
-  border-radius: 16px; padding: 12px 14px;
+  margin-top: 10px; display: grid; gap: 5px; text-align: center;
+  /* His olive, a step lighter than the card so the bar reads as a panel on it
+     — it was a BRONZE gradient (rgba(140,90,5…) over #8c5a05), the other
+     tenant's colour, left behind by the copy and visibly orange against his
+     olive. Flat for the same reason the card is: a gradient bands on camera. */
+  background: #4b4730;
+  border: 2px solid rgba(195,159,86,.55);
+  border-radius: 14px; padding: 9px 12px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
-.live-bar .lb-site { font-size: .92rem; color: #eae6dd; }
+.live-bar .lb-site { font-size: .82rem; color: #eae6dd; }
 .live-bar .lb-site b { color: var(--gold-400); direction: ltr; unicode-bidi: isolate;
-  display: inline-block; font-size: 1.05rem; }
+  display: inline-block; font-size: .95rem; }
 /* the number sits in its own olive frame inside the bar */
 /* the number is the one thing on the card a viewer is meant to ACT on, so it
    is the biggest thing in the bar and it keeps its own olive ring */
 .live-bar .lb-tel {
-  justify-self: center; border: 2px solid #8c5a05;
-  background: rgba(26,17,3,.70); border-radius: 999px;
-  padding: 6px 18px; font-size: .95rem; color: #eae6dd;
+  /* the phone pill: his gold edge on a deeper well of his own olive, not the
+     other tenant's bronze ring over a near-black fill */
+  justify-self: center; border: 2px solid rgba(195,159,86,.70);
+  background: rgba(23,22,15,.55); border-radius: 999px;
+  padding: 4px 14px; font-size: .84rem; color: #eae6dd;
 }
-.live-bar .lb-tel b { color: var(--gold-400); font-weight: 900; font-size: 1.24rem;
+.live-bar .lb-tel b { color: var(--gold-400); font-weight: 900; font-size: 1.08rem;
   letter-spacing: .01em; }
+/* The bar was 181px — a fifth of the card — and crowded the plate and the
+   paddle, which are what the camera is pointed at. It gives up PADDING and
+   LEADING first and type only after that, and nothing in it drops below 13px:
+   it is read off a phone filming a laptop, so that is the floor, not a
+   preference. The phone number stays the largest thing in the bar, because it
+   is the one thing a viewer is meant to act on. */
 /* the commission is the one thing a seller agrees to, so it is read, not skimmed */
 .live-bar .lb-fee {
-  font-size: .95rem; font-weight: 800; color: #f7efdd; line-height: 1.65;
-  border-top: 1px dashed rgba(234,230,221,.3); padding-top: 8px;
+  font-size: .84rem; font-weight: 800; color: #f7efdd; line-height: 1.5;
+  border-top: 1px dashed rgba(234,230,221,.3); padding-top: 6px;
 }
-.live-bar .lb-fee b { color: var(--gold-400); font-weight: 900; font-size: 1.04rem; }
+.live-bar .lb-fee b { color: var(--gold-400); font-weight: 900; font-size: .94rem; }
 
 /* The commission has to be readable on the broadcast without anyone
    scrolling — it only lived in the page footer, under the fold, so on camera
    it was never seen at all. */
 .live-tel {
-  margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(218,151,36,.45);
+  margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(209,183,127,.45);
   font-size: .86rem; color: #f3e3d0;
 }
 .live-tel b { color: var(--gold-400); font-weight: 900; font-size: 1rem; }
@@ -1068,7 +1083,7 @@ body.on-air .brand-foot { display: none; }
 .opbar button.sold   { background: var(--ok-600); border-color: var(--ok-600); }
 .opbar button.unsold { background: #c0392b; border-color: #c0392b; }
 .opbar button.start  { background: var(--ok-600); border-color: var(--ok-600); }
-.opbar button.next   { background: linear-gradient(135deg,#f0dcae,#da9724); color: #2a1c02; border-color: transparent; }
+.opbar button.next   { background: linear-gradient(135deg,#f0dcae,#d1b77f); color: #2a1c02; border-color: transparent; }
 .opbar button.add    { background: rgba(255,255,255,.22); }
 .opbar button.danger { background: rgba(192,57,43,.22); border-color: rgba(192,57,43,.5); }
 .opbar.light button.danger { background: #fdecea; color: var(--danger); border-color: #f3c6c1; }
@@ -1078,7 +1093,7 @@ body.on-air .brand-foot { display: none; }
   display: flex; align-items: center; gap: 10px; width: 100%; text-align: right;
   background: var(--wine-900);
   color: #fff; border-radius: 16px; padding: 12px 14px; margin-bottom: 12px;
-  box-shadow: var(--shadow); border: 1px solid rgba(218,151,36,.45);
+  box-shadow: var(--shadow); border: 1px solid rgba(209,183,127,.45);
 }
 .live-banner .n { flex: 1; font-weight: 900; font-size: 1.15rem; direction: ltr; unicode-bidi: isolate; text-align: center; }
 .live-banner.ctrl { background: var(--wine-700); }
@@ -3062,11 +3077,15 @@ function renderLive(lot, bids) {
   const t = topBid(lot.id, lot);
   const shown = finalPrice(lot, t);
   const cd = countdown(lot.end_at);
-  // Four, not six. The artwork is a hand on a FOREARM, so at six across the
-   // arms run under the next fist and the row reads as one smear — «مدموجة فوق
-   // بعض». The newest four, with the top sum among them, is what matters.
-  const last = bids.slice(-4).reverse();
+  // ONE paddle on air: the highest sum, and nothing else. A row of them put
+   // 50 and 300 beside the 5,000 on camera, which is the losing numbers taking
+   // up the screen the winning one is for — «بس اللي ينعرض فوق الاعلى فقط».
+   // The full run of sums is not lost: the operator reads it in his strip
+   // («السومات المحتسبة») and it is on the lot's own page.
+   // Ties take the LATEST of them, so the hand raised is the one that just
+   // went up rather than whoever got there first.
   const best = bids.length ? Math.max(...bids.map(b => +b.amount)) : null;
+  const last = bids.length ? [bids.filter(b => +b.amount === best).pop()] : [];
 
   const sig = JSON.stringify([
     lot.id, lot.phone, lot.status, lot.sold_price, lot.auto_sell_price,
