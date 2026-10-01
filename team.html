@@ -862,18 +862,16 @@ const RULES = () => `
          'A client belongs to <b>whoever registered them first</b>, and that priority is kept for <b class="num">180</b> days.')}</li>
   <li>${AGR ? L(`تلتزم رفد بعمولة نسبتها <b class="num">${fmtRate(AGR.rate)}%</b> من قيمة العقد الأول لكل عميل <b>يتعاقد ويسدّد</b>، تُحوَّل خلال <b class="num">${AGR.days}</b> يوماً من التحصيل.`,
                 `RAFD commits to a commission of <b class="num">${fmtRate(AGR.rate)}%</b> of the first contract of every client who <b>signs and pays</b>, transferred within <b class="num">${AGR.days}</b> days of collection.`) : ''}</li>
-  <li>${L('تُستحق العمولة عن العميل <b>الذي تعاقد وسدّد</b>، وفق النسبة المعتمدة في البرنامج، وتظهر في لوحتك.',
-         'Commission is earned on clients who <b>sign and pay</b>, at the programme rate, and is shown in your dashboard.')}</li>
   <li>${L('تُحوَّل العمولة إلى <b>الحساب البنكي المسجّل باسمك</b>، وتظهر لك حالة كل تحويل ورقمه المرجعي.',
          'Payments go to the <b>IBAN in your name</b> saved in your dashboard, where you can see each transfer and its reference.')}</li>
   <li>${L('يلتزم ممثل المبيعات بالمظهر اللائق والأنيق عند مقابلة العملاء، فهو يمثّل رفد أمامهم.',
          'Representatives must dress and present themselves smartly and professionally when meeting clients, as they represent RAFD.')}</li>
   <li>${L('لرفد إيقاف الانضمام إلى البرنامج متى بلغ عدد الأعضاء الحد المطلوب.',
          'RAFD may close sign-ups once the team reaches the size it needs.')}</li>
-  <li>${L('المشاركة في البرنامج بنظام العمولة ولا تُعد عقد عمل، ولرفد أن تعرض على من يُثبت كفاءته عقداً رسمياً براتب وعمولة مستمرة.',
-         'Participation is commission-based and is not an employment contract. RAFD may offer those who prove themselves a formal contract with a salary and ongoing commission.')}</li>
-  <li>${L('يُرشَّح ممثل المبيعات الذي يُتمّ <b>ثلاثة عقود</b> بالعمولة لوظيفة «ممثل مبيعات» بعقد عمل رسمي مع الشركة براتب شهري لا يقل عن <b class="num">4,500</b> ريال. والترشيح لا يُلزم رفد بالتعيين، ويخضع التعيين للمقابلة والشروط الواردة في عقد العمل.',
-         'A Representative who completes <b>three commission contracts</b> is nominated for a Sales Representative position under a formal employment contract with the company at a monthly salary of no less than <b class="num">SAR 4,500</b>. Nomination does not oblige RAFD to hire; hiring is subject to an interview and the terms of the employment contract.')}</li>
+  <li>${L('المشاركة في البرنامج بنظام العمولة ولا تُعد عقد عمل.',
+         'Participation is commission-based and is not an employment contract.')}</li>
+  <li>${L('يُرشَّح ممثل المبيعات الذي يُتمّ <b>ثلاثة عقود</b> بالعمولة لوظيفة «ممثل مبيعات» بعقد عمل رسمي مع الشركة براتب شهري لا يقل عن <b class="num">4,500</b> ريال، ويخضع التعيين للمقابلة والشروط الواردة في عقد العمل.',
+         'A Representative who completes <b>three commission contracts</b> is nominated for a Sales Representative position under a formal employment contract with the company at a monthly salary of no less than <b class="num">SAR 4,500</b>; hiring is subject to an interview and the terms of the employment contract.')}</li>
 </ul>`;
 
 let AGR = null;   // the agreement as it stands today, for new members
