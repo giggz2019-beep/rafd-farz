@@ -731,7 +731,7 @@ body.on-air .brand-foot { display: none; }
 .live-bar {
   margin-top: 10px; display: grid; gap: 5px; text-align: center;
   /* His olive, a step lighter than the card so the bar reads as a panel on it
-     — it was a BRONZE gradient (rgba(140,90,5…) over #8c5a05), the other
+     — it was a BRONZE gradient over a bronze border, the other
      tenant's colour, left behind by the copy and visibly orange against his
      olive. Flat for the same reason the card is: a gradient bands on camera. */
   background: #4b4730;
@@ -819,13 +819,17 @@ body.on-air .brand-foot { display: none; }
      readable on camera; shrinking them here would shrink them on exactly the
      laptop he films. The height comes out of the plate and the paddles
      instead, which can afford it. */
-  .live-bar        { margin-top: 8px; padding: 8px 10px; gap: 4px; }
-  .live-bar .lb-fee  { padding-top: 5px; font-size: .9rem; }
-  .live-bar .lb-fee b { font-size: .98rem; }
-  .live-bar .lb-site { font-size: .86rem; }
-  .live-bar .lb-site b { font-size: .96rem; }
-  .live-bar .lb-tel  { padding: 3px 14px; font-size: .88rem; }
-  .live-bar .lb-tel b { font-size: 1.12rem; }
+  /* PADDING ONLY on the short screen — no type overrides at all.
+     These used to raise the type here (fee .9, tel 1.12) back when the base
+     was bigger. After the base came down they were LARGER than it, so the
+     bar grew on exactly the laptop he films — the opposite of «مزاحمه
+     العرض». They cannot simply be lowered either: the base already sits at
+     .82–.84rem, and .82rem IS the 13px floor at a 16px root, so there is
+     nothing left to give. The height comes out of padding, the plate and
+     the paddle, which can afford it; the type does not move. */
+  .live-bar        { margin-top: 8px; padding: 7px 10px; gap: 4px; }
+  .live-bar .lb-fee  { padding-top: 5px; }
+  .live-bar .lb-tel  { padding: 3px 14px; }
   .carplate.big    { width: min(100%, 620px, 55dvh); }
   .live-brand b    { font-size: 1.28rem; }
 }
