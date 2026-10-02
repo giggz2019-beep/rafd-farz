@@ -364,6 +364,9 @@ const REMOTE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
    Flip to true and the task card, the invite card, the admin tab and the sign-up fields all return;
    nothing in the database was removed. */
 const TIKTOK_TASK = false;
+/* Sign-up asks for the TikTok account even while the task is paused (the owner
+   brought the field back on its own). The invite code stays with the task. */
+const ASK_TIKTOK = true;
 
 /* Printed on every quote. Fill the registration numbers in once they are final —
    an empty one is simply left off the page rather than printed blank. */
@@ -941,9 +944,9 @@ async function viewJoin(inviteArg) {
         <div class="field"><label>${L('رقم الجوال', 'Mobile number')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX" autocomplete="tel"></div>
         <div class="field"><label>${L('المدينة', 'City')}</label><input name="city" autocomplete="address-level2"></div>
       </div>
-      ${TIKTOK_TASK ? `<div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')}</label><input name="tiktok" class="ltr" placeholder="@username" autocapitalize="off">
-        <div class="hint">${L('حساب حقيقي نشط باسمك، وهو الحساب الذي تُنفّذ به مهمة تيك توك الشهرية. لا يُقبل الحساب نفسه لعضوين.', 'A real, active account of your own — the one you do the monthly TikTok task with. One account per member.')}</div></div>
-      <div class="field"><label>${L('رمز الدعوة', 'Invite code')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="invite" class="ltr" placeholder="RF····" autocapitalize="characters" value="${esc((inviteArg || '').toUpperCase())}">
+      ${TIKTOK_TASK || ASK_TIKTOK ? `<div class="field"><label>${L('حسابك في تيك توك', 'Your TikTok account')}</label><input name="tiktok" class="ltr" placeholder="@username" autocapitalize="off">
+        <div class="hint">${TIKTOK_TASK ? L('حساب حقيقي نشط باسمك، وهو الحساب الذي تُنفّذ به مهمة تيك توك الشهرية. لا يُقبل الحساب نفسه لعضوين.', 'A real, active account of your own — the one you do the monthly TikTok task with. One account per member.') : L('حساب حقيقي نشط باسمك. لا يُقبل الحساب نفسه لعضوين.', 'A real, active account of your own. One account per member.')}</div></div>` : ''}
+      ${TIKTOK_TASK ? `      <div class="field"><label>${L('رمز الدعوة', 'Invite code')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="invite" class="ltr" placeholder="RF····" autocapitalize="characters" value="${esc((inviteArg || '').toUpperCase())}">
         <div class="hint" id="invHint">${L('إذا دعاك أحد أعضاء الفريق فاكتب رمزه هنا.', 'If a team member invited you, type their code here.')}</div></div>
       ` : ''}
       <div class="field"><label>${L('كلمة المرور', 'Password')}</label><input name="password" type="password" autocomplete="new-password"><div class="hint">${L('ستة أحرف على الأقل، وتُستخدم مع رقم الجوال لتسجيل الدخول.', 'At least 6 characters — you sign in with it and your mobile number.')}</div></div>
@@ -967,10 +970,10 @@ async function viewJoin(inviteArg) {
   if (inv.value) checkInvite();
   $('#f').onsubmit = async e => {
     e.preventDefault(); const f = e.target; const b = f.querySelector('button[type=submit]'); const m = $('#m');
-    const phone = normPhone(f.phone.value); const tt = TIKTOK_TASK ? normTiktok(f.tiktok.value) : null;
+    const phone = normPhone(f.phone.value); const tt = TIKTOK_TASK || ASK_TIKTOK ? normTiktok(f.tiktok.value) : null;
     if (f.name.value.trim().length < 3) return formMsg(m, 'err', err('name'));
     if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
-    if (TIKTOK_TASK && !tiktokOk(tt)) return formMsg(m, 'err', err('tiktok'));
+    if ((TIKTOK_TASK || ASK_TIKTOK) && !tiktokOk(tt)) return formMsg(m, 'err', err('tiktok'));
     if (f.password.value.length < 6) return formMsg(m, 'err', err('password'));
     b.disabled = true;
     const r = await rpc('team_register', { p_name: f.name.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_tiktok: tt, p_password: f.password.value, p_agree: true, p_invite: TIKTOK_TASK ? (f.invite.value.trim() || null) : null });
