@@ -52,6 +52,10 @@
     {
       "source": "/mdmon/control",
       "destination": "/mdmon/index"
+    },
+    {
+      "source": "/rasd/carwash",
+      "destination": "/rasd/carwash/index"
     }
   ],
   "headers": [
