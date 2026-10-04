@@ -1,0 +1,15 @@
+{
+  "name": "إدارة سفراء رفد",
+  "short_name": "إدارة رفد",
+  "start_url": "/team#/admin",
+  "scope": "/",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#ffffff",
+  "theme_color": "#0b2440",
+  "icons": [
+    { "src": "/team-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/team-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

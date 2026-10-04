@@ -1143,3 +1143,62 @@ grant execute on function team_quote_request(text,uuid,text,jsonb)      to anon,
 grant execute on function team_quote_decide(text,uuid,boolean,text)     to anon, authenticated;
 grant execute on function team_quote_public(uuid)                       to anon, authenticated;
 grant execute on function team_quote_client_accept(uuid)                to anon, authenticated;
+
+-- ============================================================================
+-- Push notifications to the operator («ابي الاشعار يجيني على صفحة الاداره»).
+-- The admin page, installed on his home screen, subscribes his phone; a new
+-- lead fires a trigger that hands the lead id to the `team-push` Edge Function,
+-- which signs and sends the Web Push. Keys and the hook URL/secret live in
+-- team_config and are NOT in this file: vapid_public, vapid_private,
+-- push_hook_url, push_hook_secret. Missing → the trigger is a no-op, so a
+-- project without them behaves exactly as before.
+-- ============================================================================
+create extension if not exists pg_net;
+
+create table if not exists team_push_subs (
+  endpoint   text primary key check (endpoint ~ '^https://'),
+  p256dh     text not null,
+  auth       text not null,
+  created_at timestamptz not null default now()
+);
+alter table team_push_subs enable row level security;
+revoke all on team_push_subs from public, anon, authenticated;
+
+create or replace function team_push(p_secret text, p_action text, p jsonb default '{}'::jsonb) returns jsonb
+language plpgsql security definer set search_path = public as $$
+begin
+  if not team_is_admin(p_secret) then return jsonb_build_object('error','auth'); end if;
+  if p_action = 'key' then
+    return jsonb_build_object('ok', true, 'key', (select value from team_config where key = 'vapid_public'),
+                              'count', (select count(*) from team_push_subs));
+  elsif p_action = 'sub' then
+    if coalesce(p->>'endpoint','') !~ '^https://' or coalesce(p->>'p256dh','') = '' or coalesce(p->>'auth','') = '' then
+      return jsonb_build_object('error','sub');
+    end if;
+    insert into team_push_subs(endpoint, p256dh, auth) values (p->>'endpoint', p->>'p256dh', p->>'auth')
+      on conflict (endpoint) do update set p256dh = excluded.p256dh, auth = excluded.auth;
+    return jsonb_build_object('ok', true);
+  elsif p_action = 'unsub' then
+    delete from team_push_subs where endpoint = p->>'endpoint';
+    return jsonb_build_object('ok', true);
+  end if;
+  return jsonb_build_object('error','action');
+end $$;
+grant execute on function team_push(text,text,jsonb) to anon, authenticated;
+
+create or replace function team_lead_notify() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare u text := (select value from team_config where key = 'push_hook_url');
+        s text := (select value from team_config where key = 'push_hook_secret');
+begin
+  if u is not null and s is not null and exists (select 1 from team_push_subs) then
+    perform net.http_post(url := u, body := jsonb_build_object('lead_id', new.id),
+                          headers := jsonb_build_object('Content-Type','application/json','x-hook-secret', s));
+  end if;
+  return new;
+exception when others then
+  return new;   -- a notification must never stop a lead from being saved
+end $$;
+revoke all on function team_lead_notify() from public, anon, authenticated;
+drop trigger if exists team_leads_notify on team_leads;
+create trigger team_leads_notify after insert on team_leads for each row execute function team_lead_notify();

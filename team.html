@@ -858,7 +858,7 @@ function route() {
   renderTop(name);
   if (name === 'r' && arg) return viewRef(arg);
   if (name === 'q' && arg) return viewQuote(arg);
-  if (name === 'admin') return viewAdmin();
+  if (name === 'admin') { adminAppMeta(); return viewAdmin(); }
   if (name === 'join') return token ? go('me') : viewJoin(arg);
   if (name === 'login') return token ? go('me') : viewLogin();
   if (name === 'me') return token ? viewMe() : go('login');
@@ -1661,6 +1661,33 @@ async function viewAdmin() {
   admData = r; admCatalog = (c && c.catalog) || DEFAULT_CATALOG; drawAdmin();
 }
 
+/* The admin dashboard installs as its own home-screen app (team-admin.webmanifest,
+   start_url /team#/admin) — only on this route, so a representative who adds
+   the page to their home screen still lands on their own page. iPhone only
+   allows push for a site opened FROM the home screen (iOS 16.4+). */
+function adminAppMeta() {
+  if (document.querySelector('link[rel=manifest]')) return;
+  document.head.insertAdjacentHTML('beforeend', '<link rel="manifest" href="/team-admin.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="إدارة رفد"><link rel="apple-touch-icon" href="/team-icon-192.png">');
+}
+const b64u = s => { const b = atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)); return Uint8Array.from(b, c => c.charCodeAt(0)); };
+async function enablePush() {
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+    return sheet(L('تفعيل الإشعارات', 'Enable notifications'), `<p style="line-height:1.9">${standalone ? L('هذا الجهاز لا يدعم الإشعارات.', 'This device does not support notifications.') : L('على الآيفون: افتح الصفحة في Safari، ثم اضغط زر المشاركة ← «إضافة إلى الشاشة الرئيسية»، وافتحها من الأيقونة الجديدة واضغط «الإشعارات» مرة أخرى.', 'On iPhone: open this page in Safari, tap Share → «Add to Home Screen», open it from the new icon and tap «Notifications» again.')}</p>`);
+  }
+  const k = await rpc('team_push', { p_secret: admSecret(), p_action: 'key' });
+  if (!k || k.error || !k.key) return toast(k && k.error === 'auth' ? err('auth') : L('الإشعارات غير مفعّلة على الخادم بعد', 'Notifications are not set up on the server yet'));
+  try {
+    const reg = await navigator.serviceWorker.register('/team-sw.js');
+    if ((await Notification.requestPermission()) !== 'granted') return toast(L('لم يُسمح بالإشعارات — فعّلها من إعدادات الجوال', 'Notifications were not allowed — enable them in your phone settings'));
+    const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(k.key) });
+    const j = sub.toJSON();
+    const r = await rpc('team_push', { p_secret: admSecret(), p_action: 'sub', p: { endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth } });
+    if (!r || r.error) return toast(err(r && r.error));
+    toast(L('تم تفعيل الإشعارات ✓ سيصلك تنبيه عند كل عميل جديد', 'Notifications on ✓ — you will be alerted for every new client'));
+  } catch (e) { toast(L('تعذّر تفعيل الإشعارات على هذا الجهاز', 'Could not enable notifications on this device')); }
+}
+
 function admLogin(e) {
   app.innerHTML = `<div class="wrap"><div class="card auth"><h2>${L('لوحة إدارة سفراء رفد', 'RAFD Ambassadors — admin')}</h2><p class="sub">${L('للإدارة فقط.', 'For the team only.')}</p><div id="m">${e ? `<div class="msg err">${esc(e)}</div>` : ''}</div>
     <form id="f"><div class="field"><label>${L('كلمة السر', 'Password')}</label><input name="s" type="password" autocomplete="current-password"></div><button class="btn btn-main btn-block">${L('دخول', 'Sign in')}</button></form></div></div>`;
@@ -1682,6 +1709,7 @@ function drawAdmin() {
       <button class="btn btn-soft btn-sm" id="agrBtn">${L('نسبة العمولة', 'Commission rate')}</button>
       <button class="btn btn-soft btn-sm" id="termsBtn">${L('شروط العرض', 'Quote terms')}</button>
       <button class="btn btn-soft btn-sm" id="csv">${L('تصدير Excel', 'Export to Excel')}</button>
+      <button class="btn btn-gold btn-sm" id="pushBtn">🔔 ${L('الإشعارات', 'Notifications')}</button>
       <button class="btn btn-ghost btn-sm" id="admOut">${L('خروج', 'Sign out')}</button>
     </div>
     <div class="adm-sum">
@@ -1694,6 +1722,7 @@ function drawAdmin() {
   </div>`;
   app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { admTab = b.dataset.t; drawAdmin(); });
   $('#admOut').onclick = () => { admForget(); admLogin(); };
+  $('#pushBtn').onclick = enablePush;
   $('#csv').onclick = exportCsv;
   $('#termsBtn').onclick = openTermsEditor;
   $('#catBtn').onclick = openCatalogEditor;
