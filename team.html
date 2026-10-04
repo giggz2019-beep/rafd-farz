@@ -1188,6 +1188,22 @@ function quoteBox(l) {
 /* The ambassador builds the request from the catalogue — tick what the client
    wants, set how many — and adds anything bespoke as free text. Only what she
    picks reaches the quote. */
+/* The package picker — one widget for the add-client sheet and for a later
+   quote request. A ticked row's quantity is the number of services. */
+const QTY_DEFAULT = { basic: 10, pro: 11 };
+const quotePicker = (picked = new Map()) => `<div class="cats">${(meData.catalog || []).map(c => `<label class="cat ${picked.has(c.id) ? 'on' : ''}" data-id="${esc(c.id)}">
+        <input type="checkbox" ${picked.has(c.id) ? 'checked' : ''}>
+        <span><b>${esc(catName(c))}</b><small>${esc(catDesc(c))}</small></span>
+        <input class="qty num" inputmode="numeric" value="${esc(picked.get(c.id) || QTY_DEFAULT[c.id] || 1)}" title="${L('الكمية', 'Quantity')}" aria-label="${L('الكمية', 'Quantity')}">
+      </label>`).join('')}</div>`;
+function wirePicker(box) {
+  box.addEventListener('change', e => { const r = e.target.closest('.cat'); if (r && e.target.type === 'checkbox') r.classList.toggle('on', e.target.checked); });
+  box.addEventListener('input', e => { const r = e.target.closest('.cat'); if (r && e.target.classList.contains('qty')) { r.querySelector('[type=checkbox]').checked = true; r.classList.add('on'); } });
+  box.addEventListener('click', e => { if (e.target.classList.contains('qty')) e.preventDefault(); });
+}
+const pickedItems = box => [...box.querySelectorAll('.cat')].filter(r => r.querySelector('[type=checkbox]').checked)
+  .map(r => ({ id: r.dataset.id, q: Math.max(1, +toLatin(r.querySelector('.qty').value).replace(/[^\d.]/g, '') || 1) }));
+
 function openQuoteRequest(l) {
   const cat = meData.catalog || [];
   const prev = l.quote && l.quote.status === 'requested' ? l.quote : null;
@@ -1197,23 +1213,15 @@ function openQuoteRequest(l) {
     <div id="qm"></div>
     <form id="qf" novalidate>
       <label style="display:block;font-weight:700;font-size:.9rem;margin-bottom:8px;color:var(--navy-800)">${L('ما الذي يطلبه العميل؟', 'What does the client want?')}</label>
-      <div id="cats">${cat.map(c => `<label class="cat ${picked.has(c.id) ? 'on' : ''}" data-id="${esc(c.id)}">
-        <input type="checkbox" ${picked.has(c.id) ? 'checked' : ''}>
-        <span><b>${esc(catName(c))}</b><small>${esc(catDesc(c))}</small></span>
-        <input class="qty num" inputmode="numeric" value="${esc(picked.get(c.id) || 1)}" title="${L('الكمية', 'Quantity')}" aria-label="${L('الكمية', 'Quantity')}">
-      </label>`).join('')}</div>
+      <div id="cats">${quotePicker(picked)}</div>
       <div class="field" style="margin-top:12px"><label>${L('تخصيص إضافي', 'Custom additions')} <small>${L('(اختياري)', '(optional)')}</small></label>
         <textarea name="details" style="min-height:90px" placeholder="${L('أي متطلبات خاصة للعميل، أو تفاصيل الموقع وعدد الفروع…', 'Anything bespoke the client wants, site details, number of branches…')}">${esc(prev && prev.details !== '—' ? prev.details : '')}</textarea></div>
       <button class="btn btn-main btn-block" type="submit">${L('إرسال الطلب إلى الإدارة', 'Send request to the team')}</button>
     </form>`);
-  const box = $('#cats', s.el);
-  box.addEventListener('change', e => { const r = e.target.closest('.cat'); if (r && e.target.type === 'checkbox') r.classList.toggle('on', e.target.checked); });
-  box.addEventListener('input', e => { const r = e.target.closest('.cat'); if (r && e.target.classList.contains('qty')) { r.querySelector('[type=checkbox]').checked = true; r.classList.add('on'); } });
-  box.addEventListener('click', e => { if (e.target.classList.contains('qty')) e.preventDefault(); });
+  const box = $('#cats', s.el); wirePicker(box);
   $('#qf', s.el).onsubmit = async e => {
     e.preventDefault(); const f = e.target; const b = f.querySelector('button[type=submit]');
-    const items = [...box.querySelectorAll('.cat')].filter(r => r.querySelector('[type=checkbox]').checked)
-      .map(r => ({ id: r.dataset.id, q: Math.max(1, +toLatin(r.querySelector('.qty').value).replace(/[^\d.]/g, '') || 1) }));
+    const items = pickedItems(box);
     const details = f.details.value.trim();
     if (!items.length && details.length < 3) return formMsg($('#qm', s.el), 'err', err('details'));
     b.disabled = true;
@@ -1405,8 +1413,16 @@ function openLeadSheet() {
       ${LEAD_FIELDS(false)}
       <div class="field"><label>${L('ملاحظات', 'Notes')} <small>${L('(اختياري)', '(optional)')}</small></label><textarea name="notes" placeholder="${L('مثلاً: مدير الموارد البشرية، يرغب بعرض سعر لخمسين موظفاً', 'e.g. HR manager, wants a quote for 50 employees')}"></textarea></div>
       <p class="hint" style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.7">${L('يُحفظ بتاريخ التسجيل ووقته ولا يمكن تعديله أو حذفه بعد الحفظ، لذا يُرجى التأكد من رقم الجوال.', 'Saved with the date and time of registration and cannot be edited or deleted afterwards — double-check the mobile number.')}</p>
+      <div class="qr-box">
+        <label style="display:block;font-weight:700;font-size:.9rem;margin-bottom:4px;color:var(--navy-800)">${L('عرض السعر', 'Quote')} <small style="font-weight:400;color:var(--muted)">${L('(اختياري)', '(optional)')}</small></label>
+        <p class="hint" style="font-size:.8rem;color:var(--muted);margin:0 0 8px;line-height:1.7">${L('اختر ما يطلبه العميل والعدد، ويصل طلب عرض السعر للإدارة مع تسجيل العميل.', 'Tick what the client wants and how many — the quote request goes to the team with the client.')}</p>
+        <div id="lcats">${quotePicker()}</div>
+        <div class="field" style="margin-top:10px"><label>${L('تخصيص إضافي', 'Custom additions')} <small>${L('(اختياري)', '(optional)')}</small></label>
+          <textarea name="qdetails" style="min-height:70px" placeholder="${L('متطلبات خاصة للعميل، أو طلبه لسعر مختلف…', 'Anything bespoke, or a request for a different price…')}"></textarea></div>
+      </div>
       <button class="btn btn-main btn-block" type="submit">${L('حفظ باسمي', 'Save under my name')}</button>
     </form>`);
+  const lbox = $('#lcats', s.el); wirePicker(lbox);
   $('#lf', s.el).onsubmit = async e => {
     e.preventDefault(); const f = e.target; const m = $('#lm', s.el); const b = f.querySelector('button[type=submit]');
     const phone = normPhone(f.phone.value);
@@ -1416,8 +1432,16 @@ function openLeadSheet() {
     const r = await rpc('team_add_lead', { p_token: store(TOKEN_KEY), p_name: f.name.value.trim(), p_company: f.company.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_service: f.service.value, p_notes: f.notes.value.trim() });
     b.disabled = false;
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
+    /* the quote rides along: same tap, no second trip to the client's card */
+    const items = pickedItems(lbox), qd = f.qdetails.value.trim();
+    let quoteNote = '';
+    if ((items.length || qd.length >= 3) && r.status !== 'duplicate') {
+      const q = await rpc('team_quote_request', { p_token: store(TOKEN_KEY), p_lead: r.id, p_details: qd, p_items: items.length ? items : null });
+      quoteNote = q && q.ok ? L(' وأُرسل طلب عرض السعر للإدارة', ' and the quote request went to the team')
+        : L(' — تعذّر إرسال طلب عرض السعر، أرسله من بطاقة العميل', ' — the quote request failed; send it from the client\'s card');
+    }
     s.close();
-    toast(r.status === 'duplicate' ? L('تم الحفظ، علماً بأن هذا العميل مسجّل مسبقاً باسم ممثل مبيعات آخر', 'Saved — but a teammate registered this client first') : L('تم الحفظ باسمك ✓', 'Saved under your name ✓'));
+    toast(r.status === 'duplicate' ? L('تم الحفظ، علماً بأن هذا العميل مسجّل مسبقاً باسم ممثل مبيعات آخر', 'Saved — but a teammate registered this client first') : L('تم الحفظ باسمك ✓', 'Saved under your name ✓') + quoteNote);
     viewMe();
   };
 }
