@@ -983,13 +983,7 @@ on conflict (key) do nothing;
 -- the product catalogue the ambassador picks from and the operator prices from.
 -- price null = priced per quote. Edited from the dashboard (team_admin('catalog')).
 -- Keep in step with DEFAULT_CATALOG in team.html, which the demo uses.
-insert into team_config(key, value) values ('catalog', $cat$[
- {"id":"basic","ar":"الباقة الأساسية","en":"Basic Package","desc_ar":"اشتراك في منصة رفد بالمزايا الأساسية لفرع واحد","desc_en":"RAFD platform subscription with core features for one branch","unit_ar":"فرع","unit_en":"branch","price":null},
- {"id":"pro","ar":"الباقة الاحترافية (برو)","en":"Pro Package","desc_ar":"اشتراك في منصة رفد بكامل المزايا والتقارير المتقدمة لفرع واحد","desc_en":"RAFD platform subscription with all features and advanced reports for one branch","unit_ar":"فرع","unit_en":"branch","price":null},
- {"id":"face","ar":"التعرف على الوجه (بصمة الوجه)","en":"Face Recognition Attendance","desc_ar":"تسجيل الحضور والانصراف بالتعرف على الوجه","desc_en":"Check-in and check-out by face recognition","unit_ar":"فرع","unit_en":"branch","price":null},
- {"id":"face_cam","ar":"كاميرا التعرف على الوجه","en":"Face Recognition Camera","desc_ar":"كاميرا مخصصة للتعرف على الوجه شاملة التركيب","desc_en":"Dedicated face recognition camera, installation included","unit_ar":"كاميرا","unit_en":"camera","price":null},
- {"id":"activation","ar":"رسوم التفعيل","en":"Activation Fee","desc_ar":"تهيئة الخدمة وربطها لفرع واحد","desc_en":"Service setup and integration for one branch","unit_ar":"فرع","unit_en":"branch","price":null}
-]$cat$)
+insert into team_config(key, value) values ('catalog', $cat$[{"id": "basic", "ar": "الباقة الأساسية", "en": "Basic Package", "desc_ar": "باقة جاهزة من 10 خدمات في برنامج رصد AI، اشتراك لمدة سنة كاملة", "desc_en": "A ready package of 10 Rasd AI services, one-year subscription", "unit_ar": "خدمة", "unit_en": "service", "price": 349}, {"id": "pro", "ar": "باقة برو", "en": "Pro Package", "desc_ar": "خدمات مخصصة بعدد غير محدود، من 20 خدمة فأكثر، اشتراك لمدة سنة كاملة", "desc_en": "Custom services, unlimited number, from 20 services up, one-year subscription", "unit_ar": "خدمة", "unit_en": "service", "price": 299}, {"id": "activation", "ar": "رسوم التشغيل", "en": "Setup Fee", "desc_ar": "تشغيل الخدمة، تُدفع مرة واحدة", "desc_en": "Service setup, paid once", "unit_ar": "مرة واحدة", "unit_en": "one-time", "price": 949}]$cat$)
 on conflict (key) do nothing;
 
 -- the 3-argument version is DROPPED, not left beside this one: a defaulted
