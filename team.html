@@ -1071,7 +1071,7 @@ function drawMe() {
     <p>${L('عضو منذ', 'Member since')} ${fmtDate(m.created_at)}</p>
     <div class="rasd-row">
       <span class="rasd-chip"><img src="/rasd-logo.png" alt="${L('رصد AI', 'Rasd AI')}"></span>
-      <button class="btn btn-gold price-btn" id="priceBtn" type="button">💰 ${L('أسعار رصد AI', 'Rasd AI prices')}</button>
+      <button class="btn btn-gold price-btn" id="priceBtn" type="button">💰 ${L('أسعار برنامج رصد AI', 'Rasd AI programme prices')}</button>
     </div>
   </div></div>
   <div class="wrap">
@@ -1104,7 +1104,7 @@ function drawMe() {
 /* The price guide opens on demand from the gold button at the top of the
    dashboard — kept out of the page so it does not crowd the client list. */
 function openPrices() {
-  const s = sheet(L('أسعار رصد AI', 'Rasd AI prices'), `<div class="price-card" id="priceCard"></div>`);
+  const s = sheet(L('أسعار برنامج رصد AI', 'Rasd AI programme prices'), `<div class="price-card" id="priceCard"></div>`);
   drawPrices(s.el);
 }
 function drawPrices(root) {
