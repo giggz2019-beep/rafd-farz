@@ -440,6 +440,7 @@ const ERRS = {
   phone: ['يجب أن يكون رقم الجوال بصيغة 05XXXXXXXX', 'Mobile number must be in the format 05XXXXXXXX'],
   password: ['كلمة المرور 6 أحرف على الأقل', 'Password must be at least 6 characters'],
   name: ['يُرجى إدخال الاسم كاملاً', 'Please enter the full name'],
+  company: ['يُرجى إدخال اسم الشركة أو الجهة', 'Enter the company or organisation name'],
   terms: ['يجب الموافقة على الشروط والأحكام', 'You must accept the terms and conditions'],
   exists: ['هذا الرقم مسجّل مسبقاً، يُرجى تسجيل الدخول', 'This number is already registered — please sign in'],
   bad: ['الجوال أو كلمة المرور غير صحيحة', 'Wrong mobile number or password'],
@@ -644,6 +645,15 @@ const demo = (() => {
           agreed_rate: m.agreed_rate ?? null, agreed_at: m.terms_at || m.created_at, agreement_text: m.agreement_text || null, agreement_text_en: m.agreement_text_en || null },
         catalog: catalog(d).map(({ price, ...c }) => c),
         leads: d.leads.filter(l => l.member_id === m.id).sort((x, y) => y.created_at.localeCompare(x.created_at)).map(l => leadOut(d, l)) };
+    },
+    team_add_client(a) {
+      const cr = String(a.p_cr || '').replace(/\D/g, ''), vat = String(a.p_vat || '').replace(/\D/g, '');
+      if ((a.p_company || '').trim().length < 2) return { error: 'company' };
+      if (cr.length !== 10) return { error: 'client_cr' };
+      if (vat && vat.length !== 15) return { error: 'client_vat' };
+      const r = this.team_add_lead(a);
+      if (r.id) { const d = db(); const l = d.leads.find(x => x.id === r.id); Object.assign(l, { client_cr: cr, client_vat: vat || null }); save(d); }
+      return r;
     },
     team_add_lead(a) {
       const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
@@ -1143,6 +1153,7 @@ function leadCard(l) {
       <div>
         <h3>${esc(l.client_name)}${l.company ? ` · <span style="font-weight:600;color:var(--teal-600)">${esc(l.company)}</span>` : ''}</h3>
         <div class="meta"><span class="num">${esc(l.client_phone)}</span>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(svcLabel(l.service)) : ''}</div>
+${l.client_cr ? `<div class="meta">${L('السجل التجاري', 'CR')}: <span class="num">${esc(l.client_cr)}</span>${l.client_vat ? ` · ${L('الرقم الضريبي', 'VAT')}: <span class="num">${esc(l.client_vat)}</span>` : ''}</div>` : ''}
         <div class="meta">${L('سُجّل', 'Registered')} ${fmtDateTime(l.created_at)}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
@@ -1399,7 +1410,11 @@ function sheet(title, html) {
 
 const LEAD_FIELDS = (client) => `
   <div class="field"><label>${client ? L('الاسم', 'Your name') : L('اسم العميل', 'Client name')}</label><input name="name" required></div>
-  <div class="field"><label>${L('الشركة / الجهة', 'Company / organisation')} <small>${L('(إن وجدت)', '(if any)')}</small></label><input name="company"></div>
+  <div class="field"><label>${L('الشركة / الجهة', 'Company / organisation')}${client ? ` <small>${L('(إن وجدت)', '(if any)')}</small>` : ''}</label><input name="company"></div>
+  ${client ? '' : `<div class="row2">
+    <div class="field"><label>${L('السجل التجاري', 'Commercial registration (CR)')}</label><input name="cr" class="ltr num" inputmode="numeric" placeholder="10XXXXXXXX" autocomplete="off"></div>
+    <div class="field"><label>${L('الرقم الضريبي', 'VAT number')} <small>${L('(إن وجد)', '(if any)')}</small></label><input name="vat" class="ltr num" inputmode="numeric" placeholder="3XXXXXXXXXXXXX3" autocomplete="off"></div>
+  </div>`}
   <div class="row2">
     <div class="field"><label>${client ? L('رقم الجوال', 'Mobile number') : L('جوال العميل', 'Client mobile')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX"></div>
     <div class="field"><label>${L('المدينة', 'City')}</label><input name="city"></div>
@@ -1428,8 +1443,12 @@ function openLeadSheet() {
     const phone = normPhone(f.phone.value);
     if (f.name.value.trim().length < 2) return formMsg(m, 'err', L('يُرجى إدخال اسم العميل', "Enter the client's name"));
     if (!phoneOk(phone)) return formMsg(m, 'err', err('phone'));
+    if (f.company.value.trim().length < 2) return formMsg(m, 'err', err('company'));
+    const cr = toLatin(f.cr.value).replace(/\D/g, ''), vat = toLatin(f.vat.value).replace(/\D/g, '');
+    if (cr.length !== 10) return formMsg(m, 'err', err('client_cr'));
+    if (vat && vat.length !== 15) return formMsg(m, 'err', err('client_vat'));
     b.disabled = true;
-    const r = await rpc('team_add_lead', { p_token: store(TOKEN_KEY), p_name: f.name.value.trim(), p_company: f.company.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_service: f.service.value, p_notes: f.notes.value.trim() });
+    const r = await rpc('team_add_client', { p_token: store(TOKEN_KEY), p_name: f.name.value.trim(), p_company: f.company.value.trim(), p_phone: phone, p_city: f.city.value.trim(), p_service: f.service.value, p_notes: f.notes.value.trim(), p_cr: cr, p_vat: vat || null });
     b.disabled = false;
     if (!r || r.error) return formMsg(m, 'err', err(r && r.error));
     /* the quote rides along: same tap, no second trip to the client's card */
@@ -1781,6 +1800,7 @@ function drawAdmList() {
           <h3 style="font-size:1rem;font-weight:800">${esc(l.client_name)}${l.company ? ' · ' + esc(l.company) : ''}</h3>
           <div class="meta" style="font-size:.84rem;color:var(--muted);line-height:1.8"><a class="num" href="${wa(l.client_phone)}" target="_blank" rel="noopener">${esc(l.client_phone)}</a>${l.city ? ' · ' + esc(l.city) : ''}${l.service ? ' · ' + esc(svcLabel(l.service)) : ''}</div>
           <div class="who">${L('ممثل المبيعات', 'Representative')}: <b>${esc(m.name || '—')}</b> <span class="num">(${esc(m.code || '')})</span> · ${fmtDateTime(l.created_at)} · ${l.source === 'link' ? L('سجّل العميل بنفسه من رابط ممثل المبيعات', 'client signed up via the representative\'s link') : L('سجّله ممثل المبيعات', 'registered by the representative')}</div>
+          ${l.client_cr ? `<div class="who">${L('السجل التجاري', 'CR')}: <span class="num">${esc(l.client_cr)}</span>${l.client_vat ? ` · ${L('الرقم الضريبي', 'VAT')}: <span class="num">${esc(l.client_vat)}</span>` : ''}</div>` : ''}
           ${l.notes ? `<div class="who" style="margin-top:4px">📝 ${esc(l.notes)}</div>` : ''}
         </div>
         <span class="pill ${l.status}">${ST[l.status]}</span>
@@ -1852,10 +1872,10 @@ function openQuoteEditor(l) {
       </div>
       <div class="row2">
         <div class="field"><label>${L('عنوان العميل', 'Client address')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="caddr" placeholder="${L('الحي، المدينة', 'District, city')}" value="${esc(q.client_address || l.city || '')}"></div>
-        <div class="field"><label>${L('السجل التجاري للعميل', 'Client CR no.')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="ccr" class="ltr num" inputmode="numeric" placeholder="10XXXXXXXX" value="${esc(q.client_cr || '')}"></div>
+        <div class="field"><label>${L('السجل التجاري للعميل', 'Client CR no.')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="ccr" class="ltr num" inputmode="numeric" placeholder="10XXXXXXXX" value="${esc(q.client_cr || l.client_cr || '')}"></div>
       </div>
       <div class="row2">
-        <div class="field"><label>${L('الرقم الضريبي للعميل', 'Client VAT no.')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="cvat" class="ltr num" inputmode="numeric" placeholder="3XXXXXXXXXXXXX3" value="${esc(q.client_vat || '')}"></div>
+        <div class="field"><label>${L('الرقم الضريبي للعميل', 'Client VAT no.')} <small>${L('(اختياري)', '(optional)')}</small></label><input name="cvat" class="ltr num" inputmode="numeric" placeholder="3XXXXXXXXXXXXX3" value="${esc(q.client_vat || l.client_vat || '')}"></div>
       </div>
       <label style="display:block;font-weight:700;font-size:.85rem;margin-bottom:6px;color:var(--navy-800)">${L('أضف من الباقات', 'Add from packages')}</label>
       <div class="filters" id="catAdd">${admCatalog.map(c => `<button type="button" class="chip" data-cat="${esc(c.id)}">＋ ${esc(catName(c))}${c.price != null ? ` · <span class="num">${money(c.price)}</span>` : ''}</button>`).join('')}</div>
