@@ -392,6 +392,7 @@ begin
     'leads', coalesce((select jsonb_agg(jsonb_build_object(
         'id', l.id, 'client_name', l.client_name, 'company', l.company,
         'client_phone', l.client_phone, 'city', l.city, 'service', l.service, 'notes', l.notes,
+        'client_cr', l.client_cr, 'client_vat', l.client_vat,
         'source', l.source, 'status', l.status, 'deal_value', l.deal_value,
         'commission', l.commission, 'paid_at', l.paid_at, 'paid_ref', l.paid_ref,
         'created_at', l.created_at, 'updated_at', l.updated_at,
@@ -411,6 +412,38 @@ begin
   if not team_throttle('lead:' || v, 40, interval '1 hour') then return jsonb_build_object('error','too_many'); end if;
   insert into team_attempts(key) values ('lead:' || v);
   return team_insert_lead(v, 'manual', p_name, p_company, p_phone, p_city, p_service, p_notes);
+end $$;
+
+-- The client's commercial registration (required) and VAT number (optional),
+-- taken when the representative registers a company, so the quote is ready to
+-- issue. A new function rather than two more arguments on team_add_lead: adding
+-- parameters creates an overload (see CLAUDE.md), and the old one stays for
+-- any page still cached.
+alter table team_leads add column if not exists client_cr text
+  check (client_cr is null or client_cr ~ '^[0-9]{10}$');
+alter table team_leads add column if not exists client_vat text
+  check (client_vat is null or client_vat ~ '^[0-9]{15}$');
+
+create or replace function team_add_client(p_token text, p_name text, p_company text, p_phone text,
+  p_city text, p_service text, p_notes text, p_cr text, p_vat text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v uuid := team_member_of(p_token); r jsonb;
+        v_cr text := regexp_replace(coalesce(p_cr,''), '\D', '', 'g');
+        v_vat text := regexp_replace(coalesce(p_vat,''), '\D', '', 'g');
+begin
+  if v is null then return jsonb_build_object('error','auth'); end if;
+  if p_phone !~ '^05[0-9]{8}$' then return jsonb_build_object('error','phone'); end if;
+  if char_length(trim(coalesce(p_name,''))) < 2 then return jsonb_build_object('error','name'); end if;
+  if char_length(trim(coalesce(p_company,''))) < 2 then return jsonb_build_object('error','company'); end if;
+  if v_cr !~ '^[0-9]{10}$' then return jsonb_build_object('error','client_cr'); end if;
+  if v_vat !~ '^([0-9]{15})?$' then return jsonb_build_object('error','client_vat'); end if;
+  if not team_throttle('lead:' || v, 40, interval '1 hour') then return jsonb_build_object('error','too_many'); end if;
+  insert into team_attempts(key) values ('lead:' || v);
+  r := team_insert_lead(v, 'manual', p_name, p_company, p_phone, p_city, p_service, p_notes);
+  if r ? 'id' then
+    update team_leads set client_cr = v_cr, client_vat = nullif(v_vat, '') where id = (r->>'id')::uuid;
+  end if;
+  return r;
 end $$;
 
 create or replace function team_set_iban(p_token text, p_iban text, p_name text, p_bank text) returns jsonb
@@ -483,6 +516,7 @@ begin
       'leads', coalesce((select jsonb_agg(jsonb_build_object(
           'id', l.id, 'member_id', l.member_id, 'client_name', l.client_name, 'company', l.company,
           'client_phone', l.client_phone, 'city', l.city, 'service', l.service, 'notes', l.notes,
+          'client_cr', l.client_cr, 'client_vat', l.client_vat,
           'source', l.source, 'status', l.status, 'deal_value', l.deal_value, 'commission', l.commission,
           'paid_at', l.paid_at, 'paid_ref', l.paid_ref, 'admin_note', l.admin_note,
           'created_at', l.created_at,
@@ -601,6 +635,7 @@ grant execute on function team_login(text,text)                                 
 grant execute on function team_logout(text)                                           to anon, authenticated;
 grant execute on function team_me(text)                                               to anon, authenticated;
 grant execute on function team_add_lead(text,text,text,text,text,text,text)           to anon, authenticated;
+grant execute on function team_add_client(text,text,text,text,text,text,text,text,text) to anon, authenticated;
 grant execute on function team_set_iban(text,text,text,text)                          to anon, authenticated;
 grant execute on function team_ref_info(text)                                         to anon, authenticated;
 grant execute on function team_agreement()                                            to anon, authenticated;
