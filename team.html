@@ -1088,7 +1088,7 @@ function drawPrices() {
   let k = P.small.min; while (k < P.basic.n && k * P.small.unit <= basicTotal) k++;
   $('#priceCard').innerHTML = `
     <h3>${L('أسعار رصد AI', 'Rasd AI prices')}</h3>
-    <p class="sub" style="margin-bottom:0">${L('برنامج الكاميرات — ثلاث باقات فقط.', 'The camera programme — three packages only.')}</p>
+    <p class="sub" style="margin-bottom:0">${L('برنامج الكاميرات — ثلاث باقات فقط. جميع الأسعار غير شاملة ضريبة القيمة المضافة <b class="num">15%</b>.', 'The camera programme — three packages only. All prices exclude <b class="num">15%</b> VAT.')}</p>
     <div class="pkg">
       <div class="pkg-h"><b>${L('الباقة الأساسية', 'Basic Package')}</b><span>${sar(P.basic.unit)}</span></div>
       <small>${per}</small>
