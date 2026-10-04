@@ -314,7 +314,7 @@ begin
   if char_length(coalesce(p_password,'')) < 6 then return jsonb_build_object('error','password'); end if;
   if char_length(trim(coalesce(p_name,''))) < 3 then return jsonb_build_object('error','name'); end if;
   if v_tt is not null and v_tt !~ '^@[A-Za-z0-9._]{2,24}$' then return jsonb_build_object('error','tiktok'); end if;
-  if not team_throttle('reg', 30, interval '1 hour') then return jsonb_build_object('error','too_many'); end if;
+  if not team_throttle('reg', 300, interval '1 hour') then return jsonb_build_object('error','too_many'); end if;
   if exists (select 1 from team_members where phone = p_phone) then return jsonb_build_object('error','exists'); end if;
   if v_tt is not null and exists (select 1 from team_members where lower(ltrim(tiktok,'@')) = lower(ltrim(v_tt,'@'))) then
     return jsonb_build_object('error','tiktok_taken');
