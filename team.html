@@ -300,6 +300,14 @@ table.qd tr.it-n td { border-top: 0; padding-top: 0; color: var(--muted); font-s
 .agr-full { max-height: none; }
 .agr-title { font-weight: 900; color: var(--navy-900); font-size: 1rem; margin-bottom: 8px; }
 .agr-meta { font-size: .82rem; color: var(--muted); margin-bottom: 10px; line-height: 1.8; }
+.price-card h3 { margin-bottom: 2px; }
+.price-card .pkg { border: 1px solid var(--line, #e5e7eb); border-radius: 12px; padding: 10px 12px; margin-top: 10px; }
+.price-card .pkg-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.price-card .pkg-h span { white-space: nowrap; font-size: 1.05rem; }
+.price-card .pkg small { color: #6b7280; display: block; margin-top: 2px; }
+.price-card .pkg p, .price-card .pnote p { margin: 6px 0 0; line-height: 1.7; font-size: .9rem; }
+.price-card .pnote { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #fff7e6; border: 1px solid #f3dca8; }
+.price-card .pnote.soft { background: #f3f6f9; border-color: #dfe5ec; }
 .agr-card { background: linear-gradient(150deg, var(--teal-100), #fff 70%); border-color: #bfdfe2; }
 .agr-card .big { font-size: 1.6rem; font-weight: 900; color: var(--navy-900); }
 @media print {
@@ -382,7 +390,7 @@ const COMPANY = {
    Terms: "## " starts a numbered section, "- " a bullet. */
 const DEFAULT_TERMS = "## بدء الخدمة وتجديدها\n- تُحتسب مدة الاشتراك من تاريخ أول تشغيل فعلي للنظام وإبلاغ العميل بذلك، ولا تدخل فترة التركيب والتهيئة ضمن مدة الاشتراك.\n- يتجدد الاشتراك تلقائياً لمدة مساوية، إلا إذا أبلغ أحد الطرفين الطرف الآخر كتابياً بعدم رغبته في التجديد قبل (30) يوماً على الأقل من انتهاء المدة الجارية.\n## التزامات رفد\n- تشغيل الخدمة وربطها تقنياً بكاميرات العميل وأجهزة التسجيل (NVR) وأنظمة التذاكر المعتمدة، مع التدريب والدعم الفني دون مقابل إضافي طوال مدة الاشتراك.\n- الالتزام بنظام حماية البيانات الشخصية في المملكة العربية السعودية، بحيث تُعالج البيانات لحظياً وبشكل مشفّر، ولا تُحفظ أي بيانات شخصية أو صور للأفراد على الأجهزة الطرفية.\n- حذف جميع بيانات العميل خلال (5) أيام عمل من انتهاء الاشتراك أو إلغائه، وتزويد العميل بما يثبت ذلك كتابياً.\n## التزامات العميل\n- تسهيل وصول فريق رفد إلى المواقع والأنظمة اللازمة لإكمال أعمال الربط والتركيب.\n- يُقرّ العميل بأن أجهزة الحوسبة الطرفية المركّبة في مواقعه مملوكة لرفد، ويتعهد بالمحافظة عليها كما يحافظ على ممتلكاته.\n## إنهاء الاشتراك\n- إذا أخلّ أحد الطرفين بأي من التزاماته يُبلَّغ كتابياً ويُمنح (5) أيام لتصحيح الإخلال، فإن لم يُصحَّح جاز للطرف الآخر إنهاء الاشتراك فوراً.\n- لكل طرف إنهاء الاشتراك بإشعار كتابي قبل (30) يوماً من التاريخ المحدد للإنهاء، ويسدد العميل قيمة الخدمة المقدَّمة حتى ذلك التاريخ، ويعيد أجهزة الحوسبة الطرفية المملوكة لرفد دون تأخير.\n## أحكام عامة\n- لا يُسأل أي طرف عن التأخير الناتج عن قوة قاهرة أو ظروف خارجة عن إرادته، كالقرارات الحكومية والأوبئة، بشرط ألا يتجاوز ذلك (30) يوماً من تاريخ إبلاغ الطرف الآخر.\n- تسري على هذا العرض وما ينتج عنه أنظمة المملكة العربية السعودية، وتكون محاكم مدينة الرياض وحدها المختصة بالنظر في أي خلاف.";
 const DEFAULT_TERMS_EN = "## Service start and renewal\n- The subscription term starts on the date the system is first put into actual operation and the client is notified; the installation and setup period is not counted as part of the term.\n- The subscription renews automatically for an equal term unless either party notifies the other in writing, at least (30) days before the current term ends, that it does not wish to renew.\n## RAFD's obligations\n- To operate the service and integrate it technically with the client's cameras, recording devices (NVR) and approved ticketing systems, including training and technical support at no extra charge throughout the subscription.\n- To comply with the Personal Data Protection Law of the Kingdom of Saudi Arabia, processing data in real time and in encrypted form, with no personal data or images of individuals stored on edge devices.\n- To delete all client data within (5) working days of the subscription ending or being cancelled, and to confirm this to the client in writing.\n## Client's obligations\n- To give RAFD's team access to the sites and systems needed to complete the integration and installation work.\n- The client acknowledges that the edge computing devices installed at its sites are owned by RAFD and undertakes to look after them as it would its own property.\n## Termination\n- If either party breaches any of its obligations, it shall be notified in writing and given (5) days to remedy the breach; if the breach is not remedied, the other party may terminate the subscription immediately.\n- Either party may terminate the subscription by written notice at least (30) days before the intended termination date. The client shall pay for the service provided up to that date and return RAFD's edge computing devices without delay.\n## General provisions\n- Neither party is liable for delay caused by force majeure or circumstances beyond its control, such as government decisions or epidemics, provided this does not exceed (30) days from notifying the other party.\n- This quotation and anything arising from it are governed by the laws of the Kingdom of Saudi Arabia, and the courts of Riyadh shall have exclusive jurisdiction over any dispute.";
-const DEFAULT_CATALOG = [{"id": "basic", "ar": "الباقة الأساسية", "en": "Basic Package", "desc_ar": "اشتراك في منصة رفد بالمزايا الأساسية لفرع واحد", "desc_en": "RAFD platform subscription with core features for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "pro", "ar": "الباقة الاحترافية (برو)", "en": "Pro Package", "desc_ar": "اشتراك في منصة رفد بكامل المزايا والتقارير المتقدمة لفرع واحد", "desc_en": "RAFD platform subscription with all features and advanced reports for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "face", "ar": "التعرف على الوجه (بصمة الوجه)", "en": "Face Recognition Attendance", "desc_ar": "تسجيل الحضور والانصراف بالتعرف على الوجه", "desc_en": "Check-in and check-out by face recognition", "unit_ar": "فرع", "unit_en": "branch", "price": null}, {"id": "face_cam", "ar": "كاميرا التعرف على الوجه", "en": "Face Recognition Camera", "desc_ar": "كاميرا مخصصة للتعرف على الوجه شاملة التركيب", "desc_en": "Dedicated face recognition camera, installation included", "unit_ar": "كاميرا", "unit_en": "camera", "price": null}, {"id": "activation", "ar": "رسوم التفعيل", "en": "Activation Fee", "desc_ar": "تهيئة الخدمة وربطها لفرع واحد", "desc_en": "Service setup and integration for one branch", "unit_ar": "فرع", "unit_en": "branch", "price": null}];
+const DEFAULT_CATALOG = [{"id": "basic", "ar": "الباقة الأساسية", "en": "Basic Package", "desc_ar": "باقة جاهزة من 10 خدمات في برنامج رصد AI، اشتراك لمدة سنة كاملة", "desc_en": "A ready package of 10 Rasd AI services, one-year subscription", "unit_ar": "خدمة", "unit_en": "service", "price": 349}, {"id": "pro", "ar": "باقة برو", "en": "Pro Package", "desc_ar": "خدمات مخصصة بعدد غير محدود، تبدأ من 11 خدمة بسعر 349 ريال للخدمة، ومن 20 خدمة فأكثر 299 ريال للخدمة، اشتراك لمدة سنة كاملة", "desc_en": "Custom services, unlimited number: from 11 services at 349 SAR each, from 20 services up at 299 SAR each, one-year subscription", "unit_ar": "خدمة", "unit_en": "service", "price": 349}, {"id": "activation", "ar": "رسوم التشغيل", "en": "Setup Fee", "desc_ar": "تشغيل الخدمة، تُدفع مرة واحدة", "desc_en": "Service setup, paid once", "unit_ar": "مرة واحدة", "unit_en": "one-time", "price": 949}];
 const DEFAULT_AGREEMENT = "## أطراف الاتفاقية\n- الطرف الأول: شركة رفد الرقمية، ويُشار إليها بـ«رفد».\n- الطرف الثاني: {name}، جوال رقم {phone}، ويُشار إليه بـ«ممثل المبيعات».\n## طبيعة العلاقة\n- يعمل ممثل المبيعات مع رفد بصفة مستقلة وبنظام العمولة، ولا تُنشئ هذه الاتفاقية علاقة عمل بين الطرفين ولا تُعد عقد عمل، ولا يترتب عليها أجر ثابت أو بدلات أو أي من حقوق العامل المقررة نظاماً.\n- لرفد أن تعرض على ممثل المبيعات الذي يُثبت كفاءته عقداً مستقلاً براتب وعمولة، ويخضع ذلك العقد لشروطه الخاصة.\n## العمولة\n- تلتزم رفد بأن تدفع لممثل المبيعات عمولة نسبتها ({rate}%) من قيمة العقد الأول المبرم مع كل عميل يُنسب إليه وفق هذه الاتفاقية.\n- تُحتسب العمولة على المبالغ المحصّلة فعلياً من العميل، غير شاملة ضريبة القيمة المضافة.\n- تُستحق العمولة بعد توقيع العميل العقد وتحصيل قيمته، وتُحوَّل خلال ({days}) يوماً من تاريخ التحصيل إلى الحساب البنكي المسجّل باسم ممثل المبيعات في المنصة.\n- تبقى النسبة الواردة في هذه الاتفاقية سارية على ممثل المبيعات، ولا يسري عليه أي تعديل لاحق عليها إلا بموافقته.\n## نسبة العميل إلى ممثل المبيعات\n- يُنسب العميل إلى أول ممثل مبيعات يسجّله في المنصة، وتبقى الأولوية له مدة ({priority}) يوماً من تاريخ التسجيل.\n- يُعد تسجيل المنصة، بتاريخه ووقته المحفوظين آلياً، المرجع المعتمد بين الطرفين عند أي اختلاف.\n## التزامات ممثل المبيعات\n- تقديم معلومات صحيحة عن نفسه وعن العملاء الذين يسجّلهم.\n- عدم تقديم أي أسعار أو خصومات أو التزامات باسم رفد خارج عروض الأسعار الصادرة منها رسمياً.\n- المحافظة على سرية بيانات العملاء والأسعار، وعدم استخدامها لغير أغراض هذه الاتفاقية.\n## إنهاء المشاركة\n- لأي من الطرفين إنهاء المشاركة في أي وقت بإشعار عبر المنصة أو كتابياً.\n- يحتفظ ممثل المبيعات بعد الإنهاء بحقه في عمولة العملاء المنسوبين إليه قبل الإنهاء، متى تعاقدوا خلال مدة الأولوية.\n- لرفد إيقاف حساب ممثل المبيعات إذا أخلّ بأي من التزاماته، مع حفظ حقه في العمولات المستحقة عن الفترة السابقة للإخلال.\n## أحكام عامة\n- تخضع هذه الاتفاقية لأنظمة المملكة العربية السعودية.\n- تُعد موافقة ممثل المبيعات الإلكترونية على هذه الاتفاقية عند التسجيل إقراراً ملزماً للطرفين، وتحفظ المنصة نسخة منها في حساب ممثل المبيعات بتاريخ الموافقة ونسبة العمولة المتفق عليها.";
 const DEFAULT_AGREEMENT_EN = "## Parties\n- First party: RAFD Digital (\"RAFD\").\n- Second party: {name}, mobile number {phone} (the \"Representative\").\n## Nature of the relationship\n- The Representative works with RAFD independently and on a commission basis. This agreement does not create an employment relationship between the parties, is not an employment contract, and gives rise to no fixed salary, allowances or any statutory employee entitlements.\n- RAFD may offer a Representative who proves their ability a separate contract with a salary and commission, which will be governed by its own terms.\n## Commission\n- RAFD undertakes to pay the Representative a commission of ({rate}%) of the value of the first contract concluded with each client attributed to them under this agreement.\n- Commission is calculated on amounts actually collected from the client, excluding VAT.\n- Commission becomes due once the client has signed the contract and its value has been collected, and is transferred within ({days}) days of collection to the bank account registered in the Representative's name on the platform.\n- The rate stated in this agreement continues to apply to the Representative, and no later change to it applies to them without their consent.\n## Attribution of clients\n- A client is attributed to the first Representative who registers them on the platform, and that priority is kept for ({priority}) days from the date of registration.\n- The platform's record, with its automatically stored date and time, is the agreed reference between the parties in the event of any dispute.\n## Representative's obligations\n- To provide accurate information about themselves and about the clients they register.\n- Not to offer any prices, discounts or commitments on RAFD's behalf outside the quotations RAFD issues officially.\n- To keep client data and prices confidential and not use them for any purpose other than this agreement.\n## Ending participation\n- Either party may end participation at any time by notice through the platform or in writing.\n- After participation ends, the Representative keeps the right to commission on clients attributed to them before it ended, provided they contract within the priority period.\n- RAFD may suspend the Representative's account for breach of any of their obligations, without prejudice to commission already earned for the period before the breach.\n## General provisions\n- This agreement is governed by the laws of the Kingdom of Saudi Arabia.\n- The Representative's electronic acceptance of this agreement at registration is a binding acknowledgement by both parties, and the platform keeps a copy of it in the Representative's account with the date of acceptance and the agreed commission rate.";
 const PRIORITY_DAYS = 180;
@@ -414,10 +422,17 @@ const STATUS = () => ({
 });
 const STEP_OF = { new: 1, contacted: 2, negotiating: 3, won: 4 };
 /* The three services RAFD sells. The value stored on a lead is always the Arabic name, so the operator reads one spelling whatever language the member used; svcLabel() shows it in the viewer's language. Older leads keep whatever text they were saved with. */
-const SERVICE_LIST = [['سند AI (الكاميرات)', 'Sanad AI (cameras)'], ['التسويق الرقمي', 'Digital marketing'], ['الأتمتة والوكيل الذكي', 'Automation & AI agent']];
+/* Only Rasd AI is offered for now (the owner: «نركز ع رصد عشان مانشتت الفريق»).
+   Leads saved under the dropped programmes keep their stored text. */
+const SERVICE_LIST = [['رصد AI (برنامج الكاميرات)', 'Rasd AI (camera programme)']];
 /* Names a lead may have been saved under before the programmes were renamed. */
-const SERVICE_OLD = { 'خدمة RAFD Sense (الكاميرات)': 'سند AI (الكاميرات)', 'التسويق عبر السوشل ميديا': 'التسويق الرقمي' };
+const SERVICE_OLD = { 'خدمة RAFD Sense (الكاميرات)': 'رصد AI (برنامج الكاميرات)', 'سند AI (الكاميرات)': 'رصد AI (برنامج الكاميرات)', 'التسويق عبر السوشل ميديا': 'التسويق الرقمي' };
 const SERVICES = () => SERVICE_LIST.map(([ar, en]) => ({ v: ar, t: L(ar, en) }));
+/* «أسعار رصد AI» — the price guide every representative sees in their own
+   dashboard. Prices are per service for a full year; the setup fee is paid once.
+   The quote catalogue (DEFAULT_CATALOG / team_config.catalog) carries the same
+   three packages at the same prices — change both together. */
+const RASD_PRICE = { basic: { n: 10, unit: 349 }, pro: { from: 11, unit: 349, bulk: 20, bulkUnit: 299 }, small: { min: 5, unit: 439 }, setup: 949 };
 const svcLabel = v => { const k = SERVICE_OLD[v] || v; const x = SERVICE_LIST.find(([ar]) => ar === k); return x ? L(x[0], x[1]) : v; };
 const SAR = () => L('ر.س', 'SAR');
 
@@ -1052,6 +1067,7 @@ function drawMe() {
         <div id="leads"></div>
       </div>
       <div class="side">
+        <div class="card price-card" id="priceCard"></div>
         <div class="card agr-card" id="agrCard"></div>
         ${TIKTOK_TASK ? `<div class="card task-box" id="taskCard" ${tasksData ? '' : 'hidden'}></div>
         <div class="card" id="inviteCard" ${tasksData ? '' : 'hidden'}></div>` : ''}
@@ -1060,7 +1076,46 @@ function drawMe() {
     </div>
   </div>`;
   $('#addLead').onclick = openLeadSheet;
-  drawFilters(); drawLeads(); drawIban(); drawTasks(); drawAgreementCard();
+  drawFilters(); drawLeads(); drawIban(); drawTasks(); drawAgreementCard(); drawPrices();
+}
+
+function drawPrices() {
+  const P = RASD_PRICE, sar = v => `<b class="num">${money(v)}</b> ${SAR()}`;
+  const per = L('للخدمة · اشتراك سنة كاملة', 'per service · full-year subscription');
+  /* the smallest order at the "under 10" price that already costs more than the
+     whole basic package — the sentence the rep uses to move a client to 10 */
+  const basicTotal = P.basic.n * P.basic.unit;
+  let k = P.small.min; while (k < P.basic.n && k * P.small.unit <= basicTotal) k++;
+  $('#priceCard').innerHTML = `
+    <h3>${L('أسعار رصد AI', 'Rasd AI prices')}</h3>
+    <p class="sub" style="margin-bottom:0">${L('برنامج الكاميرات — ثلاث باقات فقط. جميع الأسعار غير شاملة ضريبة القيمة المضافة <b class="num">15%</b>.', 'The camera programme — three packages only. All prices exclude <b class="num">15%</b> VAT.')}</p>
+    <div class="pkg">
+      <div class="pkg-h"><b>${L('الباقة الأساسية', 'Basic Package')}</b><span>${sar(P.basic.unit)}</span></div>
+      <small>${per}</small>
+      <p>${L(`باقة جاهزة من <b class="num">${P.basic.n}</b> خدمات — المجموع ${sar(basicTotal)} سنوياً.`, `A ready package of <b class="num">${P.basic.n}</b> services — ${sar(basicTotal)} a year in total.`)}</p>
+    </div>
+    <div class="pkg">
+      <div class="pkg-h"><b>${L('باقة برو', 'Pro Package')}</b><span>${sar(P.pro.unit)}</span></div>
+      <small>${per}</small>
+      <p>${L(`خدمات مخصصة وعدد غير محدود، تبدأ من <b class="num">${P.pro.from}</b> خدمة بسعر ${sar(P.pro.unit)} للخدمة.`, `Custom services, no upper limit, starting at <b class="num">${P.pro.from}</b> services at ${sar(P.pro.unit)} each.`)}</p>
+      <p>${L(`من <b class="num">${P.pro.bulk}</b> خدمة فأكثر يصبح سعر الخدمة ${sar(P.pro.bulkUnit)} باشتراك سنة.`, `From <b class="num">${P.pro.bulk}</b> services up, each costs ${sar(P.pro.bulkUnit)} for a year.`)}</p>
+    </div>
+    <div class="pkg">
+      <div class="pkg-h"><b>${L('رسوم التشغيل', 'Setup fee')}</b><span>${sar(P.setup)}</span></div>
+      <small>${L('تُدفع مرة واحدة فقط', 'Paid once only')}</small>
+    </div>
+    <div class="pnote">
+      <b>${L(`إذا طلب العميل أقل من ${P.basic.n} خدمات`, `If the client wants fewer than ${P.basic.n} services`)}</b>
+      <p>${L(`الحد الأدنى <b class="num">${P.small.min}</b> خدمات، وسعر الخدمة ${sar(P.small.unit)} باشتراك سنة، مع رسوم التشغيل ${sar(P.setup)} تُدفع مرة واحدة.`,
+             `The minimum is <b class="num">${P.small.min}</b> services at ${sar(P.small.unit)} each for a year, plus the one-time setup fee of ${sar(P.setup)}.`)}</p>
+      <p>${L(`الباقة الأساسية أوفر للعميل: ${k < P.basic.n ? `<b class="num">${k}</b> خدمات بهذا السعر تكلّف ${sar(k * P.small.unit)}، بينما <b class="num">${P.basic.n}</b> خدمات في الباقة الأساسية بـ ${sar(basicTotal)} — خدمات أكثر بسعر أقل.` : 'عدد خدمات أكبر بسعر متقارب.'}`,
+             `The Basic Package is the better deal: ${k < P.basic.n ? `<b class="num">${k}</b> services at this price cost ${sar(k * P.small.unit)}, while <b class="num">${P.basic.n}</b> services in the Basic Package cost ${sar(basicTotal)} — more services for less.` : 'more services for a similar price.'}`)}</p>
+    </div>
+    <div class="pnote soft">
+      <b>${L('إذا أصرّ العميل على سعر آخر', 'If the client insists on a different price')}</b>
+      <p>${L('اطلب عرض سعر من بطاقة العميل، واكتب متطلباته وملاحظاتك في «تخصيص إضافي» لتراجعها الإدارة. لا تَعِد العميل بسعر خارج هذه الأسعار.',
+             'Request a quote from the client\'s card and write their requirements and your notes under «Custom additions» for the team to review. Do not promise any price outside this list.')}</p>
+    </div>`;
 }
 
 function drawFilters() {
@@ -1341,7 +1396,7 @@ const LEAD_FIELDS = (client) => `
     <div class="field"><label>${client ? L('رقم الجوال', 'Mobile number') : L('جوال العميل', 'Client mobile')}</label><input name="phone" class="ltr" inputmode="tel" placeholder="05XXXXXXXX"></div>
     <div class="field"><label>${L('المدينة', 'City')}</label><input name="city"></div>
   </div>
-  <div class="field"><label>${L('البرنامج المطلوب', 'Programme of interest')}</label><select name="service"><option value="">${client ? L('— اختر —', '— Select —') : L('— اختر —', '— Select —')}</option>${SERVICES().map(s => `<option value="${esc(s.v)}">${esc(s.t)}</option>`).join('')}</select></div>`;
+  <div class="field"><label>${L('البرنامج المطلوب', 'Programme of interest')}</label><select name="service">${SERVICES().length > 1 ? `<option value="">${L('— اختر —', '— Select —')}</option>` : ''}${SERVICES().map(s => `<option value="${esc(s.v)}">${esc(s.t)}</option>`).join('')}</select></div>`;
 
 function openLeadSheet() {
   const s = sheet(L('تسجيل عميل جديد', 'Register a new client'), `
