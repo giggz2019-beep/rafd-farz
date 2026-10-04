@@ -313,6 +313,7 @@ table.qd tr.it-n td { border-top: 0; padding-top: 0; color: var(--muted); font-s
 .price-card .pkg-h span { white-space: nowrap; font-size: 1.05rem; }
 .price-card .pkg small { color: #6b7280; display: block; margin-top: 2px; }
 .price-card .pkg p, .price-card .pnote p { margin: 6px 0 0; line-height: 1.7; font-size: .9rem; }
+.price-card .pintro { background: var(--gold-100); border: 1px solid var(--gold-200); color: var(--navy-900); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; font-weight: 700; line-height: 1.7; text-align: center; }
 .price-card .pnote { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #fff7e6; border: 1px solid #f3dca8; }
 .price-card .pnote.soft { background: #f3f6f9; border-color: #dfe5ec; }
 .agr-card { background: linear-gradient(150deg, var(--teal-100), #fff 70%); border-color: #bfdfe2; }
@@ -382,7 +383,7 @@ const REMOTE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 const TIKTOK_TASK = false;
 /* Sign-up asks for the TikTok account even while the task is paused (the owner
    brought the field back on its own). The invite code stays with the task. */
-const ASK_TIKTOK = true;
+const ASK_TIKTOK = false;
 
 /* Printed on every quote. Fill the registration numbers in once they are final —
    an empty one is simply left off the page rather than printed blank. */
@@ -1071,7 +1072,7 @@ function drawMe() {
     <p>${L('عضو منذ', 'Member since')} ${fmtDate(m.created_at)}</p>
     <div class="rasd-row">
       <span class="rasd-chip"><img src="/rasd-logo.png" alt="${L('رصد AI', 'Rasd AI')}"></span>
-      <button class="btn btn-gold price-btn" id="priceBtn" type="button">💰 ${L('أسعار برنامج رصد AI', 'Rasd AI programme prices')}</button>
+      <button class="btn btn-gold price-btn" id="priceBtn" type="button">💰 ${L('قائمة أسعار برنامج رصد AI', 'Rasd AI programme price list')}</button>
     </div>
   </div></div>
   <div class="wrap">
@@ -1104,7 +1105,7 @@ function drawMe() {
 /* The price guide opens on demand from the gold button at the top of the
    dashboard — kept out of the page so it does not crowd the client list. */
 function openPrices() {
-  const s = sheet(L('أسعار برنامج رصد AI', 'Rasd AI programme prices'), `<div class="price-card" id="priceCard"></div>`);
+  const s = sheet(L('قائمة أسعار برنامج رصد AI', 'Rasd AI programme price list'), `<div class="price-card" id="priceCard"></div>`);
   drawPrices(s.el);
 }
 function drawPrices(root) {
@@ -1116,6 +1117,7 @@ function drawPrices(root) {
   let k = P.small.min; while (k < P.basic.n && k * P.small.unit <= basicTotal) k++;
   $('#priceCard', root).innerHTML = `
     <img class="rasd-top" src="/rasd-logo.png" alt="${L('رصد AI', 'Rasd AI')}">
+    <div class="pintro">${L('هذه أسعار برنامج <b>رصد AI</b> التي تُعرض على العميل.', 'These are the <b>Rasd AI</b> programme prices to present to the client.')}</div>
     <p class="sub" style="margin-bottom:0">${L('برنامج الكاميرات — ثلاث باقات فقط. جميع الأسعار غير شاملة ضريبة القيمة المضافة <b class="num">15%</b>.', 'The camera programme — three packages only. All prices exclude <b class="num">15%</b> VAT.')}</p>
     <div class="pkg">
       <div class="pkg-h"><b>${L('الباقة الأساسية', 'Basic Package')}</b><span>${sar(P.basic.unit)}</span></div>
