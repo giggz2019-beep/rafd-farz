@@ -1642,14 +1642,20 @@ async function viewQuote(id) {
 
 /* ---------- operator ---------- */
 let admData = null, admTab = 'leads', admQuery = '', admStatus = 'all', admCatalog = null;
-const admSecret = () => { try { return sessionStorage.getItem(ADMIN_KEY); } catch (e) { return null; } };
+/* The operator stays signed in on this device until he presses «خروج»: the
+   secret lives in localStorage (it was sessionStorage, which a phone drops
+   whenever it closes the tab — «يطلعني كل شوي»). */
+const admSecret = () => { try { return localStorage.getItem(ADMIN_KEY) || sessionStorage.getItem(ADMIN_KEY); } catch (e) { return null; } };
+const admForget = () => { try { localStorage.removeItem(ADMIN_KEY); sessionStorage.removeItem(ADMIN_KEY); } catch (e) {} };
 const admRpc = (action, p = {}) => rpc('team_admin', { p_secret: admSecret(), p_action: action, p });
 
 async function viewAdmin() {
   if (!admSecret()) return admLogin();
   const [r, c] = await Promise.all([admRpc('list'), admRpc('catalog')]);
   if (!r || r.error) {
-    try { sessionStorage.removeItem(ADMIN_KEY); } catch (e) {}
+    // only a wrong password signs him out; a dropped connection must not
+    if (r && r.error === 'auth') admForget();
+    else if (!r || r.error === 'network') { app.innerHTML = `<div class="wrap"><div class="msg err" style="margin-top:20px">${err('network')} <button class="btn btn-soft btn-sm" id="admRetry">${L('إعادة المحاولة', 'Retry')}</button></div></div>`; $('#admRetry').onclick = viewAdmin; return; }
     return admLogin(r && r.error === 'auth' ? L('كلمة السر غير صحيحة', 'Wrong password') : err(r && r.error));
   }
   admData = r; admCatalog = (c && c.catalog) || DEFAULT_CATALOG; drawAdmin();
@@ -1658,7 +1664,7 @@ async function viewAdmin() {
 function admLogin(e) {
   app.innerHTML = `<div class="wrap"><div class="card auth"><h2>${L('لوحة إدارة سفراء رفد', 'RAFD Ambassadors — admin')}</h2><p class="sub">${L('للإدارة فقط.', 'For the team only.')}</p><div id="m">${e ? `<div class="msg err">${esc(e)}</div>` : ''}</div>
     <form id="f"><div class="field"><label>${L('كلمة السر', 'Password')}</label><input name="s" type="password" autocomplete="current-password"></div><button class="btn btn-main btn-block">${L('دخول', 'Sign in')}</button></form></div></div>`;
-  $('#f').onsubmit = ev => { ev.preventDefault(); try { sessionStorage.setItem(ADMIN_KEY, ev.target.s.value); } catch (x) {} viewAdmin(); };
+  $('#f').onsubmit = ev => { ev.preventDefault(); try { localStorage.setItem(ADMIN_KEY, ev.target.s.value); } catch (x) {} viewAdmin(); };
 }
 
 function drawAdmin() {
@@ -1687,7 +1693,7 @@ function drawAdmin() {
     <div id="admBody"></div>
   </div>`;
   app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { admTab = b.dataset.t; drawAdmin(); });
-  $('#admOut').onclick = () => { try { sessionStorage.removeItem(ADMIN_KEY); } catch (e) {} admLogin(); };
+  $('#admOut').onclick = () => { admForget(); admLogin(); };
   $('#csv').onclick = exportCsv;
   $('#termsBtn').onclick = openTermsEditor;
   $('#catBtn').onclick = openCatalogEditor;
