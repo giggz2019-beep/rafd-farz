@@ -300,7 +300,14 @@ table.qd tr.it-n td { border-top: 0; padding-top: 0; color: var(--muted); font-s
 .agr-full { max-height: none; }
 .agr-title { font-weight: 900; color: var(--navy-900); font-size: 1rem; margin-bottom: 8px; }
 .agr-meta { font-size: .82rem; color: var(--muted); margin-bottom: 10px; line-height: 1.8; }
-.price-card h3 { margin-bottom: 2px; }
+.price-btn { font-size: 1rem; padding: 12px 22px; }
+/* the Rasd AI mark is navy and green on transparent: it needs a white chip on the dark header */
+.rasd-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.rasd-chip { background: #fff; border-radius: 14px; padding: 6px 10px; display: inline-flex; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.rasd-chip img { height: 62px; width: auto; display: block; }
+.price-card .rasd-top { display: block; height: 92px; width: auto; margin: 0 auto 10px; }
+.qd-brands { display: flex; align-items: center; gap: 14px; }
+.qd-prod { height: 84px; width: auto; display: block; padding-inline-end: 14px; border-inline-end: 1px solid var(--line); }
 .price-card .pkg { border: 1px solid var(--line, #e5e7eb); border-radius: 12px; padding: 10px 12px; margin-top: 10px; }
 .price-card .pkg-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .price-card .pkg-h span { white-space: nowrap; font-size: 1.05rem; }
@@ -339,6 +346,7 @@ footer.foot { text-align: center; color: var(--muted); font-size: .8rem; padding
   table.qd th, table.qd td { padding: 8px 5px; }
   .qd-sign { grid-template-columns: 1fr 1fr; }
   .qd-logo { width: 88px; height: 63px; }
+  .qd-prod { height: 63px; }
   .qd-logo img { height: 130px; left: -77px; top: -33px; }
 }
 </style>
@@ -1061,6 +1069,10 @@ function drawMe() {
     <span class="badge ${m.status === 'contracted' ? 'contracted' : 'trial'}">${m.status === 'contracted' ? L('✦ متعاقد', '✦ Contracted') : L('فترة إثبات الكفاءة', 'Trial period')}</span>
     <h1>${L('مرحباً', 'Hi')} ${first} 👋</h1>
     <p>${L('عضو منذ', 'Member since')} ${fmtDate(m.created_at)}</p>
+    <div class="rasd-row">
+      <span class="rasd-chip"><img src="/rasd-logo.png" alt="${L('رصد AI', 'Rasd AI')}"></span>
+      <button class="btn btn-gold price-btn" id="priceBtn" type="button">💰 ${L('أسعار رصد AI', 'Rasd AI prices')}</button>
+    </div>
   </div></div>
   <div class="wrap">
     <div class="stats">
@@ -1077,7 +1089,6 @@ function drawMe() {
         <div id="leads"></div>
       </div>
       <div class="side">
-        <div class="card price-card" id="priceCard"></div>
         <div class="card agr-card" id="agrCard"></div>
         ${TIKTOK_TASK ? `<div class="card task-box" id="taskCard" ${tasksData ? '' : 'hidden'}></div>
         <div class="card" id="inviteCard" ${tasksData ? '' : 'hidden'}></div>` : ''}
@@ -1086,18 +1097,25 @@ function drawMe() {
     </div>
   </div>`;
   $('#addLead').onclick = openLeadSheet;
-  drawFilters(); drawLeads(); drawIban(); drawTasks(); drawAgreementCard(); drawPrices();
+  drawFilters(); drawLeads(); drawIban(); drawTasks(); drawAgreementCard();
+  $('#priceBtn').onclick = openPrices;
 }
 
-function drawPrices() {
+/* The price guide opens on demand from the gold button at the top of the
+   dashboard — kept out of the page so it does not crowd the client list. */
+function openPrices() {
+  const s = sheet(L('أسعار رصد AI', 'Rasd AI prices'), `<div class="price-card" id="priceCard"></div>`);
+  drawPrices(s.el);
+}
+function drawPrices(root) {
   const P = RASD_PRICE, sar = v => `<b class="num">${money(v)}</b> ${SAR()}`;
   const per = L('للخدمة · اشتراك سنة كاملة', 'per service · full-year subscription');
   /* the smallest order at the "under 10" price that already costs more than the
      whole basic package — the sentence the rep uses to move a client to 10 */
   const basicTotal = P.basic.n * P.basic.unit;
   let k = P.small.min; while (k < P.basic.n && k * P.small.unit <= basicTotal) k++;
-  $('#priceCard').innerHTML = `
-    <h3>${L('أسعار رصد AI', 'Rasd AI prices')}</h3>
+  $('#priceCard', root).innerHTML = `
+    <img class="rasd-top" src="/rasd-logo.png" alt="${L('رصد AI', 'Rasd AI')}">
     <p class="sub" style="margin-bottom:0">${L('برنامج الكاميرات — ثلاث باقات فقط. جميع الأسعار غير شاملة ضريبة القيمة المضافة <b class="num">15%</b>.', 'The camera programme — three packages only. All prices exclude <b class="num">15%</b> VAT.')}</p>
     <div class="pkg">
       <div class="pkg-h"><b>${L('الباقة الأساسية', 'Basic Package')}</b><span>${sar(P.basic.unit)}</span></div>
@@ -1560,7 +1578,7 @@ async function viewQuote(id) {
     <img class="qd-wm" src="/rafd-logo.png" alt="">
     <header class="qd-top">
       <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${addr.map(a => `<span>${esc(a)}</span>`).join('')}</div>
-      <span class="qd-logo"><img src="/rafd-logo.png" alt="RAFD"></span>
+      <div class="qd-brands"><img class="qd-prod" src="/rasd-logo.png" alt="Rasd AI"><span class="qd-logo"><img src="/rafd-logo.png" alt="RAFD"></span></div>
     </header>
     <section class="qd-mid">
       <div class="qd-client">
