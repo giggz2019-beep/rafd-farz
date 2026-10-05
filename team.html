@@ -1121,6 +1121,10 @@ function drawPrices(root) {
      whole basic package — the sentence the rep uses to move a client to 10 */
   const basicTotal = P.basic.n * P.basic.unit;
   let k = P.small.min; while (k < P.basic.n && k * P.small.unit <= basicTotal) k++;
+  /* the three orders reps are asked about most, priced from RASD_PRICE so the
+     sums follow any price change: basic, a large pro order, the minimum */
+  const unitFor = n => n < P.basic.n ? P.small.unit : n >= P.pro.bulk ? P.pro.bulkUnit : P.basic.unit;
+  const ex = [P.basic.n, 25, P.small.min].map(n => [n, unitFor(n)]);
   $('#priceCard', root).innerHTML = `
     <img class="rasd-top" src="/rasd-logo.png" alt="${L('رصد AI', 'Rasd AI')}">
     <div class="pintro">${L('هذه أسعار برنامج <b>رصد AI</b> التي تُعرض على العميل.', 'These are the <b>Rasd AI</b> programme prices to present to the client.')}</div>
@@ -1138,7 +1142,12 @@ function drawPrices(root) {
     </div>
     <div class="pkg">
       <div class="pkg-h"><b>${L('رسوم التشغيل', 'Setup fee')}</b><span>${sar(P.setup)}</span></div>
-      <small>${L('تُدفع مرة واحدة فقط', 'Paid once only')}</small>
+      <small>${L('تُدفع مرة واحدة فقط، وتُضاف على جميع الباقات', 'Paid once only, added to every package')}</small>
+    </div>
+    <div class="pnote">
+      <b>${L('أمثلة جاهزة للحساب', 'Worked examples')}</b>
+      ${ex.map(([n, u]) => `<p>${L(`<b class="num">${n}</b> ${n > 10 ? 'خدمة' : 'خدمات'}: `, `<b class="num">${n}</b> services: `)}<span class="num">${money(n)} × ${money(u)} = ${money(n * u)} + ${money(P.setup)} = <b>${money(n * u + P.setup)}</b></span> ${SAR()}</p>`).join('')}
+      <p><small>${L('قبل ضريبة القيمة المضافة.', 'Before VAT.')}</small></p>
     </div>
     <div class="pnote">
       <b>${L(`إذا طلب العميل أقل من ${P.basic.n} خدمات`, `If the client wants fewer than ${P.basic.n} services`)}</b>
