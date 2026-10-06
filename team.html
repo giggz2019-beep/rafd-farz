@@ -313,6 +313,9 @@ table.qd tr.it-n td { border-top: 0; padding-top: 0; color: var(--muted); font-s
 .price-card .pkg-h span { white-space: nowrap; font-size: 1.05rem; }
 .price-card .pkg small { color: #6b7280; display: block; margin-top: 2px; }
 .price-card .pkg p, .price-card .pnote p { margin: 6px 0 0; line-height: 1.7; font-size: .9rem; }
+.price-card .pex { padding: 8px 0; border-top: 1px dashed rgba(0,0,0,.12); line-height: 1.9; font-size: .92rem; }
+.price-card .pex:first-of-type { border-top: 0; }
+.price-card .pex-t { font-weight: 800; }
 .price-card .pintro { background: var(--gold-100); border: 1px solid var(--gold-200); color: var(--navy-900); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; font-weight: 700; line-height: 1.7; text-align: center; }
 .price-card .pnote { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #fff7e6; border: 1px solid #f3dca8; }
 .price-card .pnote.soft { background: #f3f6f9; border-color: #dfe5ec; }
@@ -1146,7 +1149,15 @@ function drawPrices(root) {
     </div>
     <div class="pnote">
       <b>${L('أمثلة جاهزة للحساب', 'Worked examples')}</b>
-      ${ex.map(([n, u]) => `<p>${L(`<b class="num">${n}</b> ${n > 10 ? 'خدمة' : 'خدمات'}: `, `<b class="num">${n}</b> services: `)}<span class="num">${money(n)} × ${money(u)} = ${money(n * u)} + ${money(P.setup)} = <b>${money(n * u + P.setup)}</b></span> ${SAR()}</p>`).join('')}
+      ${ex.map(([n, u]) => {
+        const num = v => `<b class="num">${money(v)}</b>`;
+        const svc = L(n > 10 ? 'خدمة' : 'خدمات', 'services');
+        return `<div class="pex">
+          <div>${num(n)} ${svc} × ${sar(u)} = ${sar(n * u)}</div>
+          <div>${L('رسوم التشغيل', 'Setup fee')} = ${sar(P.setup)}</div>
+          <div class="pex-t">${L('الإجمالي', 'Total')} = ${sar(n * u + P.setup)}</div>
+        </div>`;
+      }).join('')}
       <p><small>${L('قبل ضريبة القيمة المضافة.', 'Before VAT.')}</small></p>
     </div>
     <div class="pnote">
