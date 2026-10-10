@@ -451,6 +451,8 @@ const SAR = () => L('ر.س', 'SAR');
 const ERRS = {
   phone: ['يجب أن يكون رقم الجوال بصيغة 05XXXXXXXX', 'Mobile number must be in the format 05XXXXXXXX'],
   password: ['كلمة المرور 6 أحرف على الأقل', 'Password must be at least 6 characters'],
+  old_pass: ['كلمة المرور الحالية غير صحيحة', 'Your current password is wrong'],
+  pass_match: ['كلمتا المرور الجديدتان غير متطابقتين', 'The two new passwords do not match'],
   name: ['يُرجى إدخال الاسم كاملاً', 'Please enter the full name'],
   company: ['يُرجى إدخال اسم الشركة أو الجهة', 'Enter the company or organisation name'],
   terms: ['يجب الموافقة على الشروط والأحكام', 'You must accept the terms and conditions'],
@@ -656,6 +658,12 @@ const demo = (() => {
       const t = uid(); d.sessions[t] = m.id; save(d); return { ok: true, token: t };
     },
     team_logout(a) { const d = db(); delete d.sessions[a.p_token]; save(d); return null; },
+    team_change_password(a) {
+      const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
+      if (m.pass !== a.p_old) return { error: 'old_pass' };
+      if (String(a.p_new || '').length < 6) return { error: 'password' };
+      m.pass = a.p_new; save(d); return { ok: true };
+    },
     team_me(a) {
       const d = db(); const m = me(d, a.p_token); if (!m) return { error: 'auth' };
       return { member: { name: m.full_name, phone: m.phone, city: m.city, tiktok: m.tiktok, code: m.code, status: m.status, created_at: m.created_at,
@@ -848,6 +856,12 @@ const demo = (() => {
         if (p.status === 'suspended') for (const t in d.sessions) if (d.sessions[t] === p.id) delete d.sessions[t];
         save(d); return { ok: true };
       }
+      if (a.p_action === 'reset_pass') {
+        const m = d.members.find(x => x.id === p.id); if (!m) return { error: 'not_found' };
+        m.pass = String(100000 + Math.floor(Math.random() * 900000));
+        for (const t in d.sessions) if (d.sessions[t] === p.id) delete d.sessions[t];
+        save(d); return { ok: true, password: m.pass };
+      }
       if (a.p_action === 'events') return d.events.filter(e => e.lead_id === p.id);
       return { error: 'action' };
     }
@@ -892,12 +906,37 @@ function renderTop(name) {
   const t = store(TOKEN_KEY); const el = $('#topActions');
   let html = '';
   if (!['r', 'q', 'admin'].includes(name)) html = t
-    ? (name === 'me' ? `<button class="btn btn-ghost" id="logout">${L('خروج', 'Sign out')}</button>` : `<a class="btn btn-main btn-sm" href="#/me">${L('لوحتي', 'My dashboard')}</a>`)
+    ? (name === 'me' ? `<button class="btn btn-ghost" id="passBtn" title="${L('تغيير كلمة المرور', 'Change password')}">🔑</button><button class="btn btn-ghost" id="logout">${L('خروج', 'Sign out')}</button>` : `<a class="btn btn-main btn-sm" href="#/me">${L('لوحتي', 'My dashboard')}</a>`)
     : `<a class="btn btn-ghost" href="#/login">${L('دخول', 'Sign in')}</a><a class="btn btn-main btn-sm" href="#/join">${L('انضم', 'Join')}</a>`;
   el.innerHTML = langBtn() + html;
   $('#langBtn').onclick = () => setLang(EN() ? 'ar' : 'en');
   const lo = $('#logout');
   if (lo) lo.onclick = async () => { await rpc('team_logout', { p_token: t }); store(TOKEN_KEY, null); go(''); };
+  const pb = $('#passBtn'); if (pb) pb.onclick = openPassSheet;
+}
+
+/* A member changes their own password — after the operator resets it to a
+   temporary one, or any time. The current password is required. */
+function openPassSheet() {
+  const s = sheet(L('تغيير كلمة المرور', 'Change password'), `
+    <div id="pm"></div>
+    <form id="pform" novalidate>
+      <div class="field"><label>${L('كلمة المرور الحالية', 'Current password')}</label><input name="old" type="password" autocomplete="current-password"></div>
+      <div class="field"><label>${L('كلمة المرور الجديدة', 'New password')}</label><input name="nw" type="password" autocomplete="new-password"><div class="hint">${L('6 أحرف على الأقل', 'At least 6 characters')}</div></div>
+      <div class="field"><label>${L('تأكيد كلمة المرور الجديدة', 'Confirm new password')}</label><input name="nw2" type="password" autocomplete="new-password"></div>
+      <button class="btn btn-gold btn-block" type="submit">${L('حفظ', 'Save')}</button>
+    </form>`);
+  const f = $('#pform', s.el);
+  f.onsubmit = async e => {
+    e.preventDefault(); const mm = $('#pm', s.el); const b = f.querySelector('button');
+    if (f.nw.value.length < 6) return formMsg(mm, 'err', err('password'));
+    if (f.nw.value !== f.nw2.value) return formMsg(mm, 'err', err('pass_match'));
+    b.disabled = true;
+    const r = await rpc('team_change_password', { p_token: store(TOKEN_KEY), p_old: f.old.value, p_new: f.nw.value });
+    b.disabled = false;
+    if (!r || r.error) return formMsg(mm, 'err', err(r && r.error));
+    s.close(); toast(L('تم تغيير كلمة المرور ✓', 'Password changed ✓'));
+  };
 }
 
 const RULES = () => `
@@ -2125,7 +2164,7 @@ function drawAdmMembers() {
         <td><b class="num">${money(due)}</b></td>
         <td><span class="num">${m.agreed_rate != null ? fmtRate(m.agreed_rate) + '%' : '—'}</span>${m.agreed_at ? `<br><small style="color:var(--muted)">${fmtDate(m.agreed_at)}</small>` : ''}</td>
         <td>${m.iban ? `<span class="num" style="font-size:.8rem">${esc(ibanPretty(m.iban))}</span><br><small>${esc(m.iban_name || '')}${m.bank ? ' · ' + esc(m.bank) : ''}</small><br><button class="btn btn-ghost btn-sm" data-copy="${esc(m.iban)}">${L('نسخ', 'Copy')}</button>` : `<small style="color:var(--muted)">${L('لم يُضف', 'Not added')}</small>`}</td>
-        <td><select data-m="${m.id}" style="border:1.5px solid var(--line);border-radius:10px;padding:7px"><option value="trial" ${m.status === 'trial' ? 'selected' : ''}>${L('فترة إثبات الكفاءة', 'Trial period')}</option><option value="contracted" ${m.status === 'contracted' ? 'selected' : ''}>${L('متعاقد', 'Contracted')}</option><option value="suspended" ${m.status === 'suspended' ? 'selected' : ''}>${L('موقوف', 'Suspended')}</option></select></td>
+        <td><select data-m="${m.id}" style="border:1.5px solid var(--line);border-radius:10px;padding:7px"><option value="trial" ${m.status === 'trial' ? 'selected' : ''}>${L('فترة إثبات الكفاءة', 'Trial period')}</option><option value="contracted" ${m.status === 'contracted' ? 'selected' : ''}>${L('متعاقد', 'Contracted')}</option><option value="suspended" ${m.status === 'suspended' ? 'selected' : ''}>${L('موقوف', 'Suspended')}</option></select><br><button class="btn btn-ghost btn-sm" data-reset="${m.id}" style="margin-top:6px">🔑 ${L('كلمة مرور مؤقتة', 'Temporary password')}</button></td>
       </tr>`;
     }).join('') || `<tr><td colspan="7" class="empty">${L('لا يوجد أعضاء بعد.', 'Nobody yet.')}</td></tr>`}</tbody></table></div>`;
   $('#admBody').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copy(b.dataset.copy));
@@ -2134,12 +2173,32 @@ function drawAdmMembers() {
     const r = await admRpc('join', { open: $('#joinOpen').checked, cap: +cap });
     if (!r || r.error) return toast(err(r && r.error)); toast(L('تم الحفظ ✓', 'Saved ✓')); viewAdmin();
   };
+  $('#admBody').querySelectorAll('[data-reset]').forEach(b => b.onclick = () => admResetPass(memberById(b.dataset.reset)));
   $('#admBody').querySelectorAll('[data-m]').forEach(s => s.onchange = async () => {
     if (s.value === 'suspended' && !confirm(L('إيقاف الحساب يُنهي جلسة ممثل المبيعات ويمنعه من الدخول. هل تريد المتابعة؟', 'Suspending signs the representative out and blocks sign-in. Continue?'))) return drawAdmMembers();
     const r = await admRpc('member', { id: s.dataset.m, status: s.value });
     if (!r || r.error) return toast(err('network'));
     toast(L('تم ✓', 'Done ✓')); viewAdmin();
   });
+}
+
+/* «نسيت كلمة المرور»: the server issues a 6-digit temporary password, signs the
+   member out everywhere and clears their failed-login brake. It is shown here
+   once, with a ready WhatsApp message; the member then changes it with 🔑. */
+async function admResetPass(m) {
+  if (!m || !m.id) return;
+  if (!confirm(L(`إصدار كلمة مرور مؤقتة لـ ${m.name}؟ ستتوقف كلمة المرور الحالية فوراً.`, `Issue a temporary password for ${m.name}? Their current password stops working at once.`))) return;
+  const r = await admRpc('reset_pass', { id: m.id });
+  if (!r || r.error || !r.password) return toast(err(r && r.error));
+  const msg = L(`أهلاً ${m.name}، تم إعادة تعيين كلمة المرور.\nادخل من rafd-digital.com/team برقم جوالك وكلمة المرور المؤقتة: ${r.password}\nبعد الدخول غيّرها من زر 🔑 أعلى الصفحة، ولا تشاركها مع أحد.`,
+                `Hello ${m.name}, your password has been reset.\nSign in at rafd-digital.com/team with your mobile number and the temporary password: ${r.password}\nThen change it with the 🔑 button at the top of the page. Do not share it.`);
+  const s = sheet(L('كلمة المرور المؤقتة', 'Temporary password'), `
+    <p style="margin:0 0 6px">${esc(m.name)} · <span class="num">${esc(m.phone)}</span></p>
+    <div style="font-size:2rem;font-weight:800;letter-spacing:.2em;text-align:center;padding:14px;border:1.5px dashed var(--line);border-radius:12px;margin:8px 0 12px" class="num">${esc(r.password)}</div>
+    <p class="hint" style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.7">${L('لن تظهر مرة أخرى بعد إغلاق هذه النافذة. أرسلها لممثل المبيعات الآن.', 'It will not be shown again once you close this. Send it to the representative now.')}</p>
+    <a class="btn btn-gold btn-block" href="${wa(m.phone)}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${L('إرسال عبر واتساب', 'Send on WhatsApp')}</a>
+    <button class="btn btn-ghost btn-block" id="rpCopy" style="margin-top:8px">${L('نسخ الرسالة', 'Copy message')}</button>`);
+  $('#rpCopy', s.el).onclick = () => copy(msg);
 }
 
 function exportCsv() {

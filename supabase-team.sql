@@ -619,12 +619,47 @@ begin
     return jsonb_build_object('ok', true);
   end if;
 
+  -- «نسيت كلمة المرور»: a fresh 6-digit temporary password, returned once so
+  -- the operator can send it; every session of that member is signed out and
+  -- their failed-login brake is cleared. The member changes it from their page.
+  if p_action = 'reset_pass' then
+    declare np text := ((('x' || encode(extensions.gen_random_bytes(4), 'hex'))::bit(32)::bigint % 900000) + 100000)::text; ph text;
+    begin
+      update team_members set pass_hash = extensions.crypt(np, extensions.gen_salt('bf'))
+       where id = (p->>'id')::uuid returning phone into ph;
+      if ph is null then return jsonb_build_object('error','not_found'); end if;
+      delete from team_sessions where member_id = (p->>'id')::uuid;
+      delete from team_attempts where key = 'login:' || ph;
+      return jsonb_build_object('ok', true, 'password', np);
+    end;
+  end if;
+
   if p_action = 'events' then
     return coalesce((select jsonb_agg(jsonb_build_object('at', e.at, 'actor', e.actor, 'action', e.action,
              'detail', e.detail) order by e.at) from team_lead_events e where e.lead_id = (p->>'id')::uuid), '[]'::jsonb);
   end if;
 
   return jsonb_build_object('error','action');
+end $$;
+
+-- A member changes their own password (after a reset, or any time): the
+-- current one is required, and the new one follows the sign-up rule (6+).
+create or replace function team_change_password(p_token text, p_old text, p_new text) returns jsonb
+language plpgsql security definer set search_path = public, extensions as $$
+declare v uuid := team_member_of(p_token); m team_members;
+begin
+  if v is null then return jsonb_build_object('error','auth'); end if;
+  select * into m from team_members where id = v;
+  if not team_throttle('pass:' || v::text, 8, interval '15 minutes') then
+    return jsonb_build_object('error','too_many');
+  end if;
+  if m.pass_hash <> crypt(coalesce(p_old,''), m.pass_hash) then
+    insert into team_attempts(key) values ('pass:' || v::text);
+    return jsonb_build_object('error','old_pass');
+  end if;
+  if char_length(coalesce(p_new,'')) < 6 then return jsonb_build_object('error','password'); end if;
+  update team_members set pass_hash = crypt(p_new, gen_salt('bf')) where id = v;
+  return jsonb_build_object('ok', true);
 end $$;
 
 -- A new function is EXECUTE-able by PUBLIC, and Supabase grants anon/authenticated on top.
@@ -637,6 +672,7 @@ grant execute on function team_me(text)                                         
 grant execute on function team_add_lead(text,text,text,text,text,text,text)           to anon, authenticated;
 grant execute on function team_add_client(text,text,text,text,text,text,text,text,text) to anon, authenticated;
 grant execute on function team_set_iban(text,text,text,text)                          to anon, authenticated;
+grant execute on function team_change_password(text,text,text)                     to anon, authenticated;
 grant execute on function team_ref_info(text)                                         to anon, authenticated;
 grant execute on function team_agreement()                                            to anon, authenticated;
 grant execute on function team_ref_submit(text,text,text,text,text,text,text)         to anon, authenticated;
