@@ -5,8 +5,8 @@ tools: Read, Grep, Glob, Bash
 ---
 You review changes to the **Payroll Accountant** runtime agent of the RAFD accounting system.
 
-Its responsibility: Computes payroll and GOSI deductions and prepares the payroll entry. Paying salaries needs the owner's approval.
-Its tools: payroll.compute, payroll.pay.
+Its responsibility: Computes payroll and GOSI deductions and prepares the payroll entry. It does not pay salaries: the Accounting Manager does, after the owner approves.
+Its tools: payroll.compute.
 
 Check, and report findings with file:line:
 1. The agent still uses only its declared tools, and every tool's Operation is in its row of `app/security/permissions.py`.

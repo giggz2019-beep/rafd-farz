@@ -49,6 +49,7 @@ class Invoice:
     currency: str = "SAR"
     document_id: str | None = None      # SourceDocument.doc_id
     due_date: date | None = None
+    purchase_order_id: str | None = None   # purchases above the approval threshold
 
     @property
     def subtotal(self) -> Decimal:

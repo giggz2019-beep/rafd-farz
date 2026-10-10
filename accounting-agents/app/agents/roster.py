@@ -11,7 +11,7 @@ import re
 from typing import Literal
 
 from ..core.ledger import AccountType
-from ..security.permissions import Op, Role
+from ..security.permissions import Role
 from .base import Agent, AgentSpec, Strict
 
 # --------------------------------------------------------------------------- outputs
@@ -82,9 +82,24 @@ class AccountingManagerAgent(Agent):
     spec = AgentSpec(
         Role.ACCOUNTING_MANAGER, "Accounting Manager",
         "Coordinates the other agents, applies the posting policy, resolves conflicts, and is the only "
-        "agent that posts to the staging ledger. Escalates anything uncertain to the owner.",
+        "agent that posts to the staging ledger. After the owner approves, it carries out what other agents "
+        "prepared — vendor payments, payroll, VAT filing packages, bank-detail changes — and prepares none "
+        "of them itself. Escalates anything uncertain to the owner.",
         frozenset({"ledger.post_staging", "ledger.reverse_entry", "daftra.write_journal",
+                   "payables.execute_payment", "payroll.pay", "vat.submit_return", "bank.update_account",
                    "ledger.balances", "documents.verify", "daftra.list_journals"}))
+
+    def execute_payment(self, request: dict, *, key: str, approval_id: str | None = None) -> dict:
+        """Pays a request Accounts Payable raised; the details must match it exactly."""
+        return self.tool("payables.execute_payment",
+                         {"payment_request_id": request["request_id"], "vendor": request["vendor"],
+                          "amount": request["amount"]}, key=key, approval_id=approval_id)
+
+    def pay_payroll(self, period: str, total_net: str, *, key: str, approval_id: str | None = None) -> dict:
+        return self.tool("payroll.pay", {"period": period, "total_net": total_net}, key=key, approval_id=approval_id)
+
+    def submit_vat_return(self, summary: dict, *, key: str, approval_id: str | None = None) -> dict:
+        return self.tool("vat.submit_return", summary, key=key, approval_id=approval_id)
 
     def decide_posting(self, audit: AuditReport, *, preparer_role: Role,
                        classifier_needs_review: bool, classifier_confidence: str | None) -> ManagerDecision:
@@ -163,40 +178,54 @@ class AccountsReceivableAgent(Agent):
 class AccountsPayableAgent(Agent):
     spec = AgentSpec(
         Role.ACCOUNTS_PAYABLE, "Accounts Payable",
-        "Tracks what the company owes: registers purchase invoices and requests vendor payments. "
-        "Every payment needs the owner's approval.",
-        frozenset({"payables.register", "payables.execute_payment"}))
+        "Tracks what the company owes: asks the owner to approve new vendors and purchase orders, records "
+        "goods and services received, registers purchase invoices and raises payment requests. It never "
+        "pays — the Accounting Manager executes a payment after the owner approves it.",
+        frozenset({"payables.register", "payables.request_payment", "vendors.add",
+                   "purchasing.raise_order", "purchasing.record_receipt"}))
 
     def register(self, invoice: dict, *, key: str) -> dict:
         return self.tool("payables.register", {"invoice": invoice}, key=key)
 
-    def pay(self, payable_key: str, vendor: str, amount: str, *, key: str, approval_id: str | None = None) -> dict:
-        return self.tool("payables.execute_payment",
-                         {"payable_key": payable_key, "vendor": vendor, "amount": amount},
+    def add_vendor(self, name: str, vat_number: str | None = None, standing_limit: str | None = None, *,
+                   key: str, approval_id: str | None = None) -> dict:
+        return self.tool("vendors.add", {"name": name, "vat_number": vat_number, "standing_limit": standing_limit},
                          key=key, approval_id=approval_id)
+
+    def raise_order(self, vendor: str, amount: str, description: str, *, key: str,
+                    approval_id: str | None = None) -> dict:
+        return self.tool("purchasing.raise_order", {"vendor": vendor, "amount": amount, "description": description},
+                         key=key, approval_id=approval_id)
+
+    def record_receipt(self, po_id: str, received_on: str, note: str = "", document_id: str | None = None, *,
+                       key: str) -> dict:
+        return self.tool("purchasing.record_receipt", {"po_id": po_id, "received_on": received_on, "note": note,
+                                                       "document_id": document_id}, key=key)
+
+    def request_payment(self, payable_key: str, amount: str, *, key: str) -> dict:
+        return self.tool("payables.request_payment", {"payable_key": payable_key, "amount": amount,
+                                                      "requested_by": self.role.value}, key=key)
 
 
 class PayrollAccountantAgent(Agent):
     spec = AgentSpec(
         Role.PAYROLL_ACCOUNTANT, "Payroll Accountant",
-        "Computes payroll and GOSI deductions and prepares the payroll entry. Paying salaries needs the "
-        "owner's approval.",
-        frozenset({"payroll.compute", "payroll.pay"}))
+        "Computes payroll and GOSI deductions and prepares the payroll entry. It does not pay salaries: "
+        "the Accounting Manager does, after the owner approves.",
+        frozenset({"payroll.compute"}))
 
     def prepare(self, period: str, employees: list[dict], entry_date: str, document_ids: list[str], *, key: str) -> dict:
         return self.tool("payroll.compute", {"period": period, "employees": employees, "entry_date": entry_date,
                                              "document_ids": document_ids, "prepared_by": self.role.value}, key=key)
-
-    def pay(self, period: str, total_net: str, *, key: str, approval_id: str | None = None) -> dict:
-        return self.tool("payroll.pay", {"period": period, "total_net": total_net}, key=key, approval_id=approval_id)
 
 
 class VatAccountantAgent(Agent):
     spec = AgentSpec(
         Role.VAT_ACCOUNTANT, "Saudi VAT Accountant",
         "Validates VAT on every invoice, monitors the registration threshold, and prepares VAT returns. "
-        "Filing is done by the owner on the ZATCA portal after approval.",
-        frozenset({"vat.validate_invoice", "vat.prepare_return", "vat.submit_return"}))
+        "It does not file: after the owner approves, the Accounting Manager releases the filing package and "
+        "the owner files it on the ZATCA portal.",
+        frozenset({"vat.validate_invoice", "vat.prepare_return"}))
 
     def validate(self, invoice: dict, *, key: str) -> list[dict]:
         return self.tool("vat.validate_invoice", {"invoice": invoice}, key=key)["issues"]
@@ -204,15 +233,13 @@ class VatAccountantAgent(Agent):
     def prepare_return(self, period: str, *, key: str) -> dict:
         return self.tool("vat.prepare_return", {"period": period}, key=key)
 
-    def submit_return(self, summary: dict, *, key: str, approval_id: str | None = None) -> dict:
-        return self.tool("vat.submit_return", summary, key=key, approval_id=approval_id)
-
 
 class BankReconciliationAgent(Agent):
     spec = AgentSpec(
         Role.BANK_RECONCILIATION, "Bank Reconciliation",
-        "Matches bank statement lines to booked cash movements and explains the differences.",
-        frozenset({"bank.reconcile", "bank.update_account", "daftra.list_journals", "ledger.balances"}))
+        "Matches bank statement lines to booked cash movements and explains the differences. It cannot "
+        "change bank details.",
+        frozenset({"bank.reconcile", "daftra.list_journals", "ledger.balances"}))
 
     def reconcile(self, bank: list[dict], book: list[dict], *, key: str) -> dict:
         return self.tool("bank.reconcile", {"bank": bank, "book": book}, key=key)
@@ -250,9 +277,11 @@ class InternalAuditAgent(Agent):
     spec = AgentSpec(
         Role.INTERNAL_AUDIT, "Internal Audit",
         "Independently reviews every proposed entry: duplicates, documentation, VAT, double-entry integrity, "
-        "and the audit-log chain. Can block; cannot post, pay, or approve.",
+        "purchase controls (approved vendor, purchase order, receipt — the three-way match), and the "
+        "audit-log chain. Can block; cannot post, pay, or approve.",
         frozenset({"invoices.check_duplicate", "audit.review_entry", "audit.verify_chain",
-                   "documents.verify", "ledger.balances", "daftra.list_journals"}), effort="high")
+                   "purchasing.check_controls", "documents.verify", "ledger.balances",
+                   "daftra.list_journals"}), effort="high")
 
     def review(self, invoice: dict, entry: dict, vat_issues: list[dict], *, key: str,
                with_opinion: bool = True) -> AuditReport:
@@ -269,6 +298,10 @@ class InternalAuditAgent(Agent):
         elif dup["verdict"] == "possible_duplicate":
             warnings.append(Finding(code="POSSIBLE_DUPLICATE", message=f"looks like {dup['existing']}",
                                     severity="warning", source="duplicates"))
+        if invoice.get("direction") == "purchase":
+            for i in self.tool("purchasing.check_controls", {"invoice": invoice}, key=f"{key}:controls")["issues"]:
+                blockers.append(Finding(code=i["code"], message=i["message"], severity="blocker",
+                                        source="purchasing"))
         for i in self.tool("audit.review_entry", {"entry": entry}, key=f"{key}:entry")["issues"]:
             blockers.append(Finding(code=i["code"], message=i["message"], severity="blocker", source="ledger"))
         for v in vat_issues:

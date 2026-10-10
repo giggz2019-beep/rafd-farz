@@ -32,6 +32,8 @@ class Op(str, Enum):
     CLASSIFY_EXPENSE = "classify_expense"
     MANAGE_RECEIVABLES = "manage_receivables"
     MANAGE_PAYABLES = "manage_payables"
+    REQUEST_PAYMENT = "request_payment"                 # prepare a payment request (does not pay)
+    RECORD_RECEIPT = "record_receipt"                   # goods / service received against a PO
     PREPARE_PAYROLL = "prepare_payroll"
     VALIDATE_VAT = "validate_vat"
     PREPARE_VAT_RETURN = "prepare_vat_return"
@@ -49,6 +51,8 @@ class Op(str, Enum):
     EXECUTE_PAYROLL_PAYMENT = "execute_payroll_payment"
     REVERSE_OR_DELETE_ENTRY = "reverse_or_delete_entry"  # destructive accounting change
     WRITE_DAFTRA = "write_daftra"
+    REGISTER_VENDOR = "register_vendor"                 # add a vendor to the approved list
+    RAISE_PURCHASE_ORDER = "raise_purchase_order"
     # ---- owner only ----
     APPROVE = "approve"
 
@@ -56,29 +60,53 @@ class Op(str, Enum):
 APPROVAL_REQUIRED: frozenset[Op] = frozenset({
     Op.EXECUTE_PAYMENT, Op.MODIFY_BANK_ACCOUNT, Op.SUBMIT_TAX_RETURN,
     Op.EXECUTE_PAYROLL_PAYMENT, Op.REVERSE_OR_DELETE_ENTRY, Op.WRITE_DAFTRA,
+    Op.REGISTER_VENDOR, Op.RAISE_PURCHASE_ORDER,
 })
 
 _COMMON = {Op.READ_LEDGER, Op.READ_DOCUMENTS, Op.REQUEST_APPROVAL}
 
 PERMISSIONS: dict[Role, frozenset[Op]] = {
+    # The manager posts entries others prepared and, after the owner approves, carries out the
+    # effects others requested (payments, payroll, filing, bank changes). It prepares none of them.
     Role.ACCOUNTING_MANAGER: frozenset(_COMMON | {Op.READ_DAFTRA, Op.RESOLVE_CONFLICT,
                                                   Op.POST_TO_STAGING_LEDGER, Op.REVERSE_OR_DELETE_ENTRY,
-                                                  Op.WRITE_DAFTRA}),
+                                                  Op.WRITE_DAFTRA, Op.EXECUTE_PAYMENT,
+                                                  Op.EXECUTE_PAYROLL_PAYMENT, Op.SUBMIT_TAX_RETURN,
+                                                  Op.MODIFY_BANK_ACCOUNT}),
     Role.REVENUE_ACCOUNTANT: frozenset(_COMMON | {Op.PROPOSE_REVENUE_ENTRY}),
     Role.EXPENSE_ACCOUNTANT: frozenset(_COMMON | {Op.PROPOSE_EXPENSE_ENTRY, Op.CLASSIFY_EXPENSE}),
     Role.ACCOUNTS_RECEIVABLE: frozenset(_COMMON | {Op.MANAGE_RECEIVABLES}),
-    Role.ACCOUNTS_PAYABLE: frozenset(_COMMON | {Op.MANAGE_PAYABLES, Op.EXECUTE_PAYMENT}),
-    Role.PAYROLL_ACCOUNTANT: frozenset(_COMMON | {Op.PREPARE_PAYROLL, Op.EXECUTE_PAYROLL_PAYMENT}),
-    Role.VAT_ACCOUNTANT: frozenset(_COMMON | {Op.VALIDATE_VAT, Op.PREPARE_VAT_RETURN, Op.SUBMIT_TAX_RETURN}),
-    Role.BANK_RECONCILIATION: frozenset(_COMMON | {Op.READ_DAFTRA, Op.RECONCILE_BANK, Op.MODIFY_BANK_ACCOUNT}),
+    Role.ACCOUNTS_PAYABLE: frozenset(_COMMON | {Op.MANAGE_PAYABLES, Op.REQUEST_PAYMENT, Op.RECORD_RECEIPT,
+                                                Op.REGISTER_VENDOR, Op.RAISE_PURCHASE_ORDER}),
+    Role.PAYROLL_ACCOUNTANT: frozenset(_COMMON | {Op.PREPARE_PAYROLL}),
+    Role.VAT_ACCOUNTANT: frozenset(_COMMON | {Op.VALIDATE_VAT, Op.PREPARE_VAT_RETURN}),
+    Role.BANK_RECONCILIATION: frozenset(_COMMON | {Op.READ_DAFTRA, Op.RECONCILE_BANK}),
     Role.FINANCIAL_ANALYST: frozenset(_COMMON | {Op.READ_DAFTRA, Op.GENERATE_REPORTS}),
     # Audit can read everything and block, but can post, pay or approve nothing.
     Role.INTERNAL_AUDIT: frozenset(_COMMON | {Op.READ_DAFTRA, Op.AUDIT_REVIEW, Op.VERIFY_AUDIT_LOG}),
     Role.OWNER: frozenset({Op.APPROVE, Op.READ_LEDGER, Op.READ_DOCUMENTS, Op.VERIFY_AUDIT_LOG}),
 }
 
+# Segregation of duties: no single role may hold both operations of any pair. Whoever prepares
+# or records something is never the one who executes, posts, or audits it.
+INCOMPATIBLE: tuple[tuple[Op, Op], ...] = (
+    (Op.MANAGE_PAYABLES, Op.EXECUTE_PAYMENT),
+    (Op.REQUEST_PAYMENT, Op.EXECUTE_PAYMENT),
+    (Op.RECORD_RECEIPT, Op.EXECUTE_PAYMENT),
+    (Op.REGISTER_VENDOR, Op.EXECUTE_PAYMENT),
+    (Op.RAISE_PURCHASE_ORDER, Op.EXECUTE_PAYMENT),
+    (Op.PREPARE_PAYROLL, Op.EXECUTE_PAYROLL_PAYMENT),
+    (Op.PREPARE_VAT_RETURN, Op.SUBMIT_TAX_RETURN),
+    (Op.RECONCILE_BANK, Op.MODIFY_BANK_ACCOUNT),
+    (Op.PROPOSE_EXPENSE_ENTRY, Op.POST_TO_STAGING_LEDGER),
+    (Op.PROPOSE_REVENUE_ENTRY, Op.POST_TO_STAGING_LEDGER),
+    (Op.AUDIT_REVIEW, Op.POST_TO_STAGING_LEDGER),
+    (Op.AUDIT_REVIEW, Op.EXECUTE_PAYMENT),
+)
+
 # Sanity: no agent may hold APPROVE.
 assert all(Op.APPROVE not in ops for r, ops in PERMISSIONS.items() if r != Role.OWNER)
+assert not [(r, a, b) for r, ops in PERMISSIONS.items() for a, b in INCOMPATIBLE if a in ops and b in ops]
 
 
 class PermissionDenied(PermissionError):

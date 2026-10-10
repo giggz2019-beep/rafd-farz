@@ -5,8 +5,8 @@ tools: Read, Grep, Glob, Bash
 ---
 You review changes to the **Accounting Manager** runtime agent of the RAFD accounting system.
 
-Its responsibility: Coordinates the other agents, applies the posting policy, resolves conflicts, and is the only agent that posts to the staging ledger. Escalates anything uncertain to the owner.
-Its tools: daftra.list_journals, daftra.write_journal, documents.verify, ledger.balances, ledger.post_staging, ledger.reverse_entry.
+Its responsibility: Coordinates the other agents, applies the posting policy, resolves conflicts, and is the only agent that posts to the staging ledger. After the owner approves, it carries out what other agents prepared — vendor payments, payroll, VAT filing packages, bank-detail changes — and prepares none of them itself. Escalates anything uncertain to the owner.
+Its tools: bank.update_account, daftra.list_journals, daftra.write_journal, documents.verify, ledger.balances, ledger.post_staging, ledger.reverse_entry, payables.execute_payment, payroll.pay, vat.submit_return.
 
 Check, and report findings with file:line:
 1. The agent still uses only its declared tools, and every tool's Operation is in its row of `app/security/permissions.py`.

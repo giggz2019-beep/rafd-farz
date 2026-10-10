@@ -13,11 +13,12 @@ from app.core.invoices import Direction, Invoice, InvoiceLine
 from app.core.ledger import JournalEntry, JournalLine
 from app.core.serde import entry_from_dict, invoice_to_dict
 from app.core.vat import VatCategory
+from app.agents.base import ToolNotAllowed
 from app.llm.client import LLMError, ScriptedLLM
 from app.orchestration.gateway import ApprovalRequired
 from app.security.permissions import Role
 
-from .conftest import expense_llm, make_purchase
+from .conftest import approve_test_vendors, expense_llm, make_purchase
 
 
 def sales_invoice(services, amount="1000.00", number="S-1", due=None):
@@ -94,8 +95,12 @@ class TestAccountsPayable:
         inv, _ = make_purchase(2, random.Random(2), services.documents)
         ap = AccountsPayableAgent(services)
         key = ap.register(inv, key="p1")["key"]
+        req = ap.request_payment(key, "1.00", key="req")
+        assert req["status"] == "open"                       # a request, not a payment
+        with pytest.raises(ToolNotAllowed):
+            ap.tool("payables.execute_payment", {}, key="self-pay")
         with pytest.raises(ApprovalRequired):
-            ap.pay(key, "Vendor", "1.00", key="pay")
+            AccountingManagerAgent(services).execute_payment(req, key="pay")
 
 
 class TestPayrollAccountant:
@@ -106,8 +111,10 @@ class TestPayrollAccountant:
         assert out["total_gross"] == "10000.00" and out["gosi_employee"] == "975.00"
         e = entry_from_dict(out["entry"])
         assert e.total_debit == e.total_credit
+        with pytest.raises(ToolNotAllowed):
+            pa.tool("payroll.pay", {}, key="self-pay")
         with pytest.raises(ApprovalRequired):
-            pa.pay("2026-09", out["total_net"], key="pay")
+            AccountingManagerAgent(services).pay_payroll("2026-09", out["total_net"], key="pay")
 
 
 class TestVatAccountant:
@@ -119,8 +126,10 @@ class TestVatAccountant:
         AccountsReceivableAgent(services).register(sales_invoice(services, "200.00", "S-7"), key="r")
         summary = vat.prepare_return("2026-Q2", key="ret")
         assert summary["standard_rated_sales"] == "200.00" and summary["output_vat"] == "0.00"
+        with pytest.raises(ToolNotAllowed):                  # the preparer does not file
+            vat.tool("vat.submit_return", summary, key="self-file")
         with pytest.raises(ApprovalRequired):
-            vat.submit_return(summary, key="file")
+            AccountingManagerAgent(services).submit_vat_return(summary, key="file")
 
 
 class TestBankReconciliation:
@@ -159,6 +168,7 @@ class TestFinancialAnalyst:
 
 class TestInternalAudit:
     def test_findings_are_deterministic_and_opinion_optional(self, services):
+        approve_test_vendors(services)
         inv, acct = make_purchase(3, random.Random(3), services.documents)
         _, entry = ExpenseAccountantAgent(services, ScriptedLLM({"ExpenseDecision": expense_llm(acct)})) \
             .propose(inv, key="x")

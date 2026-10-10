@@ -21,6 +21,9 @@ class Settings:
     claude_model: str = "claude-opus-5-5"
     claude_fallbacks: bool = True
     company_vat_registered: bool = False
+    # A purchase above this total (SAR, incl. VAT) needs an owner-approved purchase order with a
+    # recorded receipt, unless the vendor's approved standing limit covers it.
+    purchase_approval_threshold: Decimal = Decimal("1000")
     daftra_base_url: str = ""
     daftra_journals_path: str = ""
     daftra_auth_header: str = ""
@@ -44,6 +47,7 @@ class Settings:
             claude_model=e("CLAUDE_MODEL", cls.claude_model),
             claude_fallbacks=_bool("CLAUDE_FALLBACKS", True),
             company_vat_registered=_bool("COMPANY_VAT_REGISTERED", False),
+            purchase_approval_threshold=Decimal(e("PURCHASE_APPROVAL_THRESHOLD", "1000")),
             daftra_base_url=e("DAFTRA_BASE_URL", ""),
             daftra_journals_path=e("DAFTRA_JOURNALS_PATH", ""),
             daftra_auth_header=e("DAFTRA_AUTH_HEADER", ""),

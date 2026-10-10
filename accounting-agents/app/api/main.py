@@ -20,9 +20,10 @@ from pydantic import BaseModel, ConfigDict
 from ..config import Settings
 from ..llm.client import ClaudeLLM, LLM
 from ..orchestration.services import Services, build_services
+from ..orchestration.gateway import ApprovalRequired
 from ..orchestration.workflows import Agents, JobFailed, JobRunner
 from ..security.approvals import ApprovalError
-from ..security.permissions import Op, Role
+from ..security.permissions import APPROVAL_REQUIRED, Op, Role
 from .queue import JobQueue, make_queue
 
 DASHBOARD = Path(__file__).parent / "dashboard.html"
@@ -46,6 +47,32 @@ class InvoiceJobIn(_In):
 
 class DecisionIn(_In):
     reason: str | None = None
+
+
+class VendorIn(_In):
+    name: str
+    vat_number: str | None = None
+    standing_limit: str | None = None       # per-invoice limit for a recurring supplier, SAR
+
+
+class PurchaseOrderIn(_In):
+    request_id: str                          # caller's id; makes a retry safe
+    vendor: str
+    amount: str
+    description: str
+
+
+class ReceiptIn(_In):
+    receipt_id: str
+    received_on: str
+    note: str = ""
+    document_id: str | None = None
+
+
+class PaymentRequestIn(_In):
+    request_id: str
+    payable_key: str
+    amount: str
 
 
 def _check(token: str | None, expected_sha256: str) -> bool:
@@ -112,6 +139,39 @@ def create_app(settings: Settings | None = None, *, services: Services | None = 
         services.audit.record("service", "job.submitted", body.job_id, "queued", {"kind": kind})
         return {"job_id": body.job_id, "queued": True}
 
+    # ---------------- service: purchasing (each one waits for the owner) ----------------
+    def _awaiting(call) -> dict:
+        try:
+            out = call()
+        except ApprovalRequired as exc:
+            return {"status": "awaiting_owner", "approval_id": exc.request.id, "summary": exc.request.summary}
+        except ValueError as exc:
+            raise HTTPException(409, str(exc))
+        return {"status": "done", "result": out}
+
+    @app.post("/api/vendors")
+    def request_vendor(body: VendorIn, _: str = Depends(service)):
+        return _awaiting(lambda: runner.a.ap.add_vendor(body.name, body.vat_number, body.standing_limit,
+                                                         key=f"vendor:{body.name.strip().casefold()}"))
+
+    @app.post("/api/purchase-orders")
+    def request_po(body: PurchaseOrderIn, _: str = Depends(service)):
+        return _awaiting(lambda: runner.a.ap.raise_order(body.vendor, body.amount, body.description,
+                                                          key=f"po:{body.request_id}"))
+
+    @app.post("/api/purchase-orders/{po_id}/receipts")
+    def receipt(po_id: str, body: ReceiptIn, _: str = Depends(service)):
+        return _awaiting(lambda: runner.a.ap.record_receipt(po_id, body.received_on, body.note, body.document_id,
+                                                             key=f"receipt:{body.receipt_id}"))
+
+    @app.post("/api/payment-requests")
+    def request_payment(body: PaymentRequestIn, _: str = Depends(service)):
+        # Accounts Payable raises the request; the Accounting Manager executes it once the owner approves.
+        def run():
+            req = runner.a.ap.request_payment(body.payable_key, body.amount, key=f"payreq:{body.request_id}")
+            return runner.a.manager.execute_payment(req, key=f"pay:{body.request_id}")
+        return _awaiting(run)
+
     # ---------------- owner ----------------
     @app.get("/api/approvals")
     def approvals(_: Role = Depends(owner)):
@@ -124,14 +184,21 @@ def create_app(settings: Settings | None = None, *, services: Services | None = 
         except ApprovalError as exc:
             raise HTTPException(409, str(exc))
         result: dict = {"approval": req.__dict__}
-        # A held journal entry is posted straight away; every other approved operation is
-        # executed by the agent that asked for it when its job resumes.
+        # A held journal entry is posted straight away. Any other gated operation is carried out now by
+        # the agent that asked for it, with exactly the payload the owner saw.
         if req.operation == Op.POST_TO_STAGING_LEDGER.value and req.idempotency_key.endswith(":review"):
             job_id = req.idempotency_key[: -len(":review")]
             try:
                 result["job"] = runner.resume_after_review(job_id, approval_id)["status"]
             except (JobFailed, ApprovalError) as exc:
                 raise HTTPException(409, str(exc))
+        elif Op(req.operation) in APPROVAL_REQUIRED:
+            tool, _, key = req.idempotency_key.partition(":")
+            try:
+                result["executed"] = services.gateway.call(Role(req.requested_by), tool, req.payload,
+                                                           idempotency_key=key, approval_id=approval_id)
+            except (ApprovalError, ValueError, RuntimeError) as exc:
+                raise HTTPException(409, f"approved, but not carried out: {exc}")
         return result
 
     @app.post("/api/approvals/{approval_id}/reject")

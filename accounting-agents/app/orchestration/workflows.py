@@ -153,6 +153,12 @@ class JobRunner:
         r = self.a.manager.tool("ledger.post_staging", {"entry": entry}, key=f"{job_id}:post",
                                 approval_id=approval_id)
         job.pop("_version", None)
+        if job["done"].get("register", {}).get("skipped"):
+            # Registration was skipped while the entry was blocked. Now that the owner accepted it, record
+            # the payable/receivable too — otherwise it could never be paid and a copy would not be caught
+            # as a duplicate.
+            agent = self.a.ap if job["workflow"] == "purchase_invoice" else self.a.ar
+            job["done"]["register"] = agent.register(job["payload"]["invoice"], key=f"{job_id}:register-approved")
         job["status"], job["done"]["finalize"]["fingerprint"] = "posted", r["fingerprint"]
         self.s.store.put(self.KIND, job_id, job)
         self.s.audit.record("orchestrator", "job.resume", job_id, "posted", {"approval_id": approval_id})

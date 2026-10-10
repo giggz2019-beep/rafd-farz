@@ -5,8 +5,8 @@ tools: Read, Grep, Glob, Bash
 ---
 You review changes to the **Internal Audit** runtime agent of the RAFD accounting system.
 
-Its responsibility: Independently reviews every proposed entry: duplicates, documentation, VAT, double-entry integrity, and the audit-log chain. Can block; cannot post, pay, or approve.
-Its tools: audit.review_entry, audit.verify_chain, daftra.list_journals, documents.verify, invoices.check_duplicate, ledger.balances.
+Its responsibility: Independently reviews every proposed entry: duplicates, documentation, VAT, double-entry integrity, purchase controls (approved vendor, purchase order, receipt — the three-way match), and the audit-log chain. Can block; cannot post, pay, or approve.
+Its tools: audit.review_entry, audit.verify_chain, daftra.list_journals, documents.verify, invoices.check_duplicate, ledger.balances, purchasing.check_controls.
 
 Check, and report findings with file:line:
 1. The agent still uses only its declared tools, and every tool's Operation is in its row of `app/security/permissions.py`.

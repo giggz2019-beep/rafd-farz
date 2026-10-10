@@ -11,6 +11,8 @@ from app.core.invoices import Direction, Invoice, InvoiceLine
 from app.core.serde import invoice_to_dict
 from app.core.vat import VatCategory
 from app.llm.client import ScriptedLLM
+from app.orchestration.gateway import ApprovalRequired
+from app.security.permissions import Role
 from app.orchestration.services import build_services
 from app.orchestration.workflows import Agents, JobRunner
 
@@ -58,9 +60,32 @@ def approve_opinion():
     return {"recommendation": "approve", "concerns": []}
 
 
+def approve(services, call):
+    """Run a gated call the way production does: it asks, the owner approves, it runs."""
+    with pytest.raises(ApprovalRequired) as exc:
+        call(None)
+    services.approvals.approve(exc.value.request.id, Role.OWNER)
+    return call(exc.value.request.id)
+
+
+def approve_vendor(services, name, vat_number=None, standing_limit=None):
+    from app.agents.roster import AccountsPayableAgent
+    ap = AccountsPayableAgent(services)
+    return approve(services, lambda aid: ap.add_vendor(name, vat_number, standing_limit,
+                                                      key=f"vendor:{name}", approval_id=aid))
+
+
+def approve_test_vendors(services, standing_limit="1000000"):
+    """The fixture vendors are recurring suppliers with a standing limit, so no PO is needed."""
+    for name, trn, _ in VENDORS:
+        approve_vendor(services, name, trn, standing_limit)
+
+
 @pytest.fixture
 def runner_factory(services):
-    def make(responses: dict | None = None, audit_responses: dict | None = None):
+    def make(responses: dict | None = None, audit_responses: dict | None = None, approve_vendors: bool = True):
+        if approve_vendors and not services.kv.list("vendor"):
+            approve_test_vendors(services)
         llm = ScriptedLLM(responses or {})
         audit_llm = ScriptedLLM(audit_responses) if audit_responses is not None else None
         agents = Agents.build(services, llm, audit_llm=audit_llm)

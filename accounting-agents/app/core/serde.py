@@ -16,6 +16,7 @@ def invoice_to_dict(inv: Invoice) -> dict:
         "buyer_vat_number": inv.buyer_vat_number, "currency": inv.currency, "document_id": inv.document_id,
         "stated_total": None if inv.stated_total is None else str(to_money(inv.stated_total)),
         "due_date": inv.due_date.isoformat() if inv.due_date else None,
+        "purchase_order_id": inv.purchase_order_id,
         "lines": [{"description": l.description, "quantity": str(l.quantity), "unit_price": str(l.unit_price),
                    "vat_category": l.vat_category.value, "stated_vat": str(l.stated_vat)} for l in inv.lines],
     }
@@ -29,6 +30,7 @@ def invoice_from_dict(d: dict) -> Invoice:
         document_id=d.get("document_id"),
         stated_total=None if d.get("stated_total") is None else to_money(d["stated_total"]),
         due_date=date.fromisoformat(d["due_date"]) if d.get("due_date") else None,
+        purchase_order_id=d.get("purchase_order_id") or None,
         lines=tuple(InvoiceLine(l["description"], l["quantity"], l["unit_price"],
                                 VatCategory(l.get("vat_category", "standard")), l.get("stated_vat", "0"))
                     for l in d["lines"]),

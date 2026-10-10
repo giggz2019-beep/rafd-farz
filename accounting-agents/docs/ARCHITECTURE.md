@@ -45,13 +45,31 @@
 | Daftra | `app/daftra/adapter.py` | mock + read-only HTTP adapter |
 | Runtime | `app/worker.py`, `app/api/` | 24/7 worker, API, dashboard |
 
+## Segregation of duties
+
+Every effect has a preparer and a different executor, and the owner approves in between:
+
+| Step | Who prepares / records | Who executes (after owner approval) |
+|---|---|---|
+| New vendor | Accounts Payable requests | owner approves → added to the approved list |
+| Purchase order (above 1,000 SAR) | Accounts Payable raises | owner approves |
+| Goods / service received | Accounts Payable records the receipt | — |
+| Journal entry | Expense / Revenue Accountant prepares, Internal Audit reviews | Accounting Manager posts |
+| Vendor payment | Accounts Payable raises a payment request | Accounting Manager executes |
+| Payroll | Payroll Accountant computes | Accounting Manager pays |
+| VAT return | VAT Accountant prepares | Accounting Manager releases the filing package; the owner files |
+| Bank details | Bank Reconciliation only reports | Accounting Manager requests the change |
+
+`INCOMPATIBLE` in `app/security/permissions.py` lists the operation pairs no single role may hold; the
+module refuses to load if the matrix breaks one.
+
 ## Purchase-invoice workflow
 
 | Step | Agent | Tool | Result |
 |---|---|---|---|
 | vat | VAT Accountant | `vat.validate_invoice` | VAT issues (error / warning / info) |
 | classify | Expense Accountant | Claude → `ExpenseDecision`, then `expense.propose_entry` | account + balanced entry |
-| audit | Internal Audit | `documents.verify`, `invoices.check_duplicate`, `audit.review_entry` (+ optional Claude opinion) | blockers / warnings |
+| audit | Internal Audit | `documents.verify`, `invoices.check_duplicate`, `purchasing.check_controls` (approved vendor, PO, receipt), `audit.review_entry` (+ optional Claude opinion) | blockers / warnings |
 | register | Accounts Payable | `payables.register` | payable + duplicate index (skipped when blocked) |
 | finalize | Accounting Manager | fixed policy, then `ledger.post_staging` | posted / held for owner / rejected |
 
@@ -68,7 +86,8 @@ customer advance is recognised as **deferred revenue (2301)** until the service 
 - otherwise → **post** to the staging ledger
 
 A held entry becomes an approval request; the owner approves it on the dashboard and the manager
-posts it, consuming that approval.
+posts it, consuming that approval. If the hold had skipped registering the payable/receivable, it is
+registered then, so the invoice can be paid (once its vendor is approved) and a copy is caught as a duplicate.
 
 ## Recovery
 

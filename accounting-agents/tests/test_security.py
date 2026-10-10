@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy import text
 
 from app.agents.base import ToolNotAllowed
-from app.agents.roster import ALL_AGENTS, AccountsPayableAgent, ExpenseAccountantAgent, InternalAuditAgent
+from app.agents.roster import ALL_AGENTS, AccountingManagerAgent, AccountsPayableAgent
 from app.daftra.adapter import WritesDisabled
 from app.orchestration.gateway import ApprovalRequired
 from app.security.approvals import ApprovalError
@@ -58,49 +58,54 @@ def _payable(services, runner_factory):
     return services.kv.list("payable")[0]
 
 
+def _pay(services, bill, amount, key, approval_id=None, req_key=None):
+    """AP raises the request; the manager executes it; the owner approves in between."""
+    req = AccountsPayableAgent(services).request_payment(bill["key"], amount, key=req_key or f"{key}:req")
+    return AccountingManagerAgent(services).execute_payment(req, key=key, approval_id=approval_id)
+
+
 def test_payment_requires_owner_approval_and_is_single_use(services, runner_factory):
     bill = _payable(services, runner_factory)
-    ap = AccountsPayableAgent(services)
     with pytest.raises(ApprovalRequired) as exc:
-        ap.pay(bill["key"], bill["vendor"], bill["amount"], key="pay-1")
+        _pay(services, bill, "10.00", "pay-1")
     req = exc.value.request
     with pytest.raises(PermissionDenied):                         # agents cannot approve
-        services.approvals.approve(req.id, Role.ACCOUNTS_PAYABLE)
+        services.approvals.approve(req.id, Role.ACCOUNTING_MANAGER)
     with pytest.raises(ApprovalError):                            # not yet approved
-        ap.pay(bill["key"], bill["vendor"], bill["amount"], key="pay-1", approval_id=req.id)
+        _pay(services, bill, "10.00", "pay-1", approval_id=req.id)
     services.approvals.approve(req.id, Role.OWNER)
-    assert ap.pay(bill["key"], bill["vendor"], bill["amount"], key="pay-1b",
+    assert _pay(services, bill, "10.00", "pay-1b", req_key="pay-1:req",
                   approval_id=req.id)["status"] == "instruction_recorded"
     with pytest.raises(ApprovalError):                            # cannot be reused for another payment
-        ap.pay(bill["key"], bill["vendor"], "1.00", key="pay-2", approval_id=req.id)
+        _pay(services, bill, "1.00", "pay-2", approval_id=req.id)
 
 
 def test_approval_cannot_be_used_for_a_different_payload(services, runner_factory):
     bill = _payable(services, runner_factory)
-    ap = AccountsPayableAgent(services)
     with pytest.raises(ApprovalRequired) as exc:
-        ap.pay(bill["key"], bill["vendor"], "10.00", key="small")
+        _pay(services, bill, "10.00", "small")
     services.approvals.approve(exc.value.request.id, Role.OWNER)
     with pytest.raises(ApprovalError, match="payload differs"):
-        ap.pay(bill["key"], bill["vendor"], bill["amount"], key="small", approval_id=exc.value.request.id)
+        _pay(services, bill, bill["amount"], "small", approval_id=exc.value.request.id, req_key="big:req")
 
 
 def test_rejected_approval_never_executes(services, runner_factory):
     bill = _payable(services, runner_factory)
-    ap = AccountsPayableAgent(services)
     with pytest.raises(ApprovalRequired) as exc:
-        ap.pay(bill["key"], bill["vendor"], bill["amount"], key="r")
+        _pay(services, bill, bill["amount"], "r")
     with pytest.raises(ApprovalError):
         services.approvals.reject(exc.value.request.id, Role.OWNER, "")      # reason required
     services.approvals.reject(exc.value.request.id, Role.OWNER, "wrong vendor")
     with pytest.raises(ApprovalError):
-        ap.pay(bill["key"], bill["vendor"], bill["amount"], key="r", approval_id=exc.value.request.id)
+        _pay(services, bill, bill["amount"], "r", approval_id=exc.value.request.id)
 
 
 @pytest.mark.parametrize("role,tool,payload", [
-    (Role.VAT_ACCOUNTANT, "vat.submit_return", {"period": "2026-Q3", "net_payable": "0"}),
-    (Role.PAYROLL_ACCOUNTANT, "payroll.pay", {"period": "2026-09", "total_net": "1"}),
-    (Role.BANK_RECONCILIATION, "bank.update_account", {"account": "1101", "iban": "SA00"}),
+    (Role.ACCOUNTING_MANAGER, "vat.submit_return", {"period": "2026-Q3", "net_payable": "0"}),
+    (Role.ACCOUNTING_MANAGER, "payroll.pay", {"period": "2026-09", "total_net": "1"}),
+    (Role.ACCOUNTING_MANAGER, "bank.update_account", {"account": "1101", "iban": "SA00"}),
+    (Role.ACCOUNTS_PAYABLE, "vendors.add", {"name": "New Vendor"}),
+    (Role.ACCOUNTS_PAYABLE, "purchasing.raise_order", {"vendor": "New Vendor", "amount": "5000"}),
     (Role.ACCOUNTING_MANAGER, "ledger.reverse_entry", {"fingerprint": "x", "reason": "r", "on": "2026-01-01"}),
     (Role.ACCOUNTING_MANAGER, "daftra.write_journal", {"entry": {"reference": "R"}}),
 ])

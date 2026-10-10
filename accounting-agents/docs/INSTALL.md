@@ -6,7 +6,7 @@
 cd accounting-agents
 python3.12 -m venv .venv && . .venv/bin/activate
 pip install -r requirements-dev.txt
-python -m pytest            # 94 pass, 7 PostgreSQL tests skip
+python -m pytest            # 119 pass, 7 PostgreSQL tests skip
 python -m app.evals.run     # offline harness check, free
 ```
 
@@ -53,6 +53,14 @@ python -m pytest
 7. **Dashboard**: open `https://$DOMAIN/` and paste the owner token.
 8. **Feeding documents** (n8n / Telegram bot): `POST /api/documents` then `POST /api/jobs/purchase-invoice`
    with `Authorization: Bearer <service token>`.
+9. **Purchasing** (service token; each lands on the dashboard for your approval, then runs):
+   - `POST /api/vendors` `{name, vat_number?, standing_limit?}` — approve every supplier once. A
+     `standing_limit` lets a recurring supplier (hosting, software) invoice up to that amount without a PO.
+   - `POST /api/purchase-orders` `{request_id, vendor, amount, description}` — needed above
+     `PURCHASE_APPROVAL_THRESHOLD` (1,000 SAR). Put the returned `po_id` on the invoice as `purchase_order_id`.
+   - `POST /api/purchase-orders/{po_id}/receipts` `{receipt_id, received_on, note}` — record delivery.
+   - `POST /api/payment-requests` `{request_id, payable_key, amount}` — Accounts Payable asks; once you
+     approve, the Accounting Manager records the payment instruction. Make the transfer in the bank portal.
 
 ## 3. Operations
 

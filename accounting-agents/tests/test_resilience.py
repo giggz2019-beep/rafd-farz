@@ -6,7 +6,7 @@ import pytest
 
 from app.daftra.adapter import (DaftraConfig, DaftraError, DaftraNotConfigured, DaftraUnavailable,
                                 HttpDaftraAdapter, MockDaftraAdapter)
-from app.llm.client import LLMError, LLMUnavailable
+from app.llm.client import LLMUnavailable
 from app.orchestration.workflows import JobFailed
 from app.security.permissions import Role
 
@@ -134,15 +134,16 @@ def test_interrupted_gated_effect_is_not_blindly_repeated(services, runner_facto
     runner, _ = runner_factory({"ExpenseDecision": [expense_llm(acct)]})
     runner.process_purchase_invoice("g", inv)
     bill = services.kv.list("payable")[0]
-    from app.agents.roster import AccountsPayableAgent
+    from app.agents.roster import AccountingManagerAgent, AccountsPayableAgent
     from app.orchestration.gateway import ApprovalRequired
-    ap = AccountsPayableAgent(services)
+    req = AccountsPayableAgent(services).request_payment(bill["key"], bill["amount"], key="once:req")
+    mgr = AccountingManagerAgent(services)
     with pytest.raises(ApprovalRequired) as exc:
-        ap.pay(bill["key"], bill["vendor"], bill["amount"], key="once")
+        mgr.execute_payment(req, key="once")
     services.approvals.approve(exc.value.request.id, Role.OWNER)
     services.store.put_if_absent("tool_claim", "payables.execute_payment:once", {})   # crashed mid-payment
     with pytest.raises(RuntimeError, match="verify manually"):
-        ap.pay(bill["key"], bill["vendor"], bill["amount"], key="once", approval_id=exc.value.request.id)
+        mgr.execute_payment(req, key="once", approval_id=exc.value.request.id)
     assert services.kv.get("payable", bill["key"])["paid"] == "0.00"
 
 

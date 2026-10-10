@@ -8,15 +8,17 @@ instruction for a human to carry out, after the owner's approval.
 """
 from __future__ import annotations
 
+import uuid
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 
 from ..config import Settings
 from ..core.documents import DocumentStore
-from ..core.invoices import Direction, DuplicateDetector, validate_invoice
+from ..core.invoices import DuplicateDetector, validate_invoice
 from ..core.ledger import AccountType, JournalEntry, JournalLine, Ledger, validate_entry
 from ..core.money import to_money
+from ..core.purchasing import check_controls, find_vendor, vendor_key
 from ..core.payroll import Employee, compute_payroll, payroll_entry
 from ..core.reconciliation import CashMovement, reconcile
 from ..core.reports import balance_sheet, income_statement
@@ -171,27 +173,107 @@ def _register_tools(s: Services) -> None:
         return {k: str(to_money(v)) for k, v in buckets.items()}
     reg(Tool("receivables.aging", Op.MANAGE_RECEIVABLES, aging))
 
+    # ---- purchasing: vendors, purchase orders, receipts ----
+    def add_vendor(p):
+        name = p["name"].strip()
+        if not name:
+            raise ValueError("vendor name is required")
+        key = vendor_key(name)
+        limit = p.get("standing_limit")
+        rec = {"key": key, "name": name, "vat_number": p.get("vat_number") or None,
+               "standing_limit": None if limit in (None, "") else str(to_money(limit))}
+        if not s.kv.add("vendor", key, rec):
+            raise ValueError(f"vendor '{name}' is already approved")
+        return {"vendor_key": key}
+    reg(Tool("vendors.add", Op.REGISTER_VENDOR, add_vendor,
+             summarize=lambda p: f"Approve vendor {p.get('name')} (VAT {p.get('vat_number') or '—'})"
+                                 + (f", standing limit {p.get('standing_limit')} SAR per invoice"
+                                    if p.get("standing_limit") else "")))
+
+    def raise_order(p):
+        vendor = s.kv.get("vendor", vendor_key(p["vendor"]))
+        if vendor is None:
+            raise ValueError("approve the vendor before raising a purchase order")
+        amount = to_money(p["amount"])
+        if amount <= 0:
+            raise ValueError("purchase order amount must be positive")
+        po_id = f"PO-{uuid.uuid4().hex[:10].upper()}"
+        s.kv.add("purchase_order", po_id, {"id": po_id, "vendor_key": vendor["key"], "vendor": vendor["name"],
+                                           "amount": str(amount), "description": p.get("description", ""),
+                                           "invoiced": "0.00", "receipts": []})
+        return {"po_id": po_id}
+    reg(Tool("purchasing.raise_order", Op.RAISE_PURCHASE_ORDER, raise_order,
+             summarize=lambda p: f"Purchase order: {p.get('amount')} SAR to {p.get('vendor')} — {p.get('description')}"))
+
+    def record_receipt(p):
+        po = s.kv.get("purchase_order", p["po_id"])
+        if po is None:
+            raise ValueError("unknown purchase order")
+        po["receipts"].append({"on": date.fromisoformat(p["received_on"]).isoformat(),
+                               "note": p.get("note", ""), "document_id": p.get("document_id")})
+        s.kv.put("purchase_order", po["id"], po)
+        return {"po_id": po["id"], "receipts": len(po["receipts"])}
+    reg(Tool("purchasing.record_receipt", Op.RECORD_RECEIPT, record_receipt))
+
+    def check_purchase_controls(p):
+        inv = invoice_from_dict(p["invoice"])
+        po = s.kv.get("purchase_order", inv.purchase_order_id) if inv.purchase_order_id else None
+        issues = check_controls(inv, s.kv.list("vendor"), po, threshold=cfg.purchase_approval_threshold)
+        return {"issues": [{"code": i.code, "message": i.message} for i in issues]}
+    reg(Tool("purchasing.check_controls", Op.AUDIT_REVIEW, check_purchase_controls))
+
+    # ---- AP: registers bills and requests payment; it never pays ----
     def register_payable(p):
         inv = invoice_from_dict(p["invoice"])
         key = s.duplicates.register(inv)
         s.kv.add("payable", key, {"key": key, "vendor": inv.counterparty_name, "amount": str(inv.total),
-                                  "due": (inv.due_date or inv.issue_date).isoformat(), "paid": "0.00"})
+                                  "due": (inv.due_date or inv.issue_date).isoformat(), "paid": "0.00",
+                                  "purchase_order_id": inv.purchase_order_id})
         s.kv.add("invoice_purchase", key, invoice_to_dict(inv))
+        if inv.purchase_order_id and (po := s.kv.get("purchase_order", inv.purchase_order_id)):
+            po["invoiced"] = str(to_money(po["invoiced"]) + inv.total)
+            s.kv.put("purchase_order", po["id"], po)
         return {"key": key}
     reg(Tool("payables.register", Op.MANAGE_PAYABLES, register_payable))
 
-    def execute_payment(p):
+    def _open_balance(bill: dict):
+        return to_money(bill["amount"]) - to_money(bill["paid"])
+
+    def request_payment(p):
         bill = s.kv.get("payable", p["payable_key"])
         if bill is None:
             raise ValueError("unknown payable")
         amount = to_money(p["amount"])
-        if amount <= 0 or amount > to_money(bill["amount"]) - to_money(bill["paid"]):
+        if amount <= 0 or amount > _open_balance(bill):
+            raise ValueError("payment exceeds the open balance")
+        rid = f"PR-{uuid.uuid4().hex[:10].upper()}"
+        req = {"request_id": rid, "payable_key": bill["key"], "vendor": bill["vendor"], "amount": str(amount),
+               "status": "open", "requested_by": p.get("requested_by", "accounts_payable")}
+        s.kv.add("payment_request", rid, req)
+        return req
+    reg(Tool("payables.request_payment", Op.REQUEST_PAYMENT, request_payment))
+
+    def execute_payment(p):
+        req = s.kv.get("payment_request", p["payment_request_id"])
+        if req is None or req["status"] != "open":
+            raise ValueError("no open payment request with that id")
+        if (p.get("vendor"), p.get("amount")) != (req["vendor"], req["amount"]):
+            raise ValueError("payment details differ from the payment request")
+        bill = s.kv.get("payable", req["payable_key"])
+        invoice = invoice_from_dict(s.kv.get("invoice_purchase", bill["key"]))
+        if find_vendor(invoice, s.kv.list("vendor")) is None:       # checked again at the moment of paying
+            raise ValueError("vendor is not on the approved vendor list")
+        amount = to_money(req["amount"])
+        if amount > _open_balance(bill):
             raise ValueError("payment exceeds the open balance")
         bill["paid"] = str(to_money(bill["paid"]) + amount)
-        s.kv.put("payable", p["payable_key"], bill)
+        s.kv.put("payable", bill["key"], bill)
+        req["status"] = "paid"
+        s.kv.put("payment_request", req["request_id"], req)
         return {"status": "instruction_recorded", "note": "Transfer must be made in the bank portal by the owner."}
     reg(Tool("payables.execute_payment", Op.EXECUTE_PAYMENT, execute_payment,
-             summarize=lambda p: f"Pay {p.get('amount')} SAR to {p.get('vendor')} for {p.get('payable_key')}"))
+             summarize=lambda p: f"Pay {p.get('amount')} SAR to {p.get('vendor')} "
+                                 f"(request {p.get('payment_request_id')})"))
 
     # ---- payroll ----
     def payroll_compute(p):
