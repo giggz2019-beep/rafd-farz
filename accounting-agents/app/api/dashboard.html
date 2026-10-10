@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>موافقات المحاسبة — رفد</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2433; --muted:#667085; --line:#e4e7ec; --ok:#067647; --bad:#b42318; --accent:#1f4e78; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:var(--accent); color:#fff; padding:16px; }
+  header h1 { margin:0; font-size:1.15rem; }
+  main { max-width:860px; margin:0 auto; padding:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:12px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  input, textarea { width:100%; padding:10px; border:1px solid var(--line); border-radius:8px; font:inherit; }
+  button { padding:9px 14px; border-radius:8px; border:1px solid var(--line); background:#fff; font:inherit; cursor:pointer; }
+  button.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
+  button.bad { background:var(--bad); color:#fff; border-color:var(--bad); }
+  .muted { color:var(--muted); font-size:.85rem; }
+  .op { font-weight:600; }
+  pre { background:#f2f4f7; padding:8px; border-radius:6px; overflow:auto; max-height:220px; direction:ltr; text-align:left; font-size:.8rem; }
+  .status-ok { color:var(--ok); } .status-bad { color:var(--bad); }
+</style>
+</head>
+<body>
+<header><h1>قسم المحاسبة الذكي — الموافقات</h1></header>
+<main>
+  <section class="card" id="login">
+    <label for="tok">رمز المالك</label>
+    <input id="tok" type="password" autocomplete="off">
+    <div class="row" style="margin-top:8px"><button id="save">دخول</button>
+      <span class="muted">يُحفظ في هذه النافذة فقط ويُمسح عند إغلاقها.</span></div>
+  </section>
+  <section class="card"><div class="row"><span>سلسلة سجل التدقيق:</span><strong id="chain">—</strong>
+    <button id="refresh">تحديث</button></div></section>
+  <section id="list"></section>
+</main>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  let token = "";
+  try { token = sessionStorage.getItem("rafd_owner") || ""; } catch (_) {}
+  const api = async (path, opts = {}) => {
+    const r = await fetch(path, { ...opts, headers: { "Authorization": "Bearer " + token,
+      "Content-Type": "application/json" } });
+    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.status);
+    return r.json();
+  };
+  const el = (tag, cls, text) => { const e = document.createElement(tag);
+    if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  async function load() {
+    if (!token) return;
+    try {
+      const v = await api("/api/audit/verify");
+      $("chain").textContent = v.ok ? "سليمة (" + v.rows + " سجل)" : "تالفة عند السجل " + v.first_bad_seq;
+      $("chain").className = v.ok ? "status-ok" : "status-bad";
+      const items = await api("/api/approvals");
+      const list = $("list"); list.replaceChildren();
+      if (!items.length) list.append(el("div", "card muted", "لا توجد طلبات بانتظار موافقتك."));
+      for (const it of items) {
+        const c = el("div", "card");
+        c.append(el("div", "op", it.summary));
+        c.append(el("div", "muted", it.operation + " — طلبه: " + it.requested_by + " — " + it.created_at));
+        const pre = el("pre", null, JSON.stringify(it.payload, null, 2)); c.append(pre);
+        const reason = el("textarea"); reason.placeholder = "السبب (إلزامي عند الرفض)"; c.append(reason);
+        const row = el("div", "row");
+        const ok = el("button", "ok", "موافقة"), no = el("button", "bad", "رفض");
+        ok.onclick = async () => { if (!confirm("موافقة نهائية على: " + it.summary + "؟")) return;
+          try { await api("/api/approvals/" + it.id + "/approve", { method: "POST",
+            body: JSON.stringify({ reason: reason.value || null }) }); load(); } catch (e) { alert(e.message); } };
+        no.onclick = async () => { if (!reason.value.trim()) { alert("اكتب سبب الرفض"); return; }
+          try { await api("/api/approvals/" + it.id + "/reject", { method: "POST",
+            body: JSON.stringify({ reason: reason.value }) }); load(); } catch (e) { alert(e.message); } };
+        row.append(ok, no); c.append(row); list.append(c);
+      }
+      $("login").style.display = "none";
+    } catch (e) { $("chain").textContent = "خطأ: " + e.message; $("login").style.display = ""; }
+  }
+  $("save").onclick = () => { token = $("tok").value.trim();
+    try { sessionStorage.setItem("rafd_owner", token); } catch (_) {} load(); };
+  $("refresh").onclick = load;
+  load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# The ten agents
+
+Generated from `app/agents/roster.py` and `app/security/permissions.py` — regenerate rather than edit by hand.
+
+Each agent's system prompt is `app/agents/prompts/<role>.md`.
+
+| # | Agent | Responsibility | Tools (via gateway) | Owner-approval operations |
+|---|---|---|---|---|
+| 1 | **Accounting Manager** (`accounting_manager`) | Coordinates the other agents, applies the posting policy, resolves conflicts, and is the only agent that posts to the staging ledger. After the owner approves, it carries out what other agents prepared — vendor payments, payroll, VAT filing packages, bank-detail changes — and prepares none of them itself. Escalates anything uncertain to the owner. | `bank.update_account`, `daftra.list_journals`, `daftra.write_journal`, `documents.verify`, `ledger.balances`, `ledger.post_staging`, `ledger.reverse_entry`, `payables.execute_payment`, `payroll.pay`, `vat.submit_return` | execute_payment, execute_payroll_payment, modify_bank_account, reverse_or_delete_entry, submit_tax_return, write_daftra |
+| 2 | **Revenue Accountant** (`revenue_accountant`) | Recognises revenue from sales invoices: picks the revenue account and immediate vs deferred recognition, then has the deterministic tool build the entry. | `documents.verify`, `ledger.balances`, `revenue.propose_entry` | — |
+| 3 | **Expense Accountant** (`expense_accountant`) | Classifies purchase invoices to the chart of accounts and has the deterministic tool build the entry. | `documents.verify`, `expense.propose_entry`, `ledger.balances` | — |
+| 4 | **Accounts Receivable** (`accounts_receivable`) | Tracks what customers owe: registers sales invoices, produces the aging report, drafts (never sends) collection reminders. | `receivables.aging`, `receivables.register` | — |
+| 5 | **Accounts Payable** (`accounts_payable`) | Tracks what the company owes: asks the owner to approve new vendors and purchase orders, records goods and services received, registers purchase invoices and raises payment requests. It never pays — the Accounting Manager executes a payment after the owner approves it. | `payables.register`, `payables.request_payment`, `purchasing.raise_order`, `purchasing.record_receipt`, `vendors.add` | raise_purchase_order, register_vendor |
+| 6 | **Payroll Accountant** (`payroll_accountant`) | Computes payroll and GOSI deductions and prepares the payroll entry. It does not pay salaries: the Accounting Manager does, after the owner approves. | `payroll.compute` | — |
+| 7 | **Saudi VAT Accountant** (`vat_accountant`) | Validates VAT on every invoice, monitors the registration threshold, and prepares VAT returns. It does not file: after the owner approves, the Accounting Manager releases the filing package and the owner files it on the ZATCA portal. | `vat.prepare_return`, `vat.validate_invoice` | — |
+| 8 | **Bank Reconciliation** (`bank_reconciliation`) | Matches bank statement lines to booked cash movements and explains the differences. It cannot change bank details. | `bank.reconcile`, `daftra.list_journals`, `ledger.balances` | — |
+| 9 | **Financial Analyst** (`financial_analyst`) | Produces the financial statements from the ledger and a plain-language commentary for the owner. | `daftra.list_journals`, `ledger.balances`, `reports.financials` | — |
+| 10 | **Internal Audit** (`internal_audit`) | Independently reviews every proposed entry: duplicates, documentation, VAT, double-entry integrity, purchase controls (approved vendor, purchase order, receipt — the three-way match), and the audit-log chain. Can block; cannot post, pay, or approve. | `audit.review_entry`, `audit.verify_chain`, `daftra.list_journals`, `documents.verify`, `invoices.check_duplicate`, `ledger.balances`, `purchasing.check_controls` | — |
