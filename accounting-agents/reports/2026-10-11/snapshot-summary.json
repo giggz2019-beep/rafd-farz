@@ -1,0 +1,42 @@
+{
+ "accounts": {
+  "path": "/api2/journal_accounts.json",
+  "count": 27
+ },
+ "account_cats": {
+  "path": "/api2/journal_cats.json",
+  "count": 38
+ },
+ "journals": {
+  "path": "/api2/journals.json",
+  "count": 0
+ },
+ "invoices": {
+  "path": "/api2/invoices.json",
+  "count": 0
+ },
+ "purchase_invoices": {
+  "path": "/api2/purchase_invoices.json",
+  "count": 0
+ },
+ "suppliers": {
+  "path": "/api2/suppliers.json",
+  "count": 0
+ },
+ "clients": {
+  "path": "/api2/clients.json",
+  "count": 0
+ },
+ "expenses": {
+  "path": "/api2/expenses.json",
+  "count": 0
+ },
+ "incomes": {
+  "path": "/api2/incomes.json",
+  "count": 0
+ },
+ "treasuries": {
+  "path": "/api2/treasuries.json",
+  "count": 1
+ }
+}

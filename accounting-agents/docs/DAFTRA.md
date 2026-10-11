@@ -1,6 +1,6 @@
 # Daftra integration
 
-## Status: read-only adapter, not yet connected
+## Status: read-only adapter, connected (GET only)
 
 | | Status |
 |---|---|
@@ -8,22 +8,50 @@
 | `HttpDaftraAdapter` | read-only (`list_journals`, `get_journal`, `list_accounts`, `list_invoices`, `list_suppliers`, `list_expenses`), retries 429/5xx/network with backoff, never retries 4xx |
 | Writes | **disabled**: `write_journal` raises `WritesDisabled`; even with the flag on it raises `NotImplementedError` |
 
-## Live probe — 2026-10-11 (GET only, `scripts/daftra_probe.py`)
+## Live probe — 2026-10-11, second run (GET only, `scripts/daftra_probe.py`)
 
-Tenant `https://rafd1.daftra.com`, key injected by the session's egress proxy (connection
-"Daftra rafd1", configured for `Authorization: Bearer` and `APIKEY`). No header was sent by the client.
+Tenant `https://rafd1.daftra.com` («شركة رفد الرقمية»), with a **new API key from the rafd1 account**, injected
+by the egress proxy in the `APIKEY` header only (no `Authorization`). Every path answered **200**, so these
+are now the defaults in `app/config.py` and `.env.example`:
 
-| Path | Status | `X-Proxy-Error` |
-|---|---|---|
-| `/api2/journals.json`, `/api2/journal_accounts.json`, `/api2/invoices.json`, `/api2/suppliers.json`, `/api2/expenses.json` | 401 `{"result":"failed","code":401,"message":"Unauthorized"}` | `upstream auth failed: connection "Daftra rafd1", host "rafd1.daftra.com"` |
-| `/v2/api/entity/journal/list` | 401 `{"message":"Unauthenticated."}` | same |
+| Setting | Value |
+|---|---|
+| `DAFTRA_BASE_URL` | `https://rafd1.daftra.com` |
+| `DAFTRA_AUTH_HEADER` | `APIKEY` |
+| `DAFTRA_JOURNALS_PATH` | `/api2/journals.json` |
+| `DAFTRA_ACCOUNTS_PATH` | `/api2/journal_accounts.json` |
+| `DAFTRA_INVOICES_PATH` | `/api2/invoices.json` |
+| `DAFTRA_SUPPLIERS_PATH` | `/api2/suppliers.json` |
+| `DAFTRA_EXPENSES_PATH` | `/api2/expenses.json` |
 
-`rafd.daftra.com` (connection "Daftra") returns the same 401. The proxy did attach the credential and
-Daftra refused it, so the key value — not the path or the header name — is what fails. Likely causes,
-in order: the key belongs to a different tenant than `rafd1`, it was regenerated or revoked, or the
-plan has no API access. **Therefore `DAFTRA_JOURNALS_PATH`, `DAFTRA_AUTH_HEADER` and the four resource
-paths are still unset**: none of them could be confirmed by a 200. Re-run the probe after fixing the
-key; set each path only once it answers 200.
+`DAFTRA_API_KEY` stays empty in the repo; the adapter refuses to start without it.
+
+Response envelope (confirmed): `{"result":"successful","code":200,"data":[...],"pagination":{"page","page_count",
+"total_results","next","prev"}}`; each row is wrapped in its model name (`{"JournalAccount": {...}}`). Paging with
+`?page=N&limit=M` works. Also readable: `journal_cats`, `purchase_invoices`, `clients`, `incomes`, `treasuries`,
+`staff`, `site_info`. `payments` and `purchase_invoice_payments` return 404 "Invalid Endpoint".
+
+`scripts/daftra_pull.py OUT_DIR` pages through all of them (GET only) and writes one JSON per resource.
+Keep `OUT_DIR` outside the repository.
+
+### What the tenant held on 2026-10-11
+
+| Resource | Rows |
+|---|---|
+| accounts (`journal_accounts`) | 27, every balance 0 |
+| account categories (`journal_cats`) | 38, every total 0 |
+| treasuries | 1 («Main Treasury», cash, balance 0, created 2026-10-07) |
+| journals, invoices, purchase invoices, suppliers, clients, expenses, incomes | **0** |
+
+The tenant is a fresh Daftra default set-up: no transactions yet, no VAT accounts, no bank account under
+1202 البنك. The agent reports in `reports/2026-10-11/` work from this snapshot.
+
+`rafd.daftra.com` (connection "Daftra") still fails: 401 on journals/accounts, 500 on the rest.
+
+## Earlier probe — 2026-10-11, first run (superseded)
+
+With the previous key every path returned 401 with `X-Proxy-Error: upstream auth failed` — Daftra refused the
+key itself, which the new key fixed.
 
 ## What the official documentation confirms (docs.daftara.dev)
 

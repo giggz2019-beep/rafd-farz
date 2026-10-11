@@ -25,13 +25,14 @@ class Settings:
     # recorded receipt, unless the vendor's approved standing limit covers it.
     purchase_approval_threshold: Decimal = Decimal("1000")
     daftra_base_url: str = ""
-    daftra_journals_path: str = ""
-    daftra_auth_header: str = ""
+    # Paths and header confirmed by a 200 from rafd1.daftra.com on 2026-10-11 (docs/DAFTRA.md).
+    daftra_journals_path: str = "/api2/journals.json"
+    daftra_auth_header: str = "APIKEY"
     daftra_api_key: str = ""
-    daftra_accounts_path: str = ""
-    daftra_invoices_path: str = ""
-    daftra_suppliers_path: str = ""
-    daftra_expenses_path: str = ""
+    daftra_accounts_path: str = "/api2/journal_accounts.json"
+    daftra_invoices_path: str = "/api2/invoices.json"
+    daftra_suppliers_path: str = "/api2/suppliers.json"
+    daftra_expenses_path: str = "/api2/expenses.json"
     daftra_writes_enabled: bool = False        # hard off in this version
     owner_token_sha256: str = ""               # sha256 hex of the owner's dashboard token
     service_token_sha256: str = ""             # sha256 hex of the ingestion token
@@ -53,13 +54,13 @@ class Settings:
             company_vat_registered=_bool("COMPANY_VAT_REGISTERED", False),
             purchase_approval_threshold=Decimal(e("PURCHASE_APPROVAL_THRESHOLD", "1000")),
             daftra_base_url=e("DAFTRA_BASE_URL", ""),
-            daftra_journals_path=e("DAFTRA_JOURNALS_PATH", ""),
-            daftra_auth_header=e("DAFTRA_AUTH_HEADER", ""),
+            daftra_journals_path=e("DAFTRA_JOURNALS_PATH", cls.daftra_journals_path),
+            daftra_auth_header=e("DAFTRA_AUTH_HEADER", cls.daftra_auth_header),
             daftra_api_key=e("DAFTRA_API_KEY", ""),
-            daftra_accounts_path=e("DAFTRA_ACCOUNTS_PATH", ""),
-            daftra_invoices_path=e("DAFTRA_INVOICES_PATH", ""),
-            daftra_suppliers_path=e("DAFTRA_SUPPLIERS_PATH", ""),
-            daftra_expenses_path=e("DAFTRA_EXPENSES_PATH", ""),
+            daftra_accounts_path=e("DAFTRA_ACCOUNTS_PATH", cls.daftra_accounts_path),
+            daftra_invoices_path=e("DAFTRA_INVOICES_PATH", cls.daftra_invoices_path),
+            daftra_suppliers_path=e("DAFTRA_SUPPLIERS_PATH", cls.daftra_suppliers_path),
+            daftra_expenses_path=e("DAFTRA_EXPENSES_PATH", cls.daftra_expenses_path),
             daftra_writes_enabled=_bool("DAFTRA_WRITES_ENABLED", False),
             owner_token_sha256=e("OWNER_TOKEN_SHA256", ""),
             service_token_sha256=e("SERVICE_TOKEN_SHA256", ""),
