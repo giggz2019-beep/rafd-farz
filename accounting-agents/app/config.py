@@ -28,6 +28,10 @@ class Settings:
     daftra_journals_path: str = ""
     daftra_auth_header: str = ""
     daftra_api_key: str = ""
+    daftra_accounts_path: str = ""
+    daftra_invoices_path: str = ""
+    daftra_suppliers_path: str = ""
+    daftra_expenses_path: str = ""
     daftra_writes_enabled: bool = False        # hard off in this version
     owner_token_sha256: str = ""               # sha256 hex of the owner's dashboard token
     service_token_sha256: str = ""             # sha256 hex of the ingestion token
@@ -52,6 +56,10 @@ class Settings:
             daftra_journals_path=e("DAFTRA_JOURNALS_PATH", ""),
             daftra_auth_header=e("DAFTRA_AUTH_HEADER", ""),
             daftra_api_key=e("DAFTRA_API_KEY", ""),
+            daftra_accounts_path=e("DAFTRA_ACCOUNTS_PATH", ""),
+            daftra_invoices_path=e("DAFTRA_INVOICES_PATH", ""),
+            daftra_suppliers_path=e("DAFTRA_SUPPLIERS_PATH", ""),
+            daftra_expenses_path=e("DAFTRA_EXPENSES_PATH", ""),
             daftra_writes_enabled=_bool("DAFTRA_WRITES_ENABLED", False),
             owner_token_sha256=e("OWNER_TOKEN_SHA256", ""),
             service_token_sha256=e("SERVICE_TOKEN_SHA256", ""),

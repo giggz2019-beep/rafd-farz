@@ -46,13 +46,25 @@ class WritesDisabled(DaftraError):
 class DaftraAdapter(Protocol):
     def list_journals(self, page: int = 1) -> list[dict]: ...
     def get_journal(self, journal_id: str) -> dict: ...
+    def list_accounts(self, page: int = 1) -> list[dict]: ...
+    def list_invoices(self, page: int = 1) -> list[dict]: ...
+    def list_suppliers(self, page: int = 1) -> list[dict]: ...
+    def list_expenses(self, page: int = 1) -> list[dict]: ...
     def write_journal(self, entry: dict) -> dict: ...
+
+
+# Read-only resources besides journals. Each path is a separate setting and is
+# empty until confirmed against the live tenant: a list call on an unset path
+# raises DaftraNotConfigured instead of guessing.
+RESOURCES = ("accounts", "invoices", "suppliers", "expenses")
 
 
 class MockDaftraAdapter:
     """In-memory fake used until credentials and verified endpoints exist."""
-    def __init__(self, journals: list[dict] | None = None, *, fail_times: int = 0):
+    def __init__(self, journals: list[dict] | None = None, *, fail_times: int = 0,
+                 resources: dict[str, list[dict]] | None = None):
         self.journals = {str(j["id"]): j for j in (journals or [])}
+        self.resources = {k: list((resources or {}).get(k, [])) for k in RESOURCES}
         self.fail_times = fail_times
         self.calls = 0
 
@@ -72,6 +84,22 @@ class MockDaftraAdapter:
             raise DaftraError(f"journal {journal_id} not found")
         return self.journals[journal_id]
 
+    def _list(self, name: str) -> list[dict]:
+        self._maybe_fail()
+        return list(self.resources[name])
+
+    def list_accounts(self, page: int = 1) -> list[dict]:
+        return self._list("accounts")
+
+    def list_invoices(self, page: int = 1) -> list[dict]:
+        return self._list("invoices")
+
+    def list_suppliers(self, page: int = 1) -> list[dict]:
+        return self._list("suppliers")
+
+    def list_expenses(self, page: int = 1) -> list[dict]:
+        return self._list("expenses")
+
     def write_journal(self, entry: dict) -> dict:
         raise WritesDisabled("mock adapter is read-only")
 
@@ -82,9 +110,21 @@ class DaftraConfig:
     journals_path: str = ""     # verify in docs: "GET All Journals"
     auth_header: str = ""       # verify in docs: Authorization page
     api_key: str = ""
+    accounts_path: str = ""     # each verified against the live tenant before use
+    invoices_path: str = ""
+    suppliers_path: str = ""
+    expenses_path: str = ""
     writes_enabled: bool = False
     timeout: float = 20.0
     max_attempts: int = 4
+
+    @classmethod
+    def from_settings(cls, st) -> "DaftraConfig":
+        return cls(base_url=st.daftra_base_url, journals_path=st.daftra_journals_path,
+                   auth_header=st.daftra_auth_header, api_key=st.daftra_api_key,
+                   accounts_path=st.daftra_accounts_path, invoices_path=st.daftra_invoices_path,
+                   suppliers_path=st.daftra_suppliers_path, expenses_path=st.daftra_expenses_path,
+                   writes_enabled=st.daftra_writes_enabled)
 
     def missing(self) -> list[str]:
         return [n for n, v in (("DAFTRA_BASE_URL", self.base_url), ("DAFTRA_JOURNALS_PATH", self.journals_path),
@@ -132,6 +172,30 @@ class HttpDaftraAdapter:
         if not isinstance(data, list):
             raise DaftraError("unexpected journals payload shape")
         return data
+
+    def _list(self, name: str, page: int) -> list[dict]:
+        path = getattr(self.cfg, f"{name}_path")
+        if not path:
+            raise DaftraNotConfigured(f"missing setting: DAFTRA_{name.upper()}_PATH")
+        data = self._get(path, {"page": page})
+        # Same unverified envelope as journals: a bare list or {"data": [...]}.
+        if isinstance(data, dict):
+            data = data.get("data", [])
+        if not isinstance(data, list):
+            raise DaftraError(f"unexpected {name} payload shape")
+        return data
+
+    def list_accounts(self, page: int = 1) -> list[dict]:
+        return self._list("accounts", page)
+
+    def list_invoices(self, page: int = 1) -> list[dict]:
+        return self._list("invoices", page)
+
+    def list_suppliers(self, page: int = 1) -> list[dict]:
+        return self._list("suppliers", page)
+
+    def list_expenses(self, page: int = 1) -> list[dict]:
+        return self._list("expenses", page)
 
     def get_journal(self, journal_id: str) -> dict:
         data = self._get(f"{self.cfg.journals_path.rstrip('/')}/{journal_id}")

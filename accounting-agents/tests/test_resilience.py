@@ -156,3 +156,28 @@ def test_worker_recovery_requeues_interrupted_jobs(services, runner_factory):
     runner, _ = runner_factory({})
     q = MemoryQueue()
     assert recover(runner, q) == 1 and q.dequeue()["job_id"] == "stuck"
+
+
+@pytest.mark.parametrize("name", ["accounts", "invoices", "suppliers", "expenses"])
+def test_http_resource_reads_are_get_only_and_unwrap_envelope(name):
+    seen = []
+
+    def handler(req):
+        seen.append((req.method, req.url.path))
+        return httpx.Response(200, json={"data": [{"id": 7}]})
+    cfg = DaftraConfig(base_url="https://tenant.example", journals_path="/journals", auth_header="X-Key",
+                       api_key="k", **{f"{name}_path": f"/{name}"})
+    a = HttpDaftraAdapter(cfg, transport=httpx.MockTransport(handler), sleep=lambda s: None)
+    assert getattr(a, f"list_{name}")() == [{"id": 7}]
+    assert seen == [("GET", f"/{name}")]
+
+
+def test_http_resource_read_refuses_unset_path():
+    a = HttpDaftraAdapter(_cfg(), transport=httpx.MockTransport(lambda r: httpx.Response(200, json=[])))
+    with pytest.raises(DaftraNotConfigured, match="DAFTRA_INVOICES_PATH"):
+        a.list_invoices()
+
+
+def test_mock_resource_reads():
+    m = MockDaftraAdapter(resources={"suppliers": [{"id": 1}]})
+    assert m.list_suppliers() == [{"id": 1}] and m.list_expenses() == []
