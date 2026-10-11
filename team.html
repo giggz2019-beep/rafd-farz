@@ -407,6 +407,11 @@ const DEFAULT_AGREEMENT = "## أطراف الاتفاقية\n- الطرف الأ
 const DEFAULT_AGREEMENT_EN = "## Parties\n- First party: RAFD Digital (\"RAFD\").\n- Second party: {name}, mobile number {phone} (the \"Representative\").\n## Nature of the relationship\n- The Representative works with RAFD independently and on a commission basis. This agreement does not create an employment relationship between the parties, is not an employment contract, and gives rise to no fixed salary, allowances or any statutory employee entitlements.\n- RAFD may offer a Representative who proves their ability a separate contract with a salary and commission, which will be governed by its own terms.\n## Commission\n- RAFD undertakes to pay the Representative a commission of ({rate}%) of the value of the first contract concluded with each client attributed to them under this agreement.\n- Commission is calculated on amounts actually collected from the client, excluding VAT.\n- Commission becomes due once the client has signed the contract and its value has been collected, and is transferred within ({days}) days of collection to the bank account registered in the Representative's name on the platform.\n- The rate stated in this agreement continues to apply to the Representative, and no later change to it applies to them without their consent.\n## Attribution of clients\n- A client is attributed to the first Representative who registers them on the platform, and that priority is kept for ({priority}) days from the date of registration.\n- The platform's record, with its automatically stored date and time, is the agreed reference between the parties in the event of any dispute.\n## Representative's obligations\n- To provide accurate information about themselves and about the clients they register.\n- Not to offer any prices, discounts or commitments on RAFD's behalf outside the quotations RAFD issues officially.\n- To keep client data and prices confidential and not use them for any purpose other than this agreement.\n## Ending participation\n- Either party may end participation at any time by notice through the platform or in writing.\n- After participation ends, the Representative keeps the right to commission on clients attributed to them before it ended, provided they contract within the priority period.\n- RAFD may suspend the Representative's account for breach of any of their obligations, without prejudice to commission already earned for the period before the breach.\n## General provisions\n- This agreement is governed by the laws of the Kingdom of Saudi Arabia.\n- The Representative's electronic acceptance of this agreement at registration is a binding acknowledgement by both parties, and the platform keeps a copy of it in the Representative's account with the date of acceptance and the agreed commission rate.";
 const PRIORITY_DAYS = 180;
 const VAT_RATE = 0.15;
+/* RAFD is NOT VAT-registered (the owner's decision, 2026-10-11): no quote carries VAT, the
+   operator is not offered the option, and nothing on a page says prices are "before VAT".
+   The server enforces the same rule through team_config.vat_registered — flip both together,
+   and only after registering with ZATCA. Quotes sent earlier keep the VAT they were sent with. */
+const VAT_REGISTERED = false;
 const QUOTE_DAYS = 14;
 
 const TOKEN_KEY = 'rafd_team_token';
@@ -707,7 +712,7 @@ const demo = (() => {
       d.quotes = d.quotes || []; let q = d.quotes.find(x => x.lead_id === l.id);
       if (q && q.status === 'accepted') return { error: 'accepted' };
       if (!q) { q = { id: uid(), no: (d.quotes.length ? Math.max(...d.quotes.map(x => x.no)) : 0) + 1, lead_id: l.id }; d.quotes.push(q); }
-      Object.assign(q, { details: (a.p_details || '').trim().slice(0, 1000) || '—', requested_items: items || null, status: 'requested', items: null, vat: true,
+      Object.assign(q, { details: (a.p_details || '').trim().slice(0, 1000) || '—', requested_items: items || null, status: 'requested', items: null, vat: false,
         subtotal: null, total: null, valid_until: null, note: null, requested_at: now(), sent_at: null, decided_at: null, decided_by: null, decision_note: null });
       save(d); return { ok: true };
     },
@@ -825,7 +830,7 @@ const demo = (() => {
         if (!items.length || items.length > 40 || items.some(i => !String(i.d || '').trim() || !(+i.q > 0) || !(+i.p >= 0))) return { error: 'items' };
         const cv = String(p.client_vat || '').replace(/\D/g, ''); if (cv && cv.length !== 15) return { error: 'client_vat' };
         const cc = String(p.client_cr || '').replace(/\D/g, ''); if (cc && cc.length !== 10) return { error: 'client_cr' };
-        const sub = items.reduce((t, i) => t + i.q * i.p, 0); const vat = p.vat !== false;
+        const sub = items.reduce((t, i) => t + i.q * i.p, 0); const vat = VAT_REGISTERED && p.vat === true;
         const t = (v, n) => String(v || '').trim().slice(0, n) || null;
         Object.assign(q, { plan: p.plan || null, client_address: t(p.client_address, 300), client_vat: cv || null, client_cr: cc || null, lang: p.lang === 'en' ? 'en' : 'ar',
           terms: d.quoteTerms || DEFAULT_TERMS, terms_en: d.quoteTermsEn || DEFAULT_TERMS_EN,
@@ -1131,7 +1136,9 @@ function drawPrices(root) {
   $('#priceCard', root).innerHTML = `
     <img class="rasd-top" src="/rasd-logo.png" alt="${L('رصد AI', 'Rasd AI')}">
     <div class="pintro">${L('هذه أسعار برنامج <b>رصد AI</b> التي تُعرض على العميل.', 'These are the <b>Rasd AI</b> programme prices to present to the client.')}</div>
-    <p class="sub" style="margin-bottom:0">${L('برنامج الكاميرات — ثلاث باقات فقط. جميع الأسعار غير شاملة ضريبة القيمة المضافة <b class="num">15%</b>.', 'The camera programme — three packages only. All prices exclude <b class="num">15%</b> VAT.')}</p>
+    <p class="sub" style="margin-bottom:0">${VAT_REGISTERED
+      ? L('برنامج الكاميرات — ثلاث باقات فقط. جميع الأسعار غير شاملة ضريبة القيمة المضافة <b class="num">15%</b>.', 'The camera programme — three packages only. All prices exclude <b class="num">15%</b> VAT.')
+      : L('برنامج الكاميرات — ثلاث باقات فقط. الأسعار المعروضة هي المبلغ الذي يدفعه العميل، ولا يُضاف عليها شيء.', 'The camera programme — three packages only. The prices shown are what the client pays; nothing is added on top.')}</p>
     <div class="pkg">
       <div class="pkg-h"><b>${L('الباقة الأساسية', 'Basic Package')}</b><span>${sar(P.basic.unit)}</span></div>
       <small>${per}</small>
@@ -1158,7 +1165,7 @@ function drawPrices(root) {
           <div class="pex-t">${L('الإجمالي', 'Total')} = ${sar(n * u + P.setup)}</div>
         </div>`;
       }).join('')}
-      <p><small>${L('قبل ضريبة القيمة المضافة.', 'Before VAT.')}</small></p>
+      ${VAT_REGISTERED ? `<p><small>${L('قبل ضريبة القيمة المضافة.', 'Before VAT.')}</small></p>` : ''}
     </div>
     <div class="pnote">
       <b>${L(`إذا طلب العميل أقل من ${P.basic.n} خدمات`, `If the client wants fewer than ${P.basic.n} services`)}</b>
@@ -1598,7 +1605,7 @@ async function viewQuote(id) {
   const C = COMPANY; const B = C.bank || {};
   const foot = [C.email && `<span class="num">${esc(C.email)}</span>`, C.vat && `${L('الرقم الضريبي', 'VAT No.')} <span class="num">${esc(C.vat)}</span>`,
     C.cr && `${L('س.ت', 'CR')} <span class="num">${esc(C.cr)}</span>`, C.phone && `<span class="num">${esc(C.phone)}</span>`].filter(Boolean).join('<i>·</i>');
-  const tax = q.vat ? '15%' : '—';
+  const tax = '15%';
   const pick = (ar, en) => (EN() && en) ? en : ar;
   const addr = EN() && (C.address_en || []).length ? C.address_en : (C.address || []);
   const terms = pick(q.terms, q.terms_en);
@@ -1627,14 +1634,14 @@ async function viewQuote(id) {
       <div><small>${L('ممثل المبيعات', 'Sales representative')}</small><b>${esc(q.rep_name || '—')}</b></div>
     </section>
     <div class="scroll-x"><table class="qd">
-      <thead><tr><th>${L('الوصف', 'Description')}</th><th class="n">${L('الكمية', 'Qty')}</th><th class="n">${L('سعر الوحدة', 'Unit price')}</th><th class="n">${L('الضريبة', 'VAT')}</th><th class="n">${L('المبلغ', 'Amount')}</th></tr></thead>
+      <thead><tr><th>${L('الوصف', 'Description')}</th><th class="n">${L('الكمية', 'Qty')}</th><th class="n">${L('سعر الوحدة', 'Unit price')}</th>${q.vat ? `<th class="n">${L('الضريبة', 'VAT')}</th>` : ''}<th class="n">${L('المبلغ', 'Amount')}</th></tr></thead>
       <tbody>${(q.items || []).map(it => { const n = pick(it.n, it.n_en); const u = pick(it.u, it.u_en);
-        return `<tr class="it${n ? ' has-n' : ''}"><td><b>${esc(pick(it.d, it.d_en))}</b></td><td class="n"><span class="num">${money(it.q)}</span>${u ? ' ' + esc(u) : ''}</td><td class="n num">${sar(it.p)}</td><td class="n num">${tax}</td><td class="n num">${sar(it.q * it.p)}</td></tr>
-        ${n ? `<tr class="it-n"><td colspan="5">${esc(n)}</td></tr>` : ''}`; }).join('')}</tbody>
+        return `<tr class="it${n ? ' has-n' : ''}"><td><b>${esc(pick(it.d, it.d_en))}</b></td><td class="n"><span class="num">${money(it.q)}</span>${u ? ' ' + esc(u) : ''}</td><td class="n num">${sar(it.p)}</td>${q.vat ? `<td class="n num">${tax}</td>` : ''}<td class="n num">${sar(it.q * it.p)}</td></tr>
+        ${n ? `<tr class="it-n"><td colspan="${q.vat ? 5 : 4}">${esc(n)}</td></tr>` : ''}`; }).join('')}</tbody>
     </table></div>
     <div class="qd-sum">
-      <div><span>${L('المبلغ قبل الضريبة', 'Subtotal (excl. VAT)')}</span><span class="num">${sar(q.subtotal)} ${SAR()}</span></div>
-      ${q.vat ? `<div><span>${L('ضريبة القيمة المضافة 15%', 'VAT 15%')}</span><span class="num">${sar(q.total - q.subtotal)} ${SAR()}</span></div>` : ''}
+      ${q.vat ? `<div><span>${L('المبلغ قبل الضريبة', 'Subtotal (excl. VAT)')}</span><span class="num">${sar(q.subtotal)} ${SAR()}</span></div>
+      <div><span>${L('ضريبة القيمة المضافة 15%', 'VAT 15%')}</span><span class="num">${sar(q.total - q.subtotal)} ${SAR()}</span></div>` : ''}
       <div class="tot"><span>${L('الإجمالي', 'Total')}</span><span class="num">${sar(q.total)} ${SAR()}</span></div>
     </div>
     ${q.note ? `<section class="qd-sec"><h3>${L('ملاحظات خاصة بهذا العرض', 'Notes on this quotation')}</h3><p style="white-space:pre-wrap">${esc(q.note)}</p></section>` : ''}
@@ -1963,7 +1970,7 @@ function openQuoteEditor(l) {
       <div class="qrow" style="font-size:.72rem;color:var(--muted);font-weight:700;margin-bottom:2px"><span>${L('البند', 'Item')}</span><span>${L('الكمية', 'Qty')}</span><span>${L('سعر الوحدة', 'Unit price')}</span><span></span></div>
       <div id="rows">${rows.map(row).join('')}</div>
       <button type="button" class="btn btn-ghost btn-sm" id="addRow">＋ ${L('بند مخصص', 'Custom line')}</button>
-      <label class="check" style="margin-top:10px"><input type="checkbox" name="vat" ${q.vat !== false ? 'checked' : ''}><span>${L('يضاف ضريبة القيمة المضافة 15%', 'Add 15% VAT')}</span></label>
+      ${VAT_REGISTERED ? `<label class="check" style="margin-top:10px"><input type="checkbox" name="vat" ${q.vat !== false ? 'checked' : ''}><span>${L('يضاف ضريبة القيمة المضافة 15%', 'Add 15% VAT')}</span></label>` : ''}
       <div class="field"><label>${L('ساري حتى', 'Valid until')}</label><input type="date" name="valid" value="${esc(q.valid_until || addDays(QUOTE_DAYS))}"></div>
       <div class="field"><label>${L('ملاحظات خاصة بهذا العرض', 'Notes on this quote')} <small>${L('(تظهر للعميل، وتُضاف الشروط العامة تلقائياً)', '(shown to the client — the standard terms are added automatically)')}</small></label><textarea name="note" placeholder="${L('مثلاً: الدفع 50% مقدم و50% بعد التركيب.', 'e.g. 50% upfront, 50% after installation.')}">${esc(q.note || '')}</textarea></div>
       <div class="qbox" id="sum" style="margin:0 0 12px"></div>
@@ -1975,9 +1982,10 @@ function openQuoteEditor(l) {
     q: +toLatin(val(r, 'q')).replace(/[^\d.]/g, ''), p: (x => x === '' ? NaN : +x)(toLatin(val(r, 'p')).replace(/[^\d.]/g, '')),
     n: val(r, 'n').trim(), u: val(r, 'u').trim(), d_en: val(r, 'd_en').trim(), n_en: val(r, 'n_en').trim(), u_en: val(r, 'u_en').trim() }));
   const filled = i => i.d || i.q > 1 || !Number.isNaN(i.p);
-  const sum = () => { const its = read().filter(filled); const sub = its.reduce((t, i) => t + (i.q || 0) * (i.p || 0), 0); const vat = f.vat.checked;
+  const withVat = () => VAT_REGISTERED && !!(f.vat && f.vat.checked);
+  const sum = () => { const its = read().filter(filled); const sub = its.reduce((t, i) => t + (i.q || 0) * (i.p || 0), 0); const vat = withVat();
     $('#sum', s.el).innerHTML = `${L('المجموع', 'Subtotal')} <b class="num">${money(sub)}</b>${vat ? ` · ${L('الضريبة', 'VAT')} <b class="num">${money(sub * VAT_RATE)}</b>` : ''} · <b>${L('الإجمالي', 'Total')} <span class="num">${money(sub * (vat ? 1 + VAT_RATE : 1))}</span> ${SAR()}</b>`; };
-  f.addEventListener('input', sum); f.vat.onchange = sum; sum();
+  f.addEventListener('input', sum); if (f.vat) f.vat.onchange = sum; sum();
   f.lang.onchange = () => f.classList.toggle('en', f.lang.value === 'en');
   const addLine = it => {
     const empty = [...rowsEl.querySelectorAll('.qitem')].find(r => !val(r, 'd').trim() && !val(r, 'p').trim());
@@ -1992,7 +2000,7 @@ function openQuoteEditor(l) {
     const items = read().filter(filled);
     if (!items.length || items.some(i => !i.d || !(i.q > 0) || !(i.p >= 0) || Number.isNaN(i.p))) return formMsg($('#em', s.el), 'err', err('items'));
     b.disabled = true;
-    const r = await admRpc('quote_send', { lead_id: l.id, items, vat: f.vat.checked, valid_until: f.valid.value, note: f.note.value.trim(), lang: f.lang.value,
+    const r = await admRpc('quote_send', { lead_id: l.id, items, vat: withVat(), valid_until: f.valid.value, note: f.note.value.trim(), lang: f.lang.value,
       plan: f.plan.value, client_address: f.caddr.value.trim(), client_vat: toLatin(f.cvat.value).replace(/\D/g, ''), client_cr: toLatin(f.ccr.value).replace(/\D/g, '') });
     b.disabled = false;
     if (!r || r.error) return formMsg($('#em', s.el), 'err', err(r && r.error));
