@@ -1,5 +1,5 @@
 {
- "source": "rafd1.daftra.com GET /api2/journal_accounts.json and /api2/journal_cats.json, 2026-10-11, after the bank account was added (codes, names, nature only)",
+ "source": "rafd1.daftra.com GET /api2/journal_accounts.json and /api2/journal_cats.json, 2026-10-11, after the AI-BATCH-2026-10-11 accounts were created (codes, names, nature only)",
  "accounts": [
   {
    "code": "120101",
@@ -7,8 +7,18 @@
    "type": "1"
   },
   {
+   "code": "120102",
+   "name": "بطاقة الشركة 1146 (مسبقة الدفع)",
+   "type": "1"
+  },
+  {
    "code": "1202001",
    "name": "شركة رفد الرقمية",
+   "type": "1"
+  },
+  {
+   "code": "1202002",
+   "name": "مريم عبيد ماجد الشيباني",
    "type": "1"
   },
   {
@@ -29,6 +39,11 @@
   {
    "code": "1210",
    "name": "المشتريات",
+   "type": "1"
+  },
+  {
+   "code": "1211",
+   "name": "حساب معلّق (تحت التصنيف)",
    "type": "1"
   },
   {
@@ -57,6 +72,11 @@
    "type": "0"
   },
   {
+   "code": "33",
+   "name": "جاري المالكة",
+   "type": "0"
+  },
+  {
    "code": "411",
    "name": "المبيعات",
    "type": "0"
@@ -65,6 +85,11 @@
    "code": "412",
    "name": "مردودات المبيعات",
    "type": "1"
+  },
+  {
+   "code": "413",
+   "name": "إيرادات الخدمات",
+   "type": "0"
   },
   {
    "code": "4201",
@@ -119,6 +144,31 @@
   {
    "code": "5206",
    "name": "مصاريف حكومية",
+   "type": "1"
+  },
+  {
+   "code": "5207",
+   "name": "مصروف اشتراكات برمجية",
+   "type": "1"
+  },
+  {
+   "code": "5208",
+   "name": "مصروف التأمينات الاجتماعية",
+   "type": "1"
+  },
+  {
+   "code": "5209",
+   "name": "مصروف تسويق وإعلان",
+   "type": "1"
+  },
+  {
+   "code": "5210",
+   "name": "مصروف شحن وبريد",
+   "type": "1"
+  },
+  {
+   "code": "5211",
+   "name": "مصروف رسوم بنكية",
    "type": "1"
   },
   {

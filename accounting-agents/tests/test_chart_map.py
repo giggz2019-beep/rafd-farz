@@ -22,9 +22,7 @@ def test_mapping_matches_the_live_rafd1_chart():
 
 def test_the_clashing_codes_are_not_passed_through():
     # internal 5201 is marketing; Daftra 5201 is rent
-    with pytest.raises(UnmappedAccount):
-        to_daftra("5201")
-    assert to_daftra("5501") == "5201"
+    assert to_daftra("5201") == "5209" and to_daftra("5501") == "5201"
     assert {a["name"] for a in DAFTRA if a["code"] == "5201"} == {"إيجار"}
     # internal 1201 is receivables; in Daftra 1201 is the treasury category
     with pytest.raises(UnmappedAccount):
@@ -40,8 +38,8 @@ def test_nothing_is_mapped_by_matching_digits():
 
 def test_unmapped_accounts_are_listed_for_the_owner():
     left = unmapped()
-    assert "1102" in left and "5101" in left and "2201" in left
-    assert "5501" not in left and "1101" not in left
+    assert "2201" in left and "5301" in left and "5901" in left
+    assert "5501" not in left and "1101" not in left and "5201" not in left
 
 
 def test_bank_maps_to_the_al_rajhi_account_under_the_bank_category():
@@ -52,8 +50,8 @@ def test_bank_maps_to_the_al_rajhi_account_under_the_bank_category():
 
 
 @pytest.mark.parametrize("mapping_change,expected", [
-    ({"5101": "5201"}, "maps to Daftra 5201, already used"),  # two internal accounts on one Daftra account
-    ({"5101": "5999"}, "does not exist"),
+    ({"5102": "5201"}, "maps to Daftra 5201, already used"),  # two internal accounts on one Daftra account
+    ({"5102": "5999"}, "does not exist"),
     ({"2101": "5203"}, "the other side"),                 # a liability onto an expense account
 ])
 def test_a_wrong_mapping_is_caught(mapping_change, expected):
@@ -74,7 +72,7 @@ def _adapter(writes):
 
 
 def test_write_path_refuses_an_unmapped_code_and_stays_unimplemented():
-    entry = {"lines": [{"account_code": "5201", "debit": "10.00"}, {"account_code": "1101", "credit": "10.00"}]}
+    entry = {"lines": [{"account_code": "5901", "debit": "10.00"}, {"account_code": "1101", "credit": "10.00"}]}
     with pytest.raises(WritesDisabled):
         _adapter(False).write_journal(entry)
     with pytest.raises(UnmappedAccount):

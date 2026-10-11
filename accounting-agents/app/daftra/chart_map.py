@@ -23,7 +23,8 @@ from .adapter import DaftraError
 DAFTRA_CODES: dict[str, str | None] = {
     # assets
     "1101": "1202001", # the company's Al Rajhi account (treasury 2 in Daftra), added 2026-10-11
-    "1102": None,      # second bank account, same
+    "1102": None,      # STC Bank (salaries, being wound down). Daftra 1202002 is a treasury named after the
+                       # owner, created by her on 2026-10-11 — whether it IS the STC account is unconfirmed
     "1201": None,      # receivables — Daftra keeps one account per client under 12041 العملاء
     "1301": None,      # input VAT — only once the company is VAT-registered
     "1401": None,      # prepaid expenses — no Daftra account yet
@@ -35,25 +36,25 @@ DAFTRA_CODES: dict[str, str | None] = {
     "2301": None,      # customer advances
     "2401": None,      # salaries payable
     "2402": None,      # GOSI payable
-    "2501": None,      # owner's current account
+    "2501": "33",      # جاري المالكة (created by AI-BATCH-2026-10-11)
     "2601": None,      # zakat provision
     # equity
     "3101": "31",      # رأس المال
     "3201": "32",      # أرباح وخسائر مرحلة
     # revenue
-    "4101": None,      # software & AI services revenue
+    "4101": "413",     # إيرادات الخدمات (created by AI-BATCH-2026-10-11)
     "4102": None,      # camera monitoring subscriptions
     "4901": "4201",    # إيرادات أخرى
     # expenses
-    "5101": None,      # software subscriptions & AI APIs
+    "5101": "5207",    # مصروف اشتراكات برمجية (created by AI-BATCH-2026-10-11)
     "5102": None,      # hosting & domains
-    "5201": None,      # marketing — NOT Daftra 5201, which is rent
+    "5201": "5209",    # marketing → مصروف تسويق وإعلان; NOT Daftra 5201, which is rent
     "5301": None,      # salaries
-    "5302": None,      # GOSI employer contribution
+    "5302": "5208",    # مصروف التأمينات الاجتماعية (created by AI-BATCH-2026-10-11)
     "5401": "5206",    # مصاريف حكومية
     "5501": "5201",    # إيجار
     "5601": None,      # freelancers & professional fees
-    "5701": None,      # bank charges
+    "5701": "5211",    # مصروف رسوم بنكية (created by AI-BATCH-2026-10-11)
     "5801": None,      # office & general
     "5901": None,      # zakat expense
 }

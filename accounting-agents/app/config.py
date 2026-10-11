@@ -41,7 +41,8 @@ class Settings:
     daftra_invoices_path: str = "/api2/invoices.json"
     daftra_suppliers_path: str = "/api2/suppliers.json"
     daftra_expenses_path: str = "/api2/expenses.json"
-    daftra_writes_enabled: bool = False        # hard off in this version
+    daftra_writes_enabled: bool = False        # off unless the owner turns it on for a tagged batch
+    daftra_auth_via_proxy: bool = False        # the API key is injected by an egress proxy
     owner_token_sha256: str = ""               # sha256 hex of the owner's dashboard token
     service_token_sha256: str = ""             # sha256 hex of the ingestion token
     secrets_master_key: str = ""
@@ -72,6 +73,7 @@ class Settings:
             daftra_suppliers_path=e("DAFTRA_SUPPLIERS_PATH", cls.daftra_suppliers_path),
             daftra_expenses_path=e("DAFTRA_EXPENSES_PATH", cls.daftra_expenses_path),
             daftra_writes_enabled=_bool("DAFTRA_WRITES_ENABLED", False),
+            daftra_auth_via_proxy=_bool("DAFTRA_AUTH_VIA_PROXY", False),
             owner_token_sha256=e("OWNER_TOKEN_SHA256", ""),
             service_token_sha256=e("SERVICE_TOKEN_SHA256", ""),
             secrets_master_key=e("SECRETS_MASTER_KEY", ""),

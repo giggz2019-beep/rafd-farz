@@ -13,15 +13,22 @@ What is NOT confirmed and therefore NOT hard-coded:
   name. They are required settings (DAFTRA_BASE_URL, DAFTRA_JOURNALS_PATH,
   DAFTRA_AUTH_HEADER); the HTTP adapter refuses to start without them.
 
-Writes are not implemented. ``write_journal`` exists only to show where the
-approval gate sits; it raises WritesDisabled unless DAFTRA_WRITES_ENABLED is
-true, and even then it raises NotImplementedError until the write endpoint has
-been verified against the official documentation.
+Writes (verified against docs.daftara.dev on 2026-10-11): ``POST /api2/journal_accounts.json``
+(``{"JournalAccount": {journal_cat_id, code, name, type}}``), ``POST /api2/journals.json``
+(``{"Journal": {date, description, number, currency_code, draft}, "JournalTransaction":
+[{journal_account_id, currency_debit, currency_credit, description}]}``) and
+``DELETE /api2/journals/{id}.json``. Every write goes through ``_guard`` and refuses unless
+DAFTRA_WRITES_ENABLED is true, and every journal must carry the batch tag in its description and a
+number with the batch prefix — so a batch can always be found again and rolled back by its tag.
+A POST is sent once and never retried: a retried POST could book an entry twice, so the caller
+re-reads by number instead.
 """
 from __future__ import annotations
 
+import re
 import time
 from dataclasses import dataclass
+from decimal import Decimal
 from typing import Protocol
 
 import httpx
@@ -43,6 +50,10 @@ class WritesDisabled(DaftraError):
     pass
 
 
+class WriteRefused(DaftraError):
+    """A write that would break a safety rule (untagged, unbalanced, non-positive)."""
+
+
 class DaftraAdapter(Protocol):
     def list_journals(self, page: int = 1) -> list[dict]: ...
     def get_journal(self, journal_id: str) -> dict: ...
@@ -51,6 +62,11 @@ class DaftraAdapter(Protocol):
     def list_suppliers(self, page: int = 1) -> list[dict]: ...
     def list_expenses(self, page: int = 1) -> list[dict]: ...
     def write_journal(self, entry: dict) -> dict: ...
+
+
+def tag_prefix(tag: str) -> str:
+    """AI-BATCH-2026-10-11 → AI20261011- : the journal-number prefix of a batch."""
+    return "AI" + re.sub(r"\D", "", tag) + "-"
 
 
 # Read-only resources besides journals. Each path is a separate setting and is
@@ -115,6 +131,7 @@ class DaftraConfig:
     suppliers_path: str = ""
     expenses_path: str = ""
     writes_enabled: bool = False
+    auth_via_proxy: bool = False   # the key is injected by an egress proxy, so none is held here
     timeout: float = 20.0
     max_attempts: int = 4
 
@@ -124,11 +141,13 @@ class DaftraConfig:
                    auth_header=st.daftra_auth_header, api_key=st.daftra_api_key,
                    accounts_path=st.daftra_accounts_path, invoices_path=st.daftra_invoices_path,
                    suppliers_path=st.daftra_suppliers_path, expenses_path=st.daftra_expenses_path,
-                   writes_enabled=st.daftra_writes_enabled)
+                   writes_enabled=st.daftra_writes_enabled,
+                   auth_via_proxy=getattr(st, "daftra_auth_via_proxy", False))
 
     def missing(self) -> list[str]:
         return [n for n, v in (("DAFTRA_BASE_URL", self.base_url), ("DAFTRA_JOURNALS_PATH", self.journals_path),
-                               ("DAFTRA_AUTH_HEADER", self.auth_header), ("DAFTRA_API_KEY", self.api_key)) if not v]
+                               ("DAFTRA_AUTH_HEADER", self.auth_header),
+                               ("DAFTRA_API_KEY", self.api_key or self.auth_via_proxy)) if not v]
 
 
 class HttpDaftraAdapter:
@@ -138,8 +157,11 @@ class HttpDaftraAdapter:
         if missing:
             raise DaftraNotConfigured("missing settings: " + ", ".join(missing))
         self.cfg, self._sleep = cfg, sleep
+        headers = {"Accept": "application/json"}
+        if cfg.api_key:
+            headers[cfg.auth_header] = cfg.api_key
         self.http = httpx.Client(base_url=cfg.base_url.rstrip("/"), timeout=cfg.timeout, transport=transport,
-                                 headers={cfg.auth_header: cfg.api_key, "Accept": "application/json"})
+                                 headers=headers)
 
     def _get(self, path: str, params: dict | None = None) -> dict | list:
         delay = 1.0
@@ -203,11 +225,69 @@ class HttpDaftraAdapter:
             raise DaftraError("unexpected journal payload shape")
         return data
 
-    def write_journal(self, entry: dict) -> dict:
+    # ------------------------------------------------------------------ writes
+    def _guard(self) -> None:
         if not self.cfg.writes_enabled:
             raise WritesDisabled("Daftra writes are disabled (DAFTRA_WRITES_ENABLED=false)")
-        # Internal codes mean different accounts in Daftra (5201 is marketing here, rent there):
-        # every line is translated, and an unmapped one refuses the whole entry.
+
+    def _send(self, method: str, path: str, body: dict | None = None) -> dict:
+        """One attempt only. A 4xx/5xx or a network error raises; the caller decides what to re-read."""
+        try:
+            r = self.http.request(method, path, json=body,
+                                  headers={"Content-Type": "application/json"} if body is not None else None)
+        except httpx.TransportError as exc:
+            raise DaftraUnavailable(f"network during {method} {path}: {exc} — re-read before retrying") from exc
+        try:
+            data = r.json()
+        except ValueError:
+            data = {"raw": r.text[:300]}
+        if r.status_code >= 400:
+            raise DaftraError(f"HTTP {r.status_code} on {method} {path}: {str(data)[:400]}")
+        return data
+
+    def create_account(self, *, journal_cat_id: int, code: str, name: str, debit_nature: bool) -> int:
+        self._guard()
+        if not code.isdigit():
+            raise WriteRefused("account code must be digits only")
+        data = self._send("POST", self.cfg.accounts_path, {"JournalAccount": {
+            "journal_cat_id": int(journal_cat_id), "code": code, "name": name, "type": 1 if debit_nature else 0}})
+        return int(data["id"])
+
+    def post_journal(self, *, date: str, description: str, number: str, tag: str,
+                     lines: list[tuple[int, Decimal, Decimal, str]], draft: bool = False) -> int:
+        """lines: (journal_account_id, debit, credit, line description). Returns the new journal id."""
+        self._guard()
+        if not tag or not description.startswith(f"[{tag}]"):
+            raise WriteRefused(f"journal description must start with [{tag}]")
+        if not number.startswith(tag_prefix(tag)):
+            raise WriteRefused(f"journal number must start with {tag_prefix(tag)}")
+        if len(lines) < 2:
+            raise WriteRefused("a journal needs at least two lines")
+        dr = sum((Decimal(l[1]) for l in lines), Decimal("0"))
+        cr = sum((Decimal(l[2]) for l in lines), Decimal("0"))
+        if dr != cr or dr <= 0 or any(Decimal(l[1]) < 0 or Decimal(l[2]) < 0 for l in lines):
+            raise WriteRefused(f"unbalanced or non-positive journal: debit {dr}, credit {cr}")
+        data = self._send("POST", self.cfg.journals_path, {
+            "Journal": {"date": date, "description": description, "number": number,
+                        "currency_code": "SAR", "draft": 1 if draft else 0},
+            "JournalTransaction": [{"journal_account_id": int(a), "currency_debit": float(d),
+                                    "currency_credit": float(c), "description": t} for a, d, c, t in lines]})
+        return int(data["id"])
+
+    def delete_journal(self, journal_id: str, *, tag: str) -> None:
+        """Rollback of a tagged batch only: the journal is re-read and must carry the tag."""
+        self._guard()
+        j = self.get_journal(str(journal_id))
+        desc = (j.get("data", j).get("Journal", {}) or {}).get("description", "") if isinstance(j, dict) else ""
+        if not str(desc).startswith(f"[{tag}]"):
+            raise WriteRefused(f"journal {journal_id} does not carry [{tag}] — not deleting it")
+        self._send("DELETE", f"{self.cfg.journals_path.rsplit('.', 1)[0]}/{journal_id}.json")
+
+    def write_journal(self, entry: dict) -> dict:
+        """An agent-built entry (internal account codes). Codes are translated through chart_map —
+        internal 5201 is marketing, Daftra 5201 is rent — and an unmapped code refuses the entry."""
+        self._guard()
         from .chart_map import to_daftra
-        [to_daftra(line["account_code"]) for line in entry.get("lines", [])]
-        raise NotImplementedError("verify the Add New Journal request body against docs.daftara.dev first")
+        codes = [to_daftra(line["account_code"]) for line in entry.get("lines", [])]
+        raise NotImplementedError("agent entries are posted as an owner-approved tagged batch "
+                                  f"(see docs/DAFTRA.md); resolved Daftra codes: {codes}")
