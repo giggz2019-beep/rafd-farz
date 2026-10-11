@@ -53,7 +53,7 @@ Every effect has a preparer and a different executor, and the owner approves in 
 |---|---|---|
 | New vendor | Accounts Payable requests | owner approves → added to the approved list |
 | Purchase order (above 1,000 SAR) | Accounts Payable raises | owner approves |
-| Goods / service received | Accounts Payable records the receipt | — |
+| Goods / service received | Expense Accountant records the receipt — not Accounts Payable, which raised the order | — |
 | Journal entry | Expense / Revenue Accountant prepares, Internal Audit reviews | Accounting Manager posts |
 | Vendor payment | Accounts Payable raises a payment request | Accounting Manager executes |
 | Payroll | Payroll Accountant computes | Accounting Manager pays |

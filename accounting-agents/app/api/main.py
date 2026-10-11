@@ -161,8 +161,9 @@ def create_app(settings: Settings | None = None, *, services: Services | None = 
 
     @app.post("/api/purchase-orders/{po_id}/receipts")
     def receipt(po_id: str, body: ReceiptIn, _: str = Depends(service)):
-        return _awaiting(lambda: runner.a.ap.record_receipt(po_id, body.received_on, body.note, body.document_id,
-                                                             key=f"receipt:{body.receipt_id}"))
+        # Recorded by the Expense Accountant, not Accounts Payable, which raised the order.
+        return _awaiting(lambda: runner.a.expense.record_receipt(po_id, body.received_on, body.note, body.document_id,
+                                                                  key=f"receipt:{body.receipt_id}"))
 
     @app.post("/api/payment-requests")
     def request_payment(body: PaymentRequestIn, _: str = Depends(service)):

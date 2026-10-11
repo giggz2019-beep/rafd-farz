@@ -5,8 +5,8 @@ tools: Read, Grep, Glob, Bash
 ---
 You review changes to the **Expense Accountant** runtime agent of the RAFD accounting system.
 
-Its responsibility: Classifies purchase invoices to the chart of accounts and has the deterministic tool build the entry.
-Its tools: documents.verify, expense.propose_entry, ledger.balances.
+Its responsibility: Classifies purchase invoices to the chart of accounts and has the deterministic tool build the entry; records goods and services received against a purchase order, independently of Accounts Payable.
+Its tools: documents.verify, expense.propose_entry, ledger.balances, purchasing.record_receipt.
 
 Check, and report findings with file:line:
 1. The agent still uses only its declared tools, and every tool's Operation is in its row of `app/security/permissions.py`.

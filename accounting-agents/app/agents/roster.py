@@ -144,8 +144,16 @@ class RevenueAccountantAgent(Agent):
 class ExpenseAccountantAgent(Agent):
     spec = AgentSpec(
         Role.EXPENSE_ACCOUNTANT, "Expense Accountant",
-        "Classifies purchase invoices to the chart of accounts and has the deterministic tool build the entry.",
-        frozenset({"expense.propose_entry", "documents.verify", "ledger.balances"}))
+        "Classifies purchase invoices to the chart of accounts and has the deterministic tool build the entry. "
+        "Records goods and services received against a purchase order — independently of Accounts Payable, "
+        "which raises the order and registers the bill.",
+        frozenset({"expense.propose_entry", "documents.verify", "ledger.balances", "purchasing.record_receipt"}))
+
+    def record_receipt(self, po_id: str, received_on: str, note: str = "", document_id: str | None = None, *,
+                       key: str) -> dict:
+        return self.tool("purchasing.record_receipt", {"po_id": po_id, "received_on": received_on, "note": note,
+                                                       "document_id": document_id,
+                                                       "recorded_by": self.role.value}, key=key)
 
     def propose(self, invoice: dict, *, key: str) -> tuple[ExpenseDecision, dict]:
         chart = {c: self.s.ledger.coa.get(c).name
@@ -178,11 +186,11 @@ class AccountsReceivableAgent(Agent):
 class AccountsPayableAgent(Agent):
     spec = AgentSpec(
         Role.ACCOUNTS_PAYABLE, "Accounts Payable",
-        "Tracks what the company owes: asks the owner to approve new vendors and purchase orders, records "
-        "goods and services received, registers purchase invoices and raises payment requests. It never "
-        "pays — the Accounting Manager executes a payment after the owner approves it.",
+        "Tracks what the company owes: asks the owner to approve new vendors and purchase orders, registers "
+        "purchase invoices and raises payment requests. It does not record receipts (the Expense Accountant "
+        "does) and never pays — the Accounting Manager executes a payment after the owner approves it.",
         frozenset({"payables.register", "payables.request_payment", "vendors.add",
-                   "purchasing.raise_order", "purchasing.record_receipt"}))
+                   "purchasing.raise_order"}))
 
     def register(self, invoice: dict, *, key: str) -> dict:
         return self.tool("payables.register", {"invoice": invoice}, key=key)
@@ -196,11 +204,6 @@ class AccountsPayableAgent(Agent):
                     approval_id: str | None = None) -> dict:
         return self.tool("purchasing.raise_order", {"vendor": vendor, "amount": amount, "description": description},
                          key=key, approval_id=approval_id)
-
-    def record_receipt(self, po_id: str, received_on: str, note: str = "", document_id: str | None = None, *,
-                       key: str) -> dict:
-        return self.tool("purchasing.record_receipt", {"po_id": po_id, "received_on": received_on, "note": note,
-                                                       "document_id": document_id}, key=key)
 
     def request_payment(self, payable_key: str, amount: str, *, key: str) -> dict:
         return self.tool("payables.request_payment", {"payable_key": payable_key, "amount": amount,

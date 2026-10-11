@@ -4,7 +4,7 @@ A multi-agent accounting system for شركة رفد الرقمية: ten speciali
 audit and post transactions, with the owner as the only approver of anything that moves money,
 files taxes or changes records.
 
-> **Status: development build — not production-ready.** All automated tests pass (125 on 2026-10-11; the 7
+> **Status: development build — not production-ready.** All automated tests pass (142 on 2026-10-11; the 7
 > PostgreSQL tests passed before the purchase-controls change and were not re-run after it), but the live-model evaluation has not been run, the Daftra connection has only been
 > read (GET) from a tenant that holds no transactions yet ([docs/DAFTRA.md](docs/DAFTRA.md)), and the Docker stack has not been started on a server. See
 > [docs/SECURITY.md](docs/SECURITY.md#known-gaps--must-be-closed-before-calling-this-production-ready).
@@ -20,7 +20,11 @@ files taxes or changes records.
 - Segregation of duties: whoever prepares never executes. Accounts Payable requests a payment, the
   Accounting Manager executes it, the owner approves in between.
 - Purchase controls: approved vendors only; above 1,000 SAR an owner-approved purchase order with a
-  recorded receipt (three-way match), unless the vendor's standing limit covers it.
+  recorded receipt (three-way match), unless the vendor's standing limit covers it. The receipt is
+  recorded by the Expense Accountant, never by Accounts Payable, and purchases split under the
+  threshold (same vendor, no PO, within 7 days) are added up and held.
+- Account codes are mapped to Daftra's chart explicitly (`app/daftra/chart_map.py`); the same digits
+  mean different accounts in the two charts.
 - Every action — including refused ones — goes to a hash-chained audit log.
 
 ## Layout

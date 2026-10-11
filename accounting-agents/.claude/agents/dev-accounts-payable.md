@@ -5,8 +5,8 @@ tools: Read, Grep, Glob, Bash
 ---
 You review changes to the **Accounts Payable** runtime agent of the RAFD accounting system.
 
-Its responsibility: Tracks what the company owes: asks the owner to approve new vendors and purchase orders, records goods and services received, registers purchase invoices and raises payment requests. It never pays — the Accounting Manager executes a payment after the owner approves it.
-Its tools: payables.register, payables.request_payment, purchasing.raise_order, purchasing.record_receipt, vendors.add.
+Its responsibility: Tracks what the company owes: asks the owner to approve new vendors and purchase orders, registers purchase invoices and raises payment requests. It never pays — the Accounting Manager executes a payment after the owner approves it.
+Its tools: payables.register, payables.request_payment, purchasing.raise_order, vendors.add. It must never hold purchasing.record_receipt.
 
 Check, and report findings with file:line:
 1. The agent still uses only its declared tools, and every tool's Operation is in its row of `app/security/permissions.py`.

@@ -58,7 +58,8 @@ python -m pytest
      `standing_limit` lets a recurring supplier (hosting, software) invoice up to that amount without a PO.
    - `POST /api/purchase-orders` `{request_id, vendor, amount, description}` — needed above
      `PURCHASE_APPROVAL_THRESHOLD` (1,000 SAR). Put the returned `po_id` on the invoice as `purchase_order_id`.
-   - `POST /api/purchase-orders/{po_id}/receipts` `{receipt_id, received_on, note}` — record delivery.
+   - `POST /api/purchase-orders/{po_id}/receipts` `{receipt_id, received_on, note}` — record delivery
+     (recorded by the Expense Accountant agent, not Accounts Payable).
    - `POST /api/payment-requests` `{request_id, payable_key, amount}` — Accounts Payable asks; once you
      approve, the Accounting Manager records the payment instruction. Make the transfer in the bank portal.
 

@@ -206,4 +206,8 @@ class HttpDaftraAdapter:
     def write_journal(self, entry: dict) -> dict:
         if not self.cfg.writes_enabled:
             raise WritesDisabled("Daftra writes are disabled (DAFTRA_WRITES_ENABLED=false)")
+        # Internal codes mean different accounts in Daftra (5201 is marketing here, rent there):
+        # every line is translated, and an unmapped one refuses the whole entry.
+        from .chart_map import to_daftra
+        [to_daftra(line["account_code"]) for line in entry.get("lines", [])]
         raise NotImplementedError("verify the Add New Journal request body against docs.daftara.dev first")

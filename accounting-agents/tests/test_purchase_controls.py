@@ -7,7 +7,7 @@ import pytest
 
 from app.agents.base import ToolNotAllowed
 from app.agents.roster import (AccountingManagerAgent, AccountsPayableAgent, BankReconciliationAgent,
-                               InternalAuditAgent)
+                               ExpenseAccountantAgent, InternalAuditAgent)
 from app.core.invoices import Direction, Invoice, InvoiceLine
 from app.core.serde import invoice_to_dict
 from app.core.vat import VatCategory
@@ -17,9 +17,9 @@ from app.security.permissions import INCOMPATIBLE, PERMISSIONS, Op, PermissionDe
 from .conftest import approve, approve_vendor, expense_llm
 
 
-def purchase(services, vendor, amount, number, *, trn=None, po=None):
+def purchase(services, vendor, amount, number, *, trn=None, po=None, on=date(2026, 3, 1)):
     doc = services.documents.add(f"{vendor}-{number}-{amount}".encode(), f"{number}.pdf", "purchase_invoice")
-    return invoice_to_dict(Invoice(Direction.PURCHASE, number, date(2026, 3, 1), vendor,
+    return invoice_to_dict(Invoice(Direction.PURCHASE, number, on, vendor,
                                    (InvoiceLine("service", Decimal(1), Decimal(amount), VatCategory.STANDARD, "0"),),
                                    seller_vat_number=trn, document_id=doc.doc_id, purchase_order_id=po))
 
@@ -61,6 +61,30 @@ def test_preparers_never_execute():
     assert Op.EXECUTE_PAYROLL_PAYMENT not in PERMISSIONS[Role.PAYROLL_ACCOUNTANT]
     assert Op.SUBMIT_TAX_RETURN not in PERMISSIONS[Role.VAT_ACCOUNTANT]
     assert Op.MODIFY_BANK_ACCOUNT not in PERMISSIONS[Role.BANK_RECONCILIATION]
+
+
+def test_accounts_payable_cannot_record_receipts(services):
+    """The role that raises the order and registers the bill does not also say the goods arrived."""
+    assert Op.RECORD_RECEIPT not in PERMISSIONS[Role.ACCOUNTS_PAYABLE]
+    assert (Op.RAISE_PURCHASE_ORDER, Op.RECORD_RECEIPT) in INCOMPATIBLE
+    assert (Op.MANAGE_PAYABLES, Op.RECORD_RECEIPT) in INCOMPATIBLE
+    approve_vendor(services, "Camera Supplier")
+    po = raise_po(services, "Camera Supplier", "5000.00")
+    with pytest.raises(ToolNotAllowed):
+        AccountsPayableAgent(services).tool("purchasing.record_receipt",
+                                            {"po_id": po, "received_on": "2026-03-01"}, key="r")
+    with pytest.raises(PermissionDenied):                         # even past the agent layer
+        services.gateway.call(Role.ACCOUNTS_PAYABLE, "purchasing.record_receipt",
+                              {"po_id": po, "received_on": "2026-03-01"}, idempotency_key="r")
+    assert not services.kv.get("purchase_order", po)["receipts"]
+
+
+def test_receipt_is_recorded_by_the_expense_accountant(services):
+    approve_vendor(services, "Camera Supplier")
+    po = raise_po(services, "Camera Supplier", "5000.00")
+    ExpenseAccountantAgent(services).record_receipt(po, "2026-03-01", "delivered", key="r")
+    (rcv,) = services.kv.get("purchase_order", po)["receipts"]
+    assert rcv["recorded_by"] == Role.EXPENSE_ACCOUNTANT.value
 
 
 # ------------------------------------------------------------------ approved vendors
@@ -113,11 +137,66 @@ def test_standing_limit_covers_a_recurring_subscription_and_nothing_above_it(ser
     assert r["status"] == "held_for_owner" and "PO_REQUIRED" in blockers(r)
 
 
+# ------------------------------------------------------------------ split purchases
+def test_purchase_split_under_the_threshold_is_held(services, runner_factory):
+    approve_vendor(services, "Office Supplies")
+    first = run(runner_factory, services, purchase(services, "Office Supplies", "600.00", "SP-1"), "sp1")
+    assert first["status"] == "posted"                            # on its own it is fine
+    r = run(runner_factory, services,
+            purchase(services, "Office Supplies", "600.00", "SP-2", on=date(2026, 3, 3)), "sp2")
+    assert r["status"] == "held_for_owner" and "POSSIBLE_SPLIT_PURCHASE" in blockers(r)
+    assert "SP-1" in next(b["message"] for b in r["done"]["audit"]["blockers"]
+                          if b["code"] == "POSSIBLE_SPLIT_PURCHASE")
+
+
+def test_small_purchases_that_stay_under_the_threshold_together_post(services, runner_factory):
+    approve_vendor(services, "Office Supplies")
+    run(runner_factory, services, purchase(services, "Office Supplies", "400.00", "SP-1"), "sp1")
+    r = run(runner_factory, services,
+            purchase(services, "Office Supplies", "600.00", "SP-2", on=date(2026, 3, 2)), "sp2")
+    assert r["status"] == "posted"                                # 1,000.00 is not above 1,000
+
+
+def test_purchases_further_apart_than_the_window_are_not_summed(services, runner_factory):
+    approve_vendor(services, "Office Supplies")
+    run(runner_factory, services, purchase(services, "Office Supplies", "900.00", "M-1"), "m1")
+    r = run(runner_factory, services,
+            purchase(services, "Office Supplies", "900.00", "M-2", on=date(2026, 3, 8)), "m2")
+    assert r["status"] == "posted"                                # a week apart, e.g. a monthly bill
+
+
+def test_other_vendors_and_standing_limits_are_not_summed(services, runner_factory):
+    approve_vendor(services, "Office Supplies")
+    approve_vendor(services, "Stationery Co")
+    approve_vendor(services, "Hosting Co", standing_limit="3000")
+    run(runner_factory, services, purchase(services, "Office Supplies", "800.00", "A-1"), "a1")
+    assert run(runner_factory, services, purchase(services, "Stationery Co", "800.00", "B-1"), "b1")["status"] == "posted"
+    run(runner_factory, services, purchase(services, "Hosting Co", "2500.00", "H-1"), "h1")
+    r = run(runner_factory, services, purchase(services, "Hosting Co", "2400.00", "H-2", on=date(2026, 3, 2)), "h2")
+    assert r["status"] == "posted"
+
+
+def test_split_window_comes_from_settings():
+    from app.config import Settings
+    from app.llm.client import ScriptedLLM
+    from app.orchestration.services import build_services
+    from app.orchestration.workflows import Agents, JobRunner
+    services = build_services(Settings(split_purchase_window_days=30))
+    approve_vendor(services, "Office Supplies")
+    agents = Agents.build(services, ScriptedLLM({"ExpenseDecision": [expense_llm("5101")] * 2}))
+    agents.audit.llm = None
+    runner = JobRunner(services, agents)
+    runner.process_purchase_invoice("w1", purchase(services, "Office Supplies", "900.00", "W-1"))
+    r = runner.process_purchase_invoice("w2", purchase(services, "Office Supplies", "900.00", "W-2",
+                                                        on=date(2026, 3, 20)))
+    assert r["status"] == "held_for_owner"
+
+
 # ------------------------------------------------------------------ PO + receipt + invoice (three-way match)
 def test_full_three_way_match_posts(services, runner_factory):
     approve_vendor(services, "Camera Supplier")
     po = raise_po(services, "Camera Supplier", "5000.00")
-    AccountsPayableAgent(services).record_receipt(po, "2026-03-01", "10 cameras delivered", key="rcv")
+    ExpenseAccountantAgent(services).record_receipt(po, "2026-03-01", "10 cameras delivered", key="rcv")
     r = run(runner_factory, services, purchase(services, "Camera Supplier", "4000.00", "C-1", po=po), "c1")
     assert r["status"] == "posted" and not blockers(r)
     assert services.kv.get("purchase_order", po)["invoiced"] == "4000.00"
@@ -137,7 +216,7 @@ def test_purchase_order_for_another_vendor_does_not_count(services, runner_facto
     approve_vendor(services, "Camera Supplier")
     approve_vendor(services, "Other Supplier")
     po = raise_po(services, "Other Supplier", "5000.00")
-    AccountsPayableAgent(services).record_receipt(po, "2026-03-01", key="rcv")
+    ExpenseAccountantAgent(services).record_receipt(po, "2026-03-01", key="rcv")
     r = run(runner_factory, services, purchase(services, "Camera Supplier", "4000.00", "C-1", po=po), "pv")
     assert "PO_VENDOR_MISMATCH" in blockers(r)
 

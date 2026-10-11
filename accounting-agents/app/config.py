@@ -24,6 +24,9 @@ class Settings:
     # A purchase above this total (SAR, incl. VAT) needs an owner-approved purchase order with a
     # recorded receipt, unless the vendor's approved standing limit covers it.
     purchase_approval_threshold: Decimal = Decimal("1000")
+    # Invoices from one vendor without a PO, issued fewer than this many days apart, are added up
+    # against the threshold so a purchase cannot be split under it.
+    split_purchase_window_days: int = 7
     daftra_base_url: str = ""
     # Paths and header confirmed by a 200 from rafd1.daftra.com on 2026-10-11 (docs/DAFTRA.md).
     daftra_journals_path: str = "/api2/journals.json"
@@ -53,6 +56,7 @@ class Settings:
             claude_fallbacks=_bool("CLAUDE_FALLBACKS", True),
             company_vat_registered=_bool("COMPANY_VAT_REGISTERED", False),
             purchase_approval_threshold=Decimal(e("PURCHASE_APPROVAL_THRESHOLD", "1000")),
+            split_purchase_window_days=int(e("SPLIT_PURCHASE_WINDOW_DAYS", "7")),
             daftra_base_url=e("DAFTRA_BASE_URL", ""),
             daftra_journals_path=e("DAFTRA_JOURNALS_PATH", cls.daftra_journals_path),
             daftra_auth_header=e("DAFTRA_AUTH_HEADER", cls.daftra_auth_header),

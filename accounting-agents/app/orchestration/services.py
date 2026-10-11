@@ -210,7 +210,8 @@ def _register_tools(s: Services) -> None:
         if po is None:
             raise ValueError("unknown purchase order")
         po["receipts"].append({"on": date.fromisoformat(p["received_on"]).isoformat(),
-                               "note": p.get("note", ""), "document_id": p.get("document_id")})
+                               "note": p.get("note", ""), "document_id": p.get("document_id"),
+                               "recorded_by": p.get("recorded_by")})
         s.kv.put("purchase_order", po["id"], po)
         return {"po_id": po["id"], "receipts": len(po["receipts"])}
     reg(Tool("purchasing.record_receipt", Op.RECORD_RECEIPT, record_receipt))
@@ -218,7 +219,9 @@ def _register_tools(s: Services) -> None:
     def check_purchase_controls(p):
         inv = invoice_from_dict(p["invoice"])
         po = s.kv.get("purchase_order", inv.purchase_order_id) if inv.purchase_order_id else None
-        issues = check_controls(inv, s.kv.list("vendor"), po, threshold=cfg.purchase_approval_threshold)
+        prior = [invoice_from_dict(d) for d in s.kv.list("invoice_purchase")]
+        issues = check_controls(inv, s.kv.list("vendor"), po, threshold=cfg.purchase_approval_threshold,
+                                prior=prior, split_window_days=cfg.split_purchase_window_days)
         return {"issues": [{"code": i.code, "message": i.message} for i in issues]}
     reg(Tool("purchasing.check_controls", Op.AUDIT_REVIEW, check_purchase_controls))
 

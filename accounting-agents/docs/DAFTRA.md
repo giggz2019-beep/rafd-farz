@@ -48,6 +48,31 @@ The tenant is a fresh Daftra default set-up: no transactions yet, no VAT account
 
 `rafd.daftra.com` (connection "Daftra") still fails: 401 on journals/accounts, 500 on the rest.
 
+## Account-code mapping (`app/daftra/chart_map.py`)
+
+The agents' chart (`app/core/ledger.py`) and Daftra's use the same digits for different accounts —
+internal 5201 is marketing, Daftra 5201 is إيجار; internal 1201 is receivables, Daftra 1201 is the
+treasury category. So no internal code is ever sent to Daftra as it is: `to_daftra()` translates it,
+and an unmapped code refuses the whole entry (wired into `write_journal`, which is still disabled).
+
+Mapped today, because an account with the same meaning exists in rafd1: 3101→31 رأس المال,
+3201→32 أرباح وخسائر مرحلة, 4901→4201 إيرادات أخرى, 5401→5206 مصاريف حكومية, 5501→5201 إيجار.
+Everything else is `None` until the owner creates the account in Daftra and its code is filled in.
+Banks, VAT, salaries/GOSI, the owner's current account, zakat and RAFD's own revenue and expense lines
+are among them. Receivables and payables are per-client / per-supplier accounts in Daftra (under
+12041 العملاء and 2211 الموردون) and need a per-entity lookup before they can be mapped.
+
+After creating accounts in Daftra, re-pull and check (GET only, no writes):
+
+    DAFTRA_BASE_URL=https://rafd1.daftra.com python scripts/daftra_pull.py /tmp/daftra
+    python scripts/daftra_chart_check.py /tmp/daftra
+
+It fails on a mapped code that does not exist, two internal codes on one Daftra account, or a mapping
+onto an account of the opposite nature. Daftra's `type` field ("1" on every asset/expense account,
+"0" on capital/revenue/liabilities in this tenant) is read as the normal balance — an inference from
+the data. `tests/test_chart_map.py` runs the same check against the rafd1 chart in
+`tests/fixtures/daftra_rafd1_chart.json` (codes, names and nature only; no amounts).
+
 ## Earlier probe — 2026-10-11, first run (superseded)
 
 With the previous key every path returned 401 with `X-Proxy-Error: upstream auth failed` — Daftra refused the
