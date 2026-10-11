@@ -139,6 +139,9 @@ class JobRunner:
                                                  key=f"{job_id}:audit").model_dump()),
             ("register", lambda ctx: {"skipped": True} if ctx["audit"]["blockers"] else
                 a.ar.register(ctx["payload"]["invoice"], key=f"{job_id}:register")),
+            # every registered sale moves the rolling 12-month total: re-check the VAT thresholds
+            ("vat_threshold", lambda ctx: {"skipped": True} if ctx["register"].get("skipped") else
+                a.vat.registration_check(ctx["payload"]["invoice"]["issue_date"], key=f"{job_id}:vat_threshold")),
             ("finalize", lambda ctx: self._finalize(ctx, preparer=Role.REVENUE_ACCOUNTANT,
                                                     classifier={**ctx["revenue"]["decision"], "confidence": None})),
         ]

@@ -11,6 +11,7 @@ import base64
 import binascii
 import hashlib
 import hmac
+from datetime import date
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException
@@ -18,6 +19,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, ConfigDict
 
 from ..config import Settings
+from ..core.vat import registration_report
 from ..llm.client import ClaudeLLM, LLM
 from ..orchestration.services import Services, build_services
 from ..orchestration.gateway import ApprovalRequired
@@ -224,6 +226,13 @@ def create_app(settings: Settings | None = None, *, services: Services | None = 
     @app.get("/api/audit/verify")
     def verify(_: Role = Depends(owner)):
         return services.audit.verify().__dict__
+
+    @app.get("/api/vat/registration")
+    def vat_registration(_: Role = Depends(owner)):
+        # read-only for the owner: computes the same report the VAT agent records, writes nothing
+        return registration_report(services.invoices_seen("sales"), date.today(),
+                                   registered=settings.company_vat_registered,
+                                   warn_ratio=settings.vat_threshold_warn_pct / 100)
 
     @app.get("/api/reports/financials")
     def financials(_: Role = Depends(owner)):

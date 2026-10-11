@@ -34,6 +34,7 @@
   </section>
   <section class="card"><div class="row"><span>سلسلة سجل التدقيق:</span><strong id="chain">—</strong>
     <button id="refresh">تحديث</button></div></section>
+  <section id="vat"></section>
   <section id="list"></section>
 </main>
 <script>
@@ -56,6 +57,20 @@
       const v = await api("/api/audit/verify");
       $("chain").textContent = v.ok ? "سليمة (" + v.rows + " سجل)" : "تالفة عند السجل " + v.first_bad_seq;
       $("chain").className = v.ok ? "status-ok" : "status-bad";
+      // VAT registration thresholds — the company is not registered; warn as sales near 187,500 / 375,000
+      const vat = await api("/api/vat/registration");
+      const VAT_AR = {
+        approaching_voluntary: "اقتربت المبيعات الخاضعة للضريبة خلال آخر 12 شهراً من حد التسجيل الاختياري",
+        voluntary: "تجاوزت المبيعات الخاضعة للضريبة خلال آخر 12 شهراً حد التسجيل الاختياري — التسجيل جائز وغير لازم",
+        approaching_mandatory: "اقتربت المبيعات الخاضعة للضريبة خلال آخر 12 شهراً من حد التسجيل الإلزامي",
+        mandatory: "تجاوزت المبيعات الخاضعة للضريبة خلال آخر 12 شهراً حد التسجيل الإلزامي — التسجيل واجب، تحقق من المهلة مع هيئة الزكاة أو محاسب قانوني" };
+      const vb = $("vat"); vb.replaceChildren();
+      if (vat.alert) {
+        const c = el("div", "card " + (vat.alert.level === "mandatory" ? "status-bad" : ""));
+        c.append(el("div", "op", "⚠ ضريبة القيمة المضافة: " + VAT_AR[vat.alert.level]));
+        c.append(el("div", "muted", "المجموع المتحرك: " + vat.rolling_12m_taxable + " من " + vat.alert.threshold + " ريال"));
+        vb.append(c);
+      }
       const items = await api("/api/approvals");
       const list = $("list"); list.replaceChildren();
       if (!items.length) list.append(el("div", "card muted", "لا توجد طلبات بانتظار موافقتك."));

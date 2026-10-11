@@ -20,7 +20,12 @@ class Settings:
     anthropic_api_key: str = ""
     claude_model: str = "claude-opus-5-5"
     claude_fallbacks: bool = True
+    # NOT registered — the owner's decision (2026-10-11): neither mandatory nor voluntary. Keep false
+    # until the company actually registers with ZATCA; the VAT agent warns as revenue nears the
+    # thresholds (vat.registration_check). team.html / supabase-team.sql carry the same fact.
     company_vat_registered: bool = False
+    # How close to a VAT threshold (percent) counts as "approaching" it.
+    vat_threshold_warn_pct: Decimal = Decimal("80")
     # A purchase above this total (SAR, incl. VAT) needs an owner-approved purchase order with a
     # recorded receipt, unless the vendor's approved standing limit covers it.
     purchase_approval_threshold: Decimal = Decimal("1000")
@@ -55,6 +60,7 @@ class Settings:
             claude_model=e("CLAUDE_MODEL", cls.claude_model),
             claude_fallbacks=_bool("CLAUDE_FALLBACKS", True),
             company_vat_registered=_bool("COMPANY_VAT_REGISTERED", False),
+            vat_threshold_warn_pct=Decimal(e("VAT_THRESHOLD_WARN_PCT", "80")),
             purchase_approval_threshold=Decimal(e("PURCHASE_APPROVAL_THRESHOLD", "1000")),
             split_purchase_window_days=int(e("SPLIT_PURCHASE_WINDOW_DAYS", "7")),
             daftra_base_url=e("DAFTRA_BASE_URL", ""),

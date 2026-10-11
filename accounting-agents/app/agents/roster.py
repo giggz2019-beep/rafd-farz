@@ -228,10 +228,13 @@ class VatAccountantAgent(Agent):
         "Validates VAT on every invoice, monitors the registration threshold, and prepares VAT returns. "
         "It does not file: after the owner approves, the Accounting Manager releases the filing package and "
         "the owner files it on the ZATCA portal.",
-        frozenset({"vat.validate_invoice", "vat.prepare_return"}))
+        frozenset({"vat.validate_invoice", "vat.prepare_return", "vat.registration_check"}))
 
     def validate(self, invoice: dict, *, key: str) -> list[dict]:
         return self.tool("vat.validate_invoice", {"invoice": invoice}, key=key)["issues"]
+
+    def registration_check(self, as_of: str | None = None, *, key: str) -> dict:
+        return self.tool("vat.registration_check", {"as_of": as_of}, key=key)
 
     def prepare_return(self, period: str, *, key: str) -> dict:
         return self.tool("vat.prepare_return", {"period": period}, key=key)

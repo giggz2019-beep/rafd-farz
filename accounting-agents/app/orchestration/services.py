@@ -23,7 +23,7 @@ from ..core.payroll import Employee, compute_payroll, payroll_entry
 from ..core.reconciliation import CashMovement, reconcile
 from ..core.reports import balance_sheet, income_statement
 from ..core.serde import entry_from_dict, entry_to_dict, invoice_from_dict
-from ..core.vat import summarize_return
+from ..core.vat import registration_report, summarize_return
 from ..daftra.adapter import DaftraAdapter, MockDaftraAdapter, WritesDisabled
 from ..security.approvals import ApprovalService
 from ..security.audit import AuditLog
@@ -122,6 +122,22 @@ def _register_tools(s: Services) -> None:
         issues = validate_invoice(inv, company_vat_registered=cfg.company_vat_registered)
         return {"issues": [{"code": i.code, "message": i.message, "severity": i.severity} for i in issues]}
     reg(Tool("vat.validate_invoice", Op.VALIDATE_VAT, validate_inv))
+
+    def registration_check(p):
+        """Rolling-12-month taxable sales against the 187,500 / 375,000 SAR thresholds. Only an
+        unregistered company is warned; a change of alert level is written to the audit log once,
+        so the owner sees it there and on the dashboard without one entry per invoice."""
+        as_of = date.fromisoformat(p["as_of"]) if p.get("as_of") else date.today()
+        out = registration_report(s.invoices_seen("sales"), as_of, registered=cfg.company_vat_registered,
+                                  warn_ratio=cfg.vat_threshold_warn_pct / 100)
+        level = out["alert"]["level"] if out["alert"] else None
+        prev = s.kv.get("vat_alert", "current")
+        if (prev or {}).get("level") != level:
+            s.kv.put("vat_alert", "current", {"level": level, "since": as_of.isoformat()})
+            if level:
+                s.audit.record("vat_accountant", "vat.threshold_alert", level, "flagged", out)
+        return out
+    reg(Tool("vat.registration_check", Op.VALIDATE_VAT, registration_check))
 
     def prepare_return(p):
         r = summarize_return(p["period"], s.invoices_seen("sales"), s.invoices_seen("purchase"))
