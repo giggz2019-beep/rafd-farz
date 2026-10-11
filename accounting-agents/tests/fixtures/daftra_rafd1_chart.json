@@ -1,5 +1,5 @@
 {
- "source": "rafd1.daftra.com GET journal_accounts + journal_cats, 2026-10-11 after AI-RECLASS-2026-10-11 (codes, names, nature only)",
+ "source": "rafd1.daftra.com GET journal_accounts + journal_cats, 2026-10-11 after the STC correction (codes, names, nature only)",
  "accounts": [
   {
    "code": "120101",
@@ -19,6 +19,11 @@
   {
    "code": "1202002",
    "name": "مريم عبيد ماجد الشيباني",
+   "type": "1"
+  },
+  {
+   "code": "1202003",
+   "name": "بنك STC (مؤقت)",
    "type": "1"
   },
   {

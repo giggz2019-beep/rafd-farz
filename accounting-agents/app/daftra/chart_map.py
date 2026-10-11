@@ -23,8 +23,8 @@ from .adapter import DaftraError
 DAFTRA_CODES: dict[str, str | None] = {
     # assets
     "1101": "1202001", # the company's Al Rajhi account (treasury 2 in Daftra), added 2026-10-11
-    "1102": "1202002", # STC Bank (salaries, being wound down) — the treasury the owner created under her
-                       # own name on 2026-10-11; she confirmed it is the STC account
+    "1102": "1202003", # بنك STC (مؤقت) — salaries account, being wound down. NOT 1202002: that is the
+                       # owner's PERSONAL Al Rajhi treasury and must carry no company entries
     "1201": None,      # receivables — Daftra keeps one account per client under 12041 العملاء
     "1301": None,      # input VAT — only once the company is VAT-registered
     "1401": None,      # prepaid expenses — no Daftra account yet
