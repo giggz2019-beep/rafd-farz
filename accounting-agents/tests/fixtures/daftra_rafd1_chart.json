@@ -1,5 +1,5 @@
 {
- "source": "rafd1.daftra.com GET /api2/journal_accounts.json and /api2/journal_cats.json, 2026-10-11, after the AI-BATCH-2026-10-11 accounts were created (codes, names, nature only)",
+ "source": "rafd1.daftra.com GET journal_accounts + journal_cats, 2026-10-11 after AI-RECLASS-2026-10-11 (codes, names, nature only)",
  "accounts": [
   {
    "code": "120101",
@@ -49,6 +49,11 @@
   {
    "code": "214",
    "name": "أرصدة افتتاحية",
+   "type": "0"
+  },
+  {
+   "code": "215",
+   "name": "دفعات شركاء تحت التسجيل",
    "type": "0"
   },
   {
@@ -169,6 +174,11 @@
   {
    "code": "5211",
    "name": "مصروف رسوم بنكية",
+   "type": "1"
+  },
+  {
+   "code": "5212",
+   "name": "مصروف رواتب وأجور",
    "type": "1"
   },
   {

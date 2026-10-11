@@ -23,8 +23,8 @@ from .adapter import DaftraError
 DAFTRA_CODES: dict[str, str | None] = {
     # assets
     "1101": "1202001", # the company's Al Rajhi account (treasury 2 in Daftra), added 2026-10-11
-    "1102": None,      # STC Bank (salaries, being wound down). Daftra 1202002 is a treasury named after the
-                       # owner, created by her on 2026-10-11 — whether it IS the STC account is unconfirmed
+    "1102": "1202002", # STC Bank (salaries, being wound down) — the treasury the owner created under her
+                       # own name on 2026-10-11; she confirmed it is the STC account
     "1201": None,      # receivables — Daftra keeps one account per client under 12041 العملاء
     "1301": None,      # input VAT — only once the company is VAT-registered
     "1401": None,      # prepaid expenses — no Daftra account yet
@@ -49,7 +49,7 @@ DAFTRA_CODES: dict[str, str | None] = {
     "5101": "5207",    # مصروف اشتراكات برمجية (created by AI-BATCH-2026-10-11)
     "5102": None,      # hosting & domains
     "5201": "5209",    # marketing → مصروف تسويق وإعلان; NOT Daftra 5201, which is rent
-    "5301": None,      # salaries
+    "5301": "5212",    # مصروف رواتب وأجور (created by AI-RECLASS-2026-10-11)
     "5302": "5208",    # مصروف التأمينات الاجتماعية (created by AI-BATCH-2026-10-11)
     "5401": "5206",    # مصاريف حكومية
     "5501": "5201",    # إيجار
