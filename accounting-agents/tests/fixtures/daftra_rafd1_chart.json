@@ -1,9 +1,14 @@
 {
- "source": "rafd1.daftra.com GET /api2/journal_accounts.json and /api2/journal_cats.json, 2026-10-11 (codes, names, nature only)",
+ "source": "rafd1.daftra.com GET /api2/journal_accounts.json and /api2/journal_cats.json, 2026-10-11, after the bank account was added (codes, names, nature only)",
  "accounts": [
   {
    "code": "120101",
    "name": "Main Treasury",
+   "type": "1"
+  },
+  {
+   "code": "1202001",
+   "name": "شركة رفد الرقمية",
    "type": "1"
   },
   {

@@ -6,7 +6,8 @@ treasury category — so an internal code must never be sent to Daftra as it is.
 through ``to_daftra``, and a code with no confirmed Daftra account is refused, not guessed.
 
 Only accounts whose meaning matches an account that exists in the rafd1 tenant are mapped
-(checked against GET /api2/journal_accounts.json on 2026-10-11). The rest are ``None`` until the
+(checked against GET /api2/journal_accounts.json on 2026-10-11, re-pulled the same day after
+the bank account was added). The rest are ``None`` until the
 owner creates the account in Daftra and its code is filled in here; ``check_mapping`` then
 verifies the new code against a fresh snapshot (scripts/daftra_chart_check.py).
 
@@ -21,7 +22,7 @@ from .adapter import DaftraError
 
 DAFTRA_CODES: dict[str, str | None] = {
     # assets
-    "1101": None,      # bank — create a bank account under 1202 البنك first
+    "1101": "1202001", # the company's Al Rajhi account (treasury 2 in Daftra), added 2026-10-11
     "1102": None,      # second bank account, same
     "1201": None,      # receivables — Daftra keeps one account per client under 12041 العملاء
     "1301": None,      # input VAT — only once the company is VAT-registered

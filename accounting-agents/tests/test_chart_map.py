@@ -40,8 +40,15 @@ def test_nothing_is_mapped_by_matching_digits():
 
 def test_unmapped_accounts_are_listed_for_the_owner():
     left = unmapped()
-    assert "1101" in left and "5101" in left and "2201" in left
-    assert "5501" not in left
+    assert "1102" in left and "5101" in left and "2201" in left
+    assert "5501" not in left and "1101" not in left
+
+
+def test_bank_maps_to_the_al_rajhi_account_under_the_bank_category():
+    assert to_daftra("1101") == "1202001"
+    (acct,) = [a for a in DAFTRA if a["code"] == "1202001"]
+    assert acct["type"] == "1"                                   # debit-natured, like any bank account
+    assert any(c["code"] == "1202" for c in CHART["categories"])  # sits under 1202 البنك
 
 
 @pytest.mark.parametrize("mapping_change,expected", [

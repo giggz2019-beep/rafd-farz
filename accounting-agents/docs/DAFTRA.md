@@ -55,10 +55,11 @@ internal 5201 is marketing, Daftra 5201 is إيجار; internal 1201 is receivab
 treasury category. So no internal code is ever sent to Daftra as it is: `to_daftra()` translates it,
 and an unmapped code refuses the whole entry (wired into `write_journal`, which is still disabled).
 
-Mapped today, because an account with the same meaning exists in rafd1: 3101→31 رأس المال,
+Mapped today, because an account with the same meaning exists in rafd1: 1101→1202001 (the
+company's Al Rajhi account, treasury 2, SAR, added by the owner on 2026-10-11), 3101→31 رأس المال,
 3201→32 أرباح وخسائر مرحلة, 4901→4201 إيرادات أخرى, 5401→5206 مصاريف حكومية, 5501→5201 إيجار.
 Everything else is `None` until the owner creates the account in Daftra and its code is filled in.
-Banks, VAT, salaries/GOSI, the owner's current account, zakat and RAFD's own revenue and expense lines
+A second bank account (1102), VAT, salaries/GOSI, the owner's current account, zakat and RAFD's own revenue and expense lines
 are among them. Receivables and payables are per-client / per-supplier accounts in Daftra (under
 12041 العملاء and 2211 الموردون) and need a per-entity lookup before they can be mapped.
 
