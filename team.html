@@ -392,8 +392,10 @@ const ASK_TIKTOK = false;
    an empty one is simply left off the page rather than printed blank. */
 const COMPANY = {
   name: 'رفد الرقمية', name_en: 'RAFD Digital',
-  address: [],                 // e.g. ['٧٨٥٢ طريق …، حي …', 'الرياض ١٢٣٤٥']
-  address_en: [],              // e.g. ['7852 … Rd, … District', 'Riyadh 12345']
+  // The owner, 2026-10-12: invoices and quotes read «شارع الحكم المستنصر بالله، حي النهضة، الرياض» from now on. The National
+  // Address (المونسية) has not been updated yet — that comes later and does not change this line.
+  address: ['شارع الحكم المستنصر بالله، حي النهضة', 'الرياض'],
+  address_en: ['Al Hakam Al Mustansir Billah St, Al Nahdah District', 'Riyadh'],
   cr: '', vat: '', phone: '', email: '',
   bank: { name: '', name_en: '', beneficiary: '', beneficiary_en: '', iban: '', account: '' }   // empty iban → no «طريقة السداد»
 };
