@@ -46,7 +46,10 @@ same rules as the first batch; anything with an open question goes to the suspen
      list it in the report.
    - a sender or vendor never seen before, or a duplicate of an invoice already posted under another
      email: suspense + question.
-6. Report (Arabic, short) committed to `accounting-agents` under
+6. If this run posted something or has an open question, send the owner a short Arabic summary on
+   **Telegram** (`python scripts/telegram_owner.py send …`, see `docs/OWNER_CHANNEL.md` — never WhatsApp).
+   At the start of the run, `poll` her replies and act on them first.
+7. Report (Arabic, short) committed to `accounting-agents` under
    `reports/inbox/<yyyy-mm-dd>-<hhmm>.md`: how many found, posted, parked, skipped, and each open
    question. Commit and push to `accounting-agents` only.
 
