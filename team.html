@@ -397,7 +397,8 @@ const COMPANY = {
   // The owner's order: country · city · district · street, a dot between each so a client reads it at a glance.
   address: ['المملكة العربية السعودية · الرياض · حي النهضة · الحكم المستنصر بالله'],   // no «شارع» — the owner
   address_en: ['Saudi Arabia · Riyadh · Al Nahdah District · Al Hakam Al Mustansir Billah'],
-  cr: '7051647399', vat: '',   // CR: the owner confirmed 2026-10-12 (the unified number on the CR renewal) phone: '', email: '',
+  cr: '7051647399', vat: '',
+  zatca_no: '3142275087',      // الرقم المميز on the Zakat registration certificate (2025-09-16) — NOT a VAT number   // CR: the owner confirmed 2026-10-12 (the unified number on the CR renewal) phone: '', email: '',
   bank: { name: '', name_en: '', beneficiary: '', beneficiary_en: '', iban: '', account: '' }   // empty iban → no «طريقة السداد»
 };
 /* The demo's copies of the live defaults seeded by supabase-team.sql
@@ -1615,7 +1616,7 @@ async function viewQuote(id) {
   app.innerHTML = `<div class="wrap"><article class="qdoc">
     <img class="qd-wm" src="/rafd-logo.png" alt="">
     <header class="qd-top">
-      <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${addr.map(a => `<span>${esc(a)}</span>`).join('')}${C.cr ? `<span>${L('السجل التجاري', 'CR No.')}: <span class="num">${esc(C.cr)}</span></span>` : ''}</div>
+      <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${addr.map(a => `<span>${esc(a)}</span>`).join('')}${C.cr ? `<span>${L('السجل التجاري', 'CR No.')}: <span class="num">${esc(C.cr)}</span></span>` : ''}${C.zatca_no ? `<span>${L('الرقم المميز لدى هيئة الزكاة والضريبة والجمارك', 'ZATCA distinguished No.')}: <span class="num">${esc(C.zatca_no)}</span></span>` : ''}${!VAT_REGISTERED && !q.vat ? `<span>${L('المنشأة غير مسجّلة في ضريبة القيمة المضافة', 'Not registered for VAT')}</span>` : ''}</div>
       <div class="qd-brands"><img class="qd-prod" src="/rasd-logo.png" alt="Rasd AI"><span class="qd-logo"><img src="/rafd-logo.png" alt="RAFD"></span></div>
     </header>
     <section class="qd-mid">
