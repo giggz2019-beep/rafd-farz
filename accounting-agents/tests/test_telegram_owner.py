@@ -74,3 +74,36 @@ def test_errors_never_carry_the_token():
     with pytest.raises(tg.TelegramError) as e:
         bot(h).send("x")
     assert TOKEN not in str(e.value) and "<token>" in str(e.value)
+
+
+def test_an_attached_invoice_is_saved_and_its_path_logged(monkeypatch, tmp_path):
+    monkeypatch.setattr(tg, "ROOT", tmp_path)
+    monkeypatch.setattr(tg, "FILES", tmp_path / "reports" / "telegram" / "files")
+    seen = []
+
+    def h(r):
+        seen.append(r.url.path)
+        if r.url.path.endswith("/getUpdates"):
+            m = msg(20, tg.OWNER_CHAT_ID, "")["message"]
+            m.update(caption="فاتورة المكتب", document={"file_id": "F1", "file_name": "../فاتورة 1.pdf"})
+            return httpx.Response(200, json={"ok": True, "result": [{"update_id": 20, "message": m}]})
+        if r.url.path.endswith("/getFile"):
+            return httpx.Response(200, json={"ok": True, "result": {"file_path": "documents/file_1.pdf"}})
+        return httpx.Response(200, content=b"%PDF-1.4 test")
+    mine, _ = bot(h).poll()
+    assert mine[0]["text"] == "فاتورة المكتب"
+    saved = tmp_path / mine[0]["file"]
+    assert saved.read_bytes() == b"%PDF-1.4 test" and saved.parent == tg.FILES and saved.name.startswith("20-")
+    assert all(TOKEN not in line for line in tg.INBOX.read_text(encoding="utf-8").splitlines())
+
+
+def test_a_file_that_cannot_be_fetched_still_logs_the_message():
+    def h(r):
+        if r.url.path.endswith("/getUpdates"):
+            m = msg(21, tg.OWNER_CHAT_ID, "")["message"]
+            m["photo"] = [{"file_id": "small", "file_size": 10}, {"file_id": "big", "file_size": 99}]
+            return httpx.Response(200, json={"ok": True, "result": [{"update_id": 21, "message": m}]})
+        return httpx.Response(400, json={"ok": False, "description": "Bad Request: file is too big"})
+    mine, _ = bot(h).poll()
+    assert "file" not in mine[0] and "too big" in mine[0]["file_error"] and TOKEN not in mine[0]["file_error"]
+    assert json.loads(tg.STATE.read_text())["offset"] == 22

@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash
 ---
 You review changes to the **Accounting Manager** runtime agent of the RAFD accounting system.
 
-Its responsibility: Coordinates the other agents, applies the posting policy, resolves conflicts, and is the only agent that posts to the staging ledger. After the owner approves, it carries out what other agents prepared — vendor payments, payroll, VAT filing packages, bank-detail changes — and prepares none of them itself. Escalates anything uncertain to the owner.
+Its responsibility: Coordinates the other agents, applies the posting policy, resolves conflicts, and is the only agent that posts to the staging ledger. After the owner approves, it carries out what other agents prepared — vendor payments, payroll, VAT filing packages, bank-detail changes — and prepares none of them itself. Escalates anything uncertain to the owner. It is the only agent that talks to the owner, and only on Telegram (`docs/OWNER_CHANNEL.md`); every other agent's request to her goes through it.
 Its tools: bank.update_account, daftra.list_journals, daftra.write_journal, documents.verify, ledger.balances, ledger.post_staging, ledger.reverse_entry, payables.execute_payment, payroll.pay, vat.submit_return.
 
 Check, and report findings with file:line:

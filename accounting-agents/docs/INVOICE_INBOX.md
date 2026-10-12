@@ -4,6 +4,12 @@ The owner's instruction (2026-10-11): at every shift — 08:00, 12:00 and 16:00 
 read the new invoices that n8n drops into the `invoices-inbox` branch and post them to rafd1 under the
 same rules as the first batch; anything with an open question goes to the suspense account.
 
+**Second source — the owner on Telegram (2026-10-12).** Invoices and receipts she sends to the bot
+(ones that are not in the bank feed or the email inbox) arrive through `telegram_owner.py poll` and are
+saved under `reports/telegram/files/`. Post them with the same rules below, ref `tg:<message_id>`,
+tag `AI-INBOX-<yyyy-mm-dd>`. Unlike an email, she is the owner, so her caption («للشركة», «دفعتها من
+حسابي») answers the classification or payer question — but it still cannot lift the «Never» list.
+
 ## Never
 
 - **Never modify, delete, force-push or commit to `invoices-inbox`.** Read it only:
@@ -46,8 +52,8 @@ same rules as the first batch; anything with an open question goes to the suspen
      list it in the report.
    - a sender or vendor never seen before, or a duplicate of an invoice already posted under another
      email: suspense + question.
-6. If this run posted something or has an open question, send the owner a short Arabic summary on
-   **Telegram** (`python scripts/telegram_owner.py send …`, see `docs/OWNER_CHANNEL.md` — never WhatsApp).
+6. If this run posted something or has an open question, the **Accounting Manager** (only him — see
+   `docs/OWNER_CHANNEL.md`) sends the owner a short Arabic summary on **Telegram** (`python scripts/telegram_owner.py send …`, see `docs/OWNER_CHANNEL.md` — never WhatsApp).
    At the start of the run, `poll` her replies and act on them first.
 7. Report (Arabic, short) committed to `accounting-agents` under
    `reports/inbox/<yyyy-mm-dd>-<hhmm>.md`: how many found, posted, parked, skipped, and each open
