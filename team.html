@@ -396,7 +396,7 @@ const COMPANY = {
   // Address (المونسية) has not been updated yet — that comes later and does not change this line.
   address: ['شارع الحكم المستنصر بالله، حي النهضة', 'الرياض'],
   address_en: ['Al Hakam Al Mustansir Billah St, Al Nahdah District', 'Riyadh'],
-  cr: '', vat: '', phone: '', email: '',
+  cr: '7051647399', vat: '',   // CR: the owner confirmed 2026-10-12 (the unified number on the CR renewal) phone: '', email: '',
   bank: { name: '', name_en: '', beneficiary: '', beneficiary_en: '', iban: '', account: '' }   // empty iban → no «طريقة السداد»
 };
 /* The demo's copies of the live defaults seeded by supabase-team.sql
@@ -1606,7 +1606,7 @@ async function viewQuote(id) {
   const no = 'Q-' + String(q.no).padStart(5, '0');
   const C = COMPANY; const B = C.bank || {};
   const foot = [C.email && `<span class="num">${esc(C.email)}</span>`, C.vat && `${L('الرقم الضريبي', 'VAT No.')} <span class="num">${esc(C.vat)}</span>`,
-    C.cr && `${L('س.ت', 'CR')} <span class="num">${esc(C.cr)}</span>`, C.phone && `<span class="num">${esc(C.phone)}</span>`].filter(Boolean).join('<i>·</i>');
+    C.phone && `<span class="num">${esc(C.phone)}</span>`].filter(Boolean).join('<i>·</i>');
   const tax = '15%';
   const pick = (ar, en) => (EN() && en) ? en : ar;
   const addr = EN() && (C.address_en || []).length ? C.address_en : (C.address || []);
@@ -1614,7 +1614,7 @@ async function viewQuote(id) {
   app.innerHTML = `<div class="wrap"><article class="qdoc">
     <img class="qd-wm" src="/rafd-logo.png" alt="">
     <header class="qd-top">
-      <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${addr.map(a => `<span>${esc(a)}</span>`).join('')}</div>
+      <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${C.cr ? `<span>${L('السجل التجاري', 'CR No.')}: <span class="num">${esc(C.cr)}</span></span>` : ''}${addr.map(a => `<span>${esc(a)}</span>`).join('')}</div>
       <div class="qd-brands"><img class="qd-prod" src="/rasd-logo.png" alt="Rasd AI"><span class="qd-logo"><img src="/rafd-logo.png" alt="RAFD"></span></div>
     </header>
     <section class="qd-mid">
