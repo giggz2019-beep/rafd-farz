@@ -35,6 +35,9 @@ now = balances(journals, accounts)
 ok = True
 r2 = lambda x: round(float(x or 0), 2)
 
+# 2026-10-12 partners accountant: 215 was split per partner into 21501 (مشاري) / 21502 (فايز / مؤسسة الخليفي).
+# Only these three codes may move between each other; their GROUP net must equal the baseline 215 net.
+PARTNER_CODES = {"215", "21501", "21502"}
 print("=== 1. Per-account-code balances vs baseline ===")
 print(f"{'code':<9}{'name':<34}{'base net':>13}{'now net':>13}{'diff':>11}  gross dr/cr change")
 for code in sorted(set(base) | set(now)):
@@ -43,13 +46,18 @@ for code in sorted(set(base) | set(now)):
     dn = r2(n["net"] - b["net"])
     gross = f"dr {r2(n['debit']-b['debit']):+.2f} cr {r2(n['credit']-b['credit']):+.2f}"
     is_rev = code.startswith("4")
-    flag = "" if dn == 0 else ("  (reclass within revenue — checked as a group below)" if is_rev else "  <-- NET CHANGED")
-    if dn and not is_rev: ok = False
+    is_par = code in PARTNER_CODES
+    flag = "" if dn == 0 else ("  (reclass within revenue — checked as a group below)" if is_rev else
+                               "  (partner split 215 -> 21501/21502 — checked as a group below)" if is_par else "  <-- NET CHANGED")
+    if dn and not is_rev and not is_par: ok = False
     print(f"{code:<9}{(n['name'] or '')[:32]:<34}{b['net']:>13,.2f}{n['net']:>13,.2f}{dn:>11,.2f}  {gross}{flag}")
 
 grp = lambda src: r2(sum(v["net"] for k, v in src.items() if k.startswith("4")))
 gb, gn = grp(base), grp(now)
 print(f"revenue group (all 4xxx) net: base {gb:,.2f} now {gn:,.2f} {'OK' if gb == gn else 'FAIL'}"); ok &= gb == gn
+pgrp = lambda src: r2(sum(v["net"] for k, v in src.items() if k in PARTNER_CODES))
+pb, pn = pgrp(base), pgrp(now)
+print(f"partner group (215+21501+21502) net: base {pb:,.2f} now {pn:,.2f} {'OK' if pb == pn else 'FAIL'}"); ok &= pb == pn
 
 print("\n=== 2. Integrity ===")
 j1 = r2(now.get("1202001", {}).get("net"))
