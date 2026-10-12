@@ -394,8 +394,9 @@ const COMPANY = {
   name: 'رفد الرقمية', name_en: 'RAFD Digital',
   // The owner, 2026-10-12: invoices and quotes read «الرياض، حي النهضة، شارع الحكم المستنصر بالله» from now on. The National
   // Address (المونسية) has not been updated yet — that comes later and does not change this line.
-  address: ['الرياض، حي النهضة، شارع الحكم المستنصر بالله'],   // order is the owner's: city, district, street
-  address_en: ['Riyadh, Al Nahdah District, Al Hakam Al Mustansir Billah St'],
+  // The owner's order: country · city · district · street, a dot between each so a client reads it at a glance.
+  address: ['المملكة العربية السعودية · الرياض · حي النهضة · شارع الحكم المستنصر بالله'],
+  address_en: ['Saudi Arabia · Riyadh · Al Nahdah District · Al Hakam Al Mustansir Billah St'],
   cr: '7051647399', vat: '',   // CR: the owner confirmed 2026-10-12 (the unified number on the CR renewal) phone: '', email: '',
   bank: { name: '', name_en: '', beneficiary: '', beneficiary_en: '', iban: '', account: '' }   // empty iban → no «طريقة السداد»
 };
@@ -1614,7 +1615,7 @@ async function viewQuote(id) {
   app.innerHTML = `<div class="wrap"><article class="qdoc">
     <img class="qd-wm" src="/rafd-logo.png" alt="">
     <header class="qd-top">
-      <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${C.cr ? `<span>${L('السجل التجاري', 'CR No.')}: <span class="num">${esc(C.cr)}</span></span>` : ''}${addr.map(a => `<span>${esc(a)}</span>`).join('')}</div>
+      <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${addr.map(a => `<span>${esc(a)}</span>`).join('')}${C.cr ? `<span>${L('السجل التجاري', 'CR No.')}: <span class="num">${esc(C.cr)}</span></span>` : ''}</div>
       <div class="qd-brands"><img class="qd-prod" src="/rasd-logo.png" alt="Rasd AI"><span class="qd-logo"><img src="/rafd-logo.png" alt="RAFD"></span></div>
     </header>
     <section class="qd-mid">
