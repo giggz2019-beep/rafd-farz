@@ -56,7 +56,7 @@ const VAT_WORDS = /ضريبة القيمة المضافة|قبل الضريبة|
   await page.goto(`${base}#/q/${sent.q.id}`); await page.waitForSelector('.qdoc');
   const text = await page.locator('.qdoc').innerText();
   check('quote without VAT shows no VAT wording', !VAT_WORDS.test(text), (text.match(VAT_WORDS) || [])[0]);
-  check('the ZATCA distinguished number is never labelled a VAT number', /الرقم المميز لدى هيئة الزكاة والضريبة والجمارك: 3142275087/.test(text) && !/رقم ضريبي/.test(text));
+  check('the quote carries no tax number of any kind', !/رقم ضريبي|الرقم المميز|3142275087/.test(text));
   check('quote without VAT has no VAT column', await page.locator('table.qd thead th').count() === 4);
   check('quote without VAT shows the total 3,490', /3,490/.test(text));
 
