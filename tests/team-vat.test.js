@@ -55,11 +55,7 @@ const VAT_WORDS = /ضريبة القيمة المضافة|قبل الضريبة|
   // the quote page a client opens
   await page.goto(`${base}#/q/${sent.q.id}`); await page.waitForSelector('.qdoc');
   const text = await page.locator('.qdoc').innerText();
-  // The one VAT sentence allowed is the disclaimer that the company is NOT registered (the owner, 2026-10-12).
-  const NOT_REG = 'المنشأة غير مسجّلة في ضريبة القيمة المضافة';
-  check('quote states the company is not VAT-registered', text.includes(NOT_REG));
-  const rest = text.split(NOT_REG).join('');
-  check('quote without VAT shows no other VAT wording', !VAT_WORDS.test(rest), (rest.match(VAT_WORDS) || [])[0]);
+  check('quote without VAT shows no VAT wording', !VAT_WORDS.test(text), (text.match(VAT_WORDS) || [])[0]);
   check('the ZATCA distinguished number is never labelled a VAT number', /الرقم المميز لدى هيئة الزكاة والضريبة والجمارك: 3142275087/.test(text) && !/رقم ضريبي/.test(text));
   check('quote without VAT has no VAT column', await page.locator('table.qd thead th').count() === 4);
   check('quote without VAT shows the total 3,490', /3,490/.test(text));
@@ -73,7 +69,6 @@ const VAT_WORDS = /ضريبة القيمة المضافة|قبل الضريبة|
   });
   await page.goto(`${base}#/q/${oldId}`); await page.reload(); await page.waitForSelector('.qdoc');
   const oldText = await page.locator('.qdoc').innerText();
-  check('a quote sent with VAT does not say the company is unregistered', !oldText.includes('المنشأة غير مسجّلة في ضريبة القيمة المضافة'));
   check('a quote sent earlier with VAT still shows its 15%', /15%/.test(oldText) && /4,013/.test(oldText));
 
   // the representative's price guide

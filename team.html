@@ -1616,7 +1616,7 @@ async function viewQuote(id) {
   app.innerHTML = `<div class="wrap"><article class="qdoc">
     <img class="qd-wm" src="/rafd-logo.png" alt="">
     <header class="qd-top">
-      <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${addr.map(a => `<span>${esc(a)}</span>`).join('')}${C.cr ? `<span>${L('السجل التجاري', 'CR No.')}: <span class="num">${esc(C.cr)}</span></span>` : ''}${C.zatca_no ? `<span>${L('الرقم المميز لدى هيئة الزكاة والضريبة والجمارك', 'ZATCA distinguished No.')}: <span class="num">${esc(C.zatca_no)}</span></span>` : ''}${!VAT_REGISTERED && !q.vat ? `<span>${L('المنشأة غير مسجّلة في ضريبة القيمة المضافة', 'Not registered for VAT')}</span>` : ''}</div>
+      <div class="qd-co"><b>${esc(L(C.name, C.name_en))}</b>${addr.map(a => `<span>${esc(a)}</span>`).join('')}${C.cr ? `<span>${L('السجل التجاري', 'CR No.')}: <span class="num">${esc(C.cr)}</span></span>` : ''}${C.zatca_no ? `<span>${L('الرقم المميز لدى هيئة الزكاة والضريبة والجمارك', 'ZATCA distinguished No.')}: <span class="num">${esc(C.zatca_no)}</span></span>` : ''}</div>
       <div class="qd-brands"><img class="qd-prod" src="/rasd-logo.png" alt="Rasd AI"><span class="qd-logo"><img src="/rafd-logo.png" alt="RAFD"></span></div>
     </header>
     <section class="qd-mid">
