@@ -28,11 +28,18 @@ same rules as the first batch; anything with an open question goes to the suspen
    software, SaaS, hosting, AI APIs → 5207 · ads → 5209 · government fees → 5206 · GOSI → 5208 ·
    shipping → 5210 · bank charges → 5211 · rent → 5201.
    The company is NOT VAT-registered: VAT on a purchase is part of the expense, never a separate line.
-5. Post with `DAFTRA_WRITES_ENABLED=true python scripts/daftra_post_one.py …`:
-   - expense side: the account from step 4 — or **1211 الحساب المعلّق** if the classification itself
-     is unclear;
-   - payment side: the account that actually paid if the invoice proves it (1202001 Al Rajhi,
-     120102 card 1146, 33 the owner paid personally); otherwise **1211** with `--question`.
+5. Post it so it shows on the owner's dashboard — Daftra's analytics read the **Expenses module**,
+   never manual journals (since 2026-10-12 every company expense lives there, 58 records, 17,726.82):
+   - classification AND payer both clear → an expense record:
+     `DAFTRA_WRITES_ENABLED=true python scripts/daftra_post_expense.py --account <52xx> --paid-from <code> …`
+     with `--category` in Arabic (رسوم حكومية، اشتراكات برمجية، التأمينات الاجتماعية، تسويق وإعلان، شحن،
+     رسوم بنكية، رواتب وأجور، إيجار) and `--vendor`. Payer = the account that actually paid if the
+     invoice proves it: 1202001 Al Rajhi (treasury 2), 1202003 STC (treasury 4), 120102 card 1146
+     (treasury 5), 33 the owner paid personally (clearing treasury 1 — the script also posts the
+     Dr 120101 / Cr 33 journal, so treasury 1 always ends at zero).
+   - anything with an open question → a journal to **1211 الحساب المعلّق** with
+     `scripts/daftra_post_one.py … --question`; it becomes an expense once answered.
+   - Never treasury 3 / account 1202002 — the owner's personal account.
    - a foreign-currency invoice: SAR = amount × 3.75 (USD) as a provisional figure, `--question`
      saying the card/bank statement will give the exact charge.
    - a document that is not an invoice or receipt (newsletter, quote, reminder): post nothing,
