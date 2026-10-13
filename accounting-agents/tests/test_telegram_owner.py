@@ -107,3 +107,9 @@ def test_a_file_that_cannot_be_fetched_still_logs_the_message():
     mine, _ = bot(h).poll()
     assert "file" not in mine[0] and "too big" in mine[0]["file_error"] and TOKEN not in mine[0]["file_error"]
     assert json.loads(tg.STATE.read_text())["offset"] == 22
+
+
+def test_what_the_team_sends_is_logged_too():
+    bot(lambda r: httpx.Response(200, json={"ok": True, "result": {"message_id": 77}})).send("سؤال؟ نعم / لا")
+    row = json.loads(tg.INBOX.read_text(encoding="utf-8").splitlines()[-1])
+    assert row["from"] == "team" and row["message_id"] == 77 and "نعم / لا" in row["text"]

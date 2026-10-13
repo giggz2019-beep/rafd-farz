@@ -68,3 +68,33 @@ How to write it:
   - Never put the token in the chat, a commit, a report or any output.
 - **Network:** the environment's network policy must allow `api.telegram.org`.
 - **Webhook:** there is none; the n8n workflow that used one is switched off. If a webhook ever comes back, `getUpdates` answers 409, and the tool calls `deleteWebhook` once and retries.
+
+## ما يحتاج موافقتها (the owner, 2026-10-13)
+> «إذا في حاجة تحتاج توقيع، تحتاج مراجعة… يرجع لي يسألني وأنا أعطيه الأوكي على التليجرام إيه أو لا… مو بكل الأشياء يرجع لي، أشياء تافهة لا».
+
+**Done without asking, then confirmed to her in one line:** answering her questions; reports and totals; posting
+an invoice or receipt she sent herself when the account and the payer are clear and it is **1,000 SAR or less**
+(`PURCHASE_APPROVAL_THRESHOLD`); routine scheduled postings under `docs/INVOICE_INBOX.md` within that limit;
+parking anything unclear in suspense 1211 with a question.
+
+**Asked first — one line saying exactly what will be done and the amount, ending «نعم / لا» — and done only
+after her «نعم»:**
+- any single posting **over 1,000 SAR**, or anything she asked to have reviewed;
+- a new vendor, a contract, a purchase order;
+- reclassifying, reversing or correcting an entry already posted;
+- anything charged to her current account 33 that she did not state herself;
+- payroll, GOSI and every tax decision (VAT registration, a return, an exemption claim);
+- anything that will carry her signature or goes to a government body, a bank or a client.
+
+Still never, whatever the answer: paying, changing bank details, deleting what is not ours, printing more than
+the last 4 digits of an account.
+
+## The server (since 2026-10-13)
+The finance manager now runs on the team's own server (UltaHost, Saudi Arabia, Ubuntu 24.04): `deploy/server-setup.sh`
+installs it once, `rafd-bridge` answers her on Telegram the moment she writes (`scripts/owner_bridge.py` → Claude
+Code headless in the checkout), and `rafd-update` pulls this branch every 10 minutes. Its live data — offset,
+conversation log, her files — is in `/opt/rafd/data`, **not** in the repo.
+
+**Once the server is live, a cloud session must NOT run `telegram_owner.py poll`.** Telegram gives each message to
+whoever asks first, so a second poller steals messages from the server. A cloud session that needs to reach her
+sends through `send` only, or asks the server.

@@ -36,9 +36,12 @@ import httpx
 
 OWNER_CHAT_ID = 864934458
 ROOT = Path(__file__).resolve().parent.parent
-STATE = ROOT / "state" / "telegram.json"
-INBOX = ROOT / "reports" / "telegram" / "inbox.jsonl"
-FILES = ROOT / "reports" / "telegram" / "files"
+# On the team's server the live data sits OUTSIDE the checkout (RAFD_DATA_DIR), so pulling code never
+# collides with it; in a cloud session it stays in the repo and is committed.
+DATA = Path(os.environ.get("RAFD_DATA_DIR") or ROOT)
+STATE = DATA / "state" / "telegram.json"
+INBOX = DATA / "reports" / "telegram" / "inbox.jsonl"
+FILES = DATA / "reports" / "telegram" / "files"
 MAX_LEN = 4000          # Telegram's hard limit is 4096; leave room
 
 
@@ -107,13 +110,19 @@ class Bot:
         out = FILES / f"{m.get('message_id')}-{safe}"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_bytes(r.content)
-        return out.relative_to(ROOT).as_posix() if out.is_relative_to(ROOT) else str(out)
+        return out.relative_to(ROOT).as_posix() if out.is_relative_to(ROOT) else str(out.resolve())
 
     def send(self, text: str) -> list[int]:
         ids = []
         for part in _chunks(text):
             ids.append(self.call("sendMessage", chat_id=OWNER_CHAT_ID, text=part,
                                  disable_web_page_preview=True)["message_id"])
+        # the team's side goes in the same log, so the next run sees the question it asked her
+        INBOX.parent.mkdir(parents=True, exist_ok=True)
+        with INBOX.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({"from": "team", "message_id": ids[0],
+                                "date": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                                "text": text.strip()}, ensure_ascii=False) + "\n")
         return ids
 
     def poll(self, timeout: int = 0) -> tuple[list[dict], int]:
