@@ -952,8 +952,12 @@ grant execute on function team_task_admin(text,text,jsonb)       to anon, authen
 --  عروض الأسعار — quotes
 --
 --  An ambassador asks for a quote on one of her own leads, with the
---  client's requirements. The operator prices it line by line; the total
---  (and 15% VAT when ticked) is computed HERE, never trusted from the page.
+--  client's requirements. The operator prices it line by line; the total is
+--  computed HERE, never trusted from the page. RAFD is NOT VAT-registered
+--  (the owner's decision, 2026-10-11), so a quote carries no VAT: the server
+--  adds 15% only when team_config.vat_registered = 'true' AND the operator
+--  asks for it, and the page offers the option only when its own
+--  VAT_REGISTERED constant is true. Flip both together, after registering.
 --  The quote then has its own page (/team#/q/<id>) that the ambassador
 --  sends the client. Acceptance is recorded either by the ambassador or —
 --  stronger evidence — by the client pressing «أوافق» on that page
@@ -988,6 +992,10 @@ create table if not exists team_quotes (
 alter table team_quotes enable row level security;
 revoke all on team_quotes from public, anon, authenticated;
 revoke all on sequence team_quotes_no_seq from public, anon, authenticated;
+-- No VAT unless the company is registered. The column was created with default true;
+-- quotes sent before this change keep the vat value they were sent with.
+alter table team_quotes alter column vat set default false;
+insert into team_config(key, value) values ('vat_registered', 'false') on conflict (key) do nothing;
 
 -- the fuller quote layout: billing cycle, the client's address and VAT number,
 -- and the terms SNAPSHOT — copied from team_config at send time, so editing the
@@ -1136,7 +1144,10 @@ end $$;
 create or replace function team_quote_send(p jsonb) returns jsonb
 language plpgsql security definer set search_path = public as $$
 declare v_lead uuid := (p->>'lead_id')::uuid; v_items jsonb := '[]'::jsonb; it jsonb;
-        v_sub numeric := 0; v_vat boolean := coalesce((p->>'vat')::boolean, true); q numeric; pr numeric;
+        v_sub numeric := 0; q numeric; pr numeric;
+        -- VAT only for a registered company, and only when the operator asks for it
+        v_vat boolean := coalesce((p->>'vat')::boolean, false)
+                         and coalesce((select value from team_config where key = 'vat_registered'), 'false') = 'true';
 begin
   if jsonb_typeof(p->'items') <> 'array' or jsonb_array_length(p->'items') = 0 or jsonb_array_length(p->'items') > 40 then
     return jsonb_build_object('error','items');

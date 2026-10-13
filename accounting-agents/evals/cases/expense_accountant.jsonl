@@ -1,0 +1,10 @@
+{"id": "claude-subscription", "input": {"invoice": {"counterparty_name": "Anthropic, PBC", "lines": [{"description": "Claude Pro Sep 17-Oct 17, 2026", "net": "86.25"}]}}, "expect": {"account_code": "5101"}}
+{"id": "github-copilot", "input": {"invoice": {"counterparty_name": "GitHub, Inc.", "lines": [{"description": "GitHub Copilot Pro - month", "net": "37.50"}]}}, "expect": {"account_code": "5101"}}
+{"id": "domain", "input": {"invoice": {"counterparty_name": "GoDaddy", "lines": [{"description": ".DIGITAL Domain Registration rafdai.digital 1 Year", "net": "11.98"}]}}, "expect": {"account_code": "5102"}}
+{"id": "hosting", "input": {"invoice": {"counterparty_name": "Netlify, Inc.", "lines": [{"description": "1000 credits per month", "net": "33.75"}]}}, "expect": {"account_code": "5102"}}
+{"id": "snap-ads", "input": {"invoice": {"counterparty_name": "Snap Inc", "lines": [{"description": "Snapchat ads campaign", "net": "557.49"}]}}, "expect": {"account_code": "5201"}}
+{"id": "cr-fees", "input": {"invoice": {"counterparty_name": "Saudi Business Center", "lines": [{"description": "Commercial registration issuance", "net": "1775.00"}]}}, "expect": {"account_code": "5401"}}
+{"id": "freelancer", "input": {"invoice": {"counterparty_name": "Mostaql", "lines": [{"description": "Freelance UI design project", "net": "75.61"}]}}, "expect": {"account_code": "5601"}}
+{"id": "laptop", "input": {"invoice": {"counterparty_name": "Jarir Bookstore", "lines": [{"description": "MacBook Pro 14 for engineering", "net": "8999.00"}]}}, "expect": {"account_code": "1501"}}
+{"id": "possibly-personal", "input": {"invoice": {"counterparty_name": "Luxouch (Salla store)", "lines": [{"description": "Body cream and hand-care package", "net": "519.00"}]}}, "expect": {"needs_human_review": true}}
+{"id": "bank-fee", "input": {"invoice": {"counterparty_name": "Al Rajhi Bank", "lines": [{"description": "Instant transfer fee", "net": "0.58"}]}}, "expect": {"account_code": "5701"}}
